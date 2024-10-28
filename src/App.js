@@ -36,9 +36,9 @@ function App() {
   };
 
   const addTicket = (newTicket) => {
-    const id = tickets.length + 1;
+    const id = tickets.length + 1; // Генерация ID для нового тикета
     setTickets([...tickets, { ...newTicket, id }]);
-    setIsModalOpen(false);
+    setIsModalOpen(false); // Закрытие модального окна
   };
 
   const handleLoginSuccess = () => {
@@ -63,18 +63,14 @@ function App() {
         <LoginForm onLoginSuccess={handleLoginSuccess} />
       ) : (
         <>
-          <div className='header'>
-            <div className='container-name-header'>Tickets</div>
-            <button onClick={openCreateTicketModal} className="open-modal-button">
-              Add ticket
-            </button>
-          </div>
           <WorkflowDashboard
             tickets={tickets}
             updateTicket={updateTicketWorkflow}
             editTicket={editTicket}
             deleteTicket={deleteTicket}
+            addTicket={addTicket} // Передаем функцию добавления тикетов
             onEditTicket={openEditTicketModal}
+            openCreateTicketModal={openCreateTicketModal} // Передаем функцию для открытия модального окна
           />
 
           {isModalOpen && (

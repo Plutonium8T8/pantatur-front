@@ -1,20 +1,12 @@
 import React, { useState } from 'react';
 import TicketModal from './TicketModal';
 import { workflowOptions } from './WorkFlowOption';
-import { priorityOptions } from './PriorityOption';
+import './App.css';
 
-function WorkflowDashboard({ tickets, updateTicket, deleteTicket, editTicket }) {
+function WorkflowDashboard({ tickets, updateTicket, deleteTicket, editTicket, addTicket, openCreateTicketModal }) {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedTicket, setSelectedTicket] = useState(null);
-
-    // Определяем стили для приоритетов
-    const priorityStyles = {
-        low: { backgroundColor: '#fff3b0', borderColor: '#ffc107' },
-        medium: { backgroundColor: '#ffcc80', borderColor: '#ff9800' },
-        high: { backgroundColor: '#f99a9a', borderColor: '#dc3545' },
-        critical: { backgroundColor: '#f64e4e', borderColor: '#721c24' }
-    };
-
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const filteredTickets = tickets.filter(ticket =>
         ticket.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -25,7 +17,7 @@ function WorkflowDashboard({ tickets, updateTicket, deleteTicket, editTicket }) 
     const handleDragStart = (e, ticketId) => {
         e.dataTransfer.setData('ticketId', ticketId);
     };
-    
+
     const handleDrop = (e, workflow) => {
         const ticketId = e.dataTransfer.getData('ticketId');
         updateTicket(ticketId, workflow);
@@ -35,31 +27,23 @@ function WorkflowDashboard({ tickets, updateTicket, deleteTicket, editTicket }) 
         setSelectedTicket(ticket);
     };
 
-    // const openCreateTicketModal = () => {
-    //     setCurrentTicket(null);
-    //     setIsCreating(true);
-    //     setIsModalOpen(true);
-    // };
-
     const closeModal = () => setSelectedTicket(null);
 
     return (
         <div style={{ padding: '1rem' }}>
             <h2>Workflow Dashboard</h2>
-            {/* <div className='header'>
+            <div className='header'>
                 <div className='container-name-header'>Tickets</div>
-                <button onClick={openCreateTicketModal} className="open-modal-button">
-                    Add ticket
-                </button>
-            </div> */}
-            <div className='container-search-input'>
-                <input
-                    type="text"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Search tickets..."
-                    className='search-input'
-                />
+                <button onClick={openCreateTicketModal}>Add Ticket</button>
+                <div className='container-search-input'>
+                    <input
+                        type="text"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        placeholder="Search tickets..."
+                        className='search-input'
+                    />
+                </div>
             </div>
             <div className='container-tickets'>
                 {workflowOptions.map((workflow) => (
@@ -83,8 +67,8 @@ function WorkflowDashboard({ tickets, updateTicket, deleteTicket, editTicket }) 
                                         onDragStart={(e) => handleDragStart(e, ticket.id)}
                                         onClick={() => handleTicketClick(ticket)}
                                         style={{
-                                            borderColor: priorityStyles[ticket.priority]?.borderColor || '#ddd',
-                                            backgroundColor: priorityStyles[ticket.priority]?.backgroundColor || '#f9f9f9',
+                                            borderColor: ticket.priority === 'high' ? '#dc3545' : '#ddd',
+                                            backgroundColor: ticket.priority === 'high' ? '#f99a9a' : '#f9f9f9',
                                         }}
                                     >
                                         <h4>{ticket.title}</h4>
@@ -93,7 +77,6 @@ function WorkflowDashboard({ tickets, updateTicket, deleteTicket, editTicket }) 
                                 ))}
                         </div>
                     </div>
-
                 ))}
             </div>
 
