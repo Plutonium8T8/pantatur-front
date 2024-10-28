@@ -55,7 +55,7 @@ function LoginForm({ onLoginSuccess }) {
   };
 
 
-  return (
+  return (<div className='body-login-form'>
     <div className="login-form">
       <h2>{isLogin ? 'Login' : 'Register'}</h2>
 
@@ -102,6 +102,7 @@ function LoginForm({ onLoginSuccess }) {
       {isLoading && <div className="spinner"></div>}
 
       {message && <p className="error-message">{message}</p>}
+    </div>
     </div>
   );
 }

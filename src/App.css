@@ -1,10 +1,8 @@
+/* * {
+  border: 1px solid red;
+} */
 .App {
   text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -149,7 +147,6 @@
 }
 
 .header {
-  border-bottom: 3px solid #2E9E2E;
   display: flex;
   flex-direction: row;
   text-align: center;
@@ -174,21 +171,22 @@
 
 .container-tickets {
   display: flex;
+  gap: 8px;
   flex-direction: row;
-  gap: 16px;
+  justify-content: space-between;
   overflow-x: scroll;
   overflow-y: scroll;
   max-height: fit-content;
-  padding: 12px 0px 0px 0px;
+  padding: 4px;
 }
 
 /* Стиль для колонки (основного контейнера) */
 .colone-ticket {
-  min-width: 30%;
+  display: flex;
+  flex-direction: row;
+  min-width: 25%;
   border: 1px solid #ddd;
   border-radius: 8px;
-  padding: 1rem;
-  box-sizing: border-box;
   display: flex;
   flex-direction: column;
 }
@@ -223,4 +221,56 @@
   color: white;
   font-size: 1rem;
   cursor: pointer;
+}
+/* .container-inputs-modal {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+} */
+.container-select-priority-workflow {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+.priority-component {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.priority-select {
+  min-width: 255px;
+}
+.workflow-select {
+  min-width: 255px;
+}
+.container-button-save-delete-close {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 20px;
+  text-align: center;
+  align-items: center;
+}
+/* Overlay styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Modal content styles */
+.modal-content {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }

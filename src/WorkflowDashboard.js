@@ -21,11 +21,11 @@ function WorkflowDashboard({ tickets, updateTicket, deleteTicket, editTicket, ad
     };
 
     const workflowStyles = {
-        Backlog: { backgroundColor: '#E3F2FD', borderColor: '#0D47A1' }, // Light Blue
-        'In Progress': { backgroundColor: '#BBDEFB', borderColor: '#1976D2' }, // Blue
-        Review: { backgroundColor: '#90CAF9', borderColor: '#0288D1' }, // Medium Blue
-        Completed: { backgroundColor: '#64B5F6', borderColor: '#01579B' } // Dark Blue
-    };
+        Backlog: { backgroundColor: '#E8F5E9', borderColor: '#1B5E20' }, // Light Green
+        'In Progress': { backgroundColor: '#C8E6C9', borderColor: '#388E3C' }, // Medium Green
+        Review: { backgroundColor: '#A5D6A7', borderColor: '#43A047' }, // Mid-Dark Green
+        Completed: { backgroundColor: '#81C784', borderColor: '#2E7D32' } // Dark Green
+    };    
 
     const handleDragStart = (e, ticketId) => {
         e.dataTransfer.setData('ticketId', ticketId);
@@ -43,7 +43,7 @@ function WorkflowDashboard({ tickets, updateTicket, deleteTicket, editTicket, ad
     const closeModal = () => setSelectedTicket(null);
 
     return (
-        <div style={{ padding: '1rem' }}>
+        <div>
             <h2>Workflow Dashboard</h2>
             <div className='header'>
                 <div className='container-name-header'>Tickets</div>

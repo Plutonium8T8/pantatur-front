@@ -1,7 +1,18 @@
+.body-login-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    padding-top: 100px;
+}
 .login-form {
-    max-width: 400px;
-    margin: auto;
-    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    min-width: 400px;
+    padding: 10px;
     border: 1px solid #ccc;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -15,7 +26,6 @@ h2 {
 
 .input-field {
     display: block;
-    width: 100%;
     padding: 0.5rem;
     margin-bottom: 1rem;
     border: 1px solid #ccc;

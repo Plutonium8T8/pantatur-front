@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { workflowOptions } from './WorkFlowOption';
 import { priorityOptions } from './PriorityOption';
-import Priority from './PriorityComponent';
-import Workflow from './WorkflowComponent';
+import Priority from './store/Component/PriorityComponent/PriorityComponent';
+import Workflow from './store/Component/WorkFlowComponent/WorkflowComponent';
 
 function TicketModal({ ticket, onClose, onDelete, onEdit, isCreating }) {
   const [editedTicket, setEditedTicket] = useState(ticket || {
@@ -35,31 +35,14 @@ function TicketModal({ ticket, onClose, onDelete, onEdit, isCreating }) {
 
   const handleSave = () => {
     onEdit(editedTicket);
-    onClose(); 
+    onClose();
   };
 
   if (!ticket && !isCreating) return null;
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: 'rgba(0,0,0,0.5)',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      zIndex: 1000,
-    }}>
-      <div style={{
-        background: '#fff',
-        padding: '2rem',
-        borderRadius: '8px',
-        maxWidth: '500px',
-        width: '100%',
-      }}>
+    <div className="modal-overlay">
+      <div className="modal-content">
         <>
           <label>
             Title
@@ -77,9 +60,20 @@ function TicketModal({ ticket, onClose, onDelete, onEdit, isCreating }) {
             <textarea
               name="description"
               value={editedTicket.description}
-              onChange={handleInputChange}
+              onChange={(e) => {
+                handleInputChange(e);
+                e.target.style.height = 'auto';
+                e.target.style.height = `${e.target.scrollHeight}px`;
+              }}
               placeholder="Description"
-              style={{ display: 'block', width: '100%', padding: '0.5rem', marginBottom: '1rem' }}
+              style={{
+                display: 'block',
+                width: '100%',
+                padding: '0.5rem',
+                marginBottom: '1rem',
+                minHeight: 'fit-content',
+                overflow: 'hidden'
+              }}
             />
           </label>
           <label>
@@ -92,24 +86,28 @@ function TicketModal({ ticket, onClose, onDelete, onEdit, isCreating }) {
               style={{ display: 'block', width: '100%', padding: '0.5rem', marginBottom: '1rem' }}
             />
           </label>
-          <Priority ticket={editedTicket} onChange={handleInputChange} />
-          <Workflow ticket={editedTicket} onChange={handleInputChange} />
-
-          <button onClick={handleSave} style={{ marginRight: '1rem', padding: '0.5rem 1rem', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '4px' }}>
-            {isCreating ? 'Create' : 'Save'}
-          </button>
-          {!isCreating && (
-            <button onClick={() => onDelete(ticket.id)} style={{ marginRight: '1rem', padding: '0.5rem 1rem', backgroundColor: '#dc3545', color: '#fff', border: 'none', borderRadius: '4px' }}>
-              Delete
+          <div className='container-select-priority-workflow'>
+            <Priority ticket={editedTicket} onChange={handleInputChange} />
+            <Workflow ticket={editedTicket} onChange={handleInputChange} />
+          </div>
+          <div className='container-button-save-delete-close'>
+            {!isCreating && (
+              <button onClick={() => onDelete(ticket.id)} style={{ marginRight: '1rem', padding: '0.5rem 1rem', backgroundColor: '#dc3545', color: '#fff', border: 'none', borderRadius: '4px' }}>
+                Delete
+              </button>
+            )}
+            <button onClick={handleSave} style={{ marginRight: '1rem', padding: '0.5rem 1rem', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '4px' }}>
+              {isCreating ? 'Create' : 'Save'}
             </button>
-          )}
-          <button onClick={onClose} style={{ marginTop: '1rem', marginLeft: '1rem', padding: '0.5rem 1rem', backgroundColor: '#6c757d', color: '#fff', border: 'none', borderRadius: '4px' }}>
-            Close
-          </button>
+            <button onClick={onClose} style={{ marginLeft: '1rem', padding: '0.5rem 1rem', backgroundColor: '#6c757d', color: '#fff', border: 'none', borderRadius: '4px' }}>
+              Close
+            </button>
+          </div>
         </>
       </div>
     </div>
   );
+
 }
 
 export default TicketModal;
