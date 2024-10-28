@@ -13,6 +13,19 @@ function WorkflowDashboard({ tickets, updateTicket, deleteTicket, editTicket, ad
         ticket.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
         ticket.notes.toLowerCase().includes(searchTerm.toLowerCase())
     );
+    const priorityStyles = {
+        low: { backgroundColor: '#fff3b0', borderColor: '#ffc107' },        // Желтый
+        medium: { backgroundColor: '#ffcc80', borderColor: '#ff9800' },     // Оранжевый
+        high: { backgroundColor: '#f99a9a', borderColor: '#dc3545' },
+        critical: { backgroundColor: '#f64e4e', borderColor: '#721c24' }
+    };
+
+    const workflowStyles = {
+        BackLog: { backgroundColor: '#E3F2FD', borderColor: '#0D47A1' }, // Light Blue
+        'In Progress': { backgroundColor: '#BBDEFB', borderColor: '#1976D2' }, // Blue
+        Review: { backgroundColor: '#90CAF9', borderColor: '#0288D1' }, // Medium Blue
+        Completed: { backgroundColor: '#64B5F6', borderColor: '#01579B' } // Dark Blue
+    };
 
     const handleDragStart = (e, ticketId) => {
         e.dataTransfer.setData('ticketId', ticketId);
@@ -34,7 +47,7 @@ function WorkflowDashboard({ tickets, updateTicket, deleteTicket, editTicket, ad
             <h2>Workflow Dashboard</h2>
             <div className='header'>
                 <div className='container-name-header'>Tickets</div>
-                <button onClick={openCreateTicketModal}>Add Ticket</button>
+                <button onClick={openCreateTicketModal} className='button-add-ticket'>Add Ticket</button>
                 <div className='container-search-input'>
                     <input
                         type="text"
@@ -53,9 +66,17 @@ function WorkflowDashboard({ tickets, updateTicket, deleteTicket, editTicket, ad
                         onDrop={(e) => handleDrop(e, workflow)}
                         onDragOver={(e) => e.preventDefault()}
                     >
-                        <div className="name-workflow">
+                        <div 
+                            className="name-workflow" 
+                            style={{
+                            borderColor: workflowStyles[workflow]?.borderColor || '', // Используем безопасный доступ и добавляем запасной вариант
+                            backgroundColor: workflowStyles[workflow]?.backgroundColor || '', // Используем безопасный доступ и добавляем запасной вариант
+                            // borderWidth: '1px',  // Убедитесь, что ширина границы задана
+                            // borderStyle: 'solid'  // Убедитесь, что стиль границы задан
+                        }}>
                             <h3>{workflow}</h3>
                         </div>
+
                         <div className="scrollable-list">
                             {filteredTickets
                                 .filter(ticket => ticket.workflow === workflow)
@@ -67,8 +88,10 @@ function WorkflowDashboard({ tickets, updateTicket, deleteTicket, editTicket, ad
                                         onDragStart={(e) => handleDragStart(e, ticket.id)}
                                         onClick={() => handleTicketClick(ticket)}
                                         style={{
-                                            borderColor: ticket.priority === 'high' ? '#dc3545' : '#ddd',
-                                            backgroundColor: ticket.priority === 'high' ? '#f99a9a' : '#f9f9f9',
+                                            borderColor: priorityStyles[ticket.priority].borderColor,
+                                            backgroundColor: priorityStyles[ticket.priority].backgroundColor,
+                                            borderWidth: '1px',  // Ensure there's a border width if needed
+                                            borderStyle: 'solid'  // Ensure the border style is solid
                                         }}
                                     >
                                         <h4>{ticket.title}</h4>

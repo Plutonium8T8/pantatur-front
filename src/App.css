@@ -65,8 +65,7 @@
 
 .search-input {
   display: flex;
-  margin-bottom: 8px;
-  max-width: 10%;
+  max-width: 100%;
 }
 
 .ticket-component {
@@ -125,13 +124,6 @@
   background-color: #0056b3;
 }
 
-.App {
-  font-family: Arial, sans-serif;
-  padding: 20px;
-  background-color: #f9f9f9;
-  min-height: 100vh;
-}
-
 .open-modal-button {
   background-color: #32CD32;
   color: #fff;
@@ -151,15 +143,6 @@
   margin-bottom: 15px;
 }
 
-.search-input {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  width: 100%;
-  margin-bottom: 10px;
-  font-size: 1rem;
-}
-
 .search-input:focus {
   border-color: #007bff;
   outline: none;
@@ -169,9 +152,10 @@
   border-bottom: 3px solid #2E9E2E;
   display: flex;
   flex-direction: row;
+  text-align: center;
+  align-items: center;
   align-items: center;
   gap: 16px;
-  padding-bottom: 6px;
 }
 
 .container-name-header {
@@ -195,6 +179,7 @@
   overflow-x: scroll;
   overflow-y: scroll;
   max-height: fit-content;
+  padding: 12px 0px 0px 0px;
 }
 
 /* Стиль для колонки (основного контейнера) */
@@ -213,7 +198,6 @@
   border-bottom: 1px solid #ddd;
   text-align: center;
   font-weight: bold;
-  background-color: #fff;
 }
 
 /* Прокручиваемый список тикетов */
@@ -233,4 +217,11 @@
   background-color: #f9f9f9; /* Цвет фона можно менять в JavaScript */
   cursor: pointer;
   box-sizing: border-box;
+}
+.button-add-ticket {
+  background-color: #32CD32;
+  border-radius: 4px;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
 }
