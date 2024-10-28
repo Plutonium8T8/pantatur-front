@@ -195,7 +195,6 @@
 
 /* Стиль для названия workflow */
 .name-workflow {
-  border-bottom: 1px solid #ddd;
   text-align: center;
   font-weight: bold;
 }
