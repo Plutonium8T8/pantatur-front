@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './LoginForm.css'; 
+import './LoginForm.css';
+import Cookies from 'js-cookie';
 
 function LoginForm({ onLoginSuccess }) {
   const [form, setForm] = useState({ email: '', username: '', password: '' });
   const [isLogin, setIsLogin] = useState(true);
   const [message, setMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false); 
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -29,7 +30,7 @@ function LoginForm({ onLoginSuccess }) {
       return;
     }
 
-    setIsLoading(true); 
+    setIsLoading(true);
     const url = isLogin
       ? 'https://pandaturapi-293102893820.europe-central2.run.app/api/login'
       : 'https://pandaturapi-293102893820.europe-central2.run.app/api/register';
@@ -40,14 +41,19 @@ function LoginForm({ onLoginSuccess }) {
       setMessage(response.data.message);
 
       if (isLogin && response.status === 202) {
-        onLoginSuccess(); 
+        // Установка JWT-куки
+        const token = response.data.token; // Убедитесь, что токен приходит в ответе
+        Cookies.set('jwt', token, { expires: 7, secure: true, sameSite: 'strict' });
+
+        onLoginSuccess();
       }
     } catch (error) {
       setMessage(error.response?.data?.message || 'An error occurred');
     } finally {
-      setIsLoading(false); 
+      setIsLoading(false);
     }
   };
+
 
   return (
     <div className="login-form">

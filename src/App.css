@@ -58,10 +58,15 @@
   }
 }
 
+.container-search-input {
+  display: flex;
+  justify-content: center;
+}
+
 .search-input {
   display: flex;
   margin-bottom: 8px;
-  width: 50%;
+  max-width: 10%;
 }
 
 .ticket-component {
@@ -128,19 +133,18 @@
 }
 
 .open-modal-button {
-  background-color: #007bff;
+  background-color: #32CD32;
   color: #fff;
   border: none;
   padding: 10px 15px;
   border-radius: 5px;
   font-size: 1rem;
   cursor: pointer;
-  margin-top: 10px;
   transition: background-color 0.3s;
 }
 
 .open-modal-button:hover {
-  background-color: #0056b3;
+  background-color: #278927;
 }
 
 .workflow-dashboard {
@@ -159,4 +163,74 @@
 .search-input:focus {
   border-color: #007bff;
   outline: none;
+}
+
+.header {
+  border-bottom: 3px solid #2E9E2E;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 6px;
+}
+
+.container-name-header {
+  font-size: 24px;
+}
+
+.options {
+  border: 1px solid gray;
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.options:hover {
+  cursor: pointer;
+}
+
+.container-tickets {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  max-height: fit-content;
+}
+
+/* Стиль для колонки (основного контейнера) */
+.colone-ticket {
+  min-width: 30%;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Стиль для названия workflow */
+.name-workflow {
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+  font-weight: bold;
+  background-color: #fff;
+}
+
+/* Прокручиваемый список тикетов */
+.scrollable-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 0px;
+  max-height: 500px;
+}
+
+/* Стиль для каждого тикета */
+.ticket {
+  padding: 1rem;
+  border: 1px solid #ddd; /* Цвет границы можно менять в JavaScript */
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  background-color: #f9f9f9; /* Цвет фона можно менять в JavaScript */
+  cursor: pointer;
+  box-sizing: border-box;
 }

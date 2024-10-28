@@ -63,9 +63,12 @@ function App() {
         <LoginForm onLoginSuccess={handleLoginSuccess} />
       ) : (
         <>
-          <button onClick={openCreateTicketModal} className="open-modal-button">
-            Add ticket
-          </button>
+          <div className='header'>
+            <div className='container-name-header'>Tickets</div>
+            <button onClick={openCreateTicketModal} className="open-modal-button">
+              Add ticket
+            </button>
+          </div>
           <WorkflowDashboard
             tickets={tickets}
             updateTicket={updateTicketWorkflow}
