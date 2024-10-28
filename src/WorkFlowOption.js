@@ -1,6 +1,6 @@
 export const workflowOptions = [
-    "Backlog ()",
-    "In Progress ()",
-    "Review ()",
-    "Completed ()"
+    "Backlog",
+    "In Progress",
+    "Review",
+    "Completed"
 ]

@@ -21,7 +21,7 @@ function WorkflowDashboard({ tickets, updateTicket, deleteTicket, editTicket, ad
     };
 
     const workflowStyles = {
-        BackLog: { backgroundColor: '#E3F2FD', borderColor: '#0D47A1' }, // Light Blue
+        Backlog: { backgroundColor: '#E3F2FD', borderColor: '#0D47A1' }, // Light Blue
         'In Progress': { backgroundColor: '#BBDEFB', borderColor: '#1976D2' }, // Blue
         Review: { backgroundColor: '#90CAF9', borderColor: '#0288D1' }, // Medium Blue
         Completed: { backgroundColor: '#64B5F6', borderColor: '#01579B' } // Dark Blue
@@ -66,16 +66,17 @@ function WorkflowDashboard({ tickets, updateTicket, deleteTicket, editTicket, ad
                         onDrop={(e) => handleDrop(e, workflow)}
                         onDragOver={(e) => e.preventDefault()}
                     >
-                        <div 
-                            className="name-workflow" 
+                        <div
+                            className="name-workflow"
                             style={{
-                            borderColor: workflowStyles[workflow]?.borderColor || '', // Используем безопасный доступ и добавляем запасной вариант
-                            backgroundColor: workflowStyles[workflow]?.backgroundColor || '', // Используем безопасный доступ и добавляем запасной вариант
-                            // borderWidth: '1px',  // Убедитесь, что ширина границы задана
-                            // borderStyle: 'solid'  // Убедитесь, что стиль границы задан
-                        }}>
+                                borderColor: workflowStyles[workflow]?.borderColor || '', // Безопасный доступ к цвету границы
+                                backgroundColor: workflowStyles[workflow]?.backgroundColor || '', // Безопасный доступ к фону
+                                borderWidth: '1px',  // Задаем ширину границы
+                                borderStyle: 'solid'  // Задаем стиль границы
+                            }}>
                             <h3>{workflow}</h3>
                         </div>
+
 
                         <div className="scrollable-list">
                             {filteredTickets
