@@ -8,13 +8,11 @@ function WorkflowDashboard({ tickets, updateTicket, deleteTicket, editTicket, ad
     const [selectedTicket, setSelectedTicket] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    // Обработка фильтрации тикетов
     const filteredTickets = tickets.filter(ticket =>
-        (ticket.title && ticket.title.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (ticket.description && ticket.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (ticket.notes && ticket.notes.toLowerCase().includes(searchTerm.toLowerCase()))
+        ticket.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        ticket.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        ticket.notes.toLowerCase().includes(searchTerm.toLowerCase())
     );
-
     const priorityStyles = {
         low: { backgroundColor: '#fff3b0', borderColor: '#ffc107' },        // Желтый
         medium: { backgroundColor: '#ffcc80', borderColor: '#ff9800' },     // Оранжевый
@@ -27,7 +25,7 @@ function WorkflowDashboard({ tickets, updateTicket, deleteTicket, editTicket, ad
         'In Progress': { backgroundColor: '#C8E6C9', borderColor: '#388E3C' }, // Medium Green
         Review: { backgroundColor: '#A5D6A7', borderColor: '#43A047' }, // Mid-Dark Green
         Completed: { backgroundColor: '#81C784', borderColor: '#2E7D32' } // Dark Green
-    };
+    };    
 
     const handleDragStart = (e, ticketId) => {
         e.dataTransfer.setData('ticketId', ticketId);
@@ -71,13 +69,14 @@ function WorkflowDashboard({ tickets, updateTicket, deleteTicket, editTicket, ad
                         <div
                             className="name-workflow"
                             style={{
-                                borderColor: workflowStyles[workflow]?.borderColor || '',
-                                backgroundColor: workflowStyles[workflow]?.backgroundColor || '',
-                                borderWidth: '1px',
-                                borderStyle: 'solid'
+                                borderColor: workflowStyles[workflow]?.borderColor || '', // Безопасный доступ к цвету границы
+                                backgroundColor: workflowStyles[workflow]?.backgroundColor || '', // Безопасный доступ к фону
+                                borderWidth: '1px',  // Задаем ширину границы
+                                borderStyle: 'solid'  // Задаем стиль границы
                             }}>
                             <h3>{workflow}</h3>
                         </div>
+
 
                         <div className="scrollable-list">
                             {filteredTickets
@@ -92,8 +91,8 @@ function WorkflowDashboard({ tickets, updateTicket, deleteTicket, editTicket, ad
                                         style={{
                                             borderColor: priorityStyles[ticket.priority].borderColor,
                                             backgroundColor: priorityStyles[ticket.priority].backgroundColor,
-                                            borderWidth: '1px',
-                                            borderStyle: 'solid'
+                                            borderWidth: '1px',  // Ensure there's a border width if needed
+                                            borderStyle: 'solid'  // Ensure the border style is solid
                                         }}
                                     >
                                         <h4>{ticket.title}</h4>

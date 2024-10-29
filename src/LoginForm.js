@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import './LoginForm.css';
 import Cookies from 'js-cookie';
 
@@ -36,82 +37,72 @@ function LoginForm({ onLoginSuccess }) {
     const data = isLogin ? { email: form.email, password: form.password } : form;
 
     try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
+      const response = await axios.post(url, data);
+      setMessage(response.data.message);
 
-      const responseData = await response.json();
-      setMessage(responseData.message);
-
-      if (isLogin && response.ok) {
-        // Set JWT cookie
-        const token = responseData.token; // Make sure the token is in the response
+      if (isLogin && response.status === 202) {
+        // Установка JWT-куки
+        const token = response.data.token; // Убедитесь, что токен приходит в ответе
         Cookies.set('jwt', token, { expires: 7, secure: true, sameSite: 'strict' });
 
         onLoginSuccess();
-      } else {
-        setMessage(responseData.message || 'An error occurred');
       }
     } catch (error) {
-      setMessage('An error occurred');
+      setMessage(error.response?.data?.message || 'An error occurred');
     } finally {
       setIsLoading(false);
     }
   };
 
-  return (
-    <div className='body-login-form'>
-      <div className="login-form">
-        <h2>{isLogin ? 'Login' : 'Register'}</h2>
 
+  return (<div className='body-login-form'>
+    <div className="login-form">
+      <h2>{isLogin ? 'Login' : 'Register'}</h2>
+
+      <input
+        type="email"
+        name="email"
+        value={form.email}
+        onChange={handleInputChange}
+        placeholder="Email"
+        className="input-field"
+      />
+
+      {!isLogin && (
         <input
-          type="email"
-          name="email"
-          value={form.email}
+          name="username"
+          value={form.username}
           onChange={handleInputChange}
-          placeholder="Email"
+          placeholder="Username"
           className="input-field"
         />
+      )}
 
-        {!isLogin && (
-          <input
-            name="username"
-            value={form.username}
-            onChange={handleInputChange}
-            placeholder="Username"
-            className="input-field"
-          />
-        )}
+      <input
+        type="password"
+        name="password"
+        value={form.password}
+        onChange={handleInputChange}
+        placeholder="Password"
+        className="input-field"
+      />
 
-        <input
-          type="password"
-          name="password"
-          value={form.password}
-          onChange={handleInputChange}
-          placeholder="Password"
-          className="input-field"
-        />
+      <button onClick={handleSubmit} className="submit-button" disabled={isLoading}>
+        {isLoading ? 'Loading...' : (isLogin ? 'Login' : 'Register')}
+      </button>
 
-        <button onClick={handleSubmit} className="submit-button" disabled={isLoading}>
-          {isLoading ? 'Loading...' : (isLogin ? 'Login' : 'Register')}
-        </button>
+      <button
+        onClick={() => setIsLogin(!isLogin)}
+        className="switch-button"
+        disabled={isLoading}
+      >
+        Switch to {isLogin ? 'Register' : 'Login'}
+      </button>
 
-        <button
-          onClick={() => setIsLogin(!isLogin)}
-          className="switch-button"
-          disabled={isLoading}
-        >
-          Switch to {isLogin ? 'Register' : 'Login'}
-        </button>
+      {isLoading && <div className="spinner"></div>}
 
-        {isLoading && <div className="spinner"></div>}
-
-        {message && <p className="error-message">{message}</p>}
-      </div>
+      {message && <p className="error-message">{message}</p>}
+    </div>
     </div>
   );
 }
