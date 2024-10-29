@@ -13,33 +13,33 @@ function App() {
   const [isCreating, setIsCreating] = useState(false);
 
   // Вариант 1: console.log внутри fetchTickets после установки тикетов
-const fetchTickets = async () => {
-  try {
-    const token = Cookies.get('jwt');
-    const response = await fetch('https://pandaturapi-293102893820.europe-central2.run.app/api/tickets', {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    });
+  const fetchTickets = async () => {
+    try {
+      const token = Cookies.get('jwt');
+      const response = await fetch('https://pandaturapi-293102893820.europe-central2.run.app/api/tickets', {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
 
-    if (!response.ok) {
-      throw new Error('Ошибка при получении данных');
+      if (!response.ok) {
+        throw new Error('Ошибка при получении данных');
+      }
+
+      const data = await response.json();
+      setTickets(data);
+      console.log("+++ Загруженные тикеты:", data); // Здесь данные уже загружены
+    } catch (error) {
+      console.error('Ошибка:', error);
     }
+  };
 
-    const data = await response.json();
-    setTickets(data);
-    console.log("+++ Загруженные тикеты:", data); // Здесь данные уже загружены
-  } catch (error) {
-    console.error('Ошибка:', error);
-  }
-};
-
-// Вариант 2: useEffect, отслеживающий изменения в tickets
-useEffect(() => {
-  console.log("+++ Обновленные тикеты:", tickets);
-}, [tickets]);
+  // Вариант 2: useEffect, отслеживающий изменения в tickets
+  useEffect(() => {
+    console.log("+++ Обновленные тикеты:", tickets);
+  }, [tickets]);
 
 
   useEffect(() => {
@@ -53,14 +53,14 @@ useEffect(() => {
   const updateTicketWorkflow = (ticketId, newWorkflow) => {
     console.log("Старые тикеты:", tickets);
     setTickets((prevTickets) => {
-        const updatedTickets = prevTickets.map((ticket) =>
-            ticket.id == ticketId ? { ...ticket, workflow: newWorkflow } : ticket
-        );
-        return updatedTickets; // Возврат обновленного состояния тикетов
+      const updatedTickets = prevTickets.map((ticket) =>
+        ticket.id == ticketId ? { ...ticket, workflow: newWorkflow } : ticket
+      );
+      return updatedTickets; // Возврат обновленного состояния тикетов
     });
-};
+  };
 
-  
+
 
   const editTicket = (updatedTicket) => {
     setTickets((prevTickets) =>
@@ -78,7 +78,7 @@ useEffect(() => {
     const id = tickets.length + 1; // Генерация ID для нового тикета
     setTickets([...tickets, { ...newTicket, id }]);
     setIsModalOpen(false);
-};
+  };
 
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
@@ -114,12 +114,12 @@ useEffect(() => {
 
           {isModalOpen && (
             <TicketModal
-            ticket={currentTicket}
-            onClose={() => setIsModalOpen(false)}
-            onEdit={isCreating ? addTicket : editTicket}
-            onDelete={deleteTicket}
-            isCreating={isCreating}
-        />
+              ticket={currentTicket}
+              onClose={() => setIsModalOpen(false)}
+              onEdit={isCreating ? addTicket : editTicket}
+              onDelete={deleteTicket}
+              isCreating={isCreating}
+            />
           )}
         </>
       )}
