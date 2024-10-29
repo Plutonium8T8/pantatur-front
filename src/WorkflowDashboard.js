@@ -87,8 +87,8 @@ function WorkflowDashboard({ tickets, updateTicket, deleteTicket, editTicket, op
                                             borderStyle: 'solid'
                                         }}
                                     >
-                                        <h4>{ticket.title}</h4>
-                                        <p>{ticket.description}</p>
+                                        <h4>{ticket.title || "Без заголовка"}</h4>
+                                        <p>{ticket.description || "Без описания"}</p>
                                     </div>
                                 ))}
                         </div>
