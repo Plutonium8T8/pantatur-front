@@ -3,6 +3,7 @@ import './App.css';
 import WorkflowDashboard from './WorkflowDashboard';
 import LoginForm from './LoginForm';
 import TicketModal from './TicketModal';
+import Cookies from 'js-cookie';
 
 function App() {
   const [tickets, setTickets] = useState([]);
@@ -14,6 +15,29 @@ function App() {
   useEffect(() => {
     console.log(tickets);
   }, [tickets]);
+
+  const fetchTickets = async () => {
+    try {
+      const token = Cookies.get('jwt'); // Получение токена из cookies
+      const response = await fetch('https://pandaturapi-293102893820.europe-central2.run.app/api/tickets', {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`, // Используем токен
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error('Ошибка при получении данных');
+      }
+  
+      const data = await response.json();
+      setTickets(data); // Убедитесь, что структура данных соответствует вашему состоянию
+    } catch (error) {
+      console.error('Ошибка:', error);
+    }
+  };
+  
 
   const updateTicketWorkflow = (ticketId, newWorkflow) => {
     setTickets((prevTickets) =>
@@ -56,6 +80,12 @@ function App() {
     setIsCreating(false);
     setIsModalOpen(true);
   };
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetchTickets(); // Получение тикетов при успешном входе
+    }
+  }, [isLoggedIn]);
 
   return (
     <div className="App">
