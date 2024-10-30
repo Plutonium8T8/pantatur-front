@@ -6,7 +6,6 @@ import Workflow from './store/Component/WorkFlowComponent/WorkflowComponent';
 import Cookies from 'js-cookie';
 
 const saveTicketToServer = async (ticketData, isCreating) => {
-
   try {
     const token = Cookies.get('jwt');
     const response = await fetch('https://pandaturapi-293102893820.europe-central2.run.app/api/tickets', {
@@ -40,26 +39,8 @@ function TicketModal({ ticket, onClose, onDelete, onEdit, isCreating }) {
     userId: "",
     serviceReference: "",
     socialMediaReferences: [{}],
-    technician_id: [{}]
+    technician_id: [{}]  // Изменение на массив
   });
-
-  // useEffect(() => {
-  //   if (isCreating) {
-  //     setEditedTicket({
-  //       title: '',
-  //       description: '',
-  //       notes: '',
-  //       priority: priorityOptions[0],
-  //       workflow: workflowOptions[0],
-  //       userId: "",
-  //       serviceReference: "",
-  //       socialMediaReferences: [{}],
-  //       technician_id: [{}]
-  //     });
-  //   } else {
-  //     setEditedTicket(ticket);
-  //   }
-  // }, [ticket, isCreating]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -71,6 +52,11 @@ function TicketModal({ ticket, onClose, onDelete, onEdit, isCreating }) {
           ...prevTicket.socialMediaReferences[0],
           [name]: value
         }]
+      }));
+    } else if (name === 'technician_id') {
+      setEditedTicket((prevTicket) => ({
+        ...prevTicket,
+        technician_id: [value] // Установка technician_id как массив
       }));
     } else {
       setEditedTicket((prevTicket) => ({ ...prevTicket, [name]: value }));
