@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import TicketModal from './TicketModal';
-import { workflowOptions } from './WorkFlowOption';
+import { workflowOptions } from './WorkFlowOption'; // Здесь определите ваши опции
 import './App.css';
 
 function WorkflowDashboard({ tickets, updateTicket, deleteTicket, editTicket, openCreateTicketModal }) {
@@ -73,27 +73,31 @@ function WorkflowDashboard({ tickets, updateTicket, deleteTicket, editTicket, op
                                 .filter(ticket =>
                                     (ticket.title?.includes(searchTerm) || ticket.description?.includes(searchTerm) || ticket.notes?.includes(searchTerm) || searchTerm === '')
                                 )
-                                .map(ticket => (
-                                    <div
-                                        key={ticket.id}
-                                        className="ticket"
-                                        draggable
-                                        onDragStart={(e) => handleDragStart(e, ticket.id)}
-                                        onClick={() => handleTicketClick(ticket)}
-                                        style={{
-                                            borderColor: priorityStyles[ticket.priority]?.borderColor,
-                                            backgroundColor: priorityStyles[ticket.priority]?.backgroundColor,
-                                            borderWidth: '1px',
-                                            borderStyle: 'solid'
-                                        }}
-                                    >
-                                        <h4>{ticket.title || "Без заголовка"}</h4>
-                                        <p>{ticket.description || "Без описания"}</p>
-                                    </div>
-                                ))}
+                                .map(ticket => {
+                                    // console.log(ticket); // Вывод тикета для отладки
+                                    return (
+                                        <div
+                                            key={ticket.id}
+                                            className="ticket"
+                                            draggable
+                                            onDragStart={(e) => handleDragStart(e, ticket.id)}
+                                            onClick={() => handleTicketClick(ticket)}
+                                            style={{
+                                                borderColor: priorityStyles[ticket.priority]?.borderColor,
+                                                backgroundColor: priorityStyles[ticket.priority]?.backgroundColor,
+                                                borderWidth: '1px',
+                                                borderStyle: 'solid'
+                                            }}
+                                        >
+                                            <h4>{ticket.title || "Без заголовка"}</h4>
+                                            <p>{ticket.description || "Без описания"}</p>
+                                        </div>
+                                    );
+                                })}
                         </div>
                     </div>
                 ))}
+
             </div>
 
             {selectedTicket && (

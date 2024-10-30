@@ -40,24 +40,26 @@ function TicketModal({ ticket, onClose, onDelete, onEdit, isCreating }) {
     userId: "",
     serviceReference: "",
     socialMediaReferences: [{}],
+    technician_id: [{}]
   });
 
-  useEffect(() => {
-    if (isCreating) {
-      setEditedTicket({
-        title: '',
-        description: '',
-        notes: '',
-        priority: priorityOptions[0],
-        workflow: workflowOptions[0],
-        userId: "",
-        serviceReference: "",
-        socialMediaReferences: [{}],
-      });
-    } else {
-      setEditedTicket(ticket);
-    }
-  }, [ticket, isCreating]);
+  // useEffect(() => {
+  //   if (isCreating) {
+  //     setEditedTicket({
+  //       title: '',
+  //       description: '',
+  //       notes: '',
+  //       priority: priorityOptions[0],
+  //       workflow: workflowOptions[0],
+  //       userId: "",
+  //       serviceReference: "",
+  //       socialMediaReferences: [{}],
+  //       technician_id: [{}]
+  //     });
+  //   } else {
+  //     setEditedTicket(ticket);
+  //   }
+  // }, [ticket, isCreating]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
