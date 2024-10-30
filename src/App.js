@@ -12,7 +12,6 @@ function App() {
   const [currentTicket, setCurrentTicket] = useState(null);
   const [isCreating, setIsCreating] = useState(false);
 
-  // Вариант 1: console.log внутри fetchTickets после установки тикетов
   const fetchTickets = async () => {
     try {
       const token = Cookies.get('jwt');
@@ -30,54 +29,54 @@ function App() {
 
       const data = await response.json();
       setTickets(data);
-      console.log("+++ Загруженные тикеты:", data); // Здесь данные уже загружены
+      console.log("+++ Загруженные тикеты:", data);
     } catch (error) {
       console.error('Ошибка:', error);
     }
   };
 
-  // Вариант 2: useEffect, отслеживающий изменения в tickets
   useEffect(() => {
-    console.log("+++ Обновленные тикеты:", tickets);
-  }, [tickets]);
-
-
-  useEffect(() => {
-    // Получаем тикеты, только если пользователь залогинен
+    // Загружаем тикеты при входе пользователя
     if (isLoggedIn) {
       fetchTickets();
-      console.log("+++" + tickets)
     }
   }, [isLoggedIn]);
 
   const updateTicketWorkflow = (ticketId, newWorkflow) => {
-    console.log("Старые тикеты:", tickets);
     setTickets((prevTickets) => {
       const updatedTickets = prevTickets.map((ticket) =>
-        ticket.id == ticketId ? { ...ticket, workflow: newWorkflow } : ticket
+        ticket.id === ticketId ? { ...ticket, workflow: newWorkflow } : ticket
       );
-      return updatedTickets; // Возврат обновленного состояния тикетов
+      return updatedTickets;
     });
+    fetchTickets(); // Обновляем список после изменения workflow
   };
 
-
-
-  const editTicket = (updatedTicket) => {
+  const editTicket = async (updatedTicket) => {
+    // Обновляем тикет локально
     setTickets((prevTickets) =>
       prevTickets.map((ticket) =>
         ticket.id === updatedTicket.id ? { ...ticket, ...updatedTicket } : ticket
       )
     );
+    // Обновляем список тикетов после редактирования
+    fetchTickets();
   };
 
-  const deleteTicket = (ticketId) => {
+  const deleteTicket = async (ticketId) => {
+    // Удаляем тикет локально
     setTickets((prevTickets) => prevTickets.filter((ticket) => ticket.id !== ticketId));
+    // Обновляем список тикетов после удаления
+    fetchTickets();
   };
 
   const addTicket = (newTicket) => {
+    // Добавляем тикет локально
     const id = tickets.length + 1; // Генерация ID для нового тикета
     setTickets([...tickets, { ...newTicket, id }]);
     setIsModalOpen(false);
+    // Обновляем список тикетов после добавления
+    fetchTickets();
   };
 
   const handleLoginSuccess = () => {
