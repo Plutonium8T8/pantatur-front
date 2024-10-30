@@ -1,11 +1,133 @@
 import React, { useEffect, useState } from 'react';
 import TicketModal from './TicketModal';
 import { workflowOptions } from './WorkFlowOption'; // Здесь определите ваши опции
+import { priorityOptions } from './PriorityOption';
+
+import Cookies from 'js-cookie';
+
 import './App.css';
 
-function WorkflowDashboard({ tickets, updateTicket, deleteTicket, editTicket, openCreateTicketModal }) {
+export const updateTicket = async (updateData) => {
+    try {
+        const token = Cookies.get('jwt');
+        const response = await fetch(`https://pandaturapi-293102893820.europe-central2.run.app/api/tickets/${updateData.id}`, {
+            method: 'PATCH',
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({...updateData})
+        });
+
+        if (!response.ok) {
+            throw new Error('Ошибка при обновлении данных');
+        }
+
+        const data = await response.json();
+        return data;
+
+    } catch (error) {
+        console.error('Ошибка:', error);
+    }
+
+};
+
+
+
+const WorkflowDashboard = () => {
+
+    const [tickets, setTickets] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
-    const [selectedTicket, setSelectedTicket] = useState(null);
+    
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [currentTicket, setCurrentTicket] = useState(null);
+
+    const fetchTickets = async () => {
+        try {
+            const token = Cookies.get('jwt');
+            const response = await fetch('https://pandaturapi-293102893820.europe-central2.run.app/api/tickets', {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Ошибка при получении данных');
+            }
+
+            const data = await response.json();
+            setTickets(...data);
+            console.log("+++ Загруженные тикеты:", ...data);
+        } catch (error) {
+            console.error('Ошибка:', error);
+        }
+    };
+
+
+
+
+    const updateTicketWorkflow = (ticketId, newWorkflow) => {
+
+
+        setTickets((prevTickets) => {
+            console.log("+",ticketId, newWorkflow);
+            const updatedTickets = prevTickets.map((ticket) =>
+                ticket.id == ticketId ? { ...ticket, workflow: newWorkflow } : ticket
+            ); console.log(updatedTickets);
+
+            return updatedTickets;
+        });
+
+    updateTicket({id: ticketId, workflow: newWorkflow})
+        .then(res => {
+            console.log(res);
+        })
+        .catch(e => {
+            console.error(e);
+        })
+        .finally(() => {
+
+        })
+        //fetchTickets(); // Обновляем список после изменения workflow
+    };
+
+    const editTicket = (updatedTicket) => {
+        // // Обновляем тикет локально
+        // setTickets((prevTickets) =>
+        //     prevTickets.map((ticket) =>
+        //         ticket.id === updatedTicket.id ? { ...ticket, ...updatedTicket } : ticket
+        //     )
+        // );
+        // Обновляем список тикетов после редактирования
+        //fetchTickets();
+        
+    };
+
+
+
+    const openCreateTicketModal = () => {
+        setCurrentTicket({
+            title: '',
+            description: '',
+            notes: '',
+            priority: priorityOptions[0],
+            workflow: workflowOptions[0],
+            user_id: "",
+            service_reference: "",
+            social_media_references: [{}],
+            technician_id: [{}]  // Изменение на массив
+          });
+        // setIsCreating(true);
+        setIsModalOpen(true);
+    };
+
+
+
+    useEffect(() => {
+        fetchTickets();
+    }, [])
 
     const priorityStyles = {
         low: { backgroundColor: '#fff3b0', borderColor: '#ffc107' },
@@ -28,14 +150,18 @@ function WorkflowDashboard({ tickets, updateTicket, deleteTicket, editTicket, op
     const handleDrop = (e, workflow) => {
         e.preventDefault();
         const ticketId = e.dataTransfer.getData('ticketId');
-        updateTicket(ticketId, workflow);
+        // console.log(ticketId, workflow);
+        updateTicketWorkflow(ticketId, workflow);
     };
 
     const handleTicketClick = (ticket) => {
-        setSelectedTicket(ticket);
+        setCurrentTicket(ticket);
     };
 
-    const closeModal = () => setSelectedTicket(null);
+    const closeModal = () => {
+        setCurrentTicket(null);
+        fetchTickets();
+    }
 
     return (
         <div>
@@ -81,7 +207,10 @@ function WorkflowDashboard({ tickets, updateTicket, deleteTicket, editTicket, op
                                             className="ticket"
                                             draggable
                                             onDragStart={(e) => handleDragStart(e, ticket.id)}
-                                            onClick={() => handleTicketClick(ticket)}
+                                            onClick={() => {
+                                                setCurrentTicket(ticket);
+                                                setIsModalOpen(true);
+                                            }}
                                             style={{
                                                 borderColor: priorityStyles[ticket.priority]?.borderColor,
                                                 backgroundColor: priorityStyles[ticket.priority]?.backgroundColor,
@@ -100,18 +229,13 @@ function WorkflowDashboard({ tickets, updateTicket, deleteTicket, editTicket, op
 
             </div>
 
-            {selectedTicket && (
+            {currentTicket && (
                 <TicketModal
-                    ticket={selectedTicket}
+                    ticket={currentTicket}
+                    
                     onClose={closeModal}
-                    onDelete={(id) => {
-                        deleteTicket(id);
-                        closeModal();
-                    }}
-                    onEdit={(updatedTicket) => {
-                        editTicket(updatedTicket);
-                        closeModal();
-                    }}
+
+
                 />
             )}
         </div>

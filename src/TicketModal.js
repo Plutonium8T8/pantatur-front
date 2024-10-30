@@ -4,17 +4,43 @@ import { priorityOptions } from './PriorityOption';
 import Priority from './store/Component/PriorityComponent/PriorityComponent';
 import Workflow from './store/Component/WorkFlowComponent/WorkflowComponent';
 import Cookies from 'js-cookie';
+import { updateTicket } from './WorkflowDashboard';
 
-const saveTicketToServer = async (ticketData, isCreating) => {
+export const deleteTicketById = async (id) => {
+  try {
+      const token = Cookies.get('jwt');
+      const response = await fetch(`https://pandaturapi-293102893820.europe-central2.run.app/api/tickets/${id}`, {
+          method: 'DELETE',
+          headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+          },
+      });
+
+      if (!response.ok) {
+          throw new Error('Ошибка при delete данных');
+      }
+
+      const data = await response.json();
+      return data;
+
+  } catch (error) {
+      console.error('Ошибка:', error);
+  }
+
+};
+
+const saveTicketToServer = async (ticketData) => {
   try {
     const token = Cookies.get('jwt');
+    console.log(token);
     const response = await fetch('https://pandaturapi-293102893820.europe-central2.run.app/api/tickets', {
-      method: isCreating ? 'POST' : 'PATCH',
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`, // Use the token for authorization
       },
-      body: JSON.stringify(ticketData),
+      body: JSON.stringify({...ticketData, userId: ticketData.user_id, socialMediaReferences: ticketData.social_media_references, serviceReference: ticketData.service_reference}),
     });
 
     if (!response.ok) {
@@ -22,57 +48,69 @@ const saveTicketToServer = async (ticketData, isCreating) => {
     }
 
     const data = await response.json();
-    console.log('Успешно сохранен тикет:', data);
+    //console.log('Успешно сохранен тикет:', data);
     return data;
+
   } catch (error) {
     console.error('Ошибка при сохранении тикета на сервер:', error);
   }
 };
 
-function TicketModal({ ticket, onClose, onDelete, onEdit, isCreating }) {
-  const [editedTicket, setEditedTicket] = useState(ticket || {
-    title: '',
-    description: '',
-    notes: '',
-    priority: priorityOptions[0],
-    workflow: workflowOptions[0],
-    userId: "",
-    serviceReference: "",
-    socialMediaReferences: [{}],
-    technician_id: [{}]  // Изменение на массив
-  });
+const TicketModal = ({ ticket, onClose }) => {
+
+  const [editedTicket, setEditedTicket] = useState(ticket);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-
-    if (name === 'platform' || name === 'chatId') {
-      setEditedTicket((prevTicket) => ({
-        ...prevTicket,
-        socialMediaReferences: [{
-          ...prevTicket.socialMediaReferences[0],
-          [name]: value
-        }]
-      }));
-    } else if (name === 'technician_id') {
-      setEditedTicket((prevTicket) => ({
-        ...prevTicket,
-        technician_id: [value] // Установка technician_id как массив
-      }));
-    } else {
-      setEditedTicket((prevTicket) => ({ ...prevTicket, [name]: value }));
-    }
+    setEditedTicket((prevTicket) => ({
+      ...prevTicket,
+        [name]: value
+    }));
     console.log("+++ ", name, value);
   };
 
-  const handleSave = async () => {
-    const savedTicket = await saveTicketToServer(editedTicket, isCreating);
-    if (savedTicket) {
-      onEdit(savedTicket); // Update local state if server returns updated ticket
-      onClose();
+  const onDelete = async (ticketId) => {
+    // Удаляем тикет локально
+    deleteTicketById(ticketId).then(res => {
+        console.log(res);
+        onClose();
+    }).catch(e => {
+
+    })
+    //setTickets((prevTickets) => prevTickets.filter((ticket) => ticket.id !== ticketId));
+    // Обновляем список тикетов после удаления
+    
+};
+
+  const handleSave = () => {
+    console.log("ticket: ", editedTicket)
+    if(!editedTicket.id) {
+      saveTicketToServer(editedTicket)
+      .then(res => {
+        console.log(res);
+        onClose();
+      })
+      .catch(e => {
+        console.error(e);
+      })
+      .finally(() => {
+
+      });
+    } else {
+      updateTicket({...editedTicket})
+        .then(res => {
+          console.log(res);
+          onClose();
+        })
+        .catch(e => console.error(e))
     }
+
+
+    // Update local state if server returns updated ticket
+
   };
 
-  if (!ticket && !isCreating) return null;
+  if (!ticket) return null;
 
   return (
     <div className="modal-overlay">
@@ -82,7 +120,7 @@ function TicketModal({ ticket, onClose, onDelete, onEdit, isCreating }) {
             userID
             <input
               type="text"
-              name="userId"
+              name="user_id"
               value={editedTicket.userId}
               onChange={handleInputChange}
               placeholder="userID"
@@ -105,7 +143,7 @@ function TicketModal({ ticket, onClose, onDelete, onEdit, isCreating }) {
             <input
               type="text"
               name="platform"
-              value={editedTicket.socialMediaReferences[0].platform}
+              value={editedTicket.social_media_references[0].platform}
               onChange={handleInputChange}
               placeholder="platform"
               style={{ display: 'block', width: '100%', padding: '0.5rem', marginBottom: '1rem' }}
@@ -116,7 +154,7 @@ function TicketModal({ ticket, onClose, onDelete, onEdit, isCreating }) {
             <input
               type="text"
               name="chatId"
-              value={editedTicket.socialMediaReferences[0].chatId}
+              value={editedTicket.social_media_references[0].chat_id ?? ""}
               onChange={handleInputChange}
               placeholder="chatID"
               style={{ display: 'block', width: '100%', padding: '0.5rem', marginBottom: '1rem' }}
@@ -169,13 +207,13 @@ function TicketModal({ ticket, onClose, onDelete, onEdit, isCreating }) {
             <Workflow ticket={editedTicket} onChange={handleInputChange} />
           </div>
           <div className='container-button-save-delete-close'>
-            {!isCreating && (
+            {ticket.id && (
               <button onClick={() => onDelete(ticket.id)} style={{ marginRight: '1rem', padding: '0.5rem 1rem', backgroundColor: '#dc3545', color: '#fff', border: 'none', borderRadius: '4px' }}>
                 Delete
               </button>
             )}
             <button onClick={handleSave} style={{ marginRight: '1rem', padding: '0.5rem 1rem', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '4px' }}>
-              {isCreating ? 'Create' : 'Save'}
+              {!editedTicket.id ? 'Create' : 'Save'}
             </button>
             <button onClick={onClose} style={{ marginLeft: '1rem', padding: '0.5rem 1rem', backgroundColor: '#6c757d', color: '#fff', border: 'none', borderRadius: '4px' }}>
               Close
