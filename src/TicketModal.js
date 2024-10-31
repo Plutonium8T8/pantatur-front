@@ -1,31 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { workflowOptions } from './WorkFlowOption';
 import { priorityOptions } from './PriorityOption';
-import Priority from './store/Component/PriorityComponent/PriorityComponent';
-import Workflow from './store/Component/WorkFlowComponent/WorkflowComponent';
+import Priority from './store/Components/PriorityComponent/PriorityComponent';
+import Workflow from './store/Components/WorkFlowComponent/WorkflowComponent';
 import Cookies from 'js-cookie';
 import { updateTicket } from './WorkflowDashboard';
 
 export const deleteTicketById = async (id) => {
   try {
-      const token = Cookies.get('jwt');
-      const response = await fetch(`https://pandaturapi-293102893820.europe-central2.run.app/api/tickets/${id}`, {
-          method: 'DELETE',
-          headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json',
-          },
-      });
+    const token = Cookies.get('jwt');
+    const response = await fetch(`https://pandaturapi-293102893820.europe-central2.run.app/api/tickets/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
 
-      if (!response.ok) {
-          throw new Error('Ошибка при delete данных');
-      }
+    if (!response.ok) {
+      throw new Error('Ошибка при delete данных');
+    }
 
-      const data = await response.json();
-      return data;
+    const data = await response.json();
+    return data;
 
   } catch (error) {
-      console.error('Ошибка:', error);
+    console.error('Ошибка:', error);
   }
 
 };
@@ -40,7 +40,7 @@ const saveTicketToServer = async (ticketData) => {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`, // Use the token for authorization
       },
-      body: JSON.stringify({...ticketData, userId: ticketData.user_id, socialMediaReferences: ticketData.social_media_references, serviceReference: ticketData.service_reference}),
+      body: JSON.stringify({ ...ticketData, userId: ticketData.user_id, socialMediaReferences: ticketData.social_media_references, serviceReference: ticketData.service_reference }),
     });
 
     if (!response.ok) {
@@ -64,7 +64,7 @@ const TicketModal = ({ ticket, onClose }) => {
     const { name, value } = e.target;
     setEditedTicket((prevTicket) => ({
       ...prevTicket,
-        [name]: value
+      [name]: value
     }));
     console.log("+++ ", name, value);
   };
@@ -72,32 +72,32 @@ const TicketModal = ({ ticket, onClose }) => {
   const onDelete = async (ticketId) => {
     // Удаляем тикет локально
     deleteTicketById(ticketId).then(res => {
-        console.log(res);
-        onClose();
+      console.log(res);
+      onClose();
     }).catch(e => {
 
     })
     //setTickets((prevTickets) => prevTickets.filter((ticket) => ticket.id !== ticketId));
     // Обновляем список тикетов после удаления
-    
-};
+
+  };
 
   const handleSave = () => {
     console.log("ticket: ", editedTicket)
-    if(!editedTicket.id) {
+    if (!editedTicket.id) {
       saveTicketToServer(editedTicket)
-      .then(res => {
-        console.log(res);
-        onClose();
-      })
-      .catch(e => {
-        console.error(e);
-      })
-      .finally(() => {
+        .then(res => {
+          console.log(res);
+          onClose();
+        })
+        .catch(e => {
+          console.error(e);
+        })
+        .finally(() => {
 
-      });
+        });
     } else {
-      updateTicket({...editedTicket})
+      updateTicket({ ...editedTicket })
         .then(res => {
           console.log(res);
           onClose();
@@ -127,7 +127,7 @@ const TicketModal = ({ ticket, onClose }) => {
               style={{ display: 'block', width: '100%', padding: '0.5rem', marginBottom: '1rem' }}
             />
           </label>
-          <label>
+          {/* <label>
             serviceReference
             <input
               type="text"
@@ -137,8 +137,8 @@ const TicketModal = ({ ticket, onClose }) => {
               placeholder="serviceReference"
               style={{ display: 'block', width: '100%', padding: '0.5rem', marginBottom: '1rem' }}
             />
-          </label>
-          <label>
+          </label> */}
+          {/* <label>
             platform
             <input
               type="text"
@@ -148,8 +148,8 @@ const TicketModal = ({ ticket, onClose }) => {
               placeholder="platform"
               style={{ display: 'block', width: '100%', padding: '0.5rem', marginBottom: '1rem' }}
             />
-          </label>
-          <label>
+          </label> */}
+          {/* <label>
             chatID
             <input
               type="text"
@@ -159,7 +159,7 @@ const TicketModal = ({ ticket, onClose }) => {
               placeholder="chatID"
               style={{ display: 'block', width: '100%', padding: '0.5rem', marginBottom: '1rem' }}
             />
-          </label>
+          </label> */}
           <label>
             Title
             <input
