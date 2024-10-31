@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import TicketModal from './TicketModal';
-import { workflowOptions } from './WorkFlowOption'; // Здесь определите ваши опции
+import { workflowOptions } from './WorkFlowOption'; 
 import { priorityOptions } from './PriorityOption';
 
 import Cookies from 'js-cookie';

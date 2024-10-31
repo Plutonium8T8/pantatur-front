@@ -185,7 +185,7 @@
   display: flex;
   flex-direction: row;
   min-width: 25%;
-  border: 1px solid #ddd;
+  /* border: 1px solid #ddd; */
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -195,6 +195,7 @@
 .name-workflow {
   text-align: center;
   font-weight: bold;
+  border-radius: 8px;
 }
 
 /* Прокручиваемый список тикетов */
@@ -202,7 +203,7 @@
   flex: 1;
   overflow-y: auto;
   padding: 10px 0px;
-  max-height: 500px;
+  max-height: 700px;
 }
 
 /* Стиль для каждого тикета */

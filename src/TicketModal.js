@@ -38,7 +38,7 @@ const saveTicketToServer = async (ticketData) => {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`, // Use the token for authorization
       },
-      body: JSON.stringify({ ...ticketData, userId: ticketData.user_id, socialMediaReferences: ticketData.social_media_references, serviceReference: ticketData.service_reference }),
+      body: JSON.stringify({ ...ticketData}),
     });
 
     if (!response.ok) {
