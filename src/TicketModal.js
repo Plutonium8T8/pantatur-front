@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { workflowOptions } from './WorkFlowOption';
-import { priorityOptions } from './PriorityOption';
 import Priority from './store/Components/PriorityComponent/PriorityComponent';
 import Workflow from './store/Components/WorkFlowComponent/WorkflowComponent';
 import Cookies from 'js-cookie';
@@ -70,7 +68,6 @@ const TicketModal = ({ ticket, onClose }) => {
   };
 
   const onDelete = async (ticketId) => {
-    // Удаляем тикет локально
     deleteTicketById(ticketId).then(res => {
       console.log(res);
       onClose();
@@ -104,10 +101,6 @@ const TicketModal = ({ ticket, onClose }) => {
         })
         .catch(e => console.error(e))
     }
-
-
-    // Update local state if server returns updated ticket
-
   };
 
   if (!ticket) return null;
