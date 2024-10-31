@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import Priority from './store/Components/PriorityComponent/PriorityComponent';
-import Workflow from './store/Components/WorkFlowComponent/WorkflowComponent';
+import Priority from './Components/PriorityComponent/PriorityComponent';
+import Workflow from './Components/WorkFlowComponent/WorkflowComponent';
 import Cookies from 'js-cookie';
 import { updateTicket } from './WorkflowDashboard';
 
 export const deleteTicketById = async (id) => {
   try {
     const token = Cookies.get('jwt');
-    const response = await fetch(`https://pandaturapi-293102893820.europe-central2.run.app/api/tickets/${id}`, {
+    const response = await fetch(`https://pandaturapi.com/api/tickets/${id}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -32,7 +32,7 @@ const saveTicketToServer = async (ticketData) => {
   try {
     const token = Cookies.get('jwt');
     console.log(token);
-    const response = await fetch('https://pandaturapi-293102893820.europe-central2.run.app/api/tickets', {
+    const response = await fetch('https://pandaturapi.com/api/tickets', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

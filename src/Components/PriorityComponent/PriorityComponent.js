@@ -1,5 +1,5 @@
 import React from "react";
-import { priorityOptions } from "../../../PriorityOption";
+import { priorityOptions } from "../../PriorityOption";
 
 export const Priority = ({ ticket, onChange = () => { } }) => {
     return (

@@ -1,5 +1,5 @@
 import React from "react";
-import { workflowOptions } from "../../../WorkFlowOption";
+import { workflowOptions } from "../../WorkFlowOption";
 
 export const Workflow = ({ticket, onChange = () => {}}) => {
     return (

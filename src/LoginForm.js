@@ -31,8 +31,8 @@ function LoginForm({ onLoginSuccess }) {
 
     setIsLoading(true);
     const url = isLogin
-      ? 'https://pandaturapi-293102893820.europe-central2.run.app/api/login'
-      : 'https://pandaturapi-293102893820.europe-central2.run.app/api/register';
+      ? 'https://pandaturapi.com/api/login'
+      : 'https://pandaturapi.com/api/register';
     const data = isLogin ? { email: form.email, password: form.password } : form;
 
     try {
