@@ -91,7 +91,7 @@ const WorkflowDashboard = () => {
             .finally(() => {
 
             })
-        //fetchTickets(); // Обновляем список после изменения workflow
+        fetchTickets(); // Обновляем список после изменения workflow
     };
 
     const editTicket = (updatedTicket) => {
