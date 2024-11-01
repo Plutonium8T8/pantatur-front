@@ -46,7 +46,7 @@ const WorkflowDashboard = () => {
         try {
             // Добавляем задержку на 2 секунды
             await new Promise(resolve => setTimeout(resolve, 500));
-    
+
             const token = Cookies.get('jwt');
             const response = await fetch('https://pandaturapi.com/api/tickets', {
                 method: 'GET',
@@ -55,11 +55,11 @@ const WorkflowDashboard = () => {
                     'Content-Type': 'application/json',
                 },
             });
-    
+
             if (!response.ok) {
                 throw new Error('Ошибка при получении данных');
             }
-    
+
             const data = await response.json();
             setTickets(...data);
             console.log("+++ Загруженные тикеты:", ...data);
@@ -67,7 +67,7 @@ const WorkflowDashboard = () => {
             console.error('Ошибка:', error);
         }
     };
-    
+
 
 
 
@@ -155,7 +155,7 @@ const WorkflowDashboard = () => {
 
     return (
         <div>
-            <h2>Workflow Dashboard</h2>
+            <h2>Workflow Dashboard (ultimul ticket care a fost editat se duce la finalul listei)</h2>
             <div className='header'>
                 <button onClick={openCreateTicketModal} className='button-add-ticket'>Add Ticket</button>
                 <input
@@ -208,6 +208,7 @@ const WorkflowDashboard = () => {
                                                 borderStyle: 'solid'
                                             }}
                                         >
+                                            <p>ID #{ticket.id}</p>
                                             <h4>{ticket.title || "Без заголовка"}</h4>
                                             <p>{ticket.description || "Без описания"}</p>
                                         </div>
