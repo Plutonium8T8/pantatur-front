@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Priority from './Components/PriorityComponent/PriorityComponent';
 import Workflow from './Components/WorkFlowComponent/WorkflowComponent';
 import Cookies from 'js-cookie';
@@ -36,7 +36,7 @@ const saveTicketToServer = async (ticketData) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+        'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify({ ...ticketData }),
     });
@@ -47,7 +47,7 @@ const saveTicketToServer = async (ticketData) => {
 
     const data = await response.json();
     console.log('Успешно сохранен тикет:', data);
-        return data;
+    return data;
 
   } catch (error) {
     console.error('Ошибка при сохранении тикета на сервер:', error);

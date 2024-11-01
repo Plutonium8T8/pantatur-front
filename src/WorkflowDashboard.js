@@ -114,7 +114,7 @@ const WorkflowDashboard = () => {
             notes: '',
             priority: priorityOptions[0],
             workflow: workflowOptions[0],
-            user_id: "",
+            user_id: 0,
             service_reference: "",
             social_media_references: [{}],
             technician_id: [{}]  // Изменение на массив
