@@ -3,6 +3,7 @@ import Priority from './Components/PriorityComponent/PriorityComponent';
 import Workflow from './Components/WorkFlowComponent/WorkflowComponent';
 import Cookies from 'js-cookie';
 import { updateTicket } from './WorkflowDashboard';
+import { useUser } from './UserContext';
 
 export const deleteTicketById = async (id) => {
   try {
@@ -25,7 +26,6 @@ export const deleteTicketById = async (id) => {
   } catch (error) {
     console.error('Ошибка:', error);
   }
-
 };
 
 const saveTicketToServer = async (ticketData) => {
@@ -36,9 +36,9 @@ const saveTicketToServer = async (ticketData) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`, // Use the token for authorization
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ ...ticketData}),
+      body: JSON.stringify({ ...ticketData }),
     });
 
     if (!response.ok) {
@@ -46,8 +46,8 @@ const saveTicketToServer = async (ticketData) => {
     }
 
     const data = await response.json();
-    //console.log('Успешно сохранен тикет:', data);
-    return data;
+    console.log('Успешно сохранен тикет:', data);
+        return data;
 
   } catch (error) {
     console.error('Ошибка при сохранении тикета на сервер:', error);
@@ -55,8 +55,8 @@ const saveTicketToServer = async (ticketData) => {
 };
 
 const TicketModal = ({ ticket, onClose }) => {
-
   const [editedTicket, setEditedTicket] = useState(ticket);
+  const { userId } = useUser(); // Получаем user_id из контекста
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -71,12 +71,7 @@ const TicketModal = ({ ticket, onClose }) => {
     deleteTicketById(ticketId).then(res => {
       console.log(res);
       onClose();
-    }).catch(e => {
-
-    })
-    //setTickets((prevTickets) => prevTickets.filter((ticket) => ticket.id !== ticketId));
-    // Обновляем список тикетов после удаления
-
+    }).catch(e => console.error(e));
   };
 
   const handleSave = () => {
@@ -87,19 +82,14 @@ const TicketModal = ({ ticket, onClose }) => {
           console.log(res);
           onClose();
         })
-        .catch(e => {
-          console.error(e);
-        })
-        .finally(() => {
-
-        });
+        .catch(e => console.error(e));
     } else {
       updateTicket({ ...editedTicket })
         .then(res => {
           console.log(res);
           onClose();
         })
-        .catch(e => console.error(e))
+        .catch(e => console.error(e));
     }
   };
 
@@ -109,50 +99,6 @@ const TicketModal = ({ ticket, onClose }) => {
     <div className="modal-overlay">
       <div className="modal-content">
         <>
-          <label>
-            userID
-            <input
-              type="text"
-              name="user_id"
-              value={editedTicket.user_id}
-              onChange={handleInputChange}
-              placeholder="userID"
-              style={{ display: 'block', width: '100%', padding: '0.5rem', marginBottom: '1rem' }}
-            />
-          </label>
-          {/* <label>
-            serviceReference
-            <input
-              type="text"
-              name="serviceReference"
-              value={editedTicket.serviceReference}
-              onChange={handleInputChange}
-              placeholder="serviceReference"
-              style={{ display: 'block', width: '100%', padding: '0.5rem', marginBottom: '1rem' }}
-            />
-          </label> */}
-          {/* <label>
-            platform
-            <input
-              type="text"
-              name="platform"
-              value={editedTicket.social_media_references[0].platform}
-              onChange={handleInputChange}
-              placeholder="platform"
-              style={{ display: 'block', width: '100%', padding: '0.5rem', marginBottom: '1rem' }}
-            />
-          </label> */}
-          {/* <label>
-            chatID
-            <input
-              type="text"
-              name="chatId"
-              value={editedTicket.social_media_references[0].chat_id ?? ""}
-              onChange={handleInputChange}
-              placeholder="chatID"
-              style={{ display: 'block', width: '100%', padding: '0.5rem', marginBottom: '1rem' }}
-            />
-          </label> */}
           <label>
             Title
             <input
@@ -221,7 +167,6 @@ const TicketModal = ({ ticket, onClose }) => {
               Close
             </button>
           </div>
-
         </>
       </div>
     </div>

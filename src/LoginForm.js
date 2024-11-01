@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import './LoginForm.css';
 import Cookies from 'js-cookie';
+import { useUser } from './UserContext';
 
 function LoginForm({ onLoginSuccess }) {
   const [form, setForm] = useState({ email: '', username: '', password: '' });
   const [isLogin, setIsLogin] = useState(true);
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const { setUserId } = useUser();
 
   const handleInputChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -48,10 +50,12 @@ function LoginForm({ onLoginSuccess }) {
       setMessage(responseData.message);
 
       if (isLogin && response.ok) {
-        // Установка JWT-куки
         const token = responseData.token; // Убедитесь, что токен приходит в ответе
+        const user_id = responseData.user_id;
+        console.log('user_id:', user_id) // Предположим, что user_id приходит в ответе
+        
         Cookies.set('jwt', token, { expires: 7, secure: true, sameSite: 'strict' });
-
+        setUserId(user_id);
         onLoginSuccess();
       } else {
         setMessage(responseData.message || 'An error occurred');
