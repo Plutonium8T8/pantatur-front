@@ -6,7 +6,6 @@ import { priorityOptions } from './PriorityOption';
 import Cookies from 'js-cookie';
 
 import './App.css';
-import { useUser } from './UserContext';
 
 export const updateTicket = async (updateData) => {
     try {
