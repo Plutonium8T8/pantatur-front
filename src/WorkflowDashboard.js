@@ -150,7 +150,7 @@ const WorkflowDashboard = () => {
 
     const closeModal = () => {
         setCurrentTicket(null);
-        // fetchTickets();
+        fetchTickets();
     }
 
     return (
