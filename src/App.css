@@ -210,13 +210,13 @@
 .ticket {
   padding: 1rem;
   border: 1px solid #ddd;
-  /* Цвет границы можно менять в JavaScript */
   border-radius: 4px;
   margin-bottom: 1rem;
   background-color: #f9f9f9;
-  /* Цвет фона можно менять в JavaScript */
   cursor: pointer;
   box-sizing: border-box;
+  /* Цвет границы можно менять в JavaScript */
+  /* Цвет фона можно менять в JavaScript */
 }
 
 .button-add-ticket {
@@ -329,10 +329,19 @@ button {
 
 /* Modal content styles */
 .modal-content {
+  display: flex;
+  flex-direction: column;
   background: #fff;
   padding: 2rem;
   border-radius: 8px;
   max-width: 500px;
   width: 100%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+.id-ticket {
+  background-color: lightgreen;
+  position: relative;
+  left: 420px;
+  top: -20px;
+  width: fit-content;
 }

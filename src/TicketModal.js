@@ -97,6 +97,7 @@ const TicketModal = ({ ticket, onClose }) => {
   return (
     <div className="modal-overlay">
       <div className="modal-content">
+        <div className='id-ticket'>ID Ticket #{editedTicket.id}</div>
         <>
           <label>
             Title

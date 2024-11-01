@@ -44,6 +44,9 @@ const WorkflowDashboard = () => {
 
     const fetchTickets = async () => {
         try {
+            // Добавляем задержку на 2 секунды
+            await new Promise(resolve => setTimeout(resolve, 500));
+    
             const token = Cookies.get('jwt');
             const response = await fetch('https://pandaturapi.com/api/tickets', {
                 method: 'GET',
@@ -52,11 +55,11 @@ const WorkflowDashboard = () => {
                     'Content-Type': 'application/json',
                 },
             });
-
+    
             if (!response.ok) {
                 throw new Error('Ошибка при получении данных');
             }
-
+    
             const data = await response.json();
             setTickets(...data);
             console.log("+++ Загруженные тикеты:", ...data);
@@ -64,7 +67,7 @@ const WorkflowDashboard = () => {
             console.error('Ошибка:', error);
         }
     };
-
+    
 
 
 
@@ -92,19 +95,6 @@ const WorkflowDashboard = () => {
             })
         fetchTickets(); // Обновляем список после изменения workflow
     };
-
-    const editTicket = (updatedTicket) => {
-        // // Обновляем тикет локально
-        // setTickets((prevTickets) =>
-        //     prevTickets.map((ticket) =>
-        //         ticket.id === updatedTicket.id ? { ...ticket, ...updatedTicket } : ticket
-        //     )
-        // );
-        // Обновляем список тикетов после редактирования
-        //fetchTickets();
-
-    };
-
 
 
     const openCreateTicketModal = () => {
@@ -160,7 +150,7 @@ const WorkflowDashboard = () => {
 
     const closeModal = () => {
         setCurrentTicket(null);
-        fetchTickets();
+        // fetchTickets();
     }
 
     return (
