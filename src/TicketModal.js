@@ -46,7 +46,6 @@ const saveTicketToServer = async (ticketData) => {
     }
 
     const data = await response.json();
-    console.log('Успешно сохранен тикет:', data);
     return data;
 
   } catch (error) {
@@ -64,7 +63,6 @@ const TicketModal = ({ ticket, onClose }) => {
       ...prevTicket,
       [name]: value
     }));
-    console.log("+++ ", name, value);
   };
 
   const onDelete = async (ticketId) => {
@@ -75,16 +73,17 @@ const TicketModal = ({ ticket, onClose }) => {
   };
 
   const handleSave = () => {
-    console.log("ticket: ", editedTicket)
+    const ticketData = { ...editedTicket, user_id: userId }; // Добавляем user_id в данные тикета
+
     if (!editedTicket.id) {
-      saveTicketToServer(editedTicket)
+      saveTicketToServer(ticketData)
         .then(res => {
           console.log(res);
           onClose();
         })
         .catch(e => console.error(e));
     } else {
-      updateTicket({ ...editedTicket })
+      updateTicket(ticketData)
         .then(res => {
           console.log(res);
           onClose();
