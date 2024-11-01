@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import TicketModal from './TicketModal';
-import { workflowOptions } from './WorkFlowOption'; 
+import { workflowOptions } from './WorkFlowOption';
 import { priorityOptions } from './PriorityOption';
 
 import Cookies from 'js-cookie';
@@ -16,7 +16,7 @@ export const updateTicket = async (updateData) => {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({...updateData})
+            body: JSON.stringify({ ...updateData })
         });
 
         if (!response.ok) {
@@ -38,7 +38,7 @@ const WorkflowDashboard = () => {
 
     const [tickets, setTickets] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
-    
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentTicket, setCurrentTicket] = useState(null);
 
@@ -72,7 +72,7 @@ const WorkflowDashboard = () => {
 
 
         setTickets((prevTickets) => {
-            console.log("+",ticketId, newWorkflow);
+            console.log("+", ticketId, newWorkflow);
             const updatedTickets = prevTickets.map((ticket) =>
                 ticket.id == ticketId ? { ...ticket, workflow: newWorkflow } : ticket
             ); console.log(updatedTickets);
@@ -80,16 +80,16 @@ const WorkflowDashboard = () => {
             return updatedTickets;
         });
 
-    updateTicket({id: ticketId, workflow: newWorkflow})
-        .then(res => {
-            console.log(res);
-        })
-        .catch(e => {
-            console.error(e);
-        })
-        .finally(() => {
+        updateTicket({ id: ticketId, workflow: newWorkflow })
+            .then(res => {
+                console.log(res);
+            })
+            .catch(e => {
+                console.error(e);
+            })
+            .finally(() => {
 
-        })
+            })
         //fetchTickets(); // Обновляем список после изменения workflow
     };
 
@@ -102,7 +102,7 @@ const WorkflowDashboard = () => {
         // );
         // Обновляем список тикетов после редактирования
         //fetchTickets();
-        
+
     };
 
 
@@ -118,7 +118,7 @@ const WorkflowDashboard = () => {
             service_reference: "",
             social_media_references: [{}],
             technician_id: [{}]  // Изменение на массив
-          });
+        });
         // setIsCreating(true);
         setIsModalOpen(true);
     };
@@ -232,7 +232,7 @@ const WorkflowDashboard = () => {
             {currentTicket && (
                 <TicketModal
                     ticket={currentTicket}
-                    
+
                     onClose={closeModal}
 
 

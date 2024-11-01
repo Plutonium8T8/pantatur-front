@@ -114,7 +114,7 @@ const TicketModal = ({ ticket, onClose }) => {
             <input
               type="text"
               name="user_id"
-              value={editedTicket.userId}
+              value={editedTicket.user_id}
               onChange={handleInputChange}
               placeholder="userID"
               style={{ display: 'block', width: '100%', padding: '0.5rem', marginBottom: '1rem' }}
@@ -199,19 +199,29 @@ const TicketModal = ({ ticket, onClose }) => {
             <Priority ticket={editedTicket} onChange={handleInputChange} />
             <Workflow ticket={editedTicket} onChange={handleInputChange} />
           </div>
-          <div className='container-button-save-delete-close'>
+          <div className="container-button-save-delete-close">
             {ticket.id && (
-              <button onClick={() => onDelete(ticket.id)} style={{ marginRight: '1rem', padding: '0.5rem 1rem', backgroundColor: '#dc3545', color: '#fff', border: 'none', borderRadius: '4px' }}>
+              <button
+                onClick={() => onDelete(ticket.id)}
+                className="button-delete"
+              >
                 Delete
               </button>
             )}
-            <button onClick={handleSave} style={{ marginRight: '1rem', padding: '0.5rem 1rem', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '4px' }}>
+            <button
+              onClick={handleSave}
+              className="button-save"
+            >
               {!editedTicket.id ? 'Create' : 'Save'}
             </button>
-            <button onClick={onClose} style={{ marginLeft: '1rem', padding: '0.5rem 1rem', backgroundColor: '#6c757d', color: '#fff', border: 'none', borderRadius: '4px' }}>
+            <button
+              onClick={onClose}
+              className="button-close"
+            >
               Close
             </button>
           </div>
+
         </>
       </div>
     </div>
