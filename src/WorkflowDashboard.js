@@ -61,7 +61,7 @@ const WorkflowDashboard = () => {
             }
 
             const data = await response.json();
-            setTickets(...data);
+            setTickets(data);
             console.log("+++ Загруженные тикеты:", ...data);
         } catch (error) {
             console.error('Ошибка:', error);
