@@ -171,20 +171,20 @@
 
 .container-tickets {
   display: flex;
-  gap: 8px;
+  /* gap: 8px; */
   flex-direction: row;
   justify-content: space-between;
   overflow-x: scroll;
-  overflow-y: scroll;
-  max-height: fit-content;
+  /* overflow-y: scroll;  */
   padding: 4px;
+  width: 1340px;
 }
 
 /* Стиль для колонки (основного контейнера) */
 .colone-ticket {
   display: flex;
   flex-direction: row;
-  min-width: 25%;
+  min-width: 24%;
   border: 1px solid #ddd;
   border-radius: 8px;
   display: flex;
@@ -201,9 +201,9 @@
 /* Прокручиваемый список тикетов */
 .scrollable-list {
   flex: 1;
-  overflow-y: auto;
+  overflow-y: scroll;
   padding: 10px 0px;
-  max-height: 700px;
+  height: 99vh;
 }
 
 /* Стиль для каждого тикета */
@@ -345,3 +345,35 @@ button {
   top: -20px;
   width: fit-content;
 }
+.name-dashboard {
+  font-size: 24px;
+  padding-bottom: 12px;
+  padding-top: 12px;
+  background-color: #218838;
+  border-radius: 8px;
+  padding: 4px;
+}
+.dashboard-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 8px;
+}
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  /* padding: 8px 12px; */
+}
+.sidebar-page-content {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  height: 100vb;
+  width: 100vh;
+}
+/* .pageContent {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+} */

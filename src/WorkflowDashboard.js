@@ -104,10 +104,8 @@ const WorkflowDashboard = () => {
             notes: '',
             priority: priorityOptions[0],
             workflow: workflowOptions[0],
-            user_id: 0,
             service_reference: "",
-            social_media_references: [{}],
-            technician_id: [{}]  // Изменение на массив
+            technician_id: 0  // Изменение на массив
         });
         // setIsCreating(true);
         setIsModalOpen(true);
@@ -154,17 +152,19 @@ const WorkflowDashboard = () => {
     }
 
     return (
-        <div>
-            <h2>Workflow Dashboard (ultimul ticket care a fost editat se duce la finalul listei)</h2>
-            <div className='header'>
-                <button onClick={openCreateTicketModal} className='button-add-ticket'>Add Ticket</button>
-                <input
-                    type="text"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Search tickets..."
-                    className='search-input'
-                />
+        <div className='dashboard-container'>
+            <div className='dashboard-header'>
+                <div className='name-dashboard'>Workflow Dashboard</div>
+                <div className='header'>
+                    <button onClick={openCreateTicketModal} className='button-add-ticket'>Add Ticket</button>
+                    <input
+                        type="text"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        placeholder="Search tickets..."
+                        className='search-input'
+                    />
+                </div>
             </div>
             <div className='container-tickets'>
                 {workflowOptions.map((workflow) => (

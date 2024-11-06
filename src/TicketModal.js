@@ -73,24 +73,26 @@ const TicketModal = ({ ticket, onClose }) => {
   };
 
   const handleSave = () => {
-    const ticketData = { ...editedTicket, user_id: userId }; // Добавляем user_id в данные тикета
-
+    const ticketData = { ...editedTicket, client_id: userId };
+    
+    console.log('Sending ticketData:', ticketData); 
+  
     if (!editedTicket.id) {
       saveTicketToServer(ticketData)
         .then(res => {
           console.log(res);
           onClose();
         })
-        .catch(e => console.error(e));
+        .catch(e => console.error('Error saving ticket:', e));
     } else {
       updateTicket(ticketData)
         .then(res => {
           console.log(res);
           onClose();
         })
-        .catch(e => console.error(e));
+        .catch(e => console.error('Error updating ticket:', e));
     }
-  };
+  };  
 
   if (!ticket) return null;
 
