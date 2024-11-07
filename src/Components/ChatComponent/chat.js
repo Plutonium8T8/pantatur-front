@@ -3,11 +3,12 @@ import CryptoJS from 'crypto-js';
 import AES from 'crypto-js/aes';
 import Utf8 from 'crypto-js/enc-utf8';
 import '/Users/maksimbordan/Documents/PandaTurFront/pantatur-front/src/Components/ChatComponent/chat.css';
+import { useUser } from '../../UserContext';
 
 const ENCRYPTION_KEY = '0123456789abcdef0123456789abcdef';
-const RECONNECT_INTERVAL = 5000; // Interval for reconnection in milliseconds
+const RECONNECT_INTERVAL = 5000; // Интервал для переподключения в миллисекундах
 
-// Encryption and decryption functions
+// Функции шифрования и дешифрования
 const encrypt = (text) => {
     const iv = CryptoJS.lib.WordArray.random(16);
     const encrypted = AES.encrypt(text, CryptoJS.enc.Hex.parse(ENCRYPTION_KEY), {
@@ -33,8 +34,7 @@ const decrypt = (text) => {
 };
 
 const ChatComponent = () => {
-    const [senderId, setSenderId] = useState('');
-    const [clientID, setClientID] = useState('');
+    const { userId } = useUser();
     const [managerMessage, setManagerMessage] = useState('');
     const [messages, setMessages] = useState([]);
     const ws = useRef(null);
@@ -46,10 +46,7 @@ const ChatComponent = () => {
 
         ws.current.onopen = () => {
             console.log('Connected to chat server');
-            if (reconnectTimer.current) {
-                clearTimeout(reconnectTimer.current); // Clear reconnection timer
-                reconnectTimer.current = null;
-            }
+            clearTimeout(reconnectTimer.current);
         };
 
         ws.current.onmessage = (event) => {
@@ -84,7 +81,7 @@ const ChatComponent = () => {
         }
     }, [connectWebSocket]);
 
-    // Connect to WebSocket on component mount
+    // Соединение с WebSocket при монтировании компонента
     useEffect(() => {
         connectWebSocket();
         return () => {
@@ -93,96 +90,60 @@ const ChatComponent = () => {
         };
     }, [connectWebSocket, reconnectWebSocket]);
 
-    // Send message function
+    // Отправка сообщения
     const sendMessage = () => {
         if (ws.current && ws.current.readyState === WebSocket.OPEN) {
             if (managerMessage.trim()) {
                 const encryptedMessage = encrypt(managerMessage);
                 const messageData = {
-                    client_id: clientID,
-                    sender_id: senderId,
+                    client_id: userId,
+                    sender_id: userId,
                     message: encryptedMessage,
                 };
 
                 ws.current.send(JSON.stringify(messageData));
-                console.log('Message sent:', messageData); // Логируем отправку сообщения
+                console.log('Message sent:', messageData);
                 setManagerMessage('');
             } else {
                 console.warn('Message cannot be empty');
             }
-        } else if (ws.current.readyState === WebSocket.CONNECTING) {
-            console.warn('WebSocket is still connecting, please wait.');
         } else {
             console.error('WebSocket is not open');
         }
     };
-    useEffect(() => {
-        ws.current = new WebSocket('ws://34.65.204.80:8080');
 
-        ws.current.onopen = () => {
-            console.log('WebSocket connection opened');
-        };
-
-        ws.current.onmessage = (event) => {
-            console.log('Message received from server:', event.data);
-        };
-
-        ws.current.onerror = (error) => {
-            console.error('WebSocket error:', error);
-        };
-
-        ws.current.onclose = () => {
-            console.log('WebSocket connection closed');
-        };
-
-        return () => {
-            ws.current.close();
-        };
-    }, []);
-
-
-
-    // Scroll to the bottom when new messages arrive
+    // Прокрутка вниз при новом сообщении
     useEffect(() => {
         if (messageContainerRef.current) {
             messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
         }
     }, [messages]);
 
-    // Fetch and decrypt messages on component mount
+    // Получение сообщений при монтировании компонента
     const fetchMessages = useCallback(async () => {
         try {
-            const response = await fetch('https://pandaturapi.com/messages/client/896301867');
+            const response = await fetch(`https://pandaturapi.com/messages/client/${userId}`);
             if (!response.ok) throw new Error('Failed to fetch messages');
 
             const data = await response.json();
-
-            // Выводим сообщения в консоль
             console.log('Fetched messages:', data);
 
-            // Извлекаем нужные поля из данных и сохраняем их в messages
             const decryptedMessages = (Array.isArray(data) ? data : []).map(({ client_id, sender_id, message, time_sent }) => ({
                 client_id,
                 sender_id,
-                text: message, // сохраняем текст сообщения
+                text: decrypt(message), // Дешифровка сообщения перед сохранением
                 time_sent,
             }));
 
-            setMessages(decryptedMessages); // Устанавливаем расшифрованные сообщения в состояние
+            setMessages(decryptedMessages);
         } catch (error) {
             console.error('Error fetching messages:', error);
         }
-    }, []);
-
-
-
-
+    }, [userId]);
 
     useEffect(() => {
         fetchMessages();
     }, [fetchMessages]);
-
-    const client_id = 8963101867; // Ваш client_id 896301867
 
     return (
         <div className="chat-container">
@@ -192,7 +153,7 @@ const ChatComponent = () => {
                     {messages.map((msg, index) => (
                         <div
                             key={index}
-                            className={`message ${msg.sender_id === client_id ? 'sent' : 'received'}`}
+                            className={`message ${msg.sender_id === userId ? 'sent' : 'received'}`}
                         >
                             <div className="text">{msg.text}</div>
                             <div className="message-time">{msg.time_sent}</div>
@@ -215,7 +176,6 @@ const ChatComponent = () => {
             <div className="extra-info">Additional Information</div>
         </div>
     );
-
 };
 
 export default ChatComponent;

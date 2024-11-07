@@ -61,7 +61,7 @@ const WorkflowDashboard = () => {
             }
 
             const data = await response.json();
-            setTickets(data);
+            setTickets(...data);
             console.log("+++ Загруженные тикеты:", ...data);
         } catch (error) {
             console.error('Ошибка:', error);
@@ -117,19 +117,19 @@ const WorkflowDashboard = () => {
         fetchTickets();
     }, [])
 
-    const priorityStyles = {
-        low: { backgroundColor: '#fff3b0', borderColor: '#ffc107' },
-        medium: { backgroundColor: '#ffcc80', borderColor: '#ff9800' },
-        high: { backgroundColor: '#f99a9a', borderColor: '#dc3545' },
-        critical: { backgroundColor: '#f64e4e', borderColor: '#721c24' }
-    };
+    // const priorityStyles = {
+    //     low: { backgroundColor: '#fff3b0', borderColor: '#ffc107' },
+    //     medium: { backgroundColor: '#ffcc80', borderColor: '#ff9800' },
+    //     high: { backgroundColor: '#f99a9a', borderColor: '#dc3545' },
+    //     critical: { backgroundColor: '#f64e4e', borderColor: '#721c24' }
+    // };
 
-    const workflowStyles = {
-        Backlog: { backgroundColor: '#E8F5E9', borderColor: '#1B5E20' },
-        'In Progress': { backgroundColor: '#C8E6C9', borderColor: '#388E3C' },
-        Review: { backgroundColor: '#A5D6A7', borderColor: '#43A047' },
-        Completed: { backgroundColor: '#81C784', borderColor: '#2E7D32' }
-    };
+    // const workflowStyles = {
+    //     Backlog: { backgroundColor: '#E8F5E9', borderColor: '#1B5E20' },
+    //     'In Progress': { backgroundColor: '#C8E6C9', borderColor: '#388E3C' },
+    //     Review: { backgroundColor: '#A5D6A7', borderColor: '#43A047' },
+    //     Completed: { backgroundColor: '#81C784', borderColor: '#2E7D32' }
+    // };
 
     const handleDragStart = (e, ticketId) => {
         e.dataTransfer.setData('ticketId', ticketId);
@@ -154,7 +154,7 @@ const WorkflowDashboard = () => {
     return (
         <div className='dashboard-container'>
             <div className='dashboard-header'>
-                <div className='name-dashboard'>Workflow Dashboard</div>
+                {/* <div className='name-dashboard'>Workflow Dashboard</div> */}
                 <div className='header'>
                     <button onClick={openCreateTicketModal} className='button-add-ticket'>Add Ticket</button>
                     <input
@@ -174,13 +174,15 @@ const WorkflowDashboard = () => {
                         onDrop={(e) => handleDrop(e, workflow)}
                         onDragOver={(e) => e.preventDefault()}
                     >
-                        <div className="name-workflow" style={{
-                            borderColor: workflowStyles[workflow]?.borderColor || '',
-                            backgroundColor: workflowStyles[workflow]?.backgroundColor || '',
-                            borderWidth: '1px',
-                            borderStyle: 'solid'
-                        }}>
-                            <h3>{workflow}</h3>
+                        <div className="name-workflow" 
+                        // style={{
+                        //     borderColor: workflowStyles[workflow]?.borderColor || '',
+                        //     backgroundColor: workflowStyles[workflow]?.backgroundColor || '',
+                        //     borderWidth: '1px',
+                        //     borderStyle: 'solid'
+                        // }}
+                        >
+                            <div className='name-workflow'>{workflow}</div>
                         </div>
 
                         <div className="scrollable-list">
@@ -201,16 +203,17 @@ const WorkflowDashboard = () => {
                                                 setCurrentTicket(ticket);
                                                 setIsModalOpen(true);
                                             }}
-                                            style={{
-                                                borderColor: priorityStyles[ticket.priority]?.borderColor,
-                                                backgroundColor: priorityStyles[ticket.priority]?.backgroundColor,
-                                                borderWidth: '1px',
-                                                borderStyle: 'solid'
-                                            }}
+                                            // style={{
+                                            //     borderColor: priorityStyles[ticket.priority]?.borderColor,
+                                            //     backgroundColor: priorityStyles[ticket.priority]?.backgroundColor,
+                                            //     borderWidth: '1px',
+                                            //     borderStyle: 'solid'
+                                            // }}
                                         >
-                                            <p>ID #{ticket.id}</p>
-                                            <h4>{ticket.title || "Без заголовка"}</h4>
-                                            <p>{ticket.description || "Без описания"}</p>
+                                            <div>foto</div>
+                                            <div>ID #{ticket.id}</div>
+                                            <div>{ticket.title || "Без заголовка"}</div>
+                                            <div>{ticket.description || "Без описания"}</div>
                                         </div>
                                     );
                                 })}

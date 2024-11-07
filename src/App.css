@@ -338,6 +338,7 @@ button {
   width: 100%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
+
 .id-ticket {
   background-color: lightgreen;
   position: relative;
@@ -345,6 +346,7 @@ button {
   top: -20px;
   width: fit-content;
 }
+
 .name-dashboard {
   font-size: 24px;
   padding-bottom: 12px;
@@ -353,18 +355,21 @@ button {
   border-radius: 8px;
   padding: 4px;
 }
+
 .dashboard-header {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   padding: 8px;
 }
+
 .dashboard-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
   /* padding: 8px 12px; */
 }
+
 .sidebar-page-content {
   display: flex;
   flex-direction: row;
@@ -372,8 +377,13 @@ button {
   height: 100vb;
   width: 100vh;
 }
+
 /* .pageContent {
   display: flex;
   flex-direction: row;
   height: 100vh;
 } */
+.name-workflow {
+  border-radius: 8px;
+  border: 1px solid gray;
+}
