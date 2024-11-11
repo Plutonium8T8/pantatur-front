@@ -3,7 +3,7 @@ import './UserProfile.css';  // Импортируем стили
 
 const UserProfile = () => {
   const [formData, setFormData] = useState({
-    username: '',
+    name: '',
     phone: '',
     email: '',
     password: '',

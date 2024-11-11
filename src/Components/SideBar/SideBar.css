@@ -1,7 +1,6 @@
 .container-side-bar {
     display: flex; /* Используем flexbox */
     flex-direction: column; /* Расположение элементов по вертикали */
-    transition: width 0.3s ease; /* Плавный переход при изменении ширины */
     background-color: #88a5cd; /* Цвет фона панели */
     padding: 10px;
     height: 100vh;

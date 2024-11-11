@@ -5,7 +5,7 @@ import LoginForm from './LoginForm';
 import { UserProvider } from './UserContext';
 import CustomSidebar from './Components/SideBar/SideBar';
 import ChatComponent from './Components/ChatComponent/chat';
-import  UserProfile  from './Components/UserPage/UserPage';
+import UserProfile from './Components/UserPage/UserPage';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -31,11 +31,11 @@ function App() {
   let pageContent;
 
   switch (activePage) {
-    case 'workflowdashboard':
-      pageContent = <WorkflowDashboard />;
-      break;
     case 'account':
       pageContent = <UserProfile />;
+      break;
+    case 'workflowdashboard':
+      pageContent = <WorkflowDashboard />;
       break;
     default:
       pageContent = "";
