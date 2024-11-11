@@ -74,9 +74,9 @@ const TicketModal = ({ ticket, onClose }) => {
 
   const handleSave = () => {
     const ticketData = { ...editedTicket, client_id: userId };
-    
-    console.log('Sending ticketData:', ticketData); 
-  
+
+    console.log('Sending ticketData:', ticketData);
+
     if (!editedTicket.id) {
       saveTicketToServer(ticketData)
         .then(res => {
@@ -92,7 +92,7 @@ const TicketModal = ({ ticket, onClose }) => {
         })
         .catch(e => console.error('Error updating ticket:', e));
     }
-  };  
+  };
 
   if (!ticket) return null;
 
@@ -102,7 +102,7 @@ const TicketModal = ({ ticket, onClose }) => {
         <div className='id-ticket'>ID Ticket #{editedTicket.id}</div>
         <>
           <label>
-            Title
+            Nume User
             <input
               type="text"
               name="title"
@@ -113,7 +113,7 @@ const TicketModal = ({ ticket, onClose }) => {
             />
           </label>
           <label>
-            Description
+            Avion/Autocar
             <textarea
               name="description"
               value={editedTicket.description}
@@ -134,7 +134,7 @@ const TicketModal = ({ ticket, onClose }) => {
             />
           </label>
           <label>
-            Notes
+            Turcia/Egipt
             <textarea
               name="notes"
               value={editedTicket.notes}

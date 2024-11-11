@@ -1,15 +1,11 @@
 .container-side-bar {
-    min-width: 200px; /* Ширина панели в развернутом состоянии */
-    transition: width 0.3s ease; /* Плавный переход при изменении ширины */
-    background-color: #fff; /* Цвет фона панели */
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Тень для панели */
-    display: flex; /* Позволяет использовать flexbox */
+    display: flex; /* Используем flexbox */
     flex-direction: column; /* Расположение элементов по вертикали */
-    position: relative; /* Позиционирование для кнопки */
-}
-
-.container-side-bar.collapsed {
-    width: 60px; /* Ширина панели в свернутом состоянии */
+    transition: width 0.3s ease; /* Плавный переход при изменении ширины */
+    background-color: #88a5cd; /* Цвет фона панели */
+    padding: 10px;
+    height: 100vh;
+    width: fit-content;
 }
 
 .menu-side-bar {
@@ -19,19 +15,7 @@
 }
 
 .toggle-button {
-    cursor: pointer; /* Указатель для кнопки */
-    text-align: center; /* Выравнивание текста по центру */
-    margin: 10px; /* Отступы для кнопки */
-    font-size: 18px; /* Размер шрифта */
-    background-color: #f0f0f0; /* Цвет фона кнопки */
-    border: none; /* Убираем рамку */
-    border-radius: 5px; /* Скругление углов */
-    padding: 8px; /* Внутренние отступы */
-    transition: background-color 0.3s; /* Плавный переход фона при наведении */
-}
-
-.toggle-button:hover {
-    background-color: #e0e0e0; /* Цвет фона при наведении на кнопку */
+    display: none; /* Убираем кнопку сворачивания */
 }
 
 .menu-item {
@@ -50,16 +34,12 @@
     background-color: #f0f0f0; /* Цвет фона при наведении */
 }
 
-.collapsed-item {
-    text-align: center; /* Центрируем текст */
-    width: 100%; /* Задаем ширину для выравнивания */
+.container-item-menu {
+    display: flex;
+    flex-direction: column;
 }
 
-.menu-item span {
-    margin-left: 8px; /* Отступ для текста в пункте меню */
-}
-
-/* Добавляем стили для текста в пунктах меню */
+/* Добавляем стили для текста и иконок в пунктах меню */
 .menu-item:before {
     display: inline-block; /* Делаем элемент блочным */
     width: 24px; /* Ширина для символа */
@@ -69,21 +49,9 @@
     font-size: 20px; /* Размер шрифта для символа */
     margin-right: 10px; /* Отступ справа от символа */
 }
-
-.menu-item:nth-child(2):before {
-}
-
-.menu-item:nth-child(3):before {
-}
-
-.menu-item:nth-child(4):before {
-}
-
-.container-item-menu {
-    display: flex;
-    flex-direction: column;
-}
-.menu-item.collapsed-item {
-   padding: 12px 0px;
-   justify-content: center;
+.menu-item.active {
+    background-color: #e0e0e0; /* Фон для активного элемента */
+    color: #333; /* Цвет текста для активного элемента */
+    font-weight: bold; /* Жирный текст для активного элемента */
+    border-radius: 5px; /* Скругление углов */
 }

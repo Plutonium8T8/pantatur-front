@@ -33,18 +33,16 @@ function App() {
 
   return (
     <UserProvider>
-      <div className="App">
-        {!isLoggedIn ? (
-          <LoginForm onLoginSuccess={handleLoginSuccess} />
-        ) : (
-          <div className='sidebar-page-content'>
-            <CustomSidebar onNavigate={handleNavigate} />
-            <div>
-              {pageContent}
-            </div>
+      {!isLoggedIn ? (
+        <LoginForm onLoginSuccess={handleLoginSuccess} />
+      ) : (
+        <div className="app-container">
+          <CustomSidebar onNavigate={handleNavigate} />
+          <div className="page-content">
+            {pageContent}
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </UserProvider>
   );
 }

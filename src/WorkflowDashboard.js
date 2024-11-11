@@ -124,12 +124,29 @@ const WorkflowDashboard = () => {
     //     critical: { backgroundColor: '#f64e4e', borderColor: '#721c24' }
     // };
 
-    // const workflowStyles = {
-    //     Backlog: { backgroundColor: '#E8F5E9', borderColor: '#1B5E20' },
-    //     'In Progress': { backgroundColor: '#C8E6C9', borderColor: '#388E3C' },
-    //     Review: { backgroundColor: '#A5D6A7', borderColor: '#43A047' },
-    //     Completed: { backgroundColor: '#81C784', borderColor: '#2E7D32' }
-    // };
+    const workflowStyles = {
+        Interesat: { backgroundColor: '#ffff88', borderColor: '#1B5E20' },
+        'Apel de intrare': { backgroundColor: '#89C0FE', borderColor: '#388E3C' },
+        "De prelucrat": { backgroundColor: '#ff8f92', borderColor: '#43A047' },
+        "Luat in lucru": { backgroundColor: '#ebffb1', borderColor: '#2E7D32' },
+        "Oferta trimisa": { backgroundColor: '#ffcc66', borderColor: '#2E7D32' },
+        "Aprobat cu client": { backgroundColor: '#ffc8c8', borderColor: '#2E7D32' },
+        "Contract semnat": { backgroundColor: '#ff8f92', borderColor: '#2E7D32' },
+        "Plata primita": { backgroundColor: '#fff000', borderColor: '#2E7D32' },
+        "Contract incheiat": { backgroundColor: '#87f2c0', borderColor: '#2E7D32' },
+    };
+
+
+
+    // "Interesat",
+    // "Apel de intrare",
+    // "De prelucrat",
+    // "Luat in lucru",
+    // "Oferta trimisa",
+    // "Aprobat cu client",
+    // "Contract semnat",
+    // "Plata primita",
+    // "Contract incheiat"
 
     const handleDragStart = (e, ticketId) => {
         e.dataTransfer.setData('ticketId', ticketId);
@@ -154,7 +171,6 @@ const WorkflowDashboard = () => {
     return (
         <div className='dashboard-container'>
             <div className='dashboard-header'>
-                {/* <div className='name-dashboard'>Workflow Dashboard</div> */}
                 <div className='header'>
                     <button onClick={openCreateTicketModal} className='button-add-ticket'>Add Ticket</button>
                     <input
@@ -174,13 +190,13 @@ const WorkflowDashboard = () => {
                         onDrop={(e) => handleDrop(e, workflow)}
                         onDragOver={(e) => e.preventDefault()}
                     >
-                        <div className="name-workflow" 
-                        // style={{
-                        //     borderColor: workflowStyles[workflow]?.borderColor || '',
-                        //     backgroundColor: workflowStyles[workflow]?.backgroundColor || '',
-                        //     borderWidth: '1px',
-                        //     borderStyle: 'solid'
-                        // }}
+                        <div className="name-workflow"
+                            style={{
+                                // borderColor: workflowStyles[workflow]?.borderColor || '',
+                                backgroundColor: workflowStyles[workflow]?.backgroundColor || '',
+                                // borderWidth: '1px',
+                                // borderStyle: 'solid'
+                            }}
                         >
                             <div className='name-workflow'>{workflow}</div>
                         </div>
@@ -203,17 +219,26 @@ const WorkflowDashboard = () => {
                                                 setCurrentTicket(ticket);
                                                 setIsModalOpen(true);
                                             }}
-                                            // style={{
-                                            //     borderColor: priorityStyles[ticket.priority]?.borderColor,
-                                            //     backgroundColor: priorityStyles[ticket.priority]?.backgroundColor,
-                                            //     borderWidth: '1px',
-                                            //     borderStyle: 'solid'
-                                            // }}
+                                        // style={{
+                                        //     borderColor: priorityStyles[ticket.priority]?.borderColor,
+                                        //     backgroundColor: priorityStyles[ticket.priority]?.backgroundColor,
+                                        //     borderWidth: '1px',
+                                        //     borderStyle: 'solid'
+                                        // }}
                                         >
-                                            <div>foto</div>
-                                            <div>ID #{ticket.id}</div>
-                                            <div>{ticket.title || "Без заголовка"}</div>
-                                            <div>{ticket.description || "Без описания"}</div>
+                                            <div className='foto-description'>
+                                                <div><img className='foto-user' src="/user fon.png" alt="example" /> </div>
+                                                <div className='tickets-descriptions'>
+                                                    {/* <div>ID #{ticket.id}</div> */}
+                                                    <div>{ticket.title || "NameClient"}</div>
+                                                    <div>{ticket.description || "Avion/autocar"}</div>
+                                                    <div>{ticket.notes || "Turcia/Egipt"}</div>
+                                                </div>
+                                            </div>
+                                            <div className='container-time-tasks'>
+                                                <div>time</div>
+                                                <div>tasks</div>
+                                            </div>
                                         </div>
                                     );
                                 })}
