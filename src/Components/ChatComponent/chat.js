@@ -37,14 +37,32 @@ const ChatComponent = () => {
     const [managerMessage, setManagerMessage] = useState('');
     const [messages, setMessages] = useState([]);
     const [selectedChatId, setSelectedChatId] = useState(1); // ID выбранного чата
+    const [extraInfoInput, setExtraInfoInput] = useState("1");
+    const [dropdownValue, setDropdownValue] = useState("Option1"); // значение по умолчанию для выпадающего списка
     const [chats, setChats] = useState([
-        { id: 1, name: 'Chat 1' },
-        { id: 2, name: 'Chat 2' },
-        { id: 3, name: 'Chat 3' }
+        { id: 1, name: 'Nume clinet 1' }, 
+        { id: 2, name: 'Nume clinet 2' }, 
+        { id: 3, name: 'Nume clinet 3' }, 
+        { id: 4, name: 'Nume clinet 4' }, 
+        { id: 5, name: 'Nume clinet 5' }, 
+        { id: 6, name: 'Nume clinet 6' }, 
+        { id: 7, name: 'Nume clinet 7' }, 
+        { id: 8, name: 'Nume clinet 8' }, 
+        { id: 9, name: 'Nume clinet 9' }, 
+        { id: 10, name: 'Nume clinet 10' }, 
+        { id: 11, name: 'Nume clinet 11' }, 
+        { id: 12, name: 'Nume clinet 12' }, 
+        { id: 13, name: 'Nume clinet 13' }, 
+        { id: 14, name: 'Nume clinet 14' }, 
+        { id: 15, name: 'Nume clinet 15' }, 
+        { id: 16, name: 'Nume clinet 16' }, 
+        { id: 17, name: 'Nume clinet 17' }, 
+        { id: 18, name: 'Nume clinet 18' }, 
+        { id: 19, name: 'Nume clinet 19' }
     ]); // Пример списка чатов
+
     const messageContainerRef = useRef(null);
 
-    // Фильтрация сообщений по выбранному чату
     const filteredMessages = messages.filter((msg) => msg.chat_id === selectedChatId);
 
     // Отправка сообщения
@@ -55,10 +73,9 @@ const ChatComponent = () => {
                 chat_id: selectedChatId,
                 client_id: userId,
                 sender_id: userId,
-                text: decrypt(encryptedMessage), // Дешифровка для отображения локально
+                text: decrypt(encryptedMessage),
                 time_sent: new Date().toLocaleTimeString(),
             };
-
             setMessages((prevMessages) => [...prevMessages, newMessage]);
             setManagerMessage('');
         } else {
@@ -112,12 +129,38 @@ const ChatComponent = () => {
                     </div>
                 </div>
             </div>
-            <div className="extra-info">Additional Information</div>
+            <div className="extra-info">
+                <h3>Additional Information</h3>
+                <label>
+                    Info Value:
+                    <input
+                        type="text"
+                        value={extraInfoInput}
+                        onChange={(e) => setExtraInfoInput(e.target.value)}
+                        className="input-field"
+                    />
+                </label>
+                {Array.from({ length: 7 }).map((_, index) => (
+                    <label key={index}>
+                        Choose Option {index + 1}:
+                        <select
+                            value={dropdownValue}
+                            onChange={(e) => setDropdownValue(e.target.value)}
+                            className="custom-select"
+                        >
+                            <option value="Option1">Option 1</option>
+                            <option value="Option2">Option 2</option>
+                            <option value="Option3">Option 3</option>
+                        </select>
+                    </label>
+                ))}
+            </div>
         </div>
     );
 };
 
 export default ChatComponent;
+
 
 
 

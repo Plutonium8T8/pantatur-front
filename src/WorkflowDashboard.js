@@ -44,7 +44,7 @@ const WorkflowDashboard = () => {
 
     const fetchTickets = async () => {
         try {
-            // Добавляем задержку на 2 секунды
+            // Добавляем задержку на 0.5 секунды
             await new Promise(resolve => setTimeout(resolve, 500));
 
             const token = Cookies.get('jwt');
@@ -105,7 +105,7 @@ const WorkflowDashboard = () => {
             priority: priorityOptions[0],
             workflow: workflowOptions[0],
             service_reference: "",
-            technician_id: 0  // Изменение на массив
+            technician_id: 0
         });
         // setIsCreating(true);
         setIsModalOpen(true);
@@ -135,18 +135,6 @@ const WorkflowDashboard = () => {
         "Plata primita": { backgroundColor: '#fff000', borderColor: '#2E7D32' },
         "Contract incheiat": { backgroundColor: '#87f2c0', borderColor: '#2E7D32' },
     };
-
-
-
-    // "Interesat",
-    // "Apel de intrare",
-    // "De prelucrat",
-    // "Luat in lucru",
-    // "Oferta trimisa",
-    // "Aprobat cu client",
-    // "Contract semnat",
-    // "Plata primita",
-    // "Contract incheiat"
 
     const handleDragStart = (e, ticketId) => {
         e.dataTransfer.setData('ticketId', ticketId);
