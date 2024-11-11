@@ -3,11 +3,10 @@ import './UserProfile.css';  // Импортируем стили
 
 const UserProfile = () => {
   const [formData, setFormData] = useState({
-    name: '',
+    username: '',
     phone: '',
     email: '',
     password: '',
-    notes: '',
   });
 
   const handleChange = (e) => {
@@ -80,17 +79,6 @@ const UserProfile = () => {
               value={formData.password}
               onChange={handleChange}
               className="input"
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="notes">Notes</label>
-            <textarea
-              id="notes"
-              name="notes"
-              value={formData.notes}
-              onChange={handleChange}
-              className="textarea"
             />
           </div>
 
