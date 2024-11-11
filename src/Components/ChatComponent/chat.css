@@ -127,3 +127,22 @@
 .file-button:hover {
     background-color: #5a6268;
 }
+.chat-item {
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    font-size: 1em;
+    color: #555;
+    transition: background-color 0.3s, color 0.3s;
+}
+.chat-item.active {
+    background-color: #4a76a8;
+    color: #ffffff;
+}
+
+/* Эффект при наведении на чат */
+.chat-item:hover {
+    background-color: #dce3eb;
+    color: #333;
+}

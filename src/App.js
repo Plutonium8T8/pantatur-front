@@ -9,11 +9,12 @@ import UserProfile from './Components/UserPage/UserPage';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [activePage, setActivePage] = useState('workflowdashboard');
+  const [activePage, setActivePage] = useState('account'); // Устанавливаем начальную страницу на 'account'
   const [isChatOpen, setIsChatOpen] = useState(false); // Состояние для модального чата
 
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
+    setActivePage('account'); // Переходим на страницу аккаунта после успешного входа
   };
 
   const handleNavigate = (page) => {
