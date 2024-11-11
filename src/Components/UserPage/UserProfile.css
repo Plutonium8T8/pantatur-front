@@ -1,0 +1,53 @@
+.container {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+  }
+  
+  .left {
+    flex: 1;
+    padding-right: 20px;
+  }
+  
+  .profile-image {
+    width: 100%;
+    max-width: 150px;
+    border-radius: 50%;
+  }
+  
+  .right {
+    flex: 2;
+  }
+  
+  .form {
+    display: flex;
+    flex-direction: column;
+    width: 99%;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .input, .textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .textarea {
+    height: 100px;
+    resize: none;
+  }
+  
+  .button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }  

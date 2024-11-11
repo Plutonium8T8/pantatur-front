@@ -5,17 +5,27 @@ import LoginForm from './LoginForm';
 import { UserProvider } from './UserContext';
 import CustomSidebar from './Components/SideBar/SideBar';
 import ChatComponent from './Components/ChatComponent/chat';
+import  UserProfile  from './Components/UserPage/UserPage';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activePage, setActivePage] = useState('workflowdashboard');
+  const [isChatOpen, setIsChatOpen] = useState(false); // Состояние для модального чата
 
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
   };
 
   const handleNavigate = (page) => {
-    setActivePage(page);
+    if (page === 'chat') {
+      setIsChatOpen(true); // Открываем чат в модальном окне
+    } else {
+      setActivePage(page);
+    }
+  };
+
+  const closeChatModal = () => {
+    setIsChatOpen(false); // Закрываем модальное окно чата
   };
 
   let pageContent;
@@ -24,11 +34,11 @@ function App() {
     case 'workflowdashboard':
       pageContent = <WorkflowDashboard />;
       break;
-    case 'chat':
-      pageContent = <ChatComponent />;
+    case 'account':
+      pageContent = <UserProfile />;
       break;
     default:
-      pageContent = <WorkflowDashboard />;
+      pageContent = "";
   }
 
   return (
@@ -41,6 +51,17 @@ function App() {
           <div className="page-content">
             {pageContent}
           </div>
+
+          {/* Модальное окно для чата */}
+          {isChatOpen && (
+            <div className="chat-modal">
+              <div className="modal-overlay" onClick={closeChatModal}></div>
+              <div className="chat-modal-content">
+                <ChatComponent />
+                <button className="close-modal-btn" onClick={closeChatModal}>Close</button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </UserProvider>
