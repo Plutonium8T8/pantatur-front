@@ -1,0 +1,85 @@
+/* для элемента input c type="radio" */
+.custom-radio {
+    position: relative;
+    z-index: -1;
+    opacity: 0;
+    margin-left: -13px;
+}
+
+/* для элемента label связанного с .custom-radio */
+.custom-radio+label {
+    display: inline-flex;
+    /* align-items: center; */
+    user-select: none;
+}
+
+/* создание в label псевдоэлемента  before со следующими стилями */
+.custom-radio+label::before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    flex-grow: 0;
+    border: 1px solid #B0BABF;
+    border-radius: 50%;
+    margin-right: 0.5em;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 50% 50%;
+    background-color: #F6F8F9;
+}
+
+/* стили при наведении курсора на радио */
+.custom-radio:not(:disabled):not(:checked)+label:hover::before {
+    border-color: #9AA6AC;
+}
+.custom-radio:not(:disabled):checked+label:hover::before  {
+    background-color: #0D9676;
+    border-color: #0D9676;
+}
+.custom-radio.tg:not(:disabled):checked+label:hover::before  {
+    background-color: #50A7EA;
+    border-color: #50A7EA;
+}
+
+/* стили для активной радиокнопки (при нажатии на неё) */
+.custom-radio:not(:disabled):active+label::before {
+    background-color: #E5E9EB;
+    border-color: #84919A;
+}
+
+/* стили для радиокнопки, находящейся в фокусе */
+.custom-radio:focus+label::before {
+    
+}
+
+/* стили для радиокнопки, находящейся в фокусе и не находящейся в состоянии checked */
+.custom-radio:focus:not(:checked)+label::before {
+    border-color: #84919A;
+}
+
+/* стили для радиокнопки, находящейся в состоянии checked */
+.custom-radio:checked+label::before {
+    border-color: #1AC19D;
+    background-color: #1AC19D;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
+    box-shadow: none;
+}
+.custom-radio.tg:checked+label::before {
+    border-color: #50A7EA;
+    background-color: #50A7EA;
+    box-shadow: none;
+}
+
+/* стили для радиокнопки, находящейся в состоянии disabled */
+.custom-radio:disabled+label::before {
+    border-radius: 10px;
+    border: 1px solid  #B0BABF;
+    opacity: 0.5;
+    background: #F6F8F9;
+}
+.input-radio-container {
+    display: flex;
+    
+}

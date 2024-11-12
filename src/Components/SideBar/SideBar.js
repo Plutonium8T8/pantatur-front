@@ -29,19 +29,19 @@ const CustomSidebar = ({ onNavigate }) => {
                         className={`menu-item ${activeItem === 'workflowdashboard' ? 'active' : ''}`}
                         onClick={() => handleNavigate('workflowdashboard')}
                     >
-                        📝 Leads
+                        📝 <br/>Leads
                     </div>
                     <div
                         className={`menu-item ${activeItem === 'chat' ? 'active' : ''}`}
                         onClick={() => handleNavigate('chat')}
                     >
-                        💬 Chat
+                        💬 <br/>Chat
                     </div>
                     <div
                         className={`menu-item ${activeItem === 'mail' ? 'active' : ''}`}
                         onClick={() => handleNavigate('mail')}
                     >
-                        ✉️ Mail
+                        ✉️ <br/>Mail
                     </div>
                 </div>
             </div>

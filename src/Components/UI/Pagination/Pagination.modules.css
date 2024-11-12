@@ -1,0 +1,51 @@
+﻿.pagination-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.rows-onPage {
+
+}
+
+.paginator {
+    text-align: center;
+    /*    font-family: Golos Text;*/
+    color: #252C32;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px; /* 150% */
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+.page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4px 8px;
+    margin: 0 2px;
+    border-radius: 4px;
+    background: #FFFFFF;
+}
+
+    .page:not(.active) {
+        border: 1px solid #ffffff;
+        cursor: pointer;
+    }
+
+    .page:hover {
+        border-color: #1AC19D;
+    }
+
+.paginator > .active {
+    color: #FFF;
+    background: #1AC19D;
+    cursor: default;
+}
+
+.pagination-icon {
+    fill: #252C32;
+}

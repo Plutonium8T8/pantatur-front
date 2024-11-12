@@ -31,7 +31,8 @@
 }
 
 .menu-item:hover {
-    background-color: #f0f0f0; /* Цвет фона при наведении */
+    background-color: #97acec; /* Цвет фона при наведении */
+    border-radius: 50%; /* Скругление углов */
 }
 
 .container-item-menu {
@@ -50,8 +51,10 @@
     margin-right: 10px; /* Отступ справа от символа */
 }
 .menu-item.active {
-    background-color: #e0e0e0; /* Фон для активного элемента */
+    background-color: white; /* Фон для активного элемента */
     color: #333; /* Цвет текста для активного элемента */
-    font-weight: bold; /* Жирный текст для активного элемента */
-    border-radius: 5px; /* Скругление углов */
+    font-size: 15px;
+    font-weight: bold;
+    border-radius: 100%; /* Скругление углов */
+    border: 1px solid white;
 }

@@ -1,0 +1,76 @@
+.label_switch {
+    display:flex;
+    justify-content:space-between;
+}
+
+.label_switch_text{
+    padding-top:3px;
+}
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 52px;
+    height: 32px;
+    border-radius: 100px;
+    flex: 0 0 auto;
+}
+
+/*скрыть стандартное оформление checkbox*/
+.switch_input {
+    height: 0;
+    width: 0;
+    opacity: 0;
+}
+
+/* слайдер */
+.switch_slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    border-radius: 34px;
+    background-color: #fff;
+    transition: 0.4s;
+    border: 1px solid #9AA6AC;
+}
+
+    .switch_slider::before {
+        content: "";
+        position: absolute;
+        cursor: pointer;
+        left: 5px;
+        bottom: 7.5px;
+        height: 16px;
+        width: 16px;
+        border-radius: 50%;
+        background-color: #9AA6AC;
+        transition: 0.4s;
+    }
+
+/*стили при фокусе на компонент
+.switch__input:focus + .switch__slider {
+    box-shadow: 0 0 1 rgb(81, 146, 44) ;
+}*/
+
+/*стили при выборе флага компонента*/
+
+.switch_input:checked + .switch_slider {
+    background-color: #50A7EA;
+    border: none;
+}
+.switch_input:checked + .switch_slider.colorGreen{
+    background-color: #1AC19D;
+}
+
+    .switch_input:checked + .switch_slider::before {
+        transform: translateX(21px);
+        height: 23px;
+        width: 23px;
+        bottom: 4.8px;
+        background-color: white;
+    }
+.label_switch {
+    flex: 1 1 auto;
+}

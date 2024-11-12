@@ -1,0 +1,62 @@
+﻿.styled-button {
+    height: 44px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+/*    padding: 6px 6px;*/
+    /*    align-content: center;
+    text-align: center;*/
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+/*    background-color: #1AC19D;*/
+    border: 1px solid;
+    color: white;
+    padding: 0.375rem 0.75rem;
+    margin: 0 6px;
+/*    font-size: 1rem;*/
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    border-radius: 6px;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+    .styled-button.primary {
+        background-color: #1AC19D;
+        border-color: #1AC19D;
+        color: #FFFFFF;
+    }
+
+        .styled-button.primary:hover {
+            background-color: #0D9676;
+            border-color: #0D9676;
+            color: #FFFFFF;
+        }
+
+    .styled-button.secondary {
+        background-color: #FFFFFF;
+        border-color: #DDE2E4;
+        color: #252C32;
+    }
+
+        .styled-button.secondary:hover {
+            background-color: #F6F8F9;
+            border-color: #DDE2E4;
+            color: #252C32;
+        }
+
+    .styled-button.danger {
+        background-color: #FFEFEB;
+        border-color: #FFEFEB;
+        color: #F2271C;
+    }
+
+        .styled-button.danger:hover {
+            background-color: #FFE1DA;
+            border-color: #FFE1DA;
+            color: #F2271C;
+        }
