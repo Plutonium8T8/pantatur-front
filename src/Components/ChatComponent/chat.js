@@ -2,9 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import CryptoJS from 'crypto-js';
 import AES from 'crypto-js/aes';
 import Utf8 from 'crypto-js/enc-utf8';
-import '/Users/maksimbordan/Documents/PandaTurFront/pantatur-front/src/Components/ChatComponent/chat.css';
 import { useUser } from '../../UserContext';
 import Cookies from 'js-cookie';
+import '/Users/maksimbordan/Documents/PandaTurFront/pantatur-front/src/Components/ChatComponent/chat.css';
+
 const ENCRYPTION_KEY = '0123456789abcdef0123456789abcdef';
 
 // Функции шифрования и дешифрования

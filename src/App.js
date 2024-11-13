@@ -38,7 +38,7 @@ function App() {
               <Routes>
                 <Route path="/account" element={<UserProfile />} />
                 <Route path="/workflowdashboard" element={<WorkflowDashboard />} />
-                <Route path="/" element={<UserProfile />} /> {/* Страница по умолчанию */}
+                <Route path="/" element={<WorkflowDashboard />} /> {/* Страница по умолчанию */}
               </Routes>
             </div>
 
