@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Используем Routes
 import WorkflowDashboard from './WorkflowDashboard';
 import LoginForm from './LoginForm';
 import { UserProvider } from './UserContext';
@@ -9,19 +10,15 @@ import UserProfile from './Components/UserPage/UserPage';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [activePage, setActivePage] = useState('account'); // Устанавливаем начальную страницу на 'account'
   const [isChatOpen, setIsChatOpen] = useState(false); // Состояние для модального чата
 
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
-    setActivePage('account'); // Переходим на страницу аккаунта после успешного входа
   };
 
   const handleNavigate = (page) => {
     if (page === 'chat') {
       setIsChatOpen(true); // Открываем чат в модальном окне
-    } else {
-      setActivePage(page);
     }
   };
 
@@ -29,42 +26,35 @@ function App() {
     setIsChatOpen(false); // Закрываем модальное окно чата
   };
 
-  let pageContent;
-
-  switch (activePage) {
-    case 'account':
-      pageContent = <UserProfile />;
-      break;
-    case 'workflowdashboard':
-      pageContent = <WorkflowDashboard />;
-      break;
-    default:
-      pageContent = "";
-  }
-
   return (
     <UserProvider>
-      {!isLoggedIn ? (
-        <LoginForm onLoginSuccess={handleLoginSuccess} />
-      ) : (
-        <div className="app-container">
-          <CustomSidebar onNavigate={handleNavigate} />
-          <div className="page-content">
-            {pageContent}
-          </div>
-
-          {/* Модальное окно для чата */}
-          {isChatOpen && (
-            <div className="chat-modal">
-              <div className="modal-overlay" onClick={closeChatModal}></div>
-              <div className="chat-modal-content">
-                <ChatComponent />
-                <button className="close-modal-btn" onClick={closeChatModal}>Close</button>
-              </div>
+      <Router>
+        {!isLoggedIn ? (
+          <LoginForm onLoginSuccess={handleLoginSuccess} />
+        ) : (
+          <div className="app-container">
+            <CustomSidebar onNavigate={handleNavigate} />
+            <div className="page-content">
+              <Routes>
+                <Route path="/account" element={<UserProfile />} />
+                <Route path="/workflowdashboard" element={<WorkflowDashboard />} />
+                <Route path="/" element={<UserProfile />} /> {/* Страница по умолчанию */}
+              </Routes>
             </div>
-          )}
-        </div>
-      )}
+
+            {/* Модальное окно для чата */}
+            {isChatOpen && (
+              <div className="chat-modal">
+                <div className="modal-overlay" onClick={closeChatModal}></div>
+                <div className="chat-modal-content">
+                  <ChatComponent />
+                  <button className="close-modal-btn" onClick={closeChatModal}>Close</button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </Router>
     </UserProvider>
   );
 }
