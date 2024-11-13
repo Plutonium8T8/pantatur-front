@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './LoginForm.css';
 import Cookies from 'js-cookie';
 import { useUser } from './UserContext';
@@ -7,8 +7,34 @@ function LoginForm({ onLoginSuccess }) {
   const [form, setForm] = useState({ email: '', username: '', password: '' });
   const [isLogin, setIsLogin] = useState(true);
   const [message, setMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // Начальное состояние для загрузки
   const { setUserId } = useUser();
+
+  // Проверка сессии при загрузке компонента
+  useEffect(() => {
+    const jwtToken = Cookies.get('jwt');
+    if (jwtToken) {
+      fetch('https://pandaturapi.com/session', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${jwtToken}`,
+        },
+        credentials: 'include',
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.user_id) {
+            setUserId(data.user_id);
+            onLoginSuccess(); // Переход к основному контенту при успешной проверке сессии
+          }
+        })
+        .catch(error => console.error('Ошибка при проверке сессии:', error))
+        .finally(() => setIsLoading(false)); // Убираем индикатор загрузки
+    } else {
+      setIsLoading(false); // Если токен отсутствует, сразу убираем индикатор загрузки
+    }
+  }, [onLoginSuccess, setUserId]);
 
   const handleInputChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -18,18 +44,20 @@ function LoginForm({ onLoginSuccess }) {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const passwordPattern = /^(?=.*[A-Z])(?=.*\W).{1,180}$/;
 
-    if (form.email.length > 180 || !emailPattern.test(form.email)) return false;
-    if (!isLogin && form.username.length > 180) return false;
-    if (form.password.length > 180 || !passwordPattern.test(form.password)) return false;
-
-    return true;
+    return (
+      emailPattern.test(form.email) &&
+      (!isLogin || form.username.length <= 180) &&
+      passwordPattern.test(form.password) &&
+      form.email.length <= 180 &&
+      form.password.length <= 180
+    );
   };
 
   const handleSubmit = async () => {
-    if (!validateForm()) {
-      setMessage('Validation failed');
-      return;
-    }
+    // if (!validateForm()) {
+    //   setMessage('Validation failed');
+    //   return;
+    // }
 
     setIsLoading(true);
     const url = isLogin
@@ -40,25 +68,18 @@ function LoginForm({ onLoginSuccess }) {
     try {
       const response = await fetch(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
+        credentials: 'include',
       });
 
       const responseData = await response.json();
       setMessage(responseData.message);
 
       if (isLogin && response.ok) {
-        const token = responseData.token; // Убедитесь, что токен приходит в ответе
-        const user_id = responseData.user_id;
-        console.log('user_id:', user_id) // Предположим, что user_id приходит в ответе
-        
-        Cookies.set('jwt', token, { expires: 7, secure: true, sameSite: 'strict' });
-        setUserId(user_id);
+        Cookies.set('jwt', responseData.token, { expires: 7, secure: true, sameSite: 'strict' });
+        setUserId(responseData.user_id);
         onLoginSuccess();
-      } else {
-        setMessage(responseData.message || 'An error occurred');
       }
     } catch (error) {
       setMessage('An error occurred');
@@ -67,8 +88,12 @@ function LoginForm({ onLoginSuccess }) {
     }
   };
 
+  if (isLoading) {
+    return <div className="loading-spinner">Loading...</div>; // Показ индикатора загрузки
+  }
+
   return (
-    <div className='body-login-form'>
+    <div className="body-login-form">
       <div className="login-form">
         <h2>{isLogin ? 'Login' : 'Register'}</h2>
 
@@ -111,8 +136,6 @@ function LoginForm({ onLoginSuccess }) {
         >
           Switch to {isLogin ? 'Register' : 'Login'}
         </button>
-
-        {isLoading && <div className="spinner"></div>}
 
         {message && <p className="error-message">{message}</p>}
       </div>

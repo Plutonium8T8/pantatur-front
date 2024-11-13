@@ -16,7 +16,8 @@ export const updateTicket = async (updateData) => {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ ...updateData })
+            body: JSON.stringify({ ...updateData }),
+            credentials: 'include'
         });
 
         if (!response.ok) {
@@ -99,9 +100,9 @@ const WorkflowDashboard = () => {
 
     const openCreateTicketModal = () => {
         setCurrentTicket({
-            title: '',
-            description: '',
-            notes: '',
+            contact: '',
+            transport: '',
+            country: '',
             priority: priorityOptions[0],
             workflow: workflowOptions[0],
             service_reference: "",

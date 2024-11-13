@@ -102,27 +102,27 @@ const TicketModal = ({ ticket, onClose }) => {
         <div className='id-ticket'>ID Ticket #{editedTicket.id}</div>
         <>
           <label>
-            Nume User
+            Nume Client
             <input
               type="text"
-              name="title"
-              value={editedTicket.title}
+              name="contact"
+              value={editedTicket.contact}
               onChange={handleInputChange}
-              placeholder="Title"
+              placeholder="Nume Client"
               style={{ display: 'block', width: '100%', padding: '0.5rem', marginBottom: '1rem' }}
             />
           </label>
           <label>
             Avion/Autocar
             <textarea
-              name="description"
-              value={editedTicket.description}
+              name="transport"
+              value={editedTicket.transport}
               onChange={(e) => {
                 handleInputChange(e);
                 e.target.style.height = 'auto';
                 e.target.style.height = `${e.target.scrollHeight}px`;
               }}
-              placeholder="Description"
+              placeholder="Avion/Autocar"
               style={{
                 display: 'block',
                 width: '100%',
@@ -137,7 +137,7 @@ const TicketModal = ({ ticket, onClose }) => {
             Turcia/Egipt
             <textarea
               name="notes"
-              value={editedTicket.notes}
+              value={editedTicket.country}
               onChange={handleInputChange}
               placeholder="Notes"
               style={{ display: 'block', width: '100%', padding: '0.5rem', marginBottom: '1rem' }}
