@@ -113,7 +113,7 @@ const TicketModal = ({ ticket, onClose }) => {
             />
           </label>
           <label>
-            Avion/Autocar
+            Metoda de transportare
             <textarea
               name="transport"
               value={editedTicket.transport}
@@ -122,7 +122,7 @@ const TicketModal = ({ ticket, onClose }) => {
                 e.target.style.height = 'auto';
                 e.target.style.height = `${e.target.scrollHeight}px`;
               }}
-              placeholder="Avion/Autocar"
+              placeholder="Indicati metoda de transportare"
               style={{
                 display: 'block',
                 width: '100%',
@@ -134,12 +134,12 @@ const TicketModal = ({ ticket, onClose }) => {
             />
           </label>
           <label>
-            Turcia/Egipt
+            Tara destinatie
             <textarea
-              name="notes"
+              name="country"
               value={editedTicket.country}
               onChange={handleInputChange}
-              placeholder="Notes"
+              placeholder="Indicati tara destinatie"
               style={{ display: 'block', width: '100%', padding: '0.5rem', marginBottom: '1rem' }}
             />
           </label>

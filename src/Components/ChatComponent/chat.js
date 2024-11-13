@@ -4,7 +4,7 @@ import AES from 'crypto-js/aes';
 import Utf8 from 'crypto-js/enc-utf8';
 import '/Users/maksimbordan/Documents/PandaTurFront/pantatur-front/src/Components/ChatComponent/chat.css';
 import { useUser } from '../../UserContext';
-
+import Cookies from 'js-cookie';
 const ENCRYPTION_KEY = '0123456789abcdef0123456789abcdef';
 
 // Функции шифрования и дешифрования
@@ -36,41 +36,55 @@ const ChatComponent = () => {
     const { userId } = useUser();
     const [managerMessage, setManagerMessage] = useState('');
     const [messages, setMessages] = useState([]);
-    const [selectedChatId, setSelectedChatId] = useState(1); // ID выбранного чата
+    const [selectedTicketId, setSelectedTicketId] = useState(null); // ID выбранного тикета
     const [extraInfoInput, setExtraInfoInput] = useState("1");
     const [dropdownValue, setDropdownValue] = useState("Option1"); // значение по умолчанию для выпадающего списка
-    const [chats, setChats] = useState([
-        { id: 1, name: 'Nume clinet 1' }, 
-        { id: 2, name: 'Nume clinet 2' }, 
-        { id: 3, name: 'Nume clinet 3' }, 
-        { id: 4, name: 'Nume clinet 4' }, 
-        { id: 5, name: 'Nume clinet 5' }, 
-        { id: 6, name: 'Nume clinet 6' }, 
-        { id: 7, name: 'Nume clinet 7' }, 
-        { id: 8, name: 'Nume clinet 8' }, 
-        { id: 9, name: 'Nume clinet 9' }, 
-        { id: 10, name: 'Nume clinet 10' }, 
-        { id: 11, name: 'Nume clinet 11' }, 
-        { id: 12, name: 'Nume clinet 12' }, 
-        { id: 13, name: 'Nume clinet 13' }, 
-        { id: 14, name: 'Nume clinet 14' }, 
-        { id: 15, name: 'Nume clinet 15' }, 
-        { id: 16, name: 'Nume clinet 16' }, 
-        { id: 17, name: 'Nume clinet 17' }, 
-        { id: 18, name: 'Nume clinet 18' }, 
-        { id: 19, name: 'Nume clinet 19' }
-    ]); // Пример списка чатов
-
+    const [tickets, setTickets] = useState([]);
     const messageContainerRef = useRef(null);
 
-    const filteredMessages = messages.filter((msg) => msg.chat_id === selectedChatId);
+    // Получение тикетов через fetch
+    const fetchTickets = async () => {
+        try {
+            await new Promise(resolve => setTimeout(resolve, 500));
+            const token = Cookies.get('jwt');
+            const response = await fetch('https://pandaturapi.com/api/tickets', {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Ошибка при получении данных');
+            }
+
+            const data = await response.json();
+            setTickets(...data); // Устанавливаем данные тикетов
+            console.log("+++ Загруженные тикеты:", data);
+        } catch (error) {
+            console.error('Ошибка:', error);
+        }
+    };
+
+    // Загружаем тикеты при монтировании компонента
+    useEffect(() => {
+        fetchTickets();
+    }, []);
+
+    // Прокрутка вниз при новом сообщении
+    useEffect(() => {
+        if (messageContainerRef.current) {
+            messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
+        }
+    }, [messages]);
 
     // Отправка сообщения
     const sendMessage = () => {
         if (managerMessage.trim()) {
             const encryptedMessage = encrypt(managerMessage);
             const newMessage = {
-                chat_id: selectedChatId,
+                chat_id: selectedTicketId,  // Используем selectedTicketId вместо selectedChatId
                 client_id: userId,
                 sender_id: userId,
                 text: decrypt(encryptedMessage),
@@ -83,30 +97,25 @@ const ChatComponent = () => {
         }
     };
 
-    // Прокрутка вниз при новом сообщении
-    useEffect(() => {
-        if (messageContainerRef.current) {
-            messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
-        }
-    }, [filteredMessages]);
-
     return (
         <div className="chat-container">
             <div className="users-container">
-                <h3>Chat List</h3>
-                {chats.map((chat) => (
+                <h3>Ticket List</h3>
+                {tickets.map((ticket) => (
                     <div
-                        key={chat.id}
-                        className={`chat-item ${chat.id === selectedChatId ? 'active' : ''}`}
-                        onClick={() => setSelectedChatId(chat.id)}
+                        key={ticket.id}
+                        className={`chat-item ${ticket.id === selectedTicketId ? 'active' : ''}`}
+                        onClick={() => setSelectedTicketId(ticket.id)} // Выбираем тикет
                     >
-                        {chat.name}
+                        <div>{ticket.contact || "contact"}</div>
+                        <div>{ticket.transport || "transport"}</div>
+                        <div>{ticket.country || "country"}</div>                    
                     </div>
                 ))}
             </div>
             <div className="chat-area">
                 <div className="chat-messages" ref={messageContainerRef}>
-                    {filteredMessages.map((msg, index) => (
+                    {messages.filter((msg) => msg.chat_id === selectedTicketId).map((msg, index) => (
                         <div
                             key={index}
                             className={`message ${msg.sender_id === userId ? 'sent' : 'received'}`}

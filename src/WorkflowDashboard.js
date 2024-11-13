@@ -219,9 +219,9 @@ const WorkflowDashboard = () => {
                                                 <div><img className='foto-user' src="/user fon.png" alt="example" /> </div>
                                                 <div className='tickets-descriptions'>
                                                     {/* <div>ID #{ticket.id}</div> */}
-                                                    <div>{ticket.title || "NameClient"}</div>
-                                                    <div>{ticket.description || "Avion/autocar"}</div>
-                                                    <div>{ticket.notes || "Turcia/Egipt"}</div>
+                                                    <div>{ticket.contact || "contact"}</div>
+                                                    <div>{ticket.transport || "transport"}</div>
+                                                    <div>{ticket.country || "country"}</div>
                                                 </div>
                                             </div>
                                             <div className='container-time-tasks'>
