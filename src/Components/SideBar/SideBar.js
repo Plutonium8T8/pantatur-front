@@ -22,31 +22,31 @@ const CustomSidebar = ({ onNavigate }) => {
                         className={`menu-item ${activeItem === 'account' ? 'active' : ''}`}
                         onClick={() => handleNavigate('account')}
                     >
-                        👤 Account
+                        👤 <br />Account
                     </div>
                     <div
                         className={`menu-item ${activeItem === 'dashboard' ? 'active' : ''}`}
                         onClick={() => handleNavigate('dashboard')}
                     >
-                        📊 Dashboard
+                        📊 <br />Dashboard
                     </div>
                     <div
                         className={`menu-item ${activeItem === 'workflowdashboard' ? 'active' : ''}`}
                         onClick={() => handleNavigate('workflowdashboard')}
                     >
-                        📝 <br/>Leads
+                        📝 <br />Leads
                     </div>
                     <div
                         className={`menu-item ${activeItem === 'chat' ? 'active' : ''}`}
                         onClick={() => handleNavigate('chat')}
                     >
-                        💬 <br/>Chat
+                        💬 <br />Chat
                     </div>
                     <div
                         className={`menu-item ${activeItem === 'mail' ? 'active' : ''}`}
                         onClick={() => handleNavigate('mail')}
                     >
-                        ✉️ <br/>Mail
+                        ✉️ <br />Mail
                     </div>
                 </div>
             </div>
