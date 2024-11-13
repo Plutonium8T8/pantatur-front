@@ -127,7 +127,7 @@
     cursor: pointer;
     font-size: 1em;
     color: #fff;
-    background-color: red;
+    background-color: green;
     transition: background-color 0.3s, color 0.3s;
 }
 .chat-item.active {

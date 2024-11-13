@@ -39,7 +39,6 @@ const WorkflowDashboard = () => {
 
     const [tickets, setTickets] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
-
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentTicket, setCurrentTicket] = useState(null);
 

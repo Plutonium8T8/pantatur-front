@@ -119,8 +119,6 @@ const TicketModal = ({ ticket, onClose }) => {
               value={editedTicket.transport}
               onChange={(e) => {
                 handleInputChange(e);
-                e.target.style.height = 'auto';
-                e.target.style.height = `${e.target.scrollHeight}px`;
               }}
               placeholder="Indicati metoda de transportare"
               style={{
