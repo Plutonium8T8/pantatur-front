@@ -108,9 +108,10 @@ const ChatComponent = () => {
                         className={`chat-item ${ticket.id === selectedTicketId ? 'active' : ''}`}
                         onClick={() => setSelectedTicketId(ticket.id)} // Выбираем тикет
                     >
-                        <div>{ticket.contact || "contact"}</div>
-                        <div>{ticket.transport || "transport"}</div>
-                        <div>{ticket.country || "country"}</div>                    
+                        <div>{ticket.contact || "no contact"}</div>
+                        <div>{ticket.transport || "no transport"}</div>
+                        <div>{ticket.country || "no country"}</div>
+                        <div>{ticket.id || "no ID"}</div>                                        
                     </div>
                 ))}
             </div>

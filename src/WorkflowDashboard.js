@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import TicketModal from './TicketModal';
 import { workflowOptions } from './WorkFlowOption';
 import { priorityOptions } from './PriorityOption';
+import { useNavigate } from 'react-router-dom'; // Импортируем useNavigate
 
 import Cookies from 'js-cookie';
 
@@ -41,6 +42,7 @@ const WorkflowDashboard = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentTicket, setCurrentTicket] = useState(null);
+    const navigate = useNavigate(); // Используем useNavigate для перехода
 
     const fetchTickets = async () => {
         try {
@@ -149,6 +151,7 @@ const WorkflowDashboard = () => {
 
     const handleTicketClick = (ticket) => {
         setCurrentTicket(ticket);
+        // navigate(`/chat/${ticket.id}`)
     };
 
     const closeModal = () => {
@@ -193,7 +196,7 @@ const WorkflowDashboard = () => {
                             {tickets
                                 .filter(ticket => ticket.workflow === workflow)
                                 .filter(ticket =>
-                                    (ticket.title?.includes(searchTerm) || ticket.description?.includes(searchTerm) || ticket.notes?.includes(searchTerm) || searchTerm === '')
+                                    (ticket.contact?.includes(searchTerm) || ticket.transport?.includes(searchTerm) || ticket.country?.includes(searchTerm) || searchTerm === '')
                                 )
                                 .map(ticket => {
                                     // console.log(ticket); // Вывод тикета для отладки
@@ -203,24 +206,15 @@ const WorkflowDashboard = () => {
                                             className="ticket"
                                             draggable
                                             onDragStart={(e) => handleDragStart(e, ticket.id)}
-                                            onClick={() => {
-                                                setCurrentTicket(ticket);
-                                                setIsModalOpen(true);
-                                            }}
-                                        // style={{
-                                        //     borderColor: priorityStyles[ticket.priority]?.borderColor,
-                                        //     backgroundColor: priorityStyles[ticket.priority]?.backgroundColor,
-                                        //     borderWidth: '1px',
-                                        //     borderStyle: 'solid'
-                                        // }}
+                                            onClick={() => handleTicketClick(ticket)} // Обновлено для перехода на страницу чата
                                         >
                                             <div className='foto-description'>
                                                 <div><img className='foto-user' src="/user fon.png" alt="example" /> </div>
                                                 <div className='tickets-descriptions'>
-                                                    {/* <div>ID #{ticket.id}</div> */}
-                                                    <div>{ticket.contact || "contact"}</div>
-                                                    <div>{ticket.transport || "transport"}</div>
-                                                    <div>{ticket.country || "country"}</div>
+                                                    <div>{ticket.contact || "no contact"}</div>
+                                                    <div>{ticket.transport || "no transport"}</div>
+                                                    <div>{ticket.country || "no country"}</div>
+                                                    <div>{ticket.id || "no country"}</div>
                                                 </div>
                                             </div>
                                             <div className='container-time-tasks'>
@@ -228,6 +222,7 @@ const WorkflowDashboard = () => {
                                                 <div>tasks</div>
                                             </div>
                                         </div>
+
                                     );
                                 })}
                         </div>

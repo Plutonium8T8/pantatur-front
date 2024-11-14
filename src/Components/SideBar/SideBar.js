@@ -2,16 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Используем хук useNavigate
 import './SideBar.css';
 
-const CustomSidebar = ({ onNavigate }) => {
+const CustomSidebar = () => {
     const [activeItem, setActiveItem] = useState('account'); // Начальное состояние для активного элемента
     const navigate = useNavigate(); // Получаем функцию для навигации
 
     const handleNavigate = (page) => {
         setActiveItem(page); // Устанавливаем активный элемент
-        if (page !== 'chat') {
-            navigate(page); // Навигация на нужную страницу (для всего кроме чата)
-        }
-        onNavigate(page); // Передаем функцию для открытия чата (если это чат)
+        navigate(page); // Навигация на нужную страницу
     };
 
     return (
