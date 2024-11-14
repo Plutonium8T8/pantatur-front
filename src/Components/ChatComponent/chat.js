@@ -2,9 +2,20 @@ import React, { useState, useEffect, useRef } from 'react';
 import CryptoJS from 'crypto-js';
 import AES from 'crypto-js/aes';
 import Utf8 from 'crypto-js/enc-utf8';
+import Select from '../SelectComponent/SelectComponent';
 import { useUser } from '../../UserContext';
 import Cookies from 'js-cookie';
-import '/Users/maksimbordan/Documents/PandaTurFront/pantatur-front/src/Components/ChatComponent/chat.css';
+import { transportOptions } from '../../FormOptions/TransportOptions';
+import { countryOptions } from '../../FormOptions/CountryOptions';
+import { marketingOptions } from '../../FormOptions/MarketingOptions';
+import { nameExcursionOptions } from '../../FormOptions/NameExcursionOptions';
+import { paymentStatusOptions } from '../../FormOptions/PaymentStatusOptions';
+import { purchaseProcessingOptions } from '../../FormOptions/PurchaseProcessingOptions';
+import { serviceTypeOptions } from '../../FormOptions/ServiceTypeOptions';
+import { sourceOfLeadOptions } from '../../FormOptions/SourceOfLeadOptions';
+import { promoOptions } from '../../FormOptions/PromoOptions';
+
+import './chat.css';
 
 const ENCRYPTION_KEY = '0123456789abcdef0123456789abcdef';
 
@@ -38,11 +49,16 @@ const ChatComponent = () => {
     const [managerMessage, setManagerMessage] = useState('');
     const [messages, setMessages] = useState([]);
     const [selectedTicketId, setSelectedTicketId] = useState(null); // ID выбранного тикета
-    const [extraInfoInput, setExtraInfoInput] = useState("1");
-    const [dropdownValue, setDropdownValue] = useState("Option1"); // значение по умолчанию для выпадающего списка
+    const [extraInfo, setExtraInfo] = useState({}); // Состояние для дополнительной информации каждого тикета
     const [tickets, setTickets] = useState([]);
     const messageContainerRef = useRef(null);
 
+    useEffect(() => {
+        console.log("Selected Ticket ID:", selectedTicketId);
+        if (selectedTicketId) {
+            console.log("Extra info for selected ticket:", extraInfo[selectedTicketId] || "No extra info available");
+        }
+    }, [selectedTicketId]);
     // Получение тикетов через fetch
     const fetchTickets = async () => {
         try {
@@ -98,6 +114,28 @@ const ChatComponent = () => {
         }
     };
 
+    // Обработчик изменения значения в селекте для выбранного тикета
+    const handleSelectChange = (ticketId, field, value) => {
+        console.log(`Изменение значения селекта: ticketId=${ticketId}, field=${field}, value=${value}`);
+        setExtraInfo((prevState) => {
+            const newState = {
+                ...prevState,
+                [ticketId]: {
+                    ...prevState[ticketId],
+                    [field]: value,
+                },
+            };
+            console.log("Обновленное состояние extraInfo:", newState);
+            return newState;
+        });
+    };
+
+    // Используйте useEffect для логирования изменений в extraInfo
+    useEffect(() => {
+        console.log("Текущее состояние extraInfo:", extraInfo);
+    }, [extraInfo]);
+
+
     return (
         <div className="chat-container">
             <div className="users-container">
@@ -111,7 +149,7 @@ const ChatComponent = () => {
                         <div>{ticket.contact || "no contact"}</div>
                         <div>{ticket.transport || "no transport"}</div>
                         <div>{ticket.country || "no country"}</div>
-                        <div>{ticket.id || "no ID"}</div>                                        
+                        <div>{ticket.id || "no ID"}</div>
                     </div>
                 ))}
             </div>
@@ -142,70 +180,93 @@ const ChatComponent = () => {
             </div>
             <div className="extra-info">
                 <h3>Additional Information</h3>
-                <label>
-                    Responsabil
-                    <input
-                        type="text"
-                        value={extraInfoInput}
-                        onChange={(e) => setExtraInfoInput(e.target.value)}
-                        className="input-field"
-                    />
-                </label>
-                <label>
-                    Responsabil
-                    <input
-                        type="text"
-                        value={extraInfoInput}
-                        onChange={(e) => setExtraInfoInput(e.target.value)}
-                        className="input-field"
-                    />
-                </label>
-                <label>
-                    Responsabil
-                    <input
-                        type="text"
-                        value={extraInfoInput}
-                        onChange={(e) => setExtraInfoInput(e.target.value)}
-                        className="input-field"
-                    />
-                </label>
-                <label>
-                    Responsabil
-                    <input
-                        type="text"
-                        value={extraInfoInput}
-                        onChange={(e) => setExtraInfoInput(e.target.value)}
-                        className="input-field"
-                    />
-                </label>
-                <label>
-                    Responsabil
-                    <input
-                        type="text"
-                        value={extraInfoInput}
-                        onChange={(e) => setExtraInfoInput(e.target.value)}
-                        className="input-field"
-                    />
-                </label>
-                <label>
-                    Responsabil
-                    <input
-                        type="text"
-                        value={extraInfoInput}
-                        onChange={(e) => setExtraInfoInput(e.target.value)}
-                        className="input-field"
-                    />
-                </label>
-                <label>
-                    Responsabil
-                    <input
-                        type="text"
-                        value={extraInfoInput}
-                        onChange={(e) => setExtraInfoInput(e.target.value)}
-                        className="input-field"
-                    />
-                </label>
-                
+                {selectedTicketId && (
+                    <>
+                        <label>
+                            Responsabil
+                            <input
+                                type="text"
+                                value={extraInfo[selectedTicketId]?.responsabil || ""}
+                                onChange={(e) => handleSelectChange(selectedTicketId, 'responsabil', e.target.value)}
+                                className="input-field"
+                            />
+                        </label>
+                        <label>
+                            Sale
+                            <input
+                                type="text"
+                                value={extraInfo[selectedTicketId]?.sale || ""}
+                                onChange={(e) => handleSelectChange(selectedTicketId, 'sale', e.target.value)}
+                                className="input-field"
+                            />
+                        </label>
+                        <div className='selects-container'>
+                            <Select
+                                options={transportOptions}
+                                label="Transport"
+                                id="transport-select"
+                                value={extraInfo[selectedTicketId]?.transport || ""}
+                                onChange={(value) => handleSelectChange(selectedTicketId, 'transport', value)}
+                            />
+                            <Select
+                                options={countryOptions}
+                                label="Country"
+                                id="country-select"
+                                value={extraInfo[selectedTicketId]?.country || ""}
+                                onChange={(value) => handleSelectChange(selectedTicketId, 'country', value)}
+                            />
+                            <Select
+                                options={marketingOptions}
+                                label="Marketing"
+                                id="marketing-select"
+                                value={extraInfo[selectedTicketId]?.marketing || ""}
+                                onChange={(value) => handleSelectChange(selectedTicketId, 'marketing', value)}
+                            />
+                            <Select
+                                options={nameExcursionOptions}
+                                label="Excursie"
+                                id="excursie-select"
+                                value={extraInfo[selectedTicketId]?.excursie || ""}
+                                onChange={(value) => handleSelectChange(selectedTicketId, 'excursie', value)}
+                            />
+                            <Select
+                                options={paymentStatusOptions}
+                                label="Payment"
+                                id="payment-select"
+                                value={extraInfo[selectedTicketId]?.payment || ""}
+                                onChange={(value) => handleSelectChange(selectedTicketId, 'payment', value)}
+                            />
+                            <Select
+                                options={purchaseProcessingOptions}
+                                label="Purchase"
+                                id="purchase-select"
+                                value={extraInfo[selectedTicketId]?.purchase || ""}
+                                onChange={(value) => handleSelectChange(selectedTicketId, 'purchase', value)}
+                            />
+                            <Select
+                                options={serviceTypeOptions}
+                                label="Service"
+                                id="service-select"
+                                value={extraInfo[selectedTicketId]?.service || ""}
+                                onChange={(value) => handleSelectChange(selectedTicketId, 'service', value)}
+                            />
+                            <Select
+                                options={sourceOfLeadOptions}
+                                label="Lead Source"
+                                id="lead-source-select"
+                                value={extraInfo[selectedTicketId]?.leadSource || ""}
+                                onChange={(value) => handleSelectChange(selectedTicketId, 'leadSource', value)}
+                            />
+                            <Select
+                                options={promoOptions}
+                                label="Promo"
+                                id="promo-select"
+                                value={extraInfo[selectedTicketId]?.promo || ""}
+                                onChange={(value) => handleSelectChange(selectedTicketId, 'promo', value)}
+                            />
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     );

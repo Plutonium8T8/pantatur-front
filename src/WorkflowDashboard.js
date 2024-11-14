@@ -151,8 +151,14 @@ const WorkflowDashboard = () => {
 
     const handleTicketClick = (ticket) => {
         setCurrentTicket(ticket);
-        // navigate(`/chat/${ticket.id}`)
+        navigate(`/chat/${ticket.id}`)
     };
+    
+    // const handleTicketClick = (ticket) => {
+    //     const selectedTicketId = ticket;
+    //     setCurrentTicket(ticket);
+    //     navigate(`/chat/${selectedTicketId.id}`)
+    // };
 
     const closeModal = () => {
         setCurrentTicket(null);

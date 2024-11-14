@@ -209,3 +209,8 @@
 .file-button:hover {
     background-color: #0056b3;
 }
+.selects-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
