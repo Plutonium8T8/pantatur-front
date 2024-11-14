@@ -14,6 +14,7 @@ import { purchaseProcessingOptions } from '../../FormOptions/PurchaseProcessingO
 import { serviceTypeOptions } from '../../FormOptions/ServiceTypeOptions';
 import { sourceOfLeadOptions } from '../../FormOptions/SourceOfLeadOptions';
 import { promoOptions } from '../../FormOptions/PromoOptions';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import './chat.css';
 
@@ -52,6 +53,15 @@ const ChatComponent = () => {
     const [extraInfo, setExtraInfo] = useState({}); // Состояние для дополнительной информации каждого тикета
     const [tickets, setTickets] = useState([]);
     const messageContainerRef = useRef(null);
+    const navigate = useNavigate();
+    const { ticketId } = useParams(); // Получаем ticketId из URL
+
+    useEffect(() => {
+        // Если ticketId передан через URL, устанавливаем его как selectedTicketId
+        if (ticketId) {
+            setSelectedTicketId(Number(ticketId));
+        }
+    }, [ticketId]);
 
     useEffect(() => {
         console.log("Selected Ticket ID:", selectedTicketId);
