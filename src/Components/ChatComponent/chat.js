@@ -143,7 +143,7 @@ const ChatComponent = () => {
             <div className="extra-info">
                 <h3>Additional Information</h3>
                 <label>
-                    Info Value:
+                    Responsabil
                     <input
                         type="text"
                         value={extraInfoInput}
@@ -151,20 +151,61 @@ const ChatComponent = () => {
                         className="input-field"
                     />
                 </label>
-                {Array.from({ length: 7 }).map((_, index) => (
-                    <label key={index}>
-                        Choose Option {index + 1}:
-                        <select
-                            value={dropdownValue}
-                            onChange={(e) => setDropdownValue(e.target.value)}
-                            className="custom-select"
-                        >
-                            <option value="Option1">Option 1</option>
-                            <option value="Option2">Option 2</option>
-                            <option value="Option3">Option 3</option>
-                        </select>
-                    </label>
-                ))}
+                <label>
+                    Responsabil
+                    <input
+                        type="text"
+                        value={extraInfoInput}
+                        onChange={(e) => setExtraInfoInput(e.target.value)}
+                        className="input-field"
+                    />
+                </label>
+                <label>
+                    Responsabil
+                    <input
+                        type="text"
+                        value={extraInfoInput}
+                        onChange={(e) => setExtraInfoInput(e.target.value)}
+                        className="input-field"
+                    />
+                </label>
+                <label>
+                    Responsabil
+                    <input
+                        type="text"
+                        value={extraInfoInput}
+                        onChange={(e) => setExtraInfoInput(e.target.value)}
+                        className="input-field"
+                    />
+                </label>
+                <label>
+                    Responsabil
+                    <input
+                        type="text"
+                        value={extraInfoInput}
+                        onChange={(e) => setExtraInfoInput(e.target.value)}
+                        className="input-field"
+                    />
+                </label>
+                <label>
+                    Responsabil
+                    <input
+                        type="text"
+                        value={extraInfoInput}
+                        onChange={(e) => setExtraInfoInput(e.target.value)}
+                        className="input-field"
+                    />
+                </label>
+                <label>
+                    Responsabil
+                    <input
+                        type="text"
+                        value={extraInfoInput}
+                        onChange={(e) => setExtraInfoInput(e.target.value)}
+                        className="input-field"
+                    />
+                </label>
+                
             </div>
         </div>
     );

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import TicketModal from './TicketModal';
-import { workflowOptions } from './WorkFlowOption';
-import { priorityOptions } from './PriorityOption';
+import { workflowOptions } from './FormOptions/WorkFlowOption';
+import { priorityOptions } from './FormOptions/PriorityOption';
 import { useNavigate } from 'react-router-dom'; // Импортируем useNavigate
 
 import Cookies from 'js-cookie';
