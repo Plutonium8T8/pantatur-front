@@ -189,8 +189,8 @@ const WorkflowDashboard = () => {
                     >
                         <div className="name-workflow"
                             style={{
-                                // borderColor: workflowStyles[workflow]?.borderColor || '',
                                 backgroundColor: workflowStyles[workflow]?.backgroundColor || '',
+                                // borderColor: workflowStyles[workflow]?.borderColor || '',
                                 // borderWidth: '1px',
                                 // borderStyle: 'solid'
                             }}
@@ -220,7 +220,7 @@ const WorkflowDashboard = () => {
                                                     <div>{ticket.contact || "no contact"}</div>
                                                     <div>{ticket.transport || "no transport"}</div>
                                                     <div>{ticket.country || "no country"}</div>
-                                                    <div>{ticket.id || "no country"}</div>
+                                                    <div>{ticket.id || "no id"}</div>
                                                 </div>
                                             </div>
                                             <div className='container-time-tasks'>
@@ -228,22 +228,17 @@ const WorkflowDashboard = () => {
                                                 <div>tasks</div>
                                             </div>
                                         </div>
-
                                     );
                                 })}
                         </div>
                     </div>
                 ))}
-
             </div>
 
             {currentTicket && (
                 <TicketModal
                     ticket={currentTicket}
-
                     onClose={closeModal}
-
-
                 />
             )}
         </div>
