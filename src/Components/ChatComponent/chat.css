@@ -213,4 +213,28 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+    text-align:left;
+}
+.react-datepicker__input-container {
+    position: relative;
+    display: inline-block;
+    /* width: 100%; */
+}
+.react-datepicker__close-icon {
+    position: relative;
+}
+.react-datepicker__close-icon::after {
+    cursor: pointer;
+    color: black;
+    background-color: #88a5cd;
+    border-radius: 50%;
+    height: 16px;
+    width: 16px;
+    padding: 2px;
+    font-size: 12px;
+    line-height: 1;
+    text-align: center;
+    display: table-cell;
+    vertical-align: middle;
+    content: "x";
 }
