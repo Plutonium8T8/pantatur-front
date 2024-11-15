@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import CryptoJS from 'crypto-js';
 import AES from 'crypto-js/aes';
 import Utf8 from 'crypto-js/enc-utf8';
@@ -14,7 +15,6 @@ import { purchaseProcessingOptions } from '../../FormOptions/PurchaseProcessingO
 import { serviceTypeOptions } from '../../FormOptions/ServiceTypeOptions';
 import { sourceOfLeadOptions } from '../../FormOptions/SourceOfLeadOptions';
 import { promoOptions } from '../../FormOptions/PromoOptions';
-import { useNavigate, useParams } from 'react-router-dom';
 
 import './chat.css';
 
@@ -55,6 +55,11 @@ const ChatComponent = () => {
     const messageContainerRef = useRef(null);
     const navigate = useNavigate();
     const { ticketId } = useParams(); // Получаем ticketId из URL
+
+    const handleTicketClick = (ticketId) => {
+        setSelectedTicketId(ticketId); // Устанавливаем выбранный тикет
+        navigate(`/chat/${ticketId}`); // Меняем путь в браузере
+    };
 
     useEffect(() => {
         // Если ticketId передан через URL, устанавливаем его как selectedTicketId
@@ -154,7 +159,7 @@ const ChatComponent = () => {
                     <div
                         key={ticket.id}
                         className={`chat-item ${ticket.id === selectedTicketId ? 'active' : ''}`}
-                        onClick={() => setSelectedTicketId(ticket.id)} // Выбираем тикет
+                        onClick={() => handleTicketClick(ticket.id)} // Навигация и установка состояния
                     >
                         <div>{ticket.contact || "no contact"}</div>
                         <div>{ticket.transport || "no transport"}</div>
