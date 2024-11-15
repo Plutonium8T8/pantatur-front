@@ -15,6 +15,7 @@ import { purchaseProcessingOptions } from '../../FormOptions/PurchaseProcessingO
 import { serviceTypeOptions } from '../../FormOptions/ServiceTypeOptions';
 import { sourceOfLeadOptions } from '../../FormOptions/SourceOfLeadOptions';
 import { promoOptions } from '../../FormOptions/PromoOptions';
+import DatePicker from 'react-datepicker';
 
 import './chat.css';
 
@@ -197,17 +198,9 @@ const ChatComponent = () => {
                 <h3>Additional Information</h3>
                 {selectedTicketId && (
                     <>
+                        <div>Responsabil - select cu toti operatorii</div>
                         <label>
-                            Responsabil
-                            <input
-                                type="text"
-                                value={extraInfo[selectedTicketId]?.responsabil || ""}
-                                onChange={(e) => handleSelectChange(selectedTicketId, 'responsabil', e.target.value)}
-                                className="input-field"
-                            />
-                        </label>
-                        <label>
-                            Sale
+                            Sale (suma finala care achita clientul ?)
                             <input
                                 type="text"
                                 value={extraInfo[selectedTicketId]?.sale || ""}
@@ -216,55 +209,6 @@ const ChatComponent = () => {
                             />
                         </label>
                         <div className='selects-container'>
-                            <Select
-                                options={transportOptions}
-                                label="Transport"
-                                id="transport-select"
-                                value={extraInfo[selectedTicketId]?.transport || ""}
-                                onChange={(value) => handleSelectChange(selectedTicketId, 'transport', value)}
-                            />
-                            <Select
-                                options={countryOptions}
-                                label="Country"
-                                id="country-select"
-                                value={extraInfo[selectedTicketId]?.country || ""}
-                                onChange={(value) => handleSelectChange(selectedTicketId, 'country', value)}
-                            />
-                            <Select
-                                options={marketingOptions}
-                                label="Marketing"
-                                id="marketing-select"
-                                value={extraInfo[selectedTicketId]?.marketing || ""}
-                                onChange={(value) => handleSelectChange(selectedTicketId, 'marketing', value)}
-                            />
-                            <Select
-                                options={nameExcursionOptions}
-                                label="Excursie"
-                                id="excursie-select"
-                                value={extraInfo[selectedTicketId]?.excursie || ""}
-                                onChange={(value) => handleSelectChange(selectedTicketId, 'excursie', value)}
-                            />
-                            <Select
-                                options={paymentStatusOptions}
-                                label="Payment"
-                                id="payment-select"
-                                value={extraInfo[selectedTicketId]?.payment || ""}
-                                onChange={(value) => handleSelectChange(selectedTicketId, 'payment', value)}
-                            />
-                            <Select
-                                options={purchaseProcessingOptions}
-                                label="Purchase"
-                                id="purchase-select"
-                                value={extraInfo[selectedTicketId]?.purchase || ""}
-                                onChange={(value) => handleSelectChange(selectedTicketId, 'purchase', value)}
-                            />
-                            <Select
-                                options={serviceTypeOptions}
-                                label="Service"
-                                id="service-select"
-                                value={extraInfo[selectedTicketId]?.service || ""}
-                                onChange={(value) => handleSelectChange(selectedTicketId, 'service', value)}
-                            />
                             <Select
                                 options={sourceOfLeadOptions}
                                 label="Lead Source"
@@ -278,6 +222,63 @@ const ChatComponent = () => {
                                 id="promo-select"
                                 value={extraInfo[selectedTicketId]?.promo || ""}
                                 onChange={(value) => handleSelectChange(selectedTicketId, 'promo', value)}
+                            />
+                            <Select
+                                options={marketingOptions}
+                                label="Marketing"
+                                id="marketing-select"
+                                value={extraInfo[selectedTicketId]?.marketing || ""}
+                                onChange={(value) => handleSelectChange(selectedTicketId, 'marketing', value)}
+                            />
+                            <Select
+                                options={serviceTypeOptions}
+                                label="Service"
+                                id="service-select"
+                                value={extraInfo[selectedTicketId]?.service || ""}
+                                onChange={(value) => handleSelectChange(selectedTicketId, 'service', value)}
+                            />
+                            <Select
+                                options={countryOptions}
+                                label="Country"
+                                id="country-select"
+                                value={extraInfo[selectedTicketId]?.country || ""}
+                                onChange={(value) => handleSelectChange(selectedTicketId, 'country', value)}
+                            />
+                            <Select
+                                options={transportOptions}
+                                label="Transport"
+                                id="transport-select"
+                                value={extraInfo[selectedTicketId]?.transport || ""}
+                                onChange={(value) => handleSelectChange(selectedTicketId, 'transport', value)}
+                            />
+                            <Select
+                                options={nameExcursionOptions}
+                                label="Excursie"
+                                id="excursie-select"
+                                value={extraInfo[selectedTicketId]?.excursie || ""}
+                                onChange={(value) => handleSelectChange(selectedTicketId, 'excursie', value)}
+                            />
+                            <div>data plecarii</div>
+                            <div>data intoarcerii + ora</div>
+                            <Select
+                                options={purchaseProcessingOptions}
+                                label="Purchase"
+                                id="purchase-select"
+                                value={extraInfo[selectedTicketId]?.purchase || ""}
+                                onChange={(value) => handleSelectChange(selectedTicketId, 'purchase', value)}
+                            />
+                            <div>Nr de contract</div>
+                            <div>Data contractului</div>
+                            <div>Tour operator </div>
+                            <div>Nr cererii de la operator - coincide cu nr de contract ? </div>
+                            <div>Pret neto furnizor Euro - input - string (euro) ex. 460 euro</div>
+                            <div>Comision companie - 100 euro (auto calculated)</div>
+                            <Select
+                                options={paymentStatusOptions}
+                                label="Payment"
+                                id="payment-select"
+                                value={extraInfo[selectedTicketId]?.payment || ""}
+                                onChange={(value) => handleSelectChange(selectedTicketId, 'payment', value)}
                             />
                         </div>
                     </>
