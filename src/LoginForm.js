@@ -103,7 +103,7 @@ function LoginForm({ onLoginSuccess }) {
           value={form.email}
           onChange={handleInputChange}
           placeholder="Email"
-          className="input-field"
+          className="input-field-loghin"
         />
 
         {!isLogin && (
@@ -112,7 +112,7 @@ function LoginForm({ onLoginSuccess }) {
             value={form.username}
             onChange={handleInputChange}
             placeholder="Username"
-            className="input-field"
+            className="input-field-loghin"
           />
         )}
 
@@ -122,7 +122,7 @@ function LoginForm({ onLoginSuccess }) {
           value={form.password}
           onChange={handleInputChange}
           placeholder="Password"
-          className="input-field"
+          className="input-field-loghin"
         />
 
         <button onClick={handleSubmit} className="submit-button" disabled={isLoading}>

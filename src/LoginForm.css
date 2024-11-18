@@ -24,7 +24,7 @@ h2 {
     margin-bottom: 20px;
 }
 
-.input-field {
+.input-field-loghin {
     display: block;
     margin-bottom: 1rem;
     border: 1px solid #ccc;
@@ -32,7 +32,7 @@ h2 {
     font-size: 16px;
 }
 
-.input-field:focus {
+.input-field-loghin:focus {
     outline: none;
     border-color: #007bff;
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);

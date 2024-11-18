@@ -17,6 +17,8 @@ import { sourceOfLeadOptions } from '../../FormOptions/SourceOfLeadOptions';
 import { promoOptions } from '../../FormOptions/PromoOptions';
 import { responsabilLead } from '../../FormOptions/ResponsabilLead';
 import DatePicker from 'react-datepicker';
+import Input from '../InputComponent/InputComponent';
+
 import "react-datepicker/dist/react-datepicker.css";
 
 import './chat.css';
@@ -208,16 +210,17 @@ const ChatComponent = () => {
                                 value={extraInfo[selectedTicketId]?.responsabilLead || ""}
                                 onChange={(value) => handleSelectChange(selectedTicketId, 'responsabilLead', value)}
                             />
-                            <label>
-                                Sale
-                                <input
-                                    type="number"
-                                    value={extraInfo[selectedTicketId]?.sale || ""}
-                                    onChange={(e) => handleSelectChange(selectedTicketId, 'sale', e.target.value)}
-                                    className="input-field"
-                                    placeholder='Indicati suma in euro'
-                                />
-                            </label>
+                            <Input
+                                label="Sale"
+                                type="number"
+                                value={extraInfo[selectedTicketId]?.sale || ""}
+                                onChange={(e) =>
+                                    handleSelectChange(selectedTicketId, 'sale', e.target.value)
+                                }
+                                className="input-field"
+                                placeholder="Indicati suma in euro"
+                                id="sale-input"
+                            />
                             <Select
                                 options={sourceOfLeadOptions}
                                 label="Lead Source"
@@ -267,30 +270,40 @@ const ChatComponent = () => {
                                 value={extraInfo[selectedTicketId]?.excursie || ""}
                                 onChange={(value) => handleSelectChange(selectedTicketId, 'excursie', value)}
                             />
-                            <div>Data plecarii</div>
-                            <DatePicker
-                                selected={extraInfo[selectedTicketId]?.startDate || null}
-                                onChange={(date) => handleSelectChange(selectedTicketId, 'startDate', date)}
-                                isClearable
-                                placeholderText="Alegeti data și ora plecării"
-                                dateFormat="dd.MM.yyyy HH:mm"
-                                showTimeSelect
-                                timeFormat="HH:mm"
-                                timeIntervals={15} // Интервалы времени, например, каждые 15 минут
-                                timeCaption="Ora"  // Заголовок для секции времени
-                            />
-                            <div>Alegeti data si ora intoarcerii</div>
-                            <DatePicker
-                                selected={extraInfo[selectedTicketId]?.BackDate || null}
-                                onChange={(date) => handleSelectChange(selectedTicketId, 'BackDate', date)}
-                                isClearable
-                                placeholderText="Alegeti data si intoarcerii"
-                                dateFormat="dd.MM.yyyy HH:mm"
-                                showTimeSelect
-                                timeFormat="HH:mm"
-                                timeIntervals={15} // Интервалы времени, например, каждые 15 минут
-                                timeCaption="Ora"
-                            />
+                            <div className='date-go-back'>
+                                <div className='label-data-go'>
+                                <div>Data plecarii</div>
+                                <DatePicker
+                                    showIcon
+                                    selected={extraInfo[selectedTicketId]?.startDate || null}
+                                    onChange={(date) => handleSelectChange(selectedTicketId, 'startDate', date)}
+                                    isClearable
+                                    placeholderText="Alegeti data și ora plecării"
+                                    dateFormat="dd.MM.yyyy HH:mm"
+                                    showTimeSelect
+                                    timeFormat="HH:mm"
+                                    timeIntervals={15} // Интервалы времени, например, каждые 15 минут
+                                    timeCaption="Ora"  // Заголовок для секции времени
+                                    customInput={<input className="example-custom-input" />}  // Правильный синтаксис для customInput
+                                />
+                                </div>
+                                <div className='label-data-back'>
+                                <div>Data intoarcerii</div>
+                                <DatePicker
+                                    showIcon
+                                    selected={extraInfo[selectedTicketId]?.BackDate || null}
+                                    onChange={(date) => handleSelectChange(selectedTicketId, 'BackDate', date)}
+                                    isClearable
+                                    placeholderText="Alegeti data si ora intoarcerii"
+                                    dateFormat="dd.MM.yyyy HH:mm"
+                                    showTimeSelect
+                                    timeFormat="HH:mm"
+                                    timeIntervals={15} // Интервалы времени, например, каждые 15 минут
+                                    timeCaption="Ora"
+                                    customInput={<input className="example-custom-input" />}  // Правильный синтаксис для customInput
+                                />
+                                </div>
+                            </div>
                             <Select
                                 options={purchaseProcessingOptions}
                                 label="Purchase"
@@ -298,18 +311,21 @@ const ChatComponent = () => {
                                 value={extraInfo[selectedTicketId]?.purchase || ""}
                                 onChange={(value) => handleSelectChange(selectedTicketId, 'purchase', value)}
                             />
-                            <label>
-                                Nr de contract
-                                <input
-                                    type="text"
-                                    value={extraInfo[selectedTicketId]?.contractNumber || ""}
-                                    onChange={(e) => handleSelectChange(selectedTicketId, 'contractNumber', e.target.value)}
-                                    className="input-field"
-                                    placeholder='Nr contract'
-                                />
-                            </label>
+                            <Input
+                                label="Nr de contract"
+                                type="text"
+                                value={extraInfo[selectedTicketId]?.contractNumber || ""}
+                                onChange={(e) =>
+                                    handleSelectChange(selectedTicketId, 'contractNumber', e.target.value)
+                                }
+                                className="input-field"
+                                placeholder="Nr contract"
+                                id="contract-number-input"
+                            />
+                            <div className='date-contract-container'>
                             <div>Data contractului</div>
                             <DatePicker
+                                showIcon
                                 selected={extraInfo[selectedTicketId]?.ContractDate || null}
                                 onChange={(date) => handleSelectChange(selectedTicketId, 'ContractDate', date)}
                                 isClearable
@@ -319,28 +335,42 @@ const ChatComponent = () => {
                                 timeFormat="HH:mm"
                                 timeIntervals={15} // Интервалы времени, например, каждые 15 минут
                                 timeCaption="Ora"
+                                customInput={<input className="example-custom-input" />}  // Правильный синтаксис для customInput
                             />
-                            <label>
-                                Tour operator
-                                <input
-                                    type="text"
-                                    value={extraInfo[selectedTicketId]?.tourOperator || ""}
-                                    onChange={(e) => handleSelectChange(selectedTicketId, 'tourOperator', e.target.value)}
-                                    className="input-field"
-                                    placeholder='Tour operator'
-                                />
-                            </label>
-                            <div>Nr cererii de la operator - coincide cu nr de contract ? </div>
-                            <label>
-                                Pret neto (euro)
-                                <input
-                                    type="number"
-                                    value={extraInfo[selectedTicketId]?.priceNeto || ""}
-                                    onChange={(e) => handleSelectChange(selectedTicketId, 'priceNeto', e.target.value)}
-                                    className="input-field"
-                                    placeholder='Pret neto'
-                                />
-                            </label>
+                            </div>
+                            <Input
+                                label="Tour operator"
+                                type="text"
+                                value={extraInfo[selectedTicketId]?.tourOperator || ""}
+                                onChange={(e) =>
+                                    handleSelectChange(selectedTicketId, 'tourOperator', e.target.value)
+                                }
+                                className="input-field"
+                                placeholder="Tour operator"
+                                id="tour-operator-input"
+                            />
+                            <Input
+                                label="Nr cererii de la operator"
+                                type="text"
+                                value={extraInfo[selectedTicketId]?.requestNumberFromTheOperator || ""}
+                                onChange={(e) =>
+                                    handleSelectChange(selectedTicketId, 'requestNumberFromTheOperator', e.target.value)
+                                }
+                                className="input-field"
+                                placeholder="Nr cererii de la operator"
+                                id="tour-operator-input"
+                            />
+                            <Input
+                                label="Pret neto (euro)"
+                                type="number"
+                                value={extraInfo[selectedTicketId]?.priceNeto || ""}
+                                onChange={(e) =>
+                                    handleSelectChange(selectedTicketId, 'priceNeto', e.target.value)
+                                }
+                                className="input-field"
+                                placeholder="Pret neto"
+                                id="price-neto-input"
+                            />
                             <label>Comision companie - 100 euro (auto calculated)</label>
                             <Select
                                 options={paymentStatusOptions}

@@ -34,6 +34,7 @@
     padding: 15px;
     overflow-y: auto;
     scroll-behavior: smooth;
+    width: 650px;
 }
 
 /* Правая колонка для дополнительной информации */
@@ -141,7 +142,7 @@
 }
 
 .extra-info {
-    width: 250px;
+    width: 500px;
     background-color: #f8f8f8;
     padding: 10px;
     border-left: 1px solid #ddd;
@@ -156,8 +157,9 @@
 
 .select-container {
     display: flex;
-    align-items: center;
-    margin-bottom: 10px;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 10px;
 }
 
 .select-container label {
@@ -221,7 +223,7 @@
     /* width: 100%; */
 }
 .react-datepicker__close-icon {
-    position: relative;
+    padding-right: 15px;
 }
 .react-datepicker__close-icon::after {
     cursor: pointer;
@@ -237,4 +239,29 @@
     display: table-cell;
     vertical-align: middle;
     content: "x";
+}
+.example-custom-input {
+    display: flex;
+    color: black;
+    font-size: 15px;
+    padding: 4px;
+    border-radius: 10px;
+    border: 1px solid gray;
+    /* width: 93%; */
+}
+.date-go-back {
+    display: flex;
+    flex-direction: row;
+    gap: 22px;
+    padding: 10px 0px;
+}
+.date-contract-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 110px;
+    font-weight: bold;
+    color: #555;
+    padding: 0px !important;
+    margin: 0px !important;
 }
