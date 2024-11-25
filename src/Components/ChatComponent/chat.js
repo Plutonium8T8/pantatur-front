@@ -79,7 +79,13 @@ const ChatComponent = () => {
             console.log("Extra info for selected ticket:", extraInfo[selectedTicketId] || "No extra info available");
         }
     }, [selectedTicketId]);
-    
+
+    useEffect(() => {
+        if (selectedTicketId) {
+            fetchTicketExtraInfo(selectedTicketId); // Загружаем дополнительную информацию при изменении тикета
+        }
+    }, [selectedTicketId]);
+
     // Получение тикетов через fetch
     const fetchTickets = async () => {
         try {
@@ -102,6 +108,32 @@ const ChatComponent = () => {
             console.log("+++ Загруженные тикеты:", data);
         } catch (error) {
             console.error('Ошибка:', error);
+        }
+    };
+
+    // Получение дополнительной информации для тикета
+    const fetchTicketExtraInfo = async (selectedTicketId) => {
+        try {
+            const token = Cookies.get('jwt');
+            const response = await fetch(`https://pandaturapi.com/ticket-info/${selectedTicketId}`, {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Ошибка при получении дополнительной информации');
+            }
+
+            const data = await response.json();
+            setExtraInfo((prevState) => ({
+                ...prevState,
+                [ticketId]: data, // Сохраняем полученную информацию в состоянии extraInfo
+            }));
+        } catch (error) {
+            console.error('Ошибка при получении дополнительной информации:', error);
         }
     };
 
@@ -155,6 +187,7 @@ const ChatComponent = () => {
     useEffect(() => {
         console.log("Текущее состояние extraInfo:", extraInfo);
     }, [extraInfo]);
+    
     // отправка данных в бэк
     const sendExtraInfo = async () => {
         if (!selectedTicketId) {
