@@ -154,8 +154,45 @@ const ChatComponent = () => {
     useEffect(() => {
         console.log("Текущее состояние extraInfo:", extraInfo);
     }, [extraInfo]);
-
-
+// отправка данных в бэк
+    const sendExtraInfo = async () => {
+        if (!selectedTicketId) {
+            console.warn('Нет выбранного тикета для отправки данных.');
+            return;
+        }
+    
+        const token = Cookies.get('jwt'); // Получение токена из cookie
+        const ticketExtraInfo = extraInfo[selectedTicketId]; // Получаем информацию для выбранного тикета
+    
+        if (!ticketExtraInfo) {
+            console.warn('Нет дополнительной информации для выбранного тикета.');
+            return;
+        }
+    
+        try {
+            const response = await fetch(`https://pandaturapi.com/ticket-info/${selectedTicketId}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ticketId: selectedTicketId,
+                    ...ticketExtraInfo, // Отправляем дополнительную информацию
+                }),
+            });
+    
+            if (!response.ok) {
+                throw new Error('Ошибка при отправке данных');
+            }
+    
+            const result = await response.json();
+            console.log('Данные успешно отправлены:', result);
+        } catch (error) {
+            console.error('Ошибка при отправке дополнительной информации:', error);
+        }
+    };
+    
     return (
         <div className="chat-container">
             <div className="users-container">
@@ -225,8 +262,8 @@ const ChatComponent = () => {
                                 options={sourceOfLeadOptions}
                                 label="Lead Source"
                                 id="lead-source-select"
-                                value={extraInfo[selectedTicketId]?.leadSource || ""}
-                                onChange={(value) => handleSelectChange(selectedTicketId, 'leadSource', value)}
+                                value={extraInfo[selectedTicketId]?.lead_source || ""}
+                                onChange={(value) => handleSelectChange(selectedTicketId, 'lead_source', value)}
                             />
                             <Select
                                 options={promoOptions}
@@ -267,41 +304,41 @@ const ChatComponent = () => {
                                 options={nameExcursionOptions}
                                 label="Excursie"
                                 id="excursie-select"
-                                value={extraInfo[selectedTicketId]?.excursie || ""}
-                                onChange={(value) => handleSelectChange(selectedTicketId, 'excursie', value)}
+                                value={extraInfo[selectedTicketId]?.excursion || ""}
+                                onChange={(value) => handleSelectChange(selectedTicketId, 'excursion', value)}
                             />
                             <div className='date-go-back'>
                                 <div className='label-data-go'>
-                                <div>Data plecarii</div>
-                                <DatePicker
-                                    showIcon
-                                    selected={extraInfo[selectedTicketId]?.startDate || null}
-                                    onChange={(date) => handleSelectChange(selectedTicketId, 'startDate', date)}
-                                    isClearable
-                                    placeholderText="Alegeti data și ora plecării"
-                                    dateFormat="dd.MM.yyyy HH:mm"
-                                    showTimeSelect
-                                    timeFormat="HH:mm"
-                                    timeIntervals={15} // Интервалы времени, например, каждые 15 минут
-                                    timeCaption="Ora"  // Заголовок для секции времени
-                                    customInput={<input className="example-custom-input" />}  // Правильный синтаксис для customInput
-                                />
+                                    <div>Data plecarii</div>
+                                    <DatePicker
+                                        showIcon
+                                        selected={extraInfo[selectedTicketId]?.leave_date || null}
+                                        onChange={(date) => handleSelectChange(selectedTicketId, 'leave_date', date)}
+                                        isClearable
+                                        placeholderText="Alegeti data și ora plecării"
+                                        dateFormat="dd.MM.yyyy HH:mm"
+                                        showTimeSelect
+                                        timeFormat="HH:mm"
+                                        timeIntervals={15} // Интервалы времени, например, каждые 15 минут
+                                        timeCaption="Ora"  // Заголовок для секции времени
+                                        customInput={<input className="example-custom-input" />}  // Правильный синтаксис для customInput
+                                    />
                                 </div>
                                 <div className='label-data-back'>
-                                <div>Data intoarcerii</div>
-                                <DatePicker
-                                    showIcon
-                                    selected={extraInfo[selectedTicketId]?.BackDate || null}
-                                    onChange={(date) => handleSelectChange(selectedTicketId, 'BackDate', date)}
-                                    isClearable
-                                    placeholderText="Alegeti data si ora intoarcerii"
-                                    dateFormat="dd.MM.yyyy HH:mm"
-                                    showTimeSelect
-                                    timeFormat="HH:mm"
-                                    timeIntervals={15} // Интервалы времени, например, каждые 15 минут
-                                    timeCaption="Ora"
-                                    customInput={<input className="example-custom-input" />}  // Правильный синтаксис для customInput
-                                />
+                                    <div>Data intoarcerii</div>
+                                    <DatePicker
+                                        showIcon
+                                        selected={extraInfo[selectedTicketId]?.arrive_date || null}
+                                        onChange={(date) => handleSelectChange(selectedTicketId, 'arrive_date', date)}
+                                        isClearable
+                                        placeholderText="Alegeti data si ora intoarcerii"
+                                        dateFormat="dd.MM.yyyy HH:mm"
+                                        showTimeSelect
+                                        timeFormat="HH:mm"
+                                        timeIntervals={15} // Интервалы времени, например, каждые 15 минут
+                                        timeCaption="Ora"
+                                        customInput={<input className="example-custom-input" />}  // Правильный синтаксис для customInput
+                                    />
                                 </div>
                             </div>
                             <Select
@@ -314,36 +351,36 @@ const ChatComponent = () => {
                             <Input
                                 label="Nr de contract"
                                 type="text"
-                                value={extraInfo[selectedTicketId]?.contractNumber || ""}
+                                value={extraInfo[selectedTicketId]?.contract_id || ""}
                                 onChange={(e) =>
-                                    handleSelectChange(selectedTicketId, 'contractNumber', e.target.value)
+                                    handleSelectChange(selectedTicketId, 'contract_id', e.target.value)
                                 }
                                 className="input-field"
                                 placeholder="Nr contract"
                                 id="contract-number-input"
                             />
                             <div className='date-contract-container'>
-                            <div>Data contractului</div>
-                            <DatePicker
-                                showIcon
-                                selected={extraInfo[selectedTicketId]?.ContractDate || null}
-                                onChange={(date) => handleSelectChange(selectedTicketId, 'ContractDate', date)}
-                                isClearable
-                                placeholderText="Data contractului"
-                                dateFormat="dd.MM.yyyy HH:mm"
-                                showTimeSelect
-                                timeFormat="HH:mm"
-                                timeIntervals={15} // Интервалы времени, например, каждые 15 минут
-                                timeCaption="Ora"
-                                customInput={<input className="example-custom-input" />}  // Правильный синтаксис для customInput
-                            />
+                                <div>Data contractului</div>
+                                <DatePicker
+                                    showIcon
+                                    selected={extraInfo[selectedTicketId]?.contract_date || null}
+                                    onChange={(date) => handleSelectChange(selectedTicketId, 'contract_date', date)}
+                                    isClearable
+                                    placeholderText="Data contractului"
+                                    dateFormat="dd.MM.yyyy HH:mm"
+                                    showTimeSelect
+                                    timeFormat="HH:mm"
+                                    timeIntervals={15} // Интервалы времени, например, каждые 15 минут
+                                    timeCaption="Ora"
+                                    customInput={<input className="example-custom-input" />}  // Правильный синтаксис для customInput
+                                />
                             </div>
                             <Input
                                 label="Tour operator"
                                 type="text"
-                                value={extraInfo[selectedTicketId]?.tourOperator || ""}
+                                value={extraInfo[selectedTicketId]?.tour_operator || ""}
                                 onChange={(e) =>
-                                    handleSelectChange(selectedTicketId, 'tourOperator', e.target.value)
+                                    handleSelectChange(selectedTicketId, 'tour_operator', e.target.value)
                                 }
                                 className="input-field"
                                 placeholder="Tour operator"
@@ -352,9 +389,9 @@ const ChatComponent = () => {
                             <Input
                                 label="Nr cererii de la operator"
                                 type="text"
-                                value={extraInfo[selectedTicketId]?.requestNumberFromTheOperator || ""}
+                                value={extraInfo[selectedTicketId]?.request_id || ""}
                                 onChange={(e) =>
-                                    handleSelectChange(selectedTicketId, 'requestNumberFromTheOperator', e.target.value)
+                                    handleSelectChange(selectedTicketId, 'request_id', e.target.value)
                                 }
                                 className="input-field"
                                 placeholder="Nr cererii de la operator"
@@ -363,9 +400,9 @@ const ChatComponent = () => {
                             <Input
                                 label="Pret neto (euro)"
                                 type="number"
-                                value={extraInfo[selectedTicketId]?.priceNeto || ""}
+                                value={extraInfo[selectedTicketId]?.price_netto || ""}
                                 onChange={(e) =>
-                                    handleSelectChange(selectedTicketId, 'priceNeto', e.target.value)
+                                    handleSelectChange(selectedTicketId, 'price_netto', e.target.value)
                                 }
                                 className="input-field"
                                 placeholder="Pret neto"
@@ -376,9 +413,14 @@ const ChatComponent = () => {
                                 options={paymentStatusOptions}
                                 label="Payment"
                                 id="payment-select"
-                                value={extraInfo[selectedTicketId]?.payment || ""}
-                                onChange={(value) => handleSelectChange(selectedTicketId, 'payment', value)}
+                                value={extraInfo[selectedTicketId]?.payment_method || ""}
+                                onChange={(value) => handleSelectChange(selectedTicketId, 'payment_method', value)}
                             />
+                        </div>
+                        <div className="extra-info-actions">
+                            <button onClick={sendExtraInfo} className="send-extra-info-button">
+                                Отправить дополнительную информацию
+                            </button>
                         </div>
                     </>
                 )}
