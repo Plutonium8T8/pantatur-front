@@ -79,6 +79,7 @@ const ChatComponent = () => {
             console.log("Extra info for selected ticket:", extraInfo[selectedTicketId] || "No extra info available");
         }
     }, [selectedTicketId]);
+    
     // Получение тикетов через fetch
     const fetchTickets = async () => {
         try {
@@ -154,21 +155,21 @@ const ChatComponent = () => {
     useEffect(() => {
         console.log("Текущее состояние extraInfo:", extraInfo);
     }, [extraInfo]);
-// отправка данных в бэк
+    // отправка данных в бэк
     const sendExtraInfo = async () => {
         if (!selectedTicketId) {
             console.warn('Нет выбранного тикета для отправки данных.');
             return;
         }
-    
+
         const token = Cookies.get('jwt'); // Получение токена из cookie
         const ticketExtraInfo = extraInfo[selectedTicketId]; // Получаем информацию для выбранного тикета
-    
+
         if (!ticketExtraInfo) {
             console.warn('Нет дополнительной информации для выбранного тикета.');
             return;
         }
-    
+
         try {
             const response = await fetch(`https://pandaturapi.com/ticket-info/${selectedTicketId}`, {
                 method: 'POST',
@@ -181,18 +182,18 @@ const ChatComponent = () => {
                     ...ticketExtraInfo, // Отправляем дополнительную информацию
                 }),
             });
-    
+
             if (!response.ok) {
                 throw new Error('Ошибка при отправке данных');
             }
-    
+
             const result = await response.json();
             console.log('Данные успешно отправлены:', result);
         } catch (error) {
             console.error('Ошибка при отправке дополнительной информации:', error);
         }
     };
-    
+
     return (
         <div className="chat-container">
             <div className="users-container">
