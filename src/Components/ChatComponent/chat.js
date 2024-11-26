@@ -242,41 +242,6 @@ const ChatComponent = () => {
         }
     };
 
-    const updateWorkflowOnServer = async (ticketId, newWorkflow) => {
-        try {
-            const token = Cookies.get('jwt');
-            const response = await fetch(`https://pandaturapi.com/api/tickets/${selectedTicketId}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({ workflow: newWorkflow }),
-            });
-
-            if (!response.ok) {
-                throw new Error(`Ошибка: ${response.statusText}`);
-            }
-
-            const data = await response.json();
-            console.log('Workflow успешно обновлен на сервере:', data);
-        } catch (error) {
-            console.error('Ошибка при обновлении workflow:', error);
-        }
-    };
-
-    // Обработчик изменения workflow
-    const handleWorkflowChange = (event) => {
-        const newWorkflow = event.target.value;
-
-        // Обновляем локальное состояние
-        const updatedTicket = { ...selectedTicketId, workflow: newWorkflow };
-        setSelectedTicketId(updatedTicket);
-
-        // Отправляем обновление на сервер
-        updateWorkflowOnServer(selectedTicketId.id, newWorkflow);
-    };
-
     const workflowStyles = {
         Interesat: { backgroundColor: '#ffff88', borderColor: '#1B5E20' },
         'Apel de intrare': { backgroundColor: '#89C0FE', borderColor: '#388E3C' },
@@ -348,7 +313,7 @@ const ChatComponent = () => {
                         <div className='selects-container'>
                             <Workflow
                                 ticket={selectedTicketId}
-                                onChange={handleWorkflowChange}
+                                onChange={"handleWorkflowChange"}
                                 style={{
                                     backgroundColor: workflowStyles[selectedTicketId?.workflow]?.backgroundColor || '',
                                     borderColor: workflowStyles[selectedTicketId?.workflow]?.borderColor || '',
