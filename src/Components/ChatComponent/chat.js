@@ -466,7 +466,17 @@ const ChatComponent = () => {
                                 placeholder="Pret neto"
                                 id="price-neto-input"
                             />
-                            <label>Comision companie - 100 euro (auto calculated)</label>
+                            <Input
+                                label="Comision companie"
+                                type="number"
+                                value={extraInfo[selectedTicketId]?.commission || ""}
+                                onChange={(e) =>
+                                    handleSelectChange(selectedTicketId, 'commission', e.target.value)
+                                }
+                                className="input-field"
+                                placeholder="Comision"
+                                id="commission-input"
+                            />
                             <Select
                                 options={paymentStatusOptions}
                                 label="Payment"
@@ -477,7 +487,7 @@ const ChatComponent = () => {
                         </div>
                         <div className="extra-info-actions">
                             <button onClick={sendExtraInfo} className="send-extra-info-button">
-                                {isLoading ? 'Actualizare...' : 'Trimite'}
+                                {isLoading ? 'Waiting...' : 'Actualizare'}
                             </button>
                         </div>
                     </>
