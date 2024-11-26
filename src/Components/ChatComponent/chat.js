@@ -18,10 +18,11 @@ import { promoOptions } from '../../FormOptions/PromoOptions';
 import TechnicianSelect from '../../FormOptions/ResponsabilLead';
 import DatePicker from 'react-datepicker';
 import Input from '../InputComponent/InputComponent';
-
+import Workflow from '../WorkFlowComponent/WorkflowComponent';
 import "react-datepicker/dist/react-datepicker.css";
 
 import './chat.css';
+import { workflowOptions } from '../../FormOptions/WorkFlowOption';
 
 const ENCRYPTION_KEY = '0123456789abcdef0123456789abcdef';
 
@@ -241,6 +242,52 @@ const ChatComponent = () => {
         }
     };
 
+    const updateWorkflowOnServer = async (ticketId, newWorkflow) => {
+        try {
+            const token = Cookies.get('jwt');
+            const response = await fetch(`https://pandaturapi.com/api/tickets/${selectedTicketId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ workflow: newWorkflow }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Ошибка: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            console.log('Workflow успешно обновлен на сервере:', data);
+        } catch (error) {
+            console.error('Ошибка при обновлении workflow:', error);
+        }
+    };
+
+    // Обработчик изменения workflow
+    const handleWorkflowChange = (event) => {
+        const newWorkflow = event.target.value;
+
+        // Обновляем локальное состояние
+        const updatedTicket = { ...selectedTicketId, workflow: newWorkflow };
+        setSelectedTicketId(updatedTicket);
+
+        // Отправляем обновление на сервер
+        updateWorkflowOnServer(selectedTicketId.id, newWorkflow);
+    };
+
+    const workflowStyles = {
+        Interesat: { backgroundColor: '#ffff88', borderColor: '#1B5E20' },
+        'Apel de intrare': { backgroundColor: '#89C0FE', borderColor: '#388E3C' },
+        "De prelucrat": { backgroundColor: '#ff8f92', borderColor: '#43A047' },
+        "Luat in lucru": { backgroundColor: '#ebffb1', borderColor: '#2E7D32' },
+        "Oferta trimisa": { backgroundColor: '#ffcc66', borderColor: '#2E7D32' },
+        "Aprobat cu client": { backgroundColor: '#ffc8c8', borderColor: '#2E7D32' },
+        "Contract semnat": { backgroundColor: '#ff8f92', borderColor: '#2E7D32' },
+        "Plata primita": { backgroundColor: '#fff000', borderColor: '#2E7D32' },
+        "Contract incheiat": { backgroundColor: '#87f2c0', borderColor: '#2E7D32' },
+    };
 
     return (
         <div className="chat-container">
@@ -260,8 +307,6 @@ const ChatComponent = () => {
                                 {/* <div>{ticket.country || "no country"}</div> */}
                                 <div>{ticket.id ? `Lead: #${ticket.id}` : "no id"}</div>
                                 <div>{ticket.workflow || "no workflow"}</div>
-
-
                             </div>
                         </div>
                         <div className='container-time-tasks-chat'>
@@ -301,6 +346,14 @@ const ChatComponent = () => {
                 {selectedTicketId && (
                     <>
                         <div className='selects-container'>
+                            <Workflow
+                                ticket={selectedTicketId}
+                                onChange={handleWorkflowChange}
+                                style={{
+                                    backgroundColor: workflowStyles[selectedTicketId?.workflow]?.backgroundColor || '',
+                                    borderColor: workflowStyles[selectedTicketId?.workflow]?.borderColor || '',
+                                }}
+                            />
                             <TechnicianSelect onTechnicianChange={handleTechnicianChange} />
                             <Input
                                 label="Sale"
