@@ -15,7 +15,7 @@ import { purchaseProcessingOptions } from '../../FormOptions/PurchaseProcessingO
 import { serviceTypeOptions } from '../../FormOptions/ServiceTypeOptions';
 import { sourceOfLeadOptions } from '../../FormOptions/SourceOfLeadOptions';
 import { promoOptions } from '../../FormOptions/PromoOptions';
-import { responsabilLead } from '../../FormOptions/ResponsabilLead';
+import TechnicianSelect from '../../FormOptions/ResponsabilLead';
 import DatePicker from 'react-datepicker';
 import Input from '../InputComponent/InputComponent';
 
@@ -60,6 +60,8 @@ const ChatComponent = () => {
     const messageContainerRef = useRef(null);
     const navigate = useNavigate();
     const { ticketId } = useParams(); // Получаем ticketId из URL
+    const [isLoading, setIsLoading] = useState(false); // Состояние загрузки
+    const [selectedTechnicianId, setSelectedTechnicianId] = useState('');
 
     const handleTicketClick = (ticketId) => {
         setSelectedTicketId(ticketId); // Устанавливаем выбранный тикет
@@ -183,25 +185,29 @@ const ChatComponent = () => {
         });
     };
 
+    const handleTechnicianChange = (technicianId) => {
+        console.log('Выбранный техник ID:', technicianId);
+        setSelectedTechnicianId(technicianId);
+    };
+
     // Используйте useEffect для логирования изменений в extraInfo
     useEffect(() => {
         console.log("Текущее состояние extraInfo:", extraInfo);
     }, [extraInfo]);
-    
+
     // отправка данных в бэк
     const sendExtraInfo = async () => {
-        if (!selectedTicketId) {
-            console.warn('Нет выбранного тикета для отправки данных.');
-            return;
-        }
-
         const token = Cookies.get('jwt'); // Получение токена из cookie
         const ticketExtraInfo = extraInfo[selectedTicketId]; // Получаем информацию для выбранного тикета
+        const technician_id = selectedTechnicianId; // Новое значение для technician_id
+
+        console.log('User ID перед отправкой:', userId);
 
         if (!ticketExtraInfo) {
-            console.warn('Нет дополнительной информации для выбранного тикета.');
+            console.warn('Нет дополнительной информации для выбранного тикета.', ticketExtraInfo);
             return;
         }
+        setIsLoading(true); // Устанавливаем состояние загрузки в true
 
         try {
             const response = await fetch(`https://pandaturapi.com/ticket-info/${selectedTicketId}`, {
@@ -211,8 +217,8 @@ const ChatComponent = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    ticketId: selectedTicketId,
-                    ...ticketExtraInfo, // Отправляем дополнительную информацию
+                    ...ticketExtraInfo, // Сначала добавляем все свойства из ticketExtraInfo
+                    technician_id, // Затем перезаписываем technician_id
                 }),
             });
 
@@ -220,12 +226,21 @@ const ChatComponent = () => {
                 throw new Error('Ошибка при отправке данных');
             }
 
+            console.log('Отправляемые данные:', {
+                ...ticketExtraInfo,
+                technician_id,
+            });
+
             const result = await response.json();
             console.log('Данные успешно отправлены:', result);
         } catch (error) {
             console.error('Ошибка при отправке дополнительной информации:', error);
         }
+        finally {
+            setIsLoading(false); // Отключаем индикатор загрузки
+        }
     };
+
 
     return (
         <div className="chat-container">
@@ -274,13 +289,7 @@ const ChatComponent = () => {
                 {selectedTicketId && (
                     <>
                         <div className='selects-container'>
-                            <Select
-                                options={responsabilLead}
-                                label="Responsabil lead"
-                                id="ResponsabilLead"
-                                value={extraInfo[selectedTicketId]?.responsabilLead || ""}
-                                onChange={(value) => handleSelectChange(selectedTicketId, 'responsabilLead', value)}
-                            />
+                            <TechnicianSelect onTechnicianChange={handleTechnicianChange} />
                             <Input
                                 label="Sale"
                                 type="number"
@@ -350,11 +359,12 @@ const ChatComponent = () => {
                                         onChange={(date) => handleSelectChange(selectedTicketId, 'leave_date', date)}
                                         isClearable
                                         placeholderText="Alegeti data și ora plecării"
-                                        dateFormat="dd.MM.yyyy HH:mm"
-                                        showTimeSelect
-                                        timeFormat="HH:mm"
-                                        timeIntervals={15} // Интервалы времени, например, каждые 15 минут
-                                        timeCaption="Ora"  // Заголовок для секции времени
+                                        dateFormat="dd.MM.yyyy"
+                                        // dateFormat="dd.MM.yyyy HH:mm"
+                                        // showTimeSelect
+                                        // timeFormat="HH:mm"
+                                        // timeIntervals={15} // Интервалы времени, например, каждые 15 минут
+                                        // timeCaption="Ora"  // Заголовок для секции времени
                                         customInput={<input className="example-custom-input" />}  // Правильный синтаксис для customInput
                                     />
                                 </div>
@@ -366,11 +376,12 @@ const ChatComponent = () => {
                                         onChange={(date) => handleSelectChange(selectedTicketId, 'arrive_date', date)}
                                         isClearable
                                         placeholderText="Alegeti data si ora intoarcerii"
-                                        dateFormat="dd.MM.yyyy HH:mm"
-                                        showTimeSelect
-                                        timeFormat="HH:mm"
-                                        timeIntervals={15} // Интервалы времени, например, каждые 15 минут
-                                        timeCaption="Ora"
+                                        dateFormat="dd.MM.yyyy"
+                                        // dateFormat="dd.MM.yyyy HH:mm"
+                                        // showTimeSelect
+                                        // timeFormat="HH:mm"
+                                        // timeIntervals={15} // Интервалы времени, например, каждые 15 минут
+                                        // timeCaption="Ora"
                                         customInput={<input className="example-custom-input" />}  // Правильный синтаксис для customInput
                                     />
                                 </div>
@@ -401,11 +412,12 @@ const ChatComponent = () => {
                                     onChange={(date) => handleSelectChange(selectedTicketId, 'contract_date', date)}
                                     isClearable
                                     placeholderText="Data contractului"
-                                    dateFormat="dd.MM.yyyy HH:mm"
-                                    showTimeSelect
-                                    timeFormat="HH:mm"
-                                    timeIntervals={15} // Интервалы времени, например, каждые 15 минут
-                                    timeCaption="Ora"
+                                    dateFormat="dd.MM.yyyy"
+                                    // dateFormat="dd.MM.yyyy HH:mm"
+                                    // showTimeSelect
+                                    // timeFormat="HH:mm"
+                                    // timeIntervals={15} // Интервалы времени, например, каждые 15 минут
+                                    // timeCaption="Ora"
                                     customInput={<input className="example-custom-input" />}  // Правильный синтаксис для customInput
                                 />
                             </div>
@@ -453,7 +465,7 @@ const ChatComponent = () => {
                         </div>
                         <div className="extra-info-actions">
                             <button onClick={sendExtraInfo} className="send-extra-info-button">
-                                Отправить дополнительную информацию
+                                {isLoading ? 'Отправка...' : 'Отправить'}
                             </button>
                         </div>
                     </>
