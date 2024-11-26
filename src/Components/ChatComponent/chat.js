@@ -23,6 +23,7 @@ import "react-datepicker/dist/react-datepicker.css";
 
 import './chat.css';
 import { workflowOptions } from '../../FormOptions/WorkFlowOption';
+import { updateTicket } from '../../WorkflowDashboard';
 
 const ENCRYPTION_KEY = '0123456789abcdef0123456789abcdef';
 
@@ -254,6 +255,47 @@ const ChatComponent = () => {
         "Contract incheiat": { backgroundColor: '#87f2c0', borderColor: '#2E7D32' },
     };
 
+    const handleWorkflowChange = async (event) => {
+        const newWorkflow = event.target.value;
+
+        if (!selectedTicketId) return; // Проверяем, что тикет выбран
+
+        const updatedTicket = selectedTicketId;
+
+        try {
+            // Отправляем PATCH запрос на сервер
+            const token = Cookies.get('jwt');
+            const response = await fetch(`https://pandaturapi.com/api/tickets/${updatedTicket}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`, // Убедитесь, что передаете токен авторизации
+                },
+                credentials: 'include',
+                body: JSON.stringify({ workflow: newWorkflow }), // Передаем только workflow
+            });
+
+            if (!response.ok) {
+                throw new Error('Ошибка при обновлении workflow');
+            }
+
+            // Получаем обновленные данные
+            const data = await response.json();
+
+            // Обновляем локальное состояние
+            setTickets((prevTickets) =>
+                prevTickets.map((ticket) =>
+                    ticket.id == updatedTicket ? { ...ticket, workflow: data.workflow } : ticket
+                )
+            );
+            setSelectedTicketId(updatedTicket); // Обновляем состояние выбранного тикета
+
+            console.log('Workflow обновлен:', data);
+        } catch (error) {
+            console.error('Ошибка при обновлении workflow:', error);
+        }
+    };
+
     return (
         <div className="chat-container">
             <div className="users-container">
@@ -313,10 +355,10 @@ const ChatComponent = () => {
                         <div className='selects-container'>
                             <Workflow
                                 ticket={selectedTicketId}
-                                onChange={"handleWorkflowChange"}
+                                onChange={handleWorkflowChange}
                                 style={{
-                                    backgroundColor: workflowStyles[selectedTicketId?.workflow]?.backgroundColor || '',
-                                    borderColor: workflowStyles[selectedTicketId?.workflow]?.borderColor || '',
+                                    backgroundColor: workflowStyles[updateTicket?.workflow]?.backgroundColor || '',
+                                    borderColor: workflowStyles[updateTicket?.workflow]?.borderColor || '',
                                 }}
                             />
                             <TechnicianSelect onTechnicianChange={handleTechnicianChange} />
