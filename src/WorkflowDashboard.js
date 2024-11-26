@@ -200,7 +200,7 @@ const WorkflowDashboard = () => {
 
                         <div className="scrollable-list">
                             {tickets
-                                // .filter(ticket => ticket.workflow === workflow)
+                                .filter(ticket => ticket.workflow === workflow)
                                 .filter(ticket =>
                                     (ticket.contact?.includes(searchTerm) || ticket.transport?.includes(searchTerm) || ticket.country?.includes(searchTerm) || searchTerm === '')
                                 )

@@ -127,18 +127,18 @@
     margin-bottom: 10px;
     cursor: pointer;
     font-size: 1em;
-    color: #fff;
-    background-color: green;
+    color: black;
+    background-color: white;
     transition: background-color 0.3s, color 0.3s;
 }
 .chat-item.active {
-    background-color: #4a76a8;
+    background-color: #3338c5;
     color: #ffffff;
 }
 
 /* Эффект при наведении на чат */
 .chat-item:hover {
-    background-color: lightcoral;
+    background-color: #4b50f6;
 }
 
 .extra-info {
@@ -251,7 +251,7 @@
 }
 .date-go-back {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     gap: 22px;
     padding: 10px 0px;
 }

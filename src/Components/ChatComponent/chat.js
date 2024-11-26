@@ -252,10 +252,22 @@ const ChatComponent = () => {
                         className={`chat-item ${ticket.id === selectedTicketId ? 'active' : ''}`}
                         onClick={() => handleTicketClick(ticket.id)} // Навигация и установка состояния
                     >
-                        <div>{ticket.contact || "no contact"}</div>
-                        <div>{ticket.transport || "no transport"}</div>
-                        <div>{ticket.country || "no country"}</div>
-                        <div>{ticket.id || "no ID"}</div>
+                        <div className='foto-description'>
+                            <div><img className='foto-user' src="/user fon.png" alt="example" /> </div>
+                            <div className='tickets-descriptions'>
+                                <div>{ticket.contact || "no contact"}</div>
+                                {/* <div>{ticket.transport || "no transport"}</div> */}
+                                {/* <div>{ticket.country || "no country"}</div> */}
+                                <div>{ticket.id ? `Lead: #${ticket.id}` : "no id"}</div>
+                                <div>{ticket.workflow || "no workflow"}</div>
+
+
+                            </div>
+                        </div>
+                        <div className='container-time-tasks-chat'>
+                            <div></div>
+                            <div>time</div>
+                        </div>
                     </div>
                 ))}
             </div>
@@ -465,7 +477,7 @@ const ChatComponent = () => {
                         </div>
                         <div className="extra-info-actions">
                             <button onClick={sendExtraInfo} className="send-extra-info-button">
-                                {isLoading ? 'Отправка...' : 'Отправить'}
+                                {isLoading ? 'Actualizare...' : 'Trimite'}
                             </button>
                         </div>
                     </>

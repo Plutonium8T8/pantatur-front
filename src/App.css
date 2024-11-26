@@ -508,3 +508,8 @@ button {
   font-weight: bold;
   color: #555;
 }
+.container-time-tasks-chat {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
