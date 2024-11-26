@@ -245,7 +245,7 @@ const ChatComponent = () => {
     return (
         <div className="chat-container">
             <div className="users-container">
-                <h3>Ticket List</h3>
+                <h3>Chat List</h3>
                 {tickets.map((ticket) => (
                     <div
                         key={ticket.id}
