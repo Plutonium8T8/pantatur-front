@@ -22,8 +22,6 @@ import Workflow from '../WorkFlowComponent/WorkflowComponent';
 import "react-datepicker/dist/react-datepicker.css";
 
 import './chat.css';
-import { workflowOptions } from '../../FormOptions/WorkFlowOption';
-import { updateTicket } from '../../WorkflowDashboard';
 
 const ENCRYPTION_KEY = '0123456789abcdef0123456789abcdef';
 
@@ -243,58 +241,46 @@ const ChatComponent = () => {
         }
     };
 
-    const workflowStyles = {
-        Interesat: { backgroundColor: '#ffff88', borderColor: '#1B5E20' },
-        'Apel de intrare': { backgroundColor: '#89C0FE', borderColor: '#388E3C' },
-        "De prelucrat": { backgroundColor: '#ff8f92', borderColor: '#43A047' },
-        "Luat in lucru": { backgroundColor: '#ebffb1', borderColor: '#2E7D32' },
-        "Oferta trimisa": { backgroundColor: '#ffcc66', borderColor: '#2E7D32' },
-        "Aprobat cu client": { backgroundColor: '#ffc8c8', borderColor: '#2E7D32' },
-        "Contract semnat": { backgroundColor: '#ff8f92', borderColor: '#2E7D32' },
-        "Plata primita": { backgroundColor: '#fff000', borderColor: '#2E7D32' },
-        "Contract incheiat": { backgroundColor: '#87f2c0', borderColor: '#2E7D32' },
-    };
-
     const handleWorkflowChange = async (event) => {
         const newWorkflow = event.target.value;
-
+      
         if (!selectedTicketId) return; // Проверяем, что тикет выбран
-
-        const updatedTicket = selectedTicketId;
-
+      
+        const updatedTicketId = selectedTicketId;
+      
         try {
-            // Отправляем PATCH запрос на сервер
-            const token = Cookies.get('jwt');
-            const response = await fetch(`https://pandaturapi.com/api/tickets/${updatedTicket}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`, // Убедитесь, что передаете токен авторизации
-                },
-                credentials: 'include',
-                body: JSON.stringify({ workflow: newWorkflow }), // Передаем только workflow
-            });
-
-            if (!response.ok) {
-                throw new Error('Ошибка при обновлении workflow');
-            }
-
-            // Получаем обновленные данные
-            const data = await response.json();
-
-            // Обновляем локальное состояние
-            setTickets((prevTickets) =>
-                prevTickets.map((ticket) =>
-                    ticket.id == updatedTicket ? { ...ticket, workflow: data.workflow } : ticket
-                )
-            );
-            setSelectedTicketId(updatedTicket); // Обновляем состояние выбранного тикета
-
-            console.log('Workflow обновлен:', data);
+          // Отправляем PATCH запрос на сервер
+          const token = Cookies.get("jwt");
+          const response = await fetch(`https://pandaturapi.com/api/tickets/${updatedTicketId}`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            credentials: "include",
+            body: JSON.stringify({ workflow: newWorkflow }),
+          });
+      
+          if (!response.ok) {
+            throw new Error("Ошибка при обновлении workflow");
+          }
+      
+          // Получаем обновленные данные
+          const data = await response.json();
+      
+          // Обновляем локальное состояние
+          setTickets((prevTickets) =>
+            prevTickets.map((ticket) =>
+              ticket.id === updatedTicketId ? { ...ticket, workflow: newWorkflow } : ticket
+            )
+          );
+      
+          console.log("Workflow обновлен:", data);
         } catch (error) {
-            console.error('Ошибка при обновлении workflow:', error);
+          console.error("Ошибка при обновлении workflow:", error);
         }
-    };
+      };
+      
 
     return (
         <div className="chat-container">
@@ -356,10 +342,6 @@ const ChatComponent = () => {
                             <Workflow
                                 ticket={selectedTicketId}
                                 onChange={handleWorkflowChange}
-                                style={{
-                                    backgroundColor: workflowStyles[updateTicket?.workflow]?.backgroundColor || '',
-                                    borderColor: workflowStyles[updateTicket?.workflow]?.borderColor || '',
-                                }}
                             />
                             <TechnicianSelect onTechnicianChange={handleTechnicianChange} />
                             <Input

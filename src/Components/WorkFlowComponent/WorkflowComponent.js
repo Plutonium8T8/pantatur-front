@@ -1,5 +1,6 @@
 import React from "react";
-import { workflowOptions } from "../../FormOptions/WorkFlowOption";
+import Select from "react-select";
+import { workflowOptions as rawWorkflowOptions } from '../../FormOptions/WorkFlowOption';
 
 // Стили для каждого workflow
 const workflowStyles = {
@@ -14,37 +15,50 @@ const workflowStyles = {
   'Contract incheiat': { backgroundColor: '#87f2c0', borderColor: '#2E7D32' },
 };
 
-export const Workflow = ({ ticket, onChange = () => {} }) => {
-  // Получаем текущий стиль
-  const currentStyle = ticket && ticket.workflow 
-    ? workflowStyles[ticket.workflow] 
-    : { backgroundColor: '#fff', borderColor: '#ccc' };
+// Преобразуем workflowOptions в массив объектов
+const workflowOptions = rawWorkflowOptions.map((workflow) => ({
+  value: workflow,
+  label: workflow,
+}));
+
+export const Workflow = ({ ticket, onChange = () => { } }) => {
+  const customStyles = {
+    option: (provided, state) => ({
+      ...provided,
+      backgroundColor: state.isFocused
+        ? workflowStyles[state.data.value]?.backgroundColor || '#f0f0f0'
+        : workflowStyles[state.data.value]?.backgroundColor || '#fff',
+      color: '#000',
+      padding: '10px',
+    }),
+    control: (provided) => ({
+      ...provided,
+      borderColor: workflowStyles[ticket?.workflow]?.borderColor || '#ccc',
+      '&:hover': {
+        borderColor: workflowStyles[ticket?.workflow]?.borderColor || '#aaa',
+      },
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      color: '#000',
+    }),
+  };
 
   return (
     <div className="container-options-component">
       <label>
         Workflow:
-        <select
-          name="workflow"
-          value={ticket ? ticket.workflow : workflowOptions[0]}
-          onChange={onChange}
-          className="workflow-select"
-          style={{
-            backgroundColor: currentStyle.backgroundColor,
-            borderColor: currentStyle.borderColor,
-            borderWidth: '2px',
-            borderStyle: 'solid',
-            borderRadius: '4px',
-            padding: '0.5rem',
-            color: '#000', // Дополнительно задаем цвет текста
-          }}
-        >
-          {workflowOptions.map((workflow) => (
-            <option key={workflow} value={workflow}>
-              {workflow}
-            </option>
-          ))}
-        </select>
+        <Select
+          options={workflowOptions}
+          value={workflowOptions.find(
+            (option) => option.value === ticket?.workflow
+          )}
+          onChange={(selected) =>
+            onChange({ target: { name: 'workflow', value: selected.value } })
+          }
+          styles={customStyles}
+          isSearchable={false}
+        />
       </label>
     </div>
   );
