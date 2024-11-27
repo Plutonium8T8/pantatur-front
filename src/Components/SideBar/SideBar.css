@@ -3,7 +3,7 @@
     flex-direction: column; /* Расположение элементов по вертикали */
     background-color: #88a5cd; /* Цвет фона панели */
     padding: 10px;
-    height: 758px;
+    /* height: 96vb; */
     width: fit-content;
     max-width: 65px;
 }

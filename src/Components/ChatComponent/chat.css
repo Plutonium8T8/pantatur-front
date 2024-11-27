@@ -1,9 +1,9 @@
 /* Основной контейнер чата */
 .chat-container {
     display: flex;
-    height: 90vh;
+    height: 99vh;
     width: 100%;
-    margin-top: 30px;
+    /* margin-top: 30px; */
     border: 1px solid #ddd;
     border-radius: 8px;
     overflow: hidden;
@@ -13,11 +13,14 @@
 
 /* Левая колонка с пользователями или списком чатов */
 .users-container {
-    width: 200px;
-    background-color: #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
     padding: 15px;
     border-right: 1px solid #ddd;
     overflow-y: auto;
+    width: 30vw;
+    height: 100vh;
 }
 
 /* Область чата (сообщения + отправка сообщения) */
@@ -34,7 +37,8 @@
     padding: 15px;
     overflow-y: auto;
     scroll-behavior: smooth;
-    width: 650px;
+    width: 30vw;
+    height: 100vh;
 }
 
 /* Правая колонка для дополнительной информации */
@@ -122,13 +126,13 @@
     background-color: #5a6268;
 }
 .chat-item {
-    padding: 10px 15px;
+    padding: 5px 5px;
     border-radius: 8px;
     margin-bottom: 10px;
     cursor: pointer;
     font-size: 1em;
     color: black;
-    background-color: white;
+    background-color: #f0f0f0;
     transition: background-color 0.3s, color 0.3s;
 }
 .chat-item.active {
@@ -138,16 +142,18 @@
 
 /* Эффект при наведении на чат */
 .chat-item:hover {
-    background-color: #4b50f6;
+    background-color: #8f92e9;
+    color:black;
 }
 
 .extra-info {
-    width: 500px;
-    background-color: #f8f8f8;
+    display: flex;
+    flex-direction: column;
     padding: 10px;
     border-left: 1px solid #ddd;
     overflow-y: auto;
     border-radius: 8px;
+    width: 25vw;
 }
 
 .extra-info h4 {

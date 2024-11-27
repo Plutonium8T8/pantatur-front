@@ -50,7 +50,7 @@ export const Workflow = ({ ticket, onChange = () => {} }) => {
 
   return (
     <div className="container-options-component">
-      <label>
+      {/* <label> */}
         Workflow:
         <Select
           options={workflowOptions}
@@ -63,7 +63,7 @@ export const Workflow = ({ ticket, onChange = () => {} }) => {
           styles={customStyles}
           isSearchable={false}
         />
-      </label>
+      {/* </label> */}
     </div>
   );
 };
