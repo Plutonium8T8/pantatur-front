@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './LoginForm.css';
 import Cookies from 'js-cookie';
 import { useUser } from './UserContext';
@@ -7,34 +7,8 @@ function LoginForm({ onLoginSuccess }) {
   const [form, setForm] = useState({ email: '', username: '', password: '' });
   const [isLogin, setIsLogin] = useState(true);
   const [message, setMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(true); // Начальное состояние для загрузки
+  const [isLoading, setIsLoading] = useState(false);
   const { setUserId } = useUser();
-
-  // Проверка сессии при загрузке компонента
-  useEffect(() => {
-    const jwtToken = Cookies.get('jwt');
-    if (jwtToken) {
-      fetch('https://pandaturapi.com/session', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${jwtToken}`,
-        },
-        credentials: 'include',
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.user_id) {
-            setUserId(data.user_id);
-            onLoginSuccess(); // Переход к основному контенту при успешной проверке сессии
-          }
-        })
-        .catch(error => console.error('Ошибка при проверке сессии:', error))
-        .finally(() => setIsLoading(false)); // Убираем индикатор загрузки
-    } else {
-      setIsLoading(false); // Если токен отсутствует, сразу убираем индикатор загрузки
-    }
-  }, [onLoginSuccess, setUserId]);
 
   const handleInputChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -87,10 +61,6 @@ function LoginForm({ onLoginSuccess }) {
       setIsLoading(false);
     }
   };
-
-  if (isLoading) {
-    return <div className="loading-spinner">Loading...</div>; // Показ индикатора загрузки
-  }
 
   return (
     <div className="body-login-form">

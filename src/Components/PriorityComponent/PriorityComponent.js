@@ -4,18 +4,18 @@ import { priorityOptions } from "../../FormOptions/PriorityOption";
 export const Priority = ({ ticket, onChange = () => { } }) => {
     return (
         <div className="container-options-component">
-        <label>
+        {/* <label> */}
             Priority:
             <select
                 name="priority"
                 value={ticket ? ticket.priority : priorityOptions[0]}
                 onChange={onChange}
                 className="priority-select"
-                style={{ display: 'block', padding: '0.5rem', marginBottom: '1rem' }}
+                style={{ display: 'block', padding: '0.5rem' }}
             >
                 {priorityOptions.map(prority => <option key={prority} value={prority}>{prority}</option>)}
             </select>
-        </label>
+        {/* </label> */}
         </div>
     )
 }

@@ -153,7 +153,7 @@ const WorkflowDashboard = () => {
         setCurrentTicket(ticket);
         navigate(`/chat/${ticket.id}`)
     };
-    
+
     // const handleTicketClick = (ticket) => {
     //     const selectedTicketId = ticket;
     //     setCurrentTicket(ticket);

@@ -228,8 +228,10 @@
 } */
 .container-select-priority-workflow {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 8px;
+  text-align: center;
+  justify-content: space-between;
 }
 
 .priority-component {
@@ -316,6 +318,7 @@ button {
 .modal-content {
   display: flex;
   flex-direction: column;
+  text-align: center;
   background: #fff;
   padding: 2rem;
   border-radius: 8px;
@@ -327,7 +330,7 @@ button {
 .id-ticket {
   background-color: lightgreen;
   position: relative;
-  left: 420px;
+  /* left: 420px; */
   top: -20px;
   width: fit-content;
 }
@@ -519,4 +522,11 @@ button {
   flex-direction: column;
   text-align: center;
   gap: 8px;
+  margin-bottom: 10px;
+}
+.select-container-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 10px;
 }
