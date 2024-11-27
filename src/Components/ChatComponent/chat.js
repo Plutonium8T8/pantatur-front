@@ -132,20 +132,32 @@ const ChatComponent = () => {
                     'Content-Type': 'application/json',
                 },
             });
-
+    
             if (!response.ok) {
                 throw new Error('Ошибка при получении дополнительной информации');
             }
-
+    
             const data = await response.json();
+    
+            // Обновляем состояние с дополнительной информацией о тикете
             setExtraInfo((prevState) => ({
                 ...prevState,
-                [ticketId]: data, // Сохраняем полученную информацию в состоянии extraInfo
+                [selectedTicketId]: data, // Сохраняем информацию для текущего тикета
             }));
+    
+            // Обновляем состояние с выбранным technician_id
+            setSelectedTechnicianId(data.technician_id); // Устанавливаем technician_id в состояние
+    
         } catch (error) {
             console.error('Ошибка при получении дополнительной информации:', error);
         }
-    };
+    };    
+
+    useEffect(() => {
+        if (selectedTicketId) {
+            fetchTicketExtraInfo(selectedTicketId);
+        }
+    }, [selectedTicketId]); // Перезапуск эффекта при изменении selectedTicketId
 
     // Загружаем тикеты при монтировании компонента
     useEffect(() => {
@@ -358,7 +370,10 @@ const ChatComponent = () => {
                                 ticket={updatedTicket} // передаем объект тикета, а не только ID
                                 onChange={handleWorkflowChange}
                             />
-                            <TechnicianSelect onTechnicianChange={handleTechnicianChange} />
+                            <TechnicianSelect
+                                selectedTechnicianId={selectedTechnicianId}  // Передаем technician_id в select
+                                onTechnicianChange={handleTechnicianChange}   // Обработчик изменения
+                            />
                             <Input
                                 label="Sale"
                                 type="number"

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 
-const TechnicianSelect = ({ onTechnicianChange }) => {
+const TechnicianSelect = ({ onTechnicianChange, selectedTechnicianId }) => {
     const [technicians, setTechnicians] = useState([]);
     const [selectedTechnician, setSelectedTechnician] = useState('');
 
@@ -34,9 +34,15 @@ const TechnicianSelect = ({ onTechnicianChange }) => {
         }
     };
 
+    // Получаем список техников при монтировании компонента
     useEffect(() => {
         fetchTechnicians();
     }, []);
+
+    // Синхронизируем значение с выбранным technician_id, если оно изменяется
+    useEffect(() => {
+        setSelectedTechnician(selectedTechnicianId);
+    }, [selectedTechnicianId]); // Зависимость от selectedTechnicianId
 
     const handleChange = (event) => {
         const technicianId = event.target.value;
