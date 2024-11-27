@@ -244,15 +244,20 @@ const ChatComponent = () => {
     // изминения значения workflow из экстра формы
     const handleWorkflowChange = async (event) => {
         const newWorkflow = event.target.value;
-
+    
         if (!selectedTicketId) return; // Проверяем, что тикет выбран
-
-        const updatedTicketId = selectedTicketId;
-
+    
+        const updatedTicket = tickets.find(ticket => ticket.id === selectedTicketId); // Найдем тикет
+    
+        if (!updatedTicket) {
+            console.error("Тикет не найден");
+            return; // Если тикет не найден, прекращаем выполнение
+        }
+    
         try {
             // Отправляем PATCH запрос на сервер
             const token = Cookies.get("jwt");
-            const response = await fetch(`https://pandaturapi.com/api/tickets/${updatedTicketId}`, {
+            const response = await fetch(`https://pandaturapi.com/api/tickets/${updatedTicket.id}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
@@ -261,27 +266,28 @@ const ChatComponent = () => {
                 credentials: "include",
                 body: JSON.stringify({ workflow: newWorkflow }),
             });
-
+    
             if (!response.ok) {
                 throw new Error("Ошибка при обновлении workflow");
             }
-
+    
             // Получаем обновленные данные
             const data = await response.json();
-
+    
             // Обновляем локальное состояние
             setTickets((prevTickets) =>
                 prevTickets.map((ticket) =>
-                    ticket.id === updatedTicketId ? { ...ticket, workflow: newWorkflow } : ticket
+                    ticket.id === updatedTicket.id ? { ...ticket, workflow: newWorkflow } : ticket
                 )
             );
-
+    
             console.log("Workflow обновлен:", data);
         } catch (error) {
             console.error("Ошибка при обновлении workflow:", error);
         }
     };
 
+    const updatedTicket = tickets.find(ticket => ticket.id === selectedTicketId);
 
     return (
         <div className="chat-container">
@@ -341,7 +347,7 @@ const ChatComponent = () => {
                     <>
                         <div className='selects-container'>
                             <Workflow
-                                ticket={selectedTicketId}
+                                ticket={updatedTicket} // передаем объект тикета, а не только ID
                                 onChange={handleWorkflowChange}
                             />
                             <TechnicianSelect onTechnicianChange={handleTechnicianChange} />
