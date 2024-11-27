@@ -513,3 +513,9 @@ button {
   flex-direction: row;
   justify-content: space-between;
 }
+.container-options-component {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  gap: 8px;
+}

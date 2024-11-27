@@ -46,20 +46,20 @@ export const Workflow = ({ ticket, onChange = () => { } }) => {
 
   return (
     <div className="container-options-component">
-      <label>
-        Workflow:
-        <Select
-          options={workflowOptions}
-          value={workflowOptions.find(
-            (option) => option.value === ticket?.workflow
-          )}
-          onChange={(selected) =>
-            onChange({ target: { name: 'workflow', value: selected.value } })
-          }
-          styles={customStyles}
-          isSearchable={false}
-        />
-      </label>
+      {/* <label> */}
+      Workflow
+      <Select
+        options={workflowOptions}
+        value={workflowOptions.find(
+          (option) => option.value === ticket?.workflow
+        )}
+        onChange={(selected) =>
+          onChange({ target: { name: 'workflow', value: selected.value } })
+        }
+        styles={customStyles}
+        isSearchable={false}
+      />
+      {/* </label> */}
     </div>
   );
 };

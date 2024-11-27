@@ -195,7 +195,7 @@ const ChatComponent = () => {
         console.log("Текущее состояние extraInfo:", extraInfo);
     }, [extraInfo]);
 
-    // отправка данных в бэк
+    // отправка данных формы в бэк
     const sendExtraInfo = async () => {
         const token = Cookies.get('jwt'); // Получение токена из cookie
         const ticketExtraInfo = extraInfo[selectedTicketId]; // Получаем информацию для выбранного тикета
@@ -241,46 +241,47 @@ const ChatComponent = () => {
         }
     };
 
+    // изминения значения workflow из экстра формы
     const handleWorkflowChange = async (event) => {
         const newWorkflow = event.target.value;
-      
+
         if (!selectedTicketId) return; // Проверяем, что тикет выбран
-      
+
         const updatedTicketId = selectedTicketId;
-      
+
         try {
-          // Отправляем PATCH запрос на сервер
-          const token = Cookies.get("jwt");
-          const response = await fetch(`https://pandaturapi.com/api/tickets/${updatedTicketId}`, {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            credentials: "include",
-            body: JSON.stringify({ workflow: newWorkflow }),
-          });
-      
-          if (!response.ok) {
-            throw new Error("Ошибка при обновлении workflow");
-          }
-      
-          // Получаем обновленные данные
-          const data = await response.json();
-      
-          // Обновляем локальное состояние
-          setTickets((prevTickets) =>
-            prevTickets.map((ticket) =>
-              ticket.id === updatedTicketId ? { ...ticket, workflow: newWorkflow } : ticket
-            )
-          );
-      
-          console.log("Workflow обновлен:", data);
+            // Отправляем PATCH запрос на сервер
+            const token = Cookies.get("jwt");
+            const response = await fetch(`https://pandaturapi.com/api/tickets/${updatedTicketId}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                credentials: "include",
+                body: JSON.stringify({ workflow: newWorkflow }),
+            });
+
+            if (!response.ok) {
+                throw new Error("Ошибка при обновлении workflow");
+            }
+
+            // Получаем обновленные данные
+            const data = await response.json();
+
+            // Обновляем локальное состояние
+            setTickets((prevTickets) =>
+                prevTickets.map((ticket) =>
+                    ticket.id === updatedTicketId ? { ...ticket, workflow: newWorkflow } : ticket
+                )
+            );
+
+            console.log("Workflow обновлен:", data);
         } catch (error) {
-          console.error("Ошибка при обновлении workflow:", error);
+            console.error("Ошибка при обновлении workflow:", error);
         }
-      };
-      
+    };
+
 
     return (
         <div className="chat-container">
