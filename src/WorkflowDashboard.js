@@ -96,6 +96,8 @@ const WorkflowDashboard = () => {
             })
             .catch(e => {
                 console.error(e);
+                window.location.reload(); // Перезагрузка страницы
+                return;
             })
             .finally(() => {
 
