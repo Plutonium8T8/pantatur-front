@@ -58,7 +58,6 @@ const ChatComponent = () => {
     const [extraInfo, setExtraInfo] = useState({}); // Состояние для дополнительной информации каждого тикета
     const [tickets, setTickets] = useState([]);
     const messageContainerRef = useRef(null);
-    const navigate = useNavigate();
     const { ticketId } = useParams(); // Получаем ticketId из URL
     const [isLoading, setIsLoading] = useState(false); // Состояние загрузки
     const [selectedTechnicianId, setSelectedTechnicianId] = useState('');
@@ -88,8 +87,11 @@ const ChatComponent = () => {
         }
     }, [selectedTicketId]);
 
+    const navigate = useNavigate(); // Хук для навигации
+
     // Получение тикетов через fetch
     const fetchTickets = async () => {
+    
         try {
             await new Promise(resolve => setTimeout(resolve, 500));
             const token = Cookies.get('jwt');
@@ -100,11 +102,17 @@ const ChatComponent = () => {
                     'Content-Type': 'application/json',
                 },
             });
-
+    
+            if (response.status === 401) {
+                console.warn('Ошибка 401: Неавторизован. Перенаправляем на логин.');
+                window.location.reload(); // Перезагрузка страницы
+                return;
+            }
+    
             if (!response.ok) {
                 throw new Error('Ошибка при получении данных');
             }
-
+    
             const data = await response.json();
             setTickets(...data); // Устанавливаем данные тикетов
             console.log("+++ Загруженные тикеты:", data);

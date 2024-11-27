@@ -45,10 +45,9 @@ const WorkflowDashboard = () => {
     const navigate = useNavigate(); // Используем useNavigate для перехода
 
     const fetchTickets = async () => {
+    
         try {
-            // Добавляем задержку на 0.5 секунды
             await new Promise(resolve => setTimeout(resolve, 500));
-
             const token = Cookies.get('jwt');
             const response = await fetch('https://pandaturapi.com/api/tickets', {
                 method: 'GET',
@@ -57,14 +56,20 @@ const WorkflowDashboard = () => {
                     'Content-Type': 'application/json',
                 },
             });
-
+    
+            if (response.status === 401) {
+                console.warn('Ошибка 401: Неавторизован. Перенаправляем на логин.');
+                window.location.reload(); // Перезагрузка страницы
+                return;
+            }
+    
             if (!response.ok) {
                 throw new Error('Ошибка при получении данных');
             }
-
+    
             const data = await response.json();
-            setTickets(...data);
-            console.log("+++ Загруженные тикеты:", ...data);
+            setTickets(...data); // Устанавливаем данные тикетов
+            console.log("+++ Загруженные тикеты:", data);
         } catch (error) {
             console.error('Ошибка:', error);
         }

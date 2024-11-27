@@ -11,7 +11,7 @@ import Cookies from 'js-cookie';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isLoading, setIsLoading] = useState(true); // Для загрузки сессии
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const jwtToken = Cookies.get('jwt');
@@ -21,7 +21,7 @@ function App() {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${jwtToken}`,
+          Authorization: `Bearer ${jwtToken}`,
         },
         credentials: 'include',
       })
@@ -42,7 +42,7 @@ function App() {
           Cookies.remove('jwt'); // Удаляем токен при ошибке
           setIsLoggedIn(false);
         })
-        .finally(() => setIsLoading(false)); // Убираем индикатор загрузки
+        .finally(() => setIsLoading(false));
     } else {
       setIsLoggedIn(false);
       setIsLoading(false);
@@ -66,6 +66,7 @@ function App() {
                 <Route path="/" element={<Navigate to="/workflowdashboard" />} />
                 <Route path="/account" element={<UserProfile />} />
                 <Route path="/workflowdashboard" element={<WorkflowDashboard />} />
+                <Route path="/account" element={<UserProfile />} />
                 <Route path="/chat/:ticketId?" element={<ChatComponent />} />
                 <Route path="*" element={<h1>Cooming soon</h1>} />
               </Routes>
