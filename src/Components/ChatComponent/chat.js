@@ -20,6 +20,7 @@ import DatePicker from 'react-datepicker';
 import Input from '../InputComponent/InputComponent';
 import Workflow from '../WorkFlowComponent/WorkflowComponent';
 import "react-datepicker/dist/react-datepicker.css";
+import { useSocket } from '../../SocketContext';
 
 import './chat.css';
 
@@ -61,6 +62,7 @@ const ChatComponent = () => {
     const { ticketId } = useParams(); // Получаем ticketId из URL
     const [isLoading, setIsLoading] = useState(false); // Состояние загрузки
     const [selectedTechnicianId, setSelectedTechnicianId] = useState('');
+    const socket = useSocket(); // Получаем WebSocket из контекста
 
     const handleTicketClick = (ticketId) => {
         setSelectedTicketId(ticketId); // Устанавливаем выбранный тикет
@@ -173,21 +175,40 @@ const ChatComponent = () => {
 
     // Отправка сообщения
     const sendMessage = () => {
-        if (managerMessage.trim()) {
-            const encryptedMessage = encrypt(managerMessage);
-            const newMessage = {
-                chat_id: selectedTicketId,  // Используем selectedTicketId вместо selectedChatId
-                client_id: userId,
-                sender_id: userId,
-                text: decrypt(encryptedMessage),
-                time_sent: new Date().toLocaleTimeString(),
-            };
-            setMessages((prevMessages) => [...prevMessages, newMessage]);
-            setManagerMessage('');
-        } else {
-            console.warn('Message cannot be empty');
+        if (!managerMessage.trim()) {
+            return; // Если сообщение пустое, ничего не отправляем
         }
-    };
+    
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            const messageData = {
+                type: 'message',
+                data: {
+                    sender_id: userId,
+                    chatRoomIds: [selectedTicketId], // Используем ID выбранного тикета
+                    platform: 'web',
+                    text: managerMessage, // Текст сообщения
+                    time_sent: new Date().toISOString() // Время отправки
+                }
+            };
+    
+            socket.send(JSON.stringify(messageData)); // Отправляем сообщение через WebSocket
+    
+            // Добавляем сообщение в список сообщений для мгновенного отображения
+            setMessages((prevMessages) => [
+                ...prevMessages,
+                { 
+                    chat_id: selectedTicketId, 
+                    sender_id: userId, 
+                    text: managerMessage, 
+                    time_sent: new Date().toISOString() 
+                }
+            ]);
+    
+            setManagerMessage(''); // Очищаем текстовое поле
+        } else {
+            console.error('WebSocket не подключен.');
+        }
+    };    
 
     // Обработчик изменения значения в селекте для выбранного тикета
     const handleSelectChange = (ticketId, field, value) => {
@@ -338,15 +359,17 @@ const ChatComponent = () => {
             </div>
             <div className="chat-area">
                 <div className="chat-messages" ref={messageContainerRef}>
-                    {messages.filter((msg) => msg.chat_id === selectedTicketId).map((msg, index) => (
-                        <div
-                            key={index}
-                            className={`message ${msg.sender_id === userId ? 'sent' : 'received'}`}
-                        >
-                            <div className="text">{msg.text}</div>
-                            <div className="message-time">{msg.time_sent}</div>
-                        </div>
-                    ))}
+                {messages
+    .filter((msg) => msg.chat_id === selectedTicketId) // Сообщения только для выбранного чата
+    .map((msg, index) => (
+        <div
+            key={index}
+            className={`message ${msg.sender_id === userId ? 'sent' : 'received'}`}
+        >
+            <div className="text">{msg.text}</div>
+            <div className="message-time">{new Date(msg.time_sent).toLocaleTimeString()}</div>
+        </div>
+    ))}
                 </div>
                 <div className="manager-send-message-container">
                     <textarea

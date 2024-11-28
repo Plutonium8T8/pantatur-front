@@ -2,13 +2,17 @@ import React, { useState } from 'react';
 import './LoginForm.css';
 import Cookies from 'js-cookie';
 import { useUser } from './UserContext';
-
+import { useSocket } from './SocketContext';
 function LoginForm({ onLoginSuccess }) {
   const [form, setForm] = useState({ email: '', username: '', password: '' });
   const [isLogin, setIsLogin] = useState(true);
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { setUserId } = useUser();
+  const socket = useSocket(); // Получаем WebSocket из контекста
+  const [errorMessage, setErrorMessage] = useState(''); // Состояние для ошибок
+  const [tickets, setTickets] = useState([]);
+  const [ticketIds, setTicketIds] = useState([]); // Состояние для хранения ID тикетов
 
   const handleInputChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -27,18 +31,60 @@ function LoginForm({ onLoginSuccess }) {
     );
   };
 
+  const fetchTicketsID = async () => {
+    try {
+      setIsLoading(true); // Показываем индикатор загрузки
+      const token = Cookies.get('jwt');
+      const response = await fetch('https://pandaturapi.com/api/tickets', {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (response.status === 401) {
+        console.warn('Ошибка 401: Неавторизован. Перенаправляем на логин.');
+        setErrorMessage('Ошибка авторизации. Попробуйте снова.');
+        return;
+      }
+  
+      if (!response.ok) {
+        throw new Error('Ошибка при получении данных тикетов');
+      }
+  
+      const data = await response.json();
+      const tickets = data[0]; // Доступ к первому элементу
+      const TicketIds = tickets.map((ticket) => ticket.id);
+  
+      setTicketIds(TicketIds);
+      setTickets(tickets);
+  
+      // Отправляем сообщение в WebSocket после успешного получения ID
+      if (socket && socket.readyState === WebSocket.OPEN) {
+        const message = {
+          type: 'connect',
+          data: {
+            chatRoomIds: TicketIds, // Используем полученные ID
+          },
+        };
+        socket.send(JSON.stringify(message));
+      }
+    } catch (error) {
+      console.error('Ошибка:', error);
+      setErrorMessage('Ошибка при загрузке тикетов');
+    } finally {
+      setIsLoading(false); // Скрываем индикатор загрузки
+    }
+  };
+  
   const handleSubmit = async () => {
-    // if (!validateForm()) {
-    //   setMessage('Validation failed');
-    //   return;
-    // }
-
     setIsLoading(true);
     const url = isLogin
       ? 'https://pandaturapi.com/api/login'
       : 'https://pandaturapi.com/api/register';
     const data = isLogin ? { email: form.email, password: form.password } : form;
-
+  
     try {
       const response = await fetch(url, {
         method: 'POST',
@@ -46,17 +92,19 @@ function LoginForm({ onLoginSuccess }) {
         body: JSON.stringify(data),
         credentials: 'include',
       });
-
+  
       const responseData = await response.json();
       setMessage(responseData.message);
-
+  
       if (isLogin && response.ok) {
         Cookies.set('jwt', responseData.token, { expires: 7, secure: true, sameSite: 'strict' });
         setUserId(responseData.user_id);
         onLoginSuccess();
+        await fetchTicketsID(); // Дожидаемся получения тикетов
       }
     } catch (error) {
-      setMessage('An error occurred');
+      setMessage('Произошла ошибка');
+      console.error(error);
     } finally {
       setIsLoading(false);
     }

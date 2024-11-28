@@ -8,11 +8,13 @@ import CustomSidebar from './Components/SideBar/SideBar';
 import ChatComponent from './Components/ChatComponent/chat';
 import UserProfile from './Components/UserPage/UserPage';
 import Cookies from 'js-cookie';
+import { SocketProvider } from './SocketContext'; // Импортируем SocketProvider
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-
+  
+// проверка сесии
   useEffect(() => {
     const jwtToken = Cookies.get('jwt');
     if (jwtToken) {
@@ -54,27 +56,28 @@ function App() {
   }
 
   return (
-    <UserProvider>
-      <Router>
-        {!isLoggedIn ? (
-          <LoginForm onLoginSuccess={() => setIsLoggedIn(true)} />
-        ) : (
-          <div className="app-container">
-            <CustomSidebar />
-            <div className="page-content">
-              <Routes>
-                <Route path="/" element={<Navigate to="/workflowdashboard" />} />
-                <Route path="/account" element={<UserProfile />} />
-                <Route path="/workflowdashboard" element={<WorkflowDashboard />} />
-                <Route path="/account" element={<UserProfile />} />
-                <Route path="/chat/:ticketId?" element={<ChatComponent />} />
-                <Route path="*" element={<h1>Cooming soon</h1>} />
-              </Routes>
+    <SocketProvider> {/* Оборачиваем все в SocketProvider */}
+      <UserProvider>
+        <Router>
+          {!isLoggedIn ? (
+            <LoginForm onLoginSuccess={() => setIsLoggedIn(true)} />
+          ) : (
+            <div className="app-container">
+              <CustomSidebar />
+              <div className="page-content">
+                <Routes>
+                  <Route path="/" element={<Navigate to="/workflowdashboard" />} />
+                  <Route path="/account" element={<UserProfile />} />
+                  <Route path="/workflowdashboard" element={<WorkflowDashboard />} />
+                  <Route path="/chat/:ticketId?" element={<ChatComponent />} />
+                  <Route path="*" element={<h1>Coming soon</h1>} />
+                </Routes>
+              </div>
             </div>
-          </div>
-        )}
-      </Router>
-    </UserProvider>
+          )}
+        </Router>
+      </UserProvider>
+    </SocketProvider>
   );
 }
 
