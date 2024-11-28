@@ -194,7 +194,7 @@ const ChatComponent = () => {
                 type: 'message',
                 data: {
                     sender_id: userId,
-                    chatRoomIds: [selectedTicketId],
+                    chatRoomId: [selectedTicketId],
                     platform: 'web',
                     text: managerMessage,
                     time_sent: currentTime
