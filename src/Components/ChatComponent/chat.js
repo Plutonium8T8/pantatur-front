@@ -331,7 +331,7 @@ const ChatComponent = () => {
                         </div>
                         <div className='container-time-tasks-chat'>
                             <div></div>
-                            <div>time</div>
+                            <div>local time</div>
                         </div>
                     </div>
                 ))}

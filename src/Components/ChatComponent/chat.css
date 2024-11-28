@@ -19,7 +19,7 @@
     padding: 15px;
     border-right: 1px solid #ddd;
     overflow-y: auto;
-    width: 30vw;
+    width: 23vw;
     height: 100vh;
 }
 
@@ -37,7 +37,7 @@
     padding: 15px;
     overflow-y: auto;
     scroll-behavior: smooth;
-    width: 30vw;
+    width: 39vw;
     height: 100vh;
 }
 
