@@ -167,21 +167,29 @@ const ChatComponent = () => {
     }, []);
 
     // Прокрутка вниз при новом сообщении
-    useEffect(() => {
-        if (messageContainerRef.current) {
-            messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
-        }
-    }, [messages]);
+    // useEffect(() => {
+    //     if (messageContainerRef.current) {
+    //         messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
+    //     }
+    // }, [messages]);
+
+    const showNotification = (data) => {
+        console.log('Notification:', data);
+    };
+
+    const handleTask = (data) => {
+        console.log('Task:', data);
+    };
 
     // Отправка сообщения
     const sendMessage = () => {
         if (!managerMessage.trim()) {
             return; // Если сообщение пустое, ничего не отправляем
         }
-    
+
         if (socket && socket.readyState === WebSocket.OPEN) {
             const currentTime = new Date().toISOString();
-    
+
             const messageData = {
                 type: 'message',
                 data: {
@@ -192,24 +200,74 @@ const ChatComponent = () => {
                     time_sent: currentTime
                 }
             };
-    
+
             socket.send(JSON.stringify(messageData));
-    
+
             setMessages((prevMessages) => [
                 ...prevMessages,
-                { 
-                    chat_id: selectedTicketId, 
-                    sender_id: userId, 
-                    text: managerMessage, 
-                    time_sent: currentTime 
+                {
+                    chatRoomId: selectedTicketId,
+                    sender_id: userId,
+                    text: managerMessage,
+                    time_sent: currentTime
                 }
             ]);
-    
+
             setManagerMessage('');
         } else {
             console.error('WebSocket не подключен.');
         }
-    };    
+    };
+
+    useEffect(() => {
+        if (socket) {
+            socket.onmessage = (event) => {
+                try {
+                    const message = JSON.parse(event.data);
+                    console.log('Received message:', message); // Логируем все полученные сообщения
+    
+                    // Логируем выбранный chat_id для отладки
+                    console.log('Selected Ticket ID:', selectedTicketId);
+                    
+                    switch (message.type) {
+                        case 'message':
+                            // Изменена проверка на chatRoomId вместо chat_id
+                            if (message.data.chatRoomId === selectedTicketId) {
+                                console.log('Adding message to state:', message.data); // Логируем сообщение перед добавлением в состояние
+                                setMessages((prevMessages) => {
+                                    const updatedMessages = [...prevMessages, message.data];
+                                    console.log('Updated messages state:', updatedMessages); // Логируем обновленное состояние
+                                    return updatedMessages;
+                                });
+                            } else {
+                                console.log(`Message's chatRoomId (${message.data.chatRoomId}) does not match selectedTicketId (${selectedTicketId})`);
+                            }
+                            break;
+                        case 'notification':
+                            console.log('Notification received:', message.data);
+                            showNotification(message.data); // Показываем уведомление
+                            break;
+                        case 'task':
+                            console.log('Task received:', message.data);
+                            handleTask(message.data); // Обрабатываем задачу
+                            break;
+                        default:
+                            console.warn('Unknown message type:', message);
+                    }
+                } catch (error) {
+                    console.error('Error parsing WebSocket message:', error);
+                }
+            };
+        }
+    
+        return () => {
+            if (socket) {
+                socket.onmessage = null; // Очистка обработчика при размонтировании компонента
+            }
+        };
+    }, [socket, selectedTicketId]);
+    
+    // Перезапуск при изменении `socket` или `selectedTicketId`   
 
     // Обработчик изменения значения в селекте для выбранного тикета
     const handleSelectChange = (ticketId, field, value) => {
@@ -361,18 +419,32 @@ const ChatComponent = () => {
             <div className="chat-area">
                 <div className="chat-messages" ref={messageContainerRef}>
                     {messages
-                        .filter((msg) => msg.chat_id === selectedTicketId) // Сообщения только для выбранного чата
-                        .map((msg, index) => (
-                            <div
-                                key={`${msg.chat_id}-${index}`} // Лучше использовать уникальный ID сообщения
-                                className={`message ${msg.sender_id === userId ? 'sent' : 'received'}`}
-                            >
-                                <div className="text">{msg.text}</div>
-                                <div className="message-time">
-                                    {new Date(msg.time_sent).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+                        .filter((msg) => msg.chatRoomId === selectedTicketId) // Сообщения только для выбранного чата
+                        .map((msg, index) => {
+                            // Логируем каждое сообщение перед рендером
+                            console.log('Rendering message:', msg);
+
+                            // Проверка на необходимые поля
+                            if (!msg.chatRoomId || !msg.sender_id || !msg.text || !msg.time_sent) {
+                                console.warn('Invalid message data:', msg); // Логируем некорректные данные
+                                return null;
+                            }
+
+                            // Отображаем только сообщения для текущего чата
+                            if (msg.chatRoomId !== selectedTicketId) return null;
+
+                            return (
+                                <div
+                                    key={msg.id || `${msg.chatRoomId}-${index}`} // Уникальный ключ для каждого сообщения
+                                    className={`message ${msg.sender_id === userId ? 'sent' : 'received'}`}
+                                >
+                                    <div className="text">{msg.text}</div>
+                                    <div className="message-time">
+                                        {new Date(msg.time_sent).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                 </div>
 
                 <div className="manager-send-message-container">
