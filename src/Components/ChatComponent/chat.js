@@ -184,54 +184,77 @@ const ChatComponent = () => {
     // Отправка сообщения
     const sendMessage = () => {
         if (!managerMessage.trim()) {
-            return; // Если сообщение пустое, ничего не отправляем
+            return;
         }
-
-        if (socket && socket.readyState === WebSocket.OPEN) {
-            const currentTime = new Date().toISOString();
-
-            const messageData = {
-                type: 'message',
-                data: {
-                    sender_id: userId,
-                    chatRoomId: [selectedTicketId],
-                    platform: 'web',
-                    text: managerMessage,
-                    time_sent: currentTime
-                }
-            };
-
-            socket.send(JSON.stringify(messageData));
-
-            setMessages((prevMessages) => [
-                ...prevMessages,
-                {
-                    chatRoomId: selectedTicketId,
-                    sender_id: userId,
-                    text: managerMessage,
-                    time_sent: currentTime
-                }
-            ]);
-
-            setManagerMessage('');
+    
+        if (socket) {
+            console.log('WebSocket state before sending message:', socket.readyState); // Логируем состояние WebSocket
+    
+            if (socket.readyState === WebSocket.OPEN) {
+                setTimeout(() => {
+                    const currentTime = new Date().toISOString();
+    
+                    const messageData = {
+                        type: 'message',
+                        data: {
+                            sender_id: userId,
+                            chatRoomIds: [selectedTicketId],
+                            platform: 'web',
+                            text: managerMessage,
+                            time_sent: currentTime
+                        }
+                    };
+    
+                    try {
+                        socket.send(JSON.stringify(messageData)); // Отправка сообщения
+                        console.log('Message sent:', messageData); // Логируем отправленное сообщение
+    
+                        setMessages((prevMessages) => [
+                            ...prevMessages,
+                            {
+                                chatRoomId: selectedTicketId,
+                                sender_id: userId,
+                                text: managerMessage,
+                                time_sent: currentTime
+                            }
+                        ]);
+    
+                        setManagerMessage('');
+                    } catch (error) {
+                        console.error('Error sending message:', error); // Логируем ошибки отправки
+                    }
+                }, 100); // Задержка 100 мс перед отправкой
+            } else {
+                console.error('WebSocket не открыт, не удается отправить сообщение.');
+            }
         } else {
-            console.error('WebSocket не подключен.');
+            console.error('Socket is null.');
         }
-    };
+    };    
 
     useEffect(() => {
         if (socket) {
+            socket.onopen = () => {
+                console.log('WebSocket подключен');
+            };
+    
+            socket.onerror = (error) => {
+                console.error('WebSocket ошибка:', error); // Логируем ошибки WebSocket
+            };
+    
+            socket.onclose = () => {
+                console.log('WebSocket закрыт');
+            };
+    
             socket.onmessage = (event) => {
                 try {
                     const message = JSON.parse(event.data);
                     console.log('Received message:', message); // Логируем все полученные сообщения
     
-                    // Логируем выбранный chat_id для отладки
                     console.log('Selected Ticket ID:', selectedTicketId);
-                    
+    
                     switch (message.type) {
                         case 'message':
-                            // Изменена проверка на chatRoomId вместо chat_id
                             if (message.data.chatRoomId === selectedTicketId) {
                                 console.log('Adding message to state:', message.data); // Логируем сообщение перед добавлением в состояние
                                 setMessages((prevMessages) => {
@@ -262,10 +285,13 @@ const ChatComponent = () => {
     
         return () => {
             if (socket) {
-                socket.onmessage = null; // Очистка обработчика при размонтировании компонента
+                socket.onmessage = null;
+                socket.onerror = null;
+                socket.onclose = null;
             }
         };
     }, [socket, selectedTicketId]);
+       
     
     // Перезапуск при изменении `socket` или `selectedTicketId`   
 
