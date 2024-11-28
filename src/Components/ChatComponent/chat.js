@@ -93,7 +93,7 @@ const ChatComponent = () => {
 
     // Получение тикетов через fetch
     const fetchTickets = async () => {
-    
+
         try {
             await new Promise(resolve => setTimeout(resolve, 500));
             const token = Cookies.get('jwt');
@@ -104,17 +104,17 @@ const ChatComponent = () => {
                     'Content-Type': 'application/json',
                 },
             });
-    
+
             if (response.status === 401) {
                 console.warn('Ошибка 401: Неавторизован. Перенаправляем на логин.');
                 window.location.reload(); // Перезагрузка страницы
                 return;
             }
-    
+
             if (!response.ok) {
                 throw new Error('Ошибка при получении данных');
             }
-    
+
             const data = await response.json();
             setTickets(...data); // Устанавливаем данные тикетов
             console.log("+++ Загруженные тикеты:", data);
@@ -134,26 +134,26 @@ const ChatComponent = () => {
                     'Content-Type': 'application/json',
                 },
             });
-    
+
             if (!response.ok) {
                 throw new Error('Ошибка при получении дополнительной информации');
             }
-    
+
             const data = await response.json();
-    
+
             // Обновляем состояние с дополнительной информацией о тикете
             setExtraInfo((prevState) => ({
                 ...prevState,
                 [selectedTicketId]: data, // Сохраняем информацию для текущего тикета
             }));
-    
+
             // Обновляем состояние с выбранным technician_id
             setSelectedTechnicianId(data.technician_id); // Устанавливаем technician_id в состояние
-    
+
         } catch (error) {
             console.error('Ошибка при получении дополнительной информации:', error);
         }
-    };    
+    };
 
     useEffect(() => {
         if (selectedTicketId) {
@@ -178,7 +178,7 @@ const ChatComponent = () => {
         if (!managerMessage.trim()) {
             return; // Если сообщение пустое, ничего не отправляем
         }
-    
+
         if (socket && socket.readyState === WebSocket.OPEN) {
             const messageData = {
                 type: 'message',
@@ -190,25 +190,25 @@ const ChatComponent = () => {
                     time_sent: new Date().toISOString() // Время отправки
                 }
             };
-    
+
             socket.send(JSON.stringify(messageData)); // Отправляем сообщение через WebSocket
-    
+
             // Добавляем сообщение в список сообщений для мгновенного отображения
             setMessages((prevMessages) => [
                 ...prevMessages,
-                { 
-                    chat_id: selectedTicketId, 
-                    sender_id: userId, 
-                    text: managerMessage, 
-                    time_sent: new Date().toISOString() 
+                {
+                    chat_id: selectedTicketId,
+                    sender_id: userId,
+                    text: managerMessage,
+                    time_sent: new Date().toISOString()
                 }
             ]);
-    
+
             setManagerMessage(''); // Очищаем текстовое поле
         } else {
             console.error('WebSocket не подключен.');
         }
-    };    
+    };
 
     // Обработчик изменения значения в селекте для выбранного тикета
     const handleSelectChange = (ticketId, field, value) => {
@@ -285,16 +285,16 @@ const ChatComponent = () => {
     // изминения значения workflow из экстра формы
     const handleWorkflowChange = async (event) => {
         const newWorkflow = event.target.value;
-    
+
         if (!selectedTicketId) return; // Проверяем, что тикет выбран
-    
+
         const updatedTicket = tickets.find(ticket => ticket.id === selectedTicketId); // Найдем тикет
-    
+
         if (!updatedTicket) {
             console.error("Тикет не найден");
             return; // Если тикет не найден, прекращаем выполнение
         }
-    
+
         try {
             // Отправляем PATCH запрос на сервер
             const token = Cookies.get("jwt");
@@ -307,21 +307,21 @@ const ChatComponent = () => {
                 credentials: "include",
                 body: JSON.stringify({ workflow: newWorkflow }),
             });
-    
+
             if (!response.ok) {
                 throw new Error("Ошибка при обновлении workflow");
             }
-    
+
             // Получаем обновленные данные
             const data = await response.json();
-    
+
             // Обновляем локальное состояние
             setTickets((prevTickets) =>
                 prevTickets.map((ticket) =>
                     ticket.id === updatedTicket.id ? { ...ticket, workflow: newWorkflow } : ticket
                 )
             );
-    
+
             console.log("Workflow обновлен:", data);
         } catch (error) {
             console.error("Ошибка при обновлении workflow:", error);
@@ -359,17 +359,17 @@ const ChatComponent = () => {
             </div>
             <div className="chat-area">
                 <div className="chat-messages" ref={messageContainerRef}>
-                {messages
-    .filter((msg) => msg.chat_id === selectedTicketId) // Сообщения только для выбранного чата
-    .map((msg, index) => (
-        <div
-            key={index}
-            className={`message ${msg.sender_id === userId ? 'sent' : 'received'}`}
-        >
-            <div className="text">{msg.text}</div>
-            <div className="message-time">{new Date(msg.time_sent).toLocaleTimeString()}</div>
-        </div>
-    ))}
+                    {messages
+                        .filter((msg) => msg.chat_id === selectedTicketId) // Сообщения только для выбранного чата
+                        .map((msg, index) => (
+                            <div
+                                key={index}
+                                className={`message ${msg.sender_id === userId ? 'sent' : 'received'}`}
+                            >
+                                <div className="text">{msg.text}</div>
+                                <div className="message-time">{new Date(msg.time_sent).toLocaleTimeString()}</div>
+                            </div>
+                        ))}
                 </div>
                 <div className="manager-send-message-container">
                     <textarea
