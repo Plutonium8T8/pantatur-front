@@ -178,37 +178,38 @@ const ChatComponent = () => {
         if (!managerMessage.trim()) {
             return; // Если сообщение пустое, ничего не отправляем
         }
-
+    
         if (socket && socket.readyState === WebSocket.OPEN) {
+            const currentTime = new Date().toISOString();
+    
             const messageData = {
                 type: 'message',
                 data: {
                     sender_id: userId,
-                    chatRoomIds: [selectedTicketId], // Используем ID выбранного тикета
+                    chatRoomIds: [selectedTicketId],
                     platform: 'web',
-                    text: managerMessage, // Текст сообщения
-                    time_sent: new Date().toISOString() // Время отправки
+                    text: managerMessage,
+                    time_sent: currentTime
                 }
             };
-
-            socket.send(JSON.stringify(messageData)); // Отправляем сообщение через WebSocket
-
-            // Добавляем сообщение в список сообщений для мгновенного отображения
+    
+            socket.send(JSON.stringify(messageData));
+    
             setMessages((prevMessages) => [
                 ...prevMessages,
-                {
-                    chat_id: selectedTicketId,
-                    sender_id: userId,
-                    text: managerMessage,
-                    time_sent: new Date().toISOString()
+                { 
+                    chat_id: selectedTicketId, 
+                    sender_id: userId, 
+                    text: managerMessage, 
+                    time_sent: currentTime 
                 }
             ]);
-
-            setManagerMessage(''); // Очищаем текстовое поле
+    
+            setManagerMessage('');
         } else {
             console.error('WebSocket не подключен.');
         }
-    };
+    };    
 
     // Обработчик изменения значения в селекте для выбранного тикета
     const handleSelectChange = (ticketId, field, value) => {
@@ -363,14 +364,17 @@ const ChatComponent = () => {
                         .filter((msg) => msg.chat_id === selectedTicketId) // Сообщения только для выбранного чата
                         .map((msg, index) => (
                             <div
-                                key={index}
+                                key={`${msg.chat_id}-${index}`} // Лучше использовать уникальный ID сообщения
                                 className={`message ${msg.sender_id === userId ? 'sent' : 'received'}`}
                             >
                                 <div className="text">{msg.text}</div>
-                                <div className="message-time">{new Date(msg.time_sent).toLocaleTimeString()}</div>
+                                <div className="message-time">
+                                    {new Date(msg.time_sent).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+                                </div>
                             </div>
                         ))}
                 </div>
+
                 <div className="manager-send-message-container">
                     <textarea
                         className="text-area-message"
