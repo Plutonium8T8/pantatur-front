@@ -470,35 +470,35 @@ const ChatComponent = () => {
 
     useEffect(() => {
         // fetchTicketsID();
-      }, []);  // Empty dependency array ensures it only runs once on mount
-      
+    }, []);  // Empty dependency array ensures it only runs once on mount
+
     return (
         <div className="chat-container">
             <div className="users-container">
                 <h3>Chat List</h3>
                 <div className='chat-item-container'>
-                {tickets.map((ticket) => (
-                    <div
-                        key={ticket.id}
-                        className={`chat-item ${ticket.id === selectedTicketId ? 'active' : ''}`}
-                        onClick={() => handleTicketClick(ticket.id)} // Навигация и установка состояния
-                    >
-                        <div className='foto-description'>
-                            <div><img className='foto-user' src="/user fon.png" alt="example" /> </div>
-                            <div className='tickets-descriptions'>
-                                <div>{ticket.contact || "no contact"}</div>
-                                {/* <div>{ticket.transport || "no transport"}</div> */}
-                                {/* <div>{ticket.country || "no country"}</div> */}
-                                <div>{ticket.id ? `Lead: #${ticket.id}` : "no id"}</div>
-                                <div>{ticket.workflow || "no workflow"}</div>
+                    {tickets.map((ticket) => (
+                        <div
+                            key={ticket.id}
+                            className={`chat-item ${ticket.id === selectedTicketId ? 'active' : ''}`}
+                            onClick={() => handleTicketClick(ticket.id)} // Навигация и установка состояния
+                        >
+                            <div className='foto-description'>
+                                <div><img className='foto-user' src="/user fon.png" alt="example" /> </div>
+                                <div className='tickets-descriptions'>
+                                    <div>{ticket.contact || "no contact"}</div>
+                                    {/* <div>{ticket.transport || "no transport"}</div> */}
+                                    {/* <div>{ticket.country || "no country"}</div> */}
+                                    <div>{ticket.id ? `Lead: #${ticket.id}` : "no id"}</div>
+                                    <div>{ticket.workflow || "no workflow"}</div>
+                                </div>
+                            </div>
+                            <div className='container-time-tasks-chat'>
+                                <div></div>
+                                <div>local time</div>
                             </div>
                         </div>
-                        <div className='container-time-tasks-chat'>
-                            <div></div>
-                            <div>local time</div>
-                        </div>
-                    </div>
-                ))}
+                    ))}
                 </div>
             </div>
             <div className="chat-area">
