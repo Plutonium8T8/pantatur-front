@@ -69,6 +69,7 @@ const ChatComponent = () => {
     const handleTicketClick = (ticketId) => {
         setSelectedTicketId(ticketId); // Устанавливаем выбранный тикет
         navigate(`/chat/${ticketId}`);
+        fetchTicketsID();
         // Меняем путь в браузере
     };
 
@@ -468,13 +469,14 @@ const ChatComponent = () => {
     };
 
     useEffect(() => {
-        fetchTicketsID();
+        // fetchTicketsID();
       }, []);  // Empty dependency array ensures it only runs once on mount
       
     return (
         <div className="chat-container">
             <div className="users-container">
                 <h3>Chat List</h3>
+                <div className='chat-item-container'>
                 {tickets.map((ticket) => (
                     <div
                         key={ticket.id}
@@ -497,6 +499,7 @@ const ChatComponent = () => {
                         </div>
                     </div>
                 ))}
+                </div>
             </div>
             <div className="chat-area">
                 <div className="chat-messages" ref={messageContainerRef}>

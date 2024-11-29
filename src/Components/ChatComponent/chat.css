@@ -274,3 +274,8 @@ align-items: center;}
 .send-extra-info-button {
     background-color: green;
 }
+.chat-item-container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 30px;
+  } 
