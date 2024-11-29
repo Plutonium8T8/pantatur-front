@@ -42,24 +42,24 @@ function LoginForm({ onLoginSuccess }) {
           'Content-Type': 'application/json',
         },
       });
-  
+
       if (response.status === 401) {
         console.warn('Ошибка 401: Неавторизован. Перенаправляем на логин.');
         setErrorMessage('Ошибка авторизации. Попробуйте снова.');
         return;
       }
-  
+
       if (!response.ok) {
         throw new Error('Ошибка при получении данных тикетов');
       }
-  
+
       const data = await response.json();
       const tickets = data[0]; // Доступ к первому элементу
       const TicketIds = tickets.map((ticket) => ticket.id);
-  
+
       setTicketIds(TicketIds);
       setTickets(tickets);
-  
+
       // Отправляем сообщение в WebSocket после успешного получения ID
       if (socket && socket.readyState === WebSocket.OPEN) {
         const message = {
@@ -77,14 +77,14 @@ function LoginForm({ onLoginSuccess }) {
       setIsLoading(false); // Скрываем индикатор загрузки
     }
   };
-  
+
   const handleSubmit = async () => {
     setIsLoading(true);
     const url = isLogin
       ? 'https://pandaturapi.com/api/login'
       : 'https://pandaturapi.com/api/register';
     const data = isLogin ? { email: form.email, password: form.password } : form;
-  
+
     try {
       const response = await fetch(url, {
         method: 'POST',
@@ -92,10 +92,10 @@ function LoginForm({ onLoginSuccess }) {
         body: JSON.stringify(data),
         credentials: 'include',
       });
-  
+
       const responseData = await response.json();
       setMessage(responseData.message);
-  
+
       if (isLogin && response.ok) {
         Cookies.set('jwt', responseData.token, { expires: 7, secure: true, sameSite: 'strict' });
         setUserId(responseData.user_id);
