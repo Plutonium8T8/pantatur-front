@@ -16,14 +16,14 @@ function App() {
   
 // проверка сесии
   useEffect(() => {
-    const jwtToken = Cookies.get('jwt');
-    if (jwtToken) {
+    const token = Cookies.get('jwt');
+    if (token) {
       // Проверка валидности сессии
       fetch('https://pandaturapi.com/session', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${jwtToken}`,
+          Authorization: `Bearer ${token}`,
         },
         credentials: 'include',
       })
