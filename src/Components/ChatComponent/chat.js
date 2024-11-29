@@ -63,10 +63,13 @@ const ChatComponent = () => {
     const [isLoading, setIsLoading] = useState(false); // Состояние загрузки
     const [selectedTechnicianId, setSelectedTechnicianId] = useState('');
     const socket = useSocket(); // Получаем WebSocket из контекста
+    const [errorMessage, setErrorMessage] = useState(''); // Состояние для ошибок
+    const [ticketIds, setTicketIds] = useState([]); // Состояние для хранения ID тикетов
 
     const handleTicketClick = (ticketId) => {
         setSelectedTicketId(ticketId); // Устанавливаем выбранный тикет
-        navigate(`/chat/${ticketId}`); // Меняем путь в браузере
+        navigate(`/chat/${ticketId}`);
+        // Меняем путь в браузере
     };
 
     useEffect(() => {
@@ -166,7 +169,7 @@ const ChatComponent = () => {
         fetchTickets();
     }, []);
 
-  //  Прокрутка вниз при новом сообщении
+    //  Прокрутка вниз при новом сообщении
     useEffect(() => {
         if (messageContainerRef.current) {
             messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
@@ -187,14 +190,14 @@ const ChatComponent = () => {
         if (!managerMessage.trim()) {
             return;
         }
-    
+
         if (socket) {
             console.log('WebSocket state before sending message:', socket.readyState); // Логируем состояние WebSocket
-    
+
             if (socket.readyState === WebSocket.OPEN) {
                 setTimeout(() => {
                     const currentTime = new Date().toISOString();
-    
+
                     const messageData = {
                         type: 'message',
                         data: {
@@ -205,11 +208,11 @@ const ChatComponent = () => {
                             time_sent: currentTime
                         }
                     };
-    
+
                     try {
                         socket.send(JSON.stringify(messageData)); // Отправка сообщения
                         console.log('Message sent:', messageData); // Логируем отправленное сообщение
-    
+
                         // setMessages((prevMessages) => [
                         //     ...prevMessages,
                         //     {
@@ -219,7 +222,7 @@ const ChatComponent = () => {
                         //         time_sent: currentTime
                         //     }
                         // ]);
-    
+
                         setManagerMessage('');
                     } catch (error) {
                         console.error('Error sending message:', error); // Логируем ошибки отправки
@@ -231,7 +234,7 @@ const ChatComponent = () => {
         } else {
             console.error('Socket is null.');
         }
-    };    
+    };
 
 
     useEffect(() => {
@@ -239,22 +242,22 @@ const ChatComponent = () => {
             socket.onopen = () => {
                 console.log('WebSocket подключен');
             };
-    
+
             socket.onerror = (error) => {
                 console.error('WebSocket ошибка:', error); // Логируем ошибки WebSocket
             };
-    
+
             socket.onclose = () => {
                 console.log('WebSocket закрыт');
             };
-    
+
             socket.onmessage = (event) => {
                 try {
                     const message = JSON.parse(event.data);
                     console.log('Received message:', message); // Логируем все полученные сообщения
-    
+
                     console.log('Selected Ticket ID:', selectedTicketId);
-    
+
                     switch (message.type) {
                         case 'message':
                             if (message.data.chatRoomId === selectedTicketId) {
@@ -284,7 +287,7 @@ const ChatComponent = () => {
                 }
             };
         }
-    
+
         return () => {
             if (socket) {
                 socket.onmessage = null;
@@ -293,8 +296,8 @@ const ChatComponent = () => {
             }
         };
     }, [socket, selectedTicketId]);
-       
-    
+
+
     // Перезапуск при изменении `socket` или `selectedTicketId`   
 
     // Обработчик изменения значения в селекте для выбранного тикета
@@ -417,6 +420,57 @@ const ChatComponent = () => {
 
     const updatedTicket = tickets.find(ticket => ticket.id === selectedTicketId);
 
+    const fetchTicketsID = async () => {
+        try {
+            setIsLoading(true); // Показываем индикатор загрузки
+            const token = Cookies.get('jwt');
+            const response = await fetch('https://pandaturapi.com/api/tickets', {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.status === 401) {
+                console.warn('Ошибка 401: Неавторизован. Перенаправляем на логин.');
+                setErrorMessage('Ошибка авторизации. Попробуйте снова.');
+                return;
+            }
+
+            if (!response.ok) {
+                throw new Error('Ошибка при получении данных тикетов');
+            }
+
+            const data = await response.json();
+            const tickets = data[0]; // Доступ к первому элементу
+            const TicketIds = tickets.map((ticket) => ticket.id);
+
+            setTicketIds(TicketIds);
+            setTickets(tickets);
+
+            // Отправляем сообщение в WebSocket после успешного получения ID
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                const message = {
+                    type: 'connect',
+                    data: {
+                        chatRoomIds: TicketIds, // Используем полученные ID
+                    },
+                };
+                socket.send(JSON.stringify(message));
+            }
+        } catch (error) {
+            console.error('Ошибка:', error);
+            setErrorMessage('Ошибка при загрузке тикетов');
+        } finally {
+            setIsLoading(false); // Скрываем индикатор загрузки
+        }
+    };
+
+    useEffect(() => {
+        fetchTicketsID();
+      }, []);  // Empty dependency array ensures it only runs once on mount
+      
     return (
         <div className="chat-container">
             <div className="users-container">
