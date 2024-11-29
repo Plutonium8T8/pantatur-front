@@ -166,12 +166,12 @@ const ChatComponent = () => {
         fetchTickets();
     }, []);
 
-    // Прокрутка вниз при новом сообщении
-    // useEffect(() => {
-    //     if (messageContainerRef.current) {
-    //         messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
-    //     }
-    // }, [messages]);
+  //  Прокрутка вниз при новом сообщении
+    useEffect(() => {
+        if (messageContainerRef.current) {
+            messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
+        }
+    }, [messages]);
 
     const showNotification = (data) => {
         console.log('Notification:', data);
@@ -180,6 +180,7 @@ const ChatComponent = () => {
     const handleTask = (data) => {
         console.log('Task:', data);
     };
+
 
     // Отправка сообщения
     const sendMessage = () => {
@@ -209,15 +210,15 @@ const ChatComponent = () => {
                         socket.send(JSON.stringify(messageData)); // Отправка сообщения
                         console.log('Message sent:', messageData); // Логируем отправленное сообщение
     
-                        setMessages((prevMessages) => [
-                            ...prevMessages,
-                            {
-                                chatRoomId: selectedTicketId,
-                                sender_id: userId,
-                                text: managerMessage,
-                                time_sent: currentTime
-                            }
-                        ]);
+                        // setMessages((prevMessages) => [
+                        //     ...prevMessages,
+                        //     {
+                        //         chatRoomId: selectedTicketId,
+                        //         sender_id: userId,
+                        //         text: managerMessage,
+                        //         time_sent: currentTime
+                        //     }
+                        // ]);
     
                         setManagerMessage('');
                     } catch (error) {
@@ -231,6 +232,7 @@ const ChatComponent = () => {
             console.error('Socket is null.');
         }
     };    
+
 
     useEffect(() => {
         if (socket) {
