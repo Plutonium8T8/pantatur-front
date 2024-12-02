@@ -109,20 +109,20 @@ const TicketModal = ({ ticket, onClose }) => {
           />
         </label>
         <div className='select-container-modal'>
-        <Select
-          options={countryOptions}
-          label="Country"
-          id="country-select"
-          value={editedTicket.country || ""}
-          onChange={(value) => handleInputChange({ target: { name: 'country', value } })}
-        />
-        <Select
-          options={transportOptions}
-          label="Transport"
-          id="transport-select"
-          value={editedTicket.transport || ""}
-          onChange={(value) => handleInputChange({ target: { name: 'transport', value } })}
-        />
+          <Select
+            options={countryOptions}
+            label="Country"
+            id="country-select"
+            value={editedTicket.country || ""}
+            onChange={(value) => handleInputChange({ target: { name: 'country', value } })}
+          />
+          <Select
+            options={transportOptions}
+            label="Transport"
+            id="transport-select"
+            value={editedTicket.transport || ""}
+            onChange={(value) => handleInputChange({ target: { name: 'transport', value } })}
+          />
         </div>
         <div className='container-select-priority-workflow'>
           <Priority ticket={editedTicket} onChange={handleInputChange} />

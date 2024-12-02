@@ -496,11 +496,13 @@ button {
 .workflow-select {
   display: flex;
 }
+
 .tech-container {
   display: flex;
   flex-direction: column;
   text-align: center;
 }
+
 .tech-select {
   width: 100%;
   color: black;
@@ -512,11 +514,13 @@ button {
   font-weight: bold;
   color: #555;
 }
+
 .container-time-tasks-chat {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 }
+
 .container-options-component {
   display: flex;
   flex-direction: column;
@@ -524,6 +528,7 @@ button {
   gap: 8px;
   margin-bottom: 10px;
 }
+
 .select-container-modal {
   display: flex;
   flex-direction: column;

@@ -104,7 +104,8 @@
     gap: 10px;
 }
 
-.send-button, .file-button {
+.send-button,
+.file-button {
     padding: 8px 12px;
     border: none;
     background-color: #007bff;
@@ -125,6 +126,7 @@
 .file-button:hover {
     background-color: #5a6268;
 }
+
 .chat-item {
     padding: 5px 5px;
     border-radius: 8px;
@@ -135,6 +137,7 @@
     background-color: #f0f0f0;
     transition: background-color 0.3s, color 0.3s;
 }
+
 .chat-item.active {
     background-color: #3338c5;
     color: #ffffff;
@@ -143,7 +146,7 @@
 /* Эффект при наведении на чат */
 .chat-item:hover {
     background-color: #8f92e9;
-    color:black;
+    color: black;
 }
 
 .extra-info {
@@ -166,7 +169,8 @@
     flex-direction: row;
     justify-content: space-between;
     gap: 10px;
-align-items: center;}
+    align-items: center;
+}
 
 .select-container label {
     margin-right: 10px;
@@ -217,20 +221,24 @@ align-items: center;}
 .file-button:hover {
     background-color: #0056b3;
 }
+
 .selects-container {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    text-align:left;
+    text-align: left;
 }
+
 .react-datepicker__input-container {
     position: relative;
     display: inline-block;
     /* width: 100%; */
 }
+
 .react-datepicker__close-icon {
     padding-right: 15px;
 }
+
 .react-datepicker__close-icon::after {
     cursor: pointer;
     color: black;
@@ -246,6 +254,7 @@ align-items: center;}
     vertical-align: middle;
     content: "x";
 }
+
 .example-custom-input {
     display: flex;
     color: black;
@@ -255,12 +264,14 @@ align-items: center;}
     border: 1px solid gray;
     /* width: 93%; */
 }
+
 .date-go-back {
     display: flex;
     flex-direction: column;
     gap: 22px;
     padding: 10px 0px;
 }
+
 .date-contract-container {
     display: flex;
     flex-direction: row;
@@ -271,11 +282,13 @@ align-items: center;}
     padding: 0px !important;
     margin: 0px !important;
 }
+
 .send-extra-info-button {
     background-color: green;
 }
+
 .chat-item-container {
     display: flex;
     flex-direction: column;
     margin-bottom: 30px;
-  } 
+}

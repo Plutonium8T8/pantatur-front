@@ -465,28 +465,28 @@ const ChatComponent = () => {
                     'Content-Type': 'application/json'
                 }
             });
-    
+
             if (!response.ok) {
                 throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
             }
-    
+
             const data = await response.json();
             console.log('Сообщения клиента:', data);
-    
+
             // Обновляем состояние с сообщениями
             setMessages(data);
         } catch (error) {
             console.error('Ошибка при получении сообщений:', error.message);
         }
     };
-    
+
 
     useEffect(() => {
         if (selectedTicketId) {
             getClientMessages();
         }
     }, [selectedTicketId]);
-    
+
 
     return (
         <div className="chat-container">
