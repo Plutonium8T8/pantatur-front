@@ -70,7 +70,6 @@ const ChatComponent = () => {
         setSelectedTicketId(ticketId); // Устанавливаем выбранный тикет
         navigate(`/chat/${ticketId}`);
         fetchTicketsID();
-        // getClientMessages();
     };
 
     useEffect(() => {
@@ -534,7 +533,7 @@ const ChatComponent = () => {
                             return (
                                 <div
                                     key={msg.id || `${msg.client_id}-${index}`} // Уникальный ключ для каждого сообщения
-                                    className={`message ${msg.sender_id === userId ? 'sent' : 'received'}`}
+                                    className={`message ${msg.sender_id == userId ? 'sent' : 'received'}`}
                                 >
                                     <div className="text">{msg.message}</div>
                                     <div className="message-time">
