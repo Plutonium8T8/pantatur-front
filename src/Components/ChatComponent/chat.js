@@ -458,7 +458,8 @@ const ChatComponent = () => {
     const getClientMessages = async () => {
         try {
             const token = Cookies.get('jwt');
-            const response = await fetch(`https://pandaturapi.com/messages/client/${selectedTicketId}`, {
+            const response = await fetch(`https://pandaturapi.com/messages`, {
+                // const response = await fetch(`https://pandaturapi.com/messages/client/${selectedTicketId}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -480,12 +481,15 @@ const ChatComponent = () => {
         }
     };
 
-
     useEffect(() => {
-        if (selectedTicketId) {
-            getClientMessages();
-        }
-    }, [selectedTicketId]);
+        getClientMessages();
+    }, []);
+
+    // useEffect(() => {
+    //     if (selectedTicketId) {
+    //         getClientMessages();
+    //     }
+    // }, [selectedTicketId]);
 
 
     return (
@@ -499,21 +503,43 @@ const ChatComponent = () => {
                             className={`chat-item ${ticket.id === selectedTicketId ? 'active' : ''}`}
                             onClick={() => handleTicketClick(ticket.id)} // Навигация и установка состояния
                         >
-                            <div className='foto-description'>
-                                <div><img className='foto-user' src="/user fon.png" alt="example" /> </div>
-                                <div className='tickets-descriptions'>
+                            <div className="foto-description">
+                                <div>
+                                    <img className="foto-user" src="/user fon.png" alt="example" />
+                                </div>
+                                <div className="tickets-descriptions">
                                     <div>{ticket.contact || "no contact"}</div>
-                                    {/* <div>{ticket.transport || "no transport"}</div> */}
-                                    {/* <div>{ticket.country || "no country"}</div> */}
                                     <div>{ticket.id ? `Lead: #${ticket.id}` : "no id"}</div>
                                     <div>{ticket.workflow || "no workflow"}</div>
                                 </div>
                             </div>
-                            <div className='container-time-tasks-chat'>
-                                <div></div>
-                                <div>local time</div>
+                            <div className="container-time-tasks-chat">
+                                <div>
+                                    {(() => {
+                                        // Фильтруем сообщения для текущего `ticket.id`
+                                        const chatMessages = messages.filter((msg) => msg.client_id === ticket.id);
+
+                                        if (chatMessages.length === 0) {
+                                            return <div>No messages</div>; // Если сообщений нет
+                                        }
+
+                                        // Находим последнее сообщение
+                                        const lastMessage = chatMessages.reduce((latest, current) =>
+                                            new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
+                                        );
+
+                                        // Форматируем время
+                                        const formattedTime = new Date(lastMessage.time_sent).toLocaleTimeString('ru-RU', {
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                        });
+
+                                        return <div>{formattedTime}</div>; // Возвращаем отформатированное время
+                                    })()}
+                                </div>
                             </div>
                         </div>
+
                     ))}
                 </div>
             </div>
