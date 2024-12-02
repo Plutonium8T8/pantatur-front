@@ -172,20 +172,74 @@ const ChatComponent = () => {
         console.log('Task:', data);
     };
 
+    useEffect(() => {
+        if (socket && selectedTicketId) {
+            // Когда выбираем чат, отправляем через сокет, что все сообщения прочитаны
+            const markMessagesAsRead = () => {
+    
+                const readMessageData = {
+                    type: 'seen',
+                    data: {
+                        client_id: selectedTicketId,
+                        sender_id: userId,
+                    },
+                };
+    
+                try {
+                    socket.send(JSON.stringify(readMessageData)); // Отправляем информацию, что сообщения прочитаны
+                    console.log('Sent mark as read:', readMessageData);
+                } catch (error) {
+                    console.error('Error sending mark as read:', error);
+                }
+            };
+    
+            // Отправляем статус прочтения при открытии чата
+            markMessagesAsRead();
+        }
+    
+        return () => {
+            if (socket) {
+                socket.onmessage = null;
+            }
+        };
+    }, [selectedTicketId, socket]);    
 
+    useEffect(() => {
+        if (socket) {
+            socket.onmessage = (event) => {
+                const message = JSON.parse(event.data);
+    
+                if (message.type === 'seen') {
+                    const { client_id, sender_id, seen_at } = message.data;
+    
+                    // Обновляем сообщения в состоянии, помечая как прочитанные
+                    if (client_id === selectedTicketId) {
+                        setMessages((prevMessages) => {
+                            return prevMessages.map((msg) =>
+                                msg.client_id === client_id && !msg.seen_at
+                                    ? { ...msg, seen_at: seen_at }
+                                    : msg
+                            );
+                        });
+                    }
+                }
+            };
+        }
+    }, [socket, selectedTicketId]);
+    
     // Отправка сообщения
     const sendMessage = () => {
         if (!managerMessage.trim()) {
             return;
         }
-
+    
         if (socket) {
-            console.log('WebSocket state before sending message:', socket.readyState); // Логируем состояние WebSocket
-
+            console.log('WebSocket state before sending message:', socket.readyState);
+    
             if (socket.readyState === WebSocket.OPEN) {
                 setTimeout(() => {
                     const currentTime = new Date().toISOString();
-
+    
                     const messageData = {
                         type: 'message',
                         data: {
@@ -193,25 +247,31 @@ const ChatComponent = () => {
                             client_id: [selectedTicketId],
                             platform: 'web',
                             text: managerMessage,
-                            time_sent: currentTime
+                            time_sent: currentTime,
                         }
                     };
-
+    
                     try {
-                        socket.send(JSON.stringify(messageData)); // Отправка сообщения
-                        console.log('Message sent:', messageData); // Логируем отправленное сообщение
+                        socket.send(JSON.stringify(messageData));
+                        console.log('Message sent:', messageData);
                         setManagerMessage('');
+    
+                        // Обновляем состояние сообщений с новым сообщением
+                        setMessages((prevMessages) => [
+                            ...prevMessages,
+                            { ...messageData.data, seen_at: false } // Новое сообщение, еще не прочитано
+                        ]);
                     } catch (error) {
-                        console.error('Error sending message:', error); // Логируем ошибки отправки
+                        console.error('Error sending message:', error);
                     }
-                }, 100); // Задержка 100 мс перед отправкой
+                }, 100);
             } else {
                 console.error('WebSocket не открыт, не удается отправить сообщение.');
             }
         } else {
             console.error('Socket is null.');
         }
-    };
+    };    
 
 
     useEffect(() => {
@@ -452,37 +512,45 @@ const ChatComponent = () => {
         try {
             const token = Cookies.get('jwt');
             const response = await fetch(`https://pandaturapi.com/messages`, {
-                // const response = await fetch(`https://pandaturapi.com/messages/client/${selectedTicketId}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 }
             });
-
+    
             if (!response.ok) {
                 throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
             }
-
+    
             const data = await response.json();
             console.log('Сообщения клиента:', data);
-
+    
             // Обновляем состояние с сообщениями
             setMessages(data);
         } catch (error) {
             console.error('Ошибка при получении сообщений:', error.message);
         }
     };
+    
+    // useEffect(() => {
+    //     const intervalId = setInterval(() => {
+    //         getClientMessages();
+    //     }, 1000); // Запрос каждые 1000 миллисекунд (1 секунда)
+    
+    //     // Очистка интервала при размонтировании компонента
+    //     return () => clearInterval(intervalId);
+    // }, []);
 
     useEffect(() => {
         getClientMessages();
     }, []);
 
-    // useEffect(() => {
-    //     if (selectedTicketId) {
-    //         getClientMessages();
-    //     }
-    // }, [selectedTicketId]);
+    useEffect(() => {
+        if (selectedTicketId) {
+            getClientMessages();
+        }
+    }, [selectedTicketId]);
 
     const scrollToBottom = () => {
         if (messageContainerRef.current) {
@@ -499,77 +567,80 @@ const ChatComponent = () => {
             <div className="users-container">
                 <h3>Chat List</h3>
                 <div className="chat-item-container">
-    {tickets.map((ticket) => {
-        // Сообщения для текущего чата
-        const chatMessages = messages.filter((msg) => msg.client_id === ticket.id);
-        
-        // Проверка на отсутствие сообщений
-        if (chatMessages.length === 0) {
-            return (
-                <div
-                    key={ticket.id}
-                    className={`chat-item ${ticket.id === selectedTicketId ? 'active' : ''}`}
-                    onClick={() => handleTicketClick(ticket.id)}
-                >
-                    <div className="foto-description">
-                        <img className="foto-user" src="/user fon.png" alt="example" />
-                        <div className="tickets-descriptions">
-                            <div>{ticket.contact || "no contact"}</div>
-                            <div>{ticket.id ? `Lead: #${ticket.id}` : "no id"}</div>
-                            <div>{ticket.workflow || "no workflow"}</div>
-                        </div>
-                    </div>
-                    <div className="container-time-tasks-chat">
-                        <div className="info-message">
-                            <div className="last-message-container">
-                                <div>No messages</div>
+                    {tickets.map((ticket) => {
+                        // Сообщения для текущего чата
+                        const chatMessages = messages.filter((msg) => msg.client_id === ticket.id);
+                        const unreadMessagesCount = chatMessages.filter((msg) => !msg.seen_at && msg.sender_id !== userId).length;
+                        // Проверка на отсутствие сообщений
+                        if (chatMessages.length === 0) {
+                            return (
+                                <div
+                                    key={ticket.id}
+                                    className={`chat-item ${ticket.id === selectedTicketId ? 'active' : ''}`}
+                                    onClick={() => handleTicketClick(ticket.id)}
+                                >
+                                    <div className="foto-description">
+                                        <img className="foto-user" src="/user fon.png" alt="example" />
+                                        <div className="tickets-descriptions">
+                                            <div>{ticket.contact || "no contact"}</div>
+                                            <div>{ticket.id ? `Lead: #${ticket.id}` : "no id"}</div>
+                                            <div>{ticket.workflow || "no workflow"}</div>
+                                        </div>
+                                    </div>
+                                    <div className="container-time-tasks-chat">
+                                        <div className="info-message">
+                                            <div className="last-message-container">
+                                                <div>No messages</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        }
+
+                        const lastMessage = chatMessages.reduce((latest, current) => {
+                            return new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest;
+                        }, { message: 'No messages', time_sent: null });
+
+                        // Ограничиваем длину сообщения до 100 символов
+                        lastMessage.message = lastMessage.message.length > 100 ? lastMessage.message.slice(0, 100) + '...' : lastMessage.message;
+
+
+                        const formattedTime = lastMessage.time_sent
+                            ? new Date(lastMessage.time_sent).toLocaleTimeString('ru-RU', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                            })
+                            : null;
+
+                        return (
+                            <div
+                                key={ticket.id}
+                                className={`chat-item ${ticket.id === selectedTicketId ? 'active' : ''}`}
+                                onClick={() => handleTicketClick(ticket.id)}
+                            >
+                                <div className="foto-description">
+                                    <img className="foto-user" src="/user fon.png" alt="example" />
+                                    <div className="tickets-descriptions">
+                                        <div>{ticket.contact || "no contact"}</div>
+                                        <div>{ticket.id ? `Lead: #${ticket.id}` : "no id"}</div>
+                                        <div>{ticket.workflow || "no workflow"}</div>
+                                    </div>
+                                </div>
+                                <div className="container-time-tasks-chat">
+                                    <div className="info-message">
+                                        <div className="last-message-container">
+                                            <div>{lastMessage.message}</div>
+                                            <div>{formattedTime}</div>
+                                            {unreadMessagesCount > 0 && (
+                                                <div className="unread-count">{unreadMessagesCount}</div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            );
-        }
-
-        const lastMessage = chatMessages.reduce((latest, current) => {
-            return new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest;
-        }, { message: 'No messages', time_sent: null });
-        
-        // Ограничиваем длину сообщения до 100 символов
-        lastMessage.message = lastMessage.message.length > 15 ? lastMessage.message.slice(0, 15) + '...' : lastMessage.message;
-        
-
-        const formattedTime = lastMessage.time_sent
-            ? new Date(lastMessage.time_sent).toLocaleTimeString('ru-RU', {
-                hour: '2-digit',
-                minute: '2-digit',
-            })
-            : null;
-
-        return (
-            <div
-                key={ticket.id}
-                className={`chat-item ${ticket.id === selectedTicketId ? 'active' : ''}`}
-                onClick={() => handleTicketClick(ticket.id)}
-            >
-                <div className="foto-description">
-                    <img className="foto-user" src="/user fon.png" alt="example" />
-                    <div className="tickets-descriptions">
-                        <div>{ticket.contact || "no contact"}</div>
-                        <div>{ticket.id ? `Lead: #${ticket.id}` : "no id"}</div>
-                        <div>{ticket.workflow || "no workflow"}</div>
-                    </div>
-                </div>
-                <div className="container-time-tasks-chat">
-                    <div className="info-message">
-                        <div className="last-message-container">
-                            <div>{lastMessage.message}</div>
-                            <div>{formattedTime}</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    })}
+                        );
+                    })}
 
                 </div>
             </div>
@@ -578,7 +649,7 @@ const ChatComponent = () => {
                     {messages
                         .filter((msg) => msg.client_id === selectedTicketId) // Сообщения только для выбранного чата
                         .map((msg, index) => {
-                            console.log('Rendering message:', msg);
+                            // console.log('Rendering message:', msg);
 
                             // Проверка на необходимые поля
                             if (!msg.client_id || !msg.sender_id || !msg.message || !msg.time_sent) {
