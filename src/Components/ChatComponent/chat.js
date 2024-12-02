@@ -70,7 +70,7 @@ const ChatComponent = () => {
         setSelectedTicketId(ticketId); // Устанавливаем выбранный тикет
         navigate(`/chat/${ticketId}`);
         fetchTicketsID();
-        // Меняем путь в браузере
+        // getClientMessages();
     };
 
     useEffect(() => {
@@ -159,11 +159,6 @@ const ChatComponent = () => {
         }
     };
 
-    useEffect(() => {
-        if (selectedTicketId) {
-            fetchTicketExtraInfo(selectedTicketId);
-        }
-    }, [selectedTicketId]); // Перезапуск эффекта при изменении selectedTicketId
 
     // Загружаем тикеты при монтировании компонента
     useEffect(() => {
@@ -203,7 +198,7 @@ const ChatComponent = () => {
                         type: 'message',
                         data: {
                             sender_id: userId,
-                            chatRoomIds: [selectedTicketId],
+                            client_id: [selectedTicketId],
                             platform: 'web',
                             text: managerMessage,
                             time_sent: currentTime
@@ -213,17 +208,6 @@ const ChatComponent = () => {
                     try {
                         socket.send(JSON.stringify(messageData)); // Отправка сообщения
                         console.log('Message sent:', messageData); // Логируем отправленное сообщение
-
-                        // setMessages((prevMessages) => [
-                        //     ...prevMessages,
-                        //     {
-                        //         chatRoomId: selectedTicketId,
-                        //         sender_id: userId,
-                        //         text: managerMessage,
-                        //         time_sent: currentTime
-                        //     }
-                        // ]);
-
                         setManagerMessage('');
                     } catch (error) {
                         console.error('Error sending message:', error); // Логируем ошибки отправки
@@ -261,7 +245,7 @@ const ChatComponent = () => {
 
                     switch (message.type) {
                         case 'message':
-                            if (message.data.chatRoomId === selectedTicketId) {
+                            if (message.data.client_id === selectedTicketId) {
                                 console.log('Adding message to state:', message.data); // Логируем сообщение перед добавлением в состояние
                                 setMessages((prevMessages) => {
                                     const updatedMessages = [...prevMessages, message.data];
@@ -269,7 +253,7 @@ const ChatComponent = () => {
                                     return updatedMessages;
                                 });
                             } else {
-                                console.log(`Message's chatRoomId (${message.data.chatRoomId}) does not match selectedTicketId (${selectedTicketId})`);
+                                console.log(`Message's chatRoomId (${message.data.client_id}) does not match selectedTicketId (${selectedTicketId})`);
                             }
                             break;
                         case 'notification':
@@ -455,7 +439,7 @@ const ChatComponent = () => {
                 const message = {
                     type: 'connect',
                     data: {
-                        chatRoomIds: TicketIds, // Используем полученные ID
+                        client_id: TicketIds, // Используем полученные ID
                     },
                 };
                 socket.send(JSON.stringify(message));
@@ -471,6 +455,39 @@ const ChatComponent = () => {
     useEffect(() => {
         // fetchTicketsID();
     }, []);  // Empty dependency array ensures it only runs once on mount
+
+    const getClientMessages = async () => {
+        try {
+            const token = Cookies.get('jwt');
+            const response = await fetch(`https://pandaturapi.com/messages/client/${selectedTicketId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+    
+            if (!response.ok) {
+                throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
+            }
+    
+            const data = await response.json();
+            console.log('Сообщения клиента:', data);
+    
+            // Обновляем состояние с сообщениями
+            setMessages(data);
+        } catch (error) {
+            console.error('Ошибка при получении сообщений:', error.message);
+        }
+    };
+    
+
+    useEffect(() => {
+        if (selectedTicketId) {
+            getClientMessages();
+        }
+    }, [selectedTicketId]);
+    
 
     return (
         <div className="chat-container">
@@ -504,26 +521,22 @@ const ChatComponent = () => {
             <div className="chat-area">
                 <div className="chat-messages" ref={messageContainerRef}>
                     {messages
-                        .filter((msg) => msg.chatRoomId === selectedTicketId) // Сообщения только для выбранного чата
+                        .filter((msg) => msg.client_id === selectedTicketId) // Сообщения только для выбранного чата
                         .map((msg, index) => {
-                            // Логируем каждое сообщение перед рендером
                             console.log('Rendering message:', msg);
 
                             // Проверка на необходимые поля
-                            if (!msg.chatRoomId || !msg.sender_id || !msg.text || !msg.time_sent) {
+                            if (!msg.client_id || !msg.sender_id || !msg.message || !msg.time_sent) {
                                 console.warn('Invalid message data:', msg); // Логируем некорректные данные
                                 return null;
                             }
 
-                            // Отображаем только сообщения для текущего чата
-                            if (msg.chatRoomId !== selectedTicketId) return null;
-
                             return (
                                 <div
-                                    key={msg.id || `${msg.chatRoomId}-${index}`} // Уникальный ключ для каждого сообщения
+                                    key={msg.id || `${msg.client_id}-${index}`} // Уникальный ключ для каждого сообщения
                                     className={`message ${msg.sender_id === userId ? 'sent' : 'received'}`}
                                 >
-                                    <div className="text">{msg.text}</div>
+                                    <div className="text">{msg.message}</div>
                                     <div className="message-time">
                                         {new Date(msg.time_sent).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
                                     </div>
@@ -531,6 +544,7 @@ const ChatComponent = () => {
                             );
                         })}
                 </div>
+
 
                 <div className="manager-send-message-container">
                     <textarea
@@ -545,6 +559,7 @@ const ChatComponent = () => {
                     </div>
                 </div>
             </div>
+
             <div className="extra-info">
                 <h3>Additional Information</h3>
                 {selectedTicketId && (

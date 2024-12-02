@@ -98,7 +98,7 @@ function LoginForm({ onLoginSuccess }) {
         const message = {
           type: 'connect',
           data: {
-            chatRoomIds: TicketIds, // Используем полученные ID
+            client_id: TicketIds, // Используем полученные ID
           },
         };
         socket.send(JSON.stringify(message));
