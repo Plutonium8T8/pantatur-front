@@ -139,13 +139,13 @@
 }
 
 .chat-item.active {
-    background-color: #3338c5;
+    background-color: #4e73df;
     color: #ffffff;
 }
 
 /* Эффект при наведении на чат */
 .chat-item:hover {
-    background-color: #8f92e9;
+    background-color: #f1f5ff;
     color: black;
 }
 
@@ -291,4 +291,16 @@
     display: flex;
     flex-direction: column;
     margin-bottom: 30px;
+}
+.info-message {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+.last-message-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    color: coral;
 }

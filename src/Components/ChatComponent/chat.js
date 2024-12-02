@@ -164,13 +164,6 @@ const ChatComponent = () => {
         fetchTickets();
     }, []);
 
-    //  Прокрутка вниз при новом сообщении
-    useEffect(() => {
-        if (messageContainerRef.current) {
-            messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
-        }
-    }, [messages]);
-
     const showNotification = (data) => {
         console.log('Notification:', data);
     };
@@ -207,7 +200,6 @@ const ChatComponent = () => {
                     try {
                         socket.send(JSON.stringify(messageData)); // Отправка сообщения
                         console.log('Message sent:', messageData); // Логируем отправленное сообщение
-                        setManagerMessage('');
                     } catch (error) {
                         console.error('Error sending message:', error); // Логируем ошибки отправки
                     }
@@ -491,56 +483,90 @@ const ChatComponent = () => {
     //     }
     // }, [selectedTicketId]);
 
+    const scrollToBottom = () => {
+        if (messageContainerRef.current) {
+            messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
+        }
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages, selectedTicketId]);
 
     return (
         <div className="chat-container">
             <div className="users-container">
                 <h3>Chat List</h3>
-                <div className='chat-item-container'>
-                    {tickets.map((ticket) => (
-                        <div
-                            key={ticket.id}
-                            className={`chat-item ${ticket.id === selectedTicketId ? 'active' : ''}`}
-                            onClick={() => handleTicketClick(ticket.id)} // Навигация и установка состояния
-                        >
-                            <div className="foto-description">
-                                <div>
-                                    <img className="foto-user" src="/user fon.png" alt="example" />
-                                </div>
-                                <div className="tickets-descriptions">
-                                    <div>{ticket.contact || "no contact"}</div>
-                                    <div>{ticket.id ? `Lead: #${ticket.id}` : "no id"}</div>
-                                    <div>{ticket.workflow || "no workflow"}</div>
-                                </div>
-                            </div>
-                            <div className="container-time-tasks-chat">
-                                <div>
-                                    {(() => {
-                                        // Фильтруем сообщения для текущего `ticket.id`
-                                        const chatMessages = messages.filter((msg) => msg.client_id === ticket.id);
-
-                                        if (chatMessages.length === 0) {
-                                            return <div>No messages</div>; // Если сообщений нет
-                                        }
-
-                                        // Находим последнее сообщение
-                                        const lastMessage = chatMessages.reduce((latest, current) =>
-                                            new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
-                                        );
-
-                                        // Форматируем время
-                                        const formattedTime = new Date(lastMessage.time_sent).toLocaleTimeString('ru-RU', {
-                                            hour: '2-digit',
-                                            minute: '2-digit',
-                                        });
-
-                                        return <div>{formattedTime}</div>; // Возвращаем отформатированное время
-                                    })()}
-                                </div>
+                <div className="chat-item-container">
+    {tickets.map((ticket) => {
+        // Сообщения для текущего чата
+        const chatMessages = messages.filter((msg) => msg.client_id === ticket.id);
+        
+        // Проверка на отсутствие сообщений
+        if (chatMessages.length === 0) {
+            return (
+                <div
+                    key={ticket.id}
+                    className={`chat-item ${ticket.id === selectedTicketId ? 'active' : ''}`}
+                    onClick={() => handleTicketClick(ticket.id)}
+                >
+                    <div className="foto-description">
+                        <img className="foto-user" src="/user fon.png" alt="example" />
+                        <div className="tickets-descriptions">
+                            <div>{ticket.contact || "no contact"}</div>
+                            <div>{ticket.id ? `Lead: #${ticket.id}` : "no id"}</div>
+                            <div>{ticket.workflow || "no workflow"}</div>
+                        </div>
+                    </div>
+                    <div className="container-time-tasks-chat">
+                        <div className="info-message">
+                            <div className="last-message-container">
+                                <div>No messages</div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            );
+        }
 
-                    ))}
+        const lastMessage = chatMessages.reduce((latest, current) =>
+            new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest, 
+            { message: 'No messages', time_sent: null }
+        );
+
+        const formattedTime = lastMessage.time_sent
+            ? new Date(lastMessage.time_sent).toLocaleTimeString('ru-RU', {
+                hour: '2-digit',
+                minute: '2-digit',
+            })
+            : null;
+
+        return (
+            <div
+                key={ticket.id}
+                className={`chat-item ${ticket.id === selectedTicketId ? 'active' : ''}`}
+                onClick={() => handleTicketClick(ticket.id)}
+            >
+                <div className="foto-description">
+                    <img className="foto-user" src="/user fon.png" alt="example" />
+                    <div className="tickets-descriptions">
+                        <div>{ticket.contact || "no contact"}</div>
+                        <div>{ticket.id ? `Lead: #${ticket.id}` : "no id"}</div>
+                        <div>{ticket.workflow || "no workflow"}</div>
+                    </div>
+                </div>
+                <div className="container-time-tasks-chat">
+                    <div className="info-message">
+                        <div className="last-message-container">
+                            <div>{lastMessage.message}</div>
+                            <div>{formattedTime}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    })}
+
                 </div>
             </div>
             <div className="chat-area">
