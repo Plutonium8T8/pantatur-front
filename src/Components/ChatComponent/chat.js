@@ -200,6 +200,7 @@ const ChatComponent = () => {
                     try {
                         socket.send(JSON.stringify(messageData)); // Отправка сообщения
                         console.log('Message sent:', messageData); // Логируем отправленное сообщение
+                        setManagerMessage('');
                     } catch (error) {
                         console.error('Error sending message:', error); // Логируем ошибки отправки
                     }
@@ -529,10 +530,13 @@ const ChatComponent = () => {
             );
         }
 
-        const lastMessage = chatMessages.reduce((latest, current) =>
-            new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest, 
-            { message: 'No messages', time_sent: null }
-        );
+        const lastMessage = chatMessages.reduce((latest, current) => {
+            return new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest;
+        }, { message: 'No messages', time_sent: null });
+        
+        // Ограничиваем длину сообщения до 100 символов
+        lastMessage.message = lastMessage.message.length > 15 ? lastMessage.message.slice(0, 15) + '...' : lastMessage.message;
+        
 
         const formattedTime = lastMessage.time_sent
             ? new Date(lastMessage.time_sent).toLocaleTimeString('ru-RU', {
