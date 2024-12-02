@@ -13,8 +13,8 @@ import { SocketProvider } from './SocketContext'; // Импортируем Sock
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  
-// проверка сесии
+
+  // проверка сесии
   useEffect(() => {
     const token = Cookies.get('jwt');
     if (token) {

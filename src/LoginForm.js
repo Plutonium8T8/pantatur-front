@@ -32,6 +32,38 @@ function LoginForm({ onLoginSuccess }) {
     );
   };
 
+  const handleSubmit = async () => {
+    setIsLoading(true);
+    const url = isLogin
+      ? 'https://pandaturapi.com/api/login'
+      : 'https://pandaturapi.com/api/register';
+    const data = isLogin ? { email: form.email, password: form.password } : form;
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+        credentials: 'include',
+      });
+
+      const responseData = await response.json();
+      setMessage(responseData.message);
+
+      if (isLogin && response.ok) {
+        Cookies.set('jwt', responseData.token, { expires: 7, secure: true, sameSite: 'strict' });
+        setUserId(responseData.user_id);
+        onLoginSuccess();
+        await fetchTicketsID(); // Дожидаемся получения тикетов
+      }
+    } catch (error) {
+      setMessage('Произошла ошибка');
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const fetchTicketsID = async () => {
     try {
       setIsLoading(true); // Показываем индикатор загрузки
@@ -76,38 +108,6 @@ function LoginForm({ onLoginSuccess }) {
       setErrorMessage('Ошибка при загрузке тикетов');
     } finally {
       setIsLoading(false); // Скрываем индикатор загрузки
-    }
-  };
-
-  const handleSubmit = async () => {
-    setIsLoading(true);
-    const url = isLogin
-      ? 'https://pandaturapi.com/api/login'
-      : 'https://pandaturapi.com/api/register';
-    const data = isLogin ? { email: form.email, password: form.password } : form;
-
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-        credentials: 'include',
-      });
-
-      const responseData = await response.json();
-      setMessage(responseData.message);
-
-      if (isLogin && response.ok) {
-        Cookies.set('jwt', responseData.token, { expires: 7, secure: true, sameSite: 'strict' });
-        setUserId(responseData.user_id);
-        onLoginSuccess();
-        await fetchTicketsID(); // Дожидаемся получения тикетов
-      }
-    } catch (error) {
-      setMessage('Произошла ошибка');
-      console.error(error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
