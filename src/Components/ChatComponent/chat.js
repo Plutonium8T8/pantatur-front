@@ -261,7 +261,8 @@ const ChatComponent = () => {
                     }
                 }, 100);
             } else {
-                console.error('WebSocket не открыт, не удается отправить сообщение.');
+                console.error('WebSocket не открыт, не удается отправить сообщение. Перезагрузите страницу');
+                alert('WebSocket не открыт, не удается отправить сообщение. Перезагрузите страницу');
             }
         } else {
             console.error('Socket is null.');
@@ -496,7 +497,7 @@ const ChatComponent = () => {
     };
 
     useEffect(() => {
-        // fetchTicketsID();
+        fetchTicketsID();
     }, []);  // Empty dependency array ensures it only runs once on mount
 
     const getClientMessages = async () => {
@@ -553,12 +554,6 @@ const ChatComponent = () => {
         scrollToBottom();
     }, [messages, selectedTicketId]);
 
-    const handleClick = () => {
-        sendMessage();
-        markMessagesAsRead();
-        // getClientMessages();
-    };
-
     const handleKeyDown = (event) => {
         if (event.key === 'Enter' && !event.shiftKey) {
             event.preventDefault(); // Предотвращаем переход на новую строку
@@ -566,10 +561,19 @@ const ChatComponent = () => {
         }
     };
     
+    const handleClick = () => {
+        sendMessage();
+        markMessagesAsRead();
+        getClientMessages();
+        // fetchTicketsID();
+    };
+
     const handleTicketClick = (ticketId) => {
         setSelectedTicketId(ticketId); // Устанавливаем выбранный тикет
         navigate(`/chat/${ticketId}`);
-        fetchTicketsID();
+        markMessagesAsRead();
+        // fetchTicketsID();
+        // getClientMessages();
     };
 
     return (

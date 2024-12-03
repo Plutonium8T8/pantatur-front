@@ -304,3 +304,13 @@
     width: 100%;
     color: coral;
 }
+.unread-count {
+    border-radius: 100%;
+    /* border: 1px solid red; */
+    background-color: red;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    align-items: center;
+    color: white;
+}
