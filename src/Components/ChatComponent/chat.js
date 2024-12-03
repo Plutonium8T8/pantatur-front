@@ -81,9 +81,6 @@ const ChatComponent = () => {
 
     useEffect(() => {
         console.log("Selected Ticket ID:", selectedTicketId);
-        if (selectedTicketId) {
-            console.log("Extra info for selected ticket:", extraInfo[selectedTicketId] || "No extra info available");
-        }
     }, [selectedTicketId]);
 
     useEffect(() => {
@@ -171,6 +168,10 @@ const ChatComponent = () => {
     const handleTask = (data) => {
         console.log('Task:', data);
     };
+    const handleSeen = (data) => {
+        console.log('seen:', data);
+    };
+
     // отправка что чаты сообшения прочитаны
     const markMessagesAsRead = () => {
         if (!socket || !selectedTicketId) return;
@@ -316,8 +317,12 @@ const ChatComponent = () => {
                             console.log('Task received:', message.data);
                             handleTask(message.data); // Обрабатываем задачу
                             break;
+                        case 'seen':
+                            console.log('send seen mesaje:', message.data);
+                            handleSeen(message.data); // Обрабатываем задачу
+                            break;
                         default:
-                            console.warn('Unknown message type:', message);
+                            console.warn('eror', message);
                     }
                 } catch (error) {
                     console.error('Error parsing WebSocket message:', error);
@@ -333,9 +338,6 @@ const ChatComponent = () => {
             }
         };
     }, [socket, selectedTicketId]);
-
-
-    // Перезапуск при изменении `socket` или `selectedTicketId`   
 
     // Обработчик изменения значения в селекте для выбранного тикета
     const handleSelectChange = (ticketId, field, value) => {
@@ -357,11 +359,6 @@ const ChatComponent = () => {
         console.log('Выбранный техник ID:', technicianId);
         setSelectedTechnicianId(technicianId);
     };
-
-    // Используйте useEffect для логирования изменений в extraInfo
-    useEffect(() => {
-        console.log("Текущее состояние extraInfo:", extraInfo);
-    }, [extraInfo]);
 
     // отправка данных формы в бэк
     const sendExtraInfo = async () => {
@@ -524,7 +521,7 @@ const ChatComponent = () => {
             }
 
             const data = await response.json();
-            console.log('Сообщения клиента:', data);
+            console.log('Сообщения клиента полученые с сервера:', data);
 
             // Обновляем состояние с сообщениями
             setMessages(data);
@@ -564,8 +561,8 @@ const ChatComponent = () => {
 
     const handleClick = () => {
         sendMessage();
+        markMessagesAsRead();
         // getClientMessages();
-        // markMessagesAsRead(); 
     };
 
     const handleKeyDown = (event) => {
@@ -574,13 +571,6 @@ const ChatComponent = () => {
             handleClick(); // Вызываем функцию, которая обрабатывает отправку
         }
     };
-
-    // const handleKeyPress = (event) => {
-    //     if (event.key === 'Enter') {
-    //         event.preventDefault(); // Предотвращает стандартное поведение, например, отправку формы
-    //         handleClick(); // Вызываем ту же функцию, что и при клике на кнопку
-    //     }
-    // };
 
     return (
         <div className="chat-container">
@@ -591,40 +581,14 @@ const ChatComponent = () => {
                         // Сообщения для текущего чата
                         const chatMessages = messages.filter((msg) => msg.client_id === ticket.id);
                         const unreadMessagesCount = chatMessages.filter((msg) => !msg.seen_at && msg.sender_id !== userId).length;
-                        // Проверка на отсутствие сообщений
-                        if (chatMessages.length === 0) {
-                            return (
-                                <div
-                                    key={ticket.id}
-                                    className={`chat-item ${ticket.id === selectedTicketId ? 'active' : ''}`}
-                                    onClick={() => handleTicketClick(ticket.id)}
-                                >
-                                    <div className="foto-description">
-                                        <img className="foto-user" src="/user fon.png" alt="example" />
-                                        <div className="tickets-descriptions">
-                                            <div>{ticket.contact || "no contact"}</div>
-                                            <div>{ticket.id ? `Lead: #${ticket.id}` : "no id"}</div>
-                                            <div>{ticket.workflow || "no workflow"}</div>
-                                        </div>
-                                    </div>
-                                    <div className="container-time-tasks-chat">
-                                        <div className="info-message">
-                                            <div className="last-message-container">
-                                                <div>No messages</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        }
 
-                        const lastMessage = chatMessages.reduce((latest, current) => {
-                            return new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest;
-                        }, { message: 'No messages', time_sent: null });
+                        // Нахождение последнего сообщения
+                        const lastMessage = chatMessages.length
+                            ? chatMessages.reduce((latest, current) => new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest)
+                            : { message: 'No messages', time_sent: null };
 
                         // Ограничиваем длину сообщения до 100 символов
                         lastMessage.message = lastMessage.message.length > 100 ? lastMessage.message.slice(0, 100) + '...' : lastMessage.message;
-
 
                         const formattedTime = lastMessage.time_sent
                             ? new Date(lastMessage.time_sent).toLocaleTimeString('ru-RU', {
@@ -661,16 +625,14 @@ const ChatComponent = () => {
                             </div>
                         );
                     })}
-
                 </div>
             </div>
             <div className="chat-area">
                 <div className="chat-messages" ref={messageContainerRef}>
                     {messages
                         .filter((msg) => msg.client_id === selectedTicketId) // Сообщения только для выбранного чата
+                        .sort((a, b) => new Date(a.time_sent) - new Date(b.time_sent)) // Сортируем по времени отправки
                         .map((msg, index) => {
-                            // console.log('Rendering message:', msg);
-
                             // Проверка на необходимые поля
                             if (!msg.client_id || !msg.sender_id || !msg.message || !msg.time_sent) {
                                 console.warn('Invalid message data:', msg); // Логируем некорректные данные
@@ -697,15 +659,23 @@ const ChatComponent = () => {
                         className="text-area-message"
                         value={managerMessage}
                         onChange={(e) => setManagerMessage(e.target.value)}
-                        placeholder="Type your message..."
+                        placeholder={selectedTicketId ? "Type your message..." : "Select a chat to start typing"}
                         onKeyDown={handleKeyDown}
+                        disabled={!selectedTicketId} // Если нет selectedTicketId, textarea отключена
                     />
                     <div className="btn-send-message">
-                        <button className="send-button" onClick={handleClick}>Send</button>
-                        <button className="file-button">Attach</button>
+                        <button
+                            className="send-button"
+                            onClick={handleClick}
+                            disabled={!selectedTicketId} // Кнопка также отключена, если нет selectedTicketId
+                        >
+                            Send
+                        </button>
+                        <button className="file-button" disabled={!selectedTicketId}>Attach</button>
                     </div>
                 </div>
             </div>
+
 
             <div className="extra-info">
                 <h3>Additional Information</h3>
