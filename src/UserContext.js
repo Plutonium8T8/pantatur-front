@@ -14,7 +14,8 @@ export const UserProvider = ({ children }) => {
   // Запись user_id в localStorage при его изменении
   useEffect(() => {
     if (userId) {
-      localStorage.setItem('user_id', userId);
+      // Преобразуем userId в число перед сохранением в localStorage
+      localStorage.setItem('user_id', Number(userId));
     } else {
       localStorage.removeItem('user_id'); // Если userId очищается, удаляем его из localStorage
     }

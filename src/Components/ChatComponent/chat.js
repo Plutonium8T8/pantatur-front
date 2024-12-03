@@ -569,12 +569,17 @@ const ChatComponent = () => {
         }
     };
 
-    const handleClick = () => {
-        sendMessage();
-        markMessagesAsRead();
-        getClientMessages();
-        // fetchTicketsID();
+    const handleClick = async () => {
+        try {
+            await sendMessage(); // Ждем, пока отправится сообщение
+            await markMessagesAsRead(); // После этого помечаем сообщения как прочитанные
+            await getClientMessages(); // Затем получаем сообщения клиента
+            // await fetchTicketsID(); // Можно раскомментировать для вызова этой функции по очереди
+        } catch (error) {
+            console.error('Error in handleClick:', error);
+        }
     };
+
 
     const handleTicketClick = (ticketId) => {
         setSelectedTicketId(ticketId); // Устанавливаем выбранный тикет
@@ -592,7 +597,11 @@ const ChatComponent = () => {
                     {tickets.map((ticket) => {
                         // Сообщения для текущего чата
                         const chatMessages = messages.filter((msg) => msg.client_id === ticket.id);
-                        const unreadMessagesCount = chatMessages.filter((msg) => !msg.seen_at && msg.sender_id !== userId).length;
+
+                        // Подсчёт непрочитанных сообщений (исключаем сообщения, отправленные текущим пользователем)
+                        const unreadMessagesCount = chatMessages.filter(
+                            (msg) => !msg.seen_at && msg.sender_id !== userId && msg.client_id !== selectedTicketId
+                        ).length;                        
 
                         // Нахождение последнего сообщения
                         const lastMessage = chatMessages.length
