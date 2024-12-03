@@ -65,6 +65,7 @@ const ChatComponent = () => {
     const socket = useSocket(); // Получаем WebSocket из контекста
     const [errorMessage, setErrorMessage] = useState(''); // Состояние для ошибок
     const [ticketIds, setTicketIds] = useState([]); // Состояние для хранения ID тикетов
+    const [unreadMessages, setUnreadMessages] = useState({});  // Состояние для отслеживания непрочитанных сообщений
 
     useEffect(() => {
         // Если ticketId передан через URL, устанавливаем его как selectedTicketId
@@ -293,15 +294,22 @@ const ChatComponent = () => {
 
                     switch (message.type) {
                         case 'message':
-                            if (message.data.client_id === selectedTicketId) {
-                                console.log('Adding message to state:', message.data); // Логируем сообщение перед добавлением в состояние
-                                setMessages((prevMessages) => {
-                                    const updatedMessages = [...prevMessages, message.data];
-                                    console.log('Updated messages state:', updatedMessages); // Логируем обновленное состояние
-                                    return updatedMessages;
+                            // Добавляем сообщение в состояние
+                            setMessages((prevMessages) => {
+                                const updatedMessages = [...prevMessages, message.data];
+                                return updatedMessages;
+                            });
+
+                            // Обновляем количество непрочитанных сообщений
+                            if (message.data.client_id !== selectedTicketId) {
+                                setUnreadMessages((prevUnreadMessages) => {
+                                    const updatedUnreadMessages = { ...prevUnreadMessages };
+                                    if (!updatedUnreadMessages[message.data.client_id]) {
+                                        updatedUnreadMessages[message.data.client_id] = 0;
+                                    }
+                                    updatedUnreadMessages[message.data.client_id]++;
+                                    return updatedUnreadMessages;
                                 });
-                            } else {
-                                console.log(`Message's chatRoomId (${message.data.client_id}) does not match selectedTicketId (${selectedTicketId})`);
                             }
                             break;
                         case 'notification':
@@ -560,7 +568,7 @@ const ChatComponent = () => {
             handleClick(); // Вызываем функцию, которая обрабатывает отправку
         }
     };
-    
+
     const handleClick = () => {
         sendMessage();
         markMessagesAsRead();
