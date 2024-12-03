@@ -569,17 +569,23 @@ const ChatComponent = () => {
         }
     };
 
-    const handleClick = async () => {
-        try {
-            await sendMessage(); // Ждем, пока отправится сообщение
-            await markMessagesAsRead(); // После этого помечаем сообщения как прочитанные
-            await getClientMessages(); // Затем получаем сообщения клиента
-            // await fetchTicketsID(); // Можно раскомментировать для вызова этой функции по очереди
-        } catch (error) {
-            console.error('Error in handleClick:', error);
-        }
-    };
+    // const handleClick = async () => {
+    //     try {
+    //         await sendMessage(); // Ждем, пока отправится сообщение
+    //         await markMessagesAsRead(); // После этого помечаем сообщения как прочитанные
+    //         await getClientMessages(); // Затем получаем сообщения клиента
+    //         // await fetchTicketsID(); // Можно раскомментировать для вызова этой функции по очереди
+    //     } catch (error) {
+    //         console.error('Error in handleClick:', error);
+    //     }
+    // };
 
+    const handleClick = () => {
+        sendMessage();
+        markMessagesAsRead();
+        getClientMessages();
+        // fetchTicketsID();
+    };
 
     const handleTicketClick = (ticketId) => {
         setSelectedTicketId(ticketId); // Устанавливаем выбранный тикет
