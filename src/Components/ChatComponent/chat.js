@@ -66,12 +66,6 @@ const ChatComponent = () => {
     const [errorMessage, setErrorMessage] = useState(''); // Состояние для ошибок
     const [ticketIds, setTicketIds] = useState([]); // Состояние для хранения ID тикетов
 
-    const handleTicketClick = (ticketId) => {
-        setSelectedTicketId(ticketId); // Устанавливаем выбранный тикет
-        navigate(`/chat/${ticketId}`);
-        fetchTicketsID();
-    };
-
     useEffect(() => {
         // Если ticketId передан через URL, устанавливаем его как selectedTicketId
         if (ticketId) {
@@ -570,6 +564,12 @@ const ChatComponent = () => {
             event.preventDefault(); // Предотвращаем переход на новую строку
             handleClick(); // Вызываем функцию, которая обрабатывает отправку
         }
+    };
+    
+    const handleTicketClick = (ticketId) => {
+        setSelectedTicketId(ticketId); // Устанавливаем выбранный тикет
+        navigate(`/chat/${ticketId}`);
+        fetchTicketsID();
     };
 
     return (
