@@ -171,47 +171,47 @@ const ChatComponent = () => {
     const handleTask = (data) => {
         console.log('Task:', data);
     };
+    // отправка что чаты сообшения прочитаны
+    const markMessagesAsRead = () => {
+        if (!socket || !selectedTicketId) return;
+
+        const readMessageData = {
+            type: 'seen',
+            data: {
+                client_id: selectedTicketId,
+                sender_id: Number(userId), // Преобразование userId в число
+            },
+        };
+
+        try {
+            socket.send(JSON.stringify(readMessageData));
+            console.log('Sent mark as read:', readMessageData);
+        } catch (error) {
+            console.error('Error sending mark as read:', error);
+        }
+    };
 
     useEffect(() => {
         if (socket && selectedTicketId) {
-            // Когда выбираем чат, отправляем через сокет, что все сообщения прочитаны
-            const markMessagesAsRead = () => {
-    
-                const readMessageData = {
-                    type: 'seen',
-                    data: {
-                        client_id: selectedTicketId,
-                        sender_id: userId,
-                    },
-                };
-    
-                try {
-                    socket.send(JSON.stringify(readMessageData)); // Отправляем информацию, что сообщения прочитаны
-                    console.log('Sent mark as read:', readMessageData);
-                } catch (error) {
-                    console.error('Error sending mark as read:', error);
-                }
-            };
-    
             // Отправляем статус прочтения при открытии чата
             markMessagesAsRead();
         }
-    
+
         return () => {
             if (socket) {
                 socket.onmessage = null;
             }
         };
-    }, [selectedTicketId, socket]);    
+    }, [selectedTicketId, socket]);
 
     useEffect(() => {
         if (socket) {
             socket.onmessage = (event) => {
                 const message = JSON.parse(event.data);
-    
+
                 if (message.type === 'seen') {
                     const { client_id, sender_id, seen_at } = message.data;
-    
+
                     // Обновляем сообщения в состоянии, помечая как прочитанные
                     if (client_id === selectedTicketId) {
                         setMessages((prevMessages) => {
@@ -226,20 +226,20 @@ const ChatComponent = () => {
             };
         }
     }, [socket, selectedTicketId]);
-    
+
     // Отправка сообщения
     const sendMessage = () => {
         if (!managerMessage.trim()) {
             return;
         }
-    
+
         if (socket) {
             console.log('WebSocket state before sending message:', socket.readyState);
-    
+
             if (socket.readyState === WebSocket.OPEN) {
                 setTimeout(() => {
                     const currentTime = new Date().toISOString();
-    
+
                     const messageData = {
                         type: 'message',
                         data: {
@@ -250,12 +250,12 @@ const ChatComponent = () => {
                             time_sent: currentTime,
                         }
                     };
-    
+
                     try {
                         socket.send(JSON.stringify(messageData));
                         console.log('Message sent:', messageData);
                         setManagerMessage('');
-    
+
                         // Обновляем состояние сообщений с новым сообщением
                         setMessages((prevMessages) => [
                             ...prevMessages,
@@ -271,7 +271,7 @@ const ChatComponent = () => {
         } else {
             console.error('Socket is null.');
         }
-    };    
+    };
 
 
     useEffect(() => {
@@ -518,26 +518,26 @@ const ChatComponent = () => {
                     'Content-Type': 'application/json'
                 }
             });
-    
+
             if (!response.ok) {
                 throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
             }
-    
+
             const data = await response.json();
             console.log('Сообщения клиента:', data);
-    
+
             // Обновляем состояние с сообщениями
             setMessages(data);
         } catch (error) {
             console.error('Ошибка при получении сообщений:', error.message);
         }
     };
-    
+
     // useEffect(() => {
     //     const intervalId = setInterval(() => {
     //         getClientMessages();
     //     }, 1000); // Запрос каждые 1000 миллисекунд (1 секунда)
-    
+
     //     // Очистка интервала при размонтировании компонента
     //     return () => clearInterval(intervalId);
     // }, []);
@@ -561,6 +561,26 @@ const ChatComponent = () => {
     useEffect(() => {
         scrollToBottom();
     }, [messages, selectedTicketId]);
+
+    const handleClick = () => {
+        sendMessage();
+        // getClientMessages();
+        // markMessagesAsRead(); 
+    };
+
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault(); // Предотвращаем переход на новую строку
+            handleClick(); // Вызываем функцию, которая обрабатывает отправку
+        }
+    };
+
+    // const handleKeyPress = (event) => {
+    //     if (event.key === 'Enter') {
+    //         event.preventDefault(); // Предотвращает стандартное поведение, например, отправку формы
+    //         handleClick(); // Вызываем ту же функцию, что и при клике на кнопку
+    //     }
+    // };
 
     return (
         <div className="chat-container">
@@ -678,9 +698,10 @@ const ChatComponent = () => {
                         value={managerMessage}
                         onChange={(e) => setManagerMessage(e.target.value)}
                         placeholder="Type your message..."
+                        onKeyDown={handleKeyDown}
                     />
                     <div className="btn-send-message">
-                        <button className="send-button" onClick={sendMessage}>Send</button>
+                        <button className="send-button" onClick={handleClick}>Send</button>
                         <button className="file-button">Attach</button>
                     </div>
                 </div>
