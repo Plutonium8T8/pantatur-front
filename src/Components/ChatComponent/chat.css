@@ -39,6 +39,7 @@
     scroll-behavior: smooth;
     width: 39vw;
     height: 100vh;
+    scroll-behavior: auto; /* Мгновенный скролл */
 }
 
 /* Правая колонка для дополнительной информации */
