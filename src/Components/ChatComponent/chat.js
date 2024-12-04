@@ -21,6 +21,7 @@ import Input from '../InputComponent/InputComponent';
 import Workflow from '../WorkFlowComponent/WorkflowComponent';
 import "react-datepicker/dist/react-datepicker.css";
 import { useSocket } from '../../SocketContext';
+import { InView } from 'react-intersection-observer';
 
 import './chat.css';
 
@@ -165,6 +166,25 @@ const ChatComponent = () => {
     };
     const handleSeen = (data) => {
         console.log('seen:', data);
+    };
+
+    const handleInView = (isVisible, msg) => {
+        if (isVisible && !msg.seen_at) {
+            const readMessageData = {
+                type: 'seen',
+                data: {
+                    client_id: msg.client_id,
+                    sender_id: Number(userId),
+                },
+            };
+
+            try {
+                socket.send(JSON.stringify(readMessageData));
+                console.log('Sent mark as read for message:', msg.id);
+            } catch (error) {
+                console.error('Error sending mark as read:', error);
+            }
+        }
     };
 
     // отправка что чаты сообшения прочитаны
@@ -582,7 +602,7 @@ const ChatComponent = () => {
 
     const handleClick = () => {
         sendMessage();
-        markMessagesAsRead();
+        // markMessagesAsRead();
         getClientMessages();
         // fetchTicketsID();
     };
@@ -590,7 +610,7 @@ const ChatComponent = () => {
     const handleTicketClick = (ticketId) => {
         setSelectedTicketId(ticketId); // Устанавливаем выбранный тикет
         navigate(`/chat/${ticketId}`);
-        markMessagesAsRead();
+        // markMessagesAsRead();
         // fetchTicketsID();
         // getClientMessages();
     };
@@ -607,7 +627,7 @@ const ChatComponent = () => {
                         // Подсчёт непрочитанных сообщений (исключаем сообщения, отправленные текущим пользователем)
                         const unreadMessagesCount = chatMessages.filter(
                             (msg) => !msg.seen_at && msg.sender_id !== userId && msg.client_id !== selectedTicketId
-                        ).length;                        
+                        ).length;
 
                         // Нахождение последнего сообщения
                         const lastMessage = chatMessages.length
@@ -623,6 +643,13 @@ const ChatComponent = () => {
                                 minute: '2-digit',
                             })
                             : null;
+
+                        // Отслеживаем видимость сообщений
+                        const handleInView = (isVisible, msgId) => {
+                            if (isVisible) {
+                                markMessagesAsRead(msgId); // Логика для пометки сообщения прочитанным
+                            }
+                        };
 
                         return (
                             <div
@@ -642,6 +669,19 @@ const ChatComponent = () => {
                                     <div className="info-message">
                                         <div className="last-message-container">
                                             <div>{lastMessage.message}</div>
+                                            {/* {chatMessages.map((msg) => (
+                                                <InView
+                                                    key={msg.id}
+                                                    onChange={(inView) => handleInView(inView, msg.id)}
+                                                    threshold={0.5} // Процент видимости для срабатывания (50%)
+                                                >
+                                                    {({ ref }) => (
+                                                        <div ref={ref} className={`message ${msg.seen_at ? 'read' : 'unread'}`}>
+                                                            {msg.message}
+                                                        </div>
+                                                    )}
+                                                </InView>
+                                            ))} */}
                                             <div>{formattedTime}</div>
                                             {unreadMessagesCount > 0 && (
                                                 <div className="unread-count">{unreadMessagesCount}</div>
@@ -657,28 +697,29 @@ const ChatComponent = () => {
             <div className="chat-area">
                 <div className="chat-messages" ref={messageContainerRef}>
                     {messages
-                        .filter((msg) => msg.client_id === selectedTicketId) // Сообщения только для выбранного чата
+                        .filter((msg) => msg.client_id === selectedTicketId)
                         .sort((a, b) => new Date(a.time_sent) - new Date(b.time_sent)) // Сортируем по времени отправки
                         .map((msg, index) => {
-                            // Проверка на необходимые поля
-                            if (!msg.client_id || !msg.sender_id || !msg.message || !msg.time_sent) {
-                                console.warn('Invalid message data:', msg); // Логируем некорректные данные
-                                return null;
-                            }
-
-                            return (
-                                <div
-                                    key={msg.id || `${msg.client_id}-${index}`} // Уникальный ключ для каждого сообщения
-                                    className={`message ${msg.sender_id == userId ? 'sent' : 'received'}`}
+                            return ( // Добавляем return для корректного возврата JSX
+                                <InView
+                                    key={msg.id}
+                                    onChange={(inView) => handleInView(inView, msg)}
+                                    threshold={0.5} // Сообщение считается видимым, если хотя бы 50% попадает в зону видимости
                                 >
-                                    <div className="text">{msg.message}</div>
-                                    <div className="message-time">
-                                        {new Date(msg.time_sent).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
-                                    </div>
-                                </div>
+                                    {({ ref }) => (
+                                        <div ref={ref} className={`message ${msg.sender_id == userId ? 'sent' : 'received'}`}>
+                                            <div className="text">{msg.message}</div>
+                                            <div className="message-time">
+                                                {new Date(msg.time_sent).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+                                            </div>
+                                        </div>
+                                    )}
+                                </InView>
                             );
                         })}
+
                 </div>
+
 
 
                 <div className="manager-send-message-container">
