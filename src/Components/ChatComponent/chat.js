@@ -632,7 +632,7 @@ const ChatComponent = () => {
                         // Нахождение последнего сообщения
                         const lastMessage = chatMessages.length
                             ? chatMessages.reduce((latest, current) => new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest)
-                            : { message: 'No messages', time_sent: null };
+                            : { message: '', time_sent: null };
 
                         // Ограничиваем длину сообщения до 100 символов
                         lastMessage.message = lastMessage.message.length > 100 ? lastMessage.message.slice(0, 100) + '...' : lastMessage.message;
@@ -668,7 +668,7 @@ const ChatComponent = () => {
                                 <div className="container-time-tasks-chat">
                                     <div className="info-message">
                                         <div className="last-message-container">
-                                            <div>{lastMessage.message}</div>
+                                            <div className='last-message-ticket'>{lastMessage.message}</div>
                                             {/* {chatMessages.map((msg) => (
                                                 <InView
                                                     key={msg.id}
