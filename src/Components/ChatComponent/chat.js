@@ -294,7 +294,7 @@ const ChatComponent = () => {
     useEffect(() => {
         if (socket) {
             socket.onopen = () => {
-                console.log('WebSocket подключен');
+                console.log('проверка что WebSocket подключен');
             };
 
             socket.onerror = (error) => {
@@ -602,8 +602,8 @@ const ChatComponent = () => {
 
     const handleClick = () => {
         sendMessage();
-        // markMessagesAsRead();
         getClientMessages();
+        // markMessagesAsRead();
         // fetchTicketsID();
     };
 
@@ -669,19 +669,6 @@ const ChatComponent = () => {
                                     <div className="info-message">
                                         <div className="last-message-container">
                                             <div className='last-message-ticket'>{lastMessage.message}</div>
-                                            {/* {chatMessages.map((msg) => (
-                                                <InView
-                                                    key={msg.id}
-                                                    onChange={(inView) => handleInView(inView, msg.id)}
-                                                    threshold={0.5} // Процент видимости для срабатывания (50%)
-                                                >
-                                                    {({ ref }) => (
-                                                        <div ref={ref} className={`message ${msg.seen_at ? 'read' : 'unread'}`}>
-                                                            {msg.message}
-                                                        </div>
-                                                    )}
-                                                </InView>
-                                            ))} */}
                                             <div>{formattedTime}</div>
                                             {unreadMessagesCount > 0 && (
                                                 <div className="unread-count">{unreadMessagesCount}</div>
@@ -717,11 +704,7 @@ const ChatComponent = () => {
                                 </InView>
                             );
                         })}
-
                 </div>
-
-
-
                 <div className="manager-send-message-container">
                     <textarea
                         className="text-area-message"
@@ -743,8 +726,6 @@ const ChatComponent = () => {
                     </div>
                 </div>
             </div>
-
-
             <div className="extra-info">
                 <h3>Additional Information</h3>
                 {selectedTicketId && (
