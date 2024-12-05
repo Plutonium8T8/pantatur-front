@@ -34,8 +34,6 @@ export const updateTicket = async (updateData) => {
 
 };
 
-
-
 const WorkflowDashboard = () => {
 
     const [tickets, setTickets] = useState([]);
@@ -75,9 +73,6 @@ const WorkflowDashboard = () => {
         }
     };
 
-
-
-
     const updateTicketWorkflow = (ticketId, newWorkflow) => {
 
 
@@ -105,7 +100,6 @@ const WorkflowDashboard = () => {
         fetchTickets(); // Обновляем список после изменения workflow
     };
 
-
     const openCreateTicketModal = () => {
         setCurrentTicket({
             contact: '',
@@ -120,18 +114,9 @@ const WorkflowDashboard = () => {
         setIsModalOpen(true);
     };
 
-
-
     useEffect(() => {
         fetchTickets();
     }, [])
-
-    // const priorityStyles = {
-    //     low: { backgroundColor: '#fff3b0', borderColor: '#ffc107' },
-    //     medium: { backgroundColor: '#ffcc80', borderColor: '#ff9800' },
-    //     high: { backgroundColor: '#f99a9a', borderColor: '#dc3545' },
-    //     critical: { backgroundColor: '#f64e4e', borderColor: '#721c24' }
-    // };
 
     const workflowStyles = {
         Interesat: { backgroundColor: '#ffff88', borderColor: '#1B5E20' },
@@ -160,12 +145,6 @@ const WorkflowDashboard = () => {
         setCurrentTicket(ticket);
         navigate(`/chat/${ticket.id}`)
     };
-
-    // const handleTicketClick = (ticket) => {
-    //     const selectedTicketId = ticket;
-    //     setCurrentTicket(ticket);
-    //     navigate(`/chat/${selectedTicketId.id}`)
-    // };
 
     const closeModal = () => {
         setCurrentTicket(null);

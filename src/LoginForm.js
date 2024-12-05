@@ -83,7 +83,7 @@ function LoginForm({ onLoginSuccess }) {
       }
 
       if (!response.ok) {
-        throw new Error('Ошибка при получении данных тикетов');
+        throw new Error('Ошибка при получении ID тикетов');
       }
 
       const data = await response.json();
@@ -105,7 +105,7 @@ function LoginForm({ onLoginSuccess }) {
       }
     } catch (error) {
       console.error('Ошибка:', error);
-      setErrorMessage('Ошибка при загрузке тикетов');
+      setErrorMessage('Ошибка при загрузке ID тикетов');
     } finally {
       setIsLoading(false); // Скрываем индикатор загрузки
     }
