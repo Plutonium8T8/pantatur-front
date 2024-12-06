@@ -347,7 +347,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
                                     return updatedUnreadMessages;
                                 });
                             }
-    
+
                             // Передаем обновленное количество непрочитанных сообщений
                             if (typeof onUpdateUnreadMessages === 'function') {
                                 const totalUnreadMessages = Object.values(unreadMessages).reduce(
@@ -357,7 +357,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
                                 onUpdateUnreadMessages(totalUnreadMessages + 1);
                             }
                             break;
-                            case 'notification':
+                        case 'notification':
                             console.log('Notification received:', message.data);
                             showNotification(message.data); // Показываем уведомление
                             break;
@@ -377,7 +377,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
                 }
             };
         }
-    
+
         return () => {
             if (socket) {
                 socket.onmessage = null;
@@ -386,7 +386,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
             }
         };
     }, [socket, selectedTicketId, onUpdateUnreadMessages, unreadMessages]);
-    
+
 
     // Обработчик изменения значения в селекте для выбранного тикета
     const handleSelectChange = (ticketId, field, value) => {
@@ -592,11 +592,11 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
         getClientMessages();
     }, []);
 
-    useEffect(() => {
-        if (selectedTicketId) {
-            getClientMessages();
-        }
-    }, [selectedTicketId]);
+    // useEffect(() => {
+    //     if (selectedTicketId) {
+    //         getClientMessages();
+    //     }
+    // }, [selectedTicketId]);
 
     const scrollToBottom = () => {
         if (messageContainerRef.current) {
@@ -638,7 +638,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
         navigate(`/chat/${ticketId}`);
         // markMessagesAsRead();
         // fetchTicketsID();
-        // getClientMessages();
+        getClientMessages();
     };
 
     return (
