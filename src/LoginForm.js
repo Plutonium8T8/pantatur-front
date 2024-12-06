@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './LoginForm.css';
 import Cookies from 'js-cookie';
 import { useUser } from './UserContext';
@@ -110,6 +110,10 @@ function LoginForm({ onLoginSuccess }) {
       setIsLoading(false); // Скрываем индикатор загрузки
     }
   };
+
+  // useEffect(() => {
+  //   fetchTicketsID();
+  // }, []);
 
   return (
     <div className="body-login-form">

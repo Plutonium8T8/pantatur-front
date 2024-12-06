@@ -550,9 +550,9 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
         }
     };
 
-    useEffect(() => {
-        fetchTicketsID();
-    }, []);  // Empty dependency array ensures it only runs once on mount
+    // useEffect(() => {
+    //     fetchTicketsID();
+    // }, []);  // Empty dependency array ensures it only runs once on mount
 
     const getClientMessages = async () => {
         try {

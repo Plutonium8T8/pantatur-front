@@ -6,17 +6,15 @@ import LoginForm from './LoginForm';
 import { UserProvider } from './UserContext';
 import CustomSidebar from './Components/SideBar/SideBar';
 import ChatComponent from './Components/ChatComponent/chat';
-import UserProfile from './Components/UserPage/UserPage';
 import Cookies from 'js-cookie';
 import { SocketProvider, useSocket } from './SocketContext';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [unreadMessagesCount, setUnreadMessagesCount] = useState(0); // Общее состояние
+  const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
 
   const socket = useSocket();
-
   // Проверка сессии
   useEffect(() => {
     const token = Cookies.get('jwt');
@@ -90,11 +88,11 @@ function App() {
 
   return (
     <SocketProvider>
-      <UserProvider>
-        <Router>
-          {!isLoggedIn ? (
-            <LoginForm onLoginSuccess={() => setIsLoggedIn(true)} />
-          ) : (
+    <UserProvider>
+      <Router>
+        {!isLoggedIn ? (
+          <LoginForm onLoginSuccess={() => setIsLoggedIn(true)} />
+        ) : (
             <div className="app-container">
               <CustomSidebar unreadMessagesCount={unreadMessagesCount} />
               <div className="page-content">
@@ -103,14 +101,18 @@ function App() {
                   <Route path="/workflowdashboard" element={<WorkflowDashboard />} />
                   <Route
                     path="/chat/:ticketId?"
-                    element={<ChatComponent onUpdateUnreadMessages={handleUpdateUnreadMessages} />}
+                    element={
+                      <ChatComponent
+                        onUpdateUnreadMessages={setUnreadMessagesCount}
+                      />
+                    }
                   />
                 </Routes>
               </div>
             </div>
-          )}
-        </Router>
-      </UserProvider>
+        )}
+      </Router>
+    </UserProvider>
     </SocketProvider>
   );
 }

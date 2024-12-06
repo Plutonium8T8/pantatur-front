@@ -23,12 +23,6 @@ export const SocketProvider = ({ children }) => {
 
     setSocket(socketInstance);
 
-    return () => {
-      // Закрываем соединение, когда компонент размонтируется
-      if (socketInstance) {
-        socketInstance.close();
-      }
-    };
   }, []);
 
   return (
