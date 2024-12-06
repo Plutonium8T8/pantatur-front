@@ -8,17 +8,19 @@ import CustomSidebar from './Components/SideBar/SideBar';
 import ChatComponent from './Components/ChatComponent/chat';
 import UserProfile from './Components/UserPage/UserPage';
 import Cookies from 'js-cookie';
-import { SocketProvider } from './SocketContext'; // Импортируем SocketProvider
+import { SocketProvider, useSocket } from './SocketContext';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [unreadMessagesCount, setUnreadMessagesCount] = useState(0); // Общее состояние
 
-  // проверка сесии
+  const socket = useSocket();
+
+  // Проверка сессии
   useEffect(() => {
     const token = Cookies.get('jwt');
     if (token) {
-      // Проверка валидности сессии
       fetch('https://pandaturapi.com/session', {
         method: 'GET',
         headers: {
@@ -27,21 +29,15 @@ function App() {
         },
         credentials: 'include',
       })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Сессия истекла');
-          }
+        .then((response) => {
+          if (!response.ok) throw new Error('Сессия истекла');
           return response.json();
         })
-        .then(data => {
-          if (data.user_id) {
-            setIsLoggedIn(true); // Сессия активна
-          } else {
-            setIsLoggedIn(false); // Сессия истекла
-          }
+        .then((data) => {
+          setIsLoggedIn(!!data.user_id);
         })
         .catch(() => {
-          Cookies.remove('jwt'); // Удаляем токен при ошибке
+          Cookies.remove('jwt');
           setIsLoggedIn(false);
         })
         .finally(() => setIsLoading(false));
@@ -51,26 +47,64 @@ function App() {
     }
   }, []);
 
+  // Загрузка начальных непрочитанных сообщений
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetch('https://pandaturapi.com/messages')
+        .then((res) => res.json())
+        .then((data) => {
+          const unreadCount = data.filter((msg) => !msg.seen_at).length;
+          setUnreadMessagesCount(unreadCount);
+        })
+        .catch(console.error);
+    }
+  }, [isLoggedIn]);
+
+  // Подключение к WebSocket и обновление состояния
+  useEffect(() => {
+    if (socket) {
+      socket.onmessage = (event) => {
+        try {
+          const message = JSON.parse(event.data);
+          if (message.type === 'message' && !message.data.seen_at) {
+            setUnreadMessagesCount((prev) => prev + 1);
+          }
+        } catch (error) {
+          console.error('Ошибка WebSocket:', error);
+        }
+      };
+    }
+    return () => {
+      if (socket) socket.onmessage = null;
+    };
+  }, [socket]);
+
+  // Установка индикатора через ChatComponent
+  const handleUpdateUnreadMessages = (newCount) => {
+    setUnreadMessagesCount(newCount);
+  };
+
   if (isLoading) {
-    return <div className="loading-spinner">Loading...</div>; // Индикатор загрузки
+    return <div className="loading-spinner">Loading...</div>;
   }
 
   return (
-    <SocketProvider> {/* Оборачиваем все в SocketProvider */}
+    <SocketProvider>
       <UserProvider>
         <Router>
           {!isLoggedIn ? (
             <LoginForm onLoginSuccess={() => setIsLoggedIn(true)} />
           ) : (
             <div className="app-container">
-              <CustomSidebar />
+              <CustomSidebar unreadMessagesCount={unreadMessagesCount} />
               <div className="page-content">
                 <Routes>
                   <Route path="/" element={<Navigate to="/workflowdashboard" />} />
-                  <Route path="/account" element={<UserProfile />} />
                   <Route path="/workflowdashboard" element={<WorkflowDashboard />} />
-                  <Route path="/chat/:ticketId?" element={<ChatComponent />} />
-                  <Route path="*" element={<h1>Coming soon</h1>} />
+                  <Route
+                    path="/chat/:ticketId?"
+                    element={<ChatComponent onUpdateUnreadMessages={handleUpdateUnreadMessages} />}
+                  />
                 </Routes>
               </div>
             </div>

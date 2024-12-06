@@ -2,7 +2,7 @@ import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './SideBar.css';
 
-const CustomSidebar = () => {
+const CustomSidebar = ({ unreadMessagesCount }) => {
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -45,6 +45,9 @@ const CustomSidebar = () => {
                         onClick={() => handleNavigate('chat')}
                     >
                         💬 <br />Chat
+                        {unreadMessagesCount > 0 && (
+                            <span className="unread-indicator">{unreadMessagesCount}</span>
+                        )}
                     </div>
                     <div
                         className={`menu-item ${isActive('mail') ? 'active' : ''}`}

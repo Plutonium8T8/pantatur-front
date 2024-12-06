@@ -22,7 +22,7 @@ import Workflow from '../WorkFlowComponent/WorkflowComponent';
 import "react-datepicker/dist/react-datepicker.css";
 import { useSocket } from '../../SocketContext';
 import { InView } from 'react-intersection-observer';
-
+import CustomSidebar from '../SideBar/SideBar';
 import './chat.css';
 
 const ENCRYPTION_KEY = '0123456789abcdef0123456789abcdef';
@@ -52,7 +52,7 @@ const decrypt = (text) => {
     return decrypted.toString(Utf8);
 };
 
-const ChatComponent = () => {
+const ChatComponent = ({ onUpdateUnreadMessages }) => {
     const { userId } = useUser();
     const [managerMessage, setManagerMessage] = useState('');
     const [messages, setMessages] = useState([]);
@@ -66,7 +66,23 @@ const ChatComponent = () => {
     const socket = useSocket(); // Получаем WebSocket из контекста
     const [errorMessage, setErrorMessage] = useState(''); // Состояние для ошибок
     const [ticketIds, setTicketIds] = useState([]); // Состояние для хранения ID тикетов
-    const [unreadMessages, setUnreadMessages] = useState({});  // Состояние для отслеживания непрочитанных сообщений
+    const [unreadMessages, setUnreadMessages] = useState({}); // Состояние для отслеживания непрочитанных сообщений
+
+    // Обновляем счетчик непрочитанных сообщений
+    useEffect(() => {
+        const totalUnreadMessages = tickets.reduce((total, ticket) => {
+            const chatMessages = messages.filter((msg) => msg.client_id === ticket.id);
+            const unreadMessagesCount = chatMessages.filter(
+                (msg) => !msg.seen_at && msg.sender_id !== userId && ticket.id !== selectedTicketId
+            ).length;
+            return total + unreadMessagesCount;
+        }, 0);
+
+        // Передача данных в App через callback
+        if (onUpdateUnreadMessages) {
+            onUpdateUnreadMessages(totalUnreadMessages);
+        }
+    }, [tickets, messages, userId, selectedTicketId, onUpdateUnreadMessages]);
 
     useEffect(() => {
         // Если ticketId передан через URL, устанавливаем его как selectedTicketId
@@ -331,8 +347,17 @@ const ChatComponent = () => {
                                     return updatedUnreadMessages;
                                 });
                             }
+    
+                            // Передаем обновленное количество непрочитанных сообщений
+                            if (typeof onUpdateUnreadMessages === 'function') {
+                                const totalUnreadMessages = Object.values(unreadMessages).reduce(
+                                    (sum, count) => sum + count,
+                                    0
+                                );
+                                onUpdateUnreadMessages(totalUnreadMessages + 1);
+                            }
                             break;
-                        case 'notification':
+                            case 'notification':
                             console.log('Notification received:', message.data);
                             showNotification(message.data); // Показываем уведомление
                             break;
@@ -352,7 +377,7 @@ const ChatComponent = () => {
                 }
             };
         }
-
+    
         return () => {
             if (socket) {
                 socket.onmessage = null;
@@ -360,7 +385,8 @@ const ChatComponent = () => {
                 socket.onclose = null;
             }
         };
-    }, [socket, selectedTicketId]);
+    }, [socket, selectedTicketId, onUpdateUnreadMessages, unreadMessages]);
+    
 
     // Обработчик изменения значения в селекте для выбранного тикета
     const handleSelectChange = (ticketId, field, value) => {
@@ -621,21 +647,19 @@ const ChatComponent = () => {
                 <h3>Chat List</h3>
                 <div className="chat-item-container">
                     {tickets.map((ticket) => {
-                        // Сообщения для текущего чата
                         const chatMessages = messages.filter((msg) => msg.client_id === ticket.id);
 
-                        // Подсчёт непрочитанных сообщений (исключаем сообщения, отправленные текущим пользователем)
                         const unreadMessagesCount = chatMessages.filter(
                             (msg) => !msg.seen_at && msg.sender_id !== userId && msg.client_id !== selectedTicketId
                         ).length;
 
-                        // Нахождение последнего сообщения
                         const lastMessage = chatMessages.length
                             ? chatMessages.reduce((latest, current) => new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest)
                             : { message: '', time_sent: null };
 
-                        // Ограничиваем длину сообщения до 100 символов
-                        lastMessage.message = lastMessage.message.length > 100 ? lastMessage.message.slice(0, 100) + '...' : lastMessage.message;
+                        lastMessage.message = lastMessage.message.length > 100
+                            ? lastMessage.message.slice(0, 100) + '...'
+                            : lastMessage.message;
 
                         const formattedTime = lastMessage.time_sent
                             ? new Date(lastMessage.time_sent).toLocaleTimeString('ru-RU', {
