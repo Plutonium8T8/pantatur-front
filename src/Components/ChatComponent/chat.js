@@ -628,7 +628,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
 
     const handleClick = () => {
         sendMessage();
-        getClientMessages();
+        // getClientMessages();
         // markMessagesAsRead();
         // fetchTicketsID();
     };

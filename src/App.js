@@ -88,11 +88,11 @@ function App() {
 
   return (
     <SocketProvider>
-    <UserProvider>
-      <Router>
-        {!isLoggedIn ? (
-          <LoginForm onLoginSuccess={() => setIsLoggedIn(true)} />
-        ) : (
+      <UserProvider>
+        <Router>
+          {!isLoggedIn ? (
+            <LoginForm onLoginSuccess={() => setIsLoggedIn(true)} />
+          ) : (
             <div className="app-container">
               <CustomSidebar unreadMessagesCount={unreadMessagesCount} />
               <div className="page-content">
@@ -110,9 +110,9 @@ function App() {
                 </Routes>
               </div>
             </div>
-        )}
-      </Router>
-    </UserProvider>
+          )}
+        </Router>
+      </UserProvider>
     </SocketProvider>
   );
 }
