@@ -3,6 +3,7 @@ import './LoginForm.css';
 import Cookies from 'js-cookie';
 import { useUser } from './UserContext';
 import { useSocket } from './SocketContext';
+import Snackbar from './Components/Snackbar/Snackbar';// Импортируем компонент
 
 const LoginForm = ({ onLoginSuccess }) => {
   const [form, setForm] = useState({ email: '', username: '', password: '' });
@@ -14,6 +15,7 @@ const LoginForm = ({ onLoginSuccess }) => {
   const [errorMessage, setErrorMessage] = useState(''); // Состояние для ошибок
   const [tickets, setTickets] = useState([]);
   const [ticketIds, setTicketIds] = useState([]); // Состояние для хранения ID тикетов
+  const [snackbarDescription, setSnackbarDescription] = useState("");
 
   const handleInputChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -115,6 +117,10 @@ const LoginForm = ({ onLoginSuccess }) => {
   //   fetchTicketsID();
   // }, []);
 
+  const showSnackbar = (description) => {
+    setSnackbarDescription(description);
+  };
+
   return (
     <div className="body-login-form">
       <div className="login-form">
@@ -160,6 +166,22 @@ const LoginForm = ({ onLoginSuccess }) => {
           Switch to {isLogin ? 'Register' : 'Login'}
         </button>
 
+        {isLoading && (
+          <div className="spinner-overlay">
+            <div className="spinner"></div>
+          </div>
+        )}
+        <div>
+          <button onClick={() => showSnackbar("Это уведомление!")}>
+            Показать Snackbar
+          </button>
+
+          <Snackbar
+            description={snackbarDescription}
+            duration={3000}
+            onClose={() => setSnackbarDescription("")}
+          />
+        </div>
         {message && <p className="error-message">{message}</p>}
       </div>
     </div>

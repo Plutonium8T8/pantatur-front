@@ -105,7 +105,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
 
     // Получение тикетов через fetch
     const fetchTickets = async () => {
-
+        setIsLoading(true); // Показываем индикатор загрузки
         try {
             await new Promise(resolve => setTimeout(resolve, 500));
             const token = Cookies.get('jwt');
@@ -132,6 +132,9 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
             console.log("+++ Загруженные тикеты:", data);
         } catch (error) {
             console.error('Ошибка:', error);
+        }
+        finally {
+            setIsLoading(false);
         }
     };
 
@@ -704,6 +707,11 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
                         );
                     })}
                 </div>
+                {isLoading && (
+                    <div className="spinner-overlay">
+                        <div className="spinner"></div>
+                    </div>
+                )}
             </div>
             <div className="chat-area">
                 <div className="chat-messages" ref={messageContainerRef}>

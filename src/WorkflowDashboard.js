@@ -3,7 +3,6 @@ import TicketModal from './TicketModal';
 import { workflowOptions } from './FormOptions/WorkFlowOption';
 import { priorityOptions } from './FormOptions/PriorityOption';
 import { useNavigate } from 'react-router-dom'; // Импортируем useNavigate
-
 import Cookies from 'js-cookie';
 
 import './App.css';
@@ -41,9 +40,10 @@ const WorkflowDashboard = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentTicket, setCurrentTicket] = useState(null);
     const navigate = useNavigate(); // Используем useNavigate для перехода
+    const [isLoading, setIsLoading] = useState(false);
 
     const fetchTickets = async () => {
-
+        setIsLoading(true); // Показываем индикатор загрузки
         try {
             await new Promise(resolve => setTimeout(resolve, 500));
             const token = Cookies.get('jwt');
@@ -70,6 +70,8 @@ const WorkflowDashboard = () => {
             console.log("+++ Загруженные тикеты:", data);
         } catch (error) {
             console.error('Ошибка:', error);
+        } finally {
+            setIsLoading(false); // Скрываем индикатор загрузки
         }
     };
 
@@ -219,6 +221,11 @@ const WorkflowDashboard = () => {
                         </div>
                     </div>
                 ))}
+                {isLoading && (
+                    <div className="spinner-overlay">
+                        <div className="spinner"></div>
+                    </div>
+                )}
             </div>
 
             {currentTicket && (

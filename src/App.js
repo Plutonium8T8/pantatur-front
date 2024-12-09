@@ -84,7 +84,7 @@ function App() {
   };
 
   if (isLoading) {
-    return <div className="loading-spinner">Loading...</div>;
+    return <div className="spinner"></div>;
   }
 
   return (
