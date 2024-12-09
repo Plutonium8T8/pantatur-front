@@ -8,6 +8,7 @@ import CustomSidebar from './Components/SideBar/SideBar';
 import ChatComponent from './Components/ChatComponent/chat';
 import Cookies from 'js-cookie';
 import { SocketProvider, useSocket } from './SocketContext';
+import UserProfile from './Components/UserPage/UserPage';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -97,6 +98,7 @@ function App() {
               <CustomSidebar unreadMessagesCount={unreadMessagesCount} />
               <div className="page-content">
                 <Routes>
+                  <Route path="/account" element={<UserProfile to="/account" />} />
                   <Route path="/" element={<Navigate to="/workflowdashboard" />} />
                   <Route path="/workflowdashboard" element={<WorkflowDashboard />} />
                   <Route
