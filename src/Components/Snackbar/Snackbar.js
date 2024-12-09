@@ -30,7 +30,7 @@ const Snackbar = ({ description, duration = 3000, onClose }) => {
 
 const SnackbarContainer = () => {
   const [description, setDescription] = useState([]);
-  
+
   const showSnackbar = (message) => {
     setMessages((prevMessages) => [...prevMessages, message]);
   };
