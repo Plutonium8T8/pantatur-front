@@ -3,7 +3,7 @@ import './LoginForm.css';
 import Cookies from 'js-cookie';
 import { useUser } from './UserContext';
 import { useSocket } from './SocketContext';
-import Snackbar from './Components/Snackbar/Snackbar';// Импортируем компонент
+import Snackbar from './Components/Snackbar/Snackbar'; // Импортируем компонент
 
 const LoginForm = ({ onLoginSuccess }) => {
   const [form, setForm] = useState({ email: '', username: '', password: '' });
@@ -12,10 +12,8 @@ const LoginForm = ({ onLoginSuccess }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { setUserId } = useUser();
   const socket = useSocket(); // Получаем WebSocket из контекста
-  const [errorMessage, setErrorMessage] = useState(''); // Состояние для ошибок
   const [tickets, setTickets] = useState([]);
-  const [ticketIds, setTicketIds] = useState([]); // Состояние для хранения ID тикетов
-  const [snackbarDescription, setSnackbarDescription] = useState("");
+  const [ticketIds, setTicketIds] = useState([]); // Состояние для ID тикетов
 
   const handleInputChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -35,6 +33,11 @@ const LoginForm = ({ onLoginSuccess }) => {
   };
 
   const handleSubmit = async () => {
+    // if (!validateForm()) {
+    //   setMessage('Некорректные данные');
+    //   return;
+    // }
+
     setIsLoading(true);
     const url = isLogin
       ? 'https://pandaturapi.com/api/login'
@@ -56,7 +59,7 @@ const LoginForm = ({ onLoginSuccess }) => {
         Cookies.set('jwt', responseData.token, { expires: 7, secure: true, sameSite: 'strict' });
         setUserId(responseData.user_id);
         onLoginSuccess();
-        await fetchTicketsID(); // Дожидаемся получения тикетов
+        await fetchTicketsID();
       }
     } catch (error) {
       setMessage('Произошла ошибка');
@@ -68,7 +71,7 @@ const LoginForm = ({ onLoginSuccess }) => {
 
   const fetchTicketsID = async () => {
     try {
-      setIsLoading(true); // Показываем индикатор загрузки
+      setIsLoading(true);
       const token = Cookies.get('jwt');
       const response = await fetch('https://pandaturapi.com/api/tickets', {
         method: 'GET',
@@ -79,8 +82,7 @@ const LoginForm = ({ onLoginSuccess }) => {
       });
 
       if (response.status === 401) {
-        console.warn('Ошибка 401: Неавторизован. Перенаправляем на логин.');
-        setErrorMessage('Ошибка авторизации. Попробуйте снова.');
+        setMessage('Ошибка авторизации. Попробуйте снова.');
         return;
       }
 
@@ -89,36 +91,21 @@ const LoginForm = ({ onLoginSuccess }) => {
       }
 
       const data = await response.json();
-      const tickets = data[0]; // Доступ к первому элементу
-      const TicketIds = tickets.map((ticket) => ticket.id);
+      const tickets = data[0];
+      const ticketIds = tickets.map((ticket) => ticket.id);
 
-      setTicketIds(TicketIds);
+      setTicketIds(ticketIds);
       setTickets(tickets);
 
-      // Отправляем сообщение в WebSocket после успешного получения ID
       if (socket && socket.readyState === WebSocket.OPEN) {
-        const message = {
-          type: 'connect',
-          data: {
-            client_id: TicketIds, // Используем полученные ID
-          },
-        };
-        socket.send(JSON.stringify(message));
+        socket.send(JSON.stringify({ type: 'connect', data: { client_id: ticketIds } }));
       }
     } catch (error) {
       console.error('Ошибка:', error);
-      setErrorMessage('Ошибка при загрузке ID тикетов');
+      setMessage('Ошибка при загрузке тикетов');
     } finally {
-      setIsLoading(false); // Скрываем индикатор загрузки
+      setIsLoading(false);
     }
-  };
-
-  // useEffect(() => {
-  //   fetchTicketsID();
-  // }, []);
-
-  const showSnackbar = (description) => {
-    setSnackbarDescription(description);
   };
 
   return (
@@ -171,21 +158,15 @@ const LoginForm = ({ onLoginSuccess }) => {
             <div className="spinner"></div>
           </div>
         )}
-        <div>
-          <button onClick={() => showSnackbar("Это уведомление!")}>
-            Показать Snackbar
-          </button>
 
-          <Snackbar
-            description={snackbarDescription}
-            duration={3000}
-            onClose={() => setSnackbarDescription("")}
-          />
-        </div>
-        {message && <p className="error-message">{message}</p>}
+        <Snackbar
+          description={message}
+          duration={3000}
+          onClose={() => setMessage('')}
+        />
       </div>
     </div>
   );
-}
+};
 
 export default LoginForm;

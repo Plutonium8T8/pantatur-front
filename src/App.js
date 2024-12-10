@@ -16,6 +16,7 @@ function App() {
   const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
 
   const socket = useSocket();
+
   // Проверка сессии
   useEffect(() => {
     const token = Cookies.get('jwt');

@@ -21,7 +21,13 @@ const Snackbar = ({ description, duration = 3000, onClose }) => {
   return (
     <div className="snackbar">
       <span>{description}</span>
-      <button className="snackbar-close" onClick={() => setVisible(false)}>
+      <button
+        className="snackbar-close"
+        onClick={() => {
+          setVisible(false);
+          if (onClose) onClose(); // Удаляем сообщение из массива при закрытии
+        }}
+      >
         ✕
       </button>
     </div>
@@ -29,7 +35,7 @@ const Snackbar = ({ description, duration = 3000, onClose }) => {
 };
 
 const SnackbarContainer = () => {
-  const [description, setDescription] = useState([]);
+  const [messages, setMessages] = useState([]); // Исправлено название переменной
 
   const showSnackbar = (message) => {
     setMessages((prevMessages) => [...prevMessages, message]);
@@ -44,12 +50,14 @@ const SnackbarContainer = () => {
       {messages.map((msg, index) => (
         <Snackbar
           key={index}
-          description={msg}
-          duration={3000}
+          description={msg} // Исправлено название свойства
+          duration={6000}
           onClose={removeMessage}
         />
       ))}
-      <button onClick={() => showSnackbar("Это новое сообщение!")}>Показать сообщение</button>
+      <button onClick={() => showSnackbar("Это новое сообщение!")}>
+        Показать сообщение
+      </button>
     </div>
   );
 };
