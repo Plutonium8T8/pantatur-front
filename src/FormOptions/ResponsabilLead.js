@@ -3,7 +3,7 @@ import Cookies from 'js-cookie';
 
 const TechnicianSelect = ({ onTechnicianChange, selectedTechnicianId }) => {
     const [technicians, setTechnicians] = useState([]);
-    const [selectedTechnician, setSelectedTechnician] = useState('');
+    const [selectedTechnician, setSelectedTechnician] = useState(selectedTechnicianId || ""); // Убедитесь, что начальное значение - строка
 
     const fetchTechnicians = async () => {
         const token = Cookies.get('jwt');
@@ -34,20 +34,18 @@ const TechnicianSelect = ({ onTechnicianChange, selectedTechnicianId }) => {
         }
     };
 
-    // Получаем список техников при монтировании компонента
     useEffect(() => {
         fetchTechnicians();
     }, []);
 
-    // Синхронизируем значение с выбранным technician_id, если оно изменяется
     useEffect(() => {
-        setSelectedTechnician(selectedTechnicianId);
-    }, [selectedTechnicianId]); // Зависимость от selectedTechnicianId
+        setSelectedTechnician(selectedTechnicianId || ""); // Синхронизация с внешним состоянием
+    }, [selectedTechnicianId]);
 
     const handleChange = (event) => {
         const technicianId = event.target.value;
         setSelectedTechnician(technicianId);
-        onTechnicianChange(technicianId); // Передаем выбранного техника в родительский компонент
+        onTechnicianChange(technicianId);
     };
 
     return (
