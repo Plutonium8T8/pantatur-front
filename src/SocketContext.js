@@ -11,7 +11,7 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     // Устанавливаем соединение WebSocket после логина
-    const socketInstance = new WebSocket('ws://34.65.204.80:8080'); // Укажите ваш WebSocket сервер
+    const socketInstance = new WebSocket('ws://34.88.185.205:8080'); // Укажите ваш WebSocket сервер
 
     socketInstance.onopen = () => {
       console.log('WebSocket подключен');

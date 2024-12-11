@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Priority from './Components/PriorityComponent/PriorityComponent';
 import Workflow from './Components/WorkFlowComponent/WorkflowComponent';
 import Cookies from 'js-cookie';
-import { updateTicket } from './WorkflowDashboard';
+import { updateTicket } from './Leads';
 import { useUser } from './UserContext';
 import { transportOptions } from './FormOptions/TransportOptions';
 import { countryOptions } from './FormOptions/CountryOptions';

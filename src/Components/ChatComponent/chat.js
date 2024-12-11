@@ -22,7 +22,7 @@ import Workflow from '../WorkFlowComponent/WorkflowComponent';
 import "react-datepicker/dist/react-datepicker.css";
 import { useSocket } from '../../SocketContext';
 import { InView } from 'react-intersection-observer';
-import CustomSidebar from '../SideBar/SideBar';
+import { useSnackbar } from 'notistack';
 import './chat.css';
 
 const ENCRYPTION_KEY = '0123456789abcdef0123456789abcdef';
@@ -67,6 +67,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
     const [errorMessage, setErrorMessage] = useState(''); // Состояние для ошибок
     const [ticketIds, setTicketIds] = useState([]); // Состояние для хранения ID тикетов
     const [unreadMessages, setUnreadMessages] = useState({}); // Состояние для отслеживания непрочитанных сообщений
+    const { enqueueSnackbar } = useSnackbar();
 
     // Обновляем счетчик непрочитанных сообщений
     useEffect(() => {
@@ -155,7 +156,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
             }
 
             const data = await response.json();
-
+            enqueueSnackbar('Загружено доп инфо по тикетам!', { variant: 'success' });
             // Обновляем состояние с дополнительной информацией о тикете
             setExtraInfo((prevState) => ({
                 ...prevState,
@@ -166,6 +167,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
             setSelectedTechnicianId(data.technician_id); // Устанавливаем technician_id в состояние
 
         } catch (error) {
+            enqueueSnackbar('Ошибка при получении дополнительной информации', { variant: 'error' });
             console.error('Ошибка при получении дополнительной информации:', error);
         }
     };
@@ -449,8 +451,10 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
             });
 
             const result = await response.json();
+            enqueueSnackbar('Данные успешно обновлены', { variant: 'success' });
             console.log('Данные успешно отправлены:', result);
         } catch (error) {
+            enqueueSnackbar('Ошибка при обновлении дополнительной информации:', { variant: 'error' });
             console.error('Ошибка при отправке дополнительной информации:', error);
         }
         finally {
@@ -490,7 +494,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
 
             // Получаем обновленные данные
             const data = await response.json();
-
+            enqueueSnackbar('Статус тикета обновлен!', { variant: 'success' });
             // Обновляем локальное состояние
             setTickets((prevTickets) =>
                 prevTickets.map((ticket) =>

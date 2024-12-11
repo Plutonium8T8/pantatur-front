@@ -3,7 +3,7 @@ import TicketModal from './TicketModal';
 import { workflowOptions } from './FormOptions/WorkFlowOption';
 import { priorityOptions } from './FormOptions/PriorityOption';
 import { useNavigate } from 'react-router-dom';
-import SnackbarContainer from './Components/Snackbar/Snackbar';
+import { useSnackbar } from 'notistack';
 import Cookies from 'js-cookie';
 
 import './App.css';
@@ -34,29 +34,14 @@ export const updateTicket = async (updateData) => {
     }
 };
 
-const WorkflowDashboard = () => {
+const Leads = () => {
     const [tickets, setTickets] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [setIsModalOpen] = useState(false);
     const [currentTicket, setCurrentTicket] = useState(null);
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
-    const [snackbars, setSnackbars] = useState([]); // Хранилище уведомлений
-
-    // Добавление уведомления
-    const showSnackbar = (description, type = 'info') => {
-        const newSnackbar = {
-            id: Date.now(),
-            description,
-            type,
-        };
-        setSnackbars((prev) => [...prev, newSnackbar]);
-    };
-
-    // Удаление уведомления
-    const removeSnackbar = (id) => {
-        setSnackbars((prev) => prev.filter((snackbar) => snackbar.id !== id));
-    };
+    const { enqueueSnackbar } = useSnackbar();
 
     const fetchTickets = async () => {
         setIsLoading(true);
@@ -84,9 +69,9 @@ const WorkflowDashboard = () => {
             const data = await response.json();
             setTickets(...data); // Устанавливаем данные тикетов
             console.log("+++ Загруженные тикеты:", data);
+            // enqueueSnackbar('Тикеты успешно загружены!', { variant: 'success' });
         } catch (error) {
             console.error('Ошибка:', error);
-            showSnackbar('Ошибка при загрузке тикетов.', 'error');
         } finally {
             setIsLoading(false);
         }
@@ -252,4 +237,4 @@ const WorkflowDashboard = () => {
     );
 };
 
-export default WorkflowDashboard;
+export default Leads;

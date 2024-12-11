@@ -35,8 +35,8 @@ const CustomSidebar = ({ unreadMessagesCount, unreadNotificationsCount }) => {
                         📊 <br />Dashboard
                     </div>
                     <div
-                        className={`menu-item ${isActive('workflowdashboard') ? 'active' : ''}`}
-                        onClick={() => handleNavigate('workflowdashboard')}
+                        className={`menu-item ${isActive('leads') ? 'active' : ''}`}
+                        onClick={() => handleNavigate('leads')}
                     >
                         📝 <br />Leads
                     </div>
