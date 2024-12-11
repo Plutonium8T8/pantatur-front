@@ -37,7 +37,9 @@
   width: 300px;
   z-index: 1000;
 }
-
+.snackbar-container button {
+  border: 1px solid red;
+}
 @keyframes fadeIn {
   from {
     opacity: 0;

@@ -10,6 +10,7 @@ import Cookies from 'js-cookie';
 import { SocketProvider, useSocket } from './SocketContext';
 import UserProfile from './Components/UserPage/UserPage';
 import SnackbarContainer from './Components/Snackbar/Snackbar';
+import { SnackbarProvider } from './Components/Snackbar/SnackbarContext';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -23,7 +24,7 @@ function App() {
   useEffect(() => {
     const token = Cookies.get('jwt');
     if (token) {
-      fetch('https://pandatur-api-1022490157093.europe-north1.run.app/session', {
+      fetch('https://pandatur-api.com/session', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -52,7 +53,7 @@ function App() {
   // Загрузка начальных данных для сообщений и уведомлений
   useEffect(() => {
     if (isLoggedIn) {
-      fetch('https://pandatur-api-1022490157093.europe-north1.run.app/messages')
+      fetch('https://pandatur-api.com/messages')
         .then((res) => res.json())
         .then((data) => {
           const unreadMessages = data.filter((msg) => !msg.seen_at).length;
@@ -60,7 +61,7 @@ function App() {
         })
         .catch(console.error);
 
-      fetch('https://pandatur-api-1022490157093.europe-north1.run.app/notifications')
+      fetch('https://pandatur-api.com/notifications')
         .then((res) => res.json())
         .then((data) => {
           const unreadNotifications = data.filter((notif) => !notif.seen_at).length;
@@ -97,40 +98,42 @@ function App() {
   }
 
   return (
-    <SocketProvider>
-      <UserProvider>
-        <Router>
-          {!isLoggedIn ? (
-            <LoginForm onLoginSuccess={() => setIsLoggedIn(true)} />
-          ) : (
-            <div className="app-container">
-              <CustomSidebar
-                unreadMessagesCount={unreadMessagesCount}
-                unreadNotificationsCount={unreadNotificationsCount}
-              />
-              <div className="page-content">
-                <Routes>
-                  <Route path="/account" element={<UserProfile to="/account" />} />
-                  <Route path="/" element={<Navigate to="/workflowdashboard" />} />
-                  <Route path="/workflowdashboard" element={<WorkflowDashboard />} />
-                  <Route
-                    path="/chat/:ticketId?"
-                    element={
-                      <ChatComponent
-                        onUpdateUnreadMessages={setUnreadMessagesCount}
-                      />
-                    }
-                  />
-                  <Route path="/notifications" element={<SnackbarContainer />} />
-                  {/* Route для неизвестных страниц */}
-                  <Route path="*" element={<div>Coming Soon</div>} />
-                </Routes>
+    <SnackbarProvider>
+      <SocketProvider>
+        <UserProvider>
+          <Router>
+            {!isLoggedIn ? (
+              <LoginForm onLoginSuccess={() => setIsLoggedIn(true)} />
+            ) : (
+              <div className="app-container">
+                <CustomSidebar
+                  unreadMessagesCount={unreadMessagesCount}
+                  unreadNotificationsCount={unreadNotificationsCount}
+                />
+                <div className="page-content">
+                  <Routes>
+                    <Route path="/account" element={<UserProfile to="/account" />} />
+                    <Route path="/" element={<Navigate to="/workflowdashboard" />} />
+                    <Route path="/workflowdashboard" element={<WorkflowDashboard />} />
+                    <Route
+                      path="/chat/:ticketId?"
+                      element={
+                        <ChatComponent
+                          onUpdateUnreadMessages={setUnreadMessagesCount}
+                        />
+                      }
+                    />
+                    <Route path="/notifications" element={<SnackbarContainer />} />
+                    {/* Route для неизвестных страниц */}
+                    <Route path="*" element={<div>Coming Soon</div>} />
+                  </Routes>
+                </div>
               </div>
-            </div>
-          )}
-        </Router>
-      </UserProvider>
-    </SocketProvider>
+            )}
+          </Router>
+        </UserProvider>
+      </SocketProvider>
+    </SnackbarProvider>
   );
 }
 

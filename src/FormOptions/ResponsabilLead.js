@@ -9,7 +9,7 @@ const TechnicianSelect = ({ onTechnicianChange, selectedTechnicianId }) => {
         const token = Cookies.get('jwt');
 
         try {
-            const response = await fetch('https://pandaturapi.com/users-technician', {
+            const response = await fetch('https://pandatur-api.com/users-technician', {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,

@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import TicketModal from './TicketModal';
 import { workflowOptions } from './FormOptions/WorkFlowOption';
 import { priorityOptions } from './FormOptions/PriorityOption';
-import { useNavigate } from 'react-router-dom'; // Импортируем useNavigate
+import { useNavigate } from 'react-router-dom';
+import SnackbarContainer from './Components/Snackbar/Snackbar';
 import Cookies from 'js-cookie';
 
 import './App.css';
@@ -10,14 +11,14 @@ import './App.css';
 export const updateTicket = async (updateData) => {
     try {
         const token = Cookies.get('jwt');
-        const response = await fetch(`https://pandatur-api-1022490157093.europe-north1.run.appapi/tickets/${updateData.id}`, {
+        const response = await fetch(`https://pandatur-api.com/api/tickets/${updateData.id}`, {
             method: 'PATCH',
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ ...updateData }),
-            credentials: 'include'
+            credentials: 'include',
         });
 
         if (!response.ok) {
@@ -29,25 +30,40 @@ export const updateTicket = async (updateData) => {
 
     } catch (error) {
         console.error('Ошибка:', error);
+        throw error;
     }
-
 };
 
 const WorkflowDashboard = () => {
-
     const [tickets, setTickets] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentTicket, setCurrentTicket] = useState(null);
-    const navigate = useNavigate(); // Используем useNavigate для перехода
+    const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
+    const [snackbars, setSnackbars] = useState([]); // Хранилище уведомлений
+
+    // Добавление уведомления
+    const showSnackbar = (description, type = 'info') => {
+        const newSnackbar = {
+            id: Date.now(),
+            description,
+            type,
+        };
+        setSnackbars((prev) => [...prev, newSnackbar]);
+    };
+
+    // Удаление уведомления
+    const removeSnackbar = (id) => {
+        setSnackbars((prev) => prev.filter((snackbar) => snackbar.id !== id));
+    };
 
     const fetchTickets = async () => {
-        setIsLoading(true); // Показываем индикатор загрузки
+        setIsLoading(true);
         try {
             await new Promise(resolve => setTimeout(resolve, 500));
             const token = Cookies.get('jwt');
-            const response = await fetch('https://pandatur-api-1022490157093.europe-north1.run.app/api/tickets', {
+            const response = await fetch('https://pandatur-api.com/api/tickets', {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -57,7 +73,7 @@ const WorkflowDashboard = () => {
 
             if (response.status === 401) {
                 console.warn('Ошибка 401: Неавторизован. Перенаправляем на логин.');
-                window.location.reload(); // Перезагрузка страницы
+                // window.location.reload(); // Перезагрузка страницы
                 return;
             }
 
@@ -70,8 +86,9 @@ const WorkflowDashboard = () => {
             console.log("+++ Загруженные тикеты:", data);
         } catch (error) {
             console.error('Ошибка:', error);
+            showSnackbar('Ошибка при загрузке тикетов.', 'error');
         } finally {
-            setIsLoading(false); // Скрываем индикатор загрузки
+            setIsLoading(false);
         }
     };
 
@@ -192,32 +209,29 @@ const WorkflowDashboard = () => {
                                 .filter(ticket =>
                                     (ticket.contact?.includes(searchTerm) || ticket.transport?.includes(searchTerm) || ticket.country?.includes(searchTerm) || searchTerm === '')
                                 )
-                                .map(ticket => {
-                                    // console.log(ticket); // Вывод тикета для отладки
-                                    return (
-                                        <div
-                                            key={ticket.id}
-                                            className="ticket"
-                                            draggable
-                                            onDragStart={(e) => handleDragStart(e, ticket.id)}
-                                            onClick={() => handleTicketClick(ticket)} // Обновлено для перехода на страницу чата
-                                        >
-                                            <div className='foto-description'>
-                                                <div><img className='foto-user' src="/user fon.png" alt="example" /> </div>
-                                                <div className='tickets-descriptions'>
-                                                    <div>{ticket.contact || "no contact"}</div>
-                                                    <div>{ticket.transport || "no transport"}</div>
-                                                    <div>{ticket.country || "no country"}</div>
-                                                    <div>{ticket.id || "no id"}</div>
-                                                </div>
-                                            </div>
-                                            <div className='container-time-tasks'>
-                                                <div>time</div>
-                                                <div>tasks</div>
+                                .map(ticket => (
+                                    <div
+                                        key={ticket.id}
+                                        className="ticket"
+                                        draggable
+                                        onDragStart={(e) => handleDragStart(e, ticket.id)}
+                                        onClick={() => handleTicketClick(ticket)}
+                                    >
+                                        <div className='foto-description'>
+                                            <div><img className='foto-user' src="/user fon.png" alt="example" /></div>
+                                            <div className='tickets-descriptions'>
+                                                <div>{ticket.contact || "no contact"}</div>
+                                                <div>{ticket.transport || "no transport"}</div>
+                                                <div>{ticket.country || "no country"}</div>
+                                                <div>{ticket.id || "no id"}</div>
                                             </div>
                                         </div>
-                                    );
-                                })}
+                                        <div className='container-time-tasks'>
+                                            <div>time</div>
+                                            <div>tasks</div>
+                                        </div>
+                                    </div>
+                                ))}
                         </div>
                     </div>
                 ))}
@@ -236,6 +250,6 @@ const WorkflowDashboard = () => {
             )}
         </div>
     );
-}
+};
 
 export default WorkflowDashboard;

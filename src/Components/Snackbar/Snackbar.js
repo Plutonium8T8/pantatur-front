@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Snackbar.css";
 
 const Snackbar = ({ id, description, type = "info", duration = 3000, onClose }) => {
   const [visible, setVisible] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setVisible(true);
     const timer = setTimeout(() => {
       setVisible(false);

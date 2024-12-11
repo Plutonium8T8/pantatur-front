@@ -11,7 +11,7 @@ import Select from './Components/SelectComponent/SelectComponent';
 const deleteTicketById = async (id) => {
   try {
     const token = Cookies.get('jwt');
-    const response = await fetch(`https://pandatur-api-1022490157093.europe-north1.run.app/api/tickets/${id}`, {
+    const response = await fetch(`https://pandatur-api.com/api/tickets/${id}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -32,7 +32,7 @@ const deleteTicketById = async (id) => {
 const saveTicketToServer = async (ticketData) => {
   try {
     const token = Cookies.get('jwt');
-    const response = await fetch('https://pandatur-api-1022490157093.europe-north1.run.app/api/tickets', {
+    const response = await fetch('https://pandatur-api.com/api/tickets', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

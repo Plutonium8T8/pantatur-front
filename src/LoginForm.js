@@ -39,8 +39,8 @@ const LoginForm = ({ onLoginSuccess }) => {
 
     setIsLoading(true);
     const url = isLogin
-      ? 'https://pandatur-api-1022490157093.europe-north1.run.app/api/login'
-      : 'https://pandatur-api-1022490157093.europe-north1.run.app/api/register';
+      ? 'https://pandatur-api.com/api/login'
+      : 'https://pandatur-api.com/api/register';
     const data = isLogin ? { email: form.email, password: form.password } : form;
 
     try {
@@ -72,7 +72,7 @@ const LoginForm = ({ onLoginSuccess }) => {
     try {
       setIsLoading(true);
       const token = Cookies.get('jwt');
-      const response = await fetch('https://pandatur-api-1022490157093.europe-north1.run.app/api/tickets', {
+      const response = await fetch('https://pandatur-api.com/api/tickets', {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
