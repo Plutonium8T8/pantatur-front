@@ -50,25 +50,26 @@ function App() {
   }, []);
 
   // Загрузка начальных данных для сообщений и уведомлений
-  useEffect(() => {
+   useEffect(() => {
     if (isLoggedIn) {
       fetch('https://pandatur-api.com/messages')
         .then((res) => res.json())
         .then((data) => {
-          const unreadMessages = data.filter((msg) => !msg.seen_at).length;
-          setUnreadMessagesCount(unreadMessages);
-        })
-        .catch(console.error);
-
-      fetch('https://pandatur-api.com/notifications')
-        .then((res) => res.json())
-        .then((data) => {
-          const unreadNotifications = data.filter((notif) => !notif.seen_at).length;
-          setUnreadNotificationsCount(unreadNotifications);
+          const unreadCount = data.filter((msg) => !msg.seen_at).length;
+          setUnreadMessagesCount(unreadCount);
         })
         .catch(console.error);
     }
   }, [isLoggedIn]);
+
+      // fetch('https://pandatur-api.com/notifications')
+      //   .then((res) => res.json())
+      //   .then((data) => {
+      //     const unreadNotifications = data.filter((notif) => !notif.seen_at).length;
+      //     setUnreadNotificationsCount(unreadNotifications);
+      //   })
+      //   .catch(console.error);
+  // }, [isLoggedIn]);
 
   // Подключение к WebSocket для уведомлений
   useEffect(() => {

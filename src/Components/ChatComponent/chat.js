@@ -504,6 +504,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
 
             console.log("Workflow обновлен:", data);
         } catch (error) {
+            enqueueSnackbar('Ошибка, Статус тикета обновлен!', { variant: 'error' });
             console.error("Ошибка при обновлении workflow:", error);
         }
     };
@@ -557,9 +558,9 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
         }
     };
 
-    // useEffect(() => {
-    //     fetchTicketsID();
-    // }, []);  // Empty dependency array ensures it only runs once on mount
+    useEffect(() => {
+        fetchTicketsID();
+    }, []);
 
     const getClientMessages = async () => {
         try {
@@ -578,10 +579,11 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
 
             const data = await response.json();
             console.log('Сообщения клиента полученые с сервера:', data);
-
+            enqueueSnackbar('Сообшения получены!', { variant: 'success' });
             // Обновляем состояние с сообщениями
             setMessages(data);
         } catch (error) {
+            enqueueSnackbar('Не удалось получить сообшения!', { variant: 'error' });
             console.error('Ошибка при получении сообщений:', error.message);
         }
     };
@@ -621,17 +623,6 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
             handleClick(); // Вызываем функцию, которая обрабатывает отправку
         }
     };
-
-    // const handleClick = async () => {
-    //     try {
-    //         await sendMessage(); // Ждем, пока отправится сообщение
-    //         await markMessagesAsRead(); // После этого помечаем сообщения как прочитанные
-    //         await getClientMessages(); // Затем получаем сообщения клиента
-    //         // await fetchTicketsID(); // Можно раскомментировать для вызова этой функции по очереди
-    //     } catch (error) {
-    //         console.error('Error in handleClick:', error);
-    //     }
-    // };
 
     const handleClick = () => {
         sendMessage();

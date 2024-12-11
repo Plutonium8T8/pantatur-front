@@ -3,6 +3,7 @@ import './LoginForm.css';
 import Cookies from 'js-cookie';
 import { useUser } from './UserContext';
 import { useSocket } from './SocketContext';
+import { useSnackbar } from 'notistack';
 
 const LoginForm = ({ onLoginSuccess }) => {
   const [form, setForm] = useState({ email: '', username: '', password: '' });
@@ -13,6 +14,8 @@ const LoginForm = ({ onLoginSuccess }) => {
   const socket = useSocket(); // Получаем WebSocket из контекста
   const [tickets, setTickets] = useState([]);
   const [ticketIds, setTicketIds] = useState([]); // Состояние для ID тикетов
+  const { enqueueSnackbar } = useSnackbar();
+
 
   const handleInputChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -71,7 +74,11 @@ const LoginForm = ({ onLoginSuccess }) => {
   const fetchTicketsID = async () => {
     try {
       setIsLoading(true);
+      console.log('Начало запроса тикетов...');
+      
       const token = Cookies.get('jwt');
+      console.log('Токен JWT:', token);
+  
       const response = await fetch('https://pandatur-api.com/api/tickets', {
         method: 'GET',
         headers: {
@@ -79,33 +86,44 @@ const LoginForm = ({ onLoginSuccess }) => {
           'Content-Type': 'application/json',
         },
       });
-
+  
+      console.log('Ответ от сервера:', response);
+  
       if (response.status === 401) {
         setMessage('Ошибка авторизации. Попробуйте снова.');
+        console.warn('Ошибка авторизации. Код статуса:', response.status);
         return;
       }
-
+  
       if (!response.ok) {
-        throw new Error('Ошибка при получении ID тикетов');
+        throw new Error(`Ошибка при получении ID тикетов. Код статуса: ${response.status}`);
       }
-
+  
       const data = await response.json();
+      console.log('Полученные данные:', data);
+  
       const tickets = data[0];
+      console.log('Список тикетов:', tickets);
+  
       const ticketIds = tickets.map((ticket) => ticket.id);
-
+      console.log('Список ID тикетов:', ticketIds);
+  
       setTicketIds(ticketIds);
       setTickets(tickets);
-
+  
       if (socket && socket.readyState === WebSocket.OPEN) {
-        socket.send(JSON.stringify({ type: 'connect', data: { client_id: ticketIds } }));
+        const socketMessage = JSON.stringify({ type: 'connect', data: { client_id: ticketIds } });
+        console.log('Отправка данных через WebSocket:', socketMessage);
+        socket.send(socketMessage);
       }
     } catch (error) {
-      console.error('Ошибка:', error);
+      console.error('Ошибка:', error.message);
       setMessage('Ошибка при загрузке тикетов');
     } finally {
+      console.log('Загрузка завершена.');
       setIsLoading(false);
     }
-  };
+  };  
 
   return (
     <div className="body-login-form">
