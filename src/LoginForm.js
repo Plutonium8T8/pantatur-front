@@ -3,7 +3,6 @@ import './LoginForm.css';
 import Cookies from 'js-cookie';
 import { useUser } from './UserContext';
 import { useSocket } from './SocketContext';
-import Snackbar from './Components/Snackbar/Snackbar'; // Импортируем компонент
 
 const LoginForm = ({ onLoginSuccess }) => {
   const [form, setForm] = useState({ email: '', username: '', password: '' });
@@ -40,8 +39,8 @@ const LoginForm = ({ onLoginSuccess }) => {
 
     setIsLoading(true);
     const url = isLogin
-      ? 'https://pandaturapi.com/api/login'
-      : 'https://pandaturapi.com/api/register';
+      ? 'https://pandatur-api-1022490157093.europe-north1.run.app/api/login'
+      : 'https://pandatur-api-1022490157093.europe-north1.run.app/api/register';
     const data = isLogin ? { email: form.email, password: form.password } : form;
 
     try {
@@ -73,7 +72,7 @@ const LoginForm = ({ onLoginSuccess }) => {
     try {
       setIsLoading(true);
       const token = Cookies.get('jwt');
-      const response = await fetch('https://pandaturapi.com/api/tickets', {
+      const response = await fetch('https://pandatur-api-1022490157093.europe-north1.run.app/api/tickets', {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -158,12 +157,6 @@ const LoginForm = ({ onLoginSuccess }) => {
             <div className="spinner"></div>
           </div>
         )}
-
-        <Snackbar
-          description={message}
-          duration={3000}
-          onClose={() => setMessage('')}
-        />
       </div>
     </div>
   );

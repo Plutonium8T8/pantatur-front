@@ -109,7 +109,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
         try {
             await new Promise(resolve => setTimeout(resolve, 500));
             const token = Cookies.get('jwt');
-            const response = await fetch('https://pandaturapi.com/api/tickets', {
+            const response = await fetch('https://pandatur-api-1022490157093.europe-north1.run.app/api/tickets', {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -142,7 +142,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
     const fetchTicketExtraInfo = async (selectedTicketId) => {
         try {
             const token = Cookies.get('jwt');
-            const response = await fetch(`https://pandaturapi.com/ticket-info/${selectedTicketId}`, {
+            const response = await fetch(`https://pandatur-api-1022490157093.europe-north1.run.app/ticket-info/${selectedTicketId}`, {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -427,7 +427,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
         setIsLoading(true); // Устанавливаем состояние загрузки в true
 
         try {
-            const response = await fetch(`https://pandaturapi.com/ticket-info/${selectedTicketId}`, {
+            const response = await fetch(`https://pandatur-api-1022490157093.europe-north1.run.app/ticket-info/${selectedTicketId}`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -474,7 +474,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
         try {
             // Отправляем PATCH запрос на сервер
             const token = Cookies.get("jwt");
-            const response = await fetch(`https://pandaturapi.com/api/tickets/${updatedTicket.id}`, {
+            const response = await fetch(`https://pandatur-api-1022490157093.europe-north1.run.app/api/tickets/${updatedTicket.id}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
@@ -510,7 +510,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
         try {
             setIsLoading(true); // Показываем индикатор загрузки
             const token = Cookies.get('jwt');
-            const response = await fetch('https://pandaturapi.com/api/tickets', {
+            const response = await fetch('https://pandatur-api-1022490157093.europe-north1.run.app/api/tickets', {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -560,7 +560,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
     const getClientMessages = async () => {
         try {
             const token = Cookies.get('jwt');
-            const response = await fetch(`https://pandaturapi.com/messages`, {
+            const response = await fetch(`https://pandatur-api-1022490157093.europe-north1.run.app/messages`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,

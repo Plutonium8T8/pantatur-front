@@ -9,11 +9,13 @@ import ChatComponent from './Components/ChatComponent/chat';
 import Cookies from 'js-cookie';
 import { SocketProvider, useSocket } from './SocketContext';
 import UserProfile from './Components/UserPage/UserPage';
+import SnackbarContainer from './Components/Snackbar/Snackbar';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
+  const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
 
   const socket = useSocket();
 
@@ -21,7 +23,7 @@ function App() {
   useEffect(() => {
     const token = Cookies.get('jwt');
     if (token) {
-      fetch('https://pandaturapi.com/session', {
+      fetch('https://pandatur-api-1022490157093.europe-north1.run.app/session', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -47,20 +49,28 @@ function App() {
     }
   }, []);
 
-  // Загрузка начальных непрочитанных сообщений
+  // Загрузка начальных данных для сообщений и уведомлений
   useEffect(() => {
     if (isLoggedIn) {
-      fetch('https://pandaturapi.com/messages')
+      fetch('https://pandatur-api-1022490157093.europe-north1.run.app/messages')
         .then((res) => res.json())
         .then((data) => {
-          const unreadCount = data.filter((msg) => !msg.seen_at).length;
-          setUnreadMessagesCount(unreadCount);
+          const unreadMessages = data.filter((msg) => !msg.seen_at).length;
+          setUnreadMessagesCount(unreadMessages);
+        })
+        .catch(console.error);
+
+      fetch('https://pandatur-api-1022490157093.europe-north1.run.app/notifications')
+        .then((res) => res.json())
+        .then((data) => {
+          const unreadNotifications = data.filter((notif) => !notif.seen_at).length;
+          setUnreadNotificationsCount(unreadNotifications);
         })
         .catch(console.error);
     }
   }, [isLoggedIn]);
 
-  // Подключение к WebSocket и обновление состояния
+  // Подключение к WebSocket для уведомлений
   useEffect(() => {
     if (socket) {
       socket.onmessage = (event) => {
@@ -68,6 +78,9 @@ function App() {
           const message = JSON.parse(event.data);
           if (message.type === 'message' && !message.data.seen_at) {
             setUnreadMessagesCount((prev) => prev + 1);
+          }
+          if (message.type === 'notification' && !message.data.seen_at) {
+            setUnreadNotificationsCount((prev) => prev + 1);
           }
         } catch (error) {
           console.error('Ошибка WebSocket:', error);
@@ -78,11 +91,6 @@ function App() {
       if (socket) socket.onmessage = null;
     };
   }, [socket]);
-
-  // Установка индикатора через ChatComponent
-  const handleUpdateUnreadMessages = (newCount) => {
-    setUnreadMessagesCount(newCount);
-  };
 
   if (isLoading) {
     return <div className="spinner"></div>;
@@ -96,7 +104,10 @@ function App() {
             <LoginForm onLoginSuccess={() => setIsLoggedIn(true)} />
           ) : (
             <div className="app-container">
-              <CustomSidebar unreadMessagesCount={unreadMessagesCount} />
+              <CustomSidebar
+                unreadMessagesCount={unreadMessagesCount}
+                unreadNotificationsCount={unreadNotificationsCount}
+              />
               <div className="page-content">
                 <Routes>
                   <Route path="/account" element={<UserProfile to="/account" />} />
@@ -110,6 +121,9 @@ function App() {
                       />
                     }
                   />
+                  <Route path="/notifications" element={<SnackbarContainer />} />
+                  {/* Route для неизвестных страниц */}
+                  <Route path="*" element={<div>Coming Soon</div>} />
                 </Routes>
               </div>
             </div>

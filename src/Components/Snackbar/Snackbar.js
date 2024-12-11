@@ -1,31 +1,29 @@
-import React, { useState, useEffect } from "react";
-import "./Snackbar.css"; // Стили для Snackbar
+import React, { useState } from "react";
+import "./Snackbar.css";
 
-const Snackbar = ({ description, duration = 3000, onClose }) => {
+const Snackbar = ({ id, description, type = "info", duration = 3000, onClose }) => {
   const [visible, setVisible] = useState(false);
 
-  useEffect(() => {
-    if (description) {
-      setVisible(true);
-      const timer = setTimeout(() => {
-        setVisible(false);
-        if (onClose) onClose();
-      }, duration);
+  React.useEffect(() => {
+    setVisible(true);
+    const timer = setTimeout(() => {
+      setVisible(false);
+      if (onClose) onClose(id); // Удаляем по ID
+    }, duration);
 
-      return () => clearTimeout(timer); // Очищаем таймер при размонтировании
-    }
-  }, [description, duration, onClose]);
+    return () => clearTimeout(timer); // Очищаем таймер при размонтировании
+  }, [id, description, duration, onClose]);
 
   if (!visible) return null;
 
   return (
-    <div className="snackbar">
+    <div className={`snackbar snackbar-${type}`}>
       <span>{description}</span>
       <button
         className="snackbar-close"
         onClick={() => {
           setVisible(false);
-          if (onClose) onClose(); // Удаляем сообщение из массива при закрытии
+          if (onClose) onClose(id); // Удаляем по ID
         }}
       >
         ✕
@@ -35,28 +33,45 @@ const Snackbar = ({ description, duration = 3000, onClose }) => {
 };
 
 const SnackbarContainer = () => {
-  const [messages, setMessages] = useState([]); // Исправлено название переменной
+  const [messages, setMessages] = useState([]);
 
-  const showSnackbar = (message) => {
-    setMessages((prevMessages) => [...prevMessages, message]);
+  // Добавить новое уведомление
+  const showSnackbar = (description, type = "info") => {
+    const newMessage = {
+      id: Date.now(), // Уникальный ID
+      description,
+      type,
+    };
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
   };
 
-  const removeMessage = () => {
-    setMessages((prevMessages) => prevMessages.slice(1)); // Удаляем первое сообщение из списка
+  // Удалить уведомление из списка
+  const removeSnackbar = (id) => {
+    setMessages((prevMessages) => prevMessages.filter((message) => message.id !== id));
   };
 
   return (
     <div className="snackbar-container">
-      {messages.map((msg, index) => (
+      {messages.map((message) => (
         <Snackbar
-          key={index}
-          description={msg} // Исправлено название свойства
+          key={message.id}
+          id={message.id}
+          description={message.description}
+          type={message.type}
           duration={6000}
-          onClose={removeMessage}
+          onClose={removeSnackbar}
         />
       ))}
-      <button onClick={() => showSnackbar("Это новое сообщение!")}>
-        Показать сообщение
+
+      {/* Кнопки для тестирования */}
+      <button onClick={() => showSnackbar("Информация!", "info")}>
+        Показать Info
+      </button>
+      <button onClick={() => showSnackbar("Успешно выполнено!", "success")}>
+        Показать Success
+      </button>
+      <button onClick={() => showSnackbar("Произошла ошибка!", "error")}>
+        Показать Error
       </button>
     </div>
   );

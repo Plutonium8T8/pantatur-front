@@ -10,7 +10,7 @@ import './App.css';
 export const updateTicket = async (updateData) => {
     try {
         const token = Cookies.get('jwt');
-        const response = await fetch(`https://pandaturapi.com/api/tickets/${updateData.id}`, {
+        const response = await fetch(`https://pandatur-api-1022490157093.europe-north1.run.appapi/tickets/${updateData.id}`, {
             method: 'PATCH',
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -47,7 +47,7 @@ const WorkflowDashboard = () => {
         try {
             await new Promise(resolve => setTimeout(resolve, 500));
             const token = Cookies.get('jwt');
-            const response = await fetch('https://pandaturapi.com/api/tickets', {
+            const response = await fetch('https://pandatur-api-1022490157093.europe-north1.run.app/api/tickets', {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token}`,
