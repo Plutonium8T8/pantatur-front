@@ -37,7 +37,7 @@ export const updateTicket = async (updateData) => {
 const Leads = () => {
     const [tickets, setTickets] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
-    const [setIsModalOpen] = useState(false);
+    const [IsModalOpen,setIsModalOpen] = useState(false);
     const [currentTicket, setCurrentTicket] = useState(null);
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);

@@ -10,6 +10,7 @@ import Cookies from 'js-cookie';
 import { SocketProvider, useSocket } from './SocketContext';
 import UserProfile from './Components/UserPage/UserPage';
 import { SnackbarProvider } from 'notistack';
+import { closeSnackbar } from 'notistack'
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -50,7 +51,7 @@ function App() {
   }, []);
 
   // Загрузка начальных данных для сообщений и уведомлений
-   useEffect(() => {
+  useEffect(() => {
     if (isLoggedIn) {
       fetch('https://pandatur-api.com/messages')
         .then((res) => res.json())
@@ -62,13 +63,13 @@ function App() {
     }
   }, [isLoggedIn]);
 
-      // fetch('https://pandatur-api.com/notifications')
-      //   .then((res) => res.json())
-      //   .then((data) => {
-      //     const unreadNotifications = data.filter((notif) => !notif.seen_at).length;
-      //     setUnreadNotificationsCount(unreadNotifications);
-      //   })
-      //   .catch(console.error);
+  // fetch('https://pandatur-api.com/notifications')
+  //   .then((res) => res.json())
+  //   .then((data) => {
+  //     const unreadNotifications = data.filter((notif) => !notif.seen_at).length;
+  //     setUnreadNotificationsCount(unreadNotifications);
+  //   })
+  //   .catch(console.error);
   // }, [isLoggedIn]);
 
   // Подключение к WebSocket для уведомлений
@@ -98,14 +99,19 @@ function App() {
   }
 
   return (
-    <SocketProvider>
+    <SocketProvider preventDuplicate>
       <UserProvider>
         <SnackbarProvider
-          maxSnack={10} // Максимум 3 уведомления одновременно
+          maxSnack={10}
           anchorOrigin={{
-            vertical: 'bottom', // Позиция сверху
-            horizontal: 'left', // Позиция справа
+            vertical: 'bottom',
+            horizontal: 'left',
           }}
+          action={(snackbarId) => (
+            <button onClick={() => closeSnackbar(snackbarId)}>
+              Закрыть
+            </button>
+          )}
         >
           <Router>
             {!isLoggedIn ? (

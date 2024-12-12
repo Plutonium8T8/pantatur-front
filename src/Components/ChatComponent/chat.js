@@ -313,26 +313,26 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
 
 
     useEffect(() => {
+    
         if (socket) {
             socket.onopen = () => {
-                console.log('проверка что WebSocket подключен');
+                console.log('WebSocket подключен');
             };
-
+    
             socket.onerror = (error) => {
-                console.error('WebSocket ошибка:', error); // Логируем ошибки WebSocket
+                console.error('WebSocket ошибка:', error);
             };
-
+    
             socket.onclose = () => {
                 console.log('WebSocket закрыт');
             };
-
+    
             socket.onmessage = (event) => {
                 try {
                     const message = JSON.parse(event.data);
-                    console.log('Received message:', message); // Логируем все полученные сообщения
-
+                    console.log('Received message:', message);
                     console.log('Selected Ticket ID:', selectedTicketId);
-
+    
                     switch (message.type) {
                         case 'message':
                             // Добавляем сообщение в состояние
@@ -340,7 +340,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
                                 const updatedMessages = [...prevMessages, message.data];
                                 return updatedMessages;
                             });
-
+    
                             // Обновляем количество непрочитанных сообщений
                             if (message.data.client_id !== selectedTicketId) {
                                 setUnreadMessages((prevUnreadMessages) => {
@@ -352,7 +352,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
                                     return updatedUnreadMessages;
                                 });
                             }
-
+    
                             // Передаем обновленное количество непрочитанных сообщений
                             if (typeof onUpdateUnreadMessages === 'function') {
                                 const totalUnreadMessages = Object.values(unreadMessages).reduce(
@@ -361,28 +361,43 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
                                 );
                                 onUpdateUnreadMessages(totalUnreadMessages + 1);
                             }
+    
+                            // Показываем уведомление о новом сообщении
+                            enqueueSnackbar(`Новое сообщение от клиента ${message.data.client_id}`, { variant: 'info' });
+    
                             break;
+    
                         case 'notification':
                             console.log('Notification received:', message.data);
-                            showNotification(message.data); // Показываем уведомление
+    
+                            // Показываем уведомление
+                            enqueueSnackbar(message.data.text || 'Уведомление получено!', { variant: 'success' });
+    
                             break;
+    
                         case 'task':
                             console.log('Task received:', message.data);
-                            handleTask(message.data); // Обрабатываем задачу
+    
+                            // Показываем уведомление о новой задаче
+                            enqueueSnackbar(`Новая задача: ${message.data.title}`, { variant: 'warning' });
+    
+                            handleTask(message.data);
                             break;
+    
                         case 'seen':
-                            console.log('send seen mesaje:', message.data);
-                            handleSeen(message.data); // Обрабатываем задачу
+                            console.log('Seen message received:', message.data);
+                            handleSeen(message.data);
                             break;
+    
                         default:
-                            console.warn('eror', message);
+                            console.warn('Unknown message type:', message);
                     }
                 } catch (error) {
                     console.error('Error parsing WebSocket message:', error);
                 }
             };
         }
-
+    
         return () => {
             if (socket) {
                 socket.onmessage = null;
