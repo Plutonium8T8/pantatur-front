@@ -121,7 +121,7 @@ function App() {
                     <Route path="/account" element={<UserProfile />} />
                     <Route path="/" element={<Navigate to="/leads" />} />
                     <Route path="/leads" element={<Leads />} />
-                    <Route path="/chat/:ticketId?" element={<ChatComponent onUpdateUnreadMessages={setUnreadMessagesCount}/>} />
+                    <Route path="/chat/:ticketId?" element={<ChatComponent onUpdateUnreadMessages={setUnreadMessagesCount} />} />
                     <Route path="*" element={<div>Страница в разработке</div>} />
                   </Routes>
                 </div>
