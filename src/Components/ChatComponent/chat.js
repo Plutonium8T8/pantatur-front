@@ -156,7 +156,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
             }
 
             const data = await response.json();
-            enqueueSnackbar('Загружено доп инфо по тикетам!', { variant: 'success' });
+            // enqueueSnackbar('Загружено доп инфо по тикетам!', { variant: 'success' });
             // Обновляем состояние с дополнительной информацией о тикете
             setExtraInfo((prevState) => ({
                 ...prevState,
@@ -445,7 +445,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
             });
 
             const result = await response.json();
-            enqueueSnackbar('Данные успешно обновлены', { variant: 'success' });
+            // enqueueSnackbar('Данные успешно обновлены', { variant: 'success' });
             console.log('Данные успешно отправлены:', result);
         } catch (error) {
             enqueueSnackbar('Ошибка при обновлении дополнительной информации:', { variant: 'error' });
@@ -498,63 +498,63 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
 
             console.log("Workflow обновлен:", data);
         } catch (error) {
-            enqueueSnackbar('Ошибка, Статус тикета обновлен!', { variant: 'error' });
+            enqueueSnackbar('Ошибка, Статус тикета не обновлен!', { variant: 'error' });
             console.error("Ошибка при обновлении workflow:", error);
         }
     };
 
     const updatedTicket = tickets.find(ticket => ticket.id === selectedTicketId);
 
-    const fetchTicketsID = async () => {
-        try {
-            setIsLoading(true); // Показываем индикатор загрузки
-            const token = Cookies.get('jwt');
-            const response = await fetch('https://pandatur-api.com/api/tickets', {
-                method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
+    // const fetchTicketsID = async () => {
+    //     try {
+    //         setIsLoading(true); // Показываем индикатор загрузки
+    //         const token = Cookies.get('jwt');
+    //         const response = await fetch('https://pandatur-api.com/api/tickets', {
+    //             method: 'GET',
+    //             headers: {
+    //                 Authorization: `Bearer ${token}`,
+    //                 'Content-Type': 'application/json',
+    //             },
+    //         });
 
-            if (response.status === 401) {
-                console.warn('Ошибка 401: Неавторизован. Перенаправляем на логин.');
-                setErrorMessage('Ошибка авторизации. Попробуйте снова.');
-                return;
-            }
+    //         if (response.status === 401) {
+    //             console.warn('Ошибка 401: Неавторизован. Перенаправляем на логин.');
+    //             setErrorMessage('Ошибка авторизации. Попробуйте снова.');
+    //             return;
+    //         }
 
-            if (!response.ok) {
-                throw new Error('Ошибка при получении данных тикетов');
-            }
+    //         if (!response.ok) {
+    //             throw new Error('Ошибка при получении данных тикетов');
+    //         }
 
-            const data = await response.json();
-            const tickets = data[0]; // Доступ к первому элементу
-            const TicketIds = tickets.map((ticket) => ticket.id);
+    //         const data = await response.json();
+    //         const tickets = data[0]; // Доступ к первому элементу
+    //         const TicketIds = tickets.map((ticket) => ticket.id);
 
-            setTicketIds(TicketIds);
-            setTickets(tickets);
+    //         setTicketIds(TicketIds);
+    //         setTickets(tickets);
 
-            // Отправляем сообщение в WebSocket после успешного получения ID
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                const message = {
-                    type: 'connect',
-                    data: {
-                        client_id: TicketIds, // Используем полученные ID
-                    },
-                };
-                socket.send(JSON.stringify(message));
-            }
-        } catch (error) {
-            console.error('Ошибка:', error);
-            setErrorMessage('Ошибка при загрузке тикетов');
-        } finally {
-            setIsLoading(false); // Скрываем индикатор загрузки
-        }
-    };
+    //         // Отправляем сообщение в WebSocket после успешного получения ID
+    //         if (socket && socket.readyState === WebSocket.OPEN) {
+    //             const message = {
+    //                 type: 'connect',
+    //                 data: {
+    //                     client_id: TicketIds, // Используем полученные ID
+    //                 },
+    //             };
+    //             socket.send(JSON.stringify(message));
+    //         }
+    //     } catch (error) {
+    //         console.error('Ошибка:', error);
+    //         setErrorMessage('Ошибка при загрузке тикетов');
+    //     } finally {
+    //         setIsLoading(false); // Скрываем индикатор загрузки
+    //     }
+    // };
 
-    useEffect(() => {
-        fetchTicketsID();
-    }, []);
+    // useEffect(() => {
+    //     fetchTicketsID();
+    // }, []);
 
     const getClientMessages = async () => {
         try {
@@ -573,7 +573,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
 
             const data = await response.json();
             console.log('Сообщения клиента полученые с сервера:', data);
-            enqueueSnackbar('Сообшения получены!', { variant: 'success' });
+            // enqueueSnackbar('Сообшения получены!', { variant: 'success' });
             // Обновляем состояние с сообщениями
             setMessages(data);
         } catch (error) {

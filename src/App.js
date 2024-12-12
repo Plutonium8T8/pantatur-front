@@ -11,7 +11,7 @@ import { SocketProvider, useSocket } from './SocketContext';
 import UserProfile from './Components/UserPage/UserPage';
 import { SnackbarProvider } from 'notistack';
 import { closeSnackbar } from 'notistack'
-import NotificationHandler from './NotificationHandler';
+import Notification from './Notification';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -101,7 +101,7 @@ function App() {
 
   return (
     <SnackbarProvider
-      autoHideDuration={5000}
+      autoHideDuration={7000}
       maxSnack={10}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'left', }}
       action={(snackbarId) =>
@@ -110,6 +110,7 @@ function App() {
     >
       <SocketProvider>
         <UserProvider>
+        <Notification/>
           <Router>
             {!isLoggedIn ? (
               <LoginForm onLoginSuccess={() => setIsLoggedIn(true)} />
