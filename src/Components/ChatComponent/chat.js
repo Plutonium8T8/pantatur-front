@@ -313,79 +313,57 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
 
 
     useEffect(() => {
-    
         if (socket) {
-            socket.onopen = () => {
-                console.log('WebSocket подключен');
-            };
-    
-            socket.onerror = (error) => {
-                console.error('WebSocket ошибка:', error);
-            };
-    
-            socket.onclose = () => {
-                console.log('WebSocket закрыт');
-            };
+            socket.onopen = () => console.log('WebSocket подключен');
+            socket.onerror = (error) => console.error('WebSocket ошибка:', error);
+            socket.onclose = () => console.log('WebSocket закрыт');
     
             socket.onmessage = (event) => {
+                console.log('Raw WebSocket message received:', event.data);
                 try {
                     const message = JSON.parse(event.data);
-                    console.log('Received message:', message);
-                    console.log('Selected Ticket ID:', selectedTicketId);
+                    console.log('Parsed WebSocket message:', message);
     
                     switch (message.type) {
                         case 'message':
-                            // Добавляем сообщение в состояние
-                            setMessages((prevMessages) => {
-                                const updatedMessages = [...prevMessages, message.data];
-                                return updatedMessages;
-                            });
+                            setMessages((prevMessages) => [...prevMessages, message.data]);
     
-                            // Обновляем количество непрочитанных сообщений
                             if (message.data.client_id !== selectedTicketId) {
                                 setUnreadMessages((prevUnreadMessages) => {
                                     const updatedUnreadMessages = { ...prevUnreadMessages };
-                                    if (!updatedUnreadMessages[message.data.client_id]) {
-                                        updatedUnreadMessages[message.data.client_id] = 0;
-                                    }
-                                    updatedUnreadMessages[message.data.client_id]++;
+                                    updatedUnreadMessages[message.data.client_id] =
+                                        (updatedUnreadMessages[message.data.client_id] || 0) + 1;
                                     return updatedUnreadMessages;
                                 });
-                            }
     
-                            // Передаем обновленное количество непрочитанных сообщений
-                            if (typeof onUpdateUnreadMessages === 'function') {
-                                const totalUnreadMessages = Object.values(unreadMessages).reduce(
-                                    (sum, count) => sum + count,
-                                    0
+                                enqueueSnackbar(
+                                    `Новое сообщение от клиента ${message.data.client_id}`,
+                                    { variant: 'info' }
                                 );
-                                onUpdateUnreadMessages(totalUnreadMessages + 1);
                             }
     
-                            // Показываем уведомление о новом сообщении
-                            enqueueSnackbar(`Новое сообщение от клиента ${message.data.client_id}`, { variant: 'info' });
-    
+                            if (typeof onUpdateUnreadMessages === 'function') {
+                                setUnreadMessages((prevUnreadMessages) => {
+                                    const totalUnreadMessages = Object.values(prevUnreadMessages).reduce(
+                                        (sum, count) => sum + count,
+                                        0
+                                    );
+                                    onUpdateUnreadMessages(totalUnreadMessages + 1);
+                                    return prevUnreadMessages;
+                                });
+                            }
                             break;
     
                         case 'notification':
-                            console.log('Notification received:', message.data);
-    
-                            // Показываем уведомление
                             enqueueSnackbar(message.data.text || 'Уведомление получено!', { variant: 'success' });
-    
                             break;
     
                         case 'task':
-                            console.log('Task received:', message.data);
-    
-                            // Показываем уведомление о новой задаче
                             enqueueSnackbar(`Новая задача: ${message.data.title}`, { variant: 'warning' });
-    
                             handleTask(message.data);
                             break;
     
                         case 'seen':
-                            console.log('Seen message received:', message.data);
                             handleSeen(message.data);
                             break;
     
@@ -405,7 +383,8 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
                 socket.onclose = null;
             }
         };
-    }, [socket, selectedTicketId, onUpdateUnreadMessages, unreadMessages]);
+    }, [socket, selectedTicketId, onUpdateUnreadMessages]);
+    
 
 
     // Обработчик изменения значения в селекте для выбранного тикета

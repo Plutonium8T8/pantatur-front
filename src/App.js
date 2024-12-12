@@ -102,6 +102,7 @@ function App() {
     <SocketProvider preventDuplicate>
       <UserProvider>
         <SnackbarProvider
+          autoHideDuration={3000}
           maxSnack={10}
           anchorOrigin={{
             vertical: 'bottom',

@@ -75,6 +75,39 @@ const TicketModal = ({ ticket, onClose }) => {
     }
   };
 
+  const handleSubmitCountryAndTransport = async () => {
+    const { country, transport, id } = ticket;
+
+    if (!country || !transport) {
+      alert('Выберите значения для Country и Transport');
+      return;
+    }
+
+    try {
+      const token = Cookies.get('jwt'); // Получение токена из cookie
+
+      const response = await fetch(`https://pandatur-api.com/ticket-info/${id}`, {
+        method: 'POST', // Или 'PUT', если данные нужно обновлять
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ country, transport }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Ошибка при отправке данных');
+      }
+
+      const result = await response.json();
+      console.log('Успешно отправлено:', result);
+      alert('Данные успешно отправлены!');
+    } catch (error) {
+      console.error('Ошибка отправки данных:', error);
+      alert('Не удалось отправить данные.');
+    }
+  };
+
   const handleSave = async () => {
     const ticketData = { ...editedTicket, client_id: userId };
 
@@ -88,6 +121,21 @@ const TicketModal = ({ ticket, onClose }) => {
       onClose();
     } catch (e) {
       console.error('Error saving ticket:', e);
+    }
+  };
+
+  const handleClickCreate = async () => {
+    try {
+      // Сначала сохраняем тикет
+      await handleSave();
+
+      // Затем отправляем country и transport
+      await handleSubmitCountryAndTransport();
+
+      // Закрываем модальное окно
+      onClose();
+    } catch (error) {
+      console.error('Error in handleClickCreate:', error);
     }
   };
 
@@ -134,7 +182,7 @@ const TicketModal = ({ ticket, onClose }) => {
               Delete
             </button>
           )}
-          <button onClick={handleSave} className="button-save">
+          <button onClick={handleClickCreate} className="button-save">
             {!editedTicket.id ? 'Create' : 'Save'}
           </button>
           <button onClick={onClose} className="button-close">

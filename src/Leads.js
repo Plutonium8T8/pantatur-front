@@ -37,7 +37,7 @@ export const updateTicket = async (updateData) => {
 const Leads = () => {
     const [tickets, setTickets] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
-    const [IsModalOpen,setIsModalOpen] = useState(false);
+    const [IsModalOpen, setIsModalOpen] = useState(false);
     const [currentTicket, setCurrentTicket] = useState(null);
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
@@ -78,7 +78,6 @@ const Leads = () => {
     };
 
     const updateTicketWorkflow = (ticketId, newWorkflow) => {
-
 
         setTickets((prevTickets) => {
             console.log("+", ticketId, newWorkflow);
@@ -147,6 +146,9 @@ const Leads = () => {
 
     const handleTicketClick = (ticket) => {
         setCurrentTicket(ticket);
+    };
+
+    const handleDoubleClick = (ticket) => {
         navigate(`/chat/${ticket.id}`)
     };
 
@@ -201,6 +203,7 @@ const Leads = () => {
                                         draggable
                                         onDragStart={(e) => handleDragStart(e, ticket.id)}
                                         onClick={() => handleTicketClick(ticket)}
+                                        onDoubleClick={() => handleDoubleClick(ticket)} // Добавлен обработчик двойного клика
                                     >
                                         <div className='foto-description'>
                                             <div><img className='foto-user' src="/user fon.png" alt="example" /></div>
