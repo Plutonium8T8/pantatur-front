@@ -11,6 +11,7 @@ import { SocketProvider, useSocket } from './SocketContext';
 import UserProfile from './Components/UserPage/UserPage';
 import { SnackbarProvider } from 'notistack';
 import { closeSnackbar } from 'notistack'
+import NotificationHandler from './NotificationHandler';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -100,12 +101,12 @@ function App() {
 
   return (
     <SnackbarProvider
-      autoHideDuration={3000}
+      autoHideDuration={5000}
       maxSnack={10}
-      anchorOrigin={{
-        vertical: 'bottom',
-        horizontal: 'left',
-      }}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'left', }}
+      action={(snackbarId) =>
+      (<button onClick={() => closeSnackbar(snackbarId)}
+        style={{ background: 'none', border: 'none', color: 'blue', cursor: 'pointer' }} > Закрыть </button>)}
     >
       <SocketProvider>
         <UserProvider>

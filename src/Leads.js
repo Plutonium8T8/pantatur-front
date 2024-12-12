@@ -5,6 +5,8 @@ import { priorityOptions } from './FormOptions/PriorityOption';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import Cookies from 'js-cookie';
+import { SocketProvider, useSocket } from './SocketContext';
+import NotificationHandler from './NotificationHandler';
 
 import './App.css';
 
@@ -42,6 +44,10 @@ const Leads = () => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const { enqueueSnackbar } = useSnackbar();
+    const [message, setMessage] = useState([]);
+    const [ticketIds, setTicketIds] = useState([]);
+    const socket = useSocket();
+
 
     const fetchTickets = async () => {
         setIsLoading(true);
@@ -156,6 +162,64 @@ const Leads = () => {
         setCurrentTicket(null);
         fetchTickets();
     }
+
+    const fetchTicketsID = async () => {
+        try {
+          setIsLoading(true);
+          console.log('Начало запроса тикетов...');
+          
+          const token = Cookies.get('jwt');
+          console.log('Токен JWT:', token);
+      
+          const response = await fetch('https://pandatur-api.com/api/tickets', {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          });
+      
+          console.log('Ответ от сервера:', response);
+      
+          if (response.status === 401) {
+            setMessage('Ошибка авторизации. Попробуйте снова.');
+            console.warn('Ошибка авторизации. Код статуса:', response.status);
+            return;
+          }
+      
+          if (!response.ok) {
+            throw new Error(`Ошибка при получении ID тикетов. Код статуса: ${response.status}`);
+          }
+      
+          const data = await response.json();
+          console.log('Полученные данные:', data);
+      
+          const tickets = data[0];
+          console.log('Список тикетов:', tickets);
+      
+          const ticketIds = tickets.map((ticket) => ticket.id);
+          console.log('Список ID тикетов:', ticketIds);
+      
+          setTicketIds(ticketIds);
+          setTickets(tickets);
+      
+          if (socket && socket.readyState === WebSocket.OPEN) {
+            const socketMessage = JSON.stringify({ type: 'connect', data: { client_id: ticketIds } });
+            console.log('Отправка данных через WebSocket:', socketMessage);
+            socket.send(socketMessage);
+          }
+        } catch (error) {
+          console.error('Ошибка:', error.message);
+          setMessage('Ошибка при загрузке тикетов');
+        } finally {
+          console.log('Загрузка завершена.');
+          setIsLoading(false);
+        }
+      };  
+
+      useEffect(() => {
+        fetchTicketsID();
+    }, []);
 
     return (
         <div className='dashboard-container'>
