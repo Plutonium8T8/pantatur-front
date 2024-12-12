@@ -85,7 +85,7 @@ function App() {
             setUnreadNotificationsCount((prev) => prev + 1);
           }
         } catch (error) {
-          console.error('Ошибка WebSocket:', error);
+          console.error('Ошибка Socket:', error);
         }
       };
     }
@@ -99,53 +99,37 @@ function App() {
   }
 
   return (
-    <SocketProvider preventDuplicate>
-      <UserProvider>
-        <SnackbarProvider
-          autoHideDuration={3000}
-          maxSnack={10}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}
-          action={(snackbarId) => (
-            <button onClick={() => closeSnackbar(snackbarId)}>
-              Закрыть
-            </button>
-          )}
-        >
+    <SnackbarProvider
+      autoHideDuration={3000}
+      maxSnack={10}
+      anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'left',
+      }}
+    >
+      <SocketProvider>
+        <UserProvider>
           <Router>
             {!isLoggedIn ? (
               <LoginForm onLoginSuccess={() => setIsLoggedIn(true)} />
             ) : (
               <div className="app-container">
-                <CustomSidebar
-                  unreadMessagesCount={unreadMessagesCount}
-                  unreadNotificationsCount={unreadNotificationsCount}
-                />
+                <CustomSidebar />
                 <div className="page-content">
                   <Routes>
-                    <Route path="/account" element={<UserProfile to="/account" />} />
+                    <Route path="/account" element={<UserProfile />} />
                     <Route path="/" element={<Navigate to="/leads" />} />
-                    <Route path="/leads" element={<Leads to="/leads" />} />
-                    <Route
-                      path="/chat/:ticketId?"
-                      element={
-                        <ChatComponent
-                          onUpdateUnreadMessages={setUnreadMessagesCount}
-                        />
-                      }
-                    />
-                    {/* Route для неизвестных страниц */}
-                    <Route path="*" element={<div>Coming Soon</div>} />
+                    <Route path="/leads" element={<Leads />} />
+                    <Route path="/chat/:ticketId?" element={<ChatComponent />} />
+                    <Route path="*" element={<div>Страница в разработке</div>} />
                   </Routes>
                 </div>
               </div>
             )}
           </Router>
-        </SnackbarProvider >
-      </UserProvider>
-    </SocketProvider>
+        </UserProvider>
+      </SocketProvider>
+    </SnackbarProvider>
   );
 }
 
