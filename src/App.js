@@ -115,13 +115,13 @@ function App() {
               <LoginForm onLoginSuccess={() => setIsLoggedIn(true)} />
             ) : (
               <div className="app-container">
-                <CustomSidebar />
+                <CustomSidebar unreadMessagesCount={unreadMessagesCount} />
                 <div className="page-content">
                   <Routes>
                     <Route path="/account" element={<UserProfile />} />
                     <Route path="/" element={<Navigate to="/leads" />} />
                     <Route path="/leads" element={<Leads />} />
-                    <Route path="/chat/:ticketId?" element={<ChatComponent />} />
+                    <Route path="/chat/:ticketId?" element={<ChatComponent onUpdateUnreadMessages={setUnreadMessagesCount}/>} />
                     <Route path="*" element={<div>Страница в разработке</div>} />
                   </Routes>
                 </div>
