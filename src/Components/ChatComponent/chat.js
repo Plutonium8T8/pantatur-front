@@ -317,6 +317,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
             socket.onopen = () => console.log('WebSocket подключен');
             socket.onerror = (error) => console.error('WebSocket ошибка:', error);
             socket.onclose = () => console.log('WebSocket закрыт');
+            socket.onclose = () => alert('WebSocket закрыт');
 
             socket.onmessage = (event) => {
                 console.log('Raw WebSocket message received:', event.data);
