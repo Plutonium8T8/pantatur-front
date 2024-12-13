@@ -114,7 +114,7 @@ function App() {
       (<button onClick={() => closeSnackbar(snackbarId)}
         style={{ background: 'none', border: 'none', color: 'blue', cursor: 'pointer' }} > Закрыть </button>)}
     >
-      <SocketProvider>
+      <SocketProvider isLoggedIn={isLoggedIn}>
         <UserProvider>
           <Notification />
           <Router>

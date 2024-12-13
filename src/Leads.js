@@ -5,7 +5,6 @@ import { priorityOptions } from './FormOptions/PriorityOption';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import Cookies from 'js-cookie';
-import { SocketProvider, useSocket } from './SocketContext';
 
 import './App.css';
 
@@ -45,7 +44,6 @@ const Leads = () => {
     const { enqueueSnackbar } = useSnackbar();
     const [message, setMessage] = useState([]);
     const [ticketIds, setTicketIds] = useState([]);
-    const socket = useSocket();
 
     const fetchTickets = async () => {
         setIsLoading(true);

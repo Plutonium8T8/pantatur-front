@@ -224,7 +224,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
             socket.send(JSON.stringify(readMessageData));
             console.log('Sent mark as read:', readMessageData);
         } catch (error) {
-            console.error('Error sending mark as read:', error);
+            // console.error('Error sending mark as read:', error);
         }
     };
 
@@ -506,57 +506,6 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
 
     const updatedTicket = tickets.find(ticket => ticket.id === selectedTicketId);
 
-    // const fetchTicketsID = async () => {
-    //     try {
-    //         setIsLoading(true); // Показываем индикатор загрузки
-    //         const token = Cookies.get('jwt');
-    //         const response = await fetch('https://pandatur-api.com/api/tickets', {
-    //             method: 'GET',
-    //             headers: {
-    //                 Authorization: `Bearer ${token}`,
-    //                 'Content-Type': 'application/json',
-    //             },
-    //         });
-
-    //         if (response.status === 401) {
-    //             console.warn('Ошибка 401: Неавторизован. Перенаправляем на логин.');
-    //             setErrorMessage('Ошибка авторизации. Попробуйте снова.');
-    //             return;
-    //         }
-
-    //         if (!response.ok) {
-    //             throw new Error('Ошибка при получении данных тикетов');
-    //         }
-
-    //         const data = await response.json();
-    //         const tickets = data[0]; // Доступ к первому элементу
-    //         const TicketIds = tickets.map((ticket) => ticket.id);
-
-    //         setTicketIds(TicketIds);
-    //         setTickets(tickets);
-
-    //         // Отправляем сообщение в WebSocket после успешного получения ID
-    //         if (socket && socket.readyState === WebSocket.OPEN) {
-    //             const message = {
-    //                 type: 'connect',
-    //                 data: {
-    //                     client_id: TicketIds, // Используем полученные ID
-    //                 },
-    //             };
-    //             socket.send(JSON.stringify(message));
-    //         }
-    //     } catch (error) {
-    //         console.error('Ошибка:', error);
-    //         setErrorMessage('Ошибка при загрузке тикетов');
-    //     } finally {
-    //         setIsLoading(false); // Скрываем индикатор загрузки
-    //     }
-    // };
-
-    // useEffect(() => {
-    //     fetchTicketsID();
-    // }, []);
-
     const getClientMessages = async () => {
         try {
             const token = Cookies.get('jwt');
@@ -582,15 +531,6 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
             console.error('Ошибка при получении сообщений:', error.message);
         }
     };
-
-    // useEffect(() => {
-    //     const intervalId = setInterval(() => {
-    //         getClientMessages();
-    //     }, 1000); // Запрос каждые 1000 миллисекунд (1 секунда)
-
-    //     // Очистка интервала при размонтировании компонента
-    //     return () => clearInterval(intervalId);
-    // }, []);
 
     useEffect(() => {
         getClientMessages();
