@@ -58,10 +58,12 @@ export const useSocket = () => {
 
 export const SocketProvider = ({ children, isLoggedIn }) => {
   const [socket, setSocket] = useState(null);
+  const [tickets, setTickets] = useState([]);
+  const [ticketIds, setTicketIds] = useState([]);
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
     if (!isLoggedIn) {
-      // Удаляем WebSocket при выходе из системы
       if (socket) {
         socket.close();
         setSocket(null);
@@ -74,6 +76,7 @@ export const SocketProvider = ({ children, isLoggedIn }) => {
 
     socketInstance.onopen = () => {
       console.log('WebSocket подключен');
+      fetchTicketsID(socketInstance); // Загружаем тикеты только при открытии сокета
     };
 
     socketInstance.onclose = () => {
@@ -87,6 +90,43 @@ export const SocketProvider = ({ children, isLoggedIn }) => {
       console.log('WebSocket закрыт при размонтировании.');
     };
   }, [isLoggedIn]);
+
+  const fetchTicketsID = async (socketInstance) => {
+    try {
+      const token = Cookies.get('jwt');
+      if (!token) {
+        console.warn('Нет токена. Пропускаем загрузку тикетов.');
+        return;
+      }
+
+      const response = await fetch('https://pandatur-api.com/api/tickets', {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Ошибка при получении тикетов. Код статуса: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const tickets = data[0];
+      const ticketIds = tickets.map((ticket) => ticket.id);
+
+      setTicketIds(ticketIds);
+      setTickets(tickets);
+
+      if (socketInstance && socketInstance.readyState === WebSocket.OPEN) {
+        const socketMessage = JSON.stringify({ type: 'connect', data: { client_id: ticketIds } });
+        socketInstance.send(socketMessage);
+      }
+    } catch (error) {
+      console.error('Ошибка при загрузке тикетов:', error.message);
+      setMessage('Ошибка при загрузке тикетов');
+    }
+  };
 
   return (
     <SocketContext.Provider value={socket}>
