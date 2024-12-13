@@ -1,5 +1,6 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie'; // Для работы с cookies
 import './SideBar.css';
 
 const CustomSidebar = ({ unreadMessagesCount, unreadNotificationsCount }) => {
@@ -16,6 +17,13 @@ const CustomSidebar = ({ unreadMessagesCount, unreadNotificationsCount }) => {
 
     const handleNavigate = (page) => {
         navigate(`/${page}`);
+    };
+
+    const handleLogOut = () => {
+        // Удаление токена из cookies
+        Cookies.remove('jwt');
+        // Перенаправление на страницу входа
+        window.location.reload(); // Перезагрузка страницы
     };
 
     return (
@@ -55,14 +63,20 @@ const CustomSidebar = ({ unreadMessagesCount, unreadNotificationsCount }) => {
                     >
                         ✉️ <br />Mail
                     </div>
-                    <div
-                        className={`menu-item ${isActive('notifications') ? 'active' : ''}`}
-                        onClick={() => handleNavigate('notifications')}
-                    >
-                        🔔 <br />Notifications
-                        {unreadNotificationsCount > 0 && (
-                            <span className="unread-indicator">{unreadNotificationsCount}</span>
-                        )}
+                    <div className='container-log-out'>
+                        <div
+                            className={`menu-item ${isActive('notifications') ? 'active' : ''}`}
+                            onClick={() => handleNavigate('notifications')}
+                        >
+                            🔔 <br />Notifications
+                            {unreadNotificationsCount > 0 && (
+                                <span className="unread-indicator">{unreadNotificationsCount}</span>
+                            )}
+                        </div>
+                        {/* Кнопка выхода */}
+                        <div className="menu-item" onClick={handleLogOut}>
+                            🚪 <br />Log Out
+                        </div>
                     </div>
                 </div>
             </div>
