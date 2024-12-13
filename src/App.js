@@ -101,7 +101,13 @@ function App() {
 
   return (
     <SnackbarProvider
-      autoHideDuration={7000}
+      iconVariant={{
+        success: '✅ ',
+        error: '✖️ ',
+        warning: '⚠️ ',
+        info: 'ℹ️ ',
+      }}
+      autoHideDuration={10000}
       maxSnack={10}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'left', }}
       action={(snackbarId) =>
@@ -110,7 +116,7 @@ function App() {
     >
       <SocketProvider>
         <UserProvider>
-        <Notification/>
+          <Notification />
           <Router>
             {!isLoggedIn ? (
               <LoginForm onLoginSuccess={() => setIsLoggedIn(true)} />

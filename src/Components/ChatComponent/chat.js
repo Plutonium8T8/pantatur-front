@@ -708,10 +708,13 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
                     {messages
                         .filter((msg) => msg.client_id === selectedTicketId)
                         .sort((a, b) => new Date(a.time_sent) - new Date(b.time_sent)) // Сортируем по времени отправки
-                        .map((msg, index) => {
-                            return ( // Добавляем return для корректного возврата JSX
+                        .map((msg) => {
+                            // Используем msg.id или создаем уникальный ключ
+                            const uniqueKey = msg.id || `${msg.client_id}-${msg.time_sent}`;
+
+                            return (
                                 <InView
-                                    key={msg.id}
+                                    key={uniqueKey} // Убедитесь, что ключ уникален
                                     onChange={(inView) => handleInView(inView, msg)}
                                     threshold={0.5} // Сообщение считается видимым, если хотя бы 50% попадает в зону видимости
                                 >
@@ -727,6 +730,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
                             );
                         })}
                 </div>
+
                 <div className="manager-send-message-container">
                     <textarea
                         className="text-area-message"
