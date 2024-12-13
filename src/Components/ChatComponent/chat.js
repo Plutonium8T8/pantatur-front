@@ -317,17 +317,17 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
             socket.onopen = () => console.log('WebSocket подключен');
             socket.onerror = (error) => console.error('WebSocket ошибка:', error);
             socket.onclose = () => console.log('WebSocket закрыт');
-    
+
             socket.onmessage = (event) => {
                 console.log('Raw WebSocket message received:', event.data);
                 try {
                     const message = JSON.parse(event.data);
                     console.log('Parsed WebSocket message:', message);
-    
+
                     switch (message.type) {
                         case 'message':
                             setMessages((prevMessages) => [...prevMessages, message.data]);
-    
+
                             if (message.data.client_id !== selectedTicketId) {
                                 setUnreadMessages((prevUnreadMessages) => {
                                     const updatedUnreadMessages = { ...prevUnreadMessages };
@@ -335,38 +335,28 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
                                         (updatedUnreadMessages[message.data.client_id] || 0) + 1;
                                     return updatedUnreadMessages;
                                 });
-    
-                                enqueueSnackbar(
-                                    `Новое сообщение от клиента ${message.data.client_id}`,
-                                    { variant: 'info' }
-                                );
-                            }
-    
-                            if (typeof onUpdateUnreadMessages === 'function') {
-                                setUnreadMessages((prevUnreadMessages) => {
-                                    const totalUnreadMessages = Object.values(prevUnreadMessages).reduce(
-                                        (sum, count) => sum + count,
-                                        0
-                                    );
-                                    onUpdateUnreadMessages(totalUnreadMessages + 1);
-                                    return prevUnreadMessages;
-                                });
+
+                                // отображение сообшении прям в чате
+                                // enqueueSnackbar(
+                                //     `Новое сообщение от клиента ${message.data.client_id}`,
+                                //     { variant: 'info' }
+                                // );
                             }
                             break;
-    
+
                         case 'notification':
                             enqueueSnackbar(message.data.text || 'Уведомление получено!', { variant: 'success' });
                             break;
-    
+
                         case 'task':
                             enqueueSnackbar(`Новая задача: ${message.data.title}`, { variant: 'warning' });
                             handleTask(message.data);
                             break;
-    
+
                         case 'seen':
                             handleSeen(message.data);
                             break;
-    
+
                         default:
                             console.warn('Unknown message type:', message);
                     }
@@ -375,7 +365,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
                 }
             };
         }
-    
+
         return () => {
             if (socket) {
                 socket.onmessage = null;
@@ -383,8 +373,19 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
                 socket.onclose = null;
             }
         };
-    }, [socket, selectedTicketId, onUpdateUnreadMessages]);
-    
+    }, [socket, selectedTicketId]);
+
+    // Обновляем unreadMessages через useEffect
+    useEffect(() => {
+        if (typeof onUpdateUnreadMessages === 'function') {
+            const totalUnreadMessages = Object.values(unreadMessages).reduce(
+                (sum, count) => sum + count,
+                0
+            );
+            onUpdateUnreadMessages(totalUnreadMessages);
+        }
+    }, [unreadMessages, onUpdateUnreadMessages]);
+
 
 
     // Обработчик изменения значения в селекте для выбранного тикета
