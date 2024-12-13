@@ -27,7 +27,7 @@ const CustomSidebar = ({ unreadMessagesCount, unreadNotificationsCount }) => {
     };
 
     return (
-        <div className='container-side-bar'>
+        <div className="container-side-bar">
             <div className="menu-side-bar">
                 <div className="container-item-menu">
                     <div
@@ -63,21 +63,20 @@ const CustomSidebar = ({ unreadMessagesCount, unreadNotificationsCount }) => {
                     >
                         ✉️ <br />Mail
                     </div>
-                    <div className='container-log-out'>
-                        <div
-                            className={`menu-item ${isActive('notifications') ? 'active' : ''}`}
-                            onClick={() => handleNavigate('notifications')}
-                        >
-                            🔔 <br />Notifications
-                            {unreadNotificationsCount > 0 && (
-                                <span className="unread-indicator">{unreadNotificationsCount}</span>
-                            )}
-                        </div>
-                        {/* Кнопка выхода */}
-                        <div className="menu-item" onClick={handleLogOut}>
-                            🚪 <br />Log Out
-                        </div>
+                    <div
+                        className={`menu-item ${isActive('notifications') ? 'active' : ''}`}
+                        onClick={() => handleNavigate('notifications')}
+                    >
+                        🔔 <br />Notifications
+                        {unreadNotificationsCount > 0 && (
+                            <span className="unread-indicator">{unreadNotificationsCount}</span>
+                        )}
                     </div>
+                </div>
+            </div>
+            <div className="container-log-out">
+                <div className="menu-item" onClick={handleLogOut}>
+                    🚪 <br />Log Out
                 </div>
             </div>
         </div>

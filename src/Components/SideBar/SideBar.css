@@ -1,9 +1,9 @@
 .container-side-bar {
-    display: flex; /* Используем flexbox */
+    display: flex;
     flex-direction: column; /* Расположение элементов по вертикали */
+    justify-content: space-between; /* Отделяем меню от кнопки выхода */
     background-color: #88a5cd; /* Цвет фона панели */
     padding: 10px;
-    /* height: 96vb; */
     width: fit-content;
     max-width: 65px;
 }
@@ -14,8 +14,9 @@
     align-items: stretch; /* Заставляем элементы занимать всю ширину */
 }
 
-.toggle-button {
-    display: none; /* Убираем кнопку сворачивания */
+.container-item-menu {
+    display: flex;
+    flex-direction: column;
 }
 
 .menu-item {
@@ -35,21 +36,6 @@
     border-radius: 50%; /* Скругление углов */
 }
 
-.container-item-menu {
-    display: flex;
-    flex-direction: column;
-}
-
-/* Добавляем стили для текста и иконок в пунктах меню */
-.menu-item:before {
-    display: inline-block; /* Делаем элемент блочным */
-    width: 24px; /* Ширина для символа */
-    height: 24px; /* Высота для символа */
-    text-align: center; /* Центрируем текст */
-    line-height: 24px; /* Вертикальное выравнивание */
-    font-size: 20px; /* Размер шрифта для символа */
-    margin-right: 10px; /* Отступ справа от символа */
-}
 .menu-item.active {
     background-color: white; /* Фон для активного элемента */
     color: #333; /* Цвет текста для активного элемента */
@@ -58,6 +44,7 @@
     border-radius: 100%; /* Скругление углов */
     border: 1px solid white;
 }
+
 .unread-indicator {
     display: inline-block;
     background-color: red;
@@ -67,4 +54,10 @@
     padding: 2px 6px;
     border-radius: 50%;
     margin-left: 5px;
+}
+
+.container-log-out {
+    display: flex;
+    justify-content: center; /* Центрируем кнопку выхода */
+    margin-top: auto; /* Отправляем кнопку в самый низ */
 }
