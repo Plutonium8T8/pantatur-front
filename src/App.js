@@ -99,6 +99,10 @@ function App() {
     return <div className="spinner"></div>;
   }
 
+  const handleUpdateUnreadMessages = (newCount) => {
+    setUnreadMessagesCount(newCount);
+  };
+
   return (
     <SnackbarProvider
       iconVariant={{
@@ -116,7 +120,7 @@ function App() {
     >
       <SocketProvider isLoggedIn={isLoggedIn}>
         <UserProvider>
-          <Notification />
+          <Notification onUpdateUnreadMessages={handleUpdateUnreadMessages} />
           <Router>
             {!isLoggedIn ? (
               <LoginForm onLoginSuccess={() => setIsLoggedIn(true)} />
@@ -128,7 +132,7 @@ function App() {
                     <Route path="/account" element={<UserProfile />} />
                     <Route path="/" element={<Navigate to="/leads" />} />
                     <Route path="/leads" element={<Leads />} />
-                    <Route path="/chat/:ticketId?" element={<ChatComponent onUpdateUnreadMessages={setUnreadMessagesCount} />} />
+                    <Route path="/chat/:ticketId?" element={<ChatComponent unreadMessagesCount={unreadMessagesCount} />} />
                     <Route path="*" element={<div>Страница в разработке</div>} />
                   </Routes>
                 </div>
