@@ -64,26 +64,8 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
     const [isLoading, setIsLoading] = useState(false); // Состояние загрузки
     const [selectedTechnicianId, setSelectedTechnicianId] = useState('');
     const socket = useSocket(); // Получаем WebSocket из контекста
-    const [errorMessage, setErrorMessage] = useState(''); // Состояние для ошибок
-    const [ticketIds, setTicketIds] = useState([]); // Состояние для хранения ID тикетов
     const [unreadMessages, setUnreadMessages] = useState({}); // Состояние для отслеживания непрочитанных сообщений
     const { enqueueSnackbar } = useSnackbar();
-
-    // Обновляем счетчик непрочитанных сообщений
-    useEffect(() => {
-        const totalUnreadMessages = tickets.reduce((total, ticket) => {
-            const chatMessages = messages.filter((msg) => msg.client_id === ticket.id);
-            const unreadMessagesCount = chatMessages.filter(
-                (msg) => !msg.seen_at && msg.sender_id !== userId && ticket.id !== selectedTicketId
-            ).length;
-            return total + unreadMessagesCount;
-        }, 0);
-
-        // Передача данных в App через callback
-        if (onUpdateUnreadMessages) {
-            onUpdateUnreadMessages(totalUnreadMessages);
-        }
-    }, [tickets, messages, userId, selectedTicketId, onUpdateUnreadMessages]);
 
     useEffect(() => {
         // Если ticketId передан через URL, устанавливаем его как selectedTicketId
@@ -209,8 +191,14 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
     };
 
     // отправка что чаты сообшения прочитаны
-    const markMessagesAsRead = () => {
+    const markMessagesAsRead = (messages) => {
         if (!socket || !selectedTicketId) return;
+
+        const unreadMessages = messages.filter(
+            (msg) => msg.client_id === selectedTicketId && !msg.seen_at && msg.sender_id !== Number(userId)
+        );
+
+        if (unreadMessages.length === 0) return; // Нечего отправлять, все уже прочитано
 
         const readMessageData = {
             type: 'seen',
@@ -224,14 +212,14 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
             socket.send(JSON.stringify(readMessageData));
             console.log('Sent mark as read:', readMessageData);
         } catch (error) {
-            // console.error('Error sending mark as read:', error);
+            console.error('Error sending mark as read:', error);
         }
     };
 
     useEffect(() => {
         if (socket && selectedTicketId) {
-            // Отправляем статус прочтения при открытии чата
-            markMessagesAsRead();
+            const relevantMessages = messages.filter((msg) => msg.client_id === selectedTicketId);
+            markMessagesAsRead(relevantMessages); // Отправляем статус прочтения только для текущего чата
         }
 
         return () => {
@@ -239,7 +227,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
                 socket.onmessage = null;
             }
         };
-    }, [selectedTicketId, socket]);
+    }, [selectedTicketId, socket, messages, userId]);
 
     useEffect(() => {
         if (socket) {
@@ -311,24 +299,61 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
         }
     };
 
+    const getClientMessages = async () => {
+        try {
+            const token = Cookies.get('jwt');
+            const response = await fetch(`https://pandatur-api.com/messages`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            console.log('Сообщения клиента полученые с сервера:', data);
+            // enqueueSnackbar('Сообшения получены!', { variant: 'success' });
+            // Обновляем состояние с сообщениями
+            setMessages(data);
+        } catch (error) {
+            enqueueSnackbar('Не удалось получить сообшения!', { variant: 'error' });
+            console.error('Ошибка при получении сообщений:', error.message);
+        }
+    };
+
+    useEffect(() => {
+        getClientMessages();
+    }, []);
 
     useEffect(() => {
         if (socket) {
             socket.onopen = () => console.log('WebSocket подключен');
             socket.onerror = (error) => console.error('WebSocket ошибка:', error);
-            socket.onclose = () => console.log('WebSocket закрыт');
-            socket.onclose = () => alert('WebSocket закрыт');
+            socket.onclose = () => {
+                console.log('WebSocket закрыт');
+                alert('WebSocket закрыт');
+            };
 
             socket.onmessage = (event) => {
                 console.log('Raw WebSocket message received:', event.data);
+
+                // Всегда вызываем getClientMessages при получении сообщения
+                getClientMessages();
+
                 try {
                     const message = JSON.parse(event.data);
                     console.log('Parsed WebSocket message:', message);
 
                     switch (message.type) {
                         case 'message':
+                            // Обновляем список сообщений
                             setMessages((prevMessages) => [...prevMessages, message.data]);
 
+                            // Увеличиваем счётчик непрочитанных сообщений, если сообщение не относится к текущему чату
                             if (message.data.client_id !== selectedTicketId) {
                                 setUnreadMessages((prevUnreadMessages) => {
                                     const updatedUnreadMessages = { ...prevUnreadMessages };
@@ -337,7 +362,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
                                     return updatedUnreadMessages;
                                 });
 
-                                // отображение сообшении прям в чате
+                                // (Опционально) уведомление о новом сообщении
                                 // enqueueSnackbar(
                                 //     `Новое сообщение от клиента ${message.data.client_id}`,
                                 //     { variant: 'info' }
@@ -374,20 +399,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
                 socket.onclose = null;
             }
         };
-    }, [socket, selectedTicketId]);
-
-    // Обновляем unreadMessages через useEffect
-    useEffect(() => {
-        if (typeof onUpdateUnreadMessages === 'function') {
-            const totalUnreadMessages = Object.values(unreadMessages).reduce(
-                (sum, count) => sum + count,
-                0
-            );
-            onUpdateUnreadMessages(totalUnreadMessages);
-        }
-    }, [unreadMessages, onUpdateUnreadMessages]);
-
-
+    }, [socket, selectedTicketId, getClientMessages]);
 
     // Обработчик изменения значения в селекте для выбранного тикета
     const handleSelectChange = (ticketId, field, value) => {
@@ -507,36 +519,6 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
 
     const updatedTicket = tickets.find(ticket => ticket.id === selectedTicketId);
 
-    const getClientMessages = async () => {
-        try {
-            const token = Cookies.get('jwt');
-            const response = await fetch(`https://pandatur-api.com/messages`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
-            }
-
-            const data = await response.json();
-            console.log('Сообщения клиента полученые с сервера:', data);
-            // enqueueSnackbar('Сообшения получены!', { variant: 'success' });
-            // Обновляем состояние с сообщениями
-            setMessages(data);
-        } catch (error) {
-            enqueueSnackbar('Не удалось получить сообшения!', { variant: 'error' });
-            console.error('Ошибка при получении сообщений:', error.message);
-        }
-    };
-
-    useEffect(() => {
-        getClientMessages();
-    }, []);
-
     // useEffect(() => {
     //     if (selectedTicketId) {
     //         getClientMessages();
@@ -562,7 +544,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
 
     const handleClick = () => {
         sendMessage();
-        // getClientMessages();
+        getClientMessages();
         // markMessagesAsRead();
         // fetchTicketsID();
     };
@@ -575,6 +557,26 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
         getClientMessages();
     };
 
+    // Обновляем unreadMessages через useEffect
+    useEffect(() => {
+        if (tickets.length > 0 && messages.length > 0) {
+            const totalUnreadMessages = tickets.reduce((total, ticket) => {
+                const chatMessages = messages.filter((msg) => msg.client_id === ticket.id);
+                const unreadMessagesCount = chatMessages.filter(
+                    (msg) =>
+                        !msg.seen_at &&
+                        msg.sender_id !== userId &&
+                        ticket.id !== selectedTicketId
+                ).length;
+                return total + unreadMessagesCount;
+            }, 0);
+
+            if (typeof onUpdateUnreadMessages === 'function') {
+                onUpdateUnreadMessages(totalUnreadMessages);
+            }
+        }
+    }, [tickets, messages, userId, selectedTicketId, onUpdateUnreadMessages]);
+
     return (
         <div className="chat-container">
             <div className="users-container">
@@ -584,16 +586,17 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
                         const chatMessages = messages.filter((msg) => msg.client_id === ticket.id);
 
                         const unreadMessagesCount = chatMessages.filter(
-                            (msg) => !msg.seen_at && msg.sender_id !== userId && msg.client_id !== selectedTicketId
+                            (msg) =>
+                                !msg.seen_at &&
+                                msg.sender_id !== userId &&
+                                ticket.id !== selectedTicketId
                         ).length;
 
-                        const lastMessage = chatMessages.length
-                            ? chatMessages.reduce((latest, current) => new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest)
+                        const lastMessage = chatMessages.length > 0
+                            ? chatMessages.reduce((latest, current) =>
+                                new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
+                            )
                             : { message: '', time_sent: null };
-
-                        lastMessage.message = lastMessage.message.length > 100
-                            ? lastMessage.message.slice(0, 100) + '...'
-                            : lastMessage.message;
 
                         const formattedTime = lastMessage.time_sent
                             ? new Date(lastMessage.time_sent).toLocaleTimeString('ru-RU', {
@@ -601,13 +604,6 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
                                 minute: '2-digit',
                             })
                             : null;
-
-                        // Отслеживаем видимость сообщений
-                        const handleInView = (isVisible, msgId) => {
-                            if (isVisible) {
-                                markMessagesAsRead(msgId); // Логика для пометки сообщения прочитанным
-                            }
-                        };
 
                         return (
                             <div
@@ -626,7 +622,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
                                 <div className="container-time-tasks-chat">
                                     <div className="info-message">
                                         <div className="last-message-container">
-                                            <div className='last-message-ticket'>{lastMessage.message}</div>
+                                            <div className="last-message-ticket">{lastMessage.message}</div>
                                             <div>{formattedTime}</div>
                                             {unreadMessagesCount > 0 && (
                                                 <div className="unread-count">{unreadMessagesCount}</div>
