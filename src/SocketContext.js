@@ -128,6 +128,28 @@ export const SocketProvider = ({ children, isLoggedIn }) => {
     }
   };
 
+  useEffect(() => {
+    let pingInterval;
+  
+    if (socket) {
+      // Отправка пинга через каждые 30 секунд
+      pingInterval = setInterval(() => {
+        if (socket.readyState === WebSocket.OPEN) {
+          const pingMessage = JSON.stringify({ type: 'ping' });
+          socket.send(pingMessage);
+        }
+      }, 30000); // Пинг каждые 30 секунд
+  
+      // Очистка интервала при размонтировании компонента или закрытии сокета
+      return () => {
+        clearInterval(pingInterval);  // Очищаем интервал
+        if (socket) socket.onmessage = null;  // Очищаем обработчик сообщений
+      };
+    }
+  
+    return () => {};
+  }, [socket]); // useEffect с зависимостью от сокета
+
   return (
     <SocketContext.Provider value={socket}>
       {children}

@@ -64,15 +64,6 @@ function App() {
     }
   }, [isLoggedIn]);
 
-  // fetch('https://pandatur-api.com/notifications')
-  //   .then((res) => res.json())
-  //   .then((data) => {
-  //     const unreadNotifications = data.filter((notif) => !notif.seen_at).length;
-  //     setUnreadNotificationsCount(unreadNotifications);
-  //   })
-  //   .catch(console.error);
-  // }, [isLoggedIn]);
-
   // Подключение к WebSocket для уведомлений
   useEffect(() => {
     if (socket) {
@@ -81,9 +72,6 @@ function App() {
           const message = JSON.parse(event.data);
           if (message.type === 'message' && !message.data.seen_at) {
             setUnreadMessagesCount((prev) => prev + 1);
-          }
-          if (message.type === 'notification' && !message.data.seen_at) {
-            setUnreadNotificationsCount((prev) => prev + 1);
           }
         } catch (error) {
           console.error('Ошибка Socket:', error);
@@ -115,8 +103,8 @@ function App() {
       maxSnack={10}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'left', }}
       action={(snackbarId) =>
-      (<button onClick={() => closeSnackbar(snackbarId)}
-        style={{ background: 'none', border: 'none', color: 'blue', cursor: 'pointer' }} > Закрыть </button>)}
+        (<button onClick={() => closeSnackbar(snackbarId)}
+          style={{ background: 'none', border: 'none', color: 'blue', cursor: 'pointer' }} > Закрыть </button>)}
     >
       <SocketProvider isLoggedIn={isLoggedIn}>
         <UserProvider>
