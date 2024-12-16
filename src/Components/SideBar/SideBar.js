@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie'; // Для работы с cookies
 import './SideBar.css';
 
-const CustomSidebar = ({ unreadMessagesCount, unreadNotificationsCount }) => {
+const CustomSidebar = ({ unreadMessagesCount }) => {
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -68,9 +68,6 @@ const CustomSidebar = ({ unreadMessagesCount, unreadNotificationsCount }) => {
                         onClick={() => handleNavigate('notifications')}
                     >
                         🔔 <br />Notifications
-                        {unreadNotificationsCount > 0 && (
-                            <span className="unread-indicator">{unreadNotificationsCount}</span>
-                        )}
                     </div>
                 </div>
             </div>
