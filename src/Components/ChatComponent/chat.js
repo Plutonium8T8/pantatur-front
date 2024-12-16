@@ -410,7 +410,6 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
 
     // Обработчик изменения значения в селекте для выбранного тикета
     const handleSelectChange = (ticketId, field, value) => {
-        console.log(`Изменение значения селекта: ticketId=${ticketId}, field=${field}, value=${value}`);
         setExtraInfo((prevState) => {
             const newState = {
                 ...prevState,
@@ -525,12 +524,6 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
     };
 
     const updatedTicket = tickets.find(ticket => ticket.id === selectedTicketId);
-
-    // useEffect(() => {
-    //     if (selectedTicketId) {
-    //         getClientMessages();
-    //     }
-    // }, [selectedTicketId]);
 
     const scrollToBottom = () => {
         if (messageContainerRef.current) {
