@@ -190,21 +190,58 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
         }
     };
 
+    const getClientMessages = async () => {
+        try {
+            const token = Cookies.get('jwt');
+            const response = await fetch(`https://pandatur-api.com/messages`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            console.log('Сообщения клиента полученые с сервера:', data);
+            // enqueueSnackbar('Сообшения получены!', { variant: 'success' });
+            // Обновляем состояние с сообщениями
+            setMessages(data);
+        } catch (error) {
+            enqueueSnackbar('Не удалось получить сообшения!', { variant: 'error' });
+            console.error('Ошибка при получении сообщений:', error.message);
+        }
+    };
+
+    useEffect(() => {
+        getClientMessages();
+    }, []);
+
     // отправка что чаты сообшения прочитаны
     const markMessagesAsRead = (messages) => {
-        if (!socket || !selectedTicketId) return;
+        console.log('Messages received:', messages);
+
+        if (!socket || !selectedTicketId || !Array.isArray(messages)) {
+            console.error('Invalid messages or missing parameters');
+            return;
+        }
 
         const unreadMessages = messages.filter(
             (msg) => msg.client_id === selectedTicketId && !msg.seen_at && msg.sender_id !== Number(userId)
         );
 
-        if (unreadMessages.length === 0) return; // Нечего отправлять, все уже прочитано
+        console.log('Unread messages:', unreadMessages);
+
+        if (unreadMessages.length === 0) return;
 
         const readMessageData = {
             type: 'seen',
             data: {
                 client_id: selectedTicketId,
-                sender_id: Number(userId), // Преобразование userId в число
+                sender_id: Number(userId),
             },
         };
 
@@ -298,36 +335,6 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
             console.error('Socket is null.');
         }
     };
-
-    const getClientMessages = async () => {
-        try {
-            const token = Cookies.get('jwt');
-            const response = await fetch(`https://pandatur-api.com/messages`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
-            }
-
-            const data = await response.json();
-            console.log('Сообщения клиента полученые с сервера:', data);
-            // enqueueSnackbar('Сообшения получены!', { variant: 'success' });
-            // Обновляем состояние с сообщениями
-            setMessages(data);
-        } catch (error) {
-            enqueueSnackbar('Не удалось получить сообшения!', { variant: 'error' });
-            console.error('Ошибка при получении сообщений:', error.message);
-        }
-    };
-
-    useEffect(() => {
-        getClientMessages();
-    }, []);
 
     useEffect(() => {
         if (socket) {
@@ -545,16 +552,18 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
     const handleClick = () => {
         sendMessage();
         getClientMessages();
-        // markMessagesAsRead();
+        markMessagesAsRead();
         // fetchTicketsID();
+        fetchTickets();
     };
 
     const handleTicketClick = (ticketId) => {
         setSelectedTicketId(ticketId); // Устанавливаем выбранный тикет
         navigate(`/chat/${ticketId}`);
-        // markMessagesAsRead();
+        markMessagesAsRead();
         // fetchTicketsID();
         getClientMessages();
+        fetchTickets();
     };
 
     // Обновляем unreadMessages через useEffect
@@ -563,12 +572,9 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
             const totalUnreadMessages = tickets.reduce((total, ticket) => {
                 const chatMessages = messages.filter((msg) => msg.client_id === ticket.id);
                 const unreadMessagesCount = chatMessages.filter(
-                    (msg) =>
-                        !msg.seen_at &&
-                        msg.sender_id !== userId &&
-                        ticket.id !== selectedTicketId
+                    (msg) => !msg.seen_at && msg.sender_id !== userId && msg.client_id !== selectedTicketId
                 ).length;
-                return total + unreadMessagesCount;
+                return unreadMessagesCount;
             }, 0);
 
             if (typeof onUpdateUnreadMessages === 'function') {
@@ -586,10 +592,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
                         const chatMessages = messages.filter((msg) => msg.client_id === ticket.id);
 
                         const unreadMessagesCount = chatMessages.filter(
-                            (msg) =>
-                                !msg.seen_at &&
-                                msg.sender_id !== userId &&
-                                ticket.id !== selectedTicketId
+                            (msg) => !msg.seen_at && msg.sender_id !== userId && msg.client_id !== selectedTicketId
                         ).length;
 
                         const lastMessage = chatMessages.length > 0
@@ -604,7 +607,12 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
                                 minute: '2-digit',
                             })
                             : null;
-
+                        // Отслеживаем видимость сообщений
+                        const handleInView = (isVisible, msgId) => {
+                            if (isVisible) {
+                                markMessagesAsRead(msgId); // Логика для пометки сообщения прочитанным
+                            }
+                        };
                         return (
                             <div
                                 key={ticket.id}

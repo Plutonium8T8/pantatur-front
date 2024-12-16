@@ -26,7 +26,7 @@ const Notification = ({ selectedTicketId, onUpdateUnreadMessages }) => {
                 setUnreadMessages((prevUnreadMessages) => {
                   const updatedUnreadMessages = { ...prevUnreadMessages };
                   updatedUnreadMessages[message.data.client_id] =
-                    (updatedUnreadMessages[message.data.client_id] || 0) + 1;
+                    (updatedUnreadMessages[message.data.client_id]) + 1;
                   return updatedUnreadMessages;
                 });
 
