@@ -103,8 +103,8 @@ function App() {
       maxSnack={10}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'left', }}
       action={(snackbarId) =>
-        (<button onClick={() => closeSnackbar(snackbarId)}
-          style={{ background: 'none', border: 'none', color: 'blue', cursor: 'pointer' }} > Закрыть </button>)}
+      (<button onClick={() => closeSnackbar(snackbarId)}
+        style={{ background: 'none', border: 'none', color: 'blue', cursor: 'pointer' }} > Закрыть </button>)}
     >
       <SocketProvider isLoggedIn={isLoggedIn}>
         <UserProvider>
