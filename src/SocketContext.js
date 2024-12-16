@@ -72,7 +72,7 @@ export const SocketProvider = ({ children, isLoggedIn }) => {
     }
 
     // Устанавливаем соединение WebSocket после логина
-    const socketInstance = new WebSocket('ws://34.88.185.205:8080');
+    const socketInstance = new WebSocket('ws://34.88.101.80:8080');
 
     socketInstance.onopen = () => {
       console.log('WebSocket подключен');
@@ -130,7 +130,7 @@ export const SocketProvider = ({ children, isLoggedIn }) => {
 
   useEffect(() => {
     let pingInterval;
-  
+
     if (socket) {
       // Отправка пинга через каждые 30 секунд
       pingInterval = setInterval(() => {
@@ -138,16 +138,16 @@ export const SocketProvider = ({ children, isLoggedIn }) => {
           const pingMessage = JSON.stringify({ type: 'ping' });
           socket.send(pingMessage);
         }
-      }, 30000); // Пинг каждые 30 секунд
-  
+      }, 180000); // Пинг каждые 30 секунд
+
       // Очистка интервала при размонтировании компонента или закрытии сокета
       return () => {
         clearInterval(pingInterval);  // Очищаем интервал
         if (socket) socket.onmessage = null;  // Очищаем обработчик сообщений
       };
     }
-  
-    return () => {};
+
+    return () => { };
   }, [socket]); // useEffect с зависимостью от сокета
 
   return (

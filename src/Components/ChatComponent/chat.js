@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import CryptoJS from 'crypto-js';
 import AES from 'crypto-js/aes';
@@ -171,25 +171,6 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
         console.log('seen:', data);
     };
 
-    const handleInView = (isVisible, msg) => {
-        if (isVisible && !msg.seen_at) {
-            const readMessageData = {
-                type: 'seen',
-                data: {
-                    client_id: msg.client_id,
-                    sender_id: Number(userId),
-                },
-            };
-
-            try {
-                socket.send(JSON.stringify(readMessageData));
-                console.log('Sent mark as read for message:', msg.id);
-            } catch (error) {
-                console.error('Error sending mark as read:', error);
-            }
-        }
-    };
-
     const getClientMessages = async () => {
         try {
             const token = Cookies.get('jwt');
@@ -219,194 +200,6 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
     useEffect(() => {
         getClientMessages();
     }, []);
-
-    // отправка что чаты сообшения прочитаны
-    const markMessagesAsRead = (messages) => {
-        console.log('Messages received:', messages);
-
-        if (!socket || !selectedTicketId || !Array.isArray(messages)) {
-            console.error('Invalid messages or missing parameters');
-            return;
-        }
-
-        const unreadMessages = messages.filter(
-            (msg) => msg.client_id === selectedTicketId && !msg.seen_at && msg.sender_id !== Number(userId)
-        );
-
-        console.log('Unread messages:', unreadMessages);
-
-        if (unreadMessages.length === 0) return;
-
-        const readMessageData = {
-            type: 'seen',
-            data: {
-                client_id: selectedTicketId,
-                sender_id: Number(userId),
-            },
-        };
-
-        try {
-            socket.send(JSON.stringify(readMessageData));
-            console.log('Sent mark as read:', readMessageData);
-        } catch (error) {
-            console.error('Error sending mark as read:', error);
-        }
-    };
-
-    useEffect(() => {
-        if (socket && selectedTicketId) {
-            const relevantMessages = messages.filter((msg) => msg.client_id === selectedTicketId);
-            markMessagesAsRead(relevantMessages); // Отправляем статус прочтения только для текущего чата
-        }
-
-        return () => {
-            if (socket) {
-                socket.onmessage = null;
-            }
-        };
-    }, [selectedTicketId, socket, messages, userId]);
-
-    useEffect(() => {
-        if (socket) {
-            socket.onmessage = (event) => {
-                const message = JSON.parse(event.data);
-
-                if (message.type === 'seen') {
-                    const { client_id, sender_id, seen_at } = message.data;
-
-                    // Обновляем сообщения в состоянии, помечая как прочитанные
-                    if (client_id === selectedTicketId) {
-                        setMessages((prevMessages) => {
-                            return prevMessages.map((msg) =>
-                                msg.client_id === client_id && !msg.seen_at
-                                    ? { ...msg, seen_at: seen_at }
-                                    : msg
-                            );
-                        });
-                    }
-                }
-            };
-        }
-    }, [socket, selectedTicketId]);
-
-    // Отправка сообщения
-    const sendMessage = () => {
-        if (!managerMessage.trim()) {
-            return;
-        }
-
-        if (socket) {
-            console.log('WebSocket state before sending message:', socket.readyState);
-
-            if (socket.readyState === WebSocket.OPEN) {
-                setTimeout(() => {
-                    const currentTime = new Date().toISOString();
-
-                    const messageData = {
-                        type: 'message',
-                        data: {
-                            sender_id: userId,
-                            client_id: [selectedTicketId],
-                            platform: 'web',
-                            text: managerMessage,
-                            time_sent: currentTime,
-                        }
-                    };
-
-                    try {
-                        socket.send(JSON.stringify(messageData));
-                        console.log('Message sent:', messageData);
-                        setManagerMessage('');
-
-                        // Обновляем состояние сообщений с новым сообщением
-                        setMessages((prevMessages) => [
-                            ...prevMessages,
-                            { ...messageData.data, seen_at: false } // Новое сообщение, еще не прочитано
-                        ]);
-                    } catch (error) {
-                        console.error('Error sending message:', error);
-                    }
-                }, 100);
-            } else {
-                console.error('WebSocket не открыт, не удается отправить сообщение. Перезагрузите страницу');
-                alert('WebSocket не открыт, не удается отправить сообщение. Перезагрузите страницу');
-            }
-        } else {
-            console.error('Socket is null.');
-        }
-    };
-
-    useEffect(() => {
-        if (socket) {
-            socket.onopen = () => console.log('WebSocket подключен');
-            socket.onerror = (error) => console.error('WebSocket ошибка:', error);
-            socket.onclose = () => {
-                console.log('WebSocket закрыт');
-                alert('WebSocket закрыт');
-            };
-
-            socket.onmessage = (event) => {
-                console.log('Raw WebSocket message received:', event.data);
-
-                // Всегда вызываем getClientMessages при получении сообщения
-                getClientMessages();
-
-                try {
-                    const message = JSON.parse(event.data);
-                    console.log('Parsed WebSocket message:', message);
-
-                    switch (message.type) {
-                        case 'message':
-                            // Обновляем список сообщений
-                            setMessages((prevMessages) => [...prevMessages, message.data]);
-
-                            // Увеличиваем счётчик непрочитанных сообщений, если сообщение не относится к текущему чату
-                            if (message.data.client_id !== selectedTicketId) {
-                                setUnreadMessages((prevUnreadMessages) => {
-                                    const updatedUnreadMessages = { ...prevUnreadMessages };
-                                    updatedUnreadMessages[message.data.client_id] =
-                                        (updatedUnreadMessages[message.data.client_id] || 0) + 1;
-                                    return updatedUnreadMessages;
-                                });
-
-                                // (Опционально) уведомление о новом сообщении
-                                // enqueueSnackbar(
-                                //     `Новое сообщение от клиента ${message.data.client_id}`,
-                                //     { variant: 'info' }
-                                // );
-                            }
-                            break;
-
-                        case 'notification':
-                            enqueueSnackbar(message.data.text || 'Уведомление получено!', { variant: 'success' });
-                            break;
-
-                        case 'task':
-                            enqueueSnackbar(`Новая задача: ${message.data.title}`, { variant: 'warning' });
-                            handleTask(message.data);
-                            break;
-
-                        case 'seen':
-                            handleSeen(message.data);
-                            break;
-
-                        default:
-                            console.warn('Unknown message type:', message);
-                    }
-                } catch (error) {
-                    console.error('Error parsing WebSocket message:', error);
-                }
-            };
-        }
-
-        return () => {
-            if (socket) {
-                socket.onmessage = null;
-                socket.onerror = null;
-                socket.onclose = null;
-            }
-        };
-    }, [socket, selectedTicketId, getClientMessages]);
 
     // Обработчик изменения значения в селекте для выбранного тикета
     const handleSelectChange = (ticketId, field, value) => {
@@ -559,15 +352,139 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
         fetchTickets();
     };
 
+    const sendMessage = () => {
+        if (!managerMessage.trim()) {
+            return;
+        }
+
+        if (socket) {
+            console.log('WebSocket state before sending message:', socket.readyState);
+
+            if (socket.readyState === WebSocket.OPEN) {
+                setTimeout(() => {
+                    const currentTime = new Date().toISOString();
+
+                    const messageData = {
+                        type: 'message',
+                        data: {
+                            sender_id: userId,
+                            client_id: [selectedTicketId],
+                            platform: 'web',
+                            text: managerMessage,
+                            time_sent: currentTime,
+                        }
+                    };
+
+                    try {
+                        socket.send(JSON.stringify(messageData));
+                        console.log('Message sent:', messageData);
+                        setManagerMessage('');
+
+                        // Обновляем состояние сообщений с новым сообщением
+                        setMessages((prevMessages) => [
+                            ...prevMessages,
+                            { ...messageData.data, seen_at: false } // Новое сообщение, еще не прочитано
+                        ]);
+                    } catch (error) {
+                        console.error('Error sending message:', error);
+                    }
+                }, 100);
+            } else {
+                console.error('WebSocket не открыт, не удается отправить сообщение. Перезагрузите страницу');
+                alert('WebSocket не открыт, не удается отправить сообщение. Перезагрузите страницу');
+            }
+        } else {
+            console.error('Socket is null.');
+        }
+    };
+
+    const handleInView = (isVisible, msg) => {
+        if (isVisible && !msg.seen_at) {
+            const readMessageData = {
+                type: 'seen',
+                data: {
+                    client_id: msg.client_id,
+                    sender_id: Number(userId),
+                },
+            };
+
+            try {
+                socket.send(JSON.stringify(readMessageData));
+                console.log('Sent mark as read for message:', msg.id);
+            } catch (error) {
+                console.error('Error sending mark as read:', error);
+            }
+        }
+    };
+
+    const markMessagesAsRead = (clientId) => {
+        const relevantMessages = messages.filter(
+            (msg) => msg.client_id === clientId && !msg.seen_at && msg.sender_id !== Number(userId)
+        );
+
+        if (relevantMessages.length === 0) return;
+
+        const readMessageData = {
+            type: 'seen',
+            data: {
+                client_id: clientId,
+                sender_id: Number(userId),
+            },
+        };
+
+        try {
+            socket.send(JSON.stringify(readMessageData));
+            console.log('Sent mark as read for client:', clientId);
+        } catch (error) {
+            console.error('Error sending mark as read:', error);
+        }
+    };
+
+    useEffect(() => {
+        if (socket && selectedTicketId) {
+            markMessagesAsRead(selectedTicketId); // Отправляем статус прочтения для текущего чата
+        }
+
+        return () => {
+            if (socket) {
+                socket.onmessage = null;
+            }
+        };
+    }, [selectedTicketId, socket, messages]);
+
+    useEffect(() => {
+        if (socket) {
+            socket.onmessage = (event) => {
+                const message = JSON.parse(event.data);
+
+                if (message.type === 'seen') {
+                    const { client_id, sender_id, seen_at } = message.data;
+
+                    if (client_id === selectedTicketId) {
+                        setMessages((prevMessages) =>
+                            prevMessages.map((msg) =>
+                                msg.client_id === client_id && !msg.seen_at
+                                    ? { ...msg, seen_at: seen_at }
+                                    : msg
+                            )
+                        );
+                    }
+                }
+            };
+        }
+    }, [socket, selectedTicketId]);
+
     // Обновляем unreadMessages через useEffect
     useEffect(() => {
         if (tickets.length > 0 && messages.length > 0) {
             const totalUnreadMessages = tickets.reduce((total, ticket) => {
                 const chatMessages = messages.filter((msg) => msg.client_id === ticket.id);
                 const unreadMessagesCount = chatMessages.filter(
-                    (msg) => !msg.seen_at && msg.sender_id !== userId && msg.client_id !== selectedTicketId
+                    (msg) =>
+                        (!msg.seen_by || !msg.seen_by.includes(String(userId))) && // Пользователь не прочитал
+                        msg.sender_id !== userId // Сообщение отправлено не пользователем
                 ).length;
-                return unreadMessagesCount;
+                return total + unreadMessagesCount;
             }, 0);
 
             if (typeof onUpdateUnreadMessages === 'function') {
@@ -575,6 +492,69 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
             }
         }
     }, [tickets, messages, userId, selectedTicketId, onUpdateUnreadMessages]);
+
+
+    useEffect(() => {
+        if (socket) {
+            socket.onopen = () => console.log('WebSocket подключен');
+            socket.onerror = (error) => console.error('WebSocket ошибка:', error);
+            socket.onclose = () => {
+                console.log('WebSocket закрыт');
+                alert('WebSocket закрыт');
+            };
+
+            socket.onmessage = (event) => {
+                console.log('Raw WebSocket message received:', event.data);
+                getClientMessages();
+
+                try {
+                    const message = JSON.parse(event.data);
+                    console.log('Parsed WebSocket message:', message);
+
+                    switch (message.type) {
+                        case 'message':
+                            setMessages((prevMessages) => [...prevMessages, message.data]);
+
+                            if (message.data.client_id !== selectedTicketId && !message.data.seen_at) {
+                                setUnreadMessages((prevUnreadMessages) => {
+                                    const updatedUnreadMessages = { ...prevUnreadMessages };
+                                    updatedUnreadMessages[message.data.client_id] =
+                                        (updatedUnreadMessages[message.data.client_id] || 0) + 1;
+                                    return updatedUnreadMessages;
+                                });
+                            }
+                            break;
+
+                        case 'notification':
+                            enqueueSnackbar(message.data.text || 'Уведомление получено!', { variant: 'success' });
+                            break;
+
+                        case 'task':
+                            enqueueSnackbar(`Новая задача: ${message.data.title}`, { variant: 'warning' });
+                            handleTask(message.data);
+                            break;
+
+                        case 'seen':
+                            handleSeen(message.data);
+                            break;
+
+                        default:
+                            console.warn('Unknown message type:', message);
+                    }
+                } catch (error) {
+                    console.error('Error parsing WebSocket message:', error);
+                }
+            };
+        }
+
+        return () => {
+            if (socket) {
+                socket.onmessage = null;
+                socket.onerror = null;
+                socket.onclose = null;
+            }
+        };
+    }, [socket, selectedTicketId, getClientMessages]);
 
     return (
         <div className="chat-container">
@@ -585,7 +565,9 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
                         const chatMessages = messages.filter((msg) => msg.client_id === ticket.id);
 
                         const unreadMessagesCount = chatMessages.filter(
-                            (msg) => !msg.seen_at && msg.sender_id !== userId && msg.client_id !== selectedTicketId
+                            (msg) =>
+                                (!msg.seen_by || !msg.seen_by.includes(String(userId))) && // Сообщение не прочитано текущим пользователем
+                                msg.sender_id !== userId // Сообщение отправлено не текущим пользователем
                         ).length;
 
                         const lastMessage = chatMessages.length > 0
@@ -600,12 +582,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
                                 minute: '2-digit',
                             })
                             : null;
-                        // Отслеживаем видимость сообщений
-                        const handleInView = (isVisible, msgId) => {
-                            if (isVisible) {
-                                markMessagesAsRead(msgId); // Логика для пометки сообщения прочитанным
-                            }
-                        };
+
                         return (
                             <div
                                 key={ticket.id}
@@ -645,16 +622,15 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
                 <div className="chat-messages" ref={messageContainerRef}>
                     {messages
                         .filter((msg) => msg.client_id === selectedTicketId)
-                        .sort((a, b) => new Date(a.time_sent) - new Date(b.time_sent)) // Сортируем по времени отправки
+                        .sort((a, b) => new Date(a.time_sent) - new Date(b.time_sent))
                         .map((msg) => {
-                            // Используем msg.id или создаем уникальный ключ
                             const uniqueKey = msg.id || `${msg.client_id}-${msg.time_sent}`;
 
                             return (
                                 <InView
-                                    key={uniqueKey} // Убедитесь, что ключ уникален
+                                    key={uniqueKey}
                                     onChange={(inView) => handleInView(inView, msg)}
-                                    threshold={0.5} // Сообщение считается видимым, если хотя бы 50% попадает в зону видимости
+                                    threshold={0.5}
                                 >
                                     {({ ref }) => (
                                         <div ref={ref} className={`message ${msg.sender_id == userId ? 'sent' : 'received'}`}>

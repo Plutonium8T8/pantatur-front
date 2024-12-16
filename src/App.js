@@ -99,7 +99,7 @@ function App() {
         warning: '⚠️ ',
         info: 'ℹ️ ',
       }}
-      autoHideDuration={10000}
+      autoHideDuration={null}
       maxSnack={10}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'left', }}
       action={(snackbarId) =>
