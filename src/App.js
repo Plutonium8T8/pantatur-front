@@ -11,13 +11,11 @@ import { SocketProvider } from './SocketContext';
 import UserProfile from './Components/UserPage/UserPage';
 import { SnackbarProvider, closeSnackbar } from 'notistack';
 import Notification from './Notification';
-import { UnreadMessagesProvider } from './UnreadMessagesContext';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
-  const [totalUnreadMessages, setTotalUnreadMessages] = useState(0);
 
   // Проверка сессии
   useEffect(() => {
@@ -72,7 +70,6 @@ function App() {
   };
 
   return (
-    <UnreadMessagesProvider>
       <SnackbarProvider
         iconVariant={{
           success: '✅ ',
@@ -80,7 +77,7 @@ function App() {
           warning: '⚠️ ',
           info: 'ℹ️ ',
         }}
-        autoHideDuration={null}
+        autoHideDuration={5000}
         maxSnack={10}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
       >
@@ -111,7 +108,6 @@ function App() {
           </UserProvider>
         </SocketProvider>
       </SnackbarProvider>
-    </UnreadMessagesProvider>
   );
 }
 

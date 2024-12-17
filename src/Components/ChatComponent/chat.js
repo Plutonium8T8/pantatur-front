@@ -23,7 +23,6 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useSocket } from '../../SocketContext';
 import { InView } from 'react-intersection-observer';
 import { useSnackbar } from 'notistack';
-import { useUnreadMessages } from '../../UnreadMessagesContext';
 import './chat.css';
 
 const ENCRYPTION_KEY = '0123456789abcdef0123456789abcdef';
@@ -53,7 +52,7 @@ const decrypt = (text) => {
     return decrypted.toString(Utf8);
 };
 
-const ChatComponent = ({ onUpdateUnreadMessages }) => {
+const ChatComponent = () => {
     const { userId } = useUser();
     const [managerMessage, setManagerMessage] = useState('');
     const [messages, setMessages] = useState([]);
@@ -65,10 +64,8 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
     const [isLoading, setIsLoading] = useState(false); // Состояние загрузки
     const [selectedTechnicianId, setSelectedTechnicianId] = useState('');
     const socket = useSocket(); // Получаем WebSocket из контекста
-    const [unreadMessages, setUnreadMessages] = useState({}); // Состояние для отслеживания непрочитанных сообщений
+    const [unreadMessages, setUnreadMessages] = useState(0); // Состояние для отслеживания непрочитанных сообщений
     const { enqueueSnackbar } = useSnackbar();
-    const [totalUnreadMessages, setTotalUnreadMessages] = useState(0);
-    const { updateUnreadMessages } = useUnreadMessages(); // Глобальный метод из контекста
 
     useEffect(() => {
         const newTotalUnreadMessages = tickets.reduce((total, ticket) => {
@@ -83,8 +80,12 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
             return total + unreadCounts;
         }, 0);
 
-        updateUnreadMessages(newTotalUnreadMessages); // Обновляем глобальное состояние
-    }, [messages, tickets, userId]);
+        // Записываем в localStorage
+        localStorage.setItem('unreadMessages', newTotalUnreadMessages);
+
+        // Обновляем локальное состояние
+        setUnreadMessages(newTotalUnreadMessages);
+    }, [messages, tickets, userId, selectedTicketId]);
 
     // useEffect(() => {
     //     const newTotalUnreadMessages = tickets.reduce((total, ticket) => {

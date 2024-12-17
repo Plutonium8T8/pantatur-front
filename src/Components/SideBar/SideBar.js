@@ -1,13 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie'; // Для работы с cookies
 import './SideBar.css';
-import { useUnreadMessages } from '../../UnreadMessagesContext';
 
 const CustomSidebar = ({  }) => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { totalUnreadMessages } = useUnreadMessages(); // Получаем глобальное состояние
+    const [unreadCount, setUnreadCount] = useState(0); // Состояние для непрочитанных сообщений
+
+    // Извлекаем количество непрочитанных сообщений из localStorage
+    useEffect(() => {
+        const count = localStorage.getItem('unreadMessages');
+        if (count) {
+            setUnreadCount(parseInt(count)); // Преобразуем значение в число и обновляем состояние
+        }
+    }, []);
 
     // Определение активного раздела на основе пути
     const isActive = (page) => {
@@ -55,8 +62,8 @@ const CustomSidebar = ({  }) => {
                         onClick={() => handleNavigate('chat')}
                     >
                         💬 <br />Chat
-                        {totalUnreadMessages > 0 && (
-                            <span className="unread-indicator">{totalUnreadMessages}</span>
+                        {unreadCount > 0 && (
+                            <span className="unread-indicator">{unreadCount}</span>
                         )}
                     </div>
                     <div
