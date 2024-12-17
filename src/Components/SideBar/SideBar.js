@@ -2,10 +2,12 @@ import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie'; // Для работы с cookies
 import './SideBar.css';
+import { useUnreadMessages } from '../../UnreadMessagesContext';
 
-const CustomSidebar = ({ unreadMessagesCount }) => {
+const CustomSidebar = ({  }) => {
     const location = useLocation();
     const navigate = useNavigate();
+    const { totalUnreadMessages } = useUnreadMessages(); // Получаем глобальное состояние
 
     // Определение активного раздела на основе пути
     const isActive = (page) => {
@@ -53,8 +55,8 @@ const CustomSidebar = ({ unreadMessagesCount }) => {
                         onClick={() => handleNavigate('chat')}
                     >
                         💬 <br />Chat
-                        {unreadMessagesCount > 0 && (
-                            <span className="unread-indicator">{unreadMessagesCount}</span>
+                        {totalUnreadMessages > 0 && (
+                            <span className="unread-indicator">{totalUnreadMessages}</span>
                         )}
                     </div>
                     <div

@@ -23,6 +23,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useSocket } from '../../SocketContext';
 import { InView } from 'react-intersection-observer';
 import { useSnackbar } from 'notistack';
+import { useUnreadMessages } from '../../UnreadMessagesContext';
 import './chat.css';
 
 const ENCRYPTION_KEY = '0123456789abcdef0123456789abcdef';
@@ -52,7 +53,7 @@ const decrypt = (text) => {
     return decrypted.toString(Utf8);
 };
 
-const ChatComponent = ({ chatMessages, unreadMessagesCount, updateUnreadMessagesCount }) => {
+const ChatComponent = ({ onUpdateUnreadMessages }) => {
     const { userId } = useUser();
     const [managerMessage, setManagerMessage] = useState('');
     const [messages, setMessages] = useState([]);
@@ -66,6 +67,42 @@ const ChatComponent = ({ chatMessages, unreadMessagesCount, updateUnreadMessages
     const socket = useSocket(); // Получаем WebSocket из контекста
     const [unreadMessages, setUnreadMessages] = useState({}); // Состояние для отслеживания непрочитанных сообщений
     const { enqueueSnackbar } = useSnackbar();
+    const [totalUnreadMessages, setTotalUnreadMessages] = useState(0);
+    const { updateUnreadMessages } = useUnreadMessages(); // Глобальный метод из контекста
+
+    useEffect(() => {
+        const newTotalUnreadMessages = tickets.reduce((total, ticket) => {
+            const chatMessages = messages.filter((msg) => msg.client_id === ticket.id);
+
+            const unreadCounts = chatMessages.filter(
+                (msg) =>
+                    (!msg.seen_by || !msg.seen_by.includes(String(userId))) &&
+                    msg.sender_id !== Number(userId)
+            ).length;
+
+            return total + unreadCounts;
+        }, 0);
+
+        updateUnreadMessages(newTotalUnreadMessages); // Обновляем глобальное состояние
+    }, [messages, tickets, userId]);
+
+    // useEffect(() => {
+    //     const newTotalUnreadMessages = tickets.reduce((total, ticket) => {
+    //         const chatMessages = messages.filter((msg) => msg.client_id === ticket.id);
+
+    //         const unreadCounts = chatMessages.filter(
+    //             (msg) =>
+    //                 (!msg.seen_by || !msg.seen_by.includes(String(userId))) &&
+    //                 msg.sender_id !== Number(userId)
+    //         ).length;
+
+    //         return total + unreadCounts;
+    //     }, 0);
+
+    //     setTotalUnreadMessages(newTotalUnreadMessages);
+    //     console.log ("непрочитаные сообшения:",newTotalUnreadMessages);
+    // }, [messages, tickets, userId]);
+    
 
     useEffect(() => {
         // Если ticketId передан через URL, устанавливаем его как selectedTicketId
@@ -73,10 +110,6 @@ const ChatComponent = ({ chatMessages, unreadMessagesCount, updateUnreadMessages
             setSelectedTicketId(Number(ticketId));
         }
     }, [ticketId]);
-
-    // useEffect(() => {
-    //     console.log("Selected Ticket ID:", selectedTicketId);
-    // }, [selectedTicketId]);
 
     useEffect(() => {
         if (selectedTicketId) {
@@ -163,7 +196,6 @@ const ChatComponent = ({ chatMessages, unreadMessagesCount, updateUnreadMessages
     const showNotification = (data) => {
         console.log('Notification:', data);
     };
-
     const handleTask = (data) => {
         console.log('Task:', data);
     };
@@ -474,41 +506,6 @@ const ChatComponent = ({ chatMessages, unreadMessagesCount, updateUnreadMessages
         }
     }, [socket, selectedTicketId]);
 
-    // // Обновляем unreadMessages через useEffect
-    // useEffect(() => {
-    //     if (!tickets.length || !messages.length) return; // Если тикетов или сообщений нет, выходим
-
-    //     const totalUnreadMessages = tickets.reduce((total, ticket) => {
-    //         // Фильтруем сообщения для текущего тикета
-    //         const unreadMessagesCount = messages
-    //             .filter(
-    //                 (msg) =>
-    //                     msg.client_id === ticket.id && // Сообщение связано с текущим тикетом
-    //                     (!msg.seen_by || !msg.seen_by.includes(String(userId))) && // Сообщение не прочитано
-    //                     msg.sender_id !== userId // Сообщение отправлено не текущим пользователем
-    //             ).length;
-
-    //         return total + unreadMessagesCount;
-    //     }, 0);
-
-    //     // Вызываем функцию обновления, если она передана
-    //     onUpdateUnreadMessages?.(totalUnreadMessages);
-    // }, [tickets, messages, userId, onUpdateUnreadMessages]);
-
-    const handleMessageRead = (msgId) => {
-        // Пример: отмечаем сообщение как прочитанное
-        // Обновляем состояние непрочитанных сообщений в родительском компоненте
-        const updatedMessages = chatMessages.map((msg) =>
-          msg.id === msgId ? { ...msg, seen_by: [...(msg.seen_by || []), 1] } : msg
-        );
-        const unreadCount = updatedMessages.filter(
-          (msg) =>
-            (!msg.seen_by || !msg.seen_by.includes('1')) && msg.sender_id !== 1
-        ).length;
-    
-        updateUnreadMessagesCount(unreadCount);  // Передаем новое количество в родительский компонент
-      };
-
     useEffect(() => {
         if (socket) {
             socket.onmessage = (event) => {
@@ -572,7 +569,7 @@ const ChatComponent = ({ chatMessages, unreadMessagesCount, updateUnreadMessages
                     {tickets.map((ticket) => {
                         const chatMessages = messages.filter((msg) => msg.client_id === ticket.id);
 
-                        const unreadMessagesCount = chatMessages.filter(
+                        const unreadCounts = chatMessages.filter(
                             (msg) =>
                                 (!msg.seen_by || !msg.seen_by.includes(String(userId))) && // Сообщение не прочитано текущим пользователем
                                 msg.sender_id !== Number(userId) // Сообщение отправлено не текущим пользователем
@@ -610,8 +607,8 @@ const ChatComponent = ({ chatMessages, unreadMessagesCount, updateUnreadMessages
                                         <div className="last-message-container">
                                             <div className="last-message-ticket">{lastMessage.message}</div>
                                             <div>{formattedTime}</div>
-                                            {unreadMessagesCount > 0 && (
-                                                <div className="unread-count">{unreadMessagesCount}</div>
+                                            {unreadCounts > 0 && (
+                                                <div className="unread-count">{unreadCounts}</div>
                                             )}
                                         </div>
                                     </div>
