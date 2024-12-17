@@ -85,7 +85,7 @@ const ChatComponent = () => {
 
         // Обновляем локальное состояние
         setUnreadMessages(newTotalUnreadMessages);
-    }, [messages, tickets, userId, selectedTicketId]);
+    }, [messages, tickets, userId]);
 
     // useEffect(() => {
     //     const newTotalUnreadMessages = tickets.reduce((total, ticket) => {
