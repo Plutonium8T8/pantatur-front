@@ -17,8 +17,8 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
+  const [chatMessages, setChatMessages] = useState([]);  // Данные сообщений чата
   const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
-
   const socket = useSocket();
 
   // Проверка сессии
@@ -65,23 +65,23 @@ function App() {
   }, [isLoggedIn]);
 
   // Подключение к WebSocket для уведомлений
-  useEffect(() => {
-    if (socket) {
-      socket.onmessage = (event) => {
-        try {
-          const message = JSON.parse(event.data);
-          if (message.type === 'message' && !message.data.seen_at) {
-            setUnreadMessagesCount((prev) => prev + 1);
-          }
-        } catch (error) {
-          console.error('Ошибка Socket:', error);
-        }
-      };
-    }
-    return () => {
-      if (socket) socket.onmessage = null;
-    };
-  }, [socket]);
+  // useEffect(() => {
+  //   if (socket) {
+  //     socket.onmessage = (event) => {
+  //       try {
+  //         const message = JSON.parse(event.data);
+  //         if (message.type === 'message' && !message.data.seen_at) {
+  //           setUnreadMessagesCount((prev) => prev + 1);
+  //         }
+  //       } catch (error) {
+  //         console.error('Ошибка Socket:', error);
+  //       }
+  //     };
+  //   }
+  //   return () => {
+  //     if (socket) socket.onmessage = null;
+  //   };
+  // }, [socket]);
 
   if (isLoading) {
     return <div className="spinner"></div>;
@@ -89,6 +89,10 @@ function App() {
 
   const handleUpdateUnreadMessages = (newCount) => {
     setUnreadMessagesCount(newCount);
+  };
+  
+  const updateUnreadMessagesCount = (newCount) => {
+    setUnreadMessagesCount(newCount);  // Обновляем состояние непрочитанных сообщений
   };
 
   return (
@@ -120,7 +124,11 @@ function App() {
                     <Route path="/account" element={<UserProfile />} />
                     <Route path="/" element={<Navigate to="/leads" />} />
                     <Route path="/leads" element={<Leads />} />
-                    <Route path="/chat/:ticketId?" element={<ChatComponent unreadMessagesCount={unreadMessagesCount} />} />
+                    <Route path="/chat/:ticketId?" element={<ChatComponent
+                      chatMessages={chatMessages}  // Передаем сообщения
+                      unreadMessagesCount={unreadMessagesCount}  // Передаем количество непрочитанных
+                      updateUnreadMessagesCount={updateUnreadMessagesCount}  // Функция обновления
+                    />} />
                     <Route path="*" element={<div>Страница в разработке</div>} />
                   </Routes>
                 </div>

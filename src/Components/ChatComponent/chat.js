@@ -52,7 +52,7 @@ const decrypt = (text) => {
     return decrypted.toString(Utf8);
 };
 
-const ChatComponent = ({ onUpdateUnreadMessages }) => {
+const ChatComponent = ({ chatMessages, unreadMessagesCount, updateUnreadMessagesCount }) => {
     const { userId } = useUser();
     const [managerMessage, setManagerMessage] = useState('');
     const [messages, setMessages] = useState([]);
@@ -74,9 +74,9 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
         }
     }, [ticketId]);
 
-    useEffect(() => {
-        console.log("Selected Ticket ID:", selectedTicketId);
-    }, [selectedTicketId]);
+    // useEffect(() => {
+    //     console.log("Selected Ticket ID:", selectedTicketId);
+    // }, [selectedTicketId]);
 
     useEffect(() => {
         if (selectedTicketId) {
@@ -112,7 +112,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
 
             const data = await response.json();
             setTickets(...data); // Устанавливаем данные тикетов
-            console.log("+++ Загруженные тикеты:", data);
+            // console.log("+++ Загруженные тикеты:", data);
         } catch (error) {
             console.error('Ошибка:', error);
         }
@@ -187,7 +187,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
             }
 
             const data = await response.json();
-            console.log('Сообщения клиента полученые с сервера:', data);
+            // console.log('Сообщения клиента полученые с сервера:', data);
             // enqueueSnackbar('Сообшения получены!', { variant: 'success' });
             // Обновляем состояние с сообщениями
             setMessages(data);
@@ -367,7 +367,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
                     const messageData = {
                         type: 'message',
                         data: {
-                            sender_id: userId,
+                            sender_id: Number(userId),
                             client_id: [selectedTicketId],
                             platform: 'web',
                             text: managerMessage,
@@ -474,35 +474,43 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
         }
     }, [socket, selectedTicketId]);
 
-    // Обновляем unreadMessages через useEffect
-    useEffect(() => {
-        if (tickets.length > 0 && messages.length > 0) {
-            const totalUnreadMessages = tickets.reduce((total, ticket) => {
-                const chatMessages = messages.filter((msg) => msg.client_id === ticket.id);
-                const unreadMessagesCount = chatMessages.filter(
-                    (msg) =>
-                        (!msg.seen_by || !msg.seen_by.includes(String(userId))) && // Пользователь не прочитал
-                        msg.sender_id !== userId // Сообщение отправлено не пользователем
-                ).length;
-                return total + unreadMessagesCount;
-            }, 0);
+    // // Обновляем unreadMessages через useEffect
+    // useEffect(() => {
+    //     if (!tickets.length || !messages.length) return; // Если тикетов или сообщений нет, выходим
 
-            if (typeof onUpdateUnreadMessages === 'function') {
-                onUpdateUnreadMessages(totalUnreadMessages);
-            }
-        }
-    }, [tickets, messages, userId, selectedTicketId, onUpdateUnreadMessages]);
+    //     const totalUnreadMessages = tickets.reduce((total, ticket) => {
+    //         // Фильтруем сообщения для текущего тикета
+    //         const unreadMessagesCount = messages
+    //             .filter(
+    //                 (msg) =>
+    //                     msg.client_id === ticket.id && // Сообщение связано с текущим тикетом
+    //                     (!msg.seen_by || !msg.seen_by.includes(String(userId))) && // Сообщение не прочитано
+    //                     msg.sender_id !== userId // Сообщение отправлено не текущим пользователем
+    //             ).length;
 
+    //         return total + unreadMessagesCount;
+    //     }, 0);
+
+    //     // Вызываем функцию обновления, если она передана
+    //     onUpdateUnreadMessages?.(totalUnreadMessages);
+    // }, [tickets, messages, userId, onUpdateUnreadMessages]);
+
+    const handleMessageRead = (msgId) => {
+        // Пример: отмечаем сообщение как прочитанное
+        // Обновляем состояние непрочитанных сообщений в родительском компоненте
+        const updatedMessages = chatMessages.map((msg) =>
+          msg.id === msgId ? { ...msg, seen_by: [...(msg.seen_by || []), 1] } : msg
+        );
+        const unreadCount = updatedMessages.filter(
+          (msg) =>
+            (!msg.seen_by || !msg.seen_by.includes('1')) && msg.sender_id !== 1
+        ).length;
+    
+        updateUnreadMessagesCount(unreadCount);  // Передаем новое количество в родительский компонент
+      };
 
     useEffect(() => {
         if (socket) {
-            socket.onopen = () => console.log('WebSocket подключен');
-            socket.onerror = (error) => console.error('WebSocket ошибка:', error);
-            socket.onclose = () => {
-                console.log('WebSocket закрыт');
-                alert('WebSocket закрыт');
-            };
-
             socket.onmessage = (event) => {
                 console.log('Raw WebSocket message received:', event.data);
                 getClientMessages();
@@ -567,7 +575,7 @@ const ChatComponent = ({ onUpdateUnreadMessages }) => {
                         const unreadMessagesCount = chatMessages.filter(
                             (msg) =>
                                 (!msg.seen_by || !msg.seen_by.includes(String(userId))) && // Сообщение не прочитано текущим пользователем
-                                msg.sender_id !== userId // Сообщение отправлено не текущим пользователем
+                                msg.sender_id !== Number(userId) // Сообщение отправлено не текущим пользователем
                         ).length;
 
                         const lastMessage = chatMessages.length > 0
