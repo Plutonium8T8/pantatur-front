@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useSnackbar } from 'notistack';
 import { useSocket } from './SocketContext'; // Используйте свой контекст для WebSocket
 
-const Notification = ({ selectedTicketId, onUpdateUnreadMessages }) => {
-  const [unreadMessages, setUnreadMessages] = useState({});
+const Notification = ({ selectedTicketId }) => {
   const socket = useSocket(); // Получаем сокет из контекста
   const { enqueueSnackbar } = useSnackbar(); // Хук для отображения уведомлений
 
@@ -23,30 +22,11 @@ const Notification = ({ selectedTicketId, onUpdateUnreadMessages }) => {
             case 'message':
               // Обрабатываем новое сообщение
               if (message.data.client_id !== selectedTicketId) {
-                setUnreadMessages((prevUnreadMessages) => {
-                  const updatedUnreadMessages = { ...prevUnreadMessages };
-                  updatedUnreadMessages[message.data.client_id] =
-                    (updatedUnreadMessages[message.data.client_id]) + 1;
-                  return updatedUnreadMessages;
-                });
-
                 // Показ уведомления о новом сообщении
                 enqueueSnackbar(
                   `Новое сообщение от клиента ${message.data.client_id}`,
                   { variant: 'info' }
                 );
-              }
-
-              // Обновляем счетчик непрочитанных сообщений
-              if (typeof onUpdateUnreadMessages === 'function') {
-                setUnreadMessages((prevUnreadMessages) => {
-                  const totalUnreadMessages = Object.values(prevUnreadMessages).reduce(
-                    (sum, count) => sum + count,
-                    0
-                  );
-                  onUpdateUnreadMessages(totalUnreadMessages + 1);
-                  return prevUnreadMessages;
-                });
               }
               break;
 
@@ -80,7 +60,7 @@ const Notification = ({ selectedTicketId, onUpdateUnreadMessages }) => {
         socket.onclose = null;
       }
     };
-  }, [socket, selectedTicketId, onUpdateUnreadMessages, enqueueSnackbar]);
+  }, [socket, selectedTicketId, enqueueSnackbar]);
 
   return null; // Компонент не отображает UI, только управляет уведомлениями
 };

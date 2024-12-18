@@ -15,7 +15,6 @@ import Notification from './Notification';
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
   const [unreadCount, setUnreadCount] = useState(0); // Для непрочитанных сообщений
   const [tickets, setTickets] = useState([]); // Массив тикетов
   const [messages, setMessages] = useState([]); // Массив сообщений
@@ -57,13 +56,13 @@ function App() {
     return tickets.reduce((total, ticket) => {
       const chatMessages = messages.filter((msg) => msg.client_id === ticket.id);
 
-      const unreadCounts = chatMessages.filter(
+      const unreadMessages = chatMessages.filter(
         (msg) =>
           (!msg.seen_by || !msg.seen_by.includes(String(userId))) &&
           msg.sender_id !== Number(userId)
       ).length;
 
-      return total + unreadCounts;
+      return total + unreadMessages;
     }, 0);
   };
 
@@ -71,7 +70,6 @@ function App() {
     if (!isLoggedIn || !userId) return;
 
     const newTotalUnreadMessages = calculateUnreadMessages(messages, tickets, userId);
-
     setUnreadCount(newTotalUnreadMessages);
   }, [isLoggedIn, userId, messages, tickets]);
 
@@ -97,26 +95,8 @@ function App() {
     }
   }, [isLoggedIn]);
 
-  useEffect(() => {
-    if (socket) {
-      socket.onmessage = (event) => {
-        try {
-          const message = JSON.parse(event.data);
-          if (message.type === 'message' && !message.data.seen_at) {
-            setUnreadMessagesCount((prev) => prev + 1);
-          }
-        } catch (error) {
-          console.error('Ошибка WebSocket:', error);
-        }
-      };
-    }
-    return () => {
-      if (socket) socket.onmessage = null;
-    };
-  }, [socket]);
-
   const handleUpdateUnreadMessages = (newCount) => {
-    setUnreadMessagesCount(newCount);
+    setUnreadCount(newCount);
   };
 
   if (isLoading) {
