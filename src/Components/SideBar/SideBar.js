@@ -2,19 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie'; // Для работы с cookies
 import './SideBar.css';
+import { useUser } from '../../UserContext';
 
-const CustomSidebar = ({  }) => {
+const CustomSidebar = ({ unreadCount }) => {
     const location = useLocation();
     const navigate = useNavigate();
-    const [unreadCount, setUnreadCount] = useState(0); // Состояние для непрочитанных сообщений
-
-    // Извлекаем количество непрочитанных сообщений из localStorage
-    useEffect(() => {
-        const count = localStorage.getItem('unreadMessages');
-        if (count) {
-            setUnreadCount(parseInt(count)); // Преобразуем значение в число и обновляем состояние
-        }
-    }, []);
+    const { userId } = useUser(); // Получаем userId из контекста
+    const token = Cookies.get('jwt'); // Получаем токен
+    const [unreadMessagesCount, setUnreadMessagesCount] = useState(0); // Для хранения количества непрочитанных сообщений
 
     // Определение активного раздела на основе пути
     const isActive = (page) => {
@@ -34,6 +29,46 @@ const CustomSidebar = ({  }) => {
         // Перенаправление на страницу входа
         window.location.reload(); // Перезагрузка страницы
     };
+
+    // useEffect(() => {
+    //     if (userId && token) { // Проверяем, что userId и token существуют
+    //         console.log("Запрос на получение непрочитанных сообщений...");
+
+    //         const fetchUnreadMessages = () => {
+    //             fetch(`https://pandatur-api.com/messages/unseen/${userId}`, {
+    //                 method: 'GET',
+    //                 headers: {
+    //                     'Content-Type': 'application/json',
+    //                     Authorization: `Bearer ${token}`,
+    //                 },
+    //             })
+    //                 .then((response) => {
+    //                     console.log("Ответ от сервера получен:", response); // Логируем сам ответ от сервера
+    //                     return response.json();
+    //                 })
+    //                 .then((data) => {
+    //                     console.log("Полученные данные:", data); // Логируем полученные данные
+
+    //                     // Проверяем, что data не пустая и извлекаем unseen_message_count
+    //                     if (data && data.length > 0) {
+    //                         const unreadMessagesCount = data[0].unseen_message_count;
+    //                         console.log("Непрочитанные сообщения:", unreadMessagesCount); // Логируем количество непрочитанных сообщений
+    //                         setUnreadMessagesCount(unreadMessagesCount);
+    //                     } else {
+    //                         console.log("Нет непрочитанных сообщений.");
+    //                     }
+    //                 })
+    //                 .catch((error) => {
+    //                     console.error('Ошибка при получении сообщений:', error); // Логируем ошибку
+    //                 });
+    //         };
+
+    //         // Вызов функции для получения сообщений
+    //         fetchUnreadMessages();
+    //     } else {
+    //         console.log("Недостаточно данных для выполнения запроса: userId или token отсутствуют.");
+    //     }
+    // }, [userId, token]); // Эффект с зависимостями от userId и token
 
     return (
         <div className="container-side-bar">

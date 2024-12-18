@@ -52,7 +52,7 @@ const decrypt = (text) => {
     return decrypted.toString(Utf8);
 };
 
-const ChatComponent = () => {
+const ChatComponent = ({setMessagesProp, setTicketsProp}) => {
     const { userId } = useUser();
     const [managerMessage, setManagerMessage] = useState('');
     const [messages, setMessages] = useState([]);
@@ -80,30 +80,21 @@ const ChatComponent = () => {
             return total + unreadCounts;
         }, 0);
 
-        // Записываем в localStorage
-        localStorage.setItem('unreadMessages', newTotalUnreadMessages);
-
         // Обновляем локальное состояние
         setUnreadMessages(newTotalUnreadMessages);
     }, [messages, tickets, userId]);
 
-    // useEffect(() => {
-    //     const newTotalUnreadMessages = tickets.reduce((total, ticket) => {
-    //         const chatMessages = messages.filter((msg) => msg.client_id === ticket.id);
-
-    //         const unreadCounts = chatMessages.filter(
-    //             (msg) =>
-    //                 (!msg.seen_by || !msg.seen_by.includes(String(userId))) &&
-    //                 msg.sender_id !== Number(userId)
-    //         ).length;
-
-    //         return total + unreadCounts;
-    //     }, 0);
-
-    //     setTotalUnreadMessages(newTotalUnreadMessages);
-    //     console.log ("непрочитаные сообшения:",newTotalUnreadMessages);
-    // }, [messages, tickets, userId]);
+    useEffect(() => {
+        if (setMessagesProp) {
+          setMessagesProp(messages); // Обновляем родительский компонент
+        }
+      }, [messages, setMessagesProp]);
     
+      useEffect(() => {
+        if (setTicketsProp) {
+          setTicketsProp(tickets); // Обновляем родительский компонент
+        }
+      }, [tickets, setTicketsProp]);
 
     useEffect(() => {
         // Если ticketId передан через URL, устанавливаем его как selectedTicketId

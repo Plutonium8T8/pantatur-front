@@ -1,23 +1,18 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-// Создаем контекст для хранения user_id
 const UserContext = createContext();
 
-// Провайдер для контекста
 export const UserProvider = ({ children }) => {
-  // Чтение user_id из localStorage при инициализации состояния
   const [userId, setUserId] = useState(() => {
     const savedUserId = localStorage.getItem('user_id');
-    return savedUserId ? savedUserId : null;
+    return savedUserId ? Number(savedUserId) : null; // Убедитесь, что преобразуете в число
   });
 
-  // Запись user_id в localStorage при его изменении
   useEffect(() => {
     if (userId) {
-      // Преобразуем userId в число перед сохранением в localStorage
-      localStorage.setItem('user_id', Number(userId));
+      localStorage.setItem('user_id', userId); // Сохранение userId
     } else {
-      localStorage.removeItem('user_id'); // Если userId очищается, удаляем его из localStorage
+      localStorage.removeItem('user_id'); // Удаление, если null
     }
   }, [userId]);
 
@@ -28,5 +23,10 @@ export const UserProvider = ({ children }) => {
   );
 };
 
-// Хук для удобного использования контекста
-export const useUser = () => useContext(UserContext);
+export const useUser = () => {
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error('useUser must be used within a UserProvider');
+  }
+  return context;
+};

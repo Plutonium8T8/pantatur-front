@@ -3,19 +3,48 @@ import './App.css';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Leads from './Leads';
 import LoginForm from './LoginForm';
-import { UserProvider } from './UserContext';
+import { UserProvider, useUser } from './UserContext';
 import CustomSidebar from './Components/SideBar/SideBar';
 import ChatComponent from './Components/ChatComponent/chat';
 import Cookies from 'js-cookie';
 import { SocketProvider } from './SocketContext';
 import UserProfile from './Components/UserPage/UserPage';
-import { SnackbarProvider, closeSnackbar } from 'notistack';
+import { SnackbarProvider } from 'notistack';
 import Notification from './Notification';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
+  const [unreadCount, setUnreadCount] = useState(0); // Для непрочитанных сообщений
+  const [tickets, setTickets] = useState([]); // Массив тикетов
+  const [messages, setMessages] = useState([]); // Массив сообщений
+  const { userId } = useUser(); // Получаем userId после логина
+
+  // Подсчёт непрочитанных сообщений
+  useEffect(() => {
+    if (!isLoggedIn || !userId) return;
+
+    const newTotalUnreadMessages = tickets.reduce((total, ticket) => {
+      const chatMessages = messages.filter((msg) => msg.client_id === ticket.id);
+
+      const unreadCounts = chatMessages.filter(
+        (msg) =>
+          (!msg.seen_by || !msg.seen_by.includes(String(userId))) &&
+          msg.sender_id !== Number(userId)
+      ).length;
+
+      return total + unreadCounts;
+    }, 0);
+
+    setUnreadCount(newTotalUnreadMessages);
+  }, [isLoggedIn, userId, messages, tickets]);
+
+  // Обработка логина
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+    setIsLoading(false);
+  };
 
   // Проверка сессии
   useEffect(() => {
@@ -47,67 +76,71 @@ function App() {
     }
   }, []);
 
-  // Загрузка начальных данных для сообщений и уведомлений
+  // Загрузка начальных данных сообщений
   useEffect(() => {
     if (isLoggedIn) {
       fetch('https://pandatur-api.com/messages')
         .then((res) => res.json())
         .then((data) => {
-          const unreadCount = data.filter((msg) => !msg.seen_at).length;
-          setUnreadMessagesCount(unreadCount);
+          setMessages(data);
         })
         .catch(console.error);
     }
   }, [isLoggedIn]);
 
+  // Обновление количества непрочитанных сообщений
+  const handleUpdateUnreadMessages = (newCount) => {
+    setUnreadMessagesCount(newCount);
+  };
 
   if (isLoading) {
     return <div className="spinner"></div>;
   }
 
-  const handleUpdateUnreadMessages = (newCount) => {
-    setUnreadMessagesCount(newCount);
-  };
-
   return (
-      <SnackbarProvider
-        iconVariant={{
-          success: '✅ ',
-          error: '✖️ ',
-          warning: '⚠️ ',
-          info: 'ℹ️ ',
-        }}
-        autoHideDuration={5000}
-        maxSnack={10}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-      >
-        <SocketProvider isLoggedIn={isLoggedIn}>
-          <UserProvider>
-            <Notification onUpdateUnreadMessages={handleUpdateUnreadMessages} />
-            <Router>
-              {!isLoggedIn ? (
-                <LoginForm onLoginSuccess={() => setIsLoggedIn(true)} />
-              ) : (
-                <div className="app-container">
-                  <CustomSidebar />
-                  <div className="page-content">
-                    <Routes>
-                      <Route path="/account" element={<UserProfile />} />
-                      <Route path="/" element={<Navigate to="/leads" />} />
-                      <Route path="/leads" element={<Leads />} />
-                      <Route
-                        path="/chat/:ticketId?"
-                        element={<ChatComponent />}
-                      />
-                      <Route path="*" element={<div>Страница в разработке</div>} />
-                    </Routes>
-                  </div>
+    <SnackbarProvider
+      iconVariant={{
+        success: '✅',
+        error: '✖️',
+        warning: '⚠️',
+        info: 'ℹ️',
+      }}
+      autoHideDuration={5000}
+      maxSnack={10}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+    >
+      <SocketProvider isLoggedIn={isLoggedIn}>
+        <UserProvider>
+          <Notification onUpdateUnreadMessages={handleUpdateUnreadMessages} />
+          <Router>
+            {!isLoggedIn ? (
+              <LoginForm onLoginSuccess={handleLogin} />
+            ) : (
+              <div className="app-container">
+                <CustomSidebar unreadCount={unreadCount} />
+                <div className="page-content">
+                  <Routes>
+                    <Route path="/account" element={<UserProfile />} />
+                    <Route path="/" element={<Navigate to="/leads" />} />
+                    <Route path="/leads" element={<Leads />} />
+                    <Route
+                      path="/chat/:ticketId?"
+                      element={
+                        <ChatComponent
+                          setMessagesProp={setMessages}
+                          setTicketsProp={setTickets}
+                        />
+                      }
+                    />
+                    <Route path="*" element={<div>Страница в разработке</div>} />
+                  </Routes>
                 </div>
-              )}
-            </Router>
-          </UserProvider>
-        </SocketProvider>
-      </SnackbarProvider>
+              </div>
+            )}
+          </Router>
+        </UserProvider>
+      </SocketProvider>
+    </SnackbarProvider>
   );
 }
 

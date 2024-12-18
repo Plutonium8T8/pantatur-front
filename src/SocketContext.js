@@ -138,7 +138,7 @@ export const SocketProvider = ({ children, isLoggedIn }) => {
           const pingMessage = JSON.stringify({ type: 'ping' });
           socket.send(pingMessage);
         }
-      }, 180000); // Пинг каждые 30 секунд
+      }, 240000); // Пинг каждые 30 секунд
 
       // Очистка интервала при размонтировании компонента или закрытии сокета
       return () => {
