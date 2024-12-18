@@ -22,10 +22,8 @@ function App() {
   const { userId } = useUser(); // Получаем userId после логина
 
   // Подсчёт непрочитанных сообщений
-  useEffect(() => {
-    if (!isLoggedIn || !userId) return;
-
-    const newTotalUnreadMessages = tickets.reduce((total, ticket) => {
+  const calculateUnreadMessages = (messages, tickets, userId) => {
+    return tickets.reduce((total, ticket) => {
       const chatMessages = messages.filter((msg) => msg.client_id === ticket.id);
 
       const unreadCounts = chatMessages.filter(
@@ -36,6 +34,12 @@ function App() {
 
       return total + unreadCounts;
     }, 0);
+  };
+
+  useEffect(() => {
+    if (!isLoggedIn || !userId) return;
+
+    const newTotalUnreadMessages = calculateUnreadMessages(messages, tickets, userId);
 
     setUnreadCount(newTotalUnreadMessages);
   }, [isLoggedIn, userId, messages, tickets]);
@@ -82,11 +86,13 @@ function App() {
       fetch('https://pandatur-api.com/messages')
         .then((res) => res.json())
         .then((data) => {
-          setMessages(data);
+          const unreadCount = data.filter((msg) => !msg.seen_at).length;
+          setUnreadCount(unreadCount); // Используйте setUnreadCount для обновления состояния
         })
         .catch(console.error);
     }
   }, [isLoggedIn]);
+  
 
   // Обновление количества непрочитанных сообщений
   const handleUpdateUnreadMessages = (newCount) => {

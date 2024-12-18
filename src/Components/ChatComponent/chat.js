@@ -68,21 +68,28 @@ const ChatComponent = ({setMessagesProp, setTicketsProp}) => {
     const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
+        console.log("Начало расчета непрочитанных сообщений");
+    
         const newTotalUnreadMessages = tickets.reduce((total, ticket) => {
             const chatMessages = messages.filter((msg) => msg.client_id === ticket.id);
-
+            console.log(`Сообщения для тикета ${ticket.id}:`, chatMessages);
+    
             const unreadCounts = chatMessages.filter(
                 (msg) =>
                     (!msg.seen_by || !msg.seen_by.includes(String(userId))) &&
                     msg.sender_id !== Number(userId)
             ).length;
-
+            console.log(`Непрочитанных сообщений для тикета ${ticket.id}:`, unreadCounts);
+    
             return total + unreadCounts;
         }, 0);
-
+    
+        console.log("Общее количество непрочитанных сообщений:", newTotalUnreadMessages);
+    
         // Обновляем локальное состояние
         setUnreadMessages(newTotalUnreadMessages);
     }, [messages, tickets, userId]);
+    
 
     useEffect(() => {
         if (setMessagesProp) {
