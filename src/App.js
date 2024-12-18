@@ -22,35 +22,6 @@ function App() {
   const { userId } = useUser(); // Получаем userId после логина
   const socket = useSocket(); // Получаем WebSocket из контекста
 
-  // Подсчёт непрочитанных сообщений
-  const calculateUnreadMessages = (messages, tickets, userId) => {
-    return tickets.reduce((total, ticket) => {
-      const chatMessages = messages.filter((msg) => msg.client_id === ticket.id);
-
-      const unreadCounts = chatMessages.filter(
-        (msg) =>
-          (!msg.seen_by || !msg.seen_by.includes(String(userId))) &&
-          msg.sender_id !== Number(userId)
-      ).length;
-
-      return total + unreadCounts;
-    }, 0);
-  };
-
-  useEffect(() => {
-    if (!isLoggedIn || !userId) return;
-
-    const newTotalUnreadMessages = calculateUnreadMessages(messages, tickets, userId);
-
-    setUnreadCount(newTotalUnreadMessages);
-  }, [isLoggedIn, userId, messages, tickets]);
-
-  // Обработка логина
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-    setIsLoading(false);
-  };
-
   // Проверка сессии
   useEffect(() => {
     const token = Cookies.get('jwt');
@@ -80,6 +51,35 @@ function App() {
       setIsLoading(false);
     }
   }, []);
+
+  // Подсчёт непрочитанных сообщений
+  const calculateUnreadMessages = (messages, tickets, userId) => {
+    return tickets.reduce((total, ticket) => {
+      const chatMessages = messages.filter((msg) => msg.client_id === ticket.id);
+
+      const unreadCounts = chatMessages.filter(
+        (msg) =>
+          (!msg.seen_by || !msg.seen_by.includes(String(userId))) &&
+          msg.sender_id !== Number(userId)
+      ).length;
+
+      return total + unreadCounts;
+    }, 0);
+  };
+
+  useEffect(() => {
+    if (!isLoggedIn || !userId) return;
+
+    const newTotalUnreadMessages = calculateUnreadMessages(messages, tickets, userId);
+
+    setUnreadCount(newTotalUnreadMessages);
+  }, [isLoggedIn, userId, messages, tickets]);
+
+  // Обработка логина
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+    setIsLoading(false);
+  };
 
   // Загрузка начальных данных сообщений
   useEffect(() => {

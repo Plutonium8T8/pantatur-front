@@ -14,10 +14,10 @@ const Notification = ({ selectedTicketId, onUpdateUnreadMessages }) => {
       socket.onclose = () => console.log('WebSocket закрыт');
 
       socket.onmessage = (event) => {
-        console.log('Raw WebSocket message received:', event.data);
+        console.log('Raw WebSocket message received notifications:', event.data);
         try {
           const message = JSON.parse(event.data);
-          console.log('Parsed WebSocket message:', message);
+          console.log('Parsed WebSocket message notifications:', message);
 
           switch (message.type) {
             case 'message':
