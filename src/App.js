@@ -115,7 +115,6 @@ function App() {
     };
   }, [socket]);
 
-  // Обновление количества непрочитанных сообщений
   const handleUpdateUnreadMessages = (newCount) => {
     setUnreadMessagesCount(newCount);
   };
