@@ -72,14 +72,12 @@ const ChatComponent = ({ setMessagesProp, setTicketsProp }) => {
 
         const newTotalUnreadMessages = tickets.reduce((total, ticket) => {
             const chatMessages = messages.filter((msg) => msg.client_id === ticket.id);
-            console.log(`Сообщения для тикета ${ticket.id}:`, chatMessages);
 
             const unreadCounts = chatMessages.filter(
                 (msg) =>
                     (!msg.seen_by || !msg.seen_by.includes(String(userId))) &&
                     msg.sender_id !== Number(userId)
             ).length;
-            console.log(`Непрочитанных сообщений для тикета ${ticket.id}:`, unreadCounts);
 
             return total + unreadCounts;
         }, 0);

@@ -3,13 +3,15 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie'; // Для работы с cookies
 import './SideBar.css';
 import { useUser } from '../../UserContext';
+import { useUnreadMessages } from '../../Unread';  // Импортируем хук для получения количества непрочитанных сообщений
 
-const CustomSidebar = ({ unreadCount }) => {
+const CustomSidebar = ( ) => {
     const location = useLocation();
     const navigate = useNavigate();
     const { userId } = useUser(); // Получаем userId из контекста
     const token = Cookies.get('jwt'); // Получаем токен
     const [unreadMessagesCount, setUnreadMessagesCount] = useState(0); // Для хранения количества непрочитанных сообщений
+    const { unreadCount } = useUnreadMessages();  // Получаем количество непрочитанных сообщений из контекста
 
     // Определение активного раздела на основе пути
     const isActive = (page) => {

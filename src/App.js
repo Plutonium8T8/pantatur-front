@@ -11,15 +11,11 @@ import { SocketProvider, useSocket } from './SocketContext';
 import UserProfile from './Components/UserPage/UserPage';
 import { SnackbarProvider } from 'notistack';
 import Notification from './Notification';
+import { UnreadMessagesProvider } from './Unread';  // Импортируем UnreadMessagesProvider из Unread.js
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [unreadCount, setUnreadCount] = useState(0); // Для непрочитанных сообщений
-  const [tickets, setTickets] = useState([]); // Массив тикетов
-  const [messages, setMessages] = useState([]); // Массив сообщений
-  const { userId } = useUser(); // Получаем userId после логина
-  const socket = useSocket(); // Получаем WebSocket из контекста
 
   // Проверка сессии
   useEffect(() => {
@@ -51,52 +47,10 @@ function App() {
     }
   }, []);
 
-  // Подсчёт непрочитанных сообщений
-  const calculateUnreadMessages = (messages, tickets, userId) => {
-    return tickets.reduce((total, ticket) => {
-      const chatMessages = messages.filter((msg) => msg.client_id === ticket.id);
-
-      const unreadMessages = chatMessages.filter(
-        (msg) =>
-          (!msg.seen_by || !msg.seen_by.includes(String(userId))) &&
-          msg.sender_id !== Number(userId)
-      ).length;
-
-      return total + unreadMessages;
-    }, 0);
-  };
-
-  useEffect(() => {
-    if (!isLoggedIn || !userId) return;
-
-    const newTotalUnreadMessages = calculateUnreadMessages(messages, tickets, userId);
-    setUnreadCount(newTotalUnreadMessages);
-  }, [isLoggedIn, userId, messages, tickets]);
-
   // Обработка логина
   const handleLogin = () => {
     setIsLoggedIn(true);
     setIsLoading(false);
-  };
-
-  // Загрузка начальных данных сообщений
-  useEffect(() => {
-    if (isLoggedIn) {
-      fetch('https://pandatur-api.com/messages')
-        .then((res) => res.json())
-        .then((data) => {
-          const unreadCount = data.filter(
-            (msg) =>
-              (!msg.seen_by || !msg.seen_by.includes(String(userId))) && // Сообщение не прочитано текущим пользователем
-              msg.sender_id !== Number(userId) // Сообщение отправлено не текущим пользователем
-          ).length; setUnreadCount(unreadCount); // Используйте setUnreadCount для обновления состояния
-        })
-        .catch(console.error);
-    }
-  }, [isLoggedIn]);
-
-  const handleUpdateUnreadMessages = (newCount) => {
-    setUnreadCount(newCount);
   };
 
   if (isLoading) {
@@ -119,30 +73,29 @@ function App() {
         <UserProvider>
           <Notification />
           <Router>
-            {!isLoggedIn ? (
-              <LoginForm onLoginSuccess={handleLogin} />
-            ) : (
-              <div className="app-container">
-                <CustomSidebar unreadCount={unreadCount} />
-                <div className="page-content">
-                  <Routes>
-                    <Route path="/account" element={<UserProfile />} />
-                    <Route path="/" element={<Navigate to="/leads" />} />
-                    <Route path="/leads" element={<Leads />} />
-                    <Route
-                      path="/chat/:ticketId?"
-                      element={
-                        <ChatComponent
-                          setMessagesProp={setMessages}
-                          setTicketsProp={setTickets}
-                        />
-                      }
-                    />
-                    <Route path="*" element={<div>Страница в разработке</div>} />
-                  </Routes>
+            <UnreadMessagesProvider>  {/* Оборачиваем приложение в UnreadMessagesProvider */}
+              {!isLoggedIn ? (
+                <LoginForm onLoginSuccess={handleLogin} />
+              ) : (
+                <div className="app-container">
+                  <CustomSidebar /> {/* Убираем пропс unreadCount */}
+                  <div className="page-content">
+                    <Routes>
+                      <Route path="/account" element={<UserProfile />} />
+                      <Route path="/" element={<Navigate to="/leads" />} />
+                      <Route path="/leads" element={<Leads />} />
+                      <Route
+                        path="/chat/:ticketId?"
+                        element={
+                          <ChatComponent />
+                        }
+                      />
+                      <Route path="*" element={<div>Страница в разработке</div>} />
+                    </Routes>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </UnreadMessagesProvider>
           </Router>
         </UserProvider>
       </SocketProvider>
