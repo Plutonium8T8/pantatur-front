@@ -7,7 +7,7 @@ import { UserProvider, useUser } from './UserContext';
 import CustomSidebar from './Components/SideBar/SideBar';
 import ChatComponent from './Components/ChatComponent/chat';
 import Cookies from 'js-cookie';
-import { SocketProvider } from './SocketContext';
+import { SocketProvider, useSocket } from './SocketContext';
 import UserProfile from './Components/UserPage/UserPage';
 import { SnackbarProvider } from 'notistack';
 import Notification from './Notification';
@@ -20,6 +20,7 @@ function App() {
   const [tickets, setTickets] = useState([]); // Массив тикетов
   const [messages, setMessages] = useState([]); // Массив сообщений
   const { userId } = useUser(); // Получаем userId после логина
+  const socket = useSocket(); // Получаем WebSocket из контекста
 
   // Подсчёт непрочитанных сообщений
   const calculateUnreadMessages = (messages, tickets, userId) => {
@@ -86,13 +87,33 @@ function App() {
       fetch('https://pandatur-api.com/messages')
         .then((res) => res.json())
         .then((data) => {
-          const unreadCount = data.filter((msg) => !msg.seen_at).length;
-          setUnreadCount(unreadCount); // Используйте setUnreadCount для обновления состояния
+          const unreadCount = data.filter(
+            (msg) =>
+              (!msg.seen_by || !msg.seen_by.includes(String(userId))) && // Сообщение не прочитано текущим пользователем
+              msg.sender_id !== Number(userId) // Сообщение отправлено не текущим пользователем
+          ).length; setUnreadCount(unreadCount); // Используйте setUnreadCount для обновления состояния
         })
         .catch(console.error);
     }
   }, [isLoggedIn]);
-  
+
+  useEffect(() => {
+    if (socket) {
+      socket.onmessage = (event) => {
+        try {
+          const message = JSON.parse(event.data);
+          if (message.type === 'message' && !message.data.seen_at) {
+            setUnreadMessagesCount((prev) => prev + 1);
+          }
+        } catch (error) {
+          console.error('Ошибка WebSocket:', error);
+        }
+      };
+    }
+    return () => {
+      if (socket) socket.onmessage = null;
+    };
+  }, [socket]);
 
   // Обновление количества непрочитанных сообщений
   const handleUpdateUnreadMessages = (newCount) => {
