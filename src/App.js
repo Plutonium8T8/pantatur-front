@@ -117,7 +117,7 @@ function App() {
     >
       <SocketProvider isLoggedIn={isLoggedIn}>
         <UserProvider>
-          <Notification onUpdateUnreadMessages={handleUpdateUnreadMessages} />
+          <Notification />
           <Router>
             {!isLoggedIn ? (
               <LoginForm onLoginSuccess={handleLogin} />
