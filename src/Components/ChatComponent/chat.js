@@ -25,33 +25,6 @@ import { InView } from 'react-intersection-observer';
 import { useSnackbar } from 'notistack';
 import './chat.css';
 
-const ENCRYPTION_KEY = '0123456789abcdef0123456789abcdef';
-
-// Функции шифрования и дешифрования
-const encrypt = (text) => {
-    const iv = CryptoJS.lib.WordArray.random(16);
-    const encrypted = AES.encrypt(text, CryptoJS.enc.Hex.parse(ENCRYPTION_KEY), {
-        iv,
-        mode: CryptoJS.mode.CBC,
-        padding: CryptoJS.pad.Pkcs7,
-    });
-    return `${iv.toString(CryptoJS.enc.Hex)}:${encrypted.ciphertext.toString(CryptoJS.enc.Hex)}`;
-};
-
-const decrypt = (text) => {
-    const [ivHex, encryptedText] = text.split(':');
-    const decrypted = AES.decrypt(
-        { ciphertext: CryptoJS.enc.Hex.parse(encryptedText) },
-        CryptoJS.enc.Hex.parse(ENCRYPTION_KEY),
-        {
-            iv: CryptoJS.enc.Hex.parse(ivHex),
-            mode: CryptoJS.mode.CBC,
-            padding: CryptoJS.pad.Pkcs7,
-        }
-    );
-    return decrypted.toString(Utf8);
-};
-
 const ChatComponent = ({ setMessagesProp, setTicketsProp }) => {
     const { userId } = useUser();
     const [managerMessage, setManagerMessage] = useState('');
@@ -66,40 +39,7 @@ const ChatComponent = ({ setMessagesProp, setTicketsProp }) => {
     const socket = useSocket(); // Получаем WebSocket из контекста
     const [unreadMessages, setUnreadMessages] = useState(0); // Состояние для отслеживания непрочитанных сообщений
     const { enqueueSnackbar } = useSnackbar();
-
-    useEffect(() => {
-        console.log("Начало расчета непрочитанных сообщений");
-
-        const newTotalUnreadMessages = tickets.reduce((total, ticket) => {
-            const chatMessages = messages.filter((msg) => msg.client_id === ticket.id);
-
-            const unreadCounts = chatMessages.filter(
-                (msg) =>
-                    (!msg.seen_by || !msg.seen_by.includes(String(userId))) &&
-                    msg.sender_id !== Number(userId)
-            ).length;
-
-            return total + unreadCounts;
-        }, 0);
-
-        console.log("Общее количество непрочитанных сообщений:", newTotalUnreadMessages);
-
-        // Обновляем локальное состояние
-        setUnreadMessages(newTotalUnreadMessages);
-    }, [messages, tickets, userId]);
-
-
-    useEffect(() => {
-        if (setMessagesProp) {
-            setMessagesProp(messages); // Обновляем родительский компонент
-        }
-    }, [messages, setMessagesProp]);
-
-    useEffect(() => {
-        if (setTicketsProp) {
-            setTicketsProp(tickets); // Обновляем родительский компонент
-        }
-    }, [tickets, setTicketsProp]);
+    const navigate = useNavigate(); // Хук для навигации
 
     useEffect(() => {
         // Если ticketId передан через URL, устанавливаем его как selectedTicketId
@@ -114,7 +54,6 @@ const ChatComponent = ({ setMessagesProp, setTicketsProp }) => {
         }
     }, [selectedTicketId]);
 
-    const navigate = useNavigate(); // Хук для навигации
 
     // Получение тикетов через fetch
     const fetchTickets = async () => {
