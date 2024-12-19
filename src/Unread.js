@@ -29,8 +29,20 @@ export const UnreadMessagesProvider = ({ children }) => {
         setUnreadCount(unreadMessages.length);
     };
     
+    // Пометка сообщений как прочитанных
+    const markMessagesAsRead = (clientId) => {
+        setMessages((prev) => {
+            const updatedMessages = prev.map((msg) =>
+                msg.client_id === clientId && !msg.seen_at
+                    ? { ...msg, seen_at: new Date().toISOString() }
+                    : msg
+            );
+    
+            updateUnreadCount(updatedMessages); // Обновляем счётчик
+            return updatedMessages;
+        });
+    };
 
-    // Загрузка сообщений из API (только при монтировании компонента)
     const fetchMessages = () => {
         fetch('https://pandatur-api.com/messages')
             .then((res) => res.json())
@@ -45,20 +57,6 @@ export const UnreadMessagesProvider = ({ children }) => {
     useEffect(() => {
         fetchMessages();
     }, [userId]);
-
-    // Пометка сообщений как прочитанных
-    const markMessagesAsRead = (clientId) => {
-        setMessages((prev) => {
-            const updatedMessages = prev.map((msg) =>
-                msg.client_id === clientId && !msg.seen_at
-                    ? { ...msg, seen_at: new Date().toISOString() }
-                    : msg
-            );
-    
-            updateUnreadCount(updatedMessages); // Обновляем счётчик
-            return updatedMessages;
-        });
-    };
 
     // Обработка WebSocket-сообщений
     useEffect(() => {
@@ -83,7 +81,8 @@ export const UnreadMessagesProvider = ({ children }) => {
                             }
                             return msg;
                         });
-                    
+                        fetchMessages();
+
                         console.log('Updated messages for client_id:', client_id, updatedMessages.filter(msg => msg.client_id === client_id));
                         return updatedMessages;
                     });
