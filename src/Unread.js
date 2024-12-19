@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { useSocket } from './SocketContext'; // Импортируем сокет-контекст
-import { UserProvider, useUser } from './UserContext';
+import { useUser } from './UserContext'; // Получаем контекст пользователя
 
 // Контекст для непрочитанных сообщений
 const UnreadMessagesContext = createContext();
@@ -17,13 +17,18 @@ export const UnreadMessagesProvider = ({ children }) => {
 
     // Обновление количества непрочитанных сообщений
     const updateUnreadCount = (updatedMessages) => {
-        const unreadMessagesCount = updatedMessages.filter(
+        const unreadMessages = updatedMessages.filter(
             (msg) =>
-                (!msg.seen_by || !msg.seen_by.includes(String(userId))) &&
+                (!msg.seen_at || !msg.seen_by?.includes(String(userId))) &&
                 msg.sender_id !== Number(userId)
-        ).length;
-        setUnreadCount(unreadMessagesCount);
+        );
+    
+        console.log('Unread messages:', unreadMessages);
+        console.log('Unread messages count:', unreadMessages.length);
+    
+        setUnreadCount(unreadMessages.length);
     };
+    
 
     // Загрузка сообщений из API (только при монтировании компонента)
     const fetchMessages = () => {
@@ -43,70 +48,59 @@ export const UnreadMessagesProvider = ({ children }) => {
 
     // Пометка сообщений как прочитанных
     const markMessagesAsRead = (clientId) => {
-        const relevantMessages = messages.filter(
-            (msg) => msg.client_id === clientId && !msg.seen_at && msg.sender_id !== Number(userId)
-        );
-
-        if (relevantMessages.length === 0) return;
-
-        const readMessageData = {
-            type: 'seen',
-            data: {
-                client_id: clientId,
-                sender_id: Number(userId),
-            },
-        };
-
-        try {
-            socket.send(JSON.stringify(readMessageData));
-            console.log('Sent mark as read for client:', clientId);
-
-            // Обновляем локально состояние
-            setMessages((prev) =>
-                prev.map((msg) =>
-                    relevantMessages.includes(msg) ? { ...msg, seen_at: new Date().toISOString() } : msg
-                )
+        setMessages((prev) => {
+            const updatedMessages = prev.map((msg) =>
+                msg.client_id === clientId && !msg.seen_at
+                    ? { ...msg, seen_at: new Date().toISOString() }
+                    : msg
             );
-        } catch (error) {
-            console.error('Error sending mark as read:', error);
-        }
+    
+            updateUnreadCount(updatedMessages); // Обновляем счётчик
+            return updatedMessages;
+        });
     };
 
     // Обработка WebSocket-сообщений
     useEffect(() => {
         if (socket) {
-            // Очистка старого обработчика при изменении сокета
             const handleNewMessage = (event) => {
                 const message = JSON.parse(event.data);
-
+                console.log('Received message:', message);
+    
                 if (message.type === 'message') {
                     setMessages((prev) => {
                         const updatedMessages = [...prev, message.data];
-                        // Вызываем обновление количества непрочитанных сообщений
                         updateUnreadCount(updatedMessages);
                         return updatedMessages;
                     });
                 } else if (message.type === 'seen') {
                     const { client_id, seen_at } = message.data;
-                    setMessages((prev) =>
-                        prev.map((msg) =>
-                            msg.client_id === client_id && !msg.seen_at
-                                ? { ...msg, seen_at: seen_at }
-                                : msg
-                        )
-                    );
+                    setMessages((prev) => {
+                        const updatedMessages = prev.map((msg) => {
+                            if (msg.client_id === client_id && !msg.seen_at) {
+                                console.log('Message being updated:', msg, 'New seen_at:', seen_at);
+                                return { ...msg, seen_at };
+                            }
+                            return msg;
+                        });
+                    
+                        console.log('Updated messages for client_id:', client_id, updatedMessages.filter(msg => msg.client_id === client_id));
+                        return updatedMessages;
+                    });
+                    
+                    
                 }
             };
-
-            // Подписка на новые сообщения
+    
             socket.addEventListener('message', handleNewMessage);
-
-            // Очистка при размонтировании или изменении сокета
+    
             return () => {
                 socket.removeEventListener('message', handleNewMessage);
             };
         }
-    }, [socket, userId]); // Привязка к сокету и userId
+    }, [socket, userId]);
+    
+    
 
     // Обновление счётчика непрочитанных сообщений
     useEffect(() => {

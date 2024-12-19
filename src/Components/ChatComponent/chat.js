@@ -44,13 +44,6 @@ const ChatComponent = ({}) => {
     const { markMessagesAsRead } = useUnreadMessages();
 
     useEffect(() => {
-        // Помечаем сообщения как прочитанные при изменении selectedTicketId
-        if (selectedTicketId) {
-            markMessagesAsRead(selectedTicketId);
-        }
-    }, [selectedTicketId]);
-
-    useEffect(() => {
         // Если ticketId передан через URL, устанавливаем его как selectedTicketId
         if (ticketId) {
             setSelectedTicketId(Number(ticketId));
@@ -312,10 +305,10 @@ const ChatComponent = ({}) => {
         }
     };
 
-    const handleClick = () => {
+    const handleClick = (clientId) => {
         sendMessage();
         getClientMessages();
-        markMessagesAsRead();
+        markMessagesAsRead(clientId); // Помечаем сообщения клиента как прочитанные
         // fetchTicketsID();
         fetchTickets();
     };
@@ -323,7 +316,6 @@ const ChatComponent = ({}) => {
     const handleTicketClick = (ticketId) => {
         setSelectedTicketId(ticketId); // Устанавливаем выбранный тикет
         navigate(`/chat/${ticketId}`);
-        markMessagesAsRead();
         // fetchTicketsID();
         getClientMessages();
         fetchTickets();
@@ -384,27 +376,15 @@ const ChatComponent = ({}) => {
                     sender_id: Number(userId),
                 },
             };
-
+    
             try {
                 socket.send(JSON.stringify(readMessageData));
-                console.log('Sent mark as read for message:', msg.id);
+                markMessagesAsRead(msg.client_id); // Локальное обновление
             } catch (error) {
                 console.error('Error sending mark as read:', error);
             }
         }
     };
-
-    useEffect(() => {
-        if (socket && selectedTicketId) {
-            markMessagesAsRead(selectedTicketId); // Отправляем статус прочтения для текущего чата
-        }
-
-        return () => {
-            if (socket) {
-                socket.onmessage = null;
-            }
-        };
-    }, [selectedTicketId, socket, messages1]);
 
     useEffect(() => {
         if (socket) {
