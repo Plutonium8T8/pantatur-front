@@ -24,22 +24,31 @@ import { useSocket } from '../../SocketContext';
 import { InView } from 'react-intersection-observer';
 import { useSnackbar } from 'notistack';
 import './chat.css';
+import { useUnreadMessages } from '../../Unread';
 
-const ChatComponent = ({ setMessagesProp, setTicketsProp }) => {
+const ChatComponent = ({}) => {
     const { userId } = useUser();
     const [managerMessage, setManagerMessage] = useState('');
-    const [messages, setMessages] = useState([]);
-    const [selectedTicketId, setSelectedTicketId] = useState(null); // ID выбранного тикета
+    const [messages1, setMessages1] = useState([]);
+    const [selectedTicketId, setSelectedTicketId] = useState(null);
     const [extraInfo, setExtraInfo] = useState({}); // Состояние для дополнительной информации каждого тикета
-    const [tickets, setTickets] = useState([]);
+    const [tickets1, setTickets1] = useState([]);
     const messageContainerRef = useRef(null);
     const { ticketId } = useParams(); // Получаем ticketId из URL
     const [isLoading, setIsLoading] = useState(false); // Состояние загрузки
     const [selectedTechnicianId, setSelectedTechnicianId] = useState('');
     const socket = useSocket(); // Получаем WebSocket из контекста
-    const [unreadMessages, setUnreadMessages] = useState(0); // Состояние для отслеживания непрочитанных сообщений
+    const [unreadMessages, setUnreadMessages] = useState({});
     const { enqueueSnackbar } = useSnackbar();
     const navigate = useNavigate(); // Хук для навигации
+    const { markMessagesAsRead } = useUnreadMessages();
+
+    useEffect(() => {
+        // Помечаем сообщения как прочитанные при изменении selectedTicketId
+        if (selectedTicketId) {
+            markMessagesAsRead(selectedTicketId);
+        }
+    }, [selectedTicketId]);
 
     useEffect(() => {
         // Если ticketId передан через URL, устанавливаем его как selectedTicketId
@@ -80,7 +89,7 @@ const ChatComponent = ({ setMessagesProp, setTicketsProp }) => {
             }
 
             const data = await response.json();
-            setTickets(...data); // Устанавливаем данные тикетов
+            setTickets1(...data); // Устанавливаем данные тикетов
             // console.log("+++ Загруженные тикеты:", data);
         } catch (error) {
             console.error('Ошибка:', error);
@@ -158,7 +167,7 @@ const ChatComponent = ({ setMessagesProp, setTicketsProp }) => {
             // console.log('Сообщения клиента полученые с сервера:', data);
             // enqueueSnackbar('Сообшения получены!', { variant: 'success' });
             // Обновляем состояние с сообщениями
-            setMessages(data);
+            setMessages1(data);
         } catch (error) {
             enqueueSnackbar('Не удалось получить сообшения!', { variant: 'error' });
             console.error('Ошибка при получении сообщений:', error.message);
@@ -243,7 +252,7 @@ const ChatComponent = ({ setMessagesProp, setTicketsProp }) => {
 
         if (!selectedTicketId) return; // Проверяем, что тикет выбран
 
-        const updatedTicket = tickets.find(ticket => ticket.id === selectedTicketId); // Найдем тикет
+        const updatedTicket = tickets1.find(ticket => ticket.id === selectedTicketId); // Найдем тикет
 
         if (!updatedTicket) {
             console.error("Тикет не найден");
@@ -271,7 +280,7 @@ const ChatComponent = ({ setMessagesProp, setTicketsProp }) => {
             const data = await response.json();
             enqueueSnackbar('Статус тикета обновлен!', { variant: 'success' });
             // Обновляем локальное состояние
-            setTickets((prevTickets) =>
+            setTickets1((prevTickets) =>
                 prevTickets.map((ticket) =>
                     ticket.id === updatedTicket.id ? { ...ticket, workflow: newWorkflow } : ticket
                 )
@@ -284,7 +293,7 @@ const ChatComponent = ({ setMessagesProp, setTicketsProp }) => {
         }
     };
 
-    const updatedTicket = tickets.find(ticket => ticket.id === selectedTicketId);
+    const updatedTicket = tickets1.find(ticket => ticket.id === selectedTicketId);
 
     const scrollToBottom = () => {
         if (messageContainerRef.current) {
@@ -294,7 +303,7 @@ const ChatComponent = ({ setMessagesProp, setTicketsProp }) => {
 
     useEffect(() => {
         scrollToBottom();
-    }, [messages, selectedTicketId]);
+    }, [messages1, selectedTicketId]);
 
     const handleKeyDown = (event) => {
         if (event.key === 'Enter' && !event.shiftKey) {
@@ -349,7 +358,7 @@ const ChatComponent = ({ setMessagesProp, setTicketsProp }) => {
                         setManagerMessage('');
 
                         // Обновляем состояние сообщений с новым сообщением
-                        setMessages((prevMessages) => [
+                        setMessages1((prevMessages) => [
                             ...prevMessages,
                             { ...messageData.data, seen_at: false } // Новое сообщение, еще не прочитано
                         ]);
@@ -385,29 +394,6 @@ const ChatComponent = ({ setMessagesProp, setTicketsProp }) => {
         }
     };
 
-    const markMessagesAsRead = (clientId) => {
-        const relevantMessages = messages.filter(
-            (msg) => msg.client_id === clientId && !msg.seen_at && msg.sender_id !== Number(userId)
-        );
-
-        if (relevantMessages.length === 0) return;
-
-        const readMessageData = {
-            type: 'seen',
-            data: {
-                client_id: clientId,
-                sender_id: Number(userId),
-            },
-        };
-
-        try {
-            socket.send(JSON.stringify(readMessageData));
-            console.log('Sent mark as read for client:', clientId);
-        } catch (error) {
-            console.error('Error sending mark as read:', error);
-        }
-    };
-
     useEffect(() => {
         if (socket && selectedTicketId) {
             markMessagesAsRead(selectedTicketId); // Отправляем статус прочтения для текущего чата
@@ -418,33 +404,11 @@ const ChatComponent = ({ setMessagesProp, setTicketsProp }) => {
                 socket.onmessage = null;
             }
         };
-    }, [selectedTicketId, socket, messages]);
+    }, [selectedTicketId, socket, messages1]);
 
     useEffect(() => {
         if (socket) {
-            socket.onmessage = (event) => {
-                const message = JSON.parse(event.data);
-
-                if (message.type === 'seen') {
-                    const { client_id, sender_id, seen_at } = message.data;
-
-                    if (client_id === selectedTicketId) {
-                        setMessages((prevMessages) =>
-                            prevMessages.map((msg) =>
-                                msg.client_id === client_id && !msg.seen_at
-                                    ? { ...msg, seen_at: seen_at }
-                                    : msg
-                            )
-                        );
-                    }
-                }
-            };
-        }
-    }, [socket, selectedTicketId]);
-
-    useEffect(() => {
-        if (socket) {
-            socket.onmessage = (event) => {
+            const handleSocketMessage = (event) => {
                 console.log('Raw WebSocket message received:', event.data);
                 getClientMessages();
 
@@ -453,25 +417,34 @@ const ChatComponent = ({ setMessagesProp, setTicketsProp }) => {
                     console.log('Parsed WebSocket message:', message);
 
                     switch (message.type) {
-                        case 'message':
-                            setMessages((prevMessages) => [...prevMessages, message.data]);
+                        case 'message': {
+                            setMessages1((prevMessages) => [...prevMessages, message.data]);
 
                             if (message.data.client_id !== selectedTicketId && !message.data.seen_at) {
                                 setUnreadMessages((prevUnreadMessages) => {
                                     const updatedUnreadMessages = { ...prevUnreadMessages };
-                                    updatedUnreadMessages[message.data.client_id] =
-                                        (updatedUnreadMessages[message.data.client_id] || 0) + 1;
+                                    const clientId = message.data.client_id;
+
+                                    // Увеличиваем счётчик для непрочитанных сообщений
+                                    updatedUnreadMessages[clientId] =
+                                        (updatedUnreadMessages[clientId] || 0) + 1;
+                                    console.log('Updated unread messages:', updatedUnreadMessages);
                                     return updatedUnreadMessages;
                                 });
                             }
                             break;
+                        }
 
                         case 'notification':
-                            enqueueSnackbar(message.data.text || 'Уведомление получено!', { variant: 'success' });
+                            enqueueSnackbar(message.data.text || 'Уведомление получено!', {
+                                variant: 'success',
+                            });
                             break;
 
                         case 'task':
-                            enqueueSnackbar(`Новая задача: ${message.data.title}`, { variant: 'warning' });
+                            enqueueSnackbar(`Новая задача: ${message.data.title}`, {
+                                variant: 'warning',
+                            });
                             handleTask(message.data);
                             break;
 
@@ -486,24 +459,28 @@ const ChatComponent = ({ setMessagesProp, setTicketsProp }) => {
                     console.error('Error parsing WebSocket message:', error);
                 }
             };
-        }
 
-        return () => {
-            if (socket) {
-                socket.onmessage = null;
-                socket.onerror = null;
-                socket.onclose = null;
-            }
-        };
-    }, [socket, selectedTicketId, getClientMessages]);
+            // Назначаем обработчик
+            socket.onmessage = handleSocketMessage;
+
+            return () => {
+                if (socket) {
+                    socket.onmessage = null;
+                    socket.onerror = null;
+                    socket.onclose = null;
+                }
+            };
+        }
+    }, [socket, selectedTicketId, getClientMessages, enqueueSnackbar, handleTask, handleSeen]);
+
 
     return (
         <div className="chat-container">
             <div className="users-container">
                 <h3>Chat List</h3>
                 <div className="chat-item-container">
-                    {tickets.map((ticket) => {
-                        const chatMessages = messages.filter((msg) => msg.client_id === ticket.id);
+                    {tickets1.map((ticket) => {
+                        const chatMessages = messages1.filter((msg) => msg.client_id === ticket.id);
 
                         const unreadCounts = chatMessages.filter(
                             (msg) =>
@@ -561,7 +538,7 @@ const ChatComponent = ({ setMessagesProp, setTicketsProp }) => {
             </div>
             <div className="chat-area">
                 <div className="chat-messages" ref={messageContainerRef}>
-                    {messages
+                    {messages1
                         .filter((msg) => msg.client_id === selectedTicketId)
                         .sort((a, b) => new Date(a.time_sent) - new Date(b.time_sent))
                         .map((msg) => {
