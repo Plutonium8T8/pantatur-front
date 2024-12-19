@@ -23,8 +23,8 @@ export const UnreadMessagesProvider = ({ children }) => {
                 msg.sender_id !== Number(userId)
         );
     
-        console.log('Unread messages:', unreadMessages);
-        console.log('Unread messages count:', unreadMessages.length);
+        // console.log('Unread messages:', unreadMessages);
+        // console.log('Unread messages count:', unreadMessages.length);
     
         setUnreadCount(unreadMessages.length);
     };
@@ -63,7 +63,7 @@ export const UnreadMessagesProvider = ({ children }) => {
         if (socket) {
             const handleNewMessage = (event) => {
                 const message = JSON.parse(event.data);
-                console.log('Received message:', message);
+                // console.log('Received message:', message);
     
                 if (message.type === 'message') {
                     setMessages((prev) => {
@@ -76,18 +76,16 @@ export const UnreadMessagesProvider = ({ children }) => {
                     setMessages((prev) => {
                         const updatedMessages = prev.map((msg) => {
                             if (msg.client_id === client_id && !msg.seen_at) {
-                                console.log('Message being updated:', msg, 'New seen_at:', seen_at);
+                                // console.log('Message being updated:', msg, 'New seen_at:', seen_at);
                                 return { ...msg, seen_at };
                             }
                             return msg;
                         });
                         fetchMessages();
 
-                        console.log('Updated messages for client_id:', client_id, updatedMessages.filter(msg => msg.client_id === client_id));
+                        // console.log('Updated messages for client_id:', client_id, updatedMessages.filter(msg => msg.client_id === client_id));
                         return updatedMessages;
                     });
-                    
-                    
                 }
             };
     
@@ -98,8 +96,6 @@ export const UnreadMessagesProvider = ({ children }) => {
             };
         }
     }, [socket, userId]);
-    
-    
 
     // Обновление счётчика непрочитанных сообщений
     useEffect(() => {
