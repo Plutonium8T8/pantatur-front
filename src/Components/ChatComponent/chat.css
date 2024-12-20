@@ -42,8 +42,6 @@
     scroll-behavior: auto; /* Мгновенный скролл */
 }
 
-/* Правая колонка для дополнительной информации */
-
 /* Стили для каждого сообщения */
 .message {
     display: flex;
@@ -60,7 +58,7 @@
 }
 
 .message .text {
-    max-width: 70%;
+    /* max-width: 70%; */
     padding: 10px;
     border-radius: 15px;
     background-color: #e0e0e0;

@@ -8,42 +8,38 @@ const Notification = ({ selectedTicketId }) => {
 
   useEffect(() => {
     if (socket) {
-      socket.onopen = () => console.log('WebSocket подключен');
-      socket.onerror = (error) => console.error('WebSocket ошибка:', error);
-      socket.onclose = () => console.log('WebSocket закрыт');
-
-      socket.onmessage = (event) => {
+      const receiveMessage = (event) => {
         console.log('Raw WebSocket message received notifications:', event.data);
         try {
           const message = JSON.parse(event.data);
           console.log('Parsed WebSocket message notifications:', message);
-
+  
           switch (message.type) {
             case 'message':
               // Обрабатываем новое сообщение
               if (message.data.client_id !== selectedTicketId) {
                 // Показ уведомления о новом сообщении
                 enqueueSnackbar(
-                  `Новое сообщение от клиента ${message.data.client_id}`,
+                  `Новое сообщение от клиента ${message.data.client_id}: ${message.data.message}`,
                   { variant: 'info' }
                 );
               }
               break;
-
+  
             case 'notification':
               // Показ уведомления
               enqueueSnackbar(message.data.text || 'Уведомление получено!', { variant: 'success' });
               break;
-
+  
             case 'task':
               // Показ уведомления о новой задаче
               enqueueSnackbar(`Новая задача: ${message.data.title}`, { variant: 'warning' });
               break;
-
+  
             case 'seen':
               // Обработать событие seen
               break;
-
+  
             default:
               console.warn('Неизвестный тип сообщения:', message);
           }
@@ -51,16 +47,22 @@ const Notification = ({ selectedTicketId }) => {
           console.error('Ошибка при разборе сообщения WebSocket:', error);
         }
       };
-    }
-
-    return () => {
-      if (socket) {
-        socket.onmessage = null;
+  
+      // Устанавливаем обработчики WebSocket
+      socket.onopen = () => console.log('WebSocket подключен');
+      socket.onerror = (error) => console.error('WebSocket ошибка:', error);
+      socket.onclose = () => console.log('WebSocket закрыт');
+      socket.addEventListener('message', receiveMessage);
+  
+      // Очистка обработчиков при размонтировании
+      return () => {
+        socket.removeEventListener('message', receiveMessage);
+        socket.onopen = null;
         socket.onerror = null;
         socket.onclose = null;
-      }
-    };
-  }, [socket, selectedTicketId, enqueueSnackbar]);
+      };
+    }
+  }, [socket, selectedTicketId, enqueueSnackbar]);   
 
   return null; // Компонент не отображает UI, только управляет уведомлениями
 };

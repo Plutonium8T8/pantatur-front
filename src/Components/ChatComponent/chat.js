@@ -623,39 +623,39 @@ const ChatComponent = ({ }) => {
                                             <div className="message-content">
                                                 <div className="message-row">
                                                     <div className="text">{msg.message}
-                                                    {editMessageId === msg.id ? (
-                                                    <div className="edit-mode">
-                                                        <input
-                                                            type="text"
-                                                            value={editedText}
-                                                            onChange={(e) =>
-                                                                setEditedText(e.target.value)
-                                                            }
-                                                            className="edit-input"
-                                                        />
-                                                        <div className="edit-buttons">
-                                                            <button
-                                                                onClick={handleSave}
-                                                                className="save-button"
-                                                            >
-                                                                ✅
-                                                            </button>
-                                                            <button
-                                                                onClick={handleCancel}
-                                                                className="cancel-button"
-                                                            >
-                                                                ❌
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                ) : (
-                                                    <div className="message-time">
-                                                        {new Date(msg.time_sent).toLocaleTimeString('ru-RU', {
-                                                            hour: '2-digit',
-                                                            minute: '2-digit',
-                                                        })}
-                                                    </div>
-                                                )}
+                                                        {editMessageId === msg.id ? (
+                                                            <div className="edit-mode">
+                                                                <input
+                                                                    type="text"
+                                                                    value={editedText}
+                                                                    onChange={(e) =>
+                                                                        setEditedText(e.target.value)
+                                                                    }
+                                                                    className="edit-input"
+                                                                />
+                                                                <div className="edit-buttons">
+                                                                    <button
+                                                                        onClick={handleSave}
+                                                                        className="save-button"
+                                                                    >
+                                                                        ✅
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={handleCancel}
+                                                                        className="cancel-button"
+                                                                    >
+                                                                        ❌
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        ) : (
+                                                            <div className="message-time">
+                                                                {new Date(msg.time_sent).toLocaleTimeString('ru-RU', {
+                                                                    hour: '2-digit',
+                                                                    minute: '2-digit',
+                                                                })}
+                                                            </div>
+                                                        )}
                                                     </div>
                                                     {/* Показываем меню только для своих сообщений */}
                                                     {msg.sender_id === userId && (
@@ -679,7 +679,7 @@ const ChatComponent = ({ }) => {
                                                         </div>
                                                     )}
                                                 </div>
-                                                
+
                                             </div>
                                         </div>
                                     )}
