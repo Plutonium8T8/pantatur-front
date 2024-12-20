@@ -26,7 +26,7 @@ import { useSnackbar } from 'notistack';
 import './chat.css';
 import { useUnreadMessages } from '../../Unread';
 
-const ChatComponent = ({}) => {
+const ChatComponent = ({ }) => {
     const { userId } = useUser();
     const [managerMessage, setManagerMessage] = useState('');
     const [messages1, setMessages1] = useState([]);
@@ -42,6 +42,10 @@ const ChatComponent = ({}) => {
     const { enqueueSnackbar } = useSnackbar();
     const navigate = useNavigate(); // Хук для навигации
     const { markMessagesAsRead } = useUnreadMessages();
+    const [menuMessageId, setMenuMessageId] = useState(null);
+    const [editMessageId, setEditMessageId] = useState(null);
+    const [editedText, setEditedText] = useState('');
+    const [messages, setMessages] = useState(messages1); // предполагается, что `messages1` - это изначальный массив сообщений
 
     useEffect(() => {
         // Если ticketId передан через URL, устанавливаем его как selectedTicketId
@@ -376,7 +380,7 @@ const ChatComponent = ({}) => {
                     sender_id: Number(userId),
                 },
             };
-    
+
             try {
                 socket.send(JSON.stringify(readMessageData));
                 markMessagesAsRead(msg.client_id); // Локальное обновление
@@ -452,6 +456,87 @@ const ChatComponent = ({}) => {
             };
         }
     }, [socket, selectedTicketId, getClientMessages, enqueueSnackbar, handleTask, handleSeen]);
+
+
+    const handleDelete = async (id) => {
+        const success = await deleteMessage(id);
+        if (success) {
+            setMessages((prevMessages) => prevMessages.filter((msg) => msg.id !== id));
+            getClientMessages();
+        } else {
+            alert('Не удалось удалить сообщение');
+        }
+    };
+
+
+    const handleEdit = (msg) => {
+        setEditMessageId(msg.id);
+        setEditedText(msg.message); // Предзаполнение текущего текста
+    };
+
+    const handleSave = async () => {
+        if (editedText.trim() === '') {
+            alert('Сообщение не может быть пустым');
+            return;
+        }
+
+        const updatedMessage = await updateMessage(editMessageId, editedText);
+        if (updatedMessage) {
+            getClientMessages();
+            setMessages((prevMessages) =>
+                prevMessages.map((msg) =>
+                    msg.id === editMessageId ? { ...msg, message: updatedMessage.message } : msg
+                )
+            );
+            setEditMessageId(null);
+            setEditedText('');
+        } else {
+            alert('Не удалось обновить сообщение');
+        }
+    };
+
+
+    const handleCancel = () => {
+        setEditMessageId(null);
+        setEditedText('');
+    };
+
+    // Пример API-запроса для удаления сообщения
+    const deleteMessage = async (id) => {
+        try {
+            const response = await fetch(`https://pandatur-api.com/messages/${id}`, {
+                method: 'DELETE',
+            });
+            if (!response.ok) {
+                throw new Error('Ошибка при удалении сообщения');
+            }
+            return true; // Успешное удаление
+        } catch (error) {
+            console.error(error);
+            return false; // Ошибка
+        }
+    };
+
+    // Пример API-запроса для обновления сообщения
+    const updateMessage = async (id, newMessage) => {
+        try {
+            const response = await fetch(`https://pandatur-api.com/messages/${id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message: newMessage }),
+            });
+            if (!response.ok) {
+                throw new Error('Ошибка при обновлении сообщения');
+            }
+            const updatedMessage = await response.json();
+            return updatedMessage;
+        } catch (error) {
+            console.error(error);
+            return null; // Ошибка
+        }
+    };
 
 
     return (
@@ -531,10 +616,41 @@ const ChatComponent = ({}) => {
                                     threshold={0.5}
                                 >
                                     {({ ref }) => (
-                                        <div ref={ref} className={`message ${msg.sender_id == userId ? 'sent' : 'received'}`}>
-                                            <div className="text">{msg.message}</div>
-                                            <div className="message-time">
-                                                {new Date(msg.time_sent).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+                                        <div ref={ref} className={`message ${msg.sender_id === userId ? 'sent' : 'received'}`}>
+                                            <div className="message-content">
+                                                <div className="menu-container">
+                                                    <button
+                                                        className="menu-button"
+                                                        onClick={() => setMenuMessageId(menuMessageId === msg.id ? null : msg.id)}
+                                                    >
+                                                        ⋮
+                                                    </button>
+                                                    {menuMessageId === msg.id && (
+                                                        <div className="menu-dropdown">
+                                                            <button onClick={() => handleEdit(msg)}>Редактировать</button>
+                                                            <button onClick={() => handleDelete(msg.id)}>Удалить</button>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                {editMessageId === msg.id ? (
+                                                    <div className="edit-mode">
+                                                        <input
+                                                            type="text"
+                                                            value={editedText}
+                                                            onChange={(e) => setEditedText(e.target.value)}
+                                                            className="edit-input"
+                                                        />
+                                                        <button onClick={handleSave} className="save-button">Сохранить</button>
+                                                        <button onClick={handleCancel} className="cancel-button">Отмена</button>
+                                                    </div>
+                                                ) : (
+                                                    <>
+                                                        <div className="text">{msg.message}</div>
+                                                        <div className="message-time">
+                                                            {new Date(msg.time_sent).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+                                                        </div>
+                                                    </>
+                                                )}
                                             </div>
                                         </div>
                                     )}

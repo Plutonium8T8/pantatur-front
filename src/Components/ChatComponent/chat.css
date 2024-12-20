@@ -320,3 +320,7 @@
     overflow: hidden;    /* Обрезает текст, если он выходит за пределы */
     text-overflow: ellipsis; /* Добавляет многоточие, если текст не помещается */
 }
+.message-content {
+    display: flex;
+    flex-direction: row;
+}
