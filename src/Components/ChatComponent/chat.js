@@ -232,7 +232,7 @@ const ChatComponent = ({ }) => {
             });
 
             const result = await response.json();
-            // enqueueSnackbar('Данные успешно обновлены', { variant: 'success' });
+            enqueueSnackbar('Данные успешно обновлены', { variant: 'success' });
             console.log('Данные успешно отправлены:', result);
         } catch (error) {
             enqueueSnackbar('Ошибка при обновлении дополнительной информации:', { variant: 'error' });
