@@ -60,10 +60,10 @@ function App() {
   return (
     <SnackbarProvider
       iconVariant={{
-        success: '✅',
-        error: '✖️',
-        warning: '⚠️',
-        info: 'ℹ️',
+        success: '✅ ',
+        error: 'X ',
+        warning: '⚠️ ',
+        info: 'ℹ️ ',
       }}
       autoHideDuration={5000}
       maxSnack={10}
