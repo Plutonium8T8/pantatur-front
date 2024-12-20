@@ -616,41 +616,70 @@ const ChatComponent = ({ }) => {
                                     threshold={0.5}
                                 >
                                     {({ ref }) => (
-                                        <div ref={ref} className={`message ${msg.sender_id === userId ? 'sent' : 'received'}`}>
+                                        <div
+                                            ref={ref}
+                                            className={`message ${msg.sender_id === userId ? 'sent' : 'received'}`}
+                                        >
                                             <div className="message-content">
-                                                <div className="menu-container">
-                                                    <button
-                                                        className="menu-button"
-                                                        onClick={() => setMenuMessageId(menuMessageId === msg.id ? null : msg.id)}
-                                                    >
-                                                        ⋮
-                                                    </button>
-                                                    {menuMessageId === msg.id && (
-                                                        <div className="menu-dropdown">
-                                                            <button onClick={() => handleEdit(msg)}>Редактировать</button>
-                                                            <button onClick={() => handleDelete(msg.id)}>Удалить</button>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                                {editMessageId === msg.id ? (
+                                                <div className="message-row">
+                                                    <div className="text">{msg.message}
+                                                    {editMessageId === msg.id ? (
                                                     <div className="edit-mode">
                                                         <input
                                                             type="text"
                                                             value={editedText}
-                                                            onChange={(e) => setEditedText(e.target.value)}
+                                                            onChange={(e) =>
+                                                                setEditedText(e.target.value)
+                                                            }
                                                             className="edit-input"
                                                         />
-                                                        <button onClick={handleSave} className="save-button">Сохранить</button>
-                                                        <button onClick={handleCancel} className="cancel-button">Отмена</button>
+                                                        <div className="edit-buttons">
+                                                            <button
+                                                                onClick={handleSave}
+                                                                className="save-button"
+                                                            >
+                                                                ✅
+                                                            </button>
+                                                            <button
+                                                                onClick={handleCancel}
+                                                                className="cancel-button"
+                                                            >
+                                                                ❌
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 ) : (
-                                                    <>
-                                                        <div className="text">{msg.message}</div>
-                                                        <div className="message-time">
-                                                            {new Date(msg.time_sent).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
-                                                        </div>
-                                                    </>
+                                                    <div className="message-time">
+                                                        {new Date(msg.time_sent).toLocaleTimeString('ru-RU', {
+                                                            hour: '2-digit',
+                                                            minute: '2-digit',
+                                                        })}
+                                                    </div>
                                                 )}
+                                                    </div>
+                                                    {/* Показываем меню только для своих сообщений */}
+                                                    {msg.sender_id === userId && (
+                                                        <div className="menu-container">
+                                                            <button
+                                                                className="menu-button"
+                                                                onClick={() =>
+                                                                    setMenuMessageId(
+                                                                        menuMessageId === msg.id ? null : msg.id
+                                                                    )
+                                                                }
+                                                            >
+                                                                ⋮
+                                                            </button>
+                                                            {menuMessageId === msg.id && (
+                                                                <div className="menu-dropdown">
+                                                                    <button onClick={() => handleEdit(msg)}>✏️</button>
+                                                                    <button onClick={() => handleDelete(msg.id)}>🗑️</button>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                
                                             </div>
                                         </div>
                                     )}
