@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
 import { useSnackbar } from 'notistack';
 import { useSocket } from './SocketContext'; // Используйте свой контекст для WebSocket
+import { UserProvider, useUser } from './UserContext';
 
 const Notification = ({ selectedTicketId }) => {
   const socket = useSocket(); // Получаем сокет из контекста
   const { enqueueSnackbar } = useSnackbar(); // Хук для отображения уведомлений
+  const { userId } = useUser();
 
   useEffect(() => {
     if (socket) {
@@ -17,7 +19,7 @@ const Notification = ({ selectedTicketId }) => {
           switch (message.type) {
             case 'message':
               // Обрабатываем новое сообщение
-              if (message.data.client_id !== selectedTicketId) {
+              if (message.data.sender_id !== userId) {
                 // Показ уведомления о новом сообщении
                 enqueueSnackbar(
                   `Новое сообщение от клиента ${message.data.client_id}: ${message.data.message}`,
