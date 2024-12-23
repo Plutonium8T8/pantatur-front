@@ -97,11 +97,14 @@
     border-radius: 5px;
     resize: none;
     outline: none;
+    height: 100px;
+    width: fit-content;
 }
 
 /* Кнопки отправки и вложений */
 .btn-send-message {
     display: flex;
+    flex-direction: column;
     gap: 10px;
 }
 
@@ -366,3 +369,13 @@
 .menu-dropdown button:hover {
     background: #f5f5f5;
 }
+.emoji-picker-popup {
+    background: white;
+    border: 1px solid #ccc;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    /* width: 500px;
+    height: 500px; */
+    /* overflow: hidden; */
+    transition: opacity 0.2s;
+  }

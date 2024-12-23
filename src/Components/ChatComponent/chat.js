@@ -25,6 +25,8 @@ import { InView } from 'react-intersection-observer';
 import { useSnackbar } from 'notistack';
 import './chat.css';
 import { useUnreadMessages } from '../../Unread';
+import EmojiPicker from 'emoji-picker-react';
+import ReactDOM from "react-dom";
 
 const ChatComponent = ({ }) => {
     const { userId } = useUser();
@@ -46,6 +48,8 @@ const ChatComponent = ({ }) => {
     const [editMessageId, setEditMessageId] = useState(null);
     const [editedText, setEditedText] = useState('');
     const [messages, setMessages] = useState(messages1); // предполагается, что `messages1` - это изначальный массив сообщений
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const [emojiPickerPosition, setEmojiPickerPosition] = useState({ top: 0, left: 0 });
 
     useEffect(() => {
         // Если ticketId передан через URL, устанавливаем его как selectedTicketId
@@ -538,6 +542,24 @@ const ChatComponent = ({ }) => {
         }
     };
 
+    const handleEmojiClick = (emojiObject) => {
+        setManagerMessage((prevMessage) => prevMessage + emojiObject.emoji);
+    };
+
+    const handleEmojiHover = (event) => {
+        const rect = event.target.getBoundingClientRect();
+        const emojiPickerHeight = 450; // Предполагаемая высота эмодзи-пикера
+        setEmojiPickerPosition({
+            top: rect.top + window.scrollY - emojiPickerHeight, // Смещаем вверх
+            left: rect.left + window.scrollX,
+        });
+        setShowEmojiPicker(true);
+    };
+
+    const handleMouseLeave = () => {
+        setShowEmojiPicker(false);
+    };
+
 
     return (
         <div className="chat-container">
@@ -697,6 +719,34 @@ const ChatComponent = ({ }) => {
                         onKeyDown={handleKeyDown}
                         disabled={!selectedTicketId} // Если нет selectedTicketId, textarea отключена
                     />
+
+                    <div className="emoji-picker-container">
+                        <button
+                            className="emoji-button"
+                            onMouseEnter={handleEmojiHover}
+                            disabled={!selectedTicketId}
+                        >
+                            😊
+                        </button>
+                        {showEmojiPicker &&
+                            ReactDOM.createPortal(
+                                <div
+                                    className="emoji-picker-popup"
+                                    style={{
+                                        position: "absolute",
+                                        top: emojiPickerPosition.top,
+                                        left: emojiPickerPosition.left,
+                                        zIndex: 1000, // Обеспечивает отображение поверх других элементов
+                                    }}
+                                    onMouseEnter={() => setShowEmojiPicker(true)} // Оставляем открытым при наведении
+                                    onMouseLeave={handleMouseLeave} // Закрываем, если курсор уходит
+                                >
+                                    <EmojiPicker onEmojiClick={handleEmojiClick} />
+                                </div>,
+                                document.body
+                            )}
+                    </div>
+
                     <div className="btn-send-message">
                         <button
                             className="send-button"
@@ -705,7 +755,7 @@ const ChatComponent = ({ }) => {
                         >
                             Send
                         </button>
-                        <button className="file-button" disabled={!selectedTicketId}>Attach</button>
+                        <button className="file-button" disabled={!selectedTicketId}>📎</button>
                     </div>
                 </div>
             </div>
