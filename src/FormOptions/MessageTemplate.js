@@ -1,0 +1,5 @@
+// Исходные шаблоны
+export const templateOptions = [
+    "Salutare 😍 Mulțumim că ați ales Panda Tur! Sunt __________, managerul companiei, și mă bucur să vă urez bun venit în aventura pe care o pregătim pentru dumneavoastră. Suntem aici pentru a ne asigura că fiecare moment al călătoriei este de neuitat.",
+    "Bună ziua , Vă mulțumim că ați completat ancheta noastră de recrutare și ne bucurăm să vă informăm că ați fost selectat pentru a participa la un interviu pentru poziția pentru care ați aplicat. Întâlnirea dvs. de interviu este programată pentru {{lead.cf.871465}}  și se va desfășura la sediul nostru din Chișinău, strada Vasile Alecsandri 121. Vă rugăm să confirmați recepționarea acestui mesaj și disponibilitatea dvs. pentru interviu la data și ora menționate. Cu stimă, Managerul Resurse Umane"
+];

@@ -39,7 +39,8 @@
     scroll-behavior: smooth;
     width: 39vw;
     height: 100vh;
-    scroll-behavior: auto; /* Мгновенный скролл */
+    scroll-behavior: auto;
+    /* Мгновенный скролл */
 }
 
 /* Стили для каждого сообщения */
@@ -51,7 +52,7 @@
 
 .message.sent {
     align-items: flex-end;
-    padding-left:100px;
+    padding-left: 100px;
 }
 
 .message.received {
@@ -86,7 +87,7 @@
     background-color: #fff;
     border-top: 1px solid #ddd;
     align-items: center;
-    gap: 10px;
+    gap: 20px;
 }
 
 /* Поле ввода сообщения */
@@ -296,11 +297,13 @@
     flex-direction: column;
     margin-bottom: 30px;
 }
+
 .info-message {
     display: flex;
     flex-direction: column;
     width: 100%;
 }
+
 .last-message-container {
     display: flex;
     flex-direction: row;
@@ -308,6 +311,7 @@
     width: 100%;
     color: coral;
 }
+
 .unread-count {
     border-radius: 100%;
     /* border: 1px solid red; */
@@ -318,23 +322,32 @@
     align-items: center;
     color: white;
 }
+
 .last-message-ticket {
-    white-space: nowrap; /* Не позволяет тексту переноситься на новую строку */
-    overflow: hidden;    /* Обрезает текст, если он выходит за пределы */
-    text-overflow: ellipsis; /* Добавляет многоточие, если текст не помещается */
+    white-space: nowrap;
+    /* Не позволяет тексту переноситься на новую строку */
+    overflow: hidden;
+    /* Обрезает текст, если он выходит за пределы */
+    text-overflow: ellipsis;
+    /* Добавляет многоточие, если текст не помещается */
 }
+
 .message-content {
     display: flex;
     flex-direction: column;
 }
+
 .message-row {
     display: flex;
-    align-items: center; /* Выровнять по вертикали */
+    align-items: center;
+    /* Выровнять по вертикали */
 }
 
 .menu-container {
-    margin-left: 8px; /* Отступ между текстом и кнопкой */
-    position: relative; /* Для позиционирования выпадающего меню */
+    margin-left: 8px;
+    /* Отступ между текстом и кнопкой */
+    position: relative;
+    /* Для позиционирования выпадающего меню */
 }
 
 .menu-button {
@@ -369,6 +382,7 @@
 .menu-dropdown button:hover {
     background: #f5f5f5;
 }
+
 .emoji-picker-popup {
     background: white;
     border: 1px solid #ccc;
@@ -378,4 +392,23 @@
     height: 500px; */
     /* overflow: hidden; */
     transition: opacity 0.2s;
-  }
+}
+
+.container-template {
+    display: flex;
+    flex-direction: column;
+    width: 30px;
+    align-items: center;
+    gap: 10px;
+}
+
+.container-template-btn {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+}
+
+.red {
+    border: 1px solid rebeccapurple;
+}

@@ -2,7 +2,7 @@ import React from "react";
 import Select from "react-select";
 
 // Универсальный компонент
-const CustomSelect = ({ options, value, onChange, customStyles, placeholder }) => {
+const CustomSelect = ({ options, value, onChange, customStyles, placeholder, className }) => {
   // Базовые стили, которые можно дополнить
   const defaultStyles = {
     option: (provided, state) => ({
@@ -34,6 +34,7 @@ const CustomSelect = ({ options, value, onChange, customStyles, placeholder }) =
       styles={customStyles || defaultStyles}
       placeholder={placeholder || "Выберите..."}
       isSearchable={false} // Убираем поиск по умолчанию
+      className={className}  // Применяем класс для селекта
     />
   );
 };

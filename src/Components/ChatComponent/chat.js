@@ -15,6 +15,7 @@ import { purchaseProcessingOptions } from '../../FormOptions/PurchaseProcessingO
 import { serviceTypeOptions } from '../../FormOptions/ServiceTypeOptions';
 import { sourceOfLeadOptions } from '../../FormOptions/SourceOfLeadOptions';
 import { promoOptions } from '../../FormOptions/PromoOptions';
+import { templateOptions } from '../../FormOptions/MessageTemplate';
 import TechnicianSelect from '../../FormOptions/ResponsabilLead';
 import DatePicker from 'react-datepicker';
 import Input from '../InputComponent/InputComponent';
@@ -50,6 +51,7 @@ const ChatComponent = ({ }) => {
     const [messages, setMessages] = useState(messages1); // предполагается, что `messages1` - это изначальный массив сообщений
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [emojiPickerPosition, setEmojiPickerPosition] = useState({ top: 0, left: 0 });
+    const [selectedMessage, setSelectedMessage] = useState(null); // Выбранный шаблон из Select
 
     useEffect(() => {
         // Если ticketId передан через URL, устанавливаем его как selectedTicketId
@@ -560,6 +562,19 @@ const ChatComponent = ({ }) => {
         setShowEmojiPicker(false);
     };
 
+    // Обработчик для изменения выбранного шаблона
+    const handleSelectTChange = (selectedOption) => {
+        console.log("Selected option:", selectedOption);
+        console.log("Selected message state:", selectedMessage);
+        console.log("Manager message state:", managerMessage);
+        if (selectedOption && selectedOption) {
+            setSelectedMessage(selectedOption);
+            setManagerMessage(selectedOption);
+        } else {
+            setSelectedMessage(null);
+            setManagerMessage("");
+        }
+    };
 
     return (
         <div className="chat-container">
@@ -719,6 +734,7 @@ const ChatComponent = ({ }) => {
                         onKeyDown={handleKeyDown}
                         disabled={!selectedTicketId} // Если нет selectedTicketId, textarea отключена
                     />
+                    <div className="container-template">
 
                     <div className="emoji-picker-container">
                         <button
@@ -746,17 +762,27 @@ const ChatComponent = ({ }) => {
                                 document.body
                             )}
                     </div>
-
-                    <div className="btn-send-message">
-                        <button
-                            className="send-button"
-                            onClick={handleClick}
-                            disabled={!selectedTicketId} // Кнопка также отключена, если нет selectedTicketId
-                        >
-                            Send
-                        </button>
-                        <button className="file-button" disabled={!selectedTicketId}>📎</button>
+                    <div className="container-template">
+                        <Select
+                            options={templateOptions} // Передаем преобразованные опции
+                            id="message-template"
+                            value={selectedMessage} // Текущее значение Select
+                            onChange={handleSelectTChange} // Обработчик выбора
+                            placeholder="Выберите сообщение"
+                            className="red"
+                        />
                     </div>
+                    </div>
+                        <div className="btn-send-message">
+                            <button
+                                className="send-button"
+                                onClick={handleClick}
+                                disabled={!selectedTicketId} // Кнопка также отключена, если нет selectedTicketId
+                            >
+                                Send
+                            </button>
+                            <button className="file-button" disabled={!selectedTicketId}>📎</button>
+                        </div>
                 </div>
             </div>
             <div className="extra-info">
