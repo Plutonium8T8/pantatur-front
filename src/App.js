@@ -9,7 +9,7 @@ import ChatComponent from './Components/ChatComponent/chat';
 import Cookies from 'js-cookie';
 import { SocketProvider, useSocket } from './SocketContext';
 import UserProfile from './Components/UserPage/UserPage';
-import { SnackbarProvider } from 'notistack';
+import { SnackbarProvider, closeSnackbar } from 'notistack';
 import Notification from './Notification';
 import { UnreadMessagesProvider } from './Unread';  // Импортируем UnreadMessagesProvider из Unread.js
 
@@ -61,13 +61,16 @@ function App() {
     <SnackbarProvider
       iconVariant={{
         success: '✅ ',
-        error: 'X ',
+        error: '✖️ ',
         warning: '⚠️ ',
         info: 'ℹ️ ',
       }}
-      autoHideDuration={5000}
+      autoHideDuration={null}
       maxSnack={10}
-      anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'left', }}
+      action={(snackbarId) =>
+      (<button onClick={() => closeSnackbar(snackbarId)}
+        style={{ background: 'none', border: 'none', color: 'blue', cursor: 'pointer' }} > Закрыть </button>)}
     >
       <SocketProvider isLoggedIn={isLoggedIn}>
         <UserProvider>
