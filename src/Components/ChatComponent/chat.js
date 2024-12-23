@@ -564,9 +564,6 @@ const ChatComponent = ({ }) => {
 
     // Обработчик для изменения выбранного шаблона
     const handleSelectTChange = (selectedOption) => {
-        console.log("Selected option:", selectedOption);
-        console.log("Selected message state:", selectedMessage);
-        console.log("Manager message state:", managerMessage);
         if (selectedOption && selectedOption) {
             setSelectedMessage(selectedOption);
             setManagerMessage(selectedOption);
@@ -734,55 +731,55 @@ const ChatComponent = ({ }) => {
                         onKeyDown={handleKeyDown}
                         disabled={!selectedTicketId} // Если нет selectedTicketId, textarea отключена
                     />
+                    <div className="btn-send-message">
+                        <button
+                            className="send-button"
+                            onClick={handleClick}
+                            disabled={!selectedTicketId} // Кнопка также отключена, если нет selectedTicketId
+                        >
+                            Send
+                        </button>
+                        <button className="file-button" disabled={!selectedTicketId}>📎</button>
+                    </div>
                     <div className="container-template">
 
-                    <div className="emoji-picker-container">
-                        <button
-                            className="emoji-button"
-                            onMouseEnter={handleEmojiHover}
-                            disabled={!selectedTicketId}
-                        >
-                            😊
-                        </button>
-                        {showEmojiPicker &&
-                            ReactDOM.createPortal(
-                                <div
-                                    className="emoji-picker-popup"
-                                    style={{
-                                        position: "absolute",
-                                        top: emojiPickerPosition.top,
-                                        left: emojiPickerPosition.left,
-                                        zIndex: 1000, // Обеспечивает отображение поверх других элементов
-                                    }}
-                                    onMouseEnter={() => setShowEmojiPicker(true)} // Оставляем открытым при наведении
-                                    onMouseLeave={handleMouseLeave} // Закрываем, если курсор уходит
-                                >
-                                    <EmojiPicker onEmojiClick={handleEmojiClick} />
-                                </div>,
-                                document.body
-                            )}
-                    </div>
-                    <div className="container-template">
-                        <Select
-                            options={templateOptions} // Передаем преобразованные опции
-                            id="message-template"
-                            value={selectedMessage} // Текущее значение Select
-                            onChange={handleSelectTChange} // Обработчик выбора
-                            placeholder="Выберите сообщение"
-                            className="red"
-                        />
-                    </div>
-                    </div>
-                        <div className="btn-send-message">
+                        <div className="emoji-picker-container">
                             <button
-                                className="send-button"
-                                onClick={handleClick}
-                                disabled={!selectedTicketId} // Кнопка также отключена, если нет selectedTicketId
+                                className="emoji-button"
+                                onMouseEnter={handleEmojiHover}
+                                disabled={!selectedTicketId}
                             >
-                                Send
+                                😊
                             </button>
-                            <button className="file-button" disabled={!selectedTicketId}>📎</button>
+                            {showEmojiPicker &&
+                                ReactDOM.createPortal(
+                                    <div
+                                        className="emoji-picker-popup"
+                                        style={{
+                                            position: "absolute",
+                                            top: emojiPickerPosition.top,
+                                            left: emojiPickerPosition.left,
+                                            zIndex: 1000, // Обеспечивает отображение поверх других элементов
+                                        }}
+                                        onMouseEnter={() => setShowEmojiPicker(true)} // Оставляем открытым при наведении
+                                        onMouseLeave={handleMouseLeave} // Закрываем, если курсор уходит
+                                    >
+                                        <EmojiPicker onEmojiClick={handleEmojiClick} />
+                                    </div>,
+                                    document.body
+                                )}
                         </div>
+                        <div className="container-template">
+                            <Select
+                                options={templateOptions} // Передаем преобразованные опции
+                                id="message-template"
+                                value={selectedMessage} // Текущее значение Select
+                                onChange={handleSelectTChange} // Обработчик выбора
+                                placeholder="Выберите сообщение"
+                                className="red"
+                            />
+                        </div>
+                    </div>
                 </div>
             </div>
             <div className="extra-info">
