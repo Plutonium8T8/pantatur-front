@@ -148,10 +148,10 @@ const Leads = () => {
 
     const handleTicketClick = (ticket) => {
         setCurrentTicket(ticket);
+        navigate(`/chat/${ticket.id}`)
     };
 
     const handleDoubleClick = (ticket) => {
-        navigate(`/chat/${ticket.id}`)
     };
 
     const closeModal = () => {
