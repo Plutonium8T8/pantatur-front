@@ -51,10 +51,12 @@
 
 .message.sent {
     align-items: flex-end;
+    padding-left:100px;
 }
 
 .message.received {
     align-items: flex-start;
+    padding-right: 100px;
 }
 
 .message .text {
