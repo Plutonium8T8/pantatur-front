@@ -736,56 +736,48 @@ const ChatComponent = ({ }) => {
                             const openImageInNewWindow = (url) => {
                                 const newWindow = window.open('', '_blank');
                                 newWindow.document.write(`
-                                    <html>
-                                        <head>
-                                            <title>Просмотр изображения</title>
-                                            <style>
-                                                body {
-                                                    display: flex;
-                                                    flex-direction: column;
-                                                    justify-content: center;
-                                                    align-items: center;
-                                                    height: 100vh;
-                                                    margin: 0;
-                                                    background-color: #f0f0f0;
-                                                }
-                                                img {
-                                                    max-width: 80%;
-                                                    max-height: 80%;
-                                                    border-radius: 8px;
-                                                }
-                                                .download-button {
-                                                    margin-top: 20px;
-                                                    padding: 10px 20px;
-                                                    background-color: #007bff;
-                                                    color: white;
-                                                    text-decoration: none;
-                                                    border-radius: 5px;
-                                                    font-size: 16px;
-                                                }
-                                                .download-button:hover {
-                                                    background-color: #0056b3;
-                                                }
-                                            </style>
-                                        </head>
-                                        <body>
-                                            <img src="${url}" alt="Просмотр изображения" />
-                                            <button class="download-button" onclick="downloadImage('${url}')">Скачать</button>
-                                            
-                                            <script>
-                                                function downloadImage(imageUrl) {
-                                                    const link = document.createElement('a');
-                                                    link.href = imageUrl;
-                                                    link.download = imageUrl.split('/').pop(); // Имя файла на основе URL
-                                                    link.click();
-                                                }
-                                            </script>
-                                        </body>
-                                    </html>
-                                `);
+                    <html>
+                        <head>
+                            <title>Просмотр изображения</title>
+                            <style>
+                                body {
+                                    display: flex;
+                                    justify-content: center;
+                                    align-items: center;
+                                    height: 100vh;
+                                    margin: 0;
+                                    background-color: #f0f0f0;
+                                }
+                                img {
+                                    max-width: 80%;
+                                    max-height: 80%;
+                                    border-radius: 8px;
+                                }
+                                .download-button {
+                                    margin-top: 20px;
+                                    padding: 10px 20px;
+                                    background-color: #007bff;
+                                    color: white;
+                                    text-decoration: none;
+                                    border-radius: 5px;
+                                    font-size: 16px;
+                                }
+                                .download-button:hover {
+                                    background-color: #0056b3;
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <div>
+                                <img src="${url}" alt="Просмотр изображения" />
+                                <br />
+                            </div>
+                        </body>
+                    </html>
+                `);
                                 newWindow.document.close();
                             };
-                            
+
                             return (
                                 <InView
                                     key={uniqueKey}
@@ -809,7 +801,7 @@ const ChatComponent = ({ }) => {
                                                                     maxHeight: '200px',
                                                                     borderRadius: '8px',
                                                                     cursor: 'pointer',
-                                                                    backgroundColor:'white',
+                                                                    backgroundColor: 'white',
                                                                 }}
                                                                 onClick={() => openImageInNewWindow(msg.message)}
                                                             />
@@ -879,6 +871,7 @@ const ChatComponent = ({ }) => {
                             );
                         })}
                 </div>
+
 
                 <div className="manager-send-message-container">
                     <textarea
