@@ -52,6 +52,7 @@ const ChatComponent = ({ }) => {
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [emojiPickerPosition, setEmojiPickerPosition] = useState({ top: 0, left: 0 });
     const [selectedMessage, setSelectedMessage] = useState(null); // Выбранный шаблон из Select
+    const [file, setFile] = useState(null);
 
     useEffect(() => {
         // Если ticketId передан через URL, устанавливаем его как selectedTicketId
@@ -331,52 +332,6 @@ const ChatComponent = ({ }) => {
         fetchTickets();
     };
 
-    const sendMessage = () => {
-        if (!managerMessage.trim()) {
-            return;
-        }
-
-        if (socket) {
-            console.log('WebSocket state before sending message:', socket.readyState);
-
-            if (socket.readyState === WebSocket.OPEN) {
-                setTimeout(() => {
-                    const currentTime = new Date().toISOString();
-
-                    const messageData = {
-                        type: 'message',
-                        data: {
-                            sender_id: Number(userId),
-                            client_id: [selectedTicketId],
-                            platform: 'web',
-                            text: managerMessage,
-                            time_sent: currentTime,
-                        }
-                    };
-
-                    try {
-                        socket.send(JSON.stringify(messageData));
-                        console.log('Message sent:', messageData);
-                        setManagerMessage('');
-
-                        // Обновляем состояние сообщений с новым сообщением
-                        setMessages1((prevMessages) => [
-                            ...prevMessages,
-                            { ...messageData.data, seen_at: false } // Новое сообщение, еще не прочитано
-                        ]);
-                    } catch (error) {
-                        console.error('Error sending message:', error);
-                    }
-                }, 100);
-            } else {
-                console.error('WebSocket не открыт, не удается отправить сообщение. Перезагрузите страницу');
-                alert('WebSocket не открыт, не удается отправить сообщение. Перезагрузите страницу');
-            }
-        } else {
-            console.error('Socket is null.');
-        }
-    };
-
     const handleInView = (isVisible, msg) => {
         if (isVisible && !msg.seen_at) {
             const readMessageData = {
@@ -399,7 +354,7 @@ const ChatComponent = ({ }) => {
     useEffect(() => {
         if (socket) {
             const handleSocketMessage = (event) => {
-                console.log('Raw WebSocket message received:', event.data);
+                // console.log('Raw WebSocket message received:', event.data);
                 getClientMessages();
 
                 try {
@@ -573,6 +528,137 @@ const ChatComponent = ({ }) => {
         }
     };
 
+    const uploadImage = async (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        const token = Cookies.get('jwt'); // Убедитесь, что библиотека Cookies импортирована
+
+        console.log('Preparing to upload image...');
+        console.log('FormData:', formData);
+        // console.log('Token:', token);
+
+        try {
+            const response = await fetch('https://pandatur-api.com/messages/upload', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    Authorization: `Bearer ${token}`, // Добавляем токен авторизации в заголовки
+                },
+            });
+
+            console.log('Response status:', response.status);
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Image uploaded successfully:', data);
+                return data; // Предполагается, что сервер возвращает объект с полем `url`
+            } else {
+                const errorMessage = `Failed to upload image. Status: ${response.status}`;
+                console.error(errorMessage);
+                throw new Error(errorMessage);
+            }
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            throw error;
+        }
+    };
+
+    const handleFileSelect = async (e) => {
+        const selectedFile = e.target.files[0];
+        console.log('Выбран файл:', selectedFile ? selectedFile.name : 'Файл не выбран');
+
+        if (selectedFile) {
+            try {
+                console.log('Начало загрузки и отправки');
+                await sendMessage(selectedFile); // Передаем файл напрямую
+                console.log('Файл загружен и сообщение отправлено!');
+            } catch (error) {
+                console.error('Ошибка при обработке файла:', error);
+            }
+        } else {
+            console.log('Файл не выбран.');
+        }
+    };
+
+    const sendMessage = async (selectedFile) => {
+        if (!managerMessage.trim() && !selectedFile) {
+            return;
+        }
+
+        if (socket) {
+            console.log('WebSocket state before sending message:', socket.readyState);
+
+            if (socket.readyState === WebSocket.OPEN) {
+                const currentTime = new Date().toISOString();
+
+                try {
+                    let imageUrl = null;
+
+                    // Если передан файл, загружаем его и получаем URL
+                    if (selectedFile) {
+                        const uploadResponse = await uploadImage(selectedFile);
+                        imageUrl = uploadResponse.url;
+                        console.log('Image URL received:', imageUrl);
+
+                        if (imageUrl) {
+                            const urlMessageData = {
+                                type: 'message',
+                                data: {
+                                    sender_id: Number(userId),
+                                    client_id: [selectedTicketId],
+                                    platform: 'web',
+                                    text: imageUrl,
+                                    time_sent: currentTime,
+                                },
+                            };
+
+                            // Отправляем через WebSocket
+                            socket.send(JSON.stringify(urlMessageData));
+                            console.log('URL message sent:', urlMessageData);
+
+                            // Обновляем сообщения
+                            setMessages1((prevMessages) => [
+                                ...prevMessages,
+                                { ...urlMessageData.data, seen_at: false },
+                            ]);
+                        }
+                    }
+
+                    // Если есть текстовое сообщение, отправляем его отдельно
+                    if (managerMessage.trim()) {
+                        const textMessageData = {
+                            type: 'message',
+                            data: {
+                                sender_id: Number(userId),
+                                client_id: [selectedTicketId],
+                                platform: 'web',
+                                text: managerMessage,
+                                time_sent: currentTime,
+                            },
+                        };
+
+                        socket.send(JSON.stringify(textMessageData));
+                        console.log('Text message sent:', textMessageData);
+
+                        setMessages1((prevMessages) => [
+                            ...prevMessages,
+                            { ...textMessageData.data, seen_at: false },
+                        ]);
+
+                        setManagerMessage('');
+                    }
+                } catch (error) {
+                    console.error('Ошибка при отправке сообщения:', error);
+                }
+            } else {
+                console.error('WebSocket не открыт. Перезагрузите страницу.');
+                alert('WebSocket не открыт. Перезагрузите страницу.');
+            }
+        } else {
+            console.error('Socket is null.');
+        }
+    };
+
     return (
         <div className="chat-container">
             <div className="users-container">
@@ -732,6 +818,16 @@ const ChatComponent = ({ }) => {
                         disabled={!selectedTicketId} // Если нет selectedTicketId, textarea отключена
                     />
                     <div className="btn-send-message">
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFileSelect}
+                            style={{ display: 'none' }}
+                            id="file-input"
+                        />
+                        <label htmlFor="file-input" className="file-button">
+                            📎
+                        </label>
                         <button
                             className="send-button"
                             onClick={handleClick}
@@ -739,7 +835,6 @@ const ChatComponent = ({ }) => {
                         >
                             Send
                         </button>
-                        <button className="file-button" disabled={!selectedTicketId}>📎</button>
                     </div>
                     <div className="container-template">
 
@@ -776,7 +871,7 @@ const ChatComponent = ({ }) => {
                                 value={selectedMessage} // Текущее значение Select
                                 onChange={handleSelectTChange} // Обработчик выбора
                                 placeholder="Выберите сообщение"
-                                className="red"
+                                className={"red"}
                             />
                         </div>
                     </div>

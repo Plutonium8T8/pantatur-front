@@ -411,4 +411,8 @@
 
 .red {
     border: 1px solid rebeccapurple;
+    color: red;
+}
+.menu-button:focus {
+    border: 1px solid blue;
 }

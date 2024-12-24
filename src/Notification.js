@@ -11,7 +11,7 @@ const Notification = ({ selectedTicketId }) => {
   useEffect(() => {
     if (socket) {
       const receiveMessage = (event) => {
-        console.log('Raw WebSocket message received notifications:', event.data);
+        // console.log('Raw WebSocket message received notifications:', event.data);
         try {
           const message = JSON.parse(event.data);
           console.log('Parsed WebSocket message notifications:', message);
@@ -43,7 +43,7 @@ const Notification = ({ selectedTicketId }) => {
               break;
   
             default:
-              console.warn('Неизвестный тип сообщения:', message);
+              // console.warn('Неизвестный тип сообщения:', message);
           }
         } catch (error) {
           console.error('Ошибка при разборе сообщения WebSocket:', error);
