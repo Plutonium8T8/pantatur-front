@@ -528,21 +528,21 @@ const ChatComponent = ({ }) => {
         }
     };
 
-    const uploadImage = async (file) => {
+    // Функция для загрузки файла
+    const uploadFile = async (file) => {
         const formData = new FormData();
         formData.append('file', file);
-        const token = Cookies.get('jwt'); // Убедитесь, что библиотека Cookies импортирована
+        const token = Cookies.get('jwt'); // Используем JWT токен для авторизации
 
-        console.log('Preparing to upload image...');
+        console.log('Preparing to upload file...');
         console.log('FormData:', formData);
-        // console.log('Token:', token);
 
         try {
             const response = await fetch('https://pandatur-api.com/messages/upload', {
                 method: 'POST',
                 body: formData,
                 headers: {
-                    Authorization: `Bearer ${token}`, // Добавляем токен авторизации в заголовки
+                    Authorization: `Bearer ${token}`,
                 },
             });
 
@@ -550,39 +550,41 @@ const ChatComponent = ({ }) => {
 
             if (response.ok) {
                 const data = await response.json();
-                console.log('Image uploaded successfully:', data);
-                return data; // Предполагается, что сервер возвращает объект с полем `url`
+                console.log('File uploaded successfully:', data);
+                return data; // Сервер должен вернуть объект с полем `url`
             } else {
-                const errorMessage = `Failed to upload image. Status: ${response.status}`;
+                const errorMessage = `Failed to upload file. Status: ${response.status}`;
                 console.error(errorMessage);
                 throw new Error(errorMessage);
             }
         } catch (error) {
-            console.error('Error uploading image:', error);
+            console.error('Error uploading file:', error);
             throw error;
         }
     };
 
+    // Обработчик выбора файла
     const handleFileSelect = async (e) => {
         const selectedFile = e.target.files[0];
-        console.log('Выбран файл:', selectedFile ? selectedFile.name : 'Файл не выбран');
+        console.log('Selected file:', selectedFile ? selectedFile.name : 'No file selected');
 
         if (selectedFile) {
             try {
-                console.log('Начало загрузки и отправки');
+                console.log('Uploading and sending file...');
                 await sendMessage(selectedFile); // Передаем файл напрямую
-                console.log('Файл загружен и сообщение отправлено!');
+                console.log('File uploaded and message sent!');
             } catch (error) {
-                console.error('Ошибка при обработке файла:', error);
+                console.error('Error processing file:', error);
             }
         } else {
-            console.log('Файл не выбран.');
+            console.log('No file selected.');
         }
     };
 
+    // Отправка сообщения
     const sendMessage = async (selectedFile) => {
         if (!managerMessage.trim() && !selectedFile) {
-            return;
+            return; // Если нет сообщения или файла — ничего не отправляем
         }
 
         if (socket) {
@@ -592,34 +594,34 @@ const ChatComponent = ({ }) => {
                 const currentTime = new Date().toISOString();
 
                 try {
-                    let imageUrl = null;
+                    let fileUrl = null;
 
                     // Если передан файл, загружаем его и получаем URL
                     if (selectedFile) {
-                        const uploadResponse = await uploadImage(selectedFile);
-                        imageUrl = uploadResponse.url;
-                        console.log('Image URL received:', imageUrl);
+                        const uploadResponse = await uploadFile(selectedFile);
+                        fileUrl = uploadResponse.url;
+                        console.log('File URL received:', fileUrl);
 
-                        if (imageUrl) {
-                            const urlMessageData = {
+                        if (fileUrl) {
+                            const fileMessageData = {
                                 type: 'message',
                                 data: {
                                     sender_id: Number(userId),
                                     client_id: [selectedTicketId],
                                     platform: 'web',
-                                    text: imageUrl,
+                                    text: fileUrl, // URL файла будет отправлен в сообщении
                                     time_sent: currentTime,
                                 },
                             };
 
                             // Отправляем через WebSocket
-                            socket.send(JSON.stringify(urlMessageData));
-                            console.log('URL message sent:', urlMessageData);
+                            socket.send(JSON.stringify(fileMessageData));
+                            console.log('File URL message sent:', fileMessageData);
 
-                            // Обновляем сообщения
+                            // Обновляем список сообщений
                             setMessages1((prevMessages) => [
                                 ...prevMessages,
-                                { ...urlMessageData.data, seen_at: false },
+                                { ...fileMessageData.data, seen_at: false },
                             ]);
                         }
                     }
@@ -645,14 +647,14 @@ const ChatComponent = ({ }) => {
                             { ...textMessageData.data, seen_at: false },
                         ]);
 
-                        setManagerMessage('');
+                        setManagerMessage(''); // Очищаем текстовое сообщение
                     }
                 } catch (error) {
-                    console.error('Ошибка при отправке сообщения:', error);
+                    console.error('Error sending message:', error);
                 }
             } else {
-                console.error('WebSocket не открыт. Перезагрузите страницу.');
-                alert('WebSocket не открыт. Перезагрузите страницу.');
+                console.error('WebSocket is not open. Please reload the page.');
+                alert('WebSocket is not open. Please reload the page.');
             }
         } else {
             console.error('Socket is null.');
@@ -732,6 +734,9 @@ const ChatComponent = ({ }) => {
                             // Функция для проверки, является ли текст URL изображения
                             const isImageUrl = (text) => /\.(jpeg|jpg|gif|png|webp|svg)$/i.test(text);
 
+                            // Функция для проверки, является ли текст URL файла (например, PDF или DOCX)
+                            const isFileUrl = (text) => /\.(pdf|docx|xlsx|pptx)$/i.test(text);
+
                             // Функция для открытия изображения в новом окне
                             const openImageInNewWindow = (url) => {
                                 const newWindow = window.open('', '_blank');
@@ -752,18 +757,6 @@ const ChatComponent = ({ }) => {
                                     max-width: 80%;
                                     max-height: 80%;
                                     border-radius: 8px;
-                                }
-                                .download-button {
-                                    margin-top: 20px;
-                                    padding: 10px 20px;
-                                    background-color: #007bff;
-                                    color: white;
-                                    text-decoration: none;
-                                    border-radius: 5px;
-                                    font-size: 16px;
-                                }
-                                .download-button:hover {
-                                    background-color: #0056b3;
                                 }
                             </style>
                         </head>
@@ -805,6 +798,19 @@ const ChatComponent = ({ }) => {
                                                                 }}
                                                                 onClick={() => openImageInNewWindow(msg.message)}
                                                             />
+                                                        ) : isFileUrl(msg.message) ? (
+                                                            <a
+                                                                href={msg.message}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                style={{
+                                                                    textDecoration: 'none',
+                                                                    color: '#007bff',
+                                                                    fontWeight: 'bold',
+                                                                }}
+                                                            >
+                                                                Открыть файл: {msg.message.split('/').pop()}
+                                                            </a>
                                                         ) : (
                                                             msg.message
                                                         )}
