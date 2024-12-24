@@ -729,6 +729,9 @@ const ChatComponent = ({ }) => {
                         .map((msg) => {
                             const uniqueKey = msg.id || `${msg.client_id}-${msg.time_sent}`;
 
+                            // Функция для проверки, является ли текст URL изображения
+                            const isImageUrl = (text) => /\.(jpeg|jpg|gif|png|webp|svg)$/i.test(text);
+
                             return (
                                 <InView
                                     key={uniqueKey}
@@ -742,7 +745,21 @@ const ChatComponent = ({ }) => {
                                         >
                                             <div className="message-content">
                                                 <div className="message-row">
-                                                    <div className="text">{msg.message}
+                                                    <div className="text">
+                                                        {isImageUrl(msg.message) ? (
+                                                            <img
+                                                                src={msg.message}
+                                                                alt="Отправленное изображение"
+                                                                style={{
+                                                                    maxWidth: '200px',
+                                                                    maxHeight: '200px',
+                                                                    borderRadius: '8px',
+                                                                    backgroundColor:"white"
+                                                                }}
+                                                            />
+                                                        ) : (
+                                                            msg.message
+                                                        )}
                                                         {editMessageId === msg.id ? (
                                                             <div className="edit-mode">
                                                                 <input
@@ -799,7 +816,6 @@ const ChatComponent = ({ }) => {
                                                         </div>
                                                     )}
                                                 </div>
-
                                             </div>
                                         </div>
                                     )}
