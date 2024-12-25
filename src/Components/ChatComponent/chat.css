@@ -109,8 +109,7 @@
     gap: 10px;
 }
 
-.send-button,
-.file-button {
+.send-button {
     padding: 8px 12px;
     border: none;
     background-color: #007bff;
@@ -121,15 +120,19 @@
 }
 
 .file-button {
-    background-color: #6c757d;
+    text-align: center;
+    border: 1px solid gray;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+    padding: 3px;
+}
+
+.file-button:hover {
+    background-color: #265689;
 }
 
 .send-button:hover {
     background-color: #0056b3;
-}
-
-.file-button:hover {
-    background-color: #5a6268;
 }
 
 .chat-item {
@@ -208,23 +211,6 @@
     display: flex;
     gap: 8px;
     margin-top: 10px;
-}
-
-.send-button,
-.file-button {
-    background-color: #007bff;
-    color: white;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s ease;
-}
-
-.send-button:hover,
-.file-button:hover {
-    background-color: #0056b3;
 }
 
 .selects-container {
@@ -409,10 +395,14 @@
     gap: 10px;
 }
 
-.red {
-    border: 1px solid rebeccapurple;
-    color: red;
-}
 .menu-button:focus {
     border: 1px solid blue;
+}
+
+.emoji-button {
+    display: flex;
+    background-color: white;
+    border: 1px solid red;
+    justify-content: center;
+    align-items: center;
 }

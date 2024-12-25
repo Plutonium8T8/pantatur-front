@@ -941,7 +941,6 @@ const ChatComponent = ({ }) => {
                                 value={selectedMessage} // Текущее значение Select
                                 onChange={handleSelectTChange} // Обработчик выбора
                                 placeholder="Выберите сообщение"
-                                className={"red"}
                             />
                         </div>
                     </div>
