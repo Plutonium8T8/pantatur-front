@@ -8,6 +8,10 @@ const Notification = ({ selectedTicketId }) => {
   const { enqueueSnackbar } = useSnackbar(); // Хук для отображения уведомлений
   const { userId } = useUser();
 
+  const truncateText = (text, maxLength = 100) => {
+    return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
+  };
+
   useEffect(() => {
     if (socket) {
       const receiveMessage = (event) => {
@@ -21,8 +25,9 @@ const Notification = ({ selectedTicketId }) => {
               // Обрабатываем новое сообщение
               if (message.data.sender_id !== userId) {
                 // Показ уведомления о новом сообщении
+                const messageText = truncateText(message.data.message, 50); // Обрезаем сообщение до 100 символов
                 enqueueSnackbar(
-                  `Новое сообщение от клиента ${message.data.client_id}: ${message.data.message}`,
+                  `Новое сообщение от клиента ${message.data.client_id}: ${messageText}`,
                   { variant: 'info' }
                 );
               }
@@ -30,7 +35,8 @@ const Notification = ({ selectedTicketId }) => {
   
             case 'notification':
               // Показ уведомления
-              enqueueSnackbar(message.data.text || 'Уведомление получено!', { variant: 'success' });
+              const notificationText = truncateText(message.data.text || 'Уведомление получено!', 100);
+              enqueueSnackbar(notificationText, { variant: 'success' });
               break;
   
             case 'task':
