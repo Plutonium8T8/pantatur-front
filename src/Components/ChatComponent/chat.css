@@ -381,7 +381,7 @@
     flex-direction: column;
     width: 30px;
     align-items: center;
-    gap: 10px;
+    gap: 7px;
 }
 
 .container-template-btn {
@@ -412,6 +412,7 @@
 
 .select-shablon {
     display: flex;
+    padding-bottom: 2px;
 }
 
 .custom-select-1 {
