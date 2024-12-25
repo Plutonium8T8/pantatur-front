@@ -500,22 +500,41 @@ const ChatComponent = ({ }) => {
     };
 
     const handleEmojiClick = (emojiObject) => {
+        // Вставка эмодзи в сообщение
         setManagerMessage((prevMessage) => prevMessage + emojiObject.emoji);
+        console.log(emojiObject.emoji); // Логируем выбранный эмодзи
     };
 
-    const handleEmojiHover = (event) => {
+    const handleEmojiClickButton = (event) => {
         const rect = event.target.getBoundingClientRect();
         const emojiPickerHeight = 450; // Предполагаемая высота эмодзи-пикера
+
+        // Устанавливаем позицию эмодзи-пикера
         setEmojiPickerPosition({
             top: rect.top + window.scrollY - emojiPickerHeight, // Смещаем вверх
             left: rect.left + window.scrollX,
         });
-        setShowEmojiPicker(true);
+
+        // Открываем или закрываем пикер при клике на иконку
+        setShowEmojiPicker((prev) => !prev);
     };
 
-    const handleMouseLeave = () => {
-        setShowEmojiPicker(false);
+    // Обработчик клика вне области эмодзи-пикера, чтобы закрыть пикер
+    const handleClickOutside = (event) => {
+        // Закрытие пикера только если клик был вне области контейнера пикера
+        if (!event.target.closest('.emoji-picker-container') && !event.target.closest('.emoji-picker-popup')) {
+            setShowEmojiPicker(false);
+        }
     };
+
+    // Добавляем обработчик события для клика вне пикера
+    useEffect(() => {
+        document.addEventListener('click', handleClickOutside);
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+        };
+    }, []);
+
 
     // Обработчик для изменения выбранного шаблона
     const handleSelectTChange = (selectedOption) => {
@@ -910,11 +929,12 @@ const ChatComponent = ({ }) => {
                         <div className="emoji-picker-container">
                             <button
                                 className="emoji-button"
-                                onMouseEnter={handleEmojiHover}
+                                onClick={handleEmojiClickButton} // Заменили на onClick
                                 disabled={!selectedTicketId}
                             >
                                 😊
                             </button>
+
                             {showEmojiPicker &&
                                 ReactDOM.createPortal(
                                     <div
@@ -926,20 +946,21 @@ const ChatComponent = ({ }) => {
                                             zIndex: 1000, // Обеспечивает отображение поверх других элементов
                                         }}
                                         onMouseEnter={() => setShowEmojiPicker(true)} // Оставляем открытым при наведении
-                                        onMouseLeave={handleMouseLeave} // Закрываем, если курсор уходит
+                                        onMouseLeave={() => setShowEmojiPicker(true)} // Можно изменить на задержку или другую логику
                                     >
                                         <EmojiPicker onEmojiClick={handleEmojiClick} />
                                     </div>,
                                     document.body
                                 )}
                         </div>
-                        <div className="container-template">
+                        <div className="select-shablon">
                             <Select
                                 options={templateOptions} // Передаем преобразованные опции
                                 id="message-template"
                                 value={selectedMessage} // Текущее значение Select
                                 onChange={handleSelectTChange} // Обработчик выбора
                                 placeholder="Выберите сообщение"
+                                customClassName="custom-select-1"
                             />
                         </div>
                     </div>
