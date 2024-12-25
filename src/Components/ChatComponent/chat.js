@@ -28,6 +28,7 @@ import './chat.css';
 import { useUnreadMessages } from '../../Unread';
 import EmojiPicker from 'emoji-picker-react';
 import ReactDOM from "react-dom";
+import Icon from '../../Components/Icon/index';
 
 const ChatComponent = ({ }) => {
     const { userId } = useUser();
@@ -52,7 +53,6 @@ const ChatComponent = ({ }) => {
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [emojiPickerPosition, setEmojiPickerPosition] = useState({ top: 0, left: 0 });
     const [selectedMessage, setSelectedMessage] = useState(null); // Выбранный шаблон из Select
-    const [file, setFile] = useState(null);
 
     useEffect(() => {
         // Если ticketId передан через URL, устанавливаем его как selectedTicketId
@@ -888,6 +888,12 @@ const ChatComponent = ({ }) => {
                         disabled={!selectedTicketId} // Если нет selectedTicketId, textarea отключена
                     />
                     <div className="btn-send-message">
+                        <Icon
+                            name={"button-send"}
+                            className="send-button"
+                            onClick={handleClick}
+                            disabled={!selectedTicketId}
+                        />
                         <input
                             type="file"
                             accept="image/*"
@@ -898,13 +904,6 @@ const ChatComponent = ({ }) => {
                         <label htmlFor="file-input" className="file-button">
                             📎
                         </label>
-                        <button
-                            className="send-button"
-                            onClick={handleClick}
-                            disabled={!selectedTicketId} // Кнопка также отключена, если нет selectedTicketId
-                        >
-                            Send
-                        </button>
                     </div>
                     <div className="container-template">
 

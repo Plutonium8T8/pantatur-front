@@ -277,6 +277,7 @@ button {
   border-radius: 4px;
   cursor: pointer;
   transition: transform 0.1s ease;
+  background-color: transparent;
 }
 
 /* Стили для кнопки удаления */

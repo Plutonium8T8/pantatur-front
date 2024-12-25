@@ -110,12 +110,12 @@
 }
 
 .send-button {
-    padding: 8px 12px;
-    border: none;
+    border: 1px solid #ddd;
+    padding: 12px;
+}
+
+.send-button:hover {
     background-color: #007bff;
-    color: #fff;
-    border-radius: 5px;
-    cursor: pointer;
     transition: background-color 0.3s;
 }
 
@@ -129,10 +129,6 @@
 
 .file-button:hover {
     background-color: #265689;
-}
-
-.send-button:hover {
-    background-color: #0056b3;
 }
 
 .chat-item {
@@ -402,7 +398,7 @@
 .emoji-button {
     display: flex;
     background-color: white;
-    border: 1px solid red;
     justify-content: center;
     align-items: center;
+    border: 1px solid #ddd;
 }
