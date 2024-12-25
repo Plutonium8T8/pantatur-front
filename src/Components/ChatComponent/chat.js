@@ -805,7 +805,7 @@ const ChatComponent = ({ }) => {
                                                                 rel="noopener noreferrer"
                                                                 style={{
                                                                     textDecoration: 'none',
-                                                                    color: '#007bff',
+                                                                    color: 'white',
                                                                     fontWeight: 'bold',
                                                                 }}
                                                             >
