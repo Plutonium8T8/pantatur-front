@@ -54,6 +54,7 @@ const ChatComponent = ({ }) => {
     const [emojiPickerPosition, setEmojiPickerPosition] = useState({ top: 0, left: 0 });
     const [selectedMessage, setSelectedMessage] = useState(null); // Выбранный шаблон из Select
     const [selectedMessageId, setSelectedMessageId] = useState(null);
+    const [selectedReaction, setSelectedReaction] = useState({});
 
     useEffect(() => {
         // Если ticketId передан через URL, устанавливаем его как selectedTicketId
@@ -695,6 +696,22 @@ const ChatComponent = ({ }) => {
         }
     };
 
+    const handleReactionClick = (reaction, messageId) => {
+        setSelectedReaction((prev) => ({
+            ...prev,
+            [messageId]: reaction,
+        }));
+
+        // Отправляем реакцию на сервер или сохраняем в БД
+        sendReaction(messageId, userId, reaction);
+    };
+
+    // Функция для извлечения последней реакции из строки реакций
+    const getLastReaction = (reactions) => {
+        const reactionsArray = reactions.replace(/[{}]/g, '').split(',');
+        return reactionsArray[reactionsArray.length - 1]; // Последняя реакция
+    };
+
     return (
         <div className="chat-container">
             <div className="users-container">
@@ -775,35 +792,37 @@ const ChatComponent = ({ }) => {
                             const openImageInNewWindow = (url) => {
                                 const newWindow = window.open('', '_blank');
                                 newWindow.document.write(`
-                                                            <html>
-                                                                <head>
-                                                                    <title>Просмотр изображения</title>
-                                                                    <style>
-                                                                        body {
-                                                                            display: flex;
-                                                                            justify-content: center;
-                                                                            align-items: center;
-                                                                            height: 100vh;
-                                                                            margin: 0;
-                                                                            background-color: #f0f0f0;
-                                                                        }
-                                                                        img {
-                                                                            max-width: 80%;
-                                                                            max-height: 80%;
-                                                                            border-radius: 8px;
-                                                                        }
-                                                                    </style>
-                                                                </head>
-                                                                <body>
-                                                                    <div>
-                                                                        <img src="${url}" alt="Просмотр изображения" />
-                                                                        <br />
-                                                                    </div>
-                                                                </body>
-                                                            </html>
-                                                        `);
+                        <html>
+                            <head>
+                                <title>Просмотр изображения</title>
+                                <style>
+                                    body {
+                                        display: flex;
+                                        justify-content: center;
+                                        align-items: center;
+                                        height: 100vh;
+                                        margin: 0;
+                                        background-color: #f0f0f0;
+                                    }
+                                    img {
+                                        max-width: 80%;
+                                        max-height: 80%;
+                                        border-radius: 8px;
+                                    }
+                                </style>
+                            </head>
+                            <body>
+                                <div>
+                                    <img src="${url}" alt="Просмотр изображения" />
+                                    <br />
+                                </div>
+                            </body>
+                        </html>
+                    `);
                                 newWindow.document.close();
                             };
+
+                            const lastReaction = getLastReaction(msg.reactions); // Получаем последнюю реакцию
 
                             return (
                                 <InView
@@ -864,13 +883,14 @@ const ChatComponent = ({ }) => {
                                                             </div>
                                                         ) : (
                                                             <div className="message-time">
-                                                                {/* Кнопка для показа реакций только для выбранного сообщения */}
+                                                                {/* Показываем последнюю реакцию как кнопку для изменения реакции */}
                                                                 <div
                                                                     className="reaction-toggle-button"
                                                                     onClick={() => setSelectedMessageId(selectedMessageId === msg.id ? null : msg.id)}
                                                                 >
-                                                                    {selectedMessageId === msg.id ? '❌' : '😊'}
+                                                                    {lastReaction || '😊'} {/* Показываем последнюю реакцию или эмодзи по умолчанию */}
                                                                 </div>
+
                                                                 {new Date(msg.time_sent).toLocaleTimeString('ru-RU', {
                                                                     hour: '2-digit',
                                                                     minute: '2-digit',
@@ -900,14 +920,12 @@ const ChatComponent = ({ }) => {
                                                     )}
 
                                                     {/* Кнопки реакций, которые появляются только для выбранного сообщения */}
-                                                    {selectedMessageId === msg.id && (
+                                                    {selectedMessageId === msg.id && !selectedReaction[msg.id] && (
                                                         <div className="reaction-buttons">
                                                             {['👍', '❤️', '😂', '😮', '😢', '😡'].map((reaction) => (
                                                                 <button
                                                                     key={reaction}
-                                                                    onClick={() =>
-                                                                        sendReaction(msg.id, userId, reaction)
-                                                                    }
+                                                                    onClick={() => handleReactionClick(reaction, msg.id)}
                                                                 >
                                                                     {reaction}
                                                                 </button>
