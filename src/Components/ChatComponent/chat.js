@@ -379,6 +379,7 @@ const ChatComponent = ({ }) => {
                                     return updatedUnreadMessages;
                                 });
                             }
+                            // getClientMessages();
                             break;
                         }
 
@@ -397,6 +398,10 @@ const ChatComponent = ({ }) => {
 
                         case 'seen':
                             handleSeen(message.data);
+                            break;
+                        case 'react':
+                            handleSeen(message.data);
+                            getClientMessages();
                             break;
 
                         default:
@@ -697,10 +702,17 @@ const ChatComponent = ({ }) => {
     };
 
     const handleReactionClick = (reaction, messageId) => {
-        setSelectedReaction((prev) => ({
-            ...prev,
-            [messageId]: reaction,
-        }));
+        // Проверяем, если текущая реакция такая же, как выбранная, то сбрасываем ее (удаляем реакцию)
+        setSelectedReaction((prev) => {
+            const newReactions = { ...prev };
+            // Если реакция уже была выбрана, то сбрасываем ее, иначе ставим новую реакцию
+            if (newReactions[messageId] === reaction) {
+                delete newReactions[messageId];
+            } else {
+                newReactions[messageId] = reaction;
+            }
+            return newReactions;
+        });
 
         // Отправляем реакцию на сервер или сохраняем в БД
         sendReaction(messageId, userId, reaction);
@@ -708,9 +720,13 @@ const ChatComponent = ({ }) => {
 
     // Функция для извлечения последней реакции из строки реакций
     const getLastReaction = (reactions) => {
-        const reactionsArray = reactions.replace(/[{}]/g, '').split(',');
-        return reactionsArray[reactionsArray.length - 1]; // Последняя реакция
+        // Убираем фигурные скобки и разделяем строку на массив реакций
+        const reactionsArray = reactions ? reactions.replace(/[{}]/g, '').split(',') : [];
+
+        // Проверяем, есть ли реакции в массиве и возвращаем последнюю
+        return reactionsArray.length > 0 ? reactionsArray[reactionsArray.length - 1] : '😊'; // Возвращаем '😊', если реакций нет
     };
+
 
     return (
         <div className="chat-container">
@@ -792,37 +808,38 @@ const ChatComponent = ({ }) => {
                             const openImageInNewWindow = (url) => {
                                 const newWindow = window.open('', '_blank');
                                 newWindow.document.write(`
-                        <html>
-                            <head>
-                                <title>Просмотр изображения</title>
-                                <style>
-                                    body {
-                                        display: flex;
-                                        justify-content: center;
-                                        align-items: center;
-                                        height: 100vh;
-                                        margin: 0;
-                                        background-color: #f0f0f0;
-                                    }
-                                    img {
-                                        max-width: 80%;
-                                        max-height: 80%;
-                                        border-radius: 8px;
-                                    }
-                                </style>
-                            </head>
-                            <body>
-                                <div>
-                                    <img src="${url}" alt="Просмотр изображения" />
-                                    <br />
-                                </div>
-                            </body>
-                        </html>
-                    `);
+                                                            <html>
+                                                                <head>
+                                                                    <title>Просмотр изображения</title>
+                                                                    <style>
+                                                                        body {
+                                                                            display: flex;
+                                                                            justify-content: center;
+                                                                            align-items: center;
+                                                                            height: 100vh;
+                                                                            margin: 0;
+                                                                            background-color: #f0f0f0;
+                                                                        }
+                                                                        img {
+                                                                            max-width: 80%;
+                                                                            max-height: 80%;
+                                                                            border-radius: 8px;
+                                                                        }
+                                                                    </style>
+                                                                </head>
+                                                                <body>
+                                                                    <div>
+                                                                        <img src="${url}" alt="Просмотр изображения" />
+                                                                        <br />
+                                                                    </div>
+                                                                </body>
+                                                            </html>
+                                                        `);
                                 newWindow.document.close();
                             };
 
-                            const lastReaction = getLastReaction(msg.reactions); // Получаем последнюю реакцию
+                            // Получаем последнюю реакцию или используем реакцию из состояния
+                            const lastReaction = selectedReaction[msg.id] || getLastReaction(msg.reactions);
 
                             return (
                                 <InView
@@ -883,7 +900,7 @@ const ChatComponent = ({ }) => {
                                                             </div>
                                                         ) : (
                                                             <div className="message-time">
-                                                                {/* Показываем последнюю реакцию как кнопку для изменения реакции */}
+                                                                {/* Показываем реакцию как кнопку для изменения реакции */}
                                                                 <div
                                                                     className="reaction-toggle-button"
                                                                     onClick={() => setSelectedMessageId(selectedMessageId === msg.id ? null : msg.id)}
