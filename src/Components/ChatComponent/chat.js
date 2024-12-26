@@ -53,7 +53,7 @@ const ChatComponent = ({ }) => {
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [emojiPickerPosition, setEmojiPickerPosition] = useState({ top: 0, left: 0 });
     const [selectedMessage, setSelectedMessage] = useState(null); // Выбранный шаблон из Select
-    const [reactions, setReactions] = useState({}); // Хранит текущие реакции для сообщений
+    const [selectedMessageId, setSelectedMessageId] = useState(null);
 
     useEffect(() => {
         // Если ticketId передан через URL, устанавливаем его как selectedTicketId
@@ -454,7 +454,8 @@ const ChatComponent = ({ }) => {
                 data: {
                     message_id: editMessageId,
                     sender_id: userId,
-                    new_text: editedText
+                    new_text: editedText,
+                    edited_at: new Date().toISOString()  // текущая дата и время в формате ISO 8601
                 }
             };
 
@@ -774,33 +775,33 @@ const ChatComponent = ({ }) => {
                             const openImageInNewWindow = (url) => {
                                 const newWindow = window.open('', '_blank');
                                 newWindow.document.write(`
-                                    <html>
-                                        <head>
-                                            <title>Просмотр изображения</title>
-                                            <style>
-                                                body {
-                                                    display: flex;
-                                                    justify-content: center;
-                                                    align-items: center;
-                                                    height: 100vh;
-                                                    margin: 0;
-                                                    background-color: #f0f0f0;
-                                                }
-                                                img {
-                                                    max-width: 80%;
-                                                    max-height: 80%;
-                                                    border-radius: 8px;
-                                                }
-                                            </style>
-                                        </head>
-                                        <body>
-                                            <div>
-                                                <img src="${url}" alt="Просмотр изображения" />
-                                                <br />
-                                            </div>
-                                        </body>
-                                    </html>
-                                `);
+                                                            <html>
+                                                                <head>
+                                                                    <title>Просмотр изображения</title>
+                                                                    <style>
+                                                                        body {
+                                                                            display: flex;
+                                                                            justify-content: center;
+                                                                            align-items: center;
+                                                                            height: 100vh;
+                                                                            margin: 0;
+                                                                            background-color: #f0f0f0;
+                                                                        }
+                                                                        img {
+                                                                            max-width: 80%;
+                                                                            max-height: 80%;
+                                                                            border-radius: 8px;
+                                                                        }
+                                                                    </style>
+                                                                </head>
+                                                                <body>
+                                                                    <div>
+                                                                        <img src="${url}" alt="Просмотр изображения" />
+                                                                        <br />
+                                                                    </div>
+                                                                </body>
+                                                            </html>
+                                                        `);
                                 newWindow.document.close();
                             };
 
@@ -847,6 +848,7 @@ const ChatComponent = ({ }) => {
                                                         ) : (
                                                             msg.message
                                                         )}
+
                                                         {editMessageId === msg.id ? (
                                                             <div className="edit-mode">
                                                                 <input
@@ -856,22 +858,19 @@ const ChatComponent = ({ }) => {
                                                                     className="edit-input"
                                                                 />
                                                                 <div className="edit-buttons">
-                                                                    <button
-                                                                        onClick={handleSave}
-                                                                        className="save-button"
-                                                                    >
-                                                                        ✅
-                                                                    </button>
-                                                                    <button
-                                                                        onClick={handleCancel}
-                                                                        className="cancel-button"
-                                                                    >
-                                                                        ❌
-                                                                    </button>
+                                                                    <button onClick={handleSave} className="save-button">✅</button>
+                                                                    <button onClick={handleCancel} className="cancel-button">❌</button>
                                                                 </div>
                                                             </div>
                                                         ) : (
                                                             <div className="message-time">
+                                                                {/* Кнопка для показа реакций только для выбранного сообщения */}
+                                                                <div
+                                                                    className="reaction-toggle-button"
+                                                                    onClick={() => setSelectedMessageId(selectedMessageId === msg.id ? null : msg.id)}
+                                                                >
+                                                                    {selectedMessageId === msg.id ? '❌' : '😊'}
+                                                                </div>
                                                                 {new Date(msg.time_sent).toLocaleTimeString('ru-RU', {
                                                                     hour: '2-digit',
                                                                     minute: '2-digit',
@@ -879,15 +878,14 @@ const ChatComponent = ({ }) => {
                                                             </div>
                                                         )}
                                                     </div>
+
                                                     {/* Показываем меню только для своих сообщений */}
                                                     {msg.sender_id === userId && (
                                                         <div className="menu-container">
                                                             <button
                                                                 className="menu-button"
                                                                 onClick={() =>
-                                                                    setMenuMessageId(
-                                                                        menuMessageId === msg.id ? null : msg.id
-                                                                    )
+                                                                    setMenuMessageId(menuMessageId === msg.id ? null : msg.id)
                                                                 }
                                                             >
                                                                 ⋮
@@ -900,19 +898,22 @@ const ChatComponent = ({ }) => {
                                                             )}
                                                         </div>
                                                     )}
-                                                    {/* Кнопки реакций */}
-                                                    <div className="reaction-buttons">
-                                                        {['👍', '❤️', '😂', '😮', '😢', '😡'].map((reaction) => (
-                                                            <button
-                                                                key={reaction}
-                                                                onClick={() =>
-                                                                    sendReaction(msg.id, userId, reaction)
-                                                                }
-                                                            >
-                                                                {reaction}
-                                                            </button>
-                                                        ))}
-                                                    </div>
+
+                                                    {/* Кнопки реакций, которые появляются только для выбранного сообщения */}
+                                                    {selectedMessageId === msg.id && (
+                                                        <div className="reaction-buttons">
+                                                            {['👍', '❤️', '😂', '😮', '😢', '😡'].map((reaction) => (
+                                                                <button
+                                                                    key={reaction}
+                                                                    onClick={() =>
+                                                                        sendReaction(msg.id, userId, reaction)
+                                                                    }
+                                                                >
+                                                                    {reaction}
+                                                                </button>
+                                                            ))}
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>

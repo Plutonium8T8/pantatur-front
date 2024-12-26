@@ -420,3 +420,10 @@
     justify-content: center;
     width: 35px;
 }
+.reaction-toggle-button {
+    cursor: pointer;
+}
+.reaction-buttons {
+    display: flex;
+    flex-direction: row;
+}
