@@ -19,7 +19,7 @@ const Notification = ({ selectedTicketId }) => {
         try {
           const message = JSON.parse(event.data);
           console.log('Parsed WebSocket message notifications:', message);
-  
+
           switch (message.type) {
             case 'message':
               // Обрабатываем новое сообщение
@@ -32,36 +32,36 @@ const Notification = ({ selectedTicketId }) => {
                 );
               }
               break;
-  
+
             case 'notification':
               // Показ уведомления
               const notificationText = truncateText(message.data.text || 'Уведомление получено!', 100);
               enqueueSnackbar(notificationText, { variant: 'success' });
               break;
-  
+
             case 'task':
               // Показ уведомления о новой задаче
               enqueueSnackbar(`Новая задача: ${message.data.title}`, { variant: 'warning' });
               break;
-  
+
             case 'seen':
               // Обработать событие seen
               break;
-  
+
             default:
-              // console.warn('Неизвестный тип сообщения:', message);
+            // console.warn('Неизвестный тип сообщения:', message);
           }
         } catch (error) {
           console.error('Ошибка при разборе сообщения WebSocket:', error);
         }
       };
-  
+
       // Устанавливаем обработчики WebSocket
       socket.onopen = () => console.log('WebSocket подключен');
       socket.onerror = (error) => console.error('WebSocket ошибка:', error);
       socket.onclose = () => console.log('WebSocket закрыт');
       socket.addEventListener('message', receiveMessage);
-  
+
       // Очистка обработчиков при размонтировании
       return () => {
         socket.removeEventListener('message', receiveMessage);
@@ -70,7 +70,7 @@ const Notification = ({ selectedTicketId }) => {
         socket.onclose = null;
       };
     }
-  }, [socket, selectedTicketId, enqueueSnackbar]);   
+  }, [socket, selectedTicketId, enqueueSnackbar]);
 
   return null; // Компонент не отображает UI, только управляет уведомлениями
 };

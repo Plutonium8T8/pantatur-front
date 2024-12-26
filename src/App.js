@@ -12,6 +12,7 @@ import UserProfile from './Components/UserPage/UserPage';
 import { SnackbarProvider, closeSnackbar } from 'notistack';
 import Notification from './Notification';
 import { UnreadMessagesProvider } from './Unread';  // Импортируем UnreadMessagesProvider из Unread.js
+import NotificationComponent from './NotificationComponent';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -93,6 +94,7 @@ function App() {
                           <ChatComponent />
                         }
                       />
+                      <Route path="/notifications" element={<NotificationComponent />} /> {/* Добавлено */}
                       <Route path="*" element={<div>Страница в разработке</div>} />
                     </Routes>
                   </div>

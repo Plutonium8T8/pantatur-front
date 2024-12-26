@@ -1,0 +1,69 @@
+.notification-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.split-screen {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.left-side,
+.right-side {
+    width: 48%; /* Устанавливаем ширину для левой и правой части */
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+    overflow-y: auto; /* Скроллинг если контент превышает размер */
+}
+
+.left-side {
+    background-color: #f9f9f9;
+}
+
+.right-side {
+    background-color: #f0f0f0;
+}
+
+h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    padding: 5px;
+    border-bottom: 1px solid #ddd;
+}
+
+li:last-child {
+    border-bottom: none;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+form input {
+    margin-bottom: 10px;
+}
+
+form button {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: #0056b3;
+}
