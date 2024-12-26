@@ -75,38 +75,33 @@ const TicketModal = ({ ticket, onClose }) => {
     }
   };
 
-  const handleSubmitCountryAndTransport = async () => {
-    const { country, transport, id } = ticket;
+  // const handleSubmitCountryAndTransport = async () => {
+  //   const { country, transport, id } = ticket;
 
-    if (!country || !transport) {
-      alert('Выберите значения для Country и Transport');
-      return;
-    }
+  //   try {
+  //     const token = Cookies.get('jwt'); // Получение токена из cookie
 
-    try {
-      const token = Cookies.get('jwt'); // Получение токена из cookie
+  //     const response = await fetch(`https://pandatur-api.com/ticket-info/${id}`, {
+  //       method: 'POST', // Или 'PUT', если данные нужно обновлять
+  //       headers: {
+  //         'Authorization': `Bearer ${token}`,
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({ country, transport }),
+  //     });
 
-      const response = await fetch(`https://pandatur-api.com/ticket-info/${id}`, {
-        method: 'POST', // Или 'PUT', если данные нужно обновлять
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ country, transport }),
-      });
+  //     if (!response.ok) {
+  //       throw new Error('Ошибка при отправке данных');
+  //     }
 
-      if (!response.ok) {
-        throw new Error('Ошибка при отправке данных');
-      }
-
-      const result = await response.json();
-      console.log('Успешно отправлено:', result);
-      alert('Данные успешно отправлены!');
-    } catch (error) {
-      console.error('Ошибка отправки данных:', error);
-      alert('Не удалось отправить данные.');
-    }
-  };
+  //     const result = await response.json();
+  //     console.log('Успешно отправлено:', result);
+  //     alert('Данные успешно отправлены!');
+  //   } catch (error) {
+  //     console.error('Ошибка отправки данных:', error);
+  //     alert('Не удалось отправить данные.');
+  //   }
+  // };
 
   const handleSave = async () => {
     const ticketData = { ...editedTicket, client_id: userId };
@@ -129,8 +124,8 @@ const TicketModal = ({ ticket, onClose }) => {
       // Сначала сохраняем тикет
       await handleSave();
 
-      // Затем отправляем country и transport
-      await handleSubmitCountryAndTransport();
+      // // Затем отправляем country и transport
+      // await handleSubmitCountryAndTransport();
 
       // Закрываем модальное окно
       onClose();
@@ -156,7 +151,7 @@ const TicketModal = ({ ticket, onClose }) => {
             style={{ display: 'block', width: '100%', padding: '0.5rem', marginBottom: '1rem' }}
           />
         </label>
-        <div className='select-container-modal'>
+        {/* <div className='select-container-modal'>
           <Select
             options={countryOptions}
             label="Country"
@@ -171,7 +166,7 @@ const TicketModal = ({ ticket, onClose }) => {
             value={editedTicket.transport || ""}
             onChange={(value) => handleInputChange({ target: { name: 'transport', value } })}
           />
-        </div>
+        </div> */}
         <div className='container-select-priority-workflow'>
           <Priority ticket={editedTicket} onChange={handleInputChange} />
           <Workflow ticket={editedTicket} onChange={handleInputChange} />

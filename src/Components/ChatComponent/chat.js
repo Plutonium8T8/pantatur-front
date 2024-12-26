@@ -84,7 +84,7 @@ const ChatComponent = ({ }) => {
 
             if (response.status === 401) {
                 console.warn('Ошибка 401: Неавторизован. Перенаправляем на логин.');
-                window.location.reload(); // Перезагрузка страницы
+                // window.location.reload(); // Перезагрузка страницы
                 return;
             }
 

@@ -48,7 +48,7 @@ const Leads = () => {
     const fetchTickets = async () => {
         setIsLoading(true);
         try {
-            await new Promise(resolve => setTimeout(resolve, 500));
+            await new Promise(resolve => setTimeout(resolve, 1000));
             const token = Cookies.get('jwt');
             const response = await fetch('https://pandatur-api.com/api/tickets', {
                 method: 'GET',
@@ -60,7 +60,7 @@ const Leads = () => {
 
             if (response.status === 401) {
                 console.warn('Ошибка 401: Неавторизован. Перенаправляем на логин.');
-                window.location.reload(); // Перезагрузка страницы
+                // window.location.reload(); // Перезагрузка страницы
                 return;
             }
 
@@ -96,7 +96,7 @@ const Leads = () => {
             })
             .catch(e => {
                 console.error(e);
-                window.location.reload(); // Перезагрузка страницы
+                // window.location.reload(); // Перезагрузка страницы
                 return;
             })
             .finally(() => {
