@@ -53,6 +53,7 @@ const ChatComponent = ({ }) => {
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [emojiPickerPosition, setEmojiPickerPosition] = useState({ top: 0, left: 0 });
     const [selectedMessage, setSelectedMessage] = useState(null); // Выбранный шаблон из Select
+    const [reactions, setReactions] = useState({}); // Хранит текущие реакции для сообщений
 
     useEffect(() => {
         // Если ticketId передан через URL, устанавливаем его как selectedTicketId
@@ -418,41 +419,55 @@ const ChatComponent = ({ }) => {
         }
     }, [socket, selectedTicketId, getClientMessages, enqueueSnackbar, handleTask, handleSeen]);
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    const handleDelete = async (id) => {
-        const success = await deleteMessage(id);
-        if (success) {
-            setMessages((prevMessages) => prevMessages.filter((msg) => msg.id !== id));
-            getClientMessages();
+    const handleDelete = (id) => {
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            socket.send(
+                JSON.stringify({
+                    type: 'delete',
+                    data: {
+                        message_id: id,
+                        client_id: userId,
+                    }
+                })
+            );
         } else {
-            alert('Не удалось удалить сообщение');
+            alert('Соединение с WebSocket отсутствует');
         }
     };
-
 
     const handleEdit = (msg) => {
         setEditMessageId(msg.id);
         setEditedText(msg.message); // Предзаполнение текущего текста
     };
 
-    const handleSave = async () => {
+    const handleSave = () => {
         if (editedText.trim() === '') {
             alert('Сообщение не может быть пустым');
             return;
         }
 
-        const updatedMessage = await updateMessage(editMessageId, editedText);
-        if (updatedMessage) {
-            getClientMessages();
-            setMessages((prevMessages) =>
-                prevMessages.map((msg) =>
-                    msg.id === editMessageId ? { ...msg, message: updatedMessage.message } : msg
-                )
-            );
-            setEditMessageId(null);
-            setEditedText('');
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            const payload = {
+                type: 'edit',
+                data: {
+                    message_id: editMessageId,
+                    sender_id: userId,
+                    new_text: editedText
+                }
+            };
+
+            try {
+                socket.send(JSON.stringify(payload)); // Убедитесь, что отправляется только JSON-объект без циклов
+                setEditMessageId(null);
+                setEditedText('');
+            } catch (error) {
+                console.error('Ошибка при отправке сообщения через WebSocket:', error);
+                alert('Не удалось сохранить изменения.');
+            }
         } else {
-            alert('Не удалось обновить сообщение');
+            alert('Соединение с WebSocket отсутствует');
         }
     };
 
@@ -462,42 +477,40 @@ const ChatComponent = ({ }) => {
         setEditedText('');
     };
 
-    // Пример API-запроса для удаления сообщения
-    const deleteMessage = async (id) => {
-        try {
-            const response = await fetch(`https://pandatur-api.com/messages/${id}`, {
-                method: 'DELETE',
-            });
-            if (!response.ok) {
-                throw new Error('Ошибка при удалении сообщения');
+    const sendReaction = (messageId, senderId, reaction) => {
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            // Логируем значение реакции для отладки
+            console.log("Отправляемая реакция:", reaction);
+
+            // Убедись, что реакция — это строка или одиночное значение
+            if (Array.isArray(reaction)) {
+                console.error("Реакция не может быть массивом");
+                return;
             }
-            return true; // Успешное удаление
-        } catch (error) {
-            console.error(error);
-            return false; // Ошибка
+
+            // Убедись, что реакция — это строка (например, "👍")
+            if (typeof reaction !== 'string') {
+                console.error("Реакция должна быть строкой, а не объектом");
+                return;
+            }
+
+            // Отправляем реакцию как строку (например, "👍")
+            socket.send(
+                JSON.stringify({
+                    type: 'react',
+                    data: {
+                        message_id: messageId,
+                        sender_id: senderId,
+                        reaction: reaction  // отправляем символ как строку
+                    }
+                })
+            );
+        } else {
+            alert('Соединение с WebSocket отсутствует');
         }
     };
 
-    // Пример API-запроса для обновления сообщения
-    const updateMessage = async (id, newMessage) => {
-        try {
-            const response = await fetch(`https://pandatur-api.com/messages/${id}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ message: newMessage }),
-            });
-            if (!response.ok) {
-                throw new Error('Ошибка при обновлении сообщения');
-            }
-            const updatedMessage = await response.json();
-            return updatedMessage;
-        } catch (error) {
-            console.error(error);
-            return null; // Ошибка
-        }
-    };
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const handleEmojiClick = (emojiObject) => {
         // Вставка эмодзи в сообщение
@@ -599,6 +612,7 @@ const ChatComponent = ({ }) => {
             console.log('No file selected.');
         }
     };
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Отправка сообщения
     const sendMessage = async (selectedFile) => {
@@ -838,9 +852,7 @@ const ChatComponent = ({ }) => {
                                                                 <input
                                                                     type="text"
                                                                     value={editedText}
-                                                                    onChange={(e) =>
-                                                                        setEditedText(e.target.value)
-                                                                    }
+                                                                    onChange={(e) => setEditedText(e.target.value)}
                                                                     className="edit-input"
                                                                 />
                                                                 <div className="edit-buttons">
@@ -888,6 +900,19 @@ const ChatComponent = ({ }) => {
                                                             )}
                                                         </div>
                                                     )}
+                                                    {/* Кнопки реакций */}
+                                                    <div className="reaction-buttons">
+                                                        {['👍', '❤️', '😂', '😮', '😢', '😡'].map((reaction) => (
+                                                            <button
+                                                                key={reaction}
+                                                                onClick={() =>
+                                                                    sendReaction(msg.id, userId, reaction)
+                                                                }
+                                                            >
+                                                                {reaction}
+                                                            </button>
+                                                        ))}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
