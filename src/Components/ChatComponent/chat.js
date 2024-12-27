@@ -928,13 +928,13 @@ const ChatComponent = ({ }) => {
                                                     {selectedMessageId === msg.id && (
                                                         <div className="reaction-buttons">
                                                             {['👍', '❤️', '😂', '😮', '😢', '😡'].map((reaction) => (
-                                                                <button
+                                                                <div
                                                                     key={reaction}
                                                                     onClick={() => handleReactionClick(reaction, msg.id)}
                                                                     className={selectedReaction[msg.id] === reaction ? 'active' : ''}
                                                                 >
                                                                     {reaction}
-                                                                </button>
+                                                                </div>
                                                             ))}
                                                         </div>
                                                     )}

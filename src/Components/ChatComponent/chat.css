@@ -432,4 +432,10 @@
 .reaction-buttons {
     display: flex;
     flex-direction: row;
+    gap: 10px;
+}
+
+.reaction-buttons div {
+    cursor: pointer;
+    font-size: 18px;
 }
