@@ -401,7 +401,7 @@ const ChatComponent = ({ }) => {
                             break;
                         case 'react':
                             handleSeen(message.data);
-                            getClientMessages();
+                            // getClientMessages();
                             break;
 
                         default:
@@ -902,8 +902,23 @@ const ChatComponent = ({ }) => {
                                                                 })}
                                                             </div>
                                                         )}
+                                                        {/* Кнопки реакций, которые появляются только для выбранного сообщения */}
+                                                        {selectedMessageId === msg.id && (
+                                                            <div className="reaction-container">
+                                                                <div className="reaction-buttons">
+                                                                    {['👍', '❤️', '😂', '😮', '😢', '😡'].map((reaction) => (
+                                                                        <div
+                                                                            key={reaction}
+                                                                            onClick={() => handleReactionClick(reaction, msg.id)}
+                                                                            className={selectedReaction[msg.id] === reaction ? 'active' : ''}
+                                                                        >
+                                                                            {reaction}
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            </div>
+                                                        )}
                                                     </div>
-
                                                     {/* Показываем меню только для своих сообщений */}
                                                     {msg.sender_id === userId && (
                                                         <div className="menu-container">
@@ -921,21 +936,6 @@ const ChatComponent = ({ }) => {
                                                                     <button onClick={() => handleDelete(msg.id)}>🗑️</button>
                                                                 </div>
                                                             )}
-                                                        </div>
-                                                    )}
-
-                                                    {/* Кнопки реакций, которые появляются только для выбранного сообщения */}
-                                                    {selectedMessageId === msg.id && (
-                                                        <div className="reaction-buttons">
-                                                            {['👍', '❤️', '😂', '😮', '😢', '😡'].map((reaction) => (
-                                                                <div
-                                                                    key={reaction}
-                                                                    onClick={() => handleReactionClick(reaction, msg.id)}
-                                                                    className={selectedReaction[msg.id] === reaction ? 'active' : ''}
-                                                                >
-                                                                    {reaction}
-                                                                </div>
-                                                            ))}
                                                         </div>
                                                     )}
                                                 </div>
