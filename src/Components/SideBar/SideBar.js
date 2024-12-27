@@ -4,7 +4,7 @@ import Cookies from 'js-cookie'; // Для работы с cookies
 import './SideBar.css';
 import { useUnreadMessages } from '../../Unread';  // Импортируем хук для получения количества непрочитанных сообщений
 
-const CustomSidebar = ( ) => {
+const CustomSidebar = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { unreadCount } = useUnreadMessages();  // Получаем количество непрочитанных сообщений из контекста
