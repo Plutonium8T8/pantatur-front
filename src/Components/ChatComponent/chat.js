@@ -484,37 +484,52 @@ const ChatComponent = ({ }) => {
         setEditedText('');
     };
 
+    const handleReactionClick = (reaction, messageId) => {
+        // Всегда обновляем реакцию
+        setSelectedReaction((prev) => ({
+            ...prev,
+            [messageId]: reaction, // Устанавливаем новую реакцию (заменяем старую)
+        }));
+
+        // Отправляем реакцию на сервер
+        sendReaction(messageId, userId, reaction);
+    };
+
+    // Пример функции sendReaction с подтверждением от сервера
     const sendReaction = (messageId, senderId, reaction) => {
-        if (socket && socket.readyState === WebSocket.OPEN) {
-            // Логируем значение реакции для отладки
-            console.log("Отправляемая реакция:", reaction);
+        return new Promise((resolve, reject) => {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(
+                    JSON.stringify({
+                        type: 'react',
+                        data: {
+                            message_id: messageId,
+                            sender_id: senderId,
+                            reaction: reaction,
+                        },
+                    })
+                );
 
-            // Убедись, что реакция — это строка или одиночное значение
-            if (Array.isArray(reaction)) {
-                console.error("Реакция не может быть массивом");
-                return;
-            }
-
-            // Убедись, что реакция — это строка (например, "👍")
-            if (typeof reaction !== 'string') {
-                console.error("Реакция должна быть строкой, а не объектом");
-                return;
-            }
-
-            // Отправляем реакцию как строку (например, "👍")
-            socket.send(
-                JSON.stringify({
-                    type: 'react',
-                    data: {
-                        message_id: messageId,
-                        sender_id: senderId,
-                        reaction: reaction  // отправляем символ как строку
+                // Здесь можно ожидать подтверждения от сервера, если это предусмотрено протоколом
+                socket.onmessage = (event) => {
+                    const response = JSON.parse(event.data);
+                    if (response.type === 'react' && response.data.message_id === messageId) {
+                        resolve(response.data); // Сервер подтвердил, что реакция принята
                     }
-                })
-            );
-        } else {
-            alert('Соединение с WebSocket отсутствует');
-        }
+                };
+            } else {
+                reject(new Error('Соединение с WebSocket отсутствует'));
+            }
+        });
+    };
+
+    // Функция для извлечения последней реакции из строки реакций
+    const getLastReaction = (reactions) => {
+        // Убираем фигурные скобки и разделяем строку на массив реакций
+        const reactionsArray = reactions ? reactions.replace(/[{}]/g, '').split(',') : [];
+
+        // Проверяем, есть ли реакции в массиве и возвращаем последнюю
+        return reactionsArray.length > 0 ? reactionsArray[reactionsArray.length - 1] : '😊'; // Возвращаем '😊', если реакций нет
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -701,33 +716,6 @@ const ChatComponent = ({ }) => {
         }
     };
 
-    const handleReactionClick = (reaction, messageId) => {
-        // Проверяем, если текущая реакция такая же, как выбранная, то сбрасываем ее (удаляем реакцию)
-        setSelectedReaction((prev) => {
-            const newReactions = { ...prev };
-            // Если реакция уже была выбрана, то сбрасываем ее, иначе ставим новую реакцию
-            if (newReactions[messageId] === reaction) {
-                delete newReactions[messageId];
-            } else {
-                newReactions[messageId] = reaction;
-            }
-            return newReactions;
-        });
-
-        // Отправляем реакцию на сервер или сохраняем в БД
-        sendReaction(messageId, userId, reaction);
-    };
-
-    // Функция для извлечения последней реакции из строки реакций
-    const getLastReaction = (reactions) => {
-        // Убираем фигурные скобки и разделяем строку на массив реакций
-        const reactionsArray = reactions ? reactions.replace(/[{}]/g, '').split(',') : [];
-
-        // Проверяем, есть ли реакции в массиве и возвращаем последнюю
-        return reactionsArray.length > 0 ? reactionsArray[reactionsArray.length - 1] : '😊'; // Возвращаем '😊', если реакций нет
-    };
-
-
     return (
         <div className="chat-container">
             <div className="users-container">
@@ -905,7 +893,7 @@ const ChatComponent = ({ }) => {
                                                                     className="reaction-toggle-button"
                                                                     onClick={() => setSelectedMessageId(selectedMessageId === msg.id ? null : msg.id)}
                                                                 >
-                                                                    {lastReaction || '😊'} {/* Показываем последнюю реакцию или эмодзи по умолчанию */}
+                                                                    {lastReaction || '☺'} {/* Показываем последнюю реакцию или эмодзи по умолчанию */}
                                                                 </div>
 
                                                                 {new Date(msg.time_sent).toLocaleTimeString('ru-RU', {
@@ -937,12 +925,13 @@ const ChatComponent = ({ }) => {
                                                     )}
 
                                                     {/* Кнопки реакций, которые появляются только для выбранного сообщения */}
-                                                    {selectedMessageId === msg.id && !selectedReaction[msg.id] && (
+                                                    {selectedMessageId === msg.id && (
                                                         <div className="reaction-buttons">
                                                             {['👍', '❤️', '😂', '😮', '😢', '😡'].map((reaction) => (
                                                                 <button
                                                                     key={reaction}
                                                                     onClick={() => handleReactionClick(reaction, msg.id)}
+                                                                    className={selectedReaction[msg.id] === reaction ? 'active' : ''}
                                                                 >
                                                                     {reaction}
                                                                 </button>
