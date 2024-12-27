@@ -398,9 +398,9 @@ const ChatComponent = ({ }) => {
                         case 'seen':
                             handleSeen(message.data);
                             break;
+
                         case 'react':
                             handleSeen(message.data);
-                            // getClientMessages();
                             break;
 
                         default:
