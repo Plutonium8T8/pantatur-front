@@ -379,7 +379,6 @@ const ChatComponent = ({ }) => {
                                     return updatedUnreadMessages;
                                 });
                             }
-                            // getClientMessages();
                             break;
                         }
 
@@ -405,7 +404,7 @@ const ChatComponent = ({ }) => {
                             break;
 
                         default:
-                            console.warn('Unknown message type:', message);
+                        // console.warn('Unknown message type:', message);
                     }
                 } catch (error) {
                     console.error('Error parsing WebSocket message:', error);
