@@ -515,6 +515,9 @@ const ChatComponent = ({ }) => {
                     if (response.type === 'react' && response.data.message_id === messageId) {
                         resolve(response.data); // Сервер подтвердил, что реакция принята
                     }
+
+                    // вот тут можно поставить getClientMessage для динамического обновления реакции
+
                 };
             } else {
                 reject(new Error('Соединение с WebSocket отсутствует'));
