@@ -905,7 +905,7 @@ const ChatComponent = ({ }) => {
                                                         {selectedMessageId === msg.id && (
                                                             <div className="reaction-container">
                                                                 <div className="reaction-buttons">
-                                                                    {['👍', '❤️', '😂', '😮', '😢', '😡'].map((reaction) => (
+                                                                    {['☺', '👍', '❤️', '😂', '😮', '😢', '😡'].map((reaction) => (
                                                                         <div
                                                                             key={reaction}
                                                                             onClick={() => handleReactionClick(reaction, msg.id)}
