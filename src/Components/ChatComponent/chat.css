@@ -420,9 +420,15 @@
     justify-content: center;
     width: 35px;
 }
+
 .reaction-toggle-button {
+    display: flex;
     cursor: pointer;
+    align-items: center;
+    justify-content: flex-end;
+    font-size: 18px;
 }
+
 .reaction-buttons {
     display: flex;
     flex-direction: row;
