@@ -1004,10 +1004,10 @@ const ChatComponent = ({ }) => {
                         </div>
                         <div className="select-shablon">
                             <Select
-                                options={templateOptions} // Передаем преобразованные опции
+                                options={templateOptions}
                                 id="message-template"
-                                value={selectedMessage} // Текущее значение Select
-                                onChange={handleSelectTChange} // Обработчик выбора
+                                value={selectedMessage ?? undefined} // Установите undefined, если selectedMessage равно null
+                                onChange={handleSelectTChange}
                                 placeholder="Выберите сообщение"
                                 customClassName="custom-select-1"
                             />
