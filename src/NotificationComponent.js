@@ -136,20 +136,20 @@ const NotificationComponent = () => {
 
     return (
         <div className="notification-container">
-            <h1>Уведомления и Задачи</h1>
+            <h1>Notifications and Tasks</h1>
 
             {/* Контейнер для разделения на две половинки */}
             <div className="split-screen">
 
                 {/* Правая часть для создания задач */}
                 <div className="right-side">
-                    <h2>Создание Задач</h2>
+                    <h2>Add Tasks</h2>
                     <form onSubmit={handleTaskSubmit}>
-                        <h1>Выберите тикет для задач</h1>
+                        <h1>Choise ticket for Tasks</h1>
 
                         {/* Селект для выбора тикета */}
                         <select value={ticketId || ''} onChange={handleTicketChange}>
-                            <option value="" disabled>Выберите тикет</option>
+                            <option value="" disabled>Choise ticket</option>
                             {tickets.map((ticket) => (
                                 <option key={ticket.id} value={ticket.id}>
                                     {ticket.name}
@@ -160,21 +160,21 @@ const NotificationComponent = () => {
                             type="text"
                             value={taskContent}
                             onChange={(e) => setTaskContent(e.target.value)}
-                            placeholder="Введите текст задачи"
+                            placeholder="Descriptions for tasks"
                             required
                         />
-                        <button type="submit">Создать Задачу</button>
+                        <button type="submit">Add task</button>
                     </form>
                 </div>
                 {/* Левая часть для создания уведомлений */}
                 <div className="left-side">
-                    <h2>Создание Уведомлений</h2>
+                    <h2>Add Notifications</h2>
                     <form onSubmit={handleNotificationSubmit}>
                         <input
                             type="text"
                             value={notificationContent}
                             onChange={(e) => setNotificationContent(e.target.value)}
-                            placeholder="Введите текст уведомления"
+                            placeholder="Description for notification"
                             required
                         />
                         <br />
@@ -186,7 +186,7 @@ const NotificationComponent = () => {
                             required
                         />
                         <br />
-                        <button type="submit">Создать Уведомление</button>
+                        <button type="submit">Add Notifications</button>
                     </form>
                 </div>
             </div>
@@ -195,7 +195,7 @@ const NotificationComponent = () => {
             <div className="split-screen">
                 {/* Левая часть для задач */}
                 <div className="left-side">
-                    <h2>Задачи</h2>
+                    <h2>Tasks</h2>
                     <ul>
                         {tasks.map((task) => (
                             <li key={task.id}>{task.content}</li>
@@ -205,7 +205,7 @@ const NotificationComponent = () => {
 
                 {/* Правая часть для уведомлений */}
                 <div className="right-side">
-                    <h1>Уведомления</h1>
+                    <h1>Notifications</h1>
                     <ul>
                         {notifications.map((notification) => (
                             <li key={notification.id}>
