@@ -56,6 +56,7 @@ const ChatComponent = ({ }) => {
     const [selectedMessageId, setSelectedMessageId] = useState(null);
     const [selectedReaction, setSelectedReaction] = useState({});
     const reactionContainerRef = useRef(null);
+    const menuRef = useRef(null);
 
     useEffect(() => {
         // Если ticketId передан через URL, устанавливаем его как selectedTicketId
@@ -427,6 +428,20 @@ const ChatComponent = ({ }) => {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    // Закрытие меню при клике вне его области
+    const handleOutsideClick = (event) => {
+        if (menuRef.current && !menuRef.current.contains(event.target)) {
+            setMenuMessageId(null); // Закрываем меню
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener('click', handleOutsideClick);
+        return () => {
+            document.removeEventListener('click', handleOutsideClick);
+        };
+    }, []);
+
     const handleDelete = (id) => {
         if (socket && socket.readyState === WebSocket.OPEN) {
             socket.send(
@@ -435,7 +450,7 @@ const ChatComponent = ({ }) => {
                     data: {
                         message_id: id,
                         client_id: userId,
-                    }
+                    },
                 })
             );
         } else {
@@ -446,6 +461,7 @@ const ChatComponent = ({ }) => {
     const handleEdit = (msg) => {
         setEditMessageId(msg.id);
         setManagerMessage(msg.message); // Устанавливаем текст сообщения в textarea
+        setMenuMessageId(null); // Закрываем меню после редактирования
     };
 
     const handleSave = () => {
@@ -940,10 +956,14 @@ const ChatComponent = ({ }) => {
                                                         )}
                                                     </div>
                                                     {msg.sender_id === userId && (
-                                                        <div className="menu-container">
+                                                        <div className="menu-container" ref={menuRef}>
                                                             <button
                                                                 className="menu-button"
-                                                                onClick={() => setMenuMessageId(menuMessageId === msg.id ? null : msg.id)}
+                                                                onClick={() =>
+                                                                    setMenuMessageId(
+                                                                        menuMessageId === msg.id ? null : msg.id
+                                                                    )
+                                                                }
                                                             >
                                                                 ⋮
                                                             </button>
