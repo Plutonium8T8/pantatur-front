@@ -56,7 +56,7 @@ const ChatComponent = ({ }) => {
     const [selectedMessageId, setSelectedMessageId] = useState(null);
     const [selectedReaction, setSelectedReaction] = useState({});
     const reactionContainerRef = useRef(null);
-    const menuRef = useRef(null);
+    const menuRefs = useRef({}); // Создаем объект для хранения ref всех меню
 
     useEffect(() => {
         // Если ticketId передан через URL, устанавливаем его как selectedTicketId
@@ -430,7 +430,13 @@ const ChatComponent = ({ }) => {
 
     // Закрытие меню при клике вне его области
     const handleOutsideClick = (event) => {
-        if (menuRef.current && !menuRef.current.contains(event.target)) {
+        // Проверяем, есть ли клик вне любого открытого меню
+        const isOutside = Object.keys(menuRefs.current).every(
+            (key) =>
+                menuRefs.current[key] && !menuRefs.current[key].contains(event.target)
+        );
+
+        if (isOutside) {
             setMenuMessageId(null); // Закрываем меню
         }
     };
@@ -442,13 +448,18 @@ const ChatComponent = ({ }) => {
         };
     }, []);
 
-    const handleDelete = (id) => {
+    const handleMenuToggle = (msgId) => {
+        setMenuMessageId(menuMessageId === msgId ? null : msgId);
+    };
+
+    const handleDelete = (msgId) => {
+        setMenuMessageId(null);
         if (socket && socket.readyState === WebSocket.OPEN) {
             socket.send(
                 JSON.stringify({
                     type: 'delete',
                     data: {
-                        message_id: id,
+                        message_id: msgId,
                         client_id: userId,
                     },
                 })
@@ -459,9 +470,9 @@ const ChatComponent = ({ }) => {
     };
 
     const handleEdit = (msg) => {
+        setMenuMessageId(null);
         setEditMessageId(msg.id);
         setManagerMessage(msg.message); // Устанавливаем текст сообщения в textarea
-        setMenuMessageId(null); // Закрываем меню после редактирования
     };
 
     const handleSave = () => {
@@ -956,12 +967,13 @@ const ChatComponent = ({ }) => {
                                                         )}
                                                     </div>
                                                     {msg.sender_id === userId && (
-                                                        <div className="menu-container">
+                                                        <div
+                                                            className="menu-container"
+                                                            ref={(el) => (menuRefs.current[msg.id] = el)} // Устанавливаем отдельный ref для каждого меню
+                                                        >
                                                             <button
                                                                 className="menu-button"
-                                                                onClick={() =>
-                                                                    setMenuMessageId(menuMessageId === msg.id ? null : msg.id)
-                                                                }
+                                                                onClick={() => handleMenuToggle(msg.id)}
                                                             >
                                                                 ⋮
                                                             </button>
@@ -972,7 +984,6 @@ const ChatComponent = ({ }) => {
                                                                 </div>
                                                             )}
                                                         </div>
-
                                                     )}
                                                 </div>
                                             </div>
