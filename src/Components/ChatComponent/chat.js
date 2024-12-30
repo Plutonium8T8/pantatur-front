@@ -741,56 +741,74 @@ const ChatComponent = ({ }) => {
             <div className="users-container">
                 <h3>Chat List</h3>
                 <div className="chat-item-container">
-                    {tickets1.map((ticket) => {
-                        const chatMessages = messages1.filter((msg) => msg.client_id === ticket.id);
+                    {tickets1
+                        .sort((a, b) => {
+                            const lastMessageA = messages1
+                                .filter((msg) => msg.client_id === a.id)
+                                .reduce((latest, current) =>
+                                    new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest,
+                                    { time_sent: null }
+                                );
 
-                        const unreadCounts = chatMessages.filter(
-                            (msg) =>
-                                (!msg.seen_by || !msg.seen_by.includes(String(userId))) && // Сообщение не прочитано текущим пользователем
-                                msg.sender_id !== Number(userId) // Сообщение отправлено не текущим пользователем
-                        ).length;
+                            const lastMessageB = messages1
+                                .filter((msg) => msg.client_id === b.id)
+                                .reduce((latest, current) =>
+                                    new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest,
+                                    { time_sent: null }
+                                );
 
-                        const lastMessage = chatMessages.length > 0
-                            ? chatMessages.reduce((latest, current) =>
-                                new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
-                            )
-                            : { message: '', time_sent: null };
+                            return new Date(lastMessageB.time_sent) - new Date(lastMessageA.time_sent);
+                        })
+                        .map((ticket) => {
+                            const chatMessages = messages1.filter((msg) => msg.client_id === ticket.id);
 
-                        const formattedTime = lastMessage.time_sent
-                            ? new Date(lastMessage.time_sent).toLocaleTimeString('ru-RU', {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                            })
-                            : null;
+                            const unreadCounts = chatMessages.filter(
+                                (msg) =>
+                                    (!msg.seen_by || !msg.seen_by.includes(String(userId))) &&
+                                    msg.sender_id !== Number(userId)
+                            ).length;
 
-                        return (
-                            <div
-                                key={ticket.id}
-                                className={`chat-item ${ticket.id === selectedTicketId ? 'active' : ''}`}
-                                onClick={() => handleTicketClick(ticket.id)}
-                            >
-                                <div className="foto-description">
-                                    <img className="foto-user" src="/user fon.png" alt="example" />
-                                    <div className="tickets-descriptions">
-                                        <div>{ticket.contact || "no contact"}</div>
-                                        <div>{ticket.id ? `Lead: #${ticket.id}` : "no id"}</div>
-                                        <div>{ticket.workflow || "no workflow"}</div>
+                            const lastMessage = chatMessages.length > 0
+                                ? chatMessages.reduce((latest, current) =>
+                                    new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
+                                )
+                                : { message: '', time_sent: null };
+
+                            const formattedTime = lastMessage.time_sent
+                                ? new Date(lastMessage.time_sent).toLocaleTimeString('ru-RU', {
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                })
+                                : null;
+
+                            return (
+                                <div
+                                    key={ticket.id}
+                                    className={`chat-item ${ticket.id === selectedTicketId ? 'active' : ''}`}
+                                    onClick={() => handleTicketClick(ticket.id)}
+                                >
+                                    <div className="foto-description">
+                                        <img className="foto-user" src="/user fon.png" alt="example" />
+                                        <div className="tickets-descriptions">
+                                            <div>{ticket.contact || "no contact"}</div>
+                                            <div>{ticket.id ? `Lead: #${ticket.id}` : "no id"}</div>
+                                            <div>{ticket.workflow || "no workflow"}</div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="container-time-tasks-chat">
-                                    <div className="info-message">
-                                        <div className="last-message-container">
-                                            <div className="last-message-ticket">{lastMessage.message}</div>
-                                            <div>{formattedTime}</div>
-                                            {unreadCounts > 0 && (
-                                                <div className="unread-count">{unreadCounts}</div>
-                                            )}
+                                    <div className="container-time-tasks-chat">
+                                        <div className="info-message">
+                                            <div className="last-message-container">
+                                                <div className="last-message-ticket">{lastMessage.message}</div>
+                                                <div>{formattedTime}</div>
+                                                {unreadCounts > 0 && (
+                                                    <div className="unread-count">{unreadCounts}</div>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        );
-                    })}
+                            );
+                        })}
                 </div>
                 {isLoading && (
                     <div className="spinner-overlay">
