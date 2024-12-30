@@ -13,6 +13,7 @@ import { SnackbarProvider, closeSnackbar } from 'notistack';
 import Notification from './Notification';
 import { UnreadMessagesProvider } from './Unread';  // Импортируем UnreadMessagesProvider из Unread.js
 import NotificationComponent from './NotificationComponent';
+import AdminPanel from './AdminPanel';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -68,21 +69,26 @@ function App() {
       }}
       autoHideDuration={null}
       maxSnack={10}
-      anchorOrigin={{ vertical: 'bottom', horizontal: 'left', }}
-      action={(snackbarId) =>
-      (<button onClick={() => closeSnackbar(snackbarId)}
-        style={{ background: 'none', border: 'none', color: 'blue', cursor: 'pointer' }} > Закрыть </button>)}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+      action={(snackbarId) => (
+        <button
+          onClick={() => closeSnackbar(snackbarId)}
+          style={{ background: 'none', border: 'none', color: 'blue', cursor: 'pointer' }}
+        >
+          Закрыть
+        </button>
+      )}
     >
       <SocketProvider isLoggedIn={isLoggedIn}>
         <UserProvider>
           <Notification />
           <Router>
-            <UnreadMessagesProvider>  {/* Оборачиваем приложение в UnreadMessagesProvider */}
+            <UnreadMessagesProvider> {/* Оборачиваем приложение в UnreadMessagesProvider */}
               {!isLoggedIn ? (
                 <LoginForm onLoginSuccess={handleLogin} />
               ) : (
                 <div className="app-container">
-                  <CustomSidebar /> {/* Убираем пропс unreadCount */}
+                  <CustomSidebar />
                   <div className="page-content">
                     <Routes>
                       <Route path="/account" element={<UserProfile />} />
@@ -94,7 +100,8 @@ function App() {
                           <ChatComponent />
                         }
                       />
-                      <Route path="/notifications" element={<NotificationComponent />} /> {/* Добавлено */}
+                      <Route path="/notifications" element={<NotificationComponent />} />
+                      <Route path="/admin-panel" element={<AdminPanel />} /> {/* Новый маршрут */}
                       <Route path="*" element={<div>Страница в разработке</div>} />
                     </Routes>
                   </div>

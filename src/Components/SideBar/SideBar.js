@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie'; // Для работы с cookies
 import './SideBar.css';
-import { useUnreadMessages } from '../../Unread';  // Импортируем хук для получения количества непрочитанных сообщений
+import { useUnreadMessages } from '../../Unread'; // Импортируем хук для получения количества непрочитанных сообщений
 
 const CustomSidebar = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { unreadCount } = useUnreadMessages();  // Получаем количество непрочитанных сообщений из контекста
+    const { unreadCount } = useUnreadMessages(); // Получаем количество непрочитанных сообщений из контекста
 
-    // Определение активного раздела на основе пути
     const isActive = (page) => {
         if (page === 'chat') {
             return location.pathname.startsWith('/chat');
@@ -22,9 +21,7 @@ const CustomSidebar = () => {
     };
 
     const handleLogOut = () => {
-        // Удаление токена из cookies
         Cookies.remove('jwt');
-        // Перенаправление на страницу входа
         window.location.reload(); // Перезагрузка страницы
     };
 
@@ -70,6 +67,13 @@ const CustomSidebar = () => {
                         onClick={() => handleNavigate('notifications')}
                     >
                         🔔 <br />Notifications
+                    </div>
+                    {/* Новый пункт меню */}
+                    <div
+                        className={`menu-item ${isActive('admin-panel') ? 'active' : ''}`}
+                        onClick={() => handleNavigate('admin-panel')}
+                    >
+                        🗓️ <br />Admin Panel
                     </div>
                 </div>
             </div>

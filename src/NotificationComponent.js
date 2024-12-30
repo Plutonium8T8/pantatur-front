@@ -148,14 +148,17 @@ const NotificationComponent = () => {
                         <h1>Choise ticket for Tasks</h1>
 
                         {/* Селект для выбора тикета */}
-                        <select value={ticketId || ''} onChange={handleTicketChange}>
-                            <option value="" disabled>Choise ticket</option>
+                        <select value={ticketId || ''} onChange={handleTicketChange} style={{ color: "#000", backgroundColor: "#fff" }}>
+                            <option value="" disabled>
+                                {tickets.length === 0 ? "Loading tickets..." : "Choose ticket"}
+                            </option>
                             {tickets.map((ticket) => (
                                 <option key={ticket.id} value={ticket.id}>
                                     {ticket.name}
                                 </option>
                             ))}
                         </select>
+
                         <input
                             type="text"
                             value={taskContent}
