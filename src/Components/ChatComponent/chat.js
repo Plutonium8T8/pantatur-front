@@ -474,7 +474,7 @@ const ChatComponent = ({ }) => {
             const payload = {
                 type: 'edit',
                 data: {
-                    message_id: editMessageId,
+                    message_id: editMessageId, // Используется правильный идентификатор сообщения
                     sender_id: userId,
                     new_text: managerMessage,
                     edited_at: new Date().toISOString(),
@@ -483,8 +483,8 @@ const ChatComponent = ({ }) => {
 
             try {
                 socket.send(JSON.stringify(payload));
-                setEditMessageId(null);
-                setManagerMessage('');
+                setEditMessageId(null); // Сбрасываем состояние редактирования
+                setManagerMessage(''); // Очищаем textarea
             } catch (error) {
                 console.error('Ошибка при сохранении:', error);
             }
@@ -956,13 +956,11 @@ const ChatComponent = ({ }) => {
                                                         )}
                                                     </div>
                                                     {msg.sender_id === userId && (
-                                                        <div className="menu-container" ref={menuRef}>
+                                                        <div className="menu-container">
                                                             <button
                                                                 className="menu-button"
                                                                 onClick={() =>
-                                                                    setMenuMessageId(
-                                                                        menuMessageId === msg.id ? null : msg.id
-                                                                    )
+                                                                    setMenuMessageId(menuMessageId === msg.id ? null : msg.id)
                                                                 }
                                                             >
                                                                 ⋮
@@ -974,6 +972,7 @@ const ChatComponent = ({ }) => {
                                                                 </div>
                                                             )}
                                                         </div>
+
                                                     )}
                                                 </div>
                                             </div>
@@ -989,9 +988,8 @@ const ChatComponent = ({ }) => {
                         className="text-area-message"
                         value={managerMessage}
                         onChange={(e) => setManagerMessage(e.target.value)}
-                        placeholder={selectedTicketId ? "Type your message..." : "Select a chat to start typing"}
+                        placeholder="Введите сообщение..."
                         onKeyDown={handleKeyDown}
-                        disabled={!selectedTicketId} // Если нет selectedTicketId, textarea отключена
                     />
                     <div className="btn-send-message">
                         <Icon
