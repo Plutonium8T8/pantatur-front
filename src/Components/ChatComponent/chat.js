@@ -908,8 +908,37 @@ const ChatComponent = ({ }) => {
                                                                 minute: '2-digit',
                                                             })}
                                                         </div>
+                                                        {selectedMessageId === msg.id && (
+                                                            <div
+                                                                className="reaction-container"
+                                                                ref={reactionContainerRef}
+                                                            >
+                                                                <div className="reaction-buttons">
+                                                                    {['☺', '👍', '❤️', '😂', '😮', '😢', '😡'].map(
+                                                                        (reaction) => (
+                                                                            <div
+                                                                                key={reaction}
+                                                                                onClick={() =>
+                                                                                    handleReactionClick(
+                                                                                        reaction,
+                                                                                        msg.id
+                                                                                    )
+                                                                                }
+                                                                                className={
+                                                                                    selectedReaction[msg.id] ===
+                                                                                        reaction
+                                                                                        ? 'active'
+                                                                                        : ''
+                                                                                }
+                                                                            >
+                                                                                {reaction}
+                                                                            </div>
+                                                                        )
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        )}
                                                     </div>
-
                                                     {msg.sender_id === userId && (
                                                         <div className="menu-container">
                                                             <button
