@@ -1,31 +1,32 @@
 import React, { useState, useEffect } from "react";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 import { useUser } from "./UserContext";
-import './NotificationComponent.css'; // Подключаем файл стилей
+import "./NotificationComponent.css";
 
 const NotificationComponent = () => {
     const [tasks, setTasks] = useState([]);
     const [notifications, setNotifications] = useState([]);
-    const [taskContent, setTaskContent] = useState(""); // Для задачи
-    const [notificationContent, setNotificationContent] = useState(""); // Для уведомления
-    const [notificationDate, setNotificationDate] = useState(""); // Для даты уведомления
+    const [taskContent, setTaskContent] = useState("");
+    const [notificationContent, setNotificationContent] = useState("");
+    const [notificationDate, setNotificationDate] = useState("");
     const [tickets, setTickets] = useState([]);
-    const [ticketId, setTicketId] = useState(null);  // Храним выбранный ID тикета
+    const [ticketId, setTicketId] = useState(null);
     const { userId } = useUser();
+    const [error, setError] = useState(null);
 
     const fetchTicketsID = async () => {
         try {
-            const token = Cookies.get('jwt');
+            const token = Cookies.get("jwt");
             if (!token) {
-                console.warn('Нет токена. Пропускаем загрузку тикетов.');
+                console.warn("Нет токена. Пропускаем загрузку тикетов.");
                 return;
             }
 
-            const response = await fetch('https://pandatur-api.com/api/tickets', {
-                method: 'GET',
+            const response = await fetch("https://pandatur-api.com/api/tickets", {
+                method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
             });
 
@@ -34,103 +35,96 @@ const NotificationComponent = () => {
             }
 
             const data = await response.json();
-            const ticketsData = data[0];  // Допустим, что тикеты находятся в первом элементе массива
-            setTickets(ticketsData);  // Сохраняем тикеты в состояние
+            if (Array.isArray(data) && Array.isArray(data[0])) {
+                setTickets(data[0]); // Извлекаем первый элемент, содержащий массив тикетов
+            } else {
+                console.warn("Неожиданная структура данных тикетов:", data);
+            }
         } catch (error) {
-            console.error('Ошибка при загрузке тикетов:', error.message);
+            console.error("Ошибка при загрузке тикетов:", error.message);
         }
     };
 
-    useEffect(() => {
-        fetchTicketsID();
-    }, []);
-
-    // Функция для получения задач с сервера
-    // Функция для получения задач по выбранному тикету
     const fetchTasks = async (ticketId) => {
         try {
-            const response = await fetch(`https://pandatur-api.com/tasks/${ticketId}`); // Используем ticketId
+            const response = await fetch(`https://pandatur-api.com/task/${ticketId}`);
             if (!response.ok) throw new Error("Ошибка при загрузке задач");
             const data = await response.json();
-            setTasks(data);  // Устанавливаем задачи в состояние
+            setTasks(data);
         } catch (error) {
             console.error("Ошибка при загрузке задач:", error);
         }
     };
-    // Обработчик изменения выбранного тикета
+
     const handleTicketChange = (e) => {
         const selectedTicketId = e.target.value;
         setTicketId(selectedTicketId);
-        fetchTasks(selectedTicketId);  // Загружаем задачи для выбранного тикета
+        fetchTasks(selectedTicketId);
     };
 
-    // Функция для получения уведомлений с сервера
     const fetchNotifications = async () => {
         try {
-            const response = await fetch(`https://pandatur-api.com/notification/${userId}`); // user_Id
+            const response = await fetch(`https://pandatur-api.com/notification/${userId}`);
             if (!response.ok) throw new Error("Ошибка при загрузке уведомлений");
 
             const data = await response.json();
-
-            console.log("Ответ от сервера с уведомлениями:", data); // Логируем данные ответа
-
-            setNotifications(data); // Устанавливаем уведомления в состояние
+            setNotifications(data);
         } catch (error) {
             console.error("Ошибка при загрузке уведомлений:", error);
         }
     };
 
-
-    // Загрузка данных при монтировании компонента
     useEffect(() => {
-        fetchTasks(); // Загружаем задачи
-        fetchNotifications(); // Загружаем уведомления
+        fetchTicketsID();
+        fetchNotifications();
     }, []);
 
-    // Обработчик отправки задачи
     const handleTaskSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch("http://localhost:5000/tasks", {
+            if (!ticketId) throw new Error("Необходимо выбрать тикет для создания задачи");
+
+            const response = await fetch(`https://pandatur-api.com/task/${ticketId}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ content: taskContent }),
+                body: JSON.stringify({ content: taskContent, ticketId }),
             });
 
             if (!response.ok) throw new Error("Ошибка при создании задачи");
-            await fetchTasks(); // Обновление данных после успешного создания
-            setTaskContent(""); // Очистка формы задачи
+            await fetchTasks(ticketId);
+            setTaskContent("");
         } catch (error) {
             console.error("Ошибка при создании задачи:", error);
+            setError(error.message);
         }
     };
 
-    // Обработчик отправки уведомления
     const handleNotificationSubmit = async (e) => {
         e.preventDefault();
         try {
-            const token = Cookies.get('jwt');
-            const response = await fetch(`https://pandatur-api.com/notification`, {
+            const token = Cookies.get("jwt");
+            const response = await fetch("https://pandatur-api.com/notification", {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    time: notificationDate, // Отправляем дату уведомления
+                    time: notificationDate,
                     description: notificationContent,
-                    client_id: userId
+                    client_id: userId,
                 }),
             });
 
             if (!response.ok) throw new Error("Ошибка при создании уведомления");
-            await fetchNotifications(); // Обновление данных после успешного создания
-            setNotificationContent(""); // Очистка формы уведомления
-            setNotificationDate(""); // Очистка поля даты
+            await fetchNotifications();
+            setNotificationContent("");
+            setNotificationDate("");
         } catch (error) {
             console.error("Ошибка при создании уведомления:", error);
+            setError(error.message);
         }
     };
 
@@ -138,23 +132,24 @@ const NotificationComponent = () => {
         <div className="notification-container">
             <h1>Notifications and Tasks</h1>
 
-            {/* Контейнер для разделения на две половинки */}
-            <div className="split-screen">
+            {error && <div className="error-message">{error}</div>}
 
-                {/* Правая часть для создания задач */}
+            <div className="split-screen">
                 <div className="right-side">
                     <h2>Add Tasks</h2>
                     <form onSubmit={handleTaskSubmit}>
-                        <h1>Choise ticket for Tasks</h1>
-
-                        {/* Селект для выбора тикета */}
-                        <select value={ticketId || ''} onChange={handleTicketChange} style={{ color: "#000", backgroundColor: "#fff" }}>
+                        <h1>Choose Ticket for Tasks</h1>
+                        <select
+                            value={ticketId || ""}
+                            onChange={handleTicketChange}
+                            style={{ color: "#000", backgroundColor: "#fff" }}
+                        >
                             <option value="" disabled>
                                 {tickets.length === 0 ? "Loading tickets..." : "Choose ticket"}
                             </option>
                             {tickets.map((ticket) => (
                                 <option key={ticket.id} value={ticket.id}>
-                                    {ticket.name}
+                                    {ticket.id}
                                 </option>
                             ))}
                         </select>
@@ -166,10 +161,10 @@ const NotificationComponent = () => {
                             placeholder="Descriptions for tasks"
                             required
                         />
-                        <button type="submit">Add task</button>
+                        <button type="submit">Add Task</button>
                     </form>
                 </div>
-                {/* Левая часть для создания уведомлений */}
+
                 <div className="left-side">
                     <h2>Add Notifications</h2>
                     <form onSubmit={handleNotificationSubmit}>
@@ -180,23 +175,18 @@ const NotificationComponent = () => {
                             placeholder="Description for notification"
                             required
                         />
-                        <br />
-                        {/* Поле для ввода даты уведомления */}
                         <input
                             type="datetime-local"
                             value={notificationDate}
                             onChange={(e) => setNotificationDate(e.target.value)}
                             required
                         />
-                        <br />
-                        <button type="submit">Add Notifications</button>
+                        <button type="submit">Add Notification</button>
                     </form>
                 </div>
             </div>
 
-            {/* Контейнер для отображения списков задач и уведомлений */}
             <div className="split-screen">
-                {/* Левая часть для задач */}
                 <div className="left-side">
                     <h2>Tasks</h2>
                     <ul>
@@ -206,7 +196,6 @@ const NotificationComponent = () => {
                     </ul>
                 </div>
 
-                {/* Правая часть для уведомлений */}
                 <div className="right-side">
                     <h1>Notifications</h1>
                     <ul>
