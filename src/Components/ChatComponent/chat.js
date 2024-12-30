@@ -445,11 +445,11 @@ const ChatComponent = ({ }) => {
 
     const handleEdit = (msg) => {
         setEditMessageId(msg.id);
-        setEditedText(msg.message); // Предзаполнение текущего текста
+        setManagerMessage(msg.message); // Устанавливаем текст сообщения в textarea
     };
 
     const handleSave = () => {
-        if (editedText.trim() === '') {
+        if (managerMessage.trim() === '') {
             alert('Сообщение не может быть пустым');
             return;
         }
@@ -460,28 +460,26 @@ const ChatComponent = ({ }) => {
                 data: {
                     message_id: editMessageId,
                     sender_id: userId,
-                    new_text: editedText,
-                    edited_at: new Date().toISOString()  // текущая дата и время в формате ISO 8601
-                }
+                    new_text: managerMessage,
+                    edited_at: new Date().toISOString(),
+                },
             };
 
             try {
-                socket.send(JSON.stringify(payload)); // Убедитесь, что отправляется только JSON-объект без циклов
+                socket.send(JSON.stringify(payload));
                 setEditMessageId(null);
-                setEditedText('');
+                setManagerMessage('');
             } catch (error) {
-                console.error('Ошибка при отправке сообщения через WebSocket:', error);
-                alert('Не удалось сохранить изменения.');
+                console.error('Ошибка при сохранении:', error);
             }
         } else {
-            alert('Соединение с WebSocket отсутствует');
+            alert('WebSocket не подключен');
         }
     };
 
-
     const handleCancel = () => {
         setEditMessageId(null);
-        setEditedText('');
+        setManagerMessage('');
     };
 
     // Обработчик клика по реакции
@@ -824,47 +822,41 @@ const ChatComponent = ({ }) => {
                         .map((msg) => {
                             const uniqueKey = msg.id || `${msg.client_id}-${msg.time_sent}`;
 
-                            // Функция для проверки, является ли текст URL изображения
-                            const isImageUrl = (text) => /\.(jpeg|jpg|gif|png|webp|svg)$/i.test(text);
+                            // Проверка типа контента
+                            const isImageUrl = /\.(jpeg|jpg|gif|png|webp|svg)$/i.test(msg.message);
+                            const isFileUrl = /\.(pdf|docx|xlsx|pptx)$/i.test(msg.message);
 
-                            // Функция для проверки, является ли текст URL файла (например, PDF или DOCX)
-                            const isFileUrl = (text) => /\.(pdf|docx|xlsx|pptx)$/i.test(text);
-
-                            // Функция для открытия изображения в новом окне
+                            // Функция открытия изображения
                             const openImageInNewWindow = (url) => {
                                 const newWindow = window.open('', '_blank');
                                 newWindow.document.write(`
-                                                            <html>
-                                                                <head>
-                                                                    <title>Просмотр изображения</title>
-                                                                    <style>
-                                                                        body {
-                                                                            display: flex;
-                                                                            justify-content: center;
-                                                                            align-items: center;
-                                                                            height: 100vh;
-                                                                            margin: 0;
-                                                                            background-color: #f0f0f0;
-                                                                        }
-                                                                        img {
-                                                                            max-width: 80%;
-                                                                            max-height: 80%;
-                                                                            border-radius: 8px;
-                                                                        }
-                                                                    </style>
-                                                                </head>
-                                                                <body>
-                                                                    <div>
-                                                                        <img src="${url}" alt="Просмотр изображения" />
-                                                                        <br />
-                                                                    </div>
-                                                                </body>
-                                                            </html>
-                                                        `);
+                        <html>
+                            <head>
+                                <title>Просмотр изображения</title>
+                                <style>
+                                    body {
+                                        display: flex;
+                                        justify-content: center;
+                                        align-items: center;
+                                        height: 100vh;
+                                        margin: 0;
+                                        background-color: #f0f0f0;
+                                    }
+                                    img {
+                                        max-width: 80%;
+                                        max-height: 80%;
+                                        border-radius: 8px;
+                                    }
+                                </style>
+                            </head>
+                            <body>
+                                <img src="${url}" alt="Просмотр изображения" />
+                            </body>
+                        </html>
+                    `);
                                 newWindow.document.close();
                             };
 
-                            // Получаем последнюю реакцию или используем реакцию из состояния
                             const lastReaction = selectedReaction[msg.id] || getLastReaction(msg.reactions);
 
                             return (
@@ -881,105 +873,48 @@ const ChatComponent = ({ }) => {
                                             <div className="message-content">
                                                 <div className="message-row">
                                                     <div className="text">
-                                                        {isImageUrl(msg.message) ? (
+                                                        {isImageUrl ? (
                                                             <img
                                                                 src={msg.message}
                                                                 alt="Отправленное изображение"
-                                                                style={{
-                                                                    maxWidth: '200px',
-                                                                    maxHeight: '200px',
-                                                                    borderRadius: '8px',
-                                                                    cursor: 'pointer',
-                                                                    backgroundColor: 'white',
-                                                                }}
+                                                                className="image-preview"
                                                                 onClick={() => openImageInNewWindow(msg.message)}
                                                             />
-                                                        ) : isFileUrl(msg.message) ? (
+                                                        ) : isFileUrl ? (
                                                             <a
                                                                 href={msg.message}
                                                                 target="_blank"
                                                                 rel="noopener noreferrer"
-                                                                style={{
-                                                                    textDecoration: 'none',
-                                                                    color: 'white',
-                                                                    fontWeight: 'bold',
-                                                                }}
+                                                                className="file-link"
                                                             >
                                                                 Открыть файл: {msg.message.split('/').pop()}
                                                             </a>
                                                         ) : (
                                                             msg.message
                                                         )}
-
-                                                        {editMessageId === msg.id ? (
-                                                            <div className="edit-mode">
-                                                                <input
-                                                                    type="text"
-                                                                    value={editedText}
-                                                                    onChange={(e) => setEditedText(e.target.value)}
-                                                                    className="edit-input"
-                                                                />
-                                                                <div className="edit-buttons">
-                                                                    <button onClick={handleSave} className="save-button">✅</button>
-                                                                    <button onClick={handleCancel} className="cancel-button">❌</button>
-                                                                </div>
-                                                            </div>
-                                                        ) : (
-                                                            <div className="message-time">
-                                                                {/* Показываем реакцию как кнопку для изменения реакции */}
-                                                                <div
-                                                                    className="reaction-toggle-button"
-                                                                    onClick={() => setSelectedMessageId(selectedMessageId === msg.id ? null : msg.id)}
-                                                                >
-                                                                    {lastReaction || '☺'} {/* Показываем последнюю реакцию или эмодзи по умолчанию */}
-                                                                </div>
-
-                                                                {new Date(msg.time_sent).toLocaleTimeString('ru-RU', {
-                                                                    hour: '2-digit',
-                                                                    minute: '2-digit',
-                                                                })}
-                                                            </div>
-                                                        )}
-                                                        {/* Кнопки реакций, которые появляются только для выбранного сообщения */}
-                                                        {selectedMessageId === msg.id && (
+                                                        <div className="message-time">
                                                             <div
-                                                                className="reaction-container"
-                                                                ref={reactionContainerRef}
+                                                                className="reaction-toggle-button"
+                                                                onClick={() =>
+                                                                    setSelectedMessageId(
+                                                                        selectedMessageId === msg.id ? null : msg.id
+                                                                    )
+                                                                }
                                                             >
-                                                                <div className="reaction-buttons">
-                                                                    {['☺', '👍', '❤️', '😂', '😮', '😢', '😡'].map(
-                                                                        (reaction) => (
-                                                                            <div
-                                                                                key={reaction}
-                                                                                onClick={() =>
-                                                                                    handleReactionClick(
-                                                                                        reaction,
-                                                                                        msg.id
-                                                                                    )
-                                                                                }
-                                                                                className={
-                                                                                    selectedReaction[msg.id] ===
-                                                                                        reaction
-                                                                                        ? 'active'
-                                                                                        : ''
-                                                                                }
-                                                                            >
-                                                                                {reaction}
-                                                                            </div>
-                                                                        )
-                                                                    )}
-                                                                </div>
+                                                                {lastReaction || '☺'}
                                                             </div>
-                                                        )}
+                                                            {new Date(msg.time_sent).toLocaleTimeString('ru-RU', {
+                                                                hour: '2-digit',
+                                                                minute: '2-digit',
+                                                            })}
+                                                        </div>
                                                     </div>
-                                                    {/* Показываем меню только для своих сообщений */}
+
                                                     {msg.sender_id === userId && (
                                                         <div className="menu-container">
                                                             <button
                                                                 className="menu-button"
-                                                                onClick={() =>
-                                                                    setMenuMessageId(menuMessageId === msg.id ? null : msg.id)
-                                                                }
+                                                                onClick={() => setMenuMessageId(menuMessageId === msg.id ? null : msg.id)}
                                                             >
                                                                 ⋮
                                                             </button>
@@ -1013,7 +948,7 @@ const ChatComponent = ({ }) => {
                         <Icon
                             name={"button-send"}
                             className="send-button"
-                            onClick={handleClick}
+                            onClick={editMessageId ? handleSave : handleClick} // Сохранение или отправка
                             disabled={!selectedTicketId}
                         />
                         <input
@@ -1028,16 +963,14 @@ const ChatComponent = ({ }) => {
                         </label>
                     </div>
                     <div className="container-template">
-
                         <div className="emoji-picker-container">
                             <button
                                 className="emoji-button"
-                                onClick={handleEmojiClickButton} // Заменили на onClick
+                                onClick={handleEmojiClickButton}
                                 disabled={!selectedTicketId}
                             >
                                 😊
                             </button>
-
                             {showEmojiPicker &&
                                 ReactDOM.createPortal(
                                     <div
@@ -1046,10 +979,10 @@ const ChatComponent = ({ }) => {
                                             position: "absolute",
                                             top: emojiPickerPosition.top,
                                             left: emojiPickerPosition.left,
-                                            zIndex: 1000, // Обеспечивает отображение поверх других элементов
+                                            zIndex: 1000,
                                         }}
-                                        onMouseEnter={() => setShowEmojiPicker(true)} // Оставляем открытым при наведении
-                                        onMouseLeave={() => setShowEmojiPicker(true)} // Можно изменить на задержку или другую логику
+                                        onMouseEnter={() => setShowEmojiPicker(true)}
+                                        onMouseLeave={() => setShowEmojiPicker(false)}
                                     >
                                         <EmojiPicker onEmojiClick={handleEmojiClick} />
                                     </div>,
@@ -1060,7 +993,7 @@ const ChatComponent = ({ }) => {
                             <Select
                                 options={templateOptions}
                                 id="message-template"
-                                value={selectedMessage ?? undefined} // Установите undefined, если selectedMessage равно null
+                                value={selectedMessage ?? undefined}
                                 onChange={handleSelectTChange}
                                 placeholder="Выберите сообщение"
                                 customClassName="custom-select-1"
