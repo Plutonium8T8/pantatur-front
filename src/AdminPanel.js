@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css'; // Импорт стилей для календаря
+import './AdminPanel.css';
 
 const AdminPanel = () => {
   const [date, setDate] = useState(new Date());
@@ -10,7 +11,7 @@ const AdminPanel = () => {
   };
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
+    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', color: 'black' }}>
       <h1>Admin Panel</h1>
       <div>
         <h2>Календарь</h2>

@@ -36,7 +36,7 @@ const NotificationComponent = () => {
 
             const data = await response.json();
             if (Array.isArray(data) && Array.isArray(data[0])) {
-                setTickets(data[0]); // Извлекаем первый элемент, содержащий массив тикетов
+                setTickets(data[0]);
             } else {
                 console.warn("Неожиданная структура данных тикетов:", data);
             }
@@ -153,12 +153,12 @@ const NotificationComponent = () => {
                             ))}
                         </select>
 
-                        <input
-                            type="text"
+                        <textarea
                             value={taskContent}
                             onChange={(e) => setTaskContent(e.target.value)}
                             placeholder="Descriptions for tasks"
                             required
+                            rows="10" cols="30"
                         />
                         <button type="submit">Add Task</button>
                     </form>
@@ -168,17 +168,17 @@ const NotificationComponent = () => {
                     <h2>Add Notifications</h2>
                     <form onSubmit={handleNotificationSubmit}>
                         <input
-                            type="text"
-                            value={notificationContent}
-                            onChange={(e) => setNotificationContent(e.target.value)}
-                            placeholder="Description for notification"
-                            required
-                        />
-                        <input
                             type="datetime-local"
                             value={notificationDate}
                             onChange={(e) => setNotificationDate(e.target.value)}
                             required
+                        />
+                        <textarea
+                            value={notificationContent}
+                            onChange={(e) => setNotificationContent(e.target.value)}
+                            placeholder="Description for notification"
+                            required
+                            rows="10" cols="30"
                         />
                         <button type="submit">Add Notification</button>
                     </form>

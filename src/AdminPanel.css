@@ -1,0 +1,16 @@
+.react-calendar__tile {
+    color: black !important; 
+}
+
+.react-calendar__tile--active {
+    background-color: #1abc9c !important; /* Цвет фона выбранной даты */
+    color: white !important; /* Цвет текста выбранной даты */
+}
+
+.react-calendar__navigation button {
+    color: black !important; 
+}
+
+.react-calendar__month-view__weekdays {
+    color: black !important;
+}
