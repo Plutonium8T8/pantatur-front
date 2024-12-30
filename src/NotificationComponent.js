@@ -138,14 +138,13 @@ const NotificationComponent = () => {
                 <div className="right-side">
                     <h2>Add Tasks</h2>
                     <form onSubmit={handleTaskSubmit}>
-                        <h1>Choose Ticket for Tasks</h1>
                         <select
                             value={ticketId || ""}
                             onChange={handleTicketChange}
                             style={{ color: "#000", backgroundColor: "#fff" }}
                         >
                             <option value="" disabled>
-                                {tickets.length === 0 ? "Loading tickets..." : "Choose ticket"}
+                                {tickets.length === 0 ? "Loading tickets..." : "Choose ticket ID"}
                             </option>
                             {tickets.map((ticket) => (
                                 <option key={ticket.id} value={ticket.id}>
