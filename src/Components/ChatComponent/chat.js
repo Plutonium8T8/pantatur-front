@@ -55,6 +55,7 @@ const ChatComponent = ({ }) => {
     const [selectedMessage, setSelectedMessage] = useState(null); // Выбранный шаблон из Select
     const [selectedMessageId, setSelectedMessageId] = useState(null);
     const [selectedReaction, setSelectedReaction] = useState({});
+    const reactionContainerRef = useRef(null);
 
     useEffect(() => {
         // Если ticketId передан через URL, устанавливаем его как selectedTicketId
@@ -483,6 +484,7 @@ const ChatComponent = ({ }) => {
         setEditedText('');
     };
 
+    // Обработчик клика по реакции
     const handleReactionClick = (reaction, messageId) => {
         // Всегда обновляем реакцию
         setSelectedReaction((prev) => ({
@@ -516,8 +518,7 @@ const ChatComponent = ({ }) => {
                         resolve(response.data); // Сервер подтвердил, что реакция принята
                     }
 
-                    // вот тут можно поставить getClientMessage для динамического обновления реакции
-
+                    // Вот тут можно поставить getClientMessage для динамического обновления реакции
                 };
             } else {
                 reject(new Error('Соединение с WebSocket отсутствует'));
@@ -531,9 +532,26 @@ const ChatComponent = ({ }) => {
         const reactionsArray = reactions ? reactions.replace(/[{}]/g, '').split(',') : [];
 
         // Проверяем, есть ли реакции в массиве и возвращаем последнюю
-        return reactionsArray.length > 0 ? reactionsArray[reactionsArray.length - 1] : '☺'; // Возвращаем '😊', если реакций нет
+        return reactionsArray.length > 0 ? reactionsArray[reactionsArray.length - 1] : '☺'; // Возвращаем '☺', если реакций нет
     };
 
+    // Обработчик клика вне контейнера
+    const handleClickOutsideReaction = (event) => {
+        if (
+            reactionContainerRef.current &&
+            !reactionContainerRef.current.contains(event.target)
+        ) {
+            setSelectedMessageId(null); // Закрываем реакции
+        }
+    };
+
+    // Привязка обработчика события к документу
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutsideReaction);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutsideReaction);
+        };
+    }, []);
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const handleEmojiClick = (emojiObject) => {
@@ -906,17 +924,32 @@ const ChatComponent = ({ }) => {
                                                         )}
                                                         {/* Кнопки реакций, которые появляются только для выбранного сообщения */}
                                                         {selectedMessageId === msg.id && (
-                                                            <div className="reaction-container">
+                                                            <div
+                                                                className="reaction-container"
+                                                                ref={reactionContainerRef}
+                                                            >
                                                                 <div className="reaction-buttons">
-                                                                    {['☺', '👍', '❤️', '😂', '😮', '😢', '😡'].map((reaction) => (
-                                                                        <div
-                                                                            key={reaction}
-                                                                            onClick={() => handleReactionClick(reaction, msg.id)}
-                                                                            className={selectedReaction[msg.id] === reaction ? 'active' : ''}
-                                                                        >
-                                                                            {reaction}
-                                                                        </div>
-                                                                    ))}
+                                                                    {['☺', '👍', '❤️', '😂', '😮', '😢', '😡'].map(
+                                                                        (reaction) => (
+                                                                            <div
+                                                                                key={reaction}
+                                                                                onClick={() =>
+                                                                                    handleReactionClick(
+                                                                                        reaction,
+                                                                                        msg.id
+                                                                                    )
+                                                                                }
+                                                                                className={
+                                                                                    selectedReaction[msg.id] ===
+                                                                                        reaction
+                                                                                        ? 'active'
+                                                                                        : ''
+                                                                                }
+                                                                            >
+                                                                                {reaction}
+                                                                            </div>
+                                                                        )
+                                                                    )}
                                                                 </div>
                                                             </div>
                                                         )}
