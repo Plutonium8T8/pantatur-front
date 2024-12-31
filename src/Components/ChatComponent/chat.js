@@ -316,7 +316,11 @@ const ChatComponent = ({ }) => {
     const handleKeyDown = (event) => {
         if (event.key === 'Enter' && !event.shiftKey) {
             event.preventDefault(); // Предотвращаем переход на новую строку
-            handleClick(); // Вызываем функцию, которая обрабатывает отправку
+            if (editMessageId) {
+                handleSave(); // Сохраняем изменения, если редактируем сообщение
+            } else {
+                handleClick(selectedTicketId); // Отправляем новое сообщение
+            }
         }
     };
 
@@ -403,7 +407,6 @@ const ChatComponent = ({ }) => {
 
                         case 'react':
                             getClientMessages();
-                            console.log("react primit de pe server");
                             break;
 
                         case 'edit':
