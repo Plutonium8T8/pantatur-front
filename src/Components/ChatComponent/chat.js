@@ -407,14 +407,17 @@ const ChatComponent = ({ }) => {
 
                         case 'react':
                             getClientMessages();
+                            console.log("react la mesaj");
                             break;
 
                         case 'edit':
                             getClientMessages();
+                            console.log("edit la mesaj");
                             break;
 
                         case 'delete':
                             getClientMessages();
+                            console.log("stergere mesaj");
                             break;
 
                         default:
