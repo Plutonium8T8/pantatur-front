@@ -402,7 +402,16 @@ const ChatComponent = ({ }) => {
                             break;
 
                         case 'react':
-                            handleSeen(message.data);
+                            getClientMessages();
+                            console.log("react primit de pe server");
+                            break;
+
+                        case 'edit':
+                            getClientMessages();
+                            break;
+
+                        case 'delete':
+                            getClientMessages();
                             break;
 
                         default:

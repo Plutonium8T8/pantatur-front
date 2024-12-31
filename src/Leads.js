@@ -244,8 +244,6 @@ const Leads = () => {
                                             <div><img className='foto-user' src="/user fon.png" alt="example" /></div>
                                             <div className='tickets-descriptions'>
                                                 <div>{ticket.contact || "no contact"}</div>
-                                                <div>{ticket.transport || "no transport"}</div>
-                                                <div>{ticket.country || "no country"}</div>
                                                 <div>{ticket.id || "no id"}</div>
                                             </div>
                                         </div>

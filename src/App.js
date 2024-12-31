@@ -14,6 +14,7 @@ import Notification from './Notification';
 import { UnreadMessagesProvider } from './Unread';  // Импортируем UnreadMessagesProvider из Unread.js
 import NotificationComponent from './NotificationComponent';
 import AdminPanel from './AdminPanel';
+import Dashboard from './Dashboard';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -92,6 +93,7 @@ function App() {
                   <div className="page-content">
                     <Routes>
                       <Route path="/account" element={<UserProfile />} />
+                      <Route path="/dashboard" element={<Dashboard />} />
                       <Route path="/" element={<Navigate to="/leads" />} />
                       <Route path="/leads" element={<Leads />} />
                       <Route
