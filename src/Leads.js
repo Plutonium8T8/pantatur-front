@@ -42,7 +42,6 @@ const Leads = () => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const { enqueueSnackbar } = useSnackbar();
-    const [extraInfo, setExtraInfo] = useState({}); // Состояние для дополнительной информации каждого тикета
 
     const fetchTickets = async () => {
         setIsLoading(true);
