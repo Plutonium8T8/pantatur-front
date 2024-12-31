@@ -42,6 +42,7 @@ const Leads = () => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const { enqueueSnackbar } = useSnackbar();
+    const [contextMenu, setContextMenu] = useState(null);
 
     const fetchTickets = async () => {
         setIsLoading(true);
@@ -157,6 +158,25 @@ const Leads = () => {
         fetchTickets();
     }
 
+    const handleContextMenu = (event, ticket) => {
+        event.preventDefault();
+        setContextMenu({
+            mouseX: event.clientX - 2,
+            mouseY: event.clientY - 4,
+            ticket,
+        });
+    };
+
+    const handleCloseContextMenu = () => {
+        setContextMenu(null);
+    };
+
+    const handleEditTicket = (ticket) => {
+        setCurrentTicket(ticket);
+        setIsModalOpen(true);
+        handleCloseContextMenu();
+    };
+
     return (
         <div className='dashboard-container'>
             <div className='dashboard-header'>
@@ -200,6 +220,7 @@ const Leads = () => {
                                     <div
                                         key={ticket.id}
                                         className="ticket"
+                                        onContextMenu={(e) => handleContextMenu(e, ticket)} // Контекстное меню
                                         draggable
                                         onDragStart={(e) => handleDragStart(e, ticket.id)}
                                         onClick={() => handleTicketClick(ticket)}
@@ -229,7 +250,22 @@ const Leads = () => {
                     </div>
                 )}
             </div>
-
+            {contextMenu && (
+                <div
+                    style={{
+                        position: 'absolute',
+                        top: contextMenu.mouseY,
+                        left: contextMenu.mouseX,
+                        backgroundColor: 'white',
+                        boxShadow: '0 2px 5px rgba(0,0,0,0.15)',
+                        zIndex: 1000,
+                        padding: '10px',
+                        borderRadius: '4px',
+                    }}
+                >
+                    <button onClick={() => handleEditTicket(contextMenu.ticket)}>Редактировать</button>
+                </div>
+            )}
             {currentTicket && (
                 <TicketModal
                     ticket={currentTicket}
