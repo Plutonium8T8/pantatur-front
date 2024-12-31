@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import TicketModal from './TicketModal';
 import { workflowOptions } from './FormOptions/WorkFlowOption';
 import { priorityOptions } from './FormOptions/PriorityOption';
@@ -43,6 +43,7 @@ const Leads = () => {
     const [isLoading, setIsLoading] = useState(false);
     const { enqueueSnackbar } = useSnackbar();
     const [contextMenu, setContextMenu] = useState(null);
+    const contextMenuRef = useRef(null); // Ссылка на контекстное меню
 
     const fetchTickets = async () => {
         setIsLoading(true);
@@ -177,6 +178,19 @@ const Leads = () => {
         handleCloseContextMenu();
     };
 
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (contextMenuRef.current && !contextMenuRef.current.contains(event.target)) {
+                setContextMenu(null); // Закрываем меню, если клик за его пределами
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
     return (
         <div className='dashboard-container'>
             <div className='dashboard-header'>
@@ -252,6 +266,7 @@ const Leads = () => {
             </div>
             {contextMenu && (
                 <div
+                    ref={contextMenuRef} // Привязываем ссылку к контекстному меню
                     style={{
                         position: 'absolute',
                         top: contextMenu.mouseY,
