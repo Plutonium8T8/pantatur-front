@@ -549,3 +549,8 @@ button {
   gap: 20px;
   margin-bottom: 10px;
 }
+.time-task {
+  background-color:lightblue;
+  padding: 5px;
+  border-radius: 8px;
+}

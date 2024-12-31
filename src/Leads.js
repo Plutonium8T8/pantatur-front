@@ -216,7 +216,7 @@ const Leads = () => {
                                             </div>
                                         </div>
                                         <div className='container-time-tasks'>
-                                            <div>time</div>
+                                            <div className='time-task'>{ticket.creation_date}</div>
                                             <div>tasks</div>
                                         </div>
                                     </div>
