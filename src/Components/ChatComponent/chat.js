@@ -133,7 +133,7 @@ const ChatComponent = ({ }) => {
 
             // Обновляем состояние с выбранным technician_id
             setSelectedTechnicianId(data.technician_id); // Устанавливаем technician_id в состояние
-
+            console.log("extra infooo", data);
         } catch (error) {
             enqueueSnackbar('Ошибка при получении дополнительной информации', { variant: 'error' });
             console.error('Ошибка при получении дополнительной информации:', error);
@@ -201,6 +201,35 @@ const ChatComponent = ({ }) => {
         });
     };
 
+
+        // const handleTechnicianUpdate = async (technicianId, selectedTicketID) => {
+        //     try {
+        //         setSelectedTechnicianId(technicianId); // Сохраняем выбранный technicianId в состояние
+
+        //         const token = Cookies.get('jwt');
+        //         if (!token) throw new Error('Отсутствует токен авторизации');
+
+        //         const response = await fetch(`https://pandatur-api.com/api/tickets/${selectedTicketId}`, {
+        //             method: 'PATCH',
+        //             headers: {
+        //                 'Content-Type': 'application/json',
+        //                 Authorization: `Bearer ${token}`,
+        //             },
+        //             body: JSON.stringify({ technician_id: userId }),
+        //         });
+
+        //         if (!response.ok) {
+        //             throw new Error(`Ошибка при обновлении technician_id. Код: ${response.status}`);
+        //         }
+
+        //         const updatedTicket = await response.json();
+        //         console.log('Тикет успешно обновлён:', updatedTicket);
+
+        //     } catch (error) {
+        //         console.error('Ошибка при обновлении technician_id:', error.message);
+        //     }
+        // };
+        
     const handleTechnicianChange = (technicianId) => {
         console.log('Выбранный техник ID:', technicianId);
         setSelectedTechnicianId(technicianId);
