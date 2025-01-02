@@ -168,6 +168,7 @@ const ChatComponent = ({ }) => {
             }
 
             const data = await response.json();
+            console.log("messagaesssss:::", data);
             // console.log('Сообщения клиента полученые с сервера:', data);
             // enqueueSnackbar('Сообшения получены!', { variant: 'success' });
             // Обновляем состояние с сообщениями
@@ -527,39 +528,80 @@ const ChatComponent = ({ }) => {
     const sendReaction = (messageId, senderId, reaction) => {
         return new Promise((resolve, reject) => {
             if (socket && socket.readyState === WebSocket.OPEN) {
-                socket.send(
-                    JSON.stringify({
-                        type: 'react',
-                        data: {
-                            message_id: messageId,
-                            sender_id: senderId,
-                            reaction: reaction,
-                        },
-                    })
-                );
+                const payload = {
+                    type: 'react',
+                    data: {
+                        message_id: messageId,
+                        sender_id: senderId,
+                        reaction: { senderId, reaction },
+                    },
+                };
 
-                // Здесь можно ожидать подтверждения от сервера, если это предусмотрено протоколом
+                console.log('Отправка реакции на сервер:', JSON.stringify(payload, null, 2)); // Лог отправляемых данных
+
+                socket.send(JSON.stringify(payload));
+
+                // Ожидание подтверждения от сервера
                 socket.onmessage = (event) => {
-                    const response = JSON.parse(event.data);
-                    if (response.type === 'react' && response.data.message_id === messageId) {
-                        resolve(response.data); // Сервер подтвердил, что реакция принята
-                    }
+                    console.log('Получен ответ от сервера:', event.data); // Лог ответа сервера
 
-                    // Вот тут можно поставить getClientMessage для динамического обновления реакции
+                    try {
+                        const response = JSON.parse(event.data);
+
+                        if (
+                            response.type === 'react' &&
+                            response.data.message_id === messageId
+                        ) {
+                            console.log('Реакция успешно обработана:', response.data); // Лог успешного результата
+                            resolve(response.data); // Сервер подтвердил реакцию
+                        } else {
+                            console.error('Неверный тип ответа или несоответствие ID:', response);
+                            reject(new Error('Неверный ответ от сервера.'));
+                        }
+                    } catch (error) {
+                        console.error('Ошибка при разборе ответа от сервера:', error); // Лог ошибок парсинга
+                        reject(new Error('Ошибка обработки ответа сервера.'));
+                    }
                 };
             } else {
-                reject(new Error('Соединение с WebSocket отсутствует'));
+                console.error('Ошибка: Соединение с WebSocket отсутствует.'); // Лог при отсутствии соединения
+                reject(new Error('Соединение с WebSocket отсутствует.'));
             }
         });
     };
 
-    // Функция для извлечения последней реакции из строки реакций
-    const getLastReaction = (reactions) => {
-        // Убираем фигурные скобки и разделяем строку на массив реакций
-        const reactionsArray = reactions ? reactions.replace(/[{}]/g, '').split(',') : [];
+    const getLastReaction = (message) => {
+        if (!message.reactions) {
+            return '☺'; // Возвращаем '☺', если реакции отсутствуют
+        }
 
-        // Проверяем, есть ли реакции в массиве и возвращаем последнюю
-        return reactionsArray.length > 0 ? reactionsArray[reactionsArray.length - 1] : '☺'; // Возвращаем '☺', если реакций нет
+        try {
+            // Убираем внешние фигурные скобки и разделяем строку на массив реакций
+            const reactionsArray = message.reactions
+                .replace(/^{|}$/g, '') // Удаляем внешние фигурные скобки
+                .split('","') // Разделяем строки реакций
+                .map((reaction) => reaction.replace(/(^"|"$)/g, '').trim()); // Убираем кавычки
+
+            // Парсим JSON-объекты и извлекаем поле `reaction`
+            const parsedReactions = reactionsArray.map((reaction) => {
+                try {
+                    // Удаляем экранированные кавычки и парсим строку
+                    const normalizedReaction = reaction.replace(/\\\"/g, '"');
+                    const parsed = JSON.parse(normalizedReaction); // Пытаемся распарсить как JSON
+                    return parsed.reaction; // Возвращаем только поле `reaction`
+                } catch {
+                    return reaction; // Если парсинг не удался, возвращаем оригинальную строку (эмодзи)
+                }
+            });
+
+            // Возвращаем только последнюю реакцию
+            return parsedReactions.length > 0
+                ? parsedReactions[parsedReactions.length - 1]
+                : '☺';
+        } catch (error) {
+            console.error('Ошибка при обработке реакций:', error);
+            return '☺'; // Значение по умолчанию при ошибке
+        }
     };
 
     // Обработчик клика вне контейнера
@@ -922,7 +964,8 @@ const ChatComponent = ({ }) => {
                                 newWindow.document.close();
                             };
 
-                            const lastReaction = selectedReaction[msg.id] || getLastReaction(msg.reactions);
+                            const lastReaction = getLastReaction(msg);
+                            console.log("reactions parsed:", lastReaction);
 
                             return (
                                 <InView
