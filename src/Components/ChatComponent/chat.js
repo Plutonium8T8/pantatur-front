@@ -96,7 +96,7 @@ const ChatComponent = ({ }) => {
             }
 
             const data = await response.json();
-            console.log("tickets+++++",data);
+            console.log("tickets+++++", data);
             setTickets1(...data); // Устанавливаем данные тикетов
         } catch (error) {
             console.error('Ошибка:', error);
@@ -105,6 +105,52 @@ const ChatComponent = ({ }) => {
             setIsLoading(false);
         }
     };
+
+    const fetchTicketsDetail = async () => {
+        if (!selectedTicketId) {
+            console.warn('Не выбран Ticket ID для запроса.');
+            return;
+        }
+
+        setIsLoading(true); // Показываем индикатор загрузки
+        try {
+            const token = Cookies.get('jwt');
+            const response = await fetch(`https://pandatur-api.com/api/tickets/${selectedTicketId}`, {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.status === 401) {
+                console.warn('Ошибка 401: Неавторизован. Перенаправляем на логин.');
+                return;
+            }
+
+            if (!response.ok) {
+                throw new Error('Ошибка при получении данных');
+            }
+
+            const data = await response.json();
+            console.log("Ticket Details:", data);
+            console.log("setSelectedTechnicianId", data.technician_id);
+            // Предположим, что сервер возвращает technician_id, связанный с этим тикетом
+            if (data.technician_id) {
+                setSelectedTechnicianId(data.technician_id); // Обновляем ID техника в состоянии
+            }
+        } catch (error) {
+            console.error('Ошибка:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (selectedTicketId) {
+            fetchTicketsDetail();
+        }
+    }, [selectedTicketId]);
 
     // Получение дополнительной информации для тикета
     const fetchTicketExtraInfo = async (selectedTicketId) => {
@@ -1149,11 +1195,14 @@ const ChatComponent = ({ }) => {
                                 ticket={updatedTicket} // передаем объект тикета, а не только ID
                                 onChange={handleWorkflowChange}
                             />
-                            <div></div>
-                            <TechnicianSelect
-                                selectedTechnicianId={selectedTechnicianId}  // записывается в сосотояние
-                                onTechnicianChange={handleTechnicianChange}  // когда он меняется он отправляется
-                            />
+                            {isLoading ? (
+                                <p>Загрузка...</p> // Индикатор загрузки
+                            ) : (
+                                <TechnicianSelect
+                                    selectedTechnicianId={selectedTechnicianId} // записывается в состояние
+                                    onTechnicianChange={handleTechnicianChange} // когда он меняется он отправляется
+                                />
+                            )}
                             <Input
                                 label="Sale"
                                 type="number"
