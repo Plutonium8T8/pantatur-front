@@ -97,6 +97,7 @@ const ChatComponent = ({ }) => {
             }
 
             const data = await response.json();
+            console.log("tickets+++++",data);
             setTickets1(...data); // Устанавливаем данные тикетов
         } catch (error) {
             console.error('Ошибка:', error);
@@ -965,7 +966,6 @@ const ChatComponent = ({ }) => {
                             };
 
                             const lastReaction = getLastReaction(msg);
-                            console.log("reactions parsed:", lastReaction);
 
                             return (
                                 <InView

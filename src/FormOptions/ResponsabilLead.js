@@ -62,7 +62,7 @@ const TechnicianSelect = ({ onTechnicianChange, selectedTechnicianId }) => {
                 </option>
                 {technicians.map((technician) => (
                     <option key={technician.id} value={technician.id}>
-                        {technician.name}
+                        {technician.name} {technician.id}
                     </option>
                 ))}
             </select>
