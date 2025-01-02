@@ -197,11 +197,6 @@ const ChatComponent = ({ }) => {
         });
     };
 
-    const handleTechnicianChange = (newTechnicianId) => {
-        console.log('Выбранный техник ID:', newTechnicianId);
-        setSelectedTechnicianId(newTechnicianId); // Обновляем состояние
-    };
-
     // отправка данных формы в бэк
     const sendExtraInfo = async () => {
         const token = Cookies.get('jwt'); // Получение токена из cookie
@@ -688,6 +683,42 @@ const ChatComponent = ({ }) => {
     };
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    const handleTechnicianChange = async (newTechnicianId) => {
+        console.log('Выбранный техник ID:', newTechnicianId);
+        console.log('userID', userId);
+        setSelectedTechnicianId(newTechnicianId);
+
+        if (!selectedTicketId || !newTechnicianId) {
+            console.warn('Не выбран тикет или техник.');
+            return;
+        }
+
+        try {
+            const token = Cookies.get('jwt');
+            if (!token) throw new Error('Отсутствует токен авторизации');
+
+            const response = await fetch(`https://pandatur-api.com/api/tickets/${selectedTicketId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                credentials: "include",
+                body: JSON.stringify({ technician_id: newTechnicianId }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Ошибка при обновлении technician_id. Код: ${response.status}`);
+            }
+
+            const updatedTicket = await response.json();
+            console.log('Тикет успешно обновлён:', updatedTicket);
+        } catch (error) {
+            console.error('Ошибка при обновлении technician_id:', error.message);
+        }
+    };
+
+
     // Отправка сообщения
     const sendMessage = async (selectedFile) => {
         if (!managerMessage.trim() && !selectedFile) {
@@ -1077,8 +1108,8 @@ const ChatComponent = ({ }) => {
                                 onChange={handleWorkflowChange}
                             />
                             <TechnicianSelect
-                                selectedTechnicianId={selectedTechnicianId}  // Передаем technician_id в select
-                                onTechnicianChange={handleTechnicianChange}   // Обработчик изменения
+                                selectedTechnicianId={selectedTechnicianId}  // Передаем текущего техника для отображения
+                                onTechnicianChange={handleTechnicianChange}  // Вызывается при изменении техника
                             />
                             <Input
                                 label="Sale"
