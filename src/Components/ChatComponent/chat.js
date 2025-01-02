@@ -76,7 +76,6 @@ const ChatComponent = ({ }) => {
     const fetchTickets = async () => {
         setIsLoading(true); // Показываем индикатор загрузки
         try {
-            await new Promise(resolve => setTimeout(resolve, 500));
             const token = Cookies.get('jwt');
             const response = await fetch('https://pandatur-api.com/api/tickets', {
                 method: 'GET',
@@ -1150,9 +1149,10 @@ const ChatComponent = ({ }) => {
                                 ticket={updatedTicket} // передаем объект тикета, а не только ID
                                 onChange={handleWorkflowChange}
                             />
+                            <div></div>
                             <TechnicianSelect
-                                selectedTechnicianId={selectedTechnicianId}  // Передаем текущего техника для отображения
-                                onTechnicianChange={handleTechnicianChange}  // Вызывается при изменении техника
+                                selectedTechnicianId={selectedTechnicianId}  // записывается в сосотояние
+                                onTechnicianChange={handleTechnicianChange}  // когда он меняется он отправляется
                             />
                             <Input
                                 label="Sale"
