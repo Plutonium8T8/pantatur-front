@@ -4,9 +4,7 @@ import Workflow from './Components/WorkFlowComponent/WorkflowComponent';
 import Cookies from 'js-cookie';
 import { updateTicket } from './Leads';
 import { useUser } from './UserContext';
-import { transportOptions } from './FormOptions/TransportOptions';
-import { countryOptions } from './FormOptions/CountryOptions';
-import Select from './Components/SelectComponent/SelectComponent';
+
 
 const deleteTicketById = async (id) => {
   try {
@@ -75,36 +73,12 @@ const TicketModal = ({ ticket, onClose }) => {
     }
   };
 
-  // const handleSubmitCountryAndTransport = async () => {
-  //   const { country, transport, id } = ticket;
-
-  //   try {
-  //     const token = Cookies.get('jwt'); // Получение токена из cookie
-
-  //     const response = await fetch(`https://pandatur-api.com/ticket-info/${id}`, {
-  //       method: 'POST', // Или 'PUT', если данные нужно обновлять
-  //       headers: {
-  //         'Authorization': `Bearer ${token}`,
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify({ country, transport }),
-  //     });
-
-  //     if (!response.ok) {
-  //       throw new Error('Ошибка при отправке данных');
-  //     }
-
-  //     const result = await response.json();
-  //     console.log('Успешно отправлено:', result);
-  //     alert('Данные успешно отправлены!');
-  //   } catch (error) {
-  //     console.error('Ошибка отправки данных:', error);
-  //     alert('Не удалось отправить данные.');
-  //   }
-  // };
-
   const handleSave = async () => {
-    const ticketData = { ...editedTicket, client_id: userId };
+    const ticketData = {
+      ...editedTicket,
+      client_id: userId,
+      technician_id: userId
+    };
 
     console.log('Sending ticketData:', ticketData);
 
@@ -124,10 +98,6 @@ const TicketModal = ({ ticket, onClose }) => {
       // Сначала сохраняем тикет
       await handleSave();
 
-      // // Затем отправляем country и transport
-      // await handleSubmitCountryAndTransport();
-
-      // Закрываем модальное окно
       onClose();
     } catch (error) {
       console.error('Error in handleClickCreate:', error);
