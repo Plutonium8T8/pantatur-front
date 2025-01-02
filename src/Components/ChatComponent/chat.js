@@ -98,7 +98,6 @@ const ChatComponent = ({ }) => {
 
             const data = await response.json();
             setTickets1(...data); // Устанавливаем данные тикетов
-            // console.log("+++ Загруженные тикеты:", data);
         } catch (error) {
             console.error('Ошибка:', error);
         }
@@ -131,9 +130,6 @@ const ChatComponent = ({ }) => {
                 [selectedTicketId]: data, // Сохраняем информацию для текущего тикета
             }));
 
-            // Обновляем состояние с выбранным technician_id
-            setSelectedTechnicianId(data.technician_id); // Устанавливаем technician_id в состояние
-            console.log("extra infooo", data);
         } catch (error) {
             enqueueSnackbar('Ошибка при получении дополнительной информации', { variant: 'error' });
             console.error('Ошибка при получении дополнительной информации:', error);
@@ -201,47 +197,15 @@ const ChatComponent = ({ }) => {
         });
     };
 
-
-        // const handleTechnicianUpdate = async (technicianId, selectedTicketID) => {
-        //     try {
-        //         setSelectedTechnicianId(technicianId); // Сохраняем выбранный technicianId в состояние
-
-        //         const token = Cookies.get('jwt');
-        //         if (!token) throw new Error('Отсутствует токен авторизации');
-
-        //         const response = await fetch(`https://pandatur-api.com/api/tickets/${selectedTicketId}`, {
-        //             method: 'PATCH',
-        //             headers: {
-        //                 'Content-Type': 'application/json',
-        //                 Authorization: `Bearer ${token}`,
-        //             },
-        //             body: JSON.stringify({ technician_id: userId }),
-        //         });
-
-        //         if (!response.ok) {
-        //             throw new Error(`Ошибка при обновлении technician_id. Код: ${response.status}`);
-        //         }
-
-        //         const updatedTicket = await response.json();
-        //         console.log('Тикет успешно обновлён:', updatedTicket);
-
-        //     } catch (error) {
-        //         console.error('Ошибка при обновлении technician_id:', error.message);
-        //     }
-        // };
-        
-    const handleTechnicianChange = (technicianId) => {
-        console.log('Выбранный техник ID:', technicianId);
-        setSelectedTechnicianId(technicianId);
+    const handleTechnicianChange = (newTechnicianId) => {
+        console.log('Выбранный техник ID:', newTechnicianId);
+        setSelectedTechnicianId(newTechnicianId); // Обновляем состояние
     };
 
     // отправка данных формы в бэк
     const sendExtraInfo = async () => {
         const token = Cookies.get('jwt'); // Получение токена из cookie
         const ticketExtraInfo = extraInfo[selectedTicketId]; // Получаем информацию для выбранного тикета
-        const technician_id = selectedTechnicianId; // Новое значение для technician_id
-
-        console.log('User ID перед отправкой:', userId);
 
         if (!ticketExtraInfo) {
             console.warn('Нет дополнительной информации для выбранного тикета.', ticketExtraInfo);
@@ -258,27 +222,26 @@ const ChatComponent = ({ }) => {
                 },
                 body: JSON.stringify({
                     ...ticketExtraInfo, // Сначала добавляем все свойства из ticketExtraInfo
-                    technician_id, // Затем перезаписываем technician_id
                 }),
             });
 
-            if (!response.ok) {
-                throw new Error('Ошибка при отправке данных');
-            }
-
+            // Логируем отправляемые данные
             console.log('Отправляемые данные:', {
                 ...ticketExtraInfo,
-                technician_id,
             });
 
+            if (!response.ok) {
+                throw new Error(`Ошибка при отправке данных. Статус: ${response.status}`);
+            }
+
             const result = await response.json();
+
             enqueueSnackbar('Данные успешно обновлены', { variant: 'success' });
             console.log('Данные успешно отправлены:', result);
         } catch (error) {
-            enqueueSnackbar('Ошибка при обновлении дополнительной информации:', { variant: 'error' });
+            enqueueSnackbar('Ошибка при обновлении дополнительной информации', { variant: 'error' });
             console.error('Ошибка при отправке дополнительной информации:', error);
-        }
-        finally {
+        } finally {
             setIsLoading(false); // Отключаем индикатор загрузки
         }
     };
