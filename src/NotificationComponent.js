@@ -13,6 +13,7 @@ const NotificationComponent = () => {
     const [ticketId, setTicketId] = useState(null);
     const { userId } = useUser();
     const [error, setError] = useState(null);
+    const [taskDate, setTaskDate] = useState("");
 
     const fetchTicketsID = async () => {
         try {
@@ -45,16 +46,38 @@ const NotificationComponent = () => {
         }
     };
 
-    const fetchTasks = async (ticketId) => {
+    const fetchTasks = async () => {
         try {
-            const response = await fetch(`https://pandatur-api.com/task/${ticketId}`);
-            if (!response.ok) throw new Error("Ошибка при загрузке задач");
+            console.log(`Запрос к API: https://pandatur-api.com/task/user/${userId}`);
+
+            const token = Cookies.get("jwt"); // Получаем токен авторизации
+            if (!token) throw new Error("Отсутствует токен авторизации");
+
+            const response = await fetch(`https://pandatur-api.com/task/user/${userId}`, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`, // Добавляем заголовок авторизации
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`Ошибка при загрузке задач. Код: ${response.status}`);
+            }
+
             const data = await response.json();
-            setTasks(data);
+            console.log("tasks", data);
+            setTasks(data); // Обновляем состояние задач
         } catch (error) {
-            console.error("Ошибка при загрузке задач:", error);
+            console.error("Ошибка при загрузке задач:", error.message);
         }
     };
+
+    useEffect(() => {
+        fetchTicketsID();
+        fetchNotifications();
+        fetchTasks();
+    }, []);
 
     const handleTicketChange = (e) => {
         const selectedTicketId = e.target.value;
@@ -74,29 +97,42 @@ const NotificationComponent = () => {
         }
     };
 
-    useEffect(() => {
-        fetchTicketsID();
-        fetchNotifications();
-    }, []);
-
     const handleTaskSubmit = async (e) => {
-        e.preventDefault();
+        e.preventDefault(); // Предотвращаем перезагрузку страницы
         try {
-            if (!ticketId) throw new Error("Необходимо выбрать тикет для создания задачи");
+            if (!ticketId) throw new Error("Выберите тикет для создания задачи");
+            const token = Cookies.get("jwt");
+            if (!token) throw new Error("Отсутствует токен авторизации");
 
-            const response = await fetch(`https://pandatur-api.com/task/${ticketId}`, {
+            const response = await fetch("https://pandatur-api.com/task", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({ content: taskContent, ticketId }),
+                body: JSON.stringify({
+                    ticket_id: ticketId, // Отправляем выбранный ticket_id
+                    time: taskDate, // Дата выполнения задачи
+                    tag: JSON.stringify(["Example tag"]), // Преобразуем массив в строку JSON
+                    description: taskContent, // Описание задачи
+                }),
             });
 
-            if (!response.ok) throw new Error("Ошибка при создании задачи");
-            await fetchTasks(ticketId);
+            if (!response.ok) {
+                throw new Error(`Ошибка при создании задачи. Код: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log("Задача успешно создана:", data);
+
+            // Обновляем список задач
+            fetchTasks();
+
+            // Сбрасываем состояние формы
             setTaskContent("");
+            setTaskDate("");
         } catch (error) {
-            console.error("Ошибка при создании задачи:", error);
+            console.error("Ошибка при создании задачи:", error.message);
             setError(error.message);
         }
     };
@@ -140,8 +176,8 @@ const NotificationComponent = () => {
                     <form onSubmit={handleTaskSubmit}>
                         <select
                             value={ticketId || ""}
-                            onChange={handleTicketChange}
-                            style={{ color: "#000", backgroundColor: "#fff" }}
+                            onChange={(e) => setTicketId(e.target.value)} // Устанавливаем ticketId при выборе
+                            required
                         >
                             <option value="" disabled>
                                 {tickets.length === 0 ? "Loading tickets..." : "Choose ticket ID"}
@@ -153,13 +189,22 @@ const NotificationComponent = () => {
                             ))}
                         </select>
 
+                        <input
+                            type="datetime-local"
+                            value={taskDate}
+                            onChange={(e) => setTaskDate(e.target.value)}
+                            required
+                        />
+
                         <textarea
                             value={taskContent}
                             onChange={(e) => setTaskContent(e.target.value)}
                             placeholder="Descriptions for tasks"
                             required
-                            rows="10" cols="30"
+                            rows="10"
+                            cols="30"
                         />
+
                         <button type="submit">Add Task</button>
                     </form>
                 </div>
@@ -190,7 +235,13 @@ const NotificationComponent = () => {
                     <h2>Tasks</h2>
                     <ul>
                         {tasks.map((task) => (
-                            <li key={task.id}>{task.content}</li>
+                            <li key={task.id}>
+                                <div><strong>ID:</strong> {task.id}</div>
+                                <div><strong>Ticket ID:</strong> {task.ticket_id}</div>
+                                <div><strong>Scheduled Time:</strong> {task.scheduledTime}</div>
+                                <div><strong>Tag:</strong> {JSON.parse(task.tag).join(", ")}</div>
+                                <div><strong>Description:</strong> {task.description}</div>
+                            </li>
                         ))}
                     </ul>
                 </div>
