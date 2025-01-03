@@ -440,3 +440,9 @@
     cursor: pointer;
     font-size: 18px;
 }
+.text img {
+    width: auto;
+    height: 100px;
+    background-color: white;
+    color: black;
+}

@@ -840,7 +840,7 @@ const ChatComponent = ({ }) => {
                             // Отправляем через WebSocket
                             socket.send(JSON.stringify(fileMessageData));
                             console.log('File URL message sent:', fileMessageData);
-
+                            getClientMessages();
                             // Обновляем список сообщений
                             setMessages1((prevMessages) => [
                                 ...prevMessages,
