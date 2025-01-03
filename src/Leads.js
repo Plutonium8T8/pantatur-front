@@ -158,9 +158,6 @@ const Leads = () => {
         navigate(`/chat/${ticket.id}`)
     };
 
-    const handleDoubleClick = (ticket) => {
-    };
-
     const closeModal = () => {
         setCurrentTicket(null);
         fetchTickets();
@@ -249,7 +246,6 @@ const Leads = () => {
                                             draggable
                                             onDragStart={(e) => handleDragStart(e, ticket.id)}
                                             onClick={() => handleTicketClick(ticket)}
-                                            onDoubleClick={() => handleDoubleClick(ticket)} // Обработчик двойного клика
                                         >
                                             <div className='foto-description'>
                                                 <div><img className='foto-user' src="/user fon.png" alt="example" /></div>
