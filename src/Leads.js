@@ -237,29 +237,56 @@ const Leads = () => {
                                 .filter(ticket =>
                                     (ticket.contact?.includes(searchTerm) || ticket.transport?.includes(searchTerm) || ticket.country?.includes(searchTerm) || searchTerm === '')
                                 )
-                                .map(ticket => (
-                                    <div
-                                        key={ticket.id}
-                                        className="ticket"
-                                        onContextMenu={(e) => handleContextMenu(e, ticket)} // Контекстное меню
-                                        draggable
-                                        onDragStart={(e) => handleDragStart(e, ticket.id)}
-                                        onClick={() => handleTicketClick(ticket)}
-                                        onDoubleClick={() => handleDoubleClick(ticket)} // Добавлен обработчик двойного клика
-                                    >
-                                        <div className='foto-description'>
-                                            <div><img className='foto-user' src="/user fon.png" alt="example" /></div>
-                                            <div className='tickets-descriptions'>
-                                                <div>{ticket.contact || "no contact"}</div>
-                                                <div>{ticket.id || "no id"}</div>
+                                .map(ticket => {
+                                    // Преобразуем строку с тегами в массив
+                                    const tags = ticket.tags ? JSON.parse(ticket.tags) : [];
+
+                                    return (
+                                        <div
+                                            key={ticket.id}
+                                            className="ticket"
+                                            onContextMenu={(e) => handleContextMenu(e, ticket)} // Контекстное меню
+                                            draggable
+                                            onDragStart={(e) => handleDragStart(e, ticket.id)}
+                                            onClick={() => handleTicketClick(ticket)}
+                                            onDoubleClick={() => handleDoubleClick(ticket)} // Обработчик двойного клика
+                                        >
+                                            <div className='foto-description'>
+                                                <div><img className='foto-user' src="/user fon.png" alt="example" /></div>
+                                                <div className='tickets-descriptions'>
+                                                    <div>{ticket.contact || "no contact"}</div>
+                                                    <div>{ticket.id || "no id"}</div>
+                                                    <div>
+                                                        {tags.length > 0 ? (
+                                                            tags.map((tag, index) => (
+                                                                <span
+                                                                    key={index}
+                                                                    style={{
+                                                                        display: 'inline-block',
+                                                                        backgroundColor: '#007bff',
+                                                                        color: '#fff',
+                                                                        padding: '5px 10px',
+                                                                        borderRadius: '20px',
+                                                                        marginRight: '5px',
+                                                                        fontSize: '12px',
+                                                                    }}
+                                                                >
+                                                                    {tag}
+                                                                </span>
+                                                            ))
+                                                        ) : (
+                                                            <span>no tags</span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className='container-time-tasks'>
+                                                <div className='time-task'>{ticket.creation_date}</div>
+                                                <div>tasks</div>
                                             </div>
                                         </div>
-                                        <div className='container-time-tasks'>
-                                            <div className='time-task'>{ticket.creation_date}</div>
-                                            <div>tasks</div>
-                                        </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                         </div>
                     </div>
                 ))}
