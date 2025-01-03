@@ -6,17 +6,17 @@
     border-radius: 10px;
     background-color: #f9f9f9;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .tags-container {
+}
+
+.tags-container {
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
     gap: 8px;
     margin-bottom: 10px;
-  }
-  
-  .tag-item {
+}
+
+.tag-item {
     display: flex;
     align-items: center;
     padding: 2px 3px;
@@ -25,9 +25,9 @@
     border-radius: 8px;
     font-size: 14px;
     width: fit-content;
-  }
-  
-  .remove-tag-button {
+}
+
+.remove-tag-button {
     margin-left: 8px;
     background-color: transparent;
     border: none;
@@ -35,27 +35,27 @@
     font-weight: bold;
     font-size: 14px;
     cursor: pointer;
-  }
-  
-  .remove-tag-button:hover {
+}
+
+.remove-tag-button:hover {
     color: #ffcccb;
-  }
-  
-  .tag-input {
+}
+
+.tag-input {
     width: 100%;
     padding: 10px 15px;
     border-radius: 5px;
     border: 1px solid #ddd;
     font-size: 14px;
-  }
-  
-  .tag-input:focus {
+}
+
+.tag-input:focus {
     border-color: #007bff;
     outline: none;
     box-shadow: 0 0 4px rgba(0, 123, 255, 0.5);
-  }
-  
-  .suggestions-list {
+}
+
+.suggestions-list {
     margin-top: 5px;
     list-style-type: none;
     padding: 0;
@@ -68,54 +68,54 @@
     position: absolute;
     z-index: 10;
     width: 300px;
-  }
-  
-  .suggestion-item {
+}
+
+.suggestion-item {
     padding: 10px;
     font-size: 14px;
     color: #333;
     cursor: pointer;
     border-bottom: 1px solid #eee;
-  }
-  
-  .suggestion-item:last-child {
+}
+
+.suggestion-item:last-child {
     border-bottom: none;
-  }
-  
-  .suggestion-item:hover {
+}
+
+.suggestion-item:hover {
     background-color: #f1f1f1;
-  }
-  
-  .tag-buttons-container {
+}
+
+.tag-buttons-container {
     display: flex;
     justify-content: space-between;
     margin-top: 15px;
-  }
-  
-  .save-tag-button,
-  .add-tag-button {
+}
+
+.save-tag-button,
+.add-tag-button {
     padding: 8px 16px;
     border: none;
     border-radius: 5px;
     font-size: 14px;
     cursor: pointer;
     transition: background-color 0.3s;
-  }
-  
-  .save-tag-button {
+}
+
+.save-tag-button {
     background-color: #28a745;
     color: white;
-  }
-  
-  .save-tag-button:hover {
+}
+
+.save-tag-button:hover {
     background-color: #218838;
-  }
-  
-  .add-tag-button {
+}
+
+.add-tag-button {
     background-color: #007bff;
     color: white;
-  }
-  
-  .add-tag-button:hover {
+}
+
+.add-tag-button:hover {
     background-color: #0056b3;
-  }  
+}
