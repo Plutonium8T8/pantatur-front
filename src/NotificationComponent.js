@@ -53,7 +53,7 @@ const NotificationComponent = () => {
             const token = Cookies.get("jwt"); // Получаем токен авторизации
             if (!token) throw new Error("Отсутствует токен авторизации");
 
-            const response = await fetch(`https://pandatur-api.com/task/user/${userId}`, {
+            const response = await fetch(`https://pandatur-api.com/task/user/2`, {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`, // Добавляем заголовок авторизации
@@ -87,13 +87,29 @@ const NotificationComponent = () => {
 
     const fetchNotifications = async () => {
         try {
-            const response = await fetch(`https://pandatur-api.com/notification/${userId}`);
-            if (!response.ok) throw new Error("Ошибка при загрузке уведомлений");
+            const token = Cookies.get('jwt'); // Получаем токен из cookies
+            if (!token) throw new Error("Токен авторизации отсутствует");
+
+            const response = await fetch(`https://pandatur-api.com/notification/${userId}`, {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${token}`, // Передаем токен в заголовке
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    console.warn("Ошибка 401: Неавторизован. Проверьте токен.");
+                }
+                throw new Error(`Ошибка при загрузке уведомлений: ${response.status}`);
+            }
 
             const data = await response.json();
-            setNotifications(data);
+            setNotifications(data); // Обновляем состояние уведомлений
+            console.log("Уведомления загружены:", data);
         } catch (error) {
-            console.error("Ошибка при загрузке уведомлений:", error);
+            console.error("Ошибка при загрузке уведомлений:", error.message);
         }
     };
 
