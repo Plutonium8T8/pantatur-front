@@ -554,3 +554,9 @@ button {
   padding: 5px;
   border-radius: 8px;
 }
+.tags-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 20px;
+}

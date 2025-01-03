@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import Priority from './Components/PriorityComponent/PriorityComponent';
 import Workflow from './Components/WorkFlowComponent/WorkflowComponent';
+import TagInput from './TagComponent';
 import Cookies from 'js-cookie';
 import { updateTicket } from './Leads';
 import { useUser } from './UserContext';
-
 
 const deleteTicketById = async (id) => {
   try {
@@ -63,6 +63,13 @@ const TicketModal = ({ ticket, onClose }) => {
     }
   };
 
+  const handleTagsChange = (tags) => {
+    setEditedTicket((prevTicket) => ({
+      ...prevTicket,
+      tags,
+    }));
+  };
+
   const onDelete = async (ticketId) => {
     try {
       const res = await deleteTicketById(ticketId);
@@ -77,7 +84,8 @@ const TicketModal = ({ ticket, onClose }) => {
     const ticketData = {
       ...editedTicket,
       client_id: userId,
-      technician_id: userId
+      technician_id: userId,
+      tags: editedTicket.tags || [], // Добавляем теги к данным для сохранения
     };
 
     console.log('Sending ticketData:', ticketData);
@@ -121,25 +129,16 @@ const TicketModal = ({ ticket, onClose }) => {
             style={{ display: 'block', width: '100%', padding: '0.5rem', marginBottom: '1rem' }}
           />
         </label>
-        {/* <div className='select-container-modal'>
-          <Select
-            options={countryOptions}
-            label="Country"
-            id="country-select"
-            value={editedTicket.country || ""}
-            onChange={(value) => handleInputChange({ target: { name: 'country', value } })}
-          />
-          <Select
-            options={transportOptions}
-            label="Transport"
-            id="transport-select"
-            value={editedTicket.transport || ""}
-            onChange={(value) => handleInputChange({ target: { name: 'transport', value } })}
-          />
-        </div> */}
         <div className='container-select-priority-workflow'>
           <Priority ticket={editedTicket} onChange={handleInputChange} />
           <Workflow ticket={editedTicket} onChange={handleInputChange} />
+        </div>
+        <div className='tags-container'>
+          <div>Tags</div>
+          <TagInput
+            initialTags={editedTicket.tags || []}
+            onChange={handleTagsChange}
+          />
         </div>
         <div className="container-button-save-delete-close">
           {ticket?.id && (
