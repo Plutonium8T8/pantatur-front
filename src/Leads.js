@@ -11,25 +11,32 @@ import './App.css';
 export const updateTicket = async (updateData) => {
     try {
         const token = Cookies.get('jwt');
+
+        if (!token) {
+            throw new Error('Токен отсутствует. Авторизация необходима.');
+        }
+
         const response = await fetch(`https://pandatur-api.com/api/tickets/${updateData.id}`, {
             method: 'PATCH',
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ ...updateData }),
+            body: JSON.stringify(updateData),
             credentials: 'include',
         });
 
         if (!response.ok) {
-            throw new Error('Ошибка при обновлении данных');
+            const errorDetails = await response.json();
+            throw new Error(
+                `Ошибка при обновлении данных: ${response.status} ${response.statusText}. Детали: ${JSON.stringify(errorDetails)}`
+            );
         }
 
-        const data = await response.json();
-        return data;
+        return await response.json();
 
     } catch (error) {
-        console.error('Ошибка:', error);
+        console.error('Ошибка при обновлении тикета:', error.message || error);
         throw error;
     }
 };
