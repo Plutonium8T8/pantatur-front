@@ -53,7 +53,7 @@ const NotificationComponent = () => {
             const token = Cookies.get("jwt"); // Получаем токен авторизации
             if (!token) throw new Error("Отсутствует токен авторизации");
 
-            const response = await fetch(`https://pandatur-api.com/task/user/2`, {
+            const response = await fetch(`https://pandatur-api.com/task/user/${userId}`, {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`, // Добавляем заголовок авторизации
