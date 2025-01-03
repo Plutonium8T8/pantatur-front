@@ -1,12 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './TagInput.css';
 
 const TagInput = ({ initialTags = [], onChange }) => {
     const [tags, setTags] = useState(Array.isArray(initialTags) ? initialTags : []);
     const [inputValue, setInputValue] = useState('');
-    const [suggestions, setSuggestions] = useState(['Tag1', 'Tag2', 'Tag3']);
+    const [suggestions, setSuggestions] = useState([]);
+
     const [filteredSuggestions, setFilteredSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
+
+    // Загрузка сохраненных тегов из localStorage при монтировании
+    useEffect(() => {
+        const savedSuggestions = localStorage.getItem('tagsSuggestions');
+        if (savedSuggestions) {
+            setSuggestions(JSON.parse(savedSuggestions));
+        } else {
+            setSuggestions(['Tag1', 'Tag2', 'Tag3']); // Начальные теги по умолчанию
+        }
+    }, []);
+
+    // Сохранение тегов в localStorage при их обновлении
+    useEffect(() => {
+        localStorage.setItem('tagsSuggestions', JSON.stringify(suggestions));
+    }, [suggestions]);
 
     const handleInputChange = (e) => {
         const value = e.target.value;
@@ -40,7 +56,8 @@ const TagInput = ({ initialTags = [], onChange }) => {
 
     const handleSaveTag = () => {
         if (inputValue && !suggestions.includes(inputValue)) {
-            setSuggestions([...suggestions, inputValue]); // Сохраняем новый тег в список доступных
+            const updatedSuggestions = [...suggestions, inputValue];
+            setSuggestions(updatedSuggestions); // Сохраняем новый тег в список доступных
         }
         setInputValue('');
         setShowSuggestions(false);
