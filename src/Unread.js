@@ -16,51 +16,51 @@ export const UnreadMessagesProvider = ({ children }) => {
     const socket = useSocket(); // Получаем WebSocket из SocketContext
 
     // Обновление количества непрочитанных сообщений
-const updateUnreadCount = (updatedMessages) => {
-    // Убедимся, что updatedMessages — это массив
-    if (!Array.isArray(updatedMessages)) {
-        console.error('Expected an array for updatedMessages, but got:', updatedMessages);
-        setUnreadCount(0);  // Если это не массив, устанавливаем 0
-        return;
-    }
-
-    // Проверка на наличие сообщений
-    if (updatedMessages.length === 0) {
-        setUnreadCount(0);  // Если сообщений нет, устанавливаем 0
-        return;
-    }
-
-    // Фильтрация непрочитанных сообщений
-    const unreadMessages = updatedMessages.filter(
-        (msg) =>
-            (!msg.seen_at || !msg.seen_by?.includes(String(userId))) &&
-            msg.sender_id !== Number(userId)
-    );
-
-    // Установка количества непрочитанных сообщений
-    setUnreadCount(unreadMessages.length);
-};
-
-    
-    // Пометка сообщений как прочитанных
-const markMessagesAsRead = (clientId) => {
-    setMessages((prev) => {
-        // Если prev не является массивом, вернем пустой массив
-        if (!Array.isArray(prev)) {
-            console.error('prev is not an array:', prev);
-            return [];
+    const updateUnreadCount = (updatedMessages) => {
+        // Убедимся, что updatedMessages — это массив
+        if (!Array.isArray(updatedMessages)) {
+            console.error('Expected an array for updatedMessages, but got:', updatedMessages);
+            setUnreadCount(0);  // Если это не массив, устанавливаем 0
+            return;
         }
 
-        const updatedMessages = prev.map((msg) =>
-            msg.client_id === clientId && !msg.seen_at
-                ? { ...msg, seen_at: new Date().toISOString() }
-                : msg
+        // Проверка на наличие сообщений
+        if (updatedMessages.length === 0) {
+            setUnreadCount(0);  // Если сообщений нет, устанавливаем 0
+            return;
+        }
+
+        // Фильтрация непрочитанных сообщений
+        const unreadMessages = updatedMessages.filter(
+            (msg) =>
+                (!msg.seen_at || !msg.seen_by?.includes(String(userId))) &&
+                msg.sender_id !== Number(userId)
         );
 
-        updateUnreadCount(updatedMessages); // Обновляем счётчик
-        return updatedMessages;
-    });
-};
+        // Установка количества непрочитанных сообщений
+        setUnreadCount(unreadMessages.length);
+    };
+
+
+    // Пометка сообщений как прочитанных
+    const markMessagesAsRead = (clientId) => {
+        setMessages((prev) => {
+            // Если prev не является массивом, вернем пустой массив
+            if (!Array.isArray(prev)) {
+                console.error('prev is not an array:', prev);
+                return [];
+            }
+
+            const updatedMessages = prev.map((msg) =>
+                msg.client_id === clientId && !msg.seen_at
+                    ? { ...msg, seen_at: new Date().toISOString() }
+                    : msg
+            );
+
+            updateUnreadCount(updatedMessages); // Обновляем счётчик
+            return updatedMessages;
+        });
+    };
 
 
     const fetchMessages = () => {
@@ -84,7 +84,7 @@ const markMessagesAsRead = (clientId) => {
             const handleNewMessage = (event) => {
                 const message = JSON.parse(event.data);
                 // console.log('Received message:', message);
-    
+
                 if (message.type === 'message') {
                     setMessages((prev) => {
                         const updatedMessages = [...prev, message.data];
@@ -108,9 +108,9 @@ const markMessagesAsRead = (clientId) => {
                     });
                 }
             };
-    
+
             socket.addEventListener('message', handleNewMessage);
-    
+
             return () => {
                 socket.removeEventListener('message', handleNewMessage);
             };
