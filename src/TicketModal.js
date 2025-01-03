@@ -30,6 +30,7 @@ const deleteTicketById = async (id) => {
 const saveTicketToServer = async (ticketData) => {
   try {
     const token = Cookies.get('jwt');
+    console.log('Отправляемые данные:', ticketData); // Логируем данные
     const response = await fetch('https://pandatur-api.com/api/tickets', {
       method: 'POST',
       headers: {
@@ -50,23 +51,24 @@ const saveTicketToServer = async (ticketData) => {
 };
 
 const TicketModal = ({ ticket, onClose }) => {
-  const [editedTicket, setEditedTicket] = useState(ticket || {});
+  const [editedTicket, setEditedTicket] = useState({
+    ...ticket,
+    tags: Array.isArray(ticket?.tags) ? ticket.tags : [], // Приводим tags к массиву
+  });
   const { userId } = useUser();
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target || {};
-    if (name) {
-      setEditedTicket((prevTicket) => ({
-        ...prevTicket,
-        [name]: value,
-      }));
-    }
+    const { name, value } = e.target;
+    setEditedTicket((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
-  const handleTagsChange = (tags) => {
-    setEditedTicket((prevTicket) => ({
-      ...prevTicket,
-      tags,
+  const handleTagsChange = (updatedTags) => {
+    setEditedTicket((prev) => ({
+      ...prev,
+      tags: updatedTags,
     }));
   };
 
@@ -85,30 +87,18 @@ const TicketModal = ({ ticket, onClose }) => {
       ...editedTicket,
       client_id: userId,
       technician_id: userId,
-      tags: editedTicket.tags || [], // Добавляем теги к данным для сохранения
     };
 
-    console.log('Sending ticketData:', ticketData);
+    console.log('Данные для отправки:', ticketData);
 
     try {
       const res = editedTicket?.id == null
         ? await saveTicketToServer(ticketData)
         : await updateTicket(ticketData);
-      console.log(res);
+      console.log('Ответ сервера:', res);
       onClose();
     } catch (e) {
-      console.error('Error saving ticket:', e);
-    }
-  };
-
-  const handleClickCreate = async () => {
-    try {
-      // Сначала сохраняем тикет
-      await handleSave();
-
-      onClose();
-    } catch (error) {
-      console.error('Error in handleClickCreate:', error);
+      console.error('Ошибка при сохранении тикета:', e);
     }
   };
 
@@ -117,7 +107,7 @@ const TicketModal = ({ ticket, onClose }) => {
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <div className='id-ticket'>ID Ticket #{editedTicket.id}</div>
+        <div className="id-ticket">ID Ticket #{editedTicket.id}</div>
         <label>
           Nume Client
           <input
@@ -126,18 +116,57 @@ const TicketModal = ({ ticket, onClose }) => {
             value={editedTicket.contact || ""}
             onChange={handleInputChange}
             placeholder="Nume Client"
-            style={{ display: 'block', width: '100%', padding: '0.5rem', marginBottom: '1rem' }}
+            style={{
+              display: 'block',
+              width: '100%',
+              padding: '0.5rem',
+              marginBottom: '1rem',
+            }}
           />
         </label>
-        <div className='container-select-priority-workflow'>
+        <div className="container-select-priority-workflow">
           <Priority ticket={editedTicket} onChange={handleInputChange} />
           <Workflow ticket={editedTicket} onChange={handleInputChange} />
         </div>
-        <div className='tags-container'>
-          <div>Tags</div>
+        <div>
+          <strong>Выбранные теги:</strong>
+          <div
+            style={{
+              padding: '10px',
+              backgroundColor: '#f9f9f9',
+              border: '1px solid #ddd',
+              borderRadius: '5px',
+              marginTop: '10px',
+              maxHeight: '100px',
+              overflowY: 'auto',
+            }}
+          >
+            {editedTicket.tags.length > 0 ? (
+              editedTicket.tags.map((tag, index) => (
+                <span
+                  key={index}
+                  style={{
+                    display: 'inline-block',
+                    backgroundColor: '#007bff',
+                    color: '#fff',
+                    padding: '5px 10px',
+                    borderRadius: '20px',
+                    margin: '5px',
+                    fontSize: '12px',
+                  }}
+                >
+                  {tag}
+                </span>
+              ))
+            ) : (
+              <em>Теги не выбраны</em>
+            )}
+          </div>
+        </div>
+        <div className="tags-container">
           <TagInput
-            initialTags={editedTicket.tags || []}
-            onChange={handleTagsChange}
+            initialTags={editedTicket.tags} // Передаем теги
+            onChange={handleTagsChange} // Обновляем теги
           />
         </div>
         <div className="container-button-save-delete-close">
@@ -146,7 +175,7 @@ const TicketModal = ({ ticket, onClose }) => {
               Delete
             </button>
           )}
-          <button onClick={handleClickCreate} className="button-save">
+          <button onClick={handleSave} className="button-save">
             {!editedTicket.id ? 'Create' : 'Save'}
           </button>
           <button onClick={onClose} className="button-close">
