@@ -19,6 +19,15 @@ const TagInput = ({ initialTags = [], onChange }) => {
         setShowSuggestions(true);
     };
 
+    const handleFocus = () => {
+        setFilteredSuggestions(suggestions); // Показываем весь список при фокусе
+        setShowSuggestions(true);
+    };
+
+    const handleBlur = () => {
+        setTimeout(() => setShowSuggestions(false), 200); // Задержка для клика на элемент
+    };
+
     const handleAddTag = (tag) => {
         if (!tags.includes(tag)) {
             const updatedTags = [...tags, tag];
@@ -59,6 +68,8 @@ const TagInput = ({ initialTags = [], onChange }) => {
                 type="text"
                 value={inputValue}
                 onChange={handleInputChange}
+                onFocus={handleFocus} // Показываем список тегов при фокусе
+                onBlur={handleBlur} // Скрываем список при потере фокуса
                 placeholder="Введите тэг..."
                 className="tag-input"
             />
