@@ -980,30 +980,30 @@ const ChatComponent = ({ }) => {
                             const openImageInNewWindow = (url) => {
                                 const newWindow = window.open('', '_blank');
                                 newWindow.document.write(`
-                        <html>
-                            <head>
-                                <title>Просмотр изображения</title>
-                                <style>
-                                    body {
-                                        display: flex;
-                                        justify-content: center;
-                                        align-items: center;
-                                        height: 100vh;
-                                        margin: 0;
-                                        background-color: #f0f0f0;
-                                    }
-                                    img {
-                                        max-width: 80%;
-                                        max-height: 80%;
-                                        border-radius: 8px;
-                                    }
-                                </style>
-                            </head>
-                            <body>
-                                <img src="${url}" alt="Просмотр изображения" />
-                            </body>
-                        </html>
-                    `);
+                                                            <html>
+                                                                <head>
+                                                                    <title>Просмотр изображения</title>
+                                                                    <style>
+                                                                        body {
+                                                                            display: flex;
+                                                                            justify-content: center;
+                                                                            align-items: center;
+                                                                            height: 100vh;
+                                                                            margin: 0;
+                                                                            background-color: #f0f0f0;
+                                                                        }
+                                                                        img {
+                                                                            max-width: 80%;
+                                                                            max-height: 80%;
+                                                                            border-radius: 8px;
+                                                                        }
+                                                                    </style>
+                                                                </head>
+                                                                <body>
+                                                                    <img src="${url}" alt="Просмотр изображения" />
+                                                                </body>
+                                                            </html>
+                                                        `);
                                 newWindow.document.close();
                             };
 
