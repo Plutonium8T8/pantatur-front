@@ -30,7 +30,7 @@ const deleteTicketById = async (id) => {
 const saveTicketToServer = async (ticketData) => {
   try {
     const token = Cookies.get('jwt');
-    console.log('Отправляемые данные:', ticketData); // Логируем данные
+    console.log('Отправляемые данные:', ticketData);
     const response = await fetch('https://pandatur-api.com/api/tickets', {
       method: 'POST',
       headers: {
@@ -53,7 +53,11 @@ const saveTicketToServer = async (ticketData) => {
 const TicketModal = ({ ticket, onClose }) => {
   const [editedTicket, setEditedTicket] = useState({
     ...ticket,
-    tags: Array.isArray(ticket?.tags) ? ticket.tags : [], // Приводим tags к массиву
+    tags: Array.isArray(ticket?.tags)
+      ? ticket.tags
+      : ticket?.tags
+        ? JSON.parse(ticket.tags) // Парсим строку в массив
+        : [], // Если теги отсутствуют, инициализируем пустым массивом
   });
   const { userId } = useUser();
 
@@ -165,8 +169,8 @@ const TicketModal = ({ ticket, onClose }) => {
         </div>
         <div className="tags-container">
           <TagInput
-            initialTags={editedTicket.tags} // Передаем теги
-            onChange={handleTagsChange} // Обновляем теги
+            initialTags={editedTicket.tags}
+            onChange={handleTagsChange}
           />
         </div>
         <div className="container-button-save-delete-close">
