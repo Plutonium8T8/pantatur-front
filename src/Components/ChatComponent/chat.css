@@ -441,6 +441,7 @@
     font-size: 18px;
 }
 .text img {
+    cursor: pointer;
     width: auto;
     height: 100px;
     background-color: white;
