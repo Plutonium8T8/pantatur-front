@@ -440,17 +440,14 @@ const ChatComponent = ({ }) => {
                             break;
 
                         case 'react':
-                            getClientMessages();
                             console.log("react la mesaj");
                             break;
 
                         case 'edit':
-                            getClientMessages();
-                            console.log("edit la mesaj");
+                            console.log('Сообщения обновлены после редактирования.');
                             break;
 
                         case 'delete':
-                            getClientMessages();
                             console.log("stergere mesaj");
                             break;
 
