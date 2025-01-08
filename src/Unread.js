@@ -2,28 +2,21 @@ import React, { createContext, useState, useEffect, useContext } from 'react';
 import { useSocket } from './SocketContext'; // Импортируем сокет-контекст
 import { useUser } from './UserContext'; // Получаем контекст пользователя
 
-// Контекст для непрочитанных сообщений
 const UnreadMessagesContext = createContext();
 
 export const useUnreadMessages = () => {
     return useContext(UnreadMessagesContext);
 };
 
-export const UnreadMessagesProvider = ({ children }) => {
+export const UnreadMessagesProvider = ({ children, isLoggedIn }) => {
     const [unreadCount, setUnreadCount] = useState(0);
     const [messages, setMessages] = useState([]); // Основное состояние сообщений
     const { userId } = useUser(); // Получаем userId из UserContext
     const socket = useSocket(); // Получаем WebSocket из SocketContext
 
-    // Обновление количества непрочитанных сообщений
     const updateUnreadCount = (updatedMessages) => {
         if (!Array.isArray(updatedMessages)) {
             console.error('Expected an array for updatedMessages, but got:', updatedMessages);
-            setUnreadCount(0);
-            return;
-        }
-
-        if (updatedMessages.length === 0) {
             setUnreadCount(0);
             return;
         }
@@ -37,7 +30,6 @@ export const UnreadMessagesProvider = ({ children }) => {
         setUnreadCount(unreadMessages.length);
     };
 
-    // Пометка сообщений как прочитанных
     const markMessagesAsRead = (clientId) => {
         setMessages((prev) => {
             if (!Array.isArray(prev)) {
@@ -66,14 +58,12 @@ export const UnreadMessagesProvider = ({ children }) => {
             .catch((error) => console.error('Error fetching messages:', error));
     };
 
-    // Выполнение запроса только после логина
     useEffect(() => {
-        if (userId) {
-            fetchMessages();
+        if (isLoggedIn && userId) {
+            fetchMessages(); // Запрос только после логирования и наличия userId
         }
-    }, [userId]);
+    }, [isLoggedIn, userId]);
 
-    // Обработка WebSocket-сообщений
     useEffect(() => {
         if (socket) {
             const handleNewMessage = (event) => {
@@ -106,7 +96,7 @@ export const UnreadMessagesProvider = ({ children }) => {
                 socket.removeEventListener('message', handleNewMessage);
             };
         }
-    }, [socket, userId]);
+    }, [socket]);
 
     useEffect(() => {
         updateUnreadCount(messages);

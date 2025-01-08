@@ -84,7 +84,7 @@ function App() {
         <UserProvider>
           <Notification />
           <Router>
-            <UnreadMessagesProvider> {/* Оборачиваем приложение в UnreadMessagesProvider */}
+            <UnreadMessagesProvider isLoggedIn={isLoggedIn}>
               {!isLoggedIn ? (
                 <LoginForm onLoginSuccess={handleLogin} />
               ) : (
@@ -103,7 +103,7 @@ function App() {
                         }
                       />
                       <Route path="/notifications" element={<NotificationComponent />} />
-                      <Route path="/admin-panel" element={<AdminPanel />} /> {/* Новый маршрут */}
+                      <Route path="/admin-panel" element={<AdminPanel />} />
                       <Route path="*" element={<div>Страница в разработке</div>} />
                     </Routes>
                   </div>
