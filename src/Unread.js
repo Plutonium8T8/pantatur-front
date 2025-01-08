@@ -17,29 +17,34 @@ export const UnreadMessagesProvider = ({ children }) => {
 
     // Обновление количества непрочитанных сообщений
     const updateUnreadCount = (updatedMessages) => {
+        // Убедимся, что updatedMessages — это массив
         if (!Array.isArray(updatedMessages)) {
             console.error('Expected an array for updatedMessages, but got:', updatedMessages);
-            setUnreadCount(0);
+            setUnreadCount(0);  // Если это не массив, устанавливаем 0
             return;
         }
 
+        // Проверка на наличие сообщений
         if (updatedMessages.length === 0) {
-            setUnreadCount(0);
+            setUnreadCount(0);  // Если сообщений нет, устанавливаем 0
             return;
         }
 
+        // Фильтрация непрочитанных сообщений
         const unreadMessages = updatedMessages.filter(
             (msg) =>
                 (!msg.seen_at || !msg.seen_by?.includes(String(userId))) &&
                 msg.sender_id !== Number(userId)
         );
 
+        // Установка количества непрочитанных сообщений
         setUnreadCount(unreadMessages.length);
     };
 
     // Пометка сообщений как прочитанных
     const markMessagesAsRead = (clientId) => {
         setMessages((prev) => {
+            // Если prev не является массивом, вернем пустой массив
             if (!Array.isArray(prev)) {
                 console.error('prev is not an array:', prev);
                 return [];
@@ -51,7 +56,7 @@ export const UnreadMessagesProvider = ({ children }) => {
                     : msg
             );
 
-            updateUnreadCount(updatedMessages);
+            updateUnreadCount(updatedMessages); // Обновляем счётчик
             return updatedMessages;
         });
     };
@@ -66,11 +71,9 @@ export const UnreadMessagesProvider = ({ children }) => {
             .catch((error) => console.error('Error fetching messages:', error));
     };
 
-    // Выполнение запроса только после логина
+    // Загрузка сообщений при монтировании компонента
     useEffect(() => {
-        if (userId) {
-            fetchMessages();
-        }
+        fetchMessages();
     }, [userId]);
 
     // Обработка WebSocket-сообщений
@@ -78,6 +81,7 @@ export const UnreadMessagesProvider = ({ children }) => {
         if (socket) {
             const handleNewMessage = (event) => {
                 const message = JSON.parse(event.data);
+                // console.log('Received message:', message);
 
                 if (message.type === 'message') {
                     setMessages((prev) => {
@@ -90,11 +94,14 @@ export const UnreadMessagesProvider = ({ children }) => {
                     setMessages((prev) => {
                         const updatedMessages = prev.map((msg) => {
                             if (msg.client_id === client_id && !msg.seen_at) {
+                                // console.log('Message being updated:', msg, 'New seen_at:', seen_at);
                                 return { ...msg, seen_at };
                             }
                             return msg;
                         });
                         fetchMessages();
+
+                        // console.log('Updated messages for client_id:', client_id, updatedMessages.filter(msg => msg.client_id === client_id));
                         return updatedMessages;
                     });
                 }
@@ -108,6 +115,7 @@ export const UnreadMessagesProvider = ({ children }) => {
         }
     }, [socket, userId]);
 
+    // Обновление счётчика непрочитанных сообщений
     useEffect(() => {
         updateUnreadCount(messages);
     }, [messages]);
