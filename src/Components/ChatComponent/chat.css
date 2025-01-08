@@ -440,6 +440,7 @@
     cursor: pointer;
     font-size: 18px;
 }
+
 .text img {
     cursor: pointer;
     width: auto;
@@ -447,3 +448,14 @@
     background-color: white;
     color: black;
 }
+
+/* .tags-ticket {
+    display: flex;
+    flex-direction: row;
+    background-color: #007bff;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 20px;
+    margin-right: 5px;
+    font-size: 12px;
+} */

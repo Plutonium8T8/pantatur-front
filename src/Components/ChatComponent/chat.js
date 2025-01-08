@@ -906,6 +906,7 @@ const ChatComponent = ({ }) => {
                                 );
 
                             return new Date(lastMessageB.time_sent) - new Date(lastMessageA.time_sent);
+
                         })
                         .map((ticket) => {
                             const chatMessages = messages1.filter((msg) => msg.client_id === ticket.id);
@@ -929,6 +930,8 @@ const ChatComponent = ({ }) => {
                                 })
                                 : null;
 
+                            const tags = ticket.tags ? JSON.parse(ticket.tags) : [];
+
                             return (
                                 <div
                                     key={ticket.id}
@@ -941,6 +944,28 @@ const ChatComponent = ({ }) => {
                                             <div>{ticket.contact || "no contact"}</div>
                                             <div>{ticket.id ? `Lead: #${ticket.id}` : "no id"}</div>
                                             <div>{ticket.workflow || "no workflow"}</div>
+                                            <div className='tags-ticket'>
+                                                {tags.length > 0 ? (
+                                                    tags.map((tag, index) => (
+                                                        <span
+                                                            key={index}
+                                                            style={{
+                                                                display: 'inline-block',
+                                                                backgroundColor: '#007bff',
+                                                                color: '#fff',
+                                                                padding: '5px 10px',
+                                                                borderRadius: '20px',
+                                                                marginRight: '5px',
+                                                                fontSize: '12px',
+                                                            }}
+                                                        >
+                                                            {tag}
+                                                        </span>
+                                                    ))
+                                                ) : (
+                                                    <div>no tags</div>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                     <div className="container-time-tasks-chat">
