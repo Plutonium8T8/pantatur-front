@@ -5,7 +5,8 @@ const ScheduleComponent = () => {
   const [schedule, setSchedule] = useState([]);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [selectedDay, setSelectedDay] = useState(null);
-  const [newShift, setNewShift] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
   const [currentWeekStart, setCurrentWeekStart] = useState(startOfWeek(new Date(), { weekStartsOn: 1 }));
 
   const getWeekDays = () => {
@@ -19,7 +20,7 @@ const ScheduleComponent = () => {
         const formattedSchedule = data.map((technician) => ({
           id: technician.id.id.id,
           name: `${technician.id.name} ${technician.id.surname}`,
-          shifts: ["", "", "", "", "", "", ""] // пустые смены по умолчанию
+          shifts: ["", "", "", "", "", "", ""], // пустые смены по умолчанию
         }));
         setSchedule(formattedSchedule);
       })
@@ -29,15 +30,26 @@ const ScheduleComponent = () => {
   const handleShiftChange = (employeeIndex, dayIndex) => {
     setSelectedEmployee(employeeIndex);
     setSelectedDay(dayIndex);
-    setNewShift(schedule[employeeIndex].shifts[dayIndex] || "");
+
+    const currentShift = schedule[employeeIndex].shifts[dayIndex];
+    if (currentShift) {
+      const [start, end] = currentShift.split(" - ");
+      setStartTime(start || "");
+      setEndTime(end || "");
+    } else {
+      setStartTime("");
+      setEndTime("");
+    }
   };
 
   const saveShift = () => {
     const updatedSchedule = [...schedule];
-    updatedSchedule[selectedEmployee].shifts[selectedDay] = newShift;
+    updatedSchedule[selectedEmployee].shifts[selectedDay] = `${startTime} - ${endTime}`;
     setSchedule(updatedSchedule);
     setSelectedEmployee(null);
     setSelectedDay(null);
+    setStartTime("");
+    setEndTime("");
   };
 
   const goToNextWeek = () => {
@@ -53,7 +65,9 @@ const ScheduleComponent = () => {
       <h1>График работы</h1>
       <div className="week-navigation">
         <button onClick={goToPreviousWeek}>Предыдущая неделя</button>
-        <span>Неделя {format(currentWeekStart, "dd.MM.yyyy")} - {format(addDays(currentWeekStart, 6), "dd.MM.yyyy")}</span>
+        <span>
+          Неделя {format(currentWeekStart, "dd.MM.yyyy")} - {format(addDays(currentWeekStart, 6), "dd.MM.yyyy")}
+        </span>
         <button onClick={goToNextWeek}>Следующая неделя</button>
       </div>
       <table className="schedule-table">
@@ -68,7 +82,9 @@ const ScheduleComponent = () => {
         <tbody>
           {schedule.map((employee, employeeIndex) => (
             <tr key={employeeIndex}>
-              <td>{employee.name} ({employee.id})</td>
+              <td>
+                {employee.name} ({employee.id})
+              </td>
               {employee.shifts.map((shift, dayIndex) => (
                 <td
                   key={dayIndex}
@@ -87,19 +103,37 @@ const ScheduleComponent = () => {
         <div className="shift-editor">
           <h3>Изменить смену</h3>
           <p>
-            {schedule[selectedEmployee].name}, {format(getWeekDays()[selectedDay], "EEEE, dd.MM")}
+            {schedule[selectedEmployee].name} ({schedule[selectedEmployee].id}), {format(getWeekDays()[selectedDay], "EEEE, dd.MM")}
           </p>
-          <input
-            type="text"
-            value={newShift}
-            onChange={(e) => setNewShift(e.target.value)}
-            placeholder="Введите время (например, 09:00 - 18:00)"
-          />
+          <div className="time-inputs">
+            <label>
+              Начало рабочего дня:
+              <input
+                type="time"
+                value={startTime}
+                onChange={(e) => setStartTime(e.target.value)}
+              />
+            </label>
+            <label>
+              Конец рабочего дня:
+              <input
+                type="time"
+                value={endTime}
+                onChange={(e) => setEndTime(e.target.value)}
+              />
+            </label>
+          </div>
           <button onClick={saveShift}>Сохранить</button>
-          <button onClick={() => {
-            setSelectedEmployee(null);
-            setSelectedDay(null);
-          }}>Отмена</button>
+          <button
+            onClick={() => {
+              setSelectedEmployee(null);
+              setSelectedDay(null);
+              setStartTime("");
+              setEndTime("");
+            }}
+          >
+            Отмена
+          </button>
         </div>
       )}
 
@@ -139,10 +173,12 @@ const ScheduleComponent = () => {
           border: 1px solid #ccc;
           border-radius: 5px;
         }
-        .shift-editor input {
+        .time-inputs label {
+          display: block;
           margin-bottom: 10px;
-          width: calc(100% - 20px);
-          padding: 5px;
+        }
+        .time-inputs input {
+          margin-left: 10px;
         }
         .shift-editor button {
           margin-right: 10px;
