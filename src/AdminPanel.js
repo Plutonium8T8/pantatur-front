@@ -7,6 +7,9 @@ const ScheduleComponent = () => {
   const [selectedDay, setSelectedDay] = useState(null);
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
+  const [shortStartTime, setShortStartTime] = useState("");
+  const [shortEndTime, setShortEndTime] = useState("");
+  const [isShortTimeEnabled, setIsShortTimeEnabled] = useState(false);
   const [currentWeekStart, setCurrentWeekStart] = useState(startOfWeek(new Date(), { weekStartsOn: 1 }));
 
   const getWeekDays = () => {
@@ -33,23 +36,35 @@ const ScheduleComponent = () => {
 
     const currentShift = schedule[employeeIndex].shifts[dayIndex];
     if (currentShift) {
-      const [start, end] = currentShift.split(" - ");
+      const [start, end, shortStart, shortEnd] = currentShift.split(" - ");
       setStartTime(start || "");
       setEndTime(end || "");
+      setShortStartTime(shortStart || "");
+      setShortEndTime(shortEnd || "");
+      setIsShortTimeEnabled(!!shortStart && !!shortEnd);
     } else {
       setStartTime("");
       setEndTime("");
+      setShortStartTime("");
+      setShortEndTime("");
+      setIsShortTimeEnabled(false);
     }
   };
 
   const saveShift = () => {
     const updatedSchedule = [...schedule];
-    updatedSchedule[selectedEmployee].shifts[selectedDay] = `${startTime} - ${endTime}`;
+    const shift = isShortTimeEnabled
+      ? `${startTime} - ${endTime} - ${shortStartTime} - ${shortEndTime}`
+      : `${startTime} - ${endTime}`;
+    updatedSchedule[selectedEmployee].shifts[selectedDay] = shift;
     setSchedule(updatedSchedule);
     setSelectedEmployee(null);
     setSelectedDay(null);
     setStartTime("");
     setEndTime("");
+    setShortStartTime("");
+    setShortEndTime("");
+    setIsShortTimeEnabled(false);
   };
 
   const goToNextWeek = () => {
@@ -103,7 +118,7 @@ const ScheduleComponent = () => {
         <div className="shift-editor">
           <h3>Изменить смену</h3>
           <p>
-            {schedule[selectedEmployee].name} ({schedule[selectedEmployee].id}), {format(getWeekDays()[selectedDay], "EEEE, dd.MM")}
+            {schedule[selectedEmployee].name}, {format(getWeekDays()[selectedDay], "EEEE, dd.MM")}
           </p>
           <div className="time-inputs">
             <label>
@@ -122,6 +137,34 @@ const ScheduleComponent = () => {
                 onChange={(e) => setEndTime(e.target.value)}
               />
             </label>
+            <label>
+              <input
+                type="checkbox"
+                checked={isShortTimeEnabled}
+                onChange={(e) => setIsShortTimeEnabled(e.target.checked)}
+              />
+              Указать короткое время
+            </label>
+            {isShortTimeEnabled && (
+              <>
+                <label>
+                  Начало короткого времени:
+                  <input
+                    type="time"
+                    value={shortStartTime}
+                    onChange={(e) => setShortStartTime(e.target.value)}
+                  />
+                </label>
+                <label>
+                  Конец короткого времени:
+                  <input
+                    type="time"
+                    value={shortEndTime}
+                    onChange={(e) => setShortEndTime(e.target.value)}
+                  />
+                </label>
+              </>
+            )}
           </div>
           <button onClick={saveShift}>Сохранить</button>
           <button
@@ -130,6 +173,9 @@ const ScheduleComponent = () => {
               setSelectedDay(null);
               setStartTime("");
               setEndTime("");
+              setShortStartTime("");
+              setShortEndTime("");
+              setIsShortTimeEnabled(false);
             }}
           >
             Отмена
