@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import './LoginForm.css';
 import Cookies from 'js-cookie';
 import { useUser } from './UserContext';
-import { useSocket } from './SocketContext';
-import { useSnackbar } from 'notistack';
 
 const LoginForm = ({ onLoginSuccess }) => {
   const [form, setForm] = useState({ email: '', username: '', password: '' });
@@ -11,11 +9,6 @@ const LoginForm = ({ onLoginSuccess }) => {
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { setUserId } = useUser();
-  const socket = useSocket(); // Получаем WebSocket из контекста
-  const [tickets, setTickets] = useState([]);
-  const [ticketIds, setTicketIds] = useState([]); // Состояние для ID тикетов
-  const { enqueueSnackbar } = useSnackbar();
-
 
   const handleInputChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });

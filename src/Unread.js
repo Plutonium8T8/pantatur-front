@@ -41,7 +41,6 @@ export const UnreadMessagesProvider = ({ children }) => {
         setUnreadCount(unreadMessages.length);
     };
 
-
     // Пометка сообщений как прочитанных
     const markMessagesAsRead = (clientId) => {
         setMessages((prev) => {
@@ -61,7 +60,6 @@ export const UnreadMessagesProvider = ({ children }) => {
             return updatedMessages;
         });
     };
-
 
     const fetchMessages = () => {
         fetch('https://pandatur-api.com/messages')
