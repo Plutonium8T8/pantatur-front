@@ -67,6 +67,29 @@ const ScheduleComponent = () => {
     setIsShortTimeEnabled(false);
   };
 
+  const calculateWorkedHours = (shift) => {
+    if (!shift) return 0;
+    const [start, end, shortStart, shortEnd] = shift.split(" - ");
+    const startTime = parseTime(start);
+    const endTime = parseTime(end);
+    const shortStartTime = shortStart ? parseTime(shortStart) : null;
+    const shortEndTime = shortEnd ? parseTime(shortEnd) : null;
+
+    let totalHours = endTime - startTime;
+
+    if (shortStartTime && shortEndTime) {
+      totalHours -= shortEndTime - shortStartTime;
+    }
+
+    return totalHours > 0 ? totalHours : 0;
+  };
+
+  const parseTime = (time) => {
+    if (!time) return 0;
+    const [hours, minutes] = time.split(":").map(Number);
+    return hours + minutes / 60;
+  };
+
   const goToNextWeek = () => {
     setCurrentWeekStart(addDays(currentWeekStart, 7));
   };
@@ -92,6 +115,7 @@ const ScheduleComponent = () => {
             {getWeekDays().map((day, index) => (
               <th key={index}>{format(day, "EEEE, dd.MM")}</th>
             ))}
+            <th>Часы работы</th>
           </tr>
         </thead>
         <tbody>
@@ -109,6 +133,7 @@ const ScheduleComponent = () => {
                   {shift || "-"}
                 </td>
               ))}
+              <td>{employee.shifts.reduce((total, shift) => total + calculateWorkedHours(shift), 0).toFixed(2)} ч.</td>
             </tr>
           ))}
         </tbody>
