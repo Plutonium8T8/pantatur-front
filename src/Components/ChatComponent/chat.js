@@ -821,31 +821,37 @@ const ChatComponent = ({ }) => {
 
                     // Если передан файл, загружаем его и получаем URL
                     if (selectedFile) {
-                        const uploadResponse = await uploadFile(selectedFile);
-                        fileUrl = uploadResponse.url;
-                        console.log('File URL received:', fileUrl);
+                        try {
+                            const uploadResponse = await uploadFile(selectedFile);
+                            fileUrl = uploadResponse.url;
+                            console.log('File URL received:', fileUrl);
 
-                        if (fileUrl) {
                             const fileMessageData = {
                                 type: 'message',
                                 data: {
                                     sender_id: Number(userId),
                                     client_id: [selectedTicketId],
                                     platform: 'web',
-                                    text: fileUrl, // URL файла будет отправлен в сообщении
+                                    text: fileUrl, // URL файла
                                     time_sent: currentTime,
                                 },
                             };
 
-                            // Отправляем через WebSocket
                             socket.send(JSON.stringify(fileMessageData));
-                            console.log('File URL message sent:', fileMessageData);
-                            getClientMessages();
-                            // Обновляем список сообщений
+                            console.log('File message sent:', fileMessageData);
+
+                            // Обновляем локальное состояние
                             setMessages1((prevMessages) => [
                                 ...prevMessages,
                                 { ...fileMessageData.data, seen_at: false },
                             ]);
+
+                            // Загружаем обновленный список сообщений
+                            await getClientMessages();
+                        } catch (error) {
+                            console.error('Error uploading file:', error);
+                            alert('Ошибка при загрузке файла. Попробуйте снова.');
+                            return;
                         }
                     }
 
@@ -871,6 +877,9 @@ const ChatComponent = ({ }) => {
                         ]);
 
                         setManagerMessage(''); // Очищаем текстовое сообщение
+
+                        // Загружаем обновленный список сообщений
+                        await getClientMessages();
                     }
                 } catch (error) {
                     console.error('Error sending message:', error);
@@ -1000,6 +1009,7 @@ const ChatComponent = ({ }) => {
                             // Проверка типа контента
                             const isImageUrl = /\.(jpeg|jpg|gif|png|webp|svg)$/i.test(msg.message);
                             const isFileUrl = /\.(pdf|docx|xlsx|pptx)$/i.test(msg.message);
+                            const isAudioUrl = /\.(mp3)$/i.test(msg.message);
 
                             // Функция открытия изображения
                             const openImageInNewWindow = (url) => {
@@ -1064,6 +1074,11 @@ const ChatComponent = ({ }) => {
                                                             >
                                                                 Открыть файл: {msg.message.split('/').pop()}
                                                             </a>
+                                                        ) : isAudioUrl ? (
+                                                            <audio controls>
+                                                                <source src={msg.message} type="audio/mpeg" />
+                                                                Ваш браузер не поддерживает воспроизведение аудио.
+                                                            </audio>
                                                         ) : (
                                                             msg.message
                                                         )}
@@ -1071,9 +1086,7 @@ const ChatComponent = ({ }) => {
                                                             <div
                                                                 className="reaction-toggle-button"
                                                                 onClick={() =>
-                                                                    setSelectedMessageId(
-                                                                        selectedMessageId === msg.id ? null : msg.id
-                                                                    )
+                                                                    setSelectedMessageId(selectedMessageId === msg.id ? null : msg.id)
                                                                 }
                                                             >
                                                                 {lastReaction || '☺'}
@@ -1084,32 +1097,19 @@ const ChatComponent = ({ }) => {
                                                             })}
                                                         </div>
                                                         {selectedMessageId === msg.id && (
-                                                            <div
-                                                                className="reaction-container"
-                                                                ref={reactionContainerRef}
-                                                            >
+                                                            <div className="reaction-container" ref={reactionContainerRef}>
                                                                 <div className="reaction-buttons">
-                                                                    {['☺', '👍', '❤️', '😂', '😮', '😢', '😡'].map(
-                                                                        (reaction) => (
-                                                                            <div
-                                                                                key={reaction}
-                                                                                onClick={() =>
-                                                                                    handleReactionClick(
-                                                                                        reaction,
-                                                                                        msg.id
-                                                                                    )
-                                                                                }
-                                                                                className={
-                                                                                    selectedReaction[msg.id] ===
-                                                                                        reaction
-                                                                                        ? 'active'
-                                                                                        : ''
-                                                                                }
-                                                                            >
-                                                                                {reaction}
-                                                                            </div>
-                                                                        )
-                                                                    )}
+                                                                    {['☺', '👍', '❤️', '😂', '😮', '😢', '😡'].map((reaction) => (
+                                                                        <div
+                                                                            key={reaction}
+                                                                            onClick={() => handleReactionClick(reaction, msg.id)}
+                                                                            className={
+                                                                                selectedReaction[msg.id] === reaction ? 'active' : ''
+                                                                            }
+                                                                        >
+                                                                            {reaction}
+                                                                        </div>
+                                                                    ))}
                                                                 </div>
                                                             </div>
                                                         )}
@@ -1159,7 +1159,7 @@ const ChatComponent = ({ }) => {
                         />
                         <input
                             type="file"
-                            accept="image/*"
+                            accept="image/*,audio/mp3,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                             onChange={handleFileSelect}
                             style={{ display: 'none' }}
                             id="file-input"
