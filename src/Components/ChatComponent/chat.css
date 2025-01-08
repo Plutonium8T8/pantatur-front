@@ -459,3 +459,9 @@
     margin-right: 5px;
     font-size: 12px;
 } */
+
+.container-graf {
+    display: flex;
+    flex-direction: row;
+    padding: 20px;
+}

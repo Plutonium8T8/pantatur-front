@@ -127,31 +127,33 @@ const Dashboard = () => {
     };
 
     return (
-        <div style={{ padding: '20px' }}>
+        <div className='container-dashboard'>
             <h2>Дашборд</h2>
-            <div style={{ marginBottom: '30px' }}>
-                <h3>Лиды по месяцам</h3>
-                <Bar data={barData} />
-            </div>
-            <div style={{ marginBottom: '30px' }}>
-                <h3>Активные лиды за неделю</h3>
-                <Line data={lineData} />
-            </div>
-            <div style={{ marginBottom: '30px' }}>
-                <h3>Статусы лидов</h3>
-                <Pie data={pieData} />
-            </div>
-            <div style={{ marginBottom: '30px' }}>
-                <h3>Оценка по отделам</h3>
-                <Radar data={radarData} />
-            </div>
-            <div style={{ marginBottom: '30px' }}>
-                <h3>Распределение устройств</h3>
-                <Doughnut data={doughnutData} />
-            </div>
-            <div style={{ marginBottom: '30px' }}>
-                <h3>Распределение продаж по регионам</h3>
-                <PolarArea data={polarData} />
+            <div className='container-graf'>
+                <div style={{ marginBottom: '30px' }}>
+                    <h3>Лиды по месяцам</h3>
+                    <Bar data={barData} />
+                </div>
+                <div style={{ marginBottom: '30px' }}>
+                    <h3>Активные лиды за неделю</h3>
+                    <Line data={lineData} />
+                </div>
+                <div style={{ marginBottom: '30px' }}>
+                    <h3>Статусы лидов</h3>
+                    <Pie data={pieData} />
+                </div>
+                <div style={{ marginBottom: '30px' }}>
+                    <h3>Оценка по отделам</h3>
+                    <Radar data={radarData} />
+                </div>
+                <div style={{ marginBottom: '30px' }}>
+                    <h3>Распределение устройств</h3>
+                    <Doughnut data={doughnutData} />
+                </div>
+                <div style={{ marginBottom: '30px' }}>
+                    <h3>Распределение продаж по регионам</h3>
+                    <PolarArea data={polarData} />
+                </div>
             </div>
         </div>
     );
