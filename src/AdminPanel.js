@@ -31,9 +31,42 @@ const ScheduleComponent = () => {
     }
   };
 
-  const removeInterval = (index) => {
-    const updatedIntervals = intervals.filter((_, i) => i !== index);
-    setIntervals(updatedIntervals);
+  const removeInterval = async (index) => {
+    try {
+      // Получаем данные о текущем сотруднике и выбранном дне
+      const technicianId = schedule[selectedEmployee]?.id;
+      const dayOfWeek = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"][selectedDay];
+
+      // Интервал, который нужно удалить
+      const intervalToDelete = intervals[index];
+
+      // Отправляем DELETE-запрос на сервер
+      const token = Cookies.get("jwt");
+      const response = await fetch(`https://pandatur-api.com/technicians/${technicianId}/schedule/${dayOfWeek}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          start: intervalToDelete.start,
+          end: intervalToDelete.end,
+          timezone: "EST", // Используйте временной пояс, подходящий вашему приложению
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
+      }
+
+      console.log(`Интервал ${intervalToDelete.start} - ${intervalToDelete.end} для ${dayOfWeek} удалён успешно.`);
+
+      // Удаляем интервал из локального состояния
+      const updatedIntervals = intervals.filter((_, i) => i !== index);
+      setIntervals(updatedIntervals);
+    } catch (error) {
+      console.error("Ошибка при удалении интервала:", error);
+    }
   };
 
   const saveShift = () => {
