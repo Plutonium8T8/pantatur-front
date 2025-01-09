@@ -13,6 +13,40 @@ const ScheduleComponent = () => {
   const [shortEndTime, setShortEndTime] = useState("");
   const [isShortTimeEnabled, setIsShortTimeEnabled] = useState(false);
   const [currentWeekStart, setCurrentWeekStart] = useState(startOfWeek(new Date(), { weekStartsOn: 1 }));
+  const [intervals, setIntervals] = useState([]); // Для хранения интервалов выбранного дня
+
+  const handleShiftChange = (employeeIndex, dayIndex) => {
+    setSelectedEmployee(employeeIndex);
+    setSelectedDay(dayIndex);
+
+    const currentShifts = schedule[employeeIndex].shifts[dayIndex];
+    if (currentShifts && currentShifts !== "-") {
+      const parsedIntervals = currentShifts.split(", ").map((interval) => {
+        const [start, end] = interval.split(" - ");
+        return { start, end };
+      });
+      setIntervals(parsedIntervals);
+    } else {
+      setIntervals([]);
+    }
+  };
+
+  const removeInterval = (index) => {
+    const updatedIntervals = intervals.filter((_, i) => i !== index);
+    setIntervals(updatedIntervals);
+  };
+
+  const saveShift = () => {
+    const updatedSchedule = [...schedule];
+    const formattedIntervals = intervals
+      .map((interval) => `${interval.start} - ${interval.end}`)
+      .join(", ");
+    updatedSchedule[selectedEmployee].shifts[selectedDay] = formattedIntervals || "-";
+    setSchedule(updatedSchedule);
+    setSelectedEmployee(null);
+    setSelectedDay(null);
+    setIntervals([]);
+  };
 
   const getWeekDays = () => {
     return Array.from({ length: 7 }, (_, i) => addDays(currentWeekStart, i));
@@ -31,53 +65,6 @@ const ScheduleComponent = () => {
       })
       .catch((error) => console.error("Ошибка загрузки данных:", error));
   }, []);
-
-  const handleShiftChange = (employeeIndex, dayIndex) => {
-    setSelectedEmployee(employeeIndex);
-    setSelectedDay(dayIndex);
-
-    const currentShifts = schedule[employeeIndex].shifts[dayIndex];
-    if (currentShifts && currentShifts !== "-") {
-      const intervals = currentShifts.split(", ").map((interval) => {
-        const [start, end] = interval.split(" - ");
-        return { start, end };
-      });
-
-      setStartTime(intervals[0]?.start || "");
-      setEndTime(intervals[0]?.end || "");
-      if (intervals[1]) {
-        setShortStartTime(intervals[1]?.start || "");
-        setShortEndTime(intervals[1]?.end || "");
-        setIsShortTimeEnabled(true);
-      } else {
-        setShortStartTime("");
-        setShortEndTime("");
-        setIsShortTimeEnabled(false);
-      }
-    } else {
-      setStartTime("");
-      setEndTime("");
-      setShortStartTime("");
-      setShortEndTime("");
-      setIsShortTimeEnabled(false);
-    }
-  };
-
-  const saveShift = () => {
-    const updatedSchedule = [...schedule];
-    const shift = isShortTimeEnabled
-      ? `${startTime} - ${endTime} - ${shortStartTime} - ${shortEndTime}`
-      : `${startTime} - ${endTime}`;
-    updatedSchedule[selectedEmployee].shifts[selectedDay] = shift;
-    setSchedule(updatedSchedule);
-    setSelectedEmployee(null);
-    setSelectedDay(null);
-    setStartTime("");
-    setEndTime("");
-    setShortStartTime("");
-    setShortEndTime("");
-    setIsShortTimeEnabled(false);
-  };
 
   const calculateWorkedHours = (shift) => {
     if (!shift) return 0;
@@ -227,59 +214,51 @@ const ScheduleComponent = () => {
                 onClick={() => {
                   setSelectedEmployee(null);
                   setSelectedDay(null);
-                  setStartTime("");
-                  setEndTime("");
-                  setShortStartTime("");
-                  setShortEndTime("");
-                  setIsShortTimeEnabled(false);
+                  setIntervals([]);
                 }}
               >
                 ×
               </button>
             </div>
             <p>
-              {schedule[selectedEmployee].name},{" "}
+              {schedule[selectedEmployee].name} ({schedule[selectedEmployee].id}),{" "}
               {format(getWeekDays()[selectedDay], "EEEE, dd.MM")}
             </p>
             <div className="time-inputs">
-              <div className="time-work">
-                <label>
-                  Interval 1 Start
-                  <input
-                    type="time"
-                    value={startTime}
-                    onChange={(e) => setStartTime(e.target.value)}
-                  />
-                </label>
-                <label>
-                  Interval 1 End
-                  <input
-                    type="time"
-                    value={endTime}
-                    onChange={(e) => setEndTime(e.target.value)}
-                  />
-                </label>
-              </div>
-              {isShortTimeEnabled && (
-                <div className="short-time">
+              {intervals.map((interval, index) => (
+                <div key={index} className="time-interval">
                   <label>
-                    Interval 2 Start
+                    Start
                     <input
                       type="time"
-                      value={shortStartTime}
-                      onChange={(e) => setShortStartTime(e.target.value)}
+                      value={interval.start}
+                      onChange={(e) => {
+                        const updatedIntervals = [...intervals];
+                        updatedIntervals[index].start = e.target.value;
+                        setIntervals(updatedIntervals);
+                      }}
                     />
                   </label>
                   <label>
-                    Interval 2 End
+                    End
                     <input
                       type="time"
-                      value={shortEndTime}
-                      onChange={(e) => setShortEndTime(e.target.value)}
+                      value={interval.end}
+                      onChange={(e) => {
+                        const updatedIntervals = [...intervals];
+                        updatedIntervals[index].end = e.target.value;
+                        setIntervals(updatedIntervals);
+                      }}
                     />
                   </label>
+                  <button
+                    className="delete-button"
+                    onClick={() => removeInterval(index)}
+                  >
+                    Delete
+                  </button>
                 </div>
-              )}
+              ))}
             </div>
             <div className="modal-footer">
               <button className="save-button" onClick={saveShift}>
@@ -290,11 +269,7 @@ const ScheduleComponent = () => {
                 onClick={() => {
                   setSelectedEmployee(null);
                   setSelectedDay(null);
-                  setStartTime("");
-                  setEndTime("");
-                  setShortStartTime("");
-                  setShortEndTime("");
-                  setIsShortTimeEnabled(false);
+                  setIntervals([]);
                 }}
               >
                 Cancel
