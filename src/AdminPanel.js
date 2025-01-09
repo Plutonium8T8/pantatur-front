@@ -213,7 +213,48 @@ const ScheduleComponent = () => {
     return "-"; // Если интервалов нет, возвращаем "-"
   };
 
-  const addInterval = async () => {
+  const cutInterval = async () => {
+    try {
+      // Получаем данные о текущем сотруднике и выбранном дне
+      const technicianId = schedule[selectedEmployee]?.id;
+      const dayOfWeek = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"][selectedDay];
+
+      // Формируем новый интервал
+      const newInterval = {
+        start: startTime || "", // Если поле пустое, отправляем пустую строку
+        end: endTime || "", // Если поле пустое, отправляем пустую строку
+        timezone: "EST", // Указываем временную зону
+      };
+
+      // Логируем данные перед отправкой
+      console.log("Отправляем данные на сервер:", newInterval);
+
+      // Отправляем POST-запрос на сервер
+      const token = Cookies.get("jwt");
+      const response = await fetch(`https://pandatur-api.com/technicians/${technicianId}/schedule/${dayOfWeek}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newInterval), // Отправляем сам объект напрямую
+      });
+
+      if (!response.ok) {
+        throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
+      }
+
+      console.log(`Новый интервал ${newInterval.start} - ${newInterval.end} для ${dayOfWeek} добавлен успешно.`);
+
+      // Обновляем локальное состояние
+      setIntervals((prev) => [...prev, newInterval]);
+      setStartTime("");
+      setEndTime("");
+    } catch (error) {
+      console.error("Ошибка при добавлении интервала:", error);
+    }
+  };
+  const AddInterval = async () => {
     try {
       // Получаем данные о текущем сотруднике и выбранном дне
       const technicianId = schedule[selectedEmployee]?.id;
@@ -252,6 +293,7 @@ const ScheduleComponent = () => {
       setEndTime("");
     } catch (error) {
       console.error("Ошибка при добавлении интервала:", error);
+      
     }
   };
 
@@ -368,7 +410,10 @@ const ScheduleComponent = () => {
                     onChange={(e) => setEndTime(e.target.value)}
                   />
                 </label>
-                <button className="add-button" onClick={addInterval}>
+                <button className="add-button" onClick={cutInterval}>
+                  Cut Interval
+                </button>
+                <button className="add-button" onClick={AddInterval}>
                   Add Interval
                 </button>
               </div>
