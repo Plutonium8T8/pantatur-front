@@ -163,15 +163,24 @@ const ScheduleComponent = () => {
 
           const weeklySchedule = userSchedule?.weekly_schedule || {};
 
-          const shifts = [
-            formatDaySchedule(weeklySchedule.monday),
-            formatDaySchedule(weeklySchedule.tuesday),
-            formatDaySchedule(weeklySchedule.wednesday),
-            formatDaySchedule(weeklySchedule.thursday),
-            formatDaySchedule(weeklySchedule.friday),
-            formatDaySchedule(weeklySchedule.saturday),
-            formatDaySchedule(weeklySchedule.sunday),
-          ];
+          const shifts = Array(7).fill("-"); // Пустой массив для дней недели
+
+          if (Array.isArray(weeklySchedule)) {
+            // Если weekly_schedule - это массив интервалов
+            weeklySchedule.forEach((daySchedule) => {
+              const dayIndex = mapDayToIndex(daySchedule.day);
+              shifts[dayIndex] = formatDaySchedule(daySchedule.intervals);
+            });
+          } else {
+            // Если weekly_schedule - это объект с ключами дней недели
+            shifts[0] = formatDaySchedule(weeklySchedule.monday); // Monday
+            shifts[1] = formatDaySchedule(weeklySchedule.tuesday); // Tuesday
+            shifts[2] = formatDaySchedule(weeklySchedule.wednesday); // Wednesday
+            shifts[3] = formatDaySchedule(weeklySchedule.thursday); // Thursday
+            shifts[4] = formatDaySchedule(weeklySchedule.friday); // Friday
+            shifts[5] = formatDaySchedule(weeklySchedule.saturday); // Saturday
+            shifts[6] = formatDaySchedule(weeklySchedule.sunday); // Sunday
+          }
 
           return {
             id: user.id.id.id,
@@ -189,11 +198,61 @@ const ScheduleComponent = () => {
     fetchData();
   }, []);
 
+  const mapDayToIndex = (day) => {
+    const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+    return days.indexOf(day.toLowerCase());
+  };
+
   const formatDaySchedule = (daySchedule) => {
-    if (!daySchedule || daySchedule.length === 0) return "-";
-    return daySchedule
-      .map((interval) => `${interval.start} - ${interval.end}`) // Только время
-      .join(", ");
+    if (Array.isArray(daySchedule) && daySchedule.length > 0) {
+      return daySchedule
+        .filter((interval) => interval.start && interval.end) // Убираем пустые интервалы
+        .map((interval) => `${interval.start} - ${interval.end}`)
+        .join(", ");
+    }
+    return "-"; // Если интервалов нет, возвращаем "-"
+  };
+
+  const addInterval = async () => {
+    try {
+      // Получаем данные о текущем сотруднике и выбранном дне
+      const technicianId = schedule[selectedEmployee]?.id;
+      const dayOfWeek = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"][selectedDay];
+
+      // Формируем новый интервал
+      const newInterval = {
+        start: startTime || "", // Если поле пустое, отправляем пустую строку
+        end: endTime || "", // Если поле пустое, отправляем пустую строку
+        timezone: "EST", // Указываем временную зону
+      };
+
+      // Логируем данные перед отправкой
+      console.log("Отправляем данные на сервер:", newInterval);
+
+      // Отправляем POST-запрос на сервер
+      const token = Cookies.get("jwt");
+      const response = await fetch(`https://pandatur-api.com/technicians/${technicianId}/schedule/${dayOfWeek}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newInterval), // Отправляем сам объект напрямую
+      });
+
+      if (!response.ok) {
+        throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
+      }
+
+      console.log(`Новый интервал ${newInterval.start} - ${newInterval.end} для ${dayOfWeek} добавлен успешно.`);
+
+      // Обновляем локальное состояние
+      setIntervals((prev) => [...prev, newInterval]);
+      setStartTime("");
+      setEndTime("");
+    } catch (error) {
+      console.error("Ошибка при добавлении интервала:", error);
+    }
   };
 
   return (
@@ -254,7 +313,7 @@ const ScheduleComponent = () => {
               </button>
             </div>
             <p>
-              {schedule[selectedEmployee].name} ({schedule[selectedEmployee].id}),{" "}
+              {schedule[selectedEmployee].name},{" "}
               {format(getWeekDays()[selectedDay], "EEEE, dd.MM")}
             </p>
             <div className="time-inputs">
@@ -292,6 +351,27 @@ const ScheduleComponent = () => {
                   </button>
                 </div>
               ))}
+              <div className="add-interval">
+                <label>
+                  Start
+                  <input
+                    type="time"
+                    value={startTime}
+                    onChange={(e) => setStartTime(e.target.value)}
+                  />
+                </label>
+                <label>
+                  End
+                  <input
+                    type="time"
+                    value={endTime}
+                    onChange={(e) => setEndTime(e.target.value)}
+                  />
+                </label>
+                <button className="add-button" onClick={addInterval}>
+                  Add Interval
+                </button>
+              </div>
             </div>
             <div className="modal-footer">
               <button className="save-button" onClick={saveShift}>
