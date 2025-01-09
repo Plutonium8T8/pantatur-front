@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { startOfWeek, addDays, format } from "date-fns";
+import './AdminPanel.css';
 
 const ScheduleComponent = () => {
   const [schedule, setSchedule] = useState([]);
@@ -100,22 +101,22 @@ const ScheduleComponent = () => {
 
   return (
     <div className="schedule-container">
-      <h1>График работы</h1>
+      <h1>Grafic de lucru</h1>
       <div className="week-navigation">
-        <button onClick={goToPreviousWeek}>Предыдущая неделя</button>
+        <button onClick={goToPreviousWeek}>Saptamana Trecuta</button>
         <span>
-          Неделя {format(currentWeekStart, "dd.MM.yyyy")} - {format(addDays(currentWeekStart, 6), "dd.MM.yyyy")}
+          Saptamana {format(currentWeekStart, "dd.MM.yyyy")} - {format(addDays(currentWeekStart, 6), "dd.MM.yyyy")}
         </span>
-        <button onClick={goToNextWeek}>Следующая неделя</button>
+        <button onClick={goToNextWeek}>Saptamana viitoare</button>
       </div>
       <table className="schedule-table">
         <thead>
           <tr>
-            <th>Сотрудник</th>
+            <th>Angajat</th>
             {getWeekDays().map((day, index) => (
               <th key={index}>{format(day, "EEEE, dd.MM")}</th>
             ))}
-            <th>Часы работы</th>
+            <th>Ore de lucru</th>
           </tr>
         </thead>
         <tbody>
@@ -140,123 +141,101 @@ const ScheduleComponent = () => {
       </table>
 
       {selectedEmployee !== null && selectedDay !== null && (
-        <div className="shift-editor">
-          <h3>Изменить смену</h3>
-          <p>
-            {schedule[selectedEmployee].name}, {format(getWeekDays()[selectedDay], "EEEE, dd.MM")}
-          </p>
-          <div className="time-inputs">
-            <label>
-              Начало рабочего дня:
-              <input
-                type="time"
-                value={startTime}
-                onChange={(e) => setStartTime(e.target.value)}
-              />
-            </label>
-            <label>
-              Конец рабочего дня:
-              <input
-                type="time"
-                value={endTime}
-                onChange={(e) => setEndTime(e.target.value)}
-              />
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                checked={isShortTimeEnabled}
-                onChange={(e) => setIsShortTimeEnabled(e.target.checked)}
-              />
-              Указать короткое время
-            </label>
-            {isShortTimeEnabled && (
-              <>
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h3>Schimba orar</h3>
+              <button
+                className="close-button"
+                onClick={() => {
+                  setSelectedEmployee(null);
+                  setSelectedDay(null);
+                  setStartTime("");
+                  setEndTime("");
+                  setShortStartTime("");
+                  setShortEndTime("");
+                  setIsShortTimeEnabled(false);
+                }}
+              >
+                ×
+              </button>
+            </div>
+            <p>
+              {schedule[selectedEmployee].name},{" "}
+              {format(getWeekDays()[selectedDay], "EEEE, dd.MM")}
+            </p>
+            <div className="time-inputs">
+              <div className="time-work">
                 <label>
-                  Начало короткого времени:
+                  Start work-time
                   <input
                     type="time"
-                    value={shortStartTime}
-                    onChange={(e) => setShortStartTime(e.target.value)}
+                    value={startTime}
+                    onChange={(e) => setStartTime(e.target.value)}
                   />
                 </label>
                 <label>
-                  Конец короткого времени:
+                  End work-time
                   <input
                     type="time"
-                    value={shortEndTime}
-                    onChange={(e) => setShortEndTime(e.target.value)}
+                    value={endTime}
+                    onChange={(e) => setEndTime(e.target.value)}
                   />
                 </label>
-              </>
-            )}
+              </div>
+              <div className="label-short-time">
+                Short-time?
+                <input
+                  type="checkbox"
+                  checked={isShortTimeEnabled}
+                  onChange={(e) => setIsShortTimeEnabled(e.target.checked)}
+                />
+              </div>
+              {isShortTimeEnabled && (
+                <>
+                  <div className="short-time">
+                    <label>
+                      Start short-time
+                      <input
+                        type="time"
+                        value={shortStartTime}
+                        onChange={(e) => setShortStartTime(e.target.value)}
+                      />
+                    </label>
+                    <label>
+                      End short-time
+                      <input
+                        type="time"
+                        value={shortEndTime}
+                        onChange={(e) => setShortEndTime(e.target.value)}
+                      />
+                    </label>
+                  </div>
+                </>
+              )}
+            </div>
+            <div className="modal-footer">
+              <button className="save-button" onClick={saveShift}>
+                Save
+              </button>
+              <button
+                className="cancel-button"
+                onClick={() => {
+                  setSelectedEmployee(null);
+                  setSelectedDay(null);
+                  setStartTime("");
+                  setEndTime("");
+                  setShortStartTime("");
+                  setShortEndTime("");
+                  setIsShortTimeEnabled(false);
+                }}
+              >
+                Cancel
+              </button>
+            </div>
           </div>
-          <button onClick={saveShift}>Сохранить</button>
-          <button
-            onClick={() => {
-              setSelectedEmployee(null);
-              setSelectedDay(null);
-              setStartTime("");
-              setEndTime("");
-              setShortStartTime("");
-              setShortEndTime("");
-              setIsShortTimeEnabled(false);
-            }}
-          >
-            Отмена
-          </button>
         </div>
       )}
-
-      <style jsx>{`
-        .schedule-container {
-          padding: 20px;
-        }
-        .week-navigation {
-          margin-bottom: 20px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
-        .schedule-table {
-          width: 100%;
-          border-collapse: collapse;
-        }
-        .schedule-table th,
-        .schedule-table td {
-          border: 1px solid #ddd;
-          padding: 8px;
-          text-align: center;
-        }
-        .schedule-table th {
-          background-color: #f4f4f4;
-        }
-        .shift-cell {
-          cursor: pointer;
-          background-color: #f9f9f9;
-        }
-        .shift-cell:hover {
-          background-color: #e0e0e0;
-        }
-        .shift-editor {
-          margin-top: 20px;
-          padding: 10px;
-          border: 1px solid #ccc;
-          border-radius: 5px;
-        }
-        .time-inputs label {
-          display: block;
-          margin-bottom: 10px;
-        }
-        .time-inputs input {
-          margin-left: 10px;
-        }
-        .shift-editor button {
-          margin-right: 10px;
-          padding: 5px 10px;
-          cursor: pointer;
-        }
-      `}</style>
     </div>
   );
 };
