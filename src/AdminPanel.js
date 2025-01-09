@@ -290,7 +290,7 @@ const ScheduleComponent = () => {
       setEndTime("");
     } catch (error) {
       console.error("Ошибка при добавлении интервала:", error);
-      
+
     }
   };
 
