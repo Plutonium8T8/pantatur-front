@@ -204,13 +204,24 @@ h1 {
 .cancel-button:hover {
     background-color: #c82333;
 }
+
 .time-work {
     display: flex;
     flex-direction: row;
     gap: 10px;
 }
+
 .short-time {
     display: flex;
     flex-direction: row;
     gap: 10px;
+}
+
+.header-component {
+    display: flex;
+    font-size: 36px;
+    padding: 15px 0px;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
 }

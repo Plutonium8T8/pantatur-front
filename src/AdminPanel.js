@@ -101,7 +101,7 @@ const ScheduleComponent = () => {
 
   return (
     <div className="schedule-container">
-      <h1>Grafic de lucru</h1>
+      <div className="header-component">Grafic de lucru</div>
       <div className="week-navigation">
         <button onClick={goToPreviousWeek}>Saptamana Trecuta</button>
         <span>
