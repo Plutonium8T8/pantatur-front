@@ -36,14 +36,24 @@ const ScheduleComponent = () => {
     setSelectedEmployee(employeeIndex);
     setSelectedDay(dayIndex);
 
-    const currentShift = schedule[employeeIndex].shifts[dayIndex];
-    if (currentShift) {
-      const [start, end, shortStart, shortEnd] = currentShift.split(" - ");
-      setStartTime(start || "");
-      setEndTime(end || "");
-      setShortStartTime(shortStart || "");
-      setShortEndTime(shortEnd || "");
-      setIsShortTimeEnabled(!!shortStart && !!shortEnd);
+    const currentShifts = schedule[employeeIndex].shifts[dayIndex];
+    if (currentShifts && currentShifts !== "-") {
+      const intervals = currentShifts.split(", ").map((interval) => {
+        const [start, end] = interval.split(" - ");
+        return { start, end };
+      });
+
+      setStartTime(intervals[0]?.start || "");
+      setEndTime(intervals[0]?.end || "");
+      if (intervals[1]) {
+        setShortStartTime(intervals[1]?.start || "");
+        setShortEndTime(intervals[1]?.end || "");
+        setIsShortTimeEnabled(true);
+      } else {
+        setShortStartTime("");
+        setShortEndTime("");
+        setIsShortTimeEnabled(false);
+      }
     } else {
       setStartTime("");
       setEndTime("");
@@ -234,7 +244,7 @@ const ScheduleComponent = () => {
             <div className="time-inputs">
               <div className="time-work">
                 <label>
-                  Start work-time
+                  Interval 1 Start
                   <input
                     type="time"
                     value={startTime}
@@ -242,7 +252,7 @@ const ScheduleComponent = () => {
                   />
                 </label>
                 <label>
-                  End work-time
+                  Interval 1 End
                   <input
                     type="time"
                     value={endTime}
@@ -250,36 +260,26 @@ const ScheduleComponent = () => {
                   />
                 </label>
               </div>
-              {/* <div className="label-short-time">
-                Short-time?
-                <input
-                  type="checkbox"
-                  checked={isShortTimeEnabled}
-                  onChange={(e) => setIsShortTimeEnabled(e.target.checked)}
-                />
-              </div>
               {isShortTimeEnabled && (
-                <>
-                  <div className="short-time">
-                    <label>
-                      Start short-time
-                      <input
-                        type="time"
-                        value={shortStartTime}
-                        onChange={(e) => setShortStartTime(e.target.value)}
-                      />
-                    </label>
-                    <label>
-                      End short-time
-                      <input
-                        type="time"
-                        value={shortEndTime}
-                        onChange={(e) => setShortEndTime(e.target.value)}
-                      />
-                    </label>
-                  </div>
-                </>
-              )} */}
+                <div className="short-time">
+                  <label>
+                    Interval 2 Start
+                    <input
+                      type="time"
+                      value={shortStartTime}
+                      onChange={(e) => setShortStartTime(e.target.value)}
+                    />
+                  </label>
+                  <label>
+                    Interval 2 End
+                    <input
+                      type="time"
+                      value={shortEndTime}
+                      onChange={(e) => setShortEndTime(e.target.value)}
+                    />
+                  </label>
+                </div>
+              )}
             </div>
             <div className="modal-footer">
               <button className="save-button" onClick={saveShift}>
