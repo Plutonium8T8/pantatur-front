@@ -61,6 +61,7 @@ const ScheduleComponent = () => {
       // Удаляем интервал из локального состояния
       const updatedIntervals = intervals.filter((_, i) => i !== index);
       setIntervals(updatedIntervals);
+      fetchData();
     } catch (error) {
       console.error("Ошибка при удалении интервала:", error);
     }
@@ -127,71 +128,71 @@ const ScheduleComponent = () => {
     setCurrentWeekStart(addDays(currentWeekStart, -7));
   };
 
+  const fetchData = async () => {
+    try {
+      const token = Cookies.get("jwt");
+
+      // Fetch users-technician
+      const usersResponse = await fetch("https://pandatur-api.com/users-technician", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const usersData = await usersResponse.json();
+
+      // Fetch technicians' schedule
+      const scheduleResponse = await fetch("https://pandatur-api.com/technicians/schedules", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const scheduleData = await scheduleResponse.json();
+
+      // Combine data
+      const combinedSchedule = usersData.map((user) => {
+        const userSchedule = scheduleData.find(
+          (schedule) => schedule.technician_id === user.id.id.id
+        );
+
+        const weeklySchedule = userSchedule?.weekly_schedule || {};
+
+        const shifts = Array(7).fill("-"); // Пустой массив для дней недели
+
+        if (Array.isArray(weeklySchedule)) {
+          // Если weekly_schedule - это массив интервалов
+          weeklySchedule.forEach((daySchedule) => {
+            const dayIndex = mapDayToIndex(daySchedule.day);
+            shifts[dayIndex] = formatDaySchedule(daySchedule.intervals);
+          });
+        } else {
+          // Если weekly_schedule - это объект с ключами дней недели
+          shifts[0] = formatDaySchedule(weeklySchedule.monday); // Monday
+          shifts[1] = formatDaySchedule(weeklySchedule.tuesday); // Tuesday
+          shifts[2] = formatDaySchedule(weeklySchedule.wednesday); // Wednesday
+          shifts[3] = formatDaySchedule(weeklySchedule.thursday); // Thursday
+          shifts[4] = formatDaySchedule(weeklySchedule.friday); // Friday
+          shifts[5] = formatDaySchedule(weeklySchedule.saturday); // Saturday
+          shifts[6] = formatDaySchedule(weeklySchedule.sunday); // Sunday
+        }
+
+        return {
+          id: user.id.id.id,
+          name: `${user.id.name} ${user.id.surname}`,
+          shifts,
+        };
+      });
+
+      setSchedule(combinedSchedule);
+    } catch (error) {
+      console.error("Ошибка загрузки данных:", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = Cookies.get("jwt");
-
-        // Fetch users-technician
-        const usersResponse = await fetch("https://pandatur-api.com/users-technician", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-        const usersData = await usersResponse.json();
-
-        // Fetch technicians' schedule
-        const scheduleResponse = await fetch("https://pandatur-api.com/technicians/schedules", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-        const scheduleData = await scheduleResponse.json();
-
-        // Combine data
-        const combinedSchedule = usersData.map((user) => {
-          const userSchedule = scheduleData.find(
-            (schedule) => schedule.technician_id === user.id.id.id
-          );
-
-          const weeklySchedule = userSchedule?.weekly_schedule || {};
-
-          const shifts = Array(7).fill("-"); // Пустой массив для дней недели
-
-          if (Array.isArray(weeklySchedule)) {
-            // Если weekly_schedule - это массив интервалов
-            weeklySchedule.forEach((daySchedule) => {
-              const dayIndex = mapDayToIndex(daySchedule.day);
-              shifts[dayIndex] = formatDaySchedule(daySchedule.intervals);
-            });
-          } else {
-            // Если weekly_schedule - это объект с ключами дней недели
-            shifts[0] = formatDaySchedule(weeklySchedule.monday); // Monday
-            shifts[1] = formatDaySchedule(weeklySchedule.tuesday); // Tuesday
-            shifts[2] = formatDaySchedule(weeklySchedule.wednesday); // Wednesday
-            shifts[3] = formatDaySchedule(weeklySchedule.thursday); // Thursday
-            shifts[4] = formatDaySchedule(weeklySchedule.friday); // Friday
-            shifts[5] = formatDaySchedule(weeklySchedule.saturday); // Saturday
-            shifts[6] = formatDaySchedule(weeklySchedule.sunday); // Sunday
-          }
-
-          return {
-            id: user.id.id.id,
-            name: `${user.id.name} ${user.id.surname}`,
-            shifts,
-          };
-        });
-
-        setSchedule(combinedSchedule);
-      } catch (error) {
-        console.error("Ошибка загрузки данных:", error);
-      }
-    };
-
     fetchData();
   }, []);
 
@@ -247,6 +248,7 @@ const ScheduleComponent = () => {
       setIntervals((prev) => [...prev, newInterval]);
       setStartTime("");
       setEndTime("");
+      fetchData();
     } catch (error) {
       console.error("Ошибка при добавлении интервала:", error);
     }
@@ -288,6 +290,7 @@ const ScheduleComponent = () => {
       setIntervals((prev) => [...prev, newInterval]);
       setStartTime("");
       setEndTime("");
+      fetchData();
     } catch (error) {
       console.error("Ошибка при добавлении интервала:", error);
 
@@ -352,7 +355,7 @@ const ScheduleComponent = () => {
               </button>
             </div>
             <p>
-              {schedule[selectedEmployee].name},{" "}
+              {schedule[selectedEmployee].name} ({schedule[selectedEmployee].id}),{" "}
               {format(getWeekDays()[selectedDay], "EEEE, dd.MM")}
             </p>
             <div className="time-inputs">

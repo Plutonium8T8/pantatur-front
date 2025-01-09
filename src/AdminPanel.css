@@ -177,6 +177,7 @@ h1 {
 .modal-footer {
     display: flex;
     justify-content: space-between;
+    margin-top: 10px;
 }
 
 .save-button {
@@ -229,7 +230,8 @@ h1 {
 .time-interval {
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
+    gap: 15px;
+
 }
 
 .delete-button {
@@ -237,6 +239,7 @@ h1 {
     color: white;
     border: none;
     padding: 5px 10px;
+    margin-top: 6px;
     margin-left: 10px;
     border-radius: 5px;
     cursor: pointer;
@@ -262,6 +265,7 @@ h1 {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    margin-left: 10px;
 }
 
 .add-button:hover {
