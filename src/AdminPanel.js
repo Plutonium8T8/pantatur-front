@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { startOfWeek, addDays, format } from "date-fns";
+import Cookies from 'js-cookie';
 import './AdminPanel.css';
 
 const ScheduleComponent = () => {
@@ -99,6 +100,72 @@ const ScheduleComponent = () => {
     setCurrentWeekStart(addDays(currentWeekStart, -7));
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = Cookies.get("jwt");
+
+        // Fetch users-technician
+        const usersResponse = await fetch("https://pandatur-api.com/users-technician", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        const usersData = await usersResponse.json();
+
+        // Fetch technicians' schedule
+        const scheduleResponse = await fetch("https://pandatur-api.com/technicians/schedules", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        const scheduleData = await scheduleResponse.json();
+
+        // Combine data
+        const combinedSchedule = usersData.map((user) => {
+          const userSchedule = scheduleData.find(
+            (schedule) => schedule.technician_id === user.id.id.id
+          );
+
+          const weeklySchedule = userSchedule?.weekly_schedule || {};
+
+          const shifts = [
+            formatDaySchedule(weeklySchedule.monday),
+            formatDaySchedule(weeklySchedule.tuesday),
+            formatDaySchedule(weeklySchedule.wednesday),
+            formatDaySchedule(weeklySchedule.thursday),
+            formatDaySchedule(weeklySchedule.friday),
+            formatDaySchedule(weeklySchedule.saturday),
+            formatDaySchedule(weeklySchedule.sunday),
+          ];
+
+          return {
+            id: user.id.id.id,
+            name: `${user.id.name} ${user.id.surname}`,
+            shifts,
+          };
+        });
+
+        setSchedule(combinedSchedule);
+      } catch (error) {
+        console.error("Ошибка загрузки данных:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const formatDaySchedule = (daySchedule) => {
+    if (!daySchedule || daySchedule.length === 0) return "-";
+    return daySchedule
+      .map((interval) => `${interval.start} - ${interval.end}`) // Только время
+      .join(", ");
+  };
+
   return (
     <div className="schedule-container">
       <div className="header-component">Grafic de lucru</div>
@@ -183,7 +250,7 @@ const ScheduleComponent = () => {
                   />
                 </label>
               </div>
-              <div className="label-short-time">
+              {/* <div className="label-short-time">
                 Short-time?
                 <input
                   type="checkbox"
@@ -212,7 +279,7 @@ const ScheduleComponent = () => {
                     </label>
                   </div>
                 </>
-              )}
+              )} */}
             </div>
             <div className="modal-footer">
               <button className="save-button" onClick={saveShift}>
