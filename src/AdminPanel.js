@@ -9,9 +9,6 @@ const ScheduleComponent = () => {
   const [selectedDay, setSelectedDay] = useState(null);
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
-  const [shortStartTime, setShortStartTime] = useState("");
-  const [shortEndTime, setShortEndTime] = useState("");
-  const [isShortTimeEnabled, setIsShortTimeEnabled] = useState(false);
   const [currentWeekStart, setCurrentWeekStart] = useState(startOfWeek(new Date(), { weekStartsOn: 1 }));
   const [intervals, setIntervals] = useState([]); // Для хранения интервалов выбранного дня
 
