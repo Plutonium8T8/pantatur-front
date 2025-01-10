@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import Cookies from 'js-cookie';
+import { useUser } from './UserContext';
 
 const SocketContext = createContext(null);
 
@@ -8,6 +9,7 @@ export const useSocket = () => {
   const [ticketIds, setTicketIds] = useState([]);
   const [tickets, setTickets] = useState([]);
   const socket = useContext(SocketContext);
+  const { userId } = useUser();
 
   const fetchTicketsID = async (socketInstance) => {
     try {
@@ -40,8 +42,10 @@ export const useSocket = () => {
       if (socketInstance && socketInstance.readyState === WebSocket.OPEN) {
         const socketMessageClient = JSON.stringify({ type: 'connect', data: { client_id: ticketIds } });
         socketInstance.send(socketMessageClient);
-        const socketMessageNotification = JSON.stringify({ type: 'connect', data: { notificationRoomId: ticketIds } });
+        const socketMessageNotification = JSON.stringify({ type: 'connect', data: { notificationRoomId: userId } });
         socketInstance.send(socketMessageNotification);
+        const socketMessageTask = JSON.stringify({ type: 'connect', data: { taskRoomId: userId } });
+        socketInstance.send(socketMessageTask);
       }
     } catch (error) {
       console.error('Ошибка при загрузке тикетов:', error.message);
@@ -96,8 +100,8 @@ export const SocketProvider = ({ children, isLoggedIn }) => {
       if (socketInstance && socketInstance.readyState === WebSocket.OPEN) {
         const socketMessageClient = JSON.stringify({ type: 'connect', data: { client_id: ticketIds } });
         socketInstance.send(socketMessageClient);
-        const socketMessageNotification = JSON.stringify({ type: 'connect', data: { notificationRoomId: ticketIds } });
-        socketInstance.send(socketMessageNotification);
+        // const socketMessageNotification = JSON.stringify({ type: 'connect', data: { notificationRoomId: ticketIds } });
+        // socketInstance.send(socketMessageNotification);
       }
     } catch (error) {
       console.error('Ошибка при загрузке тикетов:', error.message);
