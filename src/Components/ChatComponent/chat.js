@@ -428,12 +428,12 @@ const ChatComponent = ({ }) => {
                             });
                             break;
 
-                        case 'task':
-                            enqueueSnackbar(`Новая задача: ${message.data.title}`, {
-                                variant: 'warning',
-                            });
-                            handleTask(message.data);
-                            break;
+                        // case 'task':
+                        //     enqueueSnackbar(`Новая задача: ${message.data.title}`, {
+                        //         variant: 'warning',
+                        //     });
+                        //     handleTask(message.data);
+                        //     break;
 
                         case 'seen':
                             handleSeen(message.data);
