@@ -3,6 +3,7 @@ import Cookies from "js-cookie";
 import { useUser } from "./UserContext";
 import "./NotificationModal.css";
 import Icon from "./Components/Icon";
+
 const NotificationModal = ({ isOpen, onClose }) => {
     const [notifications, setNotifications] = useState([]);
     const [notificationContent, setNotificationContent] = useState("");
@@ -29,7 +30,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
             });
             if (response.ok) {
                 const data = await response.json();
-                setNotifications(data); // Устанавливаем уведомления в состояние
+                setNotifications(data);
             } else {
                 console.error(`Ошибка: ${response.status} - ${response.statusText}`);
             }
@@ -38,7 +39,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
         }
     };
 
-    // Создание нового уведомления
+    // Создание нового уведомления (POST)
     const handleNotificationSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -50,7 +51,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
                     Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({
-                    time_scheduled: notificationDate,
+                    scheduled_time: notificationDate,
                     description: notificationContent,
                     client_id: userId,
                     status: false, // Новое уведомление создаётся как "непрочитанное"
@@ -65,6 +66,31 @@ const NotificationModal = ({ isOpen, onClose }) => {
             }
         } catch (error) {
             console.error("Ошибка создания уведомления:", error.message);
+        }
+    };
+
+    // Обновление статуса уведомления на "Seen" (PATCH)
+    const handleMarkAsSeen = async (id) => {
+        try {
+            const token = Cookies.get("jwt");
+            const response = await fetch("https://pandatur-api.com/notification", {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    id: id,
+                    status: true, // Обновляем статус на "Seen"
+                }),
+            });
+            if (response.ok) {
+                fetchNotifications(); // Обновляем список уведомлений
+            } else {
+                console.error(`Ошибка обновления статуса: ${response.status}`);
+            }
+        } catch (error) {
+            console.error("Ошибка обновления статуса:", error.message);
         }
     };
 
@@ -99,22 +125,36 @@ const NotificationModal = ({ isOpen, onClose }) => {
                     <button type="submit">Add Notification</button>
                 </form>
 
-
                 {/* Динамическое отображение уведомлений */}
                 <ul className="notification-list">
                     {notifications.length === 0 ? (
                         <li className="no-notifications">Нет уведомлений</li>
                     ) : (
                         notifications.map((notification) => (
-                            <li key={notification.id} className={`notification-item ${notification.status ? 'read' : 'unread'}`}>
-                                <Icon name='notifi' />
-                                {/* <div><Icon name='notifi' /></div> */}
+                            <li
+                                key={notification.id}
+                                className={`notification-item ${notification.status ? "read" : "unread"}`}
+                            >
+                                <Icon name="notifi" />
                                 <div className="notification-content">
                                     <div className="notification-description">{notification.description}</div>
-                                    <div className="notification-time">{new Date(notification.scheduled_time).toLocaleString()}</div>
-                                    <div className={`notification-status ${notification.status ? 'completed' : 'pending'}`}>
+                                    <div className="notification-time">
+                                        {new Date(notification.scheduled_time).toLocaleString()}
+                                    </div>
+                                    <div
+                                        className={`notification-status ${notification.status ? "completed" : "pending"
+                                            }`}
+                                    >
                                         {notification.status ? "Seen" : "Unseen"}
                                     </div>
+                                    {!notification.status && (
+                                        <button
+                                            className="mark-as-seen-button"
+                                            onClick={() => handleMarkAsSeen(notification.id)}
+                                        >
+                                            Mark as Seen
+                                        </button>
+                                    )}
                                 </div>
                             </li>
                         ))

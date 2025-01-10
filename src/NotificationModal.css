@@ -212,3 +212,38 @@
     transform: scale(0.95);
     /* Лёгкое уменьшение при нажатии */
 }
+
+.mark-as-seen-button {
+    padding: 8px 15px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #4caf50;
+    /* Зеленый цвет */
+    border: none;
+    border-radius: 25px;
+    /* Скругленные края */
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Мягкая тень */
+    transition: all 0.3s ease;
+    /* Плавный переход для эффектов */
+}
+
+.mark-as-seen-button:hover {
+    background-color: #45a049;
+    /* Более темный зеленый при наведении */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+    /* Усиленная тень при наведении */
+    transform: translateY(-2px);
+    /* Легкий подъем */
+}
+
+.mark-as-seen-button:active {
+    background-color: #388e3c;
+    /* Ещё более темный зеленый при клике */
+    transform: translateY(0);
+    /* Возвращение кнопки */
+    box-shadow: 0 3px 4px rgba(0, 0, 0, 0.1);
+    /* Уменьшенная тень */
+}
