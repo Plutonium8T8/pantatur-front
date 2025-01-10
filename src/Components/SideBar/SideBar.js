@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie'; // Для работы с cookies
+import Cookies from 'js-cookie';
 import './SideBar.css';
-import { useUnreadMessages } from '../../Unread'; // Импортируем хук для получения количества непрочитанных сообщений
+import { useUnreadMessages } from '../../Unread';
 
-const CustomSidebar = () => {
+const CustomSidebar = ({ onOpenNotifications }) => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { unreadCount } = useUnreadMessages(); // Получаем количество непрочитанных сообщений из контекста
+    const { unreadCount } = useUnreadMessages();
 
     const isActive = (page) => {
         if (page === 'chat') {
@@ -22,7 +22,7 @@ const CustomSidebar = () => {
 
     const handleLogOut = () => {
         Cookies.remove('jwt');
-        window.location.reload(); // Перезагрузка страницы
+        window.location.reload();
     };
 
     return (
@@ -56,19 +56,12 @@ const CustomSidebar = () => {
                             <span className="unread-indicator">{unreadCount}</span>
                         )}
                     </div>
-                    {/* <div
-                        className={`menu-item ${isActive('mail') ? 'active' : ''}`}
-                        onClick={() => handleNavigate('mail')}
-                    >
-                        ✉️ <br />Mail
-                    </div> */}
                     <div
                         className={`menu-item ${isActive('notifications') ? 'active' : ''}`}
-                        onClick={() => handleNavigate('notifications')}
+                        onClick={onOpenNotifications} // Вызываем функцию открытия модального окна
                     >
                         🔔 <br />Notifications
                     </div>
-                    {/* Новый пункт меню */}
                     <div
                         className={`menu-item ${isActive('admin-panel') ? 'active' : ''}`}
                         onClick={() => handleNavigate('admin-panel')}

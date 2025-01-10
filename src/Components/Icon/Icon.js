@@ -72,6 +72,7 @@ import { ReactComponent as CurrencyRubleIcon } from './icons/currency-ruble-icon
 import { ReactComponent as UsersTg } from './icons/users-tg.svg';
 import { ReactComponent as ChevronRight } from './icons/chevron-right.svg';
 import { ReactComponent as ArrowNarrowLeft } from './icons/arrow-narrow-left.svg';
+import { ReactComponent as Notifi } from './icons/notifi.svg';
 
 const Icon = (props) => {
     const {
@@ -458,6 +459,11 @@ const Icon = (props) => {
         case 'arrow-narrow-left':
             return <ArrowNarrowLeft
                 className='arrow-narrow-left'
+                {...props}
+            />
+        case 'notifi':
+            return <Notifi
+                className='notifi'
                 {...props}
             />
         default:
