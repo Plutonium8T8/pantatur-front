@@ -39,13 +39,21 @@ const TaskModal = ({ isOpen, onClose }) => {
         try {
             const token = Cookies.get("jwt");
             if (!token) throw new Error("Отсутствует токен авторизации");
+
             const response = await fetch(`https://pandatur-api.com/task/user/${userId}`, {
-                headers: { Authorization: `Bearer ${token}` },
+                method: "GET", // Указываем метод GET явно
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json", // Указываем тип контента
+                },
             });
-            if (response.ok) {
-                const data = await response.json();
-                setTasks(data);
+
+            if (!response.ok) {
+                throw new Error(`Ошибка загрузки задач. Код: ${response.status}`);
             }
+
+            const data = await response.json();
+            setTasks(data); // Устанавливаем задачи в состояние
         } catch (error) {
             console.error("Ошибка загрузки задач:", error.message);
         }
