@@ -255,16 +255,20 @@ h1 {
     align-items: center;
     margin-top: 10px;
     gap: 10px;
+    border: 1px solid #ddd;
+    padding: 5px;
+    margin-top: 50px;
 }
 
 .add-button-minus {
     background-color: #bcc556;
     color: white;
     border: none;
-    padding: 5px 10px;
+    padding: 5px 0px 5px 5px;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    margin-top: 4px;
 }
 
 .add-button-plus {
@@ -275,7 +279,8 @@ h1 {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    margin-left: 10px;
+    margin-left: 5px;
+    margin-top: 4px;
 }
 
 .add-button-minus:hover {
