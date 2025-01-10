@@ -56,12 +56,12 @@ const CustomSidebar = () => {
                             <span className="unread-indicator">{unreadCount}</span>
                         )}
                     </div>
-                    <div
+                    {/* <div
                         className={`menu-item ${isActive('mail') ? 'active' : ''}`}
                         onClick={() => handleNavigate('mail')}
                     >
                         ✉️ <br />Mail
-                    </div>
+                    </div> */}
                     <div
                         className={`menu-item ${isActive('notifications') ? 'active' : ''}`}
                         onClick={() => handleNavigate('notifications')}
