@@ -253,6 +253,7 @@ const ScheduleComponent = () => {
       console.error("Ошибка при добавлении интервала:", error);
     }
   };
+
   const AddInterval = async () => {
     try {
       // Получаем данные о текущем сотруднике и выбранном дне
@@ -268,7 +269,9 @@ const ScheduleComponent = () => {
 
       // Логируем данные перед отправкой
       console.log("Отправляем данные на сервер:", newInterval);
-
+      console.log("Текущий сотрудник:", technicianId);
+      console.log("Текущий день недели:", dayOfWeek);
+      console.log("Отправляемый интервал:", newInterval);
       // Отправляем POST-запрос на сервер
       const token = Cookies.get("jwt");
       const response = await fetch(`https://pandatur-api.com/technicians/${technicianId}/schedule/${dayOfWeek}`, {
@@ -281,6 +284,8 @@ const ScheduleComponent = () => {
       });
 
       if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Ошибка ответа сервера:", errorData);
         throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
       }
 
