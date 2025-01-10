@@ -422,11 +422,11 @@ const ChatComponent = ({ }) => {
                             break;
                         }
 
-                        case 'notification':
-                            enqueueSnackbar(message.data.text || 'Уведомление получено!', {
-                                variant: 'success',
-                            });
-                            break;
+                        // case 'notification':
+                        //     enqueueSnackbar(message.data.text || 'Уведомление получено!', {
+                        //         variant: 'success',
+                        //     });
+                        //     break;
 
                         // case 'task':
                         //     enqueueSnackbar(`Новая задача: ${message.data.title}`, {

@@ -35,7 +35,7 @@ const Notification = ({ selectedTicketId }) => {
 
             case 'notification':
               // Показ уведомления
-              const notificationText = truncateText(message.data.text || 'Уведомление получено!', 100);
+              const notificationText = truncateText(message.data.text || 'Уведомление!', 100);
               enqueueSnackbar(notificationText, { variant: 'success' });
               break;
 

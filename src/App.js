@@ -11,7 +11,7 @@ import { SocketProvider, useSocket } from './SocketContext';
 import UserProfile from './Components/UserPage/UserPage';
 import { SnackbarProvider, closeSnackbar } from 'notistack';
 import Notification from './Notification';
-import { UnreadMessagesProvider } from './Unread';  // Импортируем UnreadMessagesProvider из Unread.js
+import { UnreadMessagesProvider } from './Unread';
 import NotificationComponent from './NotificationComponent';
 import AdminPanel from './AdminPanel';
 import Dashboard from './Dashboard';
@@ -72,12 +72,46 @@ function App() {
       maxSnack={10}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
       action={(snackbarId) => (
-        <button
-          onClick={() => closeSnackbar(snackbarId)}
-          style={{ background: 'none', border: 'none', color: 'blue', cursor: 'pointer' }}
-        >
-          Закрыть
-        </button>
+        <>
+          <button
+            onClick={() => closeSnackbar(snackbarId)}
+            style={{ background: 'none', color: 'blue', cursor: 'pointer', marginRight: '10px' }}
+          >
+            Закрыть ✖️
+          </button>
+          <button
+            onClick={async () => {
+              try {
+                console.log("snackbarId", snackbarId);
+                const token = Cookies.get('jwt');
+                const response = await fetch(`https://pandatur-api.com/notification`, {
+                  method: 'PATCH',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                  },
+                  credentials: "include",
+                  body: JSON.stringify({
+                    id: 25,
+                    status: true,
+                  }),
+                });
+
+                if (!response.ok) {
+                  throw new Error('Ошибка при обновлении уведомления');
+                }
+
+                console.log(`Уведомление с ID ${snackbarId} успешно обновлено`);
+                closeSnackbar(snackbarId); // Закрываем уведомление
+              } catch (error) {
+                console.error(`Ошибка: ${error.message}`);
+              }
+            }}
+            style={{ background: 'none', color: '#AAFF00', cursor: 'pointer' }}
+          >
+            Done ✅
+          </button>
+        </>
       )}
     >
       <SocketProvider isLoggedIn={isLoggedIn}>

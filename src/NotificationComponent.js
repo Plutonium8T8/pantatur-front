@@ -157,7 +157,7 @@ const NotificationComponent = () => {
         e.preventDefault();
         try {
             const token = Cookies.get("jwt");
-            const response = await fetch("https://pandatur-api.com/notification", {
+            const response = await fetch("https://pandatur-api.com/notification", { // вот тут я получаю уведомления
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -268,7 +268,7 @@ const NotificationComponent = () => {
                         {notifications.map((notification) => (
                             <li key={notification.id}>
                                 <strong>Description:</strong> {notification.description} <br />
-                                <strong>Time:</strong> {notification.scheduledTime}
+                                <strong>Time:</strong> {notification.scheduled_time}
                             </li>
                         ))}
                     </ul>
