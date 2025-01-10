@@ -51,7 +51,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
                     Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({
-                    scheduled_time: notificationDate,
+                    time: notificationDate,
                     description: notificationContent,
                     client_id: userId,
                     status: false, // Новое уведомление создаётся как "непрочитанное"
