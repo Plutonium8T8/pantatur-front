@@ -1,0 +1,170 @@
+/* .modal-overlay-task {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content-task {
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    padding: 20px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow-y: auto;
+    max-height: 80vh;
+    font-family: 'Arial', sans-serif;
+} */
+
+/* Кнопка закрытия */
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    transition: color 0.3s ease;
+}
+
+.close-button:hover {
+    color: #333;
+}
+
+/* Основной контейнер задач */
+.task-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Заголовок */
+.task-header {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+    text-align: center;
+}
+
+/* Сообщение об ошибке */
+.error-message {
+    color: #d32f2f;
+    background-color: #fdecea;
+    padding: 10px;
+    border: 1px solid #f5c6cb;
+    border-radius: 5px;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+/* Форма */
+.task-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+/* Выпадающий список */
+.task-select {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    transition: border-color 0.3s ease;
+}
+
+.task-select:focus {
+    border-color: #4caf50;
+    outline: none;
+}
+
+/* Поле ввода даты */
+.task-input {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    transition: border-color 0.3s ease;
+}
+
+.task-input:focus {
+    border-color: #4caf50;
+    outline: none;
+}
+
+/* Поле ввода описания */
+.task-textarea {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: none;
+    background-color: #fff;
+    transition: border-color 0.3s ease;
+}
+
+.task-textarea:focus {
+    border-color: #4caf50;
+    outline: none;
+}
+
+/* Кнопка */
+.task-button {
+    padding: 10px 15px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #4caf50;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.task-button:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+}
+
+.task-button:active {
+    background-color: #388e3c;
+    transform: scale(0.95);
+}
+
+/* Список задач */
+.task-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Элемент задачи */
+.task-item {
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.task-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}

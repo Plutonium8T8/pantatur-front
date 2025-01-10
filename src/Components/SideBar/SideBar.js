@@ -4,7 +4,7 @@ import Cookies from 'js-cookie';
 import './SideBar.css';
 import { useUnreadMessages } from '../../Unread';
 
-const CustomSidebar = ({ onOpenNotifications }) => {
+const CustomSidebar = ({ onOpenNotifications, onOpenTasks }) => {
     const location = useLocation();
     const navigate = useNavigate();
     const { unreadCount } = useUnreadMessages();
@@ -61,6 +61,13 @@ const CustomSidebar = ({ onOpenNotifications }) => {
                         onClick={onOpenNotifications} // Вызываем функцию открытия модального окна
                     >
                         🔔 <br />Notifications
+                    </div>
+                    {/* Новый компонент */}
+                    <div
+                        className={`menu-item ${isActive('tasks') ? 'active' : ''}`}
+                        onClick={onOpenTasks} // Функция открытия задач
+                    >
+                        ✅ <br />Tasks
                     </div>
                     <div
                         className={`menu-item ${isActive('admin-panel') ? 'active' : ''}`}

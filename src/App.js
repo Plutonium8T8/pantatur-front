@@ -3,7 +3,7 @@ import './App.css';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Leads from './Leads';
 import LoginForm from './LoginForm';
-import { UserProvider, useUser } from './UserContext';
+import { UserProvider } from './UserContext';
 import CustomSidebar from './Components/SideBar/SideBar';
 import ChatComponent from './Components/ChatComponent/chat';
 import Cookies from 'js-cookie';
@@ -13,13 +13,15 @@ import { SnackbarProvider, closeSnackbar } from 'notistack';
 import Notification from './Notification';
 import { UnreadMessagesProvider } from './Unread';
 import NotificationModal from './NotificationModal'; // Модальное окно уведомлений
+import TaskComponent from './TaskComponent'; // Используем TaskModal вместо TaskComponent
 import AdminPanel from './AdminPanel';
 import Dashboard from './Dashboard';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false); // Состояние модального окна
+  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false); // Состояние модального окна уведомлений
+  const [isTaskComponentOpen, setIsTaskComponentOpen] = useState(false); // Состояние модального окна задач
 
   // Проверка сессии
   useEffect(() => {
@@ -92,7 +94,10 @@ function App() {
                 <LoginForm onLoginSuccess={handleLogin} />
               ) : (
                 <div className="app-container">
-                  <CustomSidebar onOpenNotifications={() => setIsNotificationModalOpen(true)} />
+                  <CustomSidebar
+                    onOpenNotifications={() => setIsNotificationModalOpen(true)}
+                    onOpenTasks={() => setIsTaskComponentOpen(true)} // Передаем функцию для открытия задач
+                  />
                   <div className="page-content">
                     <Routes>
                       <Route path="/account" element={<UserProfile />} />
@@ -101,9 +106,7 @@ function App() {
                       <Route path="/leads" element={<Leads />} />
                       <Route
                         path="/chat/:ticketId?"
-                        element={
-                          <ChatComponent />
-                        }
+                        element={<ChatComponent />}
                       />
                       <Route path="/admin-panel" element={<AdminPanel />} />
                       <Route path="*" element={<div>Страница в разработке</div>} />
@@ -113,6 +116,11 @@ function App() {
                   <NotificationModal
                     isOpen={isNotificationModalOpen}
                     onClose={() => setIsNotificationModalOpen(false)}
+                  />
+                  {/* Модальное окно задач */}
+                  <TaskComponent
+                    isOpen={isTaskComponentOpen}
+                    onClose={() => setIsTaskComponentOpen(false)}
                   />
                 </div>
               )}
