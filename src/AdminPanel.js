@@ -415,11 +415,11 @@ const ScheduleComponent = () => {
                     onChange={(e) => setEndTime(e.target.value)}
                   />
                 </label>
-                <button className="add-button" onClick={cutInterval}>
-                  Cut Interval
+                <button className="add-button-plus" onClick={AddInterval}>
+                  Adauga
                 </button>
-                <button className="add-button" onClick={AddInterval}>
-                  Add Interval
+                <button className="add-button-minus" onClick={cutInterval}>
+                  Micșorează
                 </button>
               </div>
             </div>

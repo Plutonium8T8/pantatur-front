@@ -257,7 +257,17 @@ h1 {
     gap: 10px;
 }
 
-.add-button {
+.add-button-minus {
+    background-color: #bcc556;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.add-button-plus {
     background-color: #28a745;
     color: white;
     border: none;
@@ -268,6 +278,10 @@ h1 {
     margin-left: 10px;
 }
 
-.add-button:hover {
+.add-button-minus:hover {
+    background-color: #839f41;
+}
+
+.add-button-plus:hover {
     background-color: #218838;
 }
