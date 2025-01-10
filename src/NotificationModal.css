@@ -1,5 +1,5 @@
 /* Overlay для модального окна */
-.modal-overlay {
+.modal-overlay-notifi {
     position: fixed;
     top: 0;
     left: 0;
@@ -7,23 +7,30 @@
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.4);
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: flex-start;
+    /* Начало сверху */
+    justify-content: flex-start;
+    /* Прижимаем модальное окно к левой стороне */
     z-index: 1000;
 }
 
 /* Контент модального окна */
-.modal-content {
+.modal-content-notifi {
     background-color: #fefefe;
     border-radius: 10px;
     padding: 20px;
-    width: 90%;
-    max-width: 600px;
+    width: 300px;
+    /* Уменьшенная ширина для размещения слева */
+    max-height: 90vh;
+    /* Высота не более 90% от высоты экрана */
+    margin: 20px;
+    margin-left: 86px;
+    /* Отступ от левого и верхнего края */
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     position: relative;
     font-family: 'Arial', sans-serif;
     overflow-y: auto;
-    max-height: 80vh;
+    /* Прокрутка содержимого при превышении высоты */
 }
 
 /* Кнопка закрытия */
