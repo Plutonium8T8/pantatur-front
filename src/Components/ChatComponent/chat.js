@@ -97,7 +97,7 @@ const ChatComponent = ({ }) => {
 
             const data = await response.json();
             console.log("tickets+++++", data);
-            setTickets1(...data); // Устанавливаем данные тикетов
+            setTickets1(data); // Устанавливаем данные тикетов
         } catch (error) {
             console.error('Ошибка:', error);
         }
@@ -294,7 +294,13 @@ const ChatComponent = ({ }) => {
 
         if (!selectedTicketId) return; // Проверяем, что тикет выбран
 
-        const updatedTicket = tickets1.find(ticket => ticket.id === selectedTicketId); // Найдем тикет
+        const updatedTicket = Array.isArray(tickets1)
+            ? tickets1.find(ticket => ticket.id === selectedTicketId)
+            : undefined;
+
+        if (!updatedTicket) {
+            console.error('Ticket not found or tickets1 is not an array:', tickets1);
+        }
 
         if (!updatedTicket) {
             console.error("Тикет не найден");
@@ -335,7 +341,13 @@ const ChatComponent = ({ }) => {
         }
     };
 
-    const updatedTicket = tickets1.find(ticket => ticket.id === selectedTicketId);
+    const updatedTicket = Array.isArray(tickets1)
+        ? tickets1.find(ticket => ticket.id === selectedTicketId)
+        : undefined;
+
+    if (!updatedTicket) {
+        console.error('Ticket not found or tickets1 is not an array:', tickets1);
+    }
 
     const scrollToBottom = () => {
         if (messageContainerRef.current) {
@@ -898,99 +910,103 @@ const ChatComponent = ({ }) => {
             <div className="users-container">
                 <h3>Chat List</h3>
                 <div className="chat-item-container">
-                    {tickets1
-                        .sort((a, b) => {
-                            const lastMessageA = messages1
-                                .filter((msg) => msg.client_id === a.id)
-                                .reduce((latest, current) =>
-                                    new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest,
-                                    { time_sent: null }
-                                );
+                    {Array.isArray(tickets1) && tickets1.length > 0 ? (
+                        tickets1
+                            .sort((a, b) => {
+                                const lastMessageA = messages1
+                                    .filter((msg) => msg.client_id === a.id)
+                                    .reduce((latest, current) =>
+                                        new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest,
+                                        { time_sent: null }
+                                    );
 
-                            const lastMessageB = messages1
-                                .filter((msg) => msg.client_id === b.id)
-                                .reduce((latest, current) =>
-                                    new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest,
-                                    { time_sent: null }
-                                );
+                                const lastMessageB = messages1
+                                    .filter((msg) => msg.client_id === b.id)
+                                    .reduce((latest, current) =>
+                                        new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest,
+                                        { time_sent: null }
+                                    );
 
-                            return new Date(lastMessageB.time_sent) - new Date(lastMessageA.time_sent);
+                                return new Date(lastMessageB.time_sent) - new Date(lastMessageA.time_sent);
+                            })
+                            .map((ticket) => {
+                                const chatMessages = messages1.filter((msg) => msg.client_id === ticket.id);
 
-                        })
-                        .map((ticket) => {
-                            const chatMessages = messages1.filter((msg) => msg.client_id === ticket.id);
+                                const unreadCounts = chatMessages.filter(
+                                    (msg) =>
+                                        (!msg.seen_by || !msg.seen_by.includes(String(userId))) &&
+                                        msg.sender_id !== Number(userId)
+                                ).length;
 
-                            const unreadCounts = chatMessages.filter(
-                                (msg) =>
-                                    (!msg.seen_by || !msg.seen_by.includes(String(userId))) &&
-                                    msg.sender_id !== Number(userId)
-                            ).length;
+                                const lastMessage = chatMessages.length > 0
+                                    ? chatMessages.reduce((latest, current) =>
+                                        new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
+                                    )
+                                    : { message: '', time_sent: null };
 
-                            const lastMessage = chatMessages.length > 0
-                                ? chatMessages.reduce((latest, current) =>
-                                    new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
-                                )
-                                : { message: '', time_sent: null };
+                                const formattedTime = lastMessage.time_sent
+                                    ? new Date(lastMessage.time_sent).toLocaleTimeString('ru-RU', {
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                    })
+                                    : null;
 
-                            const formattedTime = lastMessage.time_sent
-                                ? new Date(lastMessage.time_sent).toLocaleTimeString('ru-RU', {
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                })
-                                : null;
+                                const tags = ticket.tags ? JSON.parse(ticket.tags) : [];
 
-                            const tags = ticket.tags ? JSON.parse(ticket.tags) : [];
-
-                            return (
-                                <div
-                                    key={ticket.id}
-                                    className={`chat-item ${ticket.id === selectedTicketId ? 'active' : ''}`}
-                                    onClick={() => handleTicketClick(ticket.id)}
-                                >
-                                    <div className="foto-description">
-                                        <img className="foto-user" src="/user fon.png" alt="example" />
-                                        <div className="tickets-descriptions">
-                                            <div>{ticket.contact || "no contact"}</div>
-                                            <div>{ticket.id ? `Lead: #${ticket.id}` : "no id"}</div>
-                                            <div>{ticket.workflow || "no workflow"}</div>
-                                            <div className='tags-ticket'>
-                                                {tags.length > 0 ? (
-                                                    tags.map((tag, index) => (
-                                                        <span
-                                                            key={index}
-                                                            style={{
-                                                                display: 'inline-block',
-                                                                backgroundColor: '#007bff',
-                                                                color: '#fff',
-                                                                padding: '5px 10px',
-                                                                borderRadius: '20px',
-                                                                marginRight: '5px',
-                                                                fontSize: '12px',
-                                                            }}
-                                                        >
-                                                            {tag}
-                                                        </span>
-                                                    ))
-                                                ) : (
-                                                    <div>no tags</div>
-                                                )}
+                                return (
+                                    <div
+                                        key={ticket.id}
+                                        className={`chat-item ${ticket.id === selectedTicketId ? 'active' : ''}`}
+                                        onClick={() => handleTicketClick(ticket.id)}
+                                    >
+                                        <div className="foto-description">
+                                            <img className="foto-user" src="/user fon.png" alt="example" />
+                                            <div className="tickets-descriptions">
+                                                <div>{ticket.contact || "no contact"}</div>
+                                                <div>{ticket.id ? `Lead: #${ticket.id}` : "no id"}</div>
+                                                <div>{ticket.workflow || "no workflow"}</div>
+                                                <div className='tags-ticket'>
+                                                    {tags.length > 0 ? (
+                                                        tags.map((tag, index) => (
+                                                            <span
+                                                                key={index}
+                                                                style={{
+                                                                    display: 'inline-block',
+                                                                    backgroundColor: '#007bff',
+                                                                    color: '#fff',
+                                                                    padding: '5px 10px',
+                                                                    borderRadius: '20px',
+                                                                    marginRight: '5px',
+                                                                    fontSize: '12px',
+                                                                }}
+                                                            >
+                                                                {tag}
+                                                            </span>
+                                                        ))
+                                                    ) : (
+                                                        <div>no tags</div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="container-time-tasks-chat">
+                                            <div className="info-message">
+                                                <div className="last-message-container">
+                                                    <div className="last-message-ticket">{lastMessage.message}</div>
+                                                    <div>{formattedTime}</div>
+                                                    {unreadCounts > 0 && (
+                                                        <div className="unread-count">{unreadCounts}</div>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="container-time-tasks-chat">
-                                        <div className="info-message">
-                                            <div className="last-message-container">
-                                                <div className="last-message-ticket">{lastMessage.message}</div>
-                                                <div>{formattedTime}</div>
-                                                {unreadCounts > 0 && (
-                                                    <div className="unread-count">{unreadCounts}</div>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        })}
+                                );
+                            })
+                    ) : (
+                        <div>No tickets available or loading...</div>
+                    )}
+
                 </div>
                 {isLoading && (
                     <div className="spinner-overlay">

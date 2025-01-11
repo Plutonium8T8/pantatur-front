@@ -23,17 +23,27 @@ const TaskModal = ({ isOpen, onClose }) => {
         try {
             const token = Cookies.get("jwt");
             if (!token) return;
+
             const response = await fetch("https://pandatur-api.com/api/tickets", {
+                method: "GET", // Указываем метод GET явно
                 headers: { Authorization: `Bearer ${token}` },
             });
+
             if (response.ok) {
                 const data = await response.json();
-                setTickets(data[0] || []);
+                setTickets(data || []); // Устанавливаем данные тикетов
+            } else {
+                console.error("Ошибка получения тикетов:", response.statusText);
             }
         } catch (error) {
             console.error("Ошибка загрузки тикетов:", error.message);
         }
     };
+
+    // Загружаем тикеты при монтировании компонента
+    useEffect(() => {
+        fetchTicketsID();
+    }, []);
 
     const fetchTasks = async () => {
         try {
