@@ -410,11 +410,23 @@ const ChatComponent = ({ }) => {
     };
 
     const handleTicketClick = (ticketId) => {
-        setSelectedTicketId(ticketId); // Устанавливаем выбранный тикет
+        // Устанавливаем выбранный тикет
+        setSelectedTicketId(ticketId);
+
+        // Находим данные выбранного тикета
+        const selectedTicket = tickets1.find((ticket) => ticket.id === ticketId);
+
+        // Если тикет найден, обновляем выбранного техника
+        if (selectedTicket) {
+            setSelectedTechnicianId(selectedTicket.technician_id || null); // Если technician_id нет, передаем null
+        } else {
+            console.warn('Тикет не найден!');
+            setSelectedTechnicianId(null);
+        }
+
+        // Выполняем дополнительные действия
         navigate(`/chat/${ticketId}`);
-        // fetchTicketsID();
         getClientMessages();
-        // fetchTickets();
     };
 
     const handleInView = (isVisible, msg) => {
@@ -812,8 +824,6 @@ const ChatComponent = ({ }) => {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const handleTechnicianChange = async (newTechnicianId) => {
-        console.log('Выбранный техник ID:', newTechnicianId);
-        console.log('userID', userId);
         setSelectedTechnicianId(newTechnicianId);
 
         if (!selectedTicketId || !newTechnicianId) {
@@ -823,8 +833,6 @@ const ChatComponent = ({ }) => {
 
         try {
             const token = Cookies.get('jwt');
-            if (!token) throw new Error('Отсутствует токен авторизации');
-
             const response = await fetch(`https://pandatur-api.com/api/tickets/${selectedTicketId}`, {
                 method: 'PATCH',
                 headers: {
@@ -942,6 +950,11 @@ const ChatComponent = ({ }) => {
 
     const updateTickets = (tickets) => {
         setFilteredTickets(tickets);
+    };
+
+    const handleTicketSelect = (ticket) => {
+        setSelectedTicketId(ticket.id);
+        setSelectedTechnicianId(ticket.technician_id || null); // Если technician_id нет, передаем null
     };
 
     return (

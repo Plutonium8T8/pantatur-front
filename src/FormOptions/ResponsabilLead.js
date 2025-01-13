@@ -3,10 +3,12 @@ import Cookies from 'js-cookie';
 
 const TechnicianSelect = ({ onTechnicianChange, selectedTechnicianId }) => {
     const [technicians, setTechnicians] = useState([]);
-    const [selectedTechnician, setSelectedTechnician] = useState(selectedTechnicianId || ""); // Убедитесь, что начальное значение - строка
+    const [selectedTechnician, setSelectedTechnician] = useState("");
+    const [isLoading, setIsLoading] = useState(true);
 
     const fetchTechnicians = async () => {
         const token = Cookies.get('jwt');
+        setIsLoading(true);
 
         try {
             const response = await fetch('https://pandatur-api.com/users-technician', {
@@ -24,13 +26,15 @@ const TechnicianSelect = ({ onTechnicianChange, selectedTechnicianId }) => {
             const data = await response.json();
 
             const formattedData = data.map((item) => ({
-                id: item.id.id, // Изменено на актуальную вложенность
-                name: `${item.id.name} ${item.id.surname}`, // Используем имя и фамилию из вложенного объекта
+                id: item.id.id,
+                name: `${item.id.name} ${item.id.surname}`,
             }));
 
             setTechnicians(formattedData);
         } catch (error) {
             console.error('Ошибка при получении данных техников:', error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -39,7 +43,12 @@ const TechnicianSelect = ({ onTechnicianChange, selectedTechnicianId }) => {
     }, []);
 
     useEffect(() => {
-        setSelectedTechnician(selectedTechnicianId || ""); // Синхронизация с внешним состоянием
+        // Синхронизируем состояние с props
+        if (selectedTechnicianId === null || selectedTechnicianId === undefined) {
+            setSelectedTechnician(""); // Сбросить выбор
+        } else {
+            setSelectedTechnician(selectedTechnicianId);
+        }
     }, [selectedTechnicianId]);
 
     const handleChange = (event) => {
@@ -51,21 +60,23 @@ const TechnicianSelect = ({ onTechnicianChange, selectedTechnicianId }) => {
     return (
         <div className='tech-container'>
             <label htmlFor="technician-select">Responsabil lead:</label>
-            <select
-                id="technician-select"
-                value={selectedTechnician}
-                onChange={handleChange}
-                className='tech-select'
-            >
-                <option value="">
-                    Select
-                </option>
-                {technicians.map((technician) => (
-                    <option key={technician.id} value={technician.id}>
-                        {technician.name} ({technician.id})
-                    </option>
-                ))}
-            </select>
+            {isLoading ? (
+                <p>Загрузка...</p>
+            ) : (
+                <select
+                    id="technician-select"
+                    value={selectedTechnician}
+                    onChange={handleChange}
+                    className='tech-select'
+                >
+                    <option value="">Select</option>
+                    {technicians.map((technician) => (
+                        <option key={technician.id} value={technician.id}>
+                            {technician.name} ({technician.id})
+                        </option>
+                    ))}
+                </select>
+            )}
         </div>
     );
 };
