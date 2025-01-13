@@ -200,30 +200,46 @@ const ChatComponent = ({ }) => {
 
     const getClientMessages = async () => {
         try {
+            // Получаем токен из cookies
             const token = Cookies.get('jwt');
-            const response = await fetch(`https://pandatur-api.com/messages`, {
+            if (!token) {
+                console.warn('Нет токена. Пропускаем загрузку сообщений.');
+                return;
+            }
+
+            // Отправляем запрос на сервер
+            const response = await fetch('https://pandatur-api.com/messages', {
                 method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
             });
 
+            // Проверяем, успешен ли запрос
             if (!response.ok) {
                 throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
             }
 
+            // Парсим данные
             const data = await response.json();
-            console.log("messagaesssss:::", data);
-            // console.log('Сообщения клиента полученые с сервера:', data);
-            // enqueueSnackbar('Сообшения получены!', { variant: 'success' });
+
+            // Логируем полученные данные (опционально)
+            console.log('Сообщения клиента:', data);
+
             // Обновляем состояние с сообщениями
             setMessages1(data);
         } catch (error) {
-            enqueueSnackbar('Не удалось получить сообшения!', { variant: 'error' });
+            // Обработка ошибок
+            enqueueSnackbar('Не удалось получить сообщения!', { variant: 'error' });
             console.error('Ошибка при получении сообщений:', error.message);
         }
     };
+
+    // Вызываем функцию (например, через useEffect)
+    useEffect(() => {
+        getClientMessages();
+    }, []);
 
     useEffect(() => {
         getClientMessages();
@@ -292,24 +308,32 @@ const ChatComponent = ({ }) => {
     const handleWorkflowChange = async (event) => {
         const newWorkflow = event.target.value;
 
-        if (!selectedTicketId) return; // Проверяем, что тикет выбран
+        if (!selectedTicketId) {
+            console.warn('Тикет не выбран.');
+            enqueueSnackbar('Ошибка: Тикет не выбран.', { variant: 'error' });
+            return;
+        }
 
+        // Проверяем, что tickets1 — это массив, и ищем тикет
         const updatedTicket = Array.isArray(tickets1)
             ? tickets1.find(ticket => ticket.id === selectedTicketId)
-            : undefined;
+            : null;
 
         if (!updatedTicket) {
             console.error('Ticket not found or tickets1 is not an array:', tickets1);
-        }
-
-        if (!updatedTicket) {
-            console.error("Тикет не найден");
-            return; // Если тикет не найден, прекращаем выполнение
+            enqueueSnackbar('Ошибка: Тикет не найден.', { variant: 'error' });
+            return;
         }
 
         try {
-            // Отправляем PATCH запрос на сервер
             const token = Cookies.get("jwt");
+            if (!token) {
+                console.warn('Нет токена для авторизации.');
+                enqueueSnackbar('Ошибка: Нет токена.', { variant: 'error' });
+                return;
+            }
+
+            // Отправляем PATCH запрос
             const response = await fetch(`https://pandatur-api.com/api/tickets/${updatedTicket.id}`, {
                 method: "PATCH",
                 headers: {
@@ -321,32 +345,38 @@ const ChatComponent = ({ }) => {
             });
 
             if (!response.ok) {
-                throw new Error("Ошибка при обновлении workflow");
+                throw new Error(`Ошибка при обновлении workflow: ${response.status} ${response.statusText}`);
             }
 
-            // Получаем обновленные данные
             const data = await response.json();
             enqueueSnackbar('Статус тикета обновлен!', { variant: 'success' });
+
             // Обновляем локальное состояние
             setTickets1((prevTickets) =>
-                prevTickets.map((ticket) =>
-                    ticket.id === updatedTicket.id ? { ...ticket, workflow: newWorkflow } : ticket
-                )
+                Array.isArray(prevTickets)
+                    ? prevTickets.map(ticket =>
+                        ticket.id === updatedTicket.id ? { ...ticket, workflow: newWorkflow } : ticket
+                    )
+                    : prevTickets
             );
 
             console.log("Workflow обновлен:", data);
         } catch (error) {
-            enqueueSnackbar('Ошибка, Статус тикета не обновлен!', { variant: 'error' });
-            console.error("Ошибка при обновлении workflow:", error);
+            enqueueSnackbar('Ошибка: Статус тикета не обновлен.', { variant: 'error' });
+            console.error('Ошибка при обновлении workflow:', error.message);
         }
     };
 
-    const updatedTicket = Array.isArray(tickets1)
+    const updatedTicket = Array.isArray(tickets1) && tickets1.length > 0
         ? tickets1.find(ticket => ticket.id === selectedTicketId)
-        : undefined;
+        : null;
 
     if (!updatedTicket) {
-        console.error('Ticket not found or tickets1 is not an array:', tickets1);
+        console.error('Ошибка: Тикет не найден или tickets1 не является массивом.', {
+            tickets1,
+            selectedTicketId,
+        });
+        // enqueueSnackbar('Ошибка: Тикет не найден.', { variant: 'error' });
     }
 
     const scrollToBottom = () => {
