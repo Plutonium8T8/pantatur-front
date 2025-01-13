@@ -14,18 +14,18 @@ const LoginForm = ({ onLoginSuccess }) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const validateForm = () => {
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const passwordPattern = /^(?=.*[A-Z])(?=.*\W).{1,180}$/;
+  // const validateForm = () => {
+  //   const emailPattern = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
+  //   const passwordPattern = /^(?=.*[A-Z])(?=.*\\W).{1,180}$/;
 
-    return (
-      emailPattern.test(form.email) &&
-      (!isLogin || form.username.length <= 180) &&
-      passwordPattern.test(form.password) &&
-      form.email.length <= 180 &&
-      form.password.length <= 180
-    );
-  };
+  //   return (
+  //     emailPattern.test(form.email) &&
+  //     (!isLogin || form.username.length <= 180) &&
+  //     passwordPattern.test(form.password) &&
+  //     form.email.length <= 180 &&
+  //     form.password.length <= 180
+  //   );
+  // };
 
   const handleSubmit = async () => {
     // if (!validateForm()) {
@@ -50,14 +50,25 @@ const LoginForm = ({ onLoginSuccess }) => {
       const responseData = await response.json();
       setMessage(responseData.message);
 
-      if (isLogin && response.ok) {
-        Cookies.set('jwt', responseData.token, { expires: 7, secure: true, sameSite: 'strict' });
-        setUserId(responseData.user_id);
-        onLoginSuccess();
+      if (response.ok) {
+        if (isLogin) {
+          Cookies.set('jwt', responseData.token, { expires: 7, secure: true, sameSite: 'strict' });
+          setUserId(responseData.user_id);
+          onLoginSuccess();
+          console.log('Успешная авторизация');
+        } else {
+          console.log('Успешная регистрация');
+        }
+      } else {
+        if (isLogin) {
+          console.log('Неудачная авторизация');
+        } else {
+          console.log('Неудачная регистрация');
+        }
       }
     } catch (error) {
       setMessage('Произошла ошибка');
-      console.error(error);
+      console.error('Ошибка сервера:', error);
     } finally {
       setIsLoading(false);
     }
@@ -113,6 +124,7 @@ const LoginForm = ({ onLoginSuccess }) => {
             <div className="spinner"></div>
           </div>
         )}
+        {message && <p className="message">{message}</p>}
       </div>
     </div>
   );
