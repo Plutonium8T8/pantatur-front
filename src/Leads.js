@@ -234,10 +234,10 @@ const Leads = () => {
                                     tickets
                                         .filter(ticket => ticket.workflow === workflow)
                                         .filter(ticket =>
-                                        (ticket.contact?.includes(searchTerm) ||
-                                            ticket.transport?.includes(searchTerm) ||
-                                            ticket.country?.includes(searchTerm) ||
-                                            searchTerm === '')
+                                        (ticket.contact?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                            ticket.transport?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                            ticket.country?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                            searchTerm.trim() === '')
                                         )
                                         .map(ticket => {
                                             // Преобразуем строку с тегами в массив
