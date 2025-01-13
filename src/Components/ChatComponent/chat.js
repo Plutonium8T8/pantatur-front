@@ -371,13 +371,13 @@ const ChatComponent = ({ }) => {
         ? tickets1.find(ticket => ticket.id === selectedTicketId)
         : null;
 
-    if (!updatedTicket) {
-        console.error('Ошибка: Тикет не найден или tickets1 не является массивом.', {
-            tickets1,
-            selectedTicketId,
-        });
-        // enqueueSnackbar('Ошибка: Тикет не найден.', { variant: 'error' });
-    }
+    // if (!updatedTicket) {
+    //     console.error('Ошибка: Тикет не найден или tickets1 не является массивом.', {
+    //         tickets1,
+    //         selectedTicketId,
+    //     });
+    //     // enqueueSnackbar('Ошибка: Тикет не найден.', { variant: 'error' });
+    // }
 
     const scrollToBottom = () => {
         if (messageContainerRef.current) {

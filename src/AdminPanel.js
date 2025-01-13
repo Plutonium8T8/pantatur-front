@@ -154,8 +154,9 @@ const ScheduleComponent = () => {
 
       // Combine data
       const combinedSchedule = usersData.map((user) => {
+        const userId = user.id.id; // Извлекаем вложенное id
         const userSchedule = scheduleData.find(
-          (schedule) => schedule.technician_id === user.id // Изменено с user.id.id.id на user.id
+          (schedule) => schedule.technician_id === userId
         );
 
         const weeklySchedule = userSchedule?.weekly_schedule || {};
@@ -180,8 +181,10 @@ const ScheduleComponent = () => {
         }
 
         return {
-          id: user.id, // Изменено с user.id.id.id на user.id
-          name: `${user.job_title}`, // Используем новые поля из данных
+          id: userId, // Извлекаем ID из вложенного объекта
+          name: `${user.id.name} ${user.id.surname}`, // Используем имя и фамилию
+          email: user.id.user.email, // Email из вложенного user
+          username: user.id.user.username, // Имя пользователя
           shifts,
         };
       });
