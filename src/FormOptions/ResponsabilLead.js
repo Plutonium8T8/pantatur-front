@@ -24,8 +24,8 @@ const TechnicianSelect = ({ onTechnicianChange, selectedTechnicianId }) => {
             const data = await response.json();
 
             const formattedData = data.map((item) => ({
-                id: item.id.id.id,
-                name: `${item.id.name} ${item.id.surname}`,
+                id: item.id.id, // Изменено на актуальную вложенность
+                name: `${item.id.name} ${item.id.surname}`, // Используем имя и фамилию из вложенного объекта
             }));
 
             setTechnicians(formattedData);
