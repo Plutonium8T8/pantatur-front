@@ -58,6 +58,7 @@ const ChatComponent = ({ }) => {
     const reactionContainerRef = useRef(null);
     const menuRefs = useRef({}); // Создаем объект для хранения ref всех меню
     const [filteredTickets, setFilteredTickets] = useState(tickets1);
+    const [activeTab, setActiveTab] = useState('extraForm'); // По умолчанию вкладка Extra Form
 
     useEffect(() => {
         // Если ticketId передан через URL, устанавливаем его как selectedTicketId
@@ -1334,212 +1335,281 @@ const ChatComponent = ({ }) => {
                 </div>
             </div>
             <div className="extra-info">
-                <h3>Additional Information</h3>
-                {selectedTicketId && (
-                    <>
-                        <div className='selects-container'>
-                            <Workflow
-                                ticket={updatedTicket} // передаем объект тикета, а не только ID
-                                onChange={handleWorkflowChange}
-                            />
-                            {isLoading ? (
-                                <p>Загрузка...</p> // Индикатор загрузки
-                            ) : (
-                                <TechnicianSelect
-                                    selectedTechnicianId={selectedTechnicianId} // записывается в состояние
-                                    onTechnicianChange={handleTechnicianChange} // когда он меняется он отправляется
-                                />
+                <div className="tabs">
+                    <button
+                        className={`tab-button ${activeTab === 'extraForm' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('extraForm')}
+                    >
+                        Extra Form
+                    </button>
+                    <button
+                        className={`tab-button ${activeTab === 'personalData' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('personalData')}
+                    >
+                        Personal Data
+                    </button>
+                </div>
+                <div className="tab-content">
+                    {activeTab === 'extraForm' && (
+                        <div className="extra-info-content">
+                            <h3>Additional Information</h3>
+                            {selectedTicketId && (
+                                <>
+                                    <div className="selects-container">
+                                        <Workflow
+                                            ticket={updatedTicket}
+                                            onChange={handleWorkflowChange}
+                                        />
+                                        {isLoading ? (
+                                            <p>Загрузка...</p>
+                                        ) : (
+                                            <TechnicianSelect
+                                                selectedTechnicianId={extraInfo[selectedTicketId]?.technicianId}
+                                                onTechnicianChange={handleTechnicianChange}
+                                            />
+                                        )}
+                                        <Input
+                                            label="Sale"
+                                            type="number"
+                                            value={extraInfo[selectedTicketId]?.sale || ""}
+                                            onChange={(e) =>
+                                                handleSelectChange(selectedTicketId, 'sale', e.target.value)
+                                            }
+                                            className="input-field"
+                                            placeholder="Indicati suma in euro"
+                                            id="sale-input"
+                                        />
+                                        <Select
+                                            options={sourceOfLeadOptions}
+                                            label="Lead Source"
+                                            id="lead-source-select"
+                                            value={extraInfo[selectedTicketId]?.lead_source || ""}
+                                            onChange={(value) =>
+                                                handleSelectChange(selectedTicketId, 'lead_source', value)
+                                            }
+                                        />
+                                        <Select
+                                            options={promoOptions}
+                                            label="Promo"
+                                            id="promo-select"
+                                            value={extraInfo[selectedTicketId]?.promo || ""}
+                                            onChange={(value) =>
+                                                handleSelectChange(selectedTicketId, 'promo', value)
+                                            }
+                                        />
+                                        <Select
+                                            options={marketingOptions}
+                                            label="Marketing"
+                                            id="marketing-select"
+                                            value={extraInfo[selectedTicketId]?.marketing || ""}
+                                            onChange={(value) =>
+                                                handleSelectChange(selectedTicketId, 'marketing', value)
+                                            }
+                                        />
+                                        <Select
+                                            options={serviceTypeOptions}
+                                            label="Service"
+                                            id="service-select"
+                                            value={extraInfo[selectedTicketId]?.service || ""}
+                                            onChange={(value) =>
+                                                handleSelectChange(selectedTicketId, 'service', value)
+                                            }
+                                        />
+                                        <Select
+                                            options={countryOptions}
+                                            label="Country"
+                                            id="country-select"
+                                            value={extraInfo[selectedTicketId]?.country || ""}
+                                            onChange={(value) =>
+                                                handleSelectChange(selectedTicketId, 'country', value)
+                                            }
+                                        />
+                                        <Select
+                                            options={transportOptions}
+                                            label="Transport"
+                                            id="transport-select"
+                                            value={extraInfo[selectedTicketId]?.transport || ""}
+                                            onChange={(value) =>
+                                                handleSelectChange(selectedTicketId, 'transport', value)
+                                            }
+                                        />
+                                        <Select
+                                            options={nameExcursionOptions}
+                                            label="Excursie"
+                                            id="excursie-select"
+                                            value={extraInfo[selectedTicketId]?.excursion || ""}
+                                            onChange={(value) =>
+                                                handleSelectChange(selectedTicketId, 'excursion', value)
+                                            }
+                                        />
+                                        <div className="date-go-back">
+                                            <div className="label-data-go">
+                                                <div>Data plecarii</div>
+                                                <DatePicker
+                                                    showIcon
+                                                    selected={extraInfo[selectedTicketId]?.leave_date || null}
+                                                    onChange={(date) =>
+                                                        handleSelectChange(selectedTicketId, 'leave_date', date)
+                                                    }
+                                                    isClearable
+                                                    placeholderText="Alegeti data și ora plecării"
+                                                    dateFormat="dd.MM.yyyy"
+                                                    customInput={<input className="example-custom-input" />}
+                                                />
+                                            </div>
+                                            <div className="label-data-back">
+                                                <div>Data intoarcerii</div>
+                                                <DatePicker
+                                                    showIcon
+                                                    selected={extraInfo[selectedTicketId]?.arrive_date || null}
+                                                    onChange={(date) =>
+                                                        handleSelectChange(selectedTicketId, 'arrive_date', date)
+                                                    }
+                                                    isClearable
+                                                    placeholderText="Alegeti data si ora intoarcerii"
+                                                    dateFormat="dd.MM.yyyy"
+                                                    customInput={<input className="example-custom-input" />}
+                                                />
+                                            </div>
+                                        </div>
+                                        <Select
+                                            options={purchaseProcessingOptions}
+                                            label="Purchase"
+                                            id="purchase-select"
+                                            value={extraInfo[selectedTicketId]?.purchase || ""}
+                                            onChange={(value) =>
+                                                handleSelectChange(selectedTicketId, 'purchase', value)
+                                            }
+                                        />
+                                        <Input
+                                            label="Nr de contract"
+                                            type="text"
+                                            value={extraInfo[selectedTicketId]?.contract_id || ""}
+                                            onChange={(e) =>
+                                                handleSelectChange(selectedTicketId, 'contract_id', e.target.value)
+                                            }
+                                            className="input-field"
+                                            placeholder="Nr contract"
+                                            id="contract-number-input"
+                                        />
+                                        <div className="date-contract-container">
+                                            <div>Data contractului</div>
+                                            <DatePicker
+                                                showIcon
+                                                selected={extraInfo[selectedTicketId]?.contract_date || null}
+                                                onChange={(date) =>
+                                                    handleSelectChange(selectedTicketId, 'contract_date', date)
+                                                }
+                                                isClearable
+                                                placeholderText="Data contractului"
+                                                dateFormat="dd.MM.yyyy"
+                                                customInput={<input className="example-custom-input" />}
+                                            />
+                                        </div>
+                                        <Input
+                                            label="Tour operator"
+                                            type="text"
+                                            value={extraInfo[selectedTicketId]?.tour_operator || ""}
+                                            onChange={(e) =>
+                                                handleSelectChange(selectedTicketId, 'tour_operator', e.target.value)
+                                            }
+                                            className="input-field"
+                                            placeholder="Tour operator"
+                                            id="tour-operator-input"
+                                        />
+                                        <Input
+                                            label="Nr cererii de la operator"
+                                            type="text"
+                                            value={extraInfo[selectedTicketId]?.request_id || ""}
+                                            onChange={(e) =>
+                                                handleSelectChange(selectedTicketId, 'request_id', e.target.value)
+                                            }
+                                            className="input-field"
+                                            placeholder="Nr cererii de la operator"
+                                            id="tour-operator-input"
+                                        />
+                                        <Input
+                                            label="Pret neto (euro)"
+                                            type="number"
+                                            value={extraInfo[selectedTicketId]?.price_netto || ""}
+                                            onChange={(e) =>
+                                                handleSelectChange(selectedTicketId, 'price_netto', e.target.value)
+                                            }
+                                            className="input-field"
+                                            placeholder="Pret neto"
+                                            id="price-neto-input"
+                                        />
+                                        <Input
+                                            label="Comision companie"
+                                            type="number"
+                                            value={extraInfo[selectedTicketId]?.commission || ""}
+                                            onChange={(e) =>
+                                                handleSelectChange(selectedTicketId, 'commission', e.target.value)
+                                            }
+                                            className="input-field"
+                                            placeholder="Comision"
+                                            id="commission-input"
+                                        />
+                                        <Select
+                                            options={paymentStatusOptions}
+                                            label="Payment"
+                                            id="payment-select"
+                                            value={extraInfo[selectedTicketId]?.payment_method || ""}
+                                            onChange={(value) =>
+                                                handleSelectChange(selectedTicketId, 'payment_method', value)
+                                            }
+                                        />
+                                    </div>
+                                    <div className="extra-info-actions">
+                                        <button onClick={sendExtraInfo} className="send-extra-info-button">
+                                            {isLoading ? 'Waiting...' : 'Actualizare'}
+                                        </button>
+                                    </div>
+                                </>
                             )}
-                            <Input
-                                label="Sale"
-                                type="number"
-                                value={extraInfo[selectedTicketId]?.sale || ""}
-                                onChange={(e) =>
-                                    handleSelectChange(selectedTicketId, 'sale', e.target.value)
-                                }
-                                className="input-field"
-                                placeholder="Indicati suma in euro"
-                                id="sale-input"
-                            />
-                            <Select
-                                options={sourceOfLeadOptions}
-                                label="Lead Source"
-                                id="lead-source-select"
-                                value={extraInfo[selectedTicketId]?.lead_source || ""}
-                                onChange={(value) => handleSelectChange(selectedTicketId, 'lead_source', value)}
-                            />
-                            <Select
-                                options={promoOptions}
-                                label="Promo"
-                                id="promo-select"
-                                value={extraInfo[selectedTicketId]?.promo || ""}
-                                onChange={(value) => handleSelectChange(selectedTicketId, 'promo', value)}
-                            />
-                            <Select
-                                options={marketingOptions}
-                                label="Marketing"
-                                id="marketing-select"
-                                value={extraInfo[selectedTicketId]?.marketing || ""}
-                                onChange={(value) => handleSelectChange(selectedTicketId, 'marketing', value)}
-                            />
-                            <Select
-                                options={serviceTypeOptions}
-                                label="Service"
-                                id="service-select"
-                                value={extraInfo[selectedTicketId]?.service || ""}
-                                onChange={(value) => handleSelectChange(selectedTicketId, 'service', value)}
-                            />
-                            <Select
-                                options={countryOptions}
-                                label="Country"
-                                id="country-select"
-                                value={extraInfo[selectedTicketId]?.country || ""}
-                                onChange={(value) => handleSelectChange(selectedTicketId, 'country', value)}
-                            />
-                            <Select
-                                options={transportOptions}
-                                label="Transport"
-                                id="transport-select"
-                                value={extraInfo[selectedTicketId]?.transport || ""}
-                                onChange={(value) => handleSelectChange(selectedTicketId, 'transport', value)}
-                            />
-                            <Select
-                                options={nameExcursionOptions}
-                                label="Excursie"
-                                id="excursie-select"
-                                value={extraInfo[selectedTicketId]?.excursion || ""}
-                                onChange={(value) => handleSelectChange(selectedTicketId, 'excursion', value)}
-                            />
-                            <div className='date-go-back'>
-                                <div className='label-data-go'>
-                                    <div>Data plecarii</div>
-                                    <DatePicker
-                                        showIcon
-                                        selected={extraInfo[selectedTicketId]?.leave_date || null}
-                                        onChange={(date) => handleSelectChange(selectedTicketId, 'leave_date', date)}
-                                        isClearable
-                                        placeholderText="Alegeti data și ora plecării"
-                                        dateFormat="dd.MM.yyyy"
-                                        // dateFormat="dd.MM.yyyy HH:mm"
-                                        // showTimeSelect
-                                        // timeFormat="HH:mm"
-                                        // timeIntervals={15} // Интервалы времени, например, каждые 15 минут
-                                        // timeCaption="Ora"  // Заголовок для секции времени
-                                        customInput={<input className="example-custom-input" />}  // Правильный синтаксис для customInput
-                                    />
-                                </div>
-                                <div className='label-data-back'>
-                                    <div>Data intoarcerii</div>
-                                    <DatePicker
-                                        showIcon
-                                        selected={extraInfo[selectedTicketId]?.arrive_date || null}
-                                        onChange={(date) => handleSelectChange(selectedTicketId, 'arrive_date', date)}
-                                        isClearable
-                                        placeholderText="Alegeti data si ora intoarcerii"
-                                        dateFormat="dd.MM.yyyy"
-                                        // dateFormat="dd.MM.yyyy HH:mm"
-                                        // showTimeSelect
-                                        // timeFormat="HH:mm"
-                                        // timeIntervals={15} // Интервалы времени, например, каждые 15 минут
-                                        // timeCaption="Ora"
-                                        customInput={<input className="example-custom-input" />}  // Правильный синтаксис для customInput
-                                    />
-                                </div>
-                            </div>
-                            <Select
-                                options={purchaseProcessingOptions}
-                                label="Purchase"
-                                id="purchase-select"
-                                value={extraInfo[selectedTicketId]?.purchase || ""}
-                                onChange={(value) => handleSelectChange(selectedTicketId, 'purchase', value)}
-                            />
-                            <Input
-                                label="Nr de contract"
-                                type="text"
-                                value={extraInfo[selectedTicketId]?.contract_id || ""}
-                                onChange={(e) =>
-                                    handleSelectChange(selectedTicketId, 'contract_id', e.target.value)
-                                }
-                                className="input-field"
-                                placeholder="Nr contract"
-                                id="contract-number-input"
-                            />
-                            <div className='date-contract-container'>
-                                <div>Data contractului</div>
-                                <DatePicker
-                                    showIcon
-                                    selected={extraInfo[selectedTicketId]?.contract_date || null}
-                                    onChange={(date) => handleSelectChange(selectedTicketId, 'contract_date', date)}
-                                    isClearable
-                                    placeholderText="Data contractului"
-                                    dateFormat="dd.MM.yyyy"
-                                    // dateFormat="dd.MM.yyyy HH:mm"
-                                    // showTimeSelect
-                                    // timeFormat="HH:mm"
-                                    // timeIntervals={15} // Интервалы времени, например, каждые 15 минут
-                                    // timeCaption="Ora"
-                                    customInput={<input className="example-custom-input" />}  // Правильный синтаксис для customInput
+                        </div>
+                    )}
+                    {activeTab === 'personalData' && (
+                        <div className="personal-data-content">
+                            <h3>Personal Data</h3>
+                            <form>
+                                <Input
+                                    label="Name"
+                                    type="text"
+                                    value={extraInfo[selectedTicketId]?.name || ""}
+                                    onChange={(e) =>
+                                        handleSelectChange(selectedTicketId, 'name', e.target.value)
+                                    }
+                                    className="input-field"
+                                    placeholder="Enter name"
                                 />
-                            </div>
-                            <Input
-                                label="Tour operator"
-                                type="text"
-                                value={extraInfo[selectedTicketId]?.tour_operator || ""}
-                                onChange={(e) =>
-                                    handleSelectChange(selectedTicketId, 'tour_operator', e.target.value)
-                                }
-                                className="input-field"
-                                placeholder="Tour operator"
-                                id="tour-operator-input"
-                            />
-                            <Input
-                                label="Nr cererii de la operator"
-                                type="text"
-                                value={extraInfo[selectedTicketId]?.request_id || ""}
-                                onChange={(e) =>
-                                    handleSelectChange(selectedTicketId, 'request_id', e.target.value)
-                                }
-                                className="input-field"
-                                placeholder="Nr cererii de la operator"
-                                id="tour-operator-input"
-                            />
-                            <Input
-                                label="Pret neto (euro)"
-                                type="number"
-                                value={extraInfo[selectedTicketId]?.price_netto || ""}
-                                onChange={(e) =>
-                                    handleSelectChange(selectedTicketId, 'price_netto', e.target.value)
-                                }
-                                className="input-field"
-                                placeholder="Pret neto"
-                                id="price-neto-input"
-                            />
-                            <Input
-                                label="Comision companie"
-                                type="number"
-                                value={extraInfo[selectedTicketId]?.commission || ""}
-                                onChange={(e) =>
-                                    handleSelectChange(selectedTicketId, 'commission', e.target.value)
-                                }
-                                className="input-field"
-                                placeholder="Comision"
-                                id="commission-input"
-                            />
-                            <Select
-                                options={paymentStatusOptions}
-                                label="Payment"
-                                id="payment-select"
-                                value={extraInfo[selectedTicketId]?.payment_method || ""}
-                                onChange={(value) => handleSelectChange(selectedTicketId, 'payment_method', value)}
-                            />
+                                <Input
+                                    label="Email"
+                                    type="email"
+                                    value={extraInfo[selectedTicketId]?.email || ""}
+                                    onChange={(e) =>
+                                        handleSelectChange(selectedTicketId, 'email', e.target.value)
+                                    }
+                                    className="input-field"
+                                    placeholder="Enter email"
+                                />
+                                <Input
+                                    label="Phone"
+                                    type="tel"
+                                    value={extraInfo[selectedTicketId]?.phone || ""}
+                                    onChange={(e) =>
+                                        handleSelectChange(selectedTicketId, 'phone', e.target.value)
+                                    }
+                                    className="input-field"
+                                    placeholder="Enter phone number"
+                                />
+                                <button type="submit" className="save-button">
+                                    Save Personal Data
+                                </button>
+                            </form>
                         </div>
-                        <div className="extra-info-actions">
-                            <button onClick={sendExtraInfo} className="send-extra-info-button">
-                                {isLoading ? 'Waiting...' : 'Actualizare'}
-                            </button>
-                        </div>
-                    </>
-                )}
+                    )}
+                </div>
             </div>
         </div>
     );
