@@ -155,7 +155,7 @@ const ScheduleComponent = () => {
       // Combine data
       const combinedSchedule = usersData.map((user) => {
         const userSchedule = scheduleData.find(
-          (schedule) => schedule.technician_id === user.id.id.id
+          (schedule) => schedule.technician_id === user.id // Изменено с user.id.id.id на user.id
         );
 
         const weeklySchedule = userSchedule?.weekly_schedule || {};
@@ -180,8 +180,8 @@ const ScheduleComponent = () => {
         }
 
         return {
-          id: user.id.id.id,
-          name: `${user.id.name} ${user.id.surname}`,
+          id: user.id, // Изменено с user.id.id.id на user.id
+          name: `${user.job_title}`, // Используем новые поля из данных
           shifts,
         };
       });
@@ -362,6 +362,7 @@ const ScheduleComponent = () => {
             <p>
               {schedule[selectedEmployee].name} ({schedule[selectedEmployee].id}),{" "}
               {format(getWeekDays()[selectedDay], "EEEE, dd.MM")}
+              <p>Intervalul in care angajatul este la munca.</p>
             </p>
             <div className="time-inputs">
               {intervals.map((interval, index) => (
