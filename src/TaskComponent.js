@@ -83,7 +83,7 @@ const TaskModal = ({ isOpen, onClose }) => {
                     ticket_id: ticketId,
                     time: taskDate,
                     description: taskContent,
-                    tag: JSON.stringify(["Example tag"]),
+                    tags: ["tag1", "tag2"], // Передаём массив, а не строку
                 }),
             });
             if (response.ok) {

@@ -57,6 +57,7 @@ const ChatComponent = ({ }) => {
     const [selectedReaction, setSelectedReaction] = useState({});
     const reactionContainerRef = useRef(null);
     const menuRefs = useRef({}); // Создаем объект для хранения ref всех меню
+    const [filteredTickets, setFilteredTickets] = useState(tickets1);
 
     useEffect(() => {
         // Если ticketId передан через URL, устанавливаем его как selectedTicketId
@@ -413,7 +414,7 @@ const ChatComponent = ({ }) => {
         navigate(`/chat/${ticketId}`);
         // fetchTicketsID();
         getClientMessages();
-        fetchTickets();
+        // fetchTickets();
     };
 
     const handleInView = (isVisible, msg) => {
@@ -935,30 +936,54 @@ const ChatComponent = ({ }) => {
         }
     };
 
+    useEffect(() => {
+        setFilteredTickets(tickets1); // Устанавливаем все тикеты по умолчанию
+    }, [tickets1]);
+
+    const updateTickets = (tickets) => {
+        setFilteredTickets(tickets);
+    };
+
     return (
         <div className="chat-container">
             <div className="users-container">
                 <h3>Chat List</h3>
-                <input
-                    type="text"
-                    placeholder="Введите ID или имя тикета"
-                    onInput={(e) => {
-                        const filterValue = e.target.value.toLowerCase();
-                        document.querySelectorAll(".chat-item").forEach((item) => {
-                            const ticketId = item.querySelector(".tickets-descriptions div:nth-child(2)").textContent.toLowerCase();
-                            const ticketContact = item.querySelector(".tickets-descriptions div:nth-child(1)").textContent.toLowerCase();
-                            if (ticketId.includes(filterValue) || ticketContact.includes(filterValue)) {
-                                item.style.display = "flex";
-                            } else {
-                                item.style.display = "none";
-                            }
-                        });
-                    }}
-                    className="ticket-filter-input"
-                />
+                <div className='filter-container-chat'>
+                    <input
+                        type="text"
+                        placeholder="Id or name"
+                        onInput={(e) => {
+                            const filterValue = e.target.value.toLowerCase();
+                            document.querySelectorAll(".chat-item").forEach((item) => {
+                                const ticketId = item.querySelector(".tickets-descriptions div:nth-child(2)").textContent.toLowerCase();
+                                const ticketContact = item.querySelector(".tickets-descriptions div:nth-child(1)").textContent.toLowerCase();
+                                if (ticketId.includes(filterValue) || ticketContact.includes(filterValue)) {
+                                    item.style.display = "flex";
+                                } else {
+                                    item.style.display = "none";
+                                }
+                            });
+                        }}
+                        className="ticket-filter-input"
+                    />
+                    <label>
+                        <input
+                            type="checkbox"
+                            id="myTicketsCheckbox"
+                            onChange={(e) => {
+                                const showMyTickets = e.target.checked;
+                                const filtered = showMyTickets
+                                    ? tickets1.filter(ticket => ticket.technician_id === userId)
+                                    : tickets1;
+                                updateTickets(filtered);
+                            }}
+                        />
+                        My tickets
+                    </label>
+                </div>
                 <div className="chat-item-container">
-                    {Array.isArray(tickets1) && tickets1.length > 0 ? (
-                        tickets1
+                    {Array.isArray(filteredTickets) && filteredTickets.length > 0 ? (
+                        filteredTickets
                             .sort((a, b) => {
                                 const lastMessageA = messages1
                                     .filter((msg) => msg.client_id === a.id)
