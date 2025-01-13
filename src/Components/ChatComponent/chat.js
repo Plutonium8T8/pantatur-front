@@ -1023,7 +1023,32 @@ const ChatComponent = ({ }) => {
                                     })
                                     : null;
 
-                                const tags = ticket.tags ? JSON.parse(ticket.tags) : [];
+                                const parseTags = (tags) => {
+                                    if (Array.isArray(tags)) {
+                                        return tags; // Если это массив, возвращаем как есть
+                                    }
+                                    if (typeof tags === 'string') {
+                                        // Проверяем, начинается ли строка с '{' и заканчивается на '}'
+                                        if (tags.startsWith('{') && tags.endsWith('}')) {
+                                            const content = tags.slice(1, -1).trim(); // Убираем фигурные скобки и пробелы
+                                            if (content === '') {
+                                                return []; // Если содержимое пустое, возвращаем пустой массив
+                                            }
+                                            return content.split(',').map(tag => tag.trim()); // Разделяем по запятым и удаляем лишние пробелы
+                                        }
+
+                                        try {
+                                            return JSON.parse(tags); // Пробуем парсить строку как JSON
+                                        } catch (error) {
+                                            console.error('Ошибка разбора JSON:', error, tags);
+                                            return []; // Если ошибка, возвращаем пустой массив
+                                        }
+                                    }
+                                    return []; // Если `tags` не строка или массив, возвращаем пустой массив
+                                };
+
+                                // Пример использования
+                                const tags = parseTags(ticket.tags);
 
                                 return (
                                     <div
@@ -1038,7 +1063,7 @@ const ChatComponent = ({ }) => {
                                                 <div>{ticket.id ? `Lead: #${ticket.id}` : "no id"}</div>
                                                 <div>{ticket.workflow || "no workflow"}</div>
                                                 <div className='tags-ticket'>
-                                                    {tags.length > 0 ? (
+                                                    {Array.isArray(tags) && tags.length > 0 ? (
                                                         tags.map((tag, index) => (
                                                             <span
                                                                 key={index}
@@ -1056,7 +1081,7 @@ const ChatComponent = ({ }) => {
                                                             </span>
                                                         ))
                                                     ) : (
-                                                        <div>no tags</div>
+                                                        tags?.length === 0 ? null : <div>no tags</div>
                                                     )}
                                                 </div>
                                             </div>
