@@ -51,14 +51,22 @@ const saveTicketToServer = async (ticketData) => {
 };
 
 const TicketModal = ({ ticket, onClose }) => {
+  const parseTags = (tags) => {
+    if (Array.isArray(tags)) {
+      return tags; // Если это уже массив, возвращаем как есть
+    }
+    if (typeof tags === 'string' && tags.startsWith('{') && tags.endsWith('}')) {
+      // Убираем фигурные скобки и разделяем строку по запятым
+      return tags.slice(1, -1).split(',').map(tag => tag.trim());
+    }
+    return []; // Если формат неизвестен, возвращаем пустой массив
+  };
+
   const [editedTicket, setEditedTicket] = useState({
     ...ticket,
-    tags: Array.isArray(ticket?.tags)
-      ? ticket.tags
-      : ticket?.tags
-        ? JSON.parse(ticket.tags) // Парсим строку в массив
-        : [], // Если теги отсутствуют, инициализируем пустым массивом
+    tags: parseTags(ticket?.tags), // Используем безопасный парсер
   });
+
   const { userId } = useUser();
 
   const handleInputChange = (e) => {

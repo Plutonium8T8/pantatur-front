@@ -195,6 +195,18 @@ const Leads = () => {
         };
     }, []);
 
+    const parseTags = (tags) => {
+        if (Array.isArray(tags)) {
+            return tags; // Если это массив, возвращаем как есть
+        }
+        if (typeof tags === 'string' && tags.startsWith('{') && tags.endsWith('}')) {
+            // Убираем фигурные скобки и разделяем строку по запятым
+            return tags.slice(1, -1).split(',').map(tag => tag.trim());
+        }
+        return []; // Если формат неизвестен, возвращаем пустой массив
+    };
+
+
     return (
         <div className='dashboard-container'>
             <div className='dashboard-header'>
@@ -241,7 +253,7 @@ const Leads = () => {
                                         )
                                         .map(ticket => {
                                             // Преобразуем строку с тегами в массив
-                                            const tags = ticket.tags ? JSON.parse(ticket.tags) : [];
+                                            const tags = parseTags(ticket.tags);
 
                                             return (
                                                 <div
