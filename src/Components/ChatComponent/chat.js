@@ -939,6 +939,23 @@ const ChatComponent = ({ }) => {
         <div className="chat-container">
             <div className="users-container">
                 <h3>Chat List</h3>
+                <input
+                    type="text"
+                    placeholder="Введите ID или имя тикета"
+                    onInput={(e) => {
+                        const filterValue = e.target.value.toLowerCase();
+                        document.querySelectorAll(".chat-item").forEach((item) => {
+                            const ticketId = item.querySelector(".tickets-descriptions div:nth-child(2)").textContent.toLowerCase();
+                            const ticketContact = item.querySelector(".tickets-descriptions div:nth-child(1)").textContent.toLowerCase();
+                            if (ticketId.includes(filterValue) || ticketContact.includes(filterValue)) {
+                                item.style.display = "flex";
+                            } else {
+                                item.style.display = "none";
+                            }
+                        });
+                    }}
+                    className="ticket-filter-input"
+                />
                 <div className="chat-item-container">
                     {Array.isArray(tickets1) && tickets1.length > 0 ? (
                         tickets1
@@ -1036,7 +1053,6 @@ const ChatComponent = ({ }) => {
                     ) : (
                         <div>No tickets available or loading...</div>
                     )}
-
                 </div>
                 {isLoading && (
                     <div className="spinner-overlay">
