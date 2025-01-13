@@ -1584,14 +1584,72 @@ const ChatComponent = ({ }) => {
                                     placeholder="Enter name"
                                 />
                                 <Input
-                                    label="Email"
-                                    type="email"
-                                    value={extraInfo[selectedTicketId]?.email || ""}
+                                    label="Surname"
+                                    type="text"
+                                    value={extraInfo[selectedTicketId]?.surname || ""}
                                     onChange={(e) =>
-                                        handleSelectChange(selectedTicketId, 'email', e.target.value)
+                                        handleSelectChange(selectedTicketId, 'surname', e.target.value)
                                     }
                                     className="input-field"
-                                    placeholder="Enter email"
+                                    placeholder="Enter surname"
+                                />
+                                <Input
+                                    label="Date of Birth"
+                                    type="date"
+                                    value={extraInfo[selectedTicketId]?.date_of_birth || ""}
+                                    onChange={(e) =>
+                                        handleSelectChange(selectedTicketId, 'date_of_birth', e.target.value)
+                                    }
+                                    className="input-field"
+                                />
+                                <Input
+                                    label="ID Card Series"
+                                    type="text"
+                                    value={extraInfo[selectedTicketId]?.id_card_series || ""}
+                                    onChange={(e) =>
+                                        handleSelectChange(selectedTicketId, 'id_card_series', e.target.value)
+                                    }
+                                    className="input-field"
+                                    placeholder="Enter ID card series"
+                                />
+                                <Input
+                                    label="ID Card Number"
+                                    type="text"
+                                    value={extraInfo[selectedTicketId]?.id_card_number || ""}
+                                    onChange={(e) =>
+                                        handleSelectChange(selectedTicketId, 'id_card_number', e.target.value)
+                                    }
+                                    className="input-field"
+                                    placeholder="Enter ID card number"
+                                />
+                                <Input
+                                    label="ID Card Release Date"
+                                    type="date"
+                                    value={extraInfo[selectedTicketId]?.id_card_release || ""}
+                                    onChange={(e) =>
+                                        handleSelectChange(selectedTicketId, 'id_card_release', e.target.value)
+                                    }
+                                    className="input-field"
+                                />
+                                <Input
+                                    label="IDNP"
+                                    type="text"
+                                    value={extraInfo[selectedTicketId]?.idnp || ""}
+                                    onChange={(e) =>
+                                        handleSelectChange(selectedTicketId, 'idnp', e.target.value)
+                                    }
+                                    className="input-field"
+                                    placeholder="Enter IDNP"
+                                />
+                                <Input
+                                    label="Address"
+                                    type="text"
+                                    value={extraInfo[selectedTicketId]?.address || ""}
+                                    onChange={(e) =>
+                                        handleSelectChange(selectedTicketId, 'address', e.target.value)
+                                    }
+                                    className="input-field"
+                                    placeholder="Enter address"
                                 />
                                 <Input
                                     label="Phone"
