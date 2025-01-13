@@ -200,8 +200,11 @@ const Leads = () => {
             return tags; // Если это массив, возвращаем как есть
         }
         if (typeof tags === 'string' && tags.startsWith('{') && tags.endsWith('}')) {
-            // Убираем фигурные скобки и разделяем строку по запятым
-            return tags.slice(1, -1).split(',').map(tag => tag.trim());
+            const content = tags.slice(1, -1).trim(); // Убираем фигурные скобки и пробелы
+            if (content === '') {
+                return []; // Если содержимое пустое, возвращаем пустой массив
+            }
+            return content.split(',').map(tag => tag.trim()); // Разделяем и обрезаем пробелы
         }
         return []; // Если формат неизвестен, возвращаем пустой массив
     };
@@ -269,9 +272,9 @@ const Leads = () => {
                                                         <div className='tickets-descriptions'>
                                                             <div>{ticket.contact || "no contact"}</div>
                                                             <div>{ticket.id || "no id"}</div>
-                                                            <div>
-                                                                {tags.length > 0 ? (
-                                                                    tags.map((tag, index) => (
+                                                            {tags.length > 0 ? (
+                                                                <div>
+                                                                    {tags.map((tag, index) => (
                                                                         <span
                                                                             key={index}
                                                                             style={{
@@ -286,11 +289,11 @@ const Leads = () => {
                                                                         >
                                                                             {tag}
                                                                         </span>
-                                                                    ))
-                                                                ) : (
-                                                                    <span>no tags</span>
-                                                                )}
-                                                            </div>
+                                                                    ))}
+                                                                </div>
+                                                            ) : (
+                                                                <span>no tags</span>
+                                                            )}
                                                         </div>
                                                     </div>
                                                     <div className='container-time-tasks'>
