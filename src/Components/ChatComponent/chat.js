@@ -474,19 +474,6 @@ const ChatComponent = ({ }) => {
                             break;
                         }
 
-                        // case 'notification':
-                        //     enqueueSnackbar(message.data.text || 'Уведомление получено!', {
-                        //         variant: 'success',
-                        //     });
-                        //     break;
-
-                        // case 'task':
-                        //     enqueueSnackbar(`Новая задача: ${message.data.title}`, {
-                        //         variant: 'warning',
-                        //     });
-                        //     handleTask(message.data);
-                        //     break;
-
                         case 'seen':
                             console.log("seen la mesaj");
                             break;
