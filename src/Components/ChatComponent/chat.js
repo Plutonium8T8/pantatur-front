@@ -976,7 +976,7 @@ const ChatComponent = ({ }) => {
 
         try {
             const token = Cookies.get('jwt');
-            const response = await fetch(`https://pandatur-api.com/users-extended/${selectedTicketId}`, {
+            const response = await fetch(`https://pandatur-api.com/users-extended/6`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
@@ -1617,7 +1617,7 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="Name"
                                     type="text"
-                                    value={personalData[selectedTicketId]?.name || ""}
+                                    value={extraInfo[selectedTicketId]?.name || ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectedTicketId, 'name', e.target.value)
                                     }
@@ -1627,7 +1627,7 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="Surname"
                                     type="text"
-                                    value={personalData[selectedTicketId]?.surname || ""}
+                                    value={extraInfo[selectedTicketId]?.surname || ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectedTicketId, 'surname', e.target.value)
                                     }
@@ -1637,7 +1637,7 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="Date of Birth"
                                     type="date"
-                                    value={personalData[selectedTicketId]?.date_of_birth || ""}
+                                    value={extraInfo[selectedTicketId]?.date_of_birth || ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectedTicketId, 'date_of_birth', e.target.value)
                                     }
@@ -1646,7 +1646,7 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="ID Card Series"
                                     type="text"
-                                    value={personalData[selectedTicketId]?.id_card_series || ""}
+                                    value={extraInfo[selectedTicketId]?.id_card_series || ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectedTicketId, 'id_card_series', e.target.value)
                                     }
@@ -1656,7 +1656,7 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="ID Card Number"
                                     type="text"
-                                    value={personalData[selectedTicketId]?.id_card_number || ""}
+                                    value={extraInfo[selectedTicketId]?.id_card_number || ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectedTicketId, 'id_card_number', e.target.value)
                                     }
@@ -1666,7 +1666,7 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="ID Card Release Date"
                                     type="date"
-                                    value={personalData[selectedTicketId]?.id_card_release || ""}
+                                    value={extraInfo[selectedTicketId]?.id_card_release || ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectedTicketId, 'id_card_release', e.target.value)
                                     }
@@ -1675,7 +1675,7 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="IDNP"
                                     type="text"
-                                    value={personalData[selectedTicketId]?.idnp || ""}
+                                    value={extraInfo[selectedTicketId]?.idnp || ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectedTicketId, 'idnp', e.target.value)
                                     }
@@ -1685,7 +1685,7 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="Address"
                                     type="text"
-                                    value={personalData[selectedTicketId]?.address || ""}
+                                    value={extraInfo[selectedTicketId]?.address || ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectedTicketId, 'address', e.target.value)
                                     }
@@ -1695,7 +1695,7 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="Phone"
                                     type="tel"
-                                    value={personalData[selectedTicketId]?.phone || ""}
+                                    value={extraInfo[selectedTicketId]?.phone || ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectedTicketId, 'phone', e.target.value)
                                     }
