@@ -1045,33 +1045,34 @@ const ChatComponent = ({ }) => {
                     {Array.isArray(filteredTickets) && filteredTickets.length > 0 ? (
                         filteredTickets
                             .sort((a, b) => {
-                                const lastMessageA = messages1
-                                    .filter((msg) => msg.client_id === a.id)
-                                    .reduce((latest, current) =>
-                                        new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest,
-                                        { time_sent: null }
-                                    );
+                                const clientMessagesA = messages1.filter((msg) => msg.client_id === a.client_id);
+                                const clientMessagesB = messages1.filter((msg) => msg.client_id === b.client_id);
 
-                                const lastMessageB = messages1
-                                    .filter((msg) => msg.client_id === b.id)
-                                    .reduce((latest, current) =>
-                                        new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest,
-                                        { time_sent: null }
-                                    );
+                                const lastMessageA = clientMessagesA.length
+                                    ? clientMessagesA.reduce((latest, current) =>
+                                        new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
+                                    )
+                                    : { time_sent: null };
+
+                                const lastMessageB = clientMessagesB.length
+                                    ? clientMessagesB.reduce((latest, current) =>
+                                        new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
+                                    )
+                                    : { time_sent: null };
 
                                 return new Date(lastMessageB.time_sent) - new Date(lastMessageA.time_sent);
                             })
                             .map((ticket) => {
-                                const chatMessages = messages1.filter((msg) => msg.client_id === ticket.id);
+                                const clientMessages = messages1.filter((msg) => msg.client_id === ticket.client_id);
 
-                                const unreadCounts = chatMessages.filter(
+                                const unreadCounts = clientMessages.filter(
                                     (msg) =>
                                         (!msg.seen_by || !msg.seen_by.includes(String(userId))) &&
                                         msg.sender_id !== Number(userId)
                                 ).length;
 
-                                const lastMessage = chatMessages.length > 0
-                                    ? chatMessages.reduce((latest, current) =>
+                                const lastMessage = clientMessages.length
+                                    ? clientMessages.reduce((latest, current) =>
                                         new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
                                     )
                                     : { message: '', time_sent: null };
@@ -1085,7 +1086,7 @@ const ChatComponent = ({ }) => {
 
                                 const parseTags = (tags) => {
                                     if (Array.isArray(tags)) {
-                                        return tags; // Если это массив, возвращаем как есть
+                                        return tags;
                                     }
                                     if (typeof tags === 'string') {
                                         // Проверяем, начинается ли строка с '{' и заканчивается на '}'
@@ -1101,13 +1102,12 @@ const ChatComponent = ({ }) => {
                                             return JSON.parse(tags); // Пробуем парсить строку как JSON
                                         } catch (error) {
                                             console.error('Ошибка разбора JSON:', error, tags);
-                                            return []; // Если ошибка, возвращаем пустой массив
+                                            return [];
                                         }
                                     }
-                                    return []; // Если `tags` не строка или массив, возвращаем пустой массив
+                                    return [];
                                 };
 
-                                // Пример использования
                                 const tags = parseTags(ticket.tags);
 
                                 return (
@@ -1122,7 +1122,7 @@ const ChatComponent = ({ }) => {
                                                 <div>{ticket.contact || "no contact"}</div>
                                                 <div>{ticket.id ? `Lead: #${ticket.id}` : "no id"}</div>
                                                 <div>{ticket.workflow || "no workflow"}</div>
-                                                <div className='tags-ticket'>
+                                                <div className="tags-ticket">
                                                     {Array.isArray(tags) && tags.length > 0 ? (
                                                         tags.map((tag, index) => (
                                                             <span
@@ -1149,8 +1149,8 @@ const ChatComponent = ({ }) => {
                                         <div className="container-time-tasks-chat">
                                             <div className="info-message">
                                                 <div className="last-message-container">
-                                                    <div className="last-message-ticket">{lastMessage.message}</div>
-                                                    <div>{formattedTime}</div>
+                                                    <div className="last-message-ticket">{lastMessage.message || 'No messages'}</div>
+                                                    <div>{formattedTime || '—'}</div>
                                                     {unreadCounts > 0 && (
                                                         <div className="unread-count">{unreadCounts}</div>
                                                     )}
