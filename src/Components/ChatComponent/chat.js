@@ -36,6 +36,7 @@ const ChatComponent = ({ }) => {
     const [messages1, setMessages1] = useState([]);
     const [selectedTicketId, setSelectedTicketId] = useState(null);
     const [extraInfo, setExtraInfo] = useState({}); // Состояние для дополнительной информации каждого тикета
+    const [personalData, setPersonalData] = useState({}); // Состояние для дополнительной информации каждого тикета
     const [tickets1, setTickets1] = useState([]);
     const messageContainerRef = useRef(null);
     const { ticketId } = useParams(); // Получаем ticketId из URL
@@ -958,6 +959,46 @@ const ChatComponent = ({ }) => {
         setSelectedTechnicianId(ticket.technician_id || null); // Если technician_id нет, передаем null
     };
 
+    const handlePersonalDataSubmit = async (event) => {
+        event.preventDefault();
+
+        const payload = {
+            name: personalData[selectedTicketId]?.name || "",
+            surname: personalData[selectedTicketId]?.surname || "",
+            date_of_birth: personalData[selectedTicketId]?.date_of_birth || "",
+            id_card_series: personalData[selectedTicketId]?.id_card_series || "",
+            id_card_number: personalData[selectedTicketId]?.id_card_number || "",
+            id_card_release: personalData[selectedTicketId]?.id_card_release || "",
+            idnp: personalData[selectedTicketId]?.idnp || "",
+            address: personalData[selectedTicketId]?.address || "",
+            phone: personalData[selectedTicketId]?.phone || "",
+        };
+
+        try {
+            const token = Cookies.get('jwt');
+            const response = await fetch(`https://pandatur-api.com/users-extended/${selectedTicketId}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to submit data: ${response.statusText}`);
+            }
+
+            const result = await response.json();
+            console.log("Data submitted successfully:", result);
+            alert("Personal data saved successfully!");
+        } catch (error) {
+            console.error("Error submitting data:", error);
+            alert("Failed to save personal data.");
+            console.log("selectedticketid", selectedTicketId);
+        }
+    };
+
     return (
         <div className="chat-container">
             <div className="users-container">
@@ -1572,11 +1613,11 @@ const ChatComponent = ({ }) => {
                     {activeTab === 'personalData' && (
                         <div className="personal-data-content">
                             <h3>Personal Data</h3>
-                            <form>
+                            <form onSubmit={handlePersonalDataSubmit}>
                                 <Input
                                     label="Name"
                                     type="text"
-                                    value={extraInfo[selectedTicketId]?.name || ""}
+                                    value={personalData[selectedTicketId]?.name || ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectedTicketId, 'name', e.target.value)
                                     }
@@ -1586,7 +1627,7 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="Surname"
                                     type="text"
-                                    value={extraInfo[selectedTicketId]?.surname || ""}
+                                    value={personalData[selectedTicketId]?.surname || ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectedTicketId, 'surname', e.target.value)
                                     }
@@ -1596,7 +1637,7 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="Date of Birth"
                                     type="date"
-                                    value={extraInfo[selectedTicketId]?.date_of_birth || ""}
+                                    value={personalData[selectedTicketId]?.date_of_birth || ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectedTicketId, 'date_of_birth', e.target.value)
                                     }
@@ -1605,7 +1646,7 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="ID Card Series"
                                     type="text"
-                                    value={extraInfo[selectedTicketId]?.id_card_series || ""}
+                                    value={personalData[selectedTicketId]?.id_card_series || ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectedTicketId, 'id_card_series', e.target.value)
                                     }
@@ -1615,7 +1656,7 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="ID Card Number"
                                     type="text"
-                                    value={extraInfo[selectedTicketId]?.id_card_number || ""}
+                                    value={personalData[selectedTicketId]?.id_card_number || ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectedTicketId, 'id_card_number', e.target.value)
                                     }
@@ -1625,7 +1666,7 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="ID Card Release Date"
                                     type="date"
-                                    value={extraInfo[selectedTicketId]?.id_card_release || ""}
+                                    value={personalData[selectedTicketId]?.id_card_release || ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectedTicketId, 'id_card_release', e.target.value)
                                     }
@@ -1634,7 +1675,7 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="IDNP"
                                     type="text"
-                                    value={extraInfo[selectedTicketId]?.idnp || ""}
+                                    value={personalData[selectedTicketId]?.idnp || ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectedTicketId, 'idnp', e.target.value)
                                     }
@@ -1644,7 +1685,7 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="Address"
                                     type="text"
-                                    value={extraInfo[selectedTicketId]?.address || ""}
+                                    value={personalData[selectedTicketId]?.address || ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectedTicketId, 'address', e.target.value)
                                     }
@@ -1654,7 +1695,7 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="Phone"
                                     type="tel"
-                                    value={extraInfo[selectedTicketId]?.phone || ""}
+                                    value={personalData[selectedTicketId]?.phone || ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectedTicketId, 'phone', e.target.value)
                                     }
