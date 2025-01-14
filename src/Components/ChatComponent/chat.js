@@ -963,15 +963,15 @@ const ChatComponent = ({ }) => {
         event.preventDefault();
 
         const payload = {
-            name: personalData[selectedTicketId]?.name || "",
-            surname: personalData[selectedTicketId]?.surname || "",
-            date_of_birth: personalData[selectedTicketId]?.date_of_birth || "",
-            id_card_series: personalData[selectedTicketId]?.id_card_series || "",
-            id_card_number: personalData[selectedTicketId]?.id_card_number || "",
-            id_card_release: personalData[selectedTicketId]?.id_card_release || "",
-            idnp: personalData[selectedTicketId]?.idnp || "",
-            address: personalData[selectedTicketId]?.address || "",
-            phone: personalData[selectedTicketId]?.phone || "",
+            name: extraInfo[selectedTicketId]?.name || "",
+            surname: extraInfo[selectedTicketId]?.surname || "",
+            date_of_birth: extraInfo[selectedTicketId]?.date_of_birth || "",
+            id_card_series: extraInfo[selectedTicketId]?.id_card_series || "",
+            id_card_number: extraInfo[selectedTicketId]?.id_card_number || "",
+            id_card_release: extraInfo[selectedTicketId]?.id_card_release || "",
+            idnp: extraInfo[selectedTicketId]?.idnp || "",
+            address: extraInfo[selectedTicketId]?.address || "",
+            phone: extraInfo[selectedTicketId]?.phone || "",
         };
 
         try {
