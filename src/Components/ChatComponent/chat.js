@@ -35,6 +35,7 @@ const ChatComponent = ({ }) => {
     const [managerMessage, setManagerMessage] = useState('');
     const [messages1, setMessages1] = useState([]);
     const [selectedTicketId, setSelectedTicketId] = useState(null);
+    const [selectClientId, setSelectClientId] = useState(null);
     const [extraInfo, setExtraInfo] = useState({}); // Состояние для дополнительной информации каждого тикета
     const [personalData, setPersonalData] = useState({}); // Состояние для дополнительной информации каждого тикета
     const [tickets1, setTickets1] = useState([]);
@@ -418,14 +419,18 @@ const ChatComponent = ({ }) => {
         // Находим данные выбранного тикета
         const selectedTicket = tickets1.find((ticket) => ticket.id === ticketId);
 
-        // Если тикет найден, обновляем выбранного техника
+        let selectClientId = null; // Инициализируем переменную
+
+        // Если тикет найден, обновляем данные
         if (selectedTicket) {
-            setSelectedTechnicianId(selectedTicket.technician_id || null); // Если technician_id нет, передаем null
+            setSelectedTechnicianId(selectedTicket.technician_id || null); // Устанавливаем technician_id
+            selectClientId = selectedTicket.client_id; // Присваиваем client_id тикета
         } else {
             console.warn('Тикет не найден!');
             setSelectedTechnicianId(null);
         }
 
+        console.log('Selected Client ID:', selectClientId); // Для проверки значения
         // Выполняем дополнительные действия
         navigate(`/chat/${ticketId}`);
         getClientMessages();
@@ -1168,7 +1173,11 @@ const ChatComponent = ({ }) => {
             <div className="chat-area">
                 <div className="chat-messages" ref={messageContainerRef}>
                     {messages1
-                        .filter((msg) => msg.client_id === selectedTicketId)
+                        .filter((msg) => {
+                            // Находим client_id текущего тикета
+                            const clientId = tickets1.find((ticket) => ticket.id === selectedTicketId)?.client_id;
+                            return msg.client_id === clientId;
+                        })
                         .sort((a, b) => new Date(a.time_sent) - new Date(b.time_sent))
                         .map((msg) => {
                             const uniqueKey = msg.id || `${msg.client_id}-${msg.time_sent}`;
@@ -1182,30 +1191,30 @@ const ChatComponent = ({ }) => {
                             const openImageInNewWindow = (url) => {
                                 const newWindow = window.open('', '_blank');
                                 newWindow.document.write(`
-                                                            <html>
-                                                                <head>
-                                                                    <title>Просмотр изображения</title>
-                                                                    <style>
-                                                                        body {
-                                                                            display: flex;
-                                                                            justify-content: center;
-                                                                            align-items: center;
-                                                                            height: 100vh;
-                                                                            margin: 0;
-                                                                            background-color: #f0f0f0;
-                                                                        }
-                                                                        img {
-                                                                            max-width: 80%;
-                                                                            max-height: 80%;
-                                                                            border-radius: 8px;
-                                                                        }
-                                                                    </style>
-                                                                </head>
-                                                                <body>
-                                                                    <img src="${url}" alt="Просмотр изображения" />
-                                                                </body>
-                                                            </html>
-                                                        `);
+                        <html>
+                            <head>
+                                <title>Просмотр изображения</title>
+                                <style>
+                                    body {
+                                        display: flex;
+                                        justify-content: center;
+                                        align-items: center;
+                                        height: 100vh;
+                                        margin: 0;
+                                        background-color: #f0f0f0;
+                                    }
+                                    img {
+                                        max-width: 80%;
+                                        max-height: 80%;
+                                        border-radius: 8px;
+                                    }
+                                </style>
+                            </head>
+                            <body>
+                                <img src="${url}" alt="Просмотр изображения" />
+                            </body>
+                        </html>
+                    `);
                                 newWindow.document.close();
                             };
 
@@ -1321,7 +1330,7 @@ const ChatComponent = ({ }) => {
                         <Icon
                             name={"button-send"}
                             className="send-button"
-                            onClick={editMessageId ? handleSave : handleClick} // Сохранение или отправка
+                            onClick={editMessageId ? handleSave : handleClick}
                             disabled={!selectedTicketId}
                         />
                         <input

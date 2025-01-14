@@ -83,7 +83,7 @@ export const useSocket = () => {
       const data = await response.json();
 
       // Извлекаем только ID тикетов
-      const ticketIds = data.map((ticket) => ticket.id);
+      const ticketIds = data.map((ticket) => ticket.client_id);
 
       setTicketIds(ticketIds);
 
@@ -144,7 +144,7 @@ export const SocketProvider = ({ children, isLoggedIn }) => {
 
       const data = await response.json();
       const ticketsData = data[0];
-      const ticketIds = ticketsData.map((ticket) => ticket.id);
+      const ticketIds = ticketsData.map((ticket) => ticket.client_id);
 
       setTicketIds(ticketIds);
       setTickets(ticketsData);
