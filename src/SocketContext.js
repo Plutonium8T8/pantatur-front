@@ -7,7 +7,6 @@ const SocketContext = createContext(null);
 export const useSocket = () => {
   const [message, setMessage] = useState([]);
   const [ticketIds, setTicketIds] = useState([]);
-  const [tickets, setTickets] = useState([]);
   const socket = useContext(SocketContext);
   const { userId } = useUser();
 
@@ -65,7 +64,7 @@ export const useSocket = () => {
 
   return useContext(SocketContext);
 };
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 export const SocketProvider = ({ children, isLoggedIn }) => {
   const [socket, setSocket] = useState(null);
   const [tickets, setTickets] = useState([]);

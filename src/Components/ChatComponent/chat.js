@@ -192,16 +192,6 @@ const ChatComponent = ({ }) => {
         fetchTickets();
     }, []);
 
-    const showNotification = (data) => {
-        console.log('Notification:', data);
-    };
-    const handleTask = (data) => {
-        console.log('Task:', data);
-    };
-    const handleSeen = (data) => {
-        console.log('seen:', data);
-    };
-
     const getClientMessages = async () => {
         try {
             // Получаем токен из cookies
@@ -498,7 +488,7 @@ const ChatComponent = ({ }) => {
                         //     break;
 
                         case 'seen':
-                            handleSeen(message.data);
+                            console.log("seen la mesaj");
                             break;
 
                         case 'react':
@@ -532,7 +522,7 @@ const ChatComponent = ({ }) => {
                 }
             };
         }
-    }, [socket, selectedTicketId, getClientMessages, enqueueSnackbar, handleTask, handleSeen]);
+    }, [socket, selectedTicketId, getClientMessages, enqueueSnackbar]);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
