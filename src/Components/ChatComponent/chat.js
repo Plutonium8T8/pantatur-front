@@ -1138,7 +1138,7 @@ const ChatComponent = ({ }) => {
                                 );
                             })
                     ) : (
-                        <div>No tickets available or loading...</div>
+                        <div>No tickets available</div>
                     )}
                 </div>
                 {isLoading && (
