@@ -998,9 +998,6 @@ const ChatComponent = ({ }) => {
             console.log("selectedticketid", selectedTicketId);
         }
     };
-    useEffect(() => {
-        console.log("selected ticket id",selectedTicketId);
-    }, []);
 
     return (
         <div className="chat-container">
