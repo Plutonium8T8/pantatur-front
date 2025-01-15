@@ -481,6 +481,14 @@ const ChatComponent = ({ }) => {
                             console.log("Сообщение удалено");
                             break;
 
+                        case 'ticket':
+                            // console.log("Сообщение удалено");
+                            break;
+
+                        case 'pong':
+                            // console.log("Сообщение удалено");
+                            break;
+
                         default:
                             console.warn('Неизвестный тип сообщения:', message);
                     }
@@ -839,7 +847,7 @@ const ChatComponent = ({ }) => {
         if (!managerMessage.trim() && !selectedFile) {
             return; // Если нет сообщения или файла — ничего не отправляем
         }
-    
+
         // Функция для получения платформы последнего сообщения
         const analyzeLastMessagePlatform = () => {
             const clientMessages = messages1.filter((msg) => msg.client_id === selectClientId);
@@ -848,29 +856,29 @@ const ChatComponent = ({ }) => {
                     new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
                 )
                 : null;
-    
+
             return lastMessage?.platform || 'web'; // Возвращаем платформу или 'web' по умолчанию
         };
-    
+
         const platform = analyzeLastMessagePlatform();
-    
+
         if (platform !== 'web') {
             console.log('Платформа не web. Отправляем через fetch.');
             try {
                 const currentTime = new Date().toISOString();
                 const messageData = {
-                    sender_id: Number(userId),
-                    client_id: selectClientId, // Передаем идентификатор напрямую
+                    sender_id: Number(userId), // Используем `camelCase` для удобства работы
+                    client_id: selectClientId,
                     platform: platform,
-                    message: selectedFile ? 'File URL' : managerMessage, // Заменяем message на text
-                    time_sent: currentTime, // Убедитесь, что это поле ожидается сервером
+                    message: selectedFile ? 'File URL' : managerMessage, // Контент сообщения
+                    // timestamp: currentTime, // Убедитесь, что сервер принимает это поле
                 };
-    
+
                 if (selectedFile) {
                     const uploadResponse = await uploadFile(selectedFile);
-                    messageData.text = uploadResponse.url;
+                    messageData.content = uploadResponse.url;
                 }
-    
+
                 await fetch('https://pandatur-api.com/messages/send', {
                     method: 'POST',
                     headers: {
@@ -879,35 +887,32 @@ const ChatComponent = ({ }) => {
                     },
                     body: JSON.stringify(messageData),
                 });
-    
+
                 console.log('Сообщение успешно отправлено через fetch:', messageData);
                 setMessages1((prevMessages) => [
                     ...prevMessages,
-                    { ...messageData, seen_at: false },
+                    { ...messageData, seenAt: false }, // Обновляем состояние сообщений
                 ]);
-    
+
                 if (!selectedFile) setManagerMessage(''); // Очищаем текстовое поле
             } catch (error) {
                 console.error('Ошибка отправки через fetch:', error);
             }
         } else if (socket) {
             console.log('Платформа web. Отправляем через WebSocket.');
-    
+
             if (socket.readyState === WebSocket.OPEN) {
                 const currentTime = new Date().toISOString();
                 try {
-                    let fileUrl = null;
-    
                     if (selectedFile) {
                         const uploadResponse = await uploadFile(selectedFile);
-                        fileUrl = uploadResponse.url;
                         const fileMessageData = {
                             type: 'message',
                             data: {
                                 sender_id: Number(userId),
                                 client_id: [selectedTicketId],
                                 platform: 'web',
-                                text: fileUrl,
+                                text: uploadResponse.url, // URL загруженного файла
                                 time_sent: currentTime,
                             },
                         };
@@ -919,7 +924,7 @@ const ChatComponent = ({ }) => {
                         ]);
                         await getClientMessages();
                     }
-    
+
                     if (managerMessage.trim()) {
                         const textMessageData = {
                             type: 'message',
@@ -931,15 +936,15 @@ const ChatComponent = ({ }) => {
                                 time_sent: currentTime,
                             },
                         };
-    
+
                         socket.send(JSON.stringify(textMessageData));
                         console.log('Текстовое сообщение отправлено через WebSocket:', textMessageData);
-    
+
                         setMessages1((prevMessages) => [
                             ...prevMessages,
                             { ...textMessageData.data, seen_at: false },
                         ]);
-    
+
                         setManagerMessage(''); // Очищаем текстовое поле
                         await getClientMessages();
                     }
@@ -952,7 +957,7 @@ const ChatComponent = ({ }) => {
         } else {
             console.error('Соединение WebSocket отсутствует.');
         }
-    };    
+    };
 
     useEffect(() => {
         setFilteredTickets(tickets1); // Устанавливаем все тикеты по умолчанию
