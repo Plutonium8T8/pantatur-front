@@ -235,10 +235,6 @@ const ChatComponent = ({ }) => {
         getClientMessages();
     }, []);
 
-    useEffect(() => {
-        getClientMessages();
-    }, []);
-
     // Обработчик изменения значения в селекте для выбранного тикета
     const handleSelectChange = (ticketId, field, value) => {
         setExtraInfo((prevState) => {
@@ -475,11 +471,11 @@ const ChatComponent = ({ }) => {
                         }
 
                         case 'seen':
-                            console.log("seen la mesaj");
+                            console.log("Сообщение отмечено как прочитанное");
                             break;
 
                         case 'react':
-                            console.log("react la mesaj");
+                            console.log("Реакция на сообщение");
                             break;
 
                         case 'edit':
@@ -487,14 +483,14 @@ const ChatComponent = ({ }) => {
                             break;
 
                         case 'delete':
-                            console.log("stergere mesaj");
+                            console.log("Сообщение удалено");
                             break;
 
                         default:
-                        // console.warn('Unknown message type:', message);
+                            console.warn('Неизвестный тип сообщения:', message);
                     }
                 } catch (error) {
-                    console.error('Error parsing WebSocket message:', error);
+                    console.error('Ошибка при разборе WebSocket сообщения:', error);
                 }
             };
 
@@ -1201,7 +1197,7 @@ const ChatComponent = ({ }) => {
                                 <InView
                                     key={uniqueKey}
                                     onChange={(inView) => handleInView(inView, msg)}
-                                    threshold={0.5}
+                                    threshold={0.1}
                                 >
                                     {({ ref }) => (
                                         <div

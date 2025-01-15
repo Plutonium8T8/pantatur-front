@@ -56,9 +56,46 @@ export const useSocket = () => {
     }
   };
 
+  // const handleSocketMessage = (event) => {
+  //   try {
+  //     const message = JSON.parse(event.data);
+  //     console.log('Получено сообщение WebSocket:', message);
+
+  //     switch (message.type) {
+  //       case 'message':
+  //         setMessage((prevMessages) => [...prevMessages, message.data]);
+  //         break;
+
+  //       case 'ticket': {
+  //         // Подключение к комнате с использованием client_id
+  //         const socketMessageClient = JSON.stringify({
+  //           type: 'connect',
+  //           data: { client_id: message.data.client_id },
+  //         });
+  //         socket.send(socketMessageClient);
+  //         console.log(`Подключён к клиенту с ID: ${message.data.client_id}`);
+  //         break;
+  //       }
+
+  //       default:
+  //         console.warn('Неизвестный тип сообщения:', message.type);
+  //     }
+  //   } catch (error) {
+  //     console.error('Ошибка при обработке сообщения WebSocket:', error.message);
+  //   }
+  // };
+
   useEffect(() => {
     if (socket) {
       fetchTicketsID(socket);
+
+      // // Назначаем обработчик для событий WebSocket
+      // socket.onmessage = handleSocketMessage;
+
+      // return () => {
+      //   // Очищаем обработчики при размонтировании
+      //   socket.onmessage = null;
+      // };
     }
   }, [socket]);
 

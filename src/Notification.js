@@ -15,7 +15,6 @@ const Notification = ({ selectedTicketId }) => {
   useEffect(() => {
     if (socket) {
       const receiveMessage = (event) => {
-        // console.log('Raw WebSocket message received notifications:', event.data);
         try {
           const message = JSON.parse(event.data);
           console.log('Parsed WebSocket message notifications:', message);
@@ -24,8 +23,7 @@ const Notification = ({ selectedTicketId }) => {
             case 'message':
               // Обрабатываем новое сообщение
               if (message.data.sender_id !== userId) {
-                // Показ уведомления о новом сообщении
-                const messageText = truncateText(message.data.message, 50); // Обрезаем сообщение до 100 символов
+                const messageText = truncateText(message.data.message, 50);
                 enqueueSnackbar(
                   `Новое сообщение от клиента ${message.data.client_id}: ${messageText}`,
                   { variant: 'info' }
@@ -44,12 +42,23 @@ const Notification = ({ selectedTicketId }) => {
               enqueueSnackbar(`Новая задача: ${message.data.title}`, { variant: 'warning' });
               break;
 
+            case 'ticket': {
+              // Подключение к комнате на основе client_id
+              const socketMessageClient = JSON.stringify({
+                type: 'connect',
+                data: { client_id: message.data.client_id },
+              });
+              socket.send(socketMessageClient);
+              console.log(`Подключён к комнате клиента с ID: ${message.data.client_id}`);
+              break;
+            }
+
             case 'seen':
               // Обработать событие seen
               break;
 
             default:
-            // console.warn('Неизвестный тип сообщения:', message);
+              console.warn('Неизвестный тип сообщения:', message.type);
           }
         } catch (error) {
           console.error('Ошибка при разборе сообщения WebSocket:', error);
@@ -70,7 +79,7 @@ const Notification = ({ selectedTicketId }) => {
         socket.onclose = null;
       };
     }
-  }, [socket, selectedTicketId, enqueueSnackbar]);
+  }, [socket, selectedTicketId, enqueueSnackbar, userId]);
 
   return null; // Компонент не отображает UI, только управляет уведомлениями
 };
