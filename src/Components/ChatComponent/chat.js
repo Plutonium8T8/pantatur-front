@@ -1381,7 +1381,7 @@ const ChatComponent = ({ }) => {
                                             <p>Загрузка...</p>
                                         ) : (
                                             <TechnicianSelect
-                                                selectedTechnicianId={extraInfo[selectedTicketId]?.technicianId}
+                                                selectedTechnicianId={selectedTechnicianId}
                                                 onTechnicianChange={handleTechnicianChange}
                                             />
                                         )}
