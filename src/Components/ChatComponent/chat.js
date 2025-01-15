@@ -1236,7 +1236,8 @@ const ChatComponent = ({ }) => {
                                     {({ ref }) => (
                                         <div
                                             ref={ref}
-                                            className={`message ${msg.sender_id === userId ? 'sent' : 'received'}`}
+                                            className={`message ${msg.sender_id == userId || msg.sender_id === 1 ? 'sent' : 'received'
+                                                }`}
                                         >
                                             <div className="message-content">
                                                 <div className="message-row">
@@ -1297,10 +1298,10 @@ const ChatComponent = ({ }) => {
                                                             </div>
                                                         )}
                                                     </div>
-                                                    {msg.sender_id === userId && (
+                                                    {(msg.sender_id == userId || msg.sender_id === 1) && (
                                                         <div
                                                             className="menu-container"
-                                                            ref={(el) => (menuRefs.current[msg.id] = el)} // Устанавливаем отдельный ref для каждого меню
+                                                            ref={(el) => (menuRefs.current[msg.id] = el)}
                                                         >
                                                             <button
                                                                 className="menu-button"
