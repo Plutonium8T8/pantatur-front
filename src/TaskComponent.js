@@ -43,6 +43,7 @@ const TaskModal = ({ isOpen, onClose }) => {
     // Загружаем тикеты при монтировании компонента
     useEffect(() => {
         fetchTicketsID();
+        fetchTasks();
     }, []);
 
     const fetchTasks = async () => {
