@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useSnackbar } from 'notistack';
 import { useSocket } from './SocketContext'; // Используйте свой контекст для WebSocket
-import { UserProvider, useUser } from './UserContext';
+import { useUser } from './UserContext';
 
 const Notification = ({ selectedTicketId }) => {
   const socket = useSocket(); // Получаем сокет из контекста
@@ -9,6 +9,10 @@ const Notification = ({ selectedTicketId }) => {
   const { userId } = useUser();
 
   const truncateText = (text, maxLength = 100) => {
+    if (!text || typeof text !== 'string') {
+      console.warn('truncateText: Invalid input', text);
+      return 'Сообщение отсутствует';
+    }
     return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
   };
 
@@ -23,7 +27,7 @@ const Notification = ({ selectedTicketId }) => {
             case 'message':
               // Обрабатываем новое сообщение
               if (message.data.sender_id !== userId) {
-                const messageText = truncateText(message.data.message, 50);
+                const messageText = truncateText(message.data.text, 50); // Исправлено с message.data.text
                 enqueueSnackbar(
                   `Новое сообщение от клиента ${message.data.client_id}: ${messageText}`,
                   { variant: 'info' }
@@ -33,7 +37,10 @@ const Notification = ({ selectedTicketId }) => {
 
             case 'notification':
               // Показ уведомления
-              const notificationText = truncateText(message.data.description || 'Уведомление с пустым текстом!', 100);
+              const notificationText = truncateText(
+                message.data.description || 'Уведомление с пустым текстом!',
+                100
+              );
               enqueueSnackbar(notificationText, { variant: 'info' });
               break;
 
@@ -43,18 +50,34 @@ const Notification = ({ selectedTicketId }) => {
               break;
 
             case 'ticket': {
-              // Подключение к комнате на основе client_id
-              const socketMessageClient = JSON.stringify({
-                type: 'connect',
-                data: { client_id: message.data.client_id },
-              });
-              socket.send(socketMessageClient);
-              console.log(`Подключён к комнате клиента с ID: ${message.data.client_id}`);
+              // Убедимся, что message.data существует и содержит client_id
+              if (message.data && message.data.client_id) {
+                // Подключение к комнате на основе client_id
+                const socketMessageClient = JSON.stringify({
+                  type: 'connect',
+                  data: { client_id: [message.data.client_id] },
+                });
+
+                socket.send(socketMessageClient); // Отправка сообщения на сервер
+                console.log(`Подключён к комнате клиента с ID: ${message.data.client_id}`);
+
+                // Показываем уведомление
+                enqueueSnackbar(
+                  `Новый тикет: ${message.data.client_id || 'Без названия'}`, // Если title отсутствует, выводим "Без названия"
+                  { variant: 'warning' }
+                );
+              } else {
+                console.warn('Неверное сообщение о тикете:', message);
+              }
               break;
             }
 
             case 'seen':
               // Обработать событие seen
+              break;
+
+            case 'pong':
+              // Ответ на ping
               break;
 
             default:

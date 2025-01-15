@@ -824,6 +824,10 @@ const ChatComponent = ({ }) => {
 
             const updatedTicket = await response.json();
             console.log('Тикет успешно обновлён:', updatedTicket);
+
+            // Вызов fetchTickets для обновления списка тикетов
+            await fetchTickets();
+            console.log('Список тикетов успешно обновлён.');
         } catch (error) {
             console.error('Ошибка при обновлении technician_id:', error.message);
         }

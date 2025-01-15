@@ -128,7 +128,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
                 {/* Динамическое отображение уведомлений */}
                 <ul className="notification-list">
                     {notifications.length === 0 ? (
-                        <li className="no-notifications">Нет уведомлений</li>
+                        <li className="no-notifications">No notifications</li>
                     ) : (
                         notifications.map((notification) => (
                             <li
