@@ -959,6 +959,97 @@ const ChatComponent = ({ }) => {
         }
     };
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // const sendMessageOLD prin socket = async (selectedFile) => {
+
+    //     if (!managerMessage.trim() && !selectedFile) {
+    //         return; // Если нет сообщения или файла — ничего не отправляем
+    //     }
+
+    //     if (socket) {
+    //         console.log('WebSocket state before sending message:', socket.readyState);
+
+    //         if (socket.readyState === WebSocket.OPEN) {
+    //             const currentTime = new Date().toISOString();
+
+    //             try {
+    //                 let fileUrl = null;
+
+    //                 // Если передан файл, загружаем его и получаем URL
+    //                 if (selectedFile) {
+    //                     try {
+    //                         const uploadResponse = await uploadFile(selectedFile);
+    //                         fileUrl = uploadResponse.url;
+    //                         console.log('File URL received:', fileUrl);
+
+    //                         const fileMessageData = {
+    //                             type: 'message',
+    //                             data: {
+    //                                 sender_id: Number(userId),
+    //                                 client_id: [selectedTicketId],
+    //                                 platform: 'web',
+    //                                 text: fileUrl, // URL файла
+    //                                 time_sent: currentTime,
+    //                             },
+    //                         };
+
+    //                         socket.send(JSON.stringify(fileMessageData));
+    //                         console.log('File message sent:', fileMessageData);
+
+    //                         // Обновляем локальное состояние
+    //                         setMessages1((prevMessages) => [
+    //                             ...prevMessages,
+    //                             { ...fileMessageData.data, seen_at: false },
+    //                         ]);
+
+    //                         // Загружаем обновленный список сообщений
+    //                         await getClientMessages();
+    //                     } catch (error) {
+    //                         console.error('Error uploading file:', error);
+    //                         alert('Ошибка при загрузке файла. Попробуйте снова.');
+    //                         return;
+    //                     }
+    //                 }
+
+    //                 // Если есть текстовое сообщение, отправляем его отдельно
+    //                 if (managerMessage.trim()) {
+    //                     const textMessageData = {
+    //                         type: 'message',
+    //                         data: {
+    //                             sender_id: Number(userId),
+    //                             client_id: [selectedTicketId],
+    //                             platform: 'web',
+    //                             text: managerMessage,
+    //                             time_sent: currentTime,
+    //                         },
+    //                     };
+
+    //                     socket.send(JSON.stringify(textMessageData));
+    //                     console.log('Text message sent:', textMessageData);
+
+    //                     setMessages1((prevMessages) => [
+    //                         ...prevMessages,
+    //                         { ...textMessageData.data, seen_at: false },
+    //                     ]);
+
+    //                     setManagerMessage(''); // Очищаем текстовое сообщение
+
+    //                     // Загружаем обновленный список сообщений
+    //                     await getClientMessages();
+    //                 }
+    //             } catch (error) {
+    //                 console.error('Error sending message:', error);
+    //             }
+    //         } else {
+    //             console.error('WebSocket is not open. Please reload the page.');
+    //             alert('WebSocket is not open. Please reload the page.');
+    //         }
+    //     } else {
+    //         console.error('Socket is null.');
+    //     }
+    // };
+
     useEffect(() => {
         setFilteredTickets(tickets1); // Устанавливаем все тикеты по умолчанию
     }, [tickets1]);
