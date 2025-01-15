@@ -63,6 +63,7 @@ const TaskModal = ({ isOpen, onClose }) => {
             }
 
             const data = await response.json();
+            console.log("tasks",data);
             setTasks(data); // Устанавливаем задачи в состояние
         } catch (error) {
             console.error("Ошибка загрузки задач:", error.message);

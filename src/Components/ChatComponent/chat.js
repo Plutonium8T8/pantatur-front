@@ -399,25 +399,20 @@ const ChatComponent = ({ }) => {
     };
 
     const handleTicketClick = (ticketId) => {
-        // Устанавливаем выбранный тикет
         setSelectedTicketId(ticketId);
 
-        // Находим данные выбранного тикета
         const selectedTicket = tickets1.find((ticket) => ticket.id === ticketId);
 
-        let selectClientId = null; // Инициализируем переменную
-
-        // Если тикет найден, обновляем данные
         if (selectedTicket) {
-            setSelectedTechnicianId(selectedTicket.technician_id || null); // Устанавливаем technician_id
-            selectClientId = selectedTicket.client_id; // Присваиваем client_id тикета
+            setSelectedTechnicianId(selectedTicket.technician_id || null);
+            setSelectClientId(selectedTicket.client_id); // Сохраняем client_id в состоянии
         } else {
             console.warn('Тикет не найден!');
             setSelectedTechnicianId(null);
+            setSelectClientId(null); // Сбрасываем client_id
         }
 
-        console.log('Selected Client ID:', selectClientId); // Для проверки значения
-        // Выполняем дополнительные действия
+        console.log('Selected Client ID:', selectedTicket?.client_id);
         navigate(`/chat/${ticketId}`);
         getClientMessages();
     };
@@ -954,7 +949,7 @@ const ChatComponent = ({ }) => {
 
         try {
             const token = Cookies.get('jwt');
-            const response = await fetch(`https://pandatur-api.com/users-extended/6`, {
+            const response = await fetch(`https://pandatur-api.com/users-extended/${selectClientId}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
@@ -973,7 +968,6 @@ const ChatComponent = ({ }) => {
         } catch (error) {
             console.error("Error submitting data:", error);
             alert("Failed to save personal data.");
-            console.log("selectedticketid", selectedTicketId);
         }
     };
 
