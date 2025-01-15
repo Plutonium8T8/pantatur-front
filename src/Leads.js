@@ -3,6 +3,8 @@ import TicketModal from './TicketModal';
 import { workflowOptions } from './FormOptions/WorkFlowOption';
 import { priorityOptions } from './FormOptions/PriorityOption';
 import { useNavigate } from 'react-router-dom';
+import { useSocket } from './SocketContext'; // Используйте свой контекст для WebSocket
+import { useUser } from './UserContext';
 import { useSnackbar } from 'notistack';
 import Cookies from 'js-cookie';
 
@@ -41,16 +43,18 @@ export const updateTicket = async (updateData) => {
     }
 };
 
-const Leads = () => {
+const Leads = (selectedTicketId) => {
     const [tickets, setTickets] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [IsModalOpen, setIsModalOpen] = useState(false);
     const [currentTicket, setCurrentTicket] = useState(null);
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
-    const { enqueueSnackbar } = useSnackbar();
     const [contextMenu, setContextMenu] = useState(null);
     const contextMenuRef = useRef(null); // Ссылка на контекстное меню
+    const socket = useSocket(); // Получаем сокет из контекста
+    const { userId } = useUser();
+    const { enqueueSnackbar } = useSnackbar(); // Хук для отображения уведомлений
 
     const fetchTickets = async () => {
         setIsLoading(true);
@@ -209,6 +213,103 @@ const Leads = () => {
         return []; // Если формат неизвестен, возвращаем пустой массив
     };
 
+    const truncateText = (text, maxLength = 100) => {
+        if (!text || typeof text !== 'string') {
+            console.warn('truncateText: Invalid input', text);
+            return 'Сообщение отсутствует';
+        }
+        return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
+    };
+
+    useEffect(() => {
+        if (socket) {
+            const receiveMessage = (event) => {
+                try {
+                    const message = JSON.parse(event.data);
+                    console.log('Parsed WebSocket message notifications:', message);
+
+                    switch (message.type) {
+                        case 'message':
+                            // Обрабатываем новое сообщение
+                            if (message.data.sender_id !== userId) {
+                                const messageText = truncateText(message.data.text, 50); // Исправлено с message.data.text
+                                enqueueSnackbar(
+                                    `Новое сообщение от клиента ${message.data.client_id}: ${messageText}`,
+                                    { variant: 'info' }
+                                );
+                            }
+                            break;
+
+                        case 'notification':
+                            // Показ уведомления
+                            const notificationText = truncateText(
+                                message.data.description || 'Уведомление с пустым текстом!',
+                                100
+                            );
+                            enqueueSnackbar(notificationText, { variant: 'info' });
+                            break;
+
+                        case 'task':
+                            // Показ уведомления о новой задаче
+                            enqueueSnackbar(`Новая задача: ${message.data.title}`, { variant: 'warning' });
+                            break;
+
+                        case 'ticket': {
+                            // Убедимся, что message.data существует и содержит client_id
+                            if (message.data && message.data.client_id) {
+                                // Подключение к комнате на основе client_id
+                                const socketMessageClient = JSON.stringify({
+                                    type: 'connect',
+                                    data: { client_id: [message.data.client_id] },
+                                });
+
+                                socket.send(socketMessageClient); // Отправка сообщения на сервер
+                                console.log(`Подключён к комнате клиента с ID: ${message.data.client_id}`);
+
+                                // Показываем уведомление
+                                enqueueSnackbar(
+                                    `Новый тикет: ${message.data.client_id || 'Без названия'}`, // Если title отсутствует, выводим "Без названия"
+                                    { variant: 'warning' }
+                                    
+                                );
+                            } else {
+                                console.warn('Неверное сообщение о тикете:', message);
+                            }
+                            fetchTickets();
+                            break;
+                        }
+
+                        case 'seen':
+                            // Обработать событие seen
+                            break;
+
+                        case 'pong':
+                            // Ответ на ping
+                            break;
+
+                        default:
+                            console.warn('Неизвестный тип сообщения:', message.type);
+                    }
+                } catch (error) {
+                    console.error('Ошибка при разборе сообщения WebSocket:', error);
+                }
+            };
+
+            // Устанавливаем обработчики WebSocket
+            socket.onopen = () => console.log('WebSocket подключен');
+            socket.onerror = (error) => console.error('WebSocket ошибка:', error);
+            socket.onclose = () => console.log('WebSocket закрыт');
+            socket.addEventListener('message', receiveMessage);
+
+            // Очистка обработчиков при размонтировании
+            return () => {
+                socket.removeEventListener('message', receiveMessage);
+                socket.onopen = null;
+                socket.onerror = null;
+                socket.onclose = null;
+            };
+        }
+    }, [socket, selectedTicketId, enqueueSnackbar, userId]);
 
     return (
         <div className='dashboard-container'>

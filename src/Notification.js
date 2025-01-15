@@ -21,18 +21,18 @@ const Notification = ({ selectedTicketId }) => {
       const receiveMessage = (event) => {
         try {
           const message = JSON.parse(event.data);
-          console.log('Parsed WebSocket message notifications:', message);
+          // console.log('Parsed WebSocket message notifications:', message);
 
           switch (message.type) {
             case 'message':
-              // Обрабатываем новое сообщение
-              if (message.data.sender_id !== userId) {
-                const messageText = truncateText(message.data.text, 50); // Исправлено с message.data.text
-                enqueueSnackbar(
-                  `Новое сообщение от клиента ${message.data.client_id}: ${messageText}`,
-                  { variant: 'info' }
-                );
-              }
+              // // Обрабатываем новое сообщение
+              // if (message.data.sender_id !== userId) {
+              //   const messageText = truncateText(message.data.text, 50); // Исправлено с message.data.text
+              //   enqueueSnackbar(
+              //     `Новое сообщение от клиента ${message.data.client_id}: ${messageText}`,
+              //     { variant: 'info' }
+              //   );
+              // }
               break;
 
             case 'notification':
@@ -50,25 +50,25 @@ const Notification = ({ selectedTicketId }) => {
               break;
 
             case 'ticket': {
-              // Убедимся, что message.data существует и содержит client_id
-              if (message.data && message.data.client_id) {
-                // Подключение к комнате на основе client_id
-                const socketMessageClient = JSON.stringify({
-                  type: 'connect',
-                  data: { client_id: [message.data.client_id] },
-                });
+              // // Убедимся, что message.data существует и содержит client_id
+              // if (message.data && message.data.client_id) {
+              //   // Подключение к комнате на основе client_id
+              //   const socketMessageClient = JSON.stringify({
+              //     type: 'connect',
+              //     data: { client_id: [message.data.client_id] },
+              //   });
 
-                socket.send(socketMessageClient); // Отправка сообщения на сервер
-                console.log(`Подключён к комнате клиента с ID: ${message.data.client_id}`);
+              //   socket.send(socketMessageClient); // Отправка сообщения на сервер
+              //   console.log(`Подключён к комнате клиента с ID: ${message.data.client_id}`);
 
-                // Показываем уведомление
-                enqueueSnackbar(
-                  `Новый тикет: ${message.data.client_id || 'Без названия'}`, // Если title отсутствует, выводим "Без названия"
-                  { variant: 'warning' }
-                );
-              } else {
-                console.warn('Неверное сообщение о тикете:', message);
-              }
+              //   // Показываем уведомление
+              //   enqueueSnackbar(
+              //     `Новый тикет: ${message.data.client_id || 'Без названия'}`, // Если title отсутствует, выводим "Без названия"
+              //     { variant: 'warning' }
+              //   );
+              // } else {
+              //   console.warn('Неверное сообщение о тикете:', message);
+              // }
               break;
             }
 
