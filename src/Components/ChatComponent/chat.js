@@ -1301,7 +1301,7 @@ const ChatComponent = ({ }) => {
                                     case "audio":
                                         return (
                                             <audio controls className="audio-preview">
-                                                <source src={msg.message} type="audio/mpeg" />
+                                                <source src={msg.message} type="audio/ogg" />
                                                 Ваш браузер не поддерживает воспроизведение аудио.
                                             </audio>
                                         );
@@ -1416,7 +1416,7 @@ const ChatComponent = ({ }) => {
                         />
                         <input
                             type="file"
-                            accept="image/*,audio/mp3,video/mp4,application/pdf"
+                            accept="image/*,audio/mp3,video/mp4,application/pdf,audio/ogg"
                             onChange={handleFileSelect}
                             style={{ display: "none" }}
                             id="file-input"
