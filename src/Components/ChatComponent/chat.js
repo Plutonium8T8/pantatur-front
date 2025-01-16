@@ -1333,58 +1333,60 @@ const ChatComponent = ({ }) => {
                                         >
                                             <div className="message-content">
                                                 <div className="message-row">
-                                                    <div className="text">{renderContent()}</div>
-                                                    <div className="message-time">
-                                                        <div
-                                                            className="reaction-toggle-button"
-                                                            onClick={() =>
-                                                                setSelectedMessageId(selectedMessageId === msg.id ? null : msg.id)
-                                                            }
-                                                        >
-                                                            {lastReaction || "☺"}
-                                                        </div>
-                                                        {new Date(msg.time_sent).toLocaleTimeString("ru-RU", {
-                                                            hour: "2-digit",
-                                                            minute: "2-digit",
-                                                        })}
-                                                    </div>
-                                                    {selectedMessageId === msg.id && (
-                                                        <div className="reaction-container" ref={reactionContainerRef}>
-                                                            <div className="reaction-buttons">
-                                                                {["☺", "👍", "❤️", "😂", "😮", "😢", "😡"].map((reaction) => (
-                                                                    <div
-                                                                        key={reaction}
-                                                                        onClick={() => handleReactionClick(reaction, msg.id)}
-                                                                        className={
-                                                                            selectedReaction[msg.id] === reaction ? "active" : ""
-                                                                        }
-                                                                    >
-                                                                        {reaction}
-                                                                    </div>
-                                                                ))}
+                                                    <div className="text">
+                                                        {renderContent()}
+                                                        <div className="message-time">
+                                                            <div
+                                                                className="reaction-toggle-button"
+                                                                onClick={() =>
+                                                                    setSelectedMessageId(selectedMessageId === msg.id ? null : msg.id)
+                                                                }
+                                                            >
+                                                                {lastReaction || "☺"}
                                                             </div>
+                                                            {new Date(msg.time_sent).toLocaleTimeString("ru-RU", {
+                                                                hour: "2-digit",
+                                                                minute: "2-digit",
+                                                            })}
                                                         </div>
-                                                    )}
-                                                </div>
-                                                {(msg.sender_id == userId || msg.sender_id === 1) && (
-                                                    <div
-                                                        className="menu-container"
-                                                        ref={(el) => (menuRefs.current[msg.id] = el)}
-                                                    >
-                                                        <button
-                                                            className="menu-button"
-                                                            onClick={() => handleMenuToggle(msg.id)}
-                                                        >
-                                                            ⋮
-                                                        </button>
-                                                        {menuMessageId === msg.id && (
-                                                            <div className="menu-dropdown">
-                                                                <button onClick={() => handleEdit(msg)}>✏️</button>
-                                                                <button onClick={() => handleDelete(msg.id)}>🗑️</button>
+                                                        {selectedMessageId === msg.id && (
+                                                            <div className="reaction-container" ref={reactionContainerRef}>
+                                                                <div className="reaction-buttons">
+                                                                    {["☺", "👍", "❤️", "😂", "😮", "😢", "😡"].map((reaction) => (
+                                                                        <div
+                                                                            key={reaction}
+                                                                            onClick={() => handleReactionClick(reaction, msg.id)}
+                                                                            className={
+                                                                                selectedReaction[msg.id] === reaction ? "active" : ""
+                                                                            }
+                                                                        >
+                                                                            {reaction}
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
                                                             </div>
                                                         )}
                                                     </div>
-                                                )}
+                                                    {(msg.sender_id == userId || msg.sender_id === 1) && (
+                                                        <div
+                                                            className="menu-container"
+                                                            ref={(el) => (menuRefs.current[msg.id] = el)}
+                                                        >
+                                                            <button
+                                                                className="menu-button"
+                                                                onClick={() => handleMenuToggle(msg.id)}
+                                                            >
+                                                                ⋮
+                                                            </button>
+                                                            {menuMessageId === msg.id && (
+                                                                <div className="menu-dropdown">
+                                                                    <button onClick={() => handleEdit(msg)}>✏️</button>
+                                                                    <button onClick={() => handleDelete(msg.id)}>🗑️</button>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
                                     )}
