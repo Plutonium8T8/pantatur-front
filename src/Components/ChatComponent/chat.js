@@ -1286,6 +1286,9 @@ const ChatComponent = ({ }) => {
                                                 onError={(e) => {
                                                     e.target.src = "https://via.placeholder.com/300?text=Ошибка+загрузки";
                                                 }}
+                                                onClick={() => {
+                                                    window.open(msg.message, "_blank");
+                                                }}
                                             />
                                         );
                                     case "video":
@@ -1303,6 +1306,7 @@ const ChatComponent = ({ }) => {
                                             </audio>
                                         );
                                     case "file":
+                                        const fileName = msg.message.split("/").pop(); // Извлекаем название файла из URL
                                         return (
                                             <a
                                                 href={msg.message}
@@ -1310,7 +1314,7 @@ const ChatComponent = ({ }) => {
                                                 rel="noopener noreferrer"
                                                 className="file-link"
                                             >
-                                                Открыть файл
+                                                Открыть файл: {fileName}
                                             </a>
                                         );
                                     default:
