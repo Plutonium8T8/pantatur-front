@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './LoginForm.css';
 import Cookies from 'js-cookie';
 import { useUser } from './UserContext';
@@ -14,25 +14,7 @@ const LoginForm = ({ onLoginSuccess }) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // const validateForm = () => {
-  //   const emailPattern = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
-  //   const passwordPattern = /^(?=.*[A-Z])(?=.*\\W).{1,180}$/;
-
-  //   return (
-  //     emailPattern.test(form.email) &&
-  //     (!isLogin || form.username.length <= 180) &&
-  //     passwordPattern.test(form.password) &&
-  //     form.email.length <= 180 &&
-  //     form.password.length <= 180
-  //   );
-  // };
-
   const handleSubmit = async () => {
-    // if (!validateForm()) {
-    //   setMessage('Некорректные данные');
-    //   return;
-    // }
-
     setIsLoading(true);
     const url = isLogin
       ? 'https://pandatur-api.com/api/login'
@@ -55,76 +37,72 @@ const LoginForm = ({ onLoginSuccess }) => {
           Cookies.set('jwt', responseData.token, { expires: 7, secure: true, sameSite: 'strict' });
           setUserId(responseData.user_id);
           onLoginSuccess();
-          console.log('Успешная авторизация');
-        } else {
-          console.log('Успешная регистрация');
-        }
-      } else {
-        if (isLogin) {
-          console.log('Неудачная авторизация');
-        } else {
-          console.log('Неудачная регистрация');
         }
       }
     } catch (error) {
-      setMessage('Произошла ошибка');
-      console.error('Ошибка сервера:', error);
+      setMessage('An error occurred.');
     } finally {
       setIsLoading(false);
     }
   };
 
+  const handleSwitch = () => {
+    setIsLogin(!isLogin);
+  };
+
   return (
-    <div className="body-login-form">
-      <div className="login-form">
-        <h2>{isLogin ? 'Login' : 'Register'}</h2>
+    <div className="body-login">
+      <div className="body-login-form">
+        <div className="login-form">
+          <h2>{isLogin ? 'Login' : 'Register'}</h2>
 
-        <input
-          type="email"
-          name="email"
-          value={form.email}
-          onChange={handleInputChange}
-          placeholder="Email"
-          className="input-field-loghin"
-        />
-
-        {!isLogin && (
           <input
             name="username"
             value={form.username}
             onChange={handleInputChange}
             placeholder="Username"
-            className="input-field-loghin"
+            className={`input-field-login ${isLogin ? 'hidden' : ''}`}
           />
-        )}
 
-        <input
-          type="password"
-          name="password"
-          value={form.password}
-          onChange={handleInputChange}
-          placeholder="Password"
-          className="input-field-loghin"
-        />
+          <input
+            type="email"
+            name="email"
+            value={form.email}
+            onChange={handleInputChange}
+            placeholder="Email"
+            className={`input-field-login ${isLogin ? 'slide' : ''}`}
+          />
 
-        <button onClick={handleSubmit} className="submit-button" disabled={isLoading}>
-          {isLoading ? 'Loading...' : (isLogin ? 'Login' : 'Register')}
-        </button>
+          <input
+            type="password"
+            name="password"
+            value={form.password}
+            onChange={handleInputChange}
+            placeholder="Password"
+            className={`input-field-login ${isLogin ? 'slide' : ''}`}
+          />
 
-        <button
-          onClick={() => setIsLogin(!isLogin)}
-          className="switch-button"
-          disabled={isLoading}
-        >
-          Switch to {isLogin ? 'Register' : 'Login'}
-        </button>
+          <div className="button-container">
+            <button onClick={handleSubmit} className="submit-button" disabled={isLoading}>
+              {isLoading ? 'Loading...' : isLogin ? 'Login' : 'Register'}
+            </button>
 
-        {isLoading && (
-          <div className="spinner-overlay">
-            <div className="spinner"></div>
+            <button
+              onClick={handleSwitch}
+              className="switch-button"
+              disabled={isLoading}
+            >
+              Switch to {isLogin ? 'Register' : 'Login'}
+            </button>
           </div>
-        )}
-        {message && <p className="message">{message}</p>}
+
+          {isLoading && (
+            <div className="spinner-overlay">
+              <div className="spinner"></div>
+            </div>
+          )}
+          {message && <p className="message">{message}</p>}
+        </div>
       </div>
     </div>
   );
