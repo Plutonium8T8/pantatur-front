@@ -409,10 +409,10 @@ const ChatComponent = ({ }) => {
         } else {
             console.warn('Тикет не найден!');
             setSelectedTechnicianId(null);
-            setSelectClientId(null); // Сбрасываем client_id
+            // Не сбрасываем client_id, если тикет не найден
         }
 
-        console.log('Selected Client ID:', selectedTicket?.client_id);
+        console.log('Selected Client ID:', selectedTicket?.client_id || "No change");
         navigate(`/chat/${ticketId}`);
         getClientMessages();
     };
@@ -482,7 +482,7 @@ const ChatComponent = ({ }) => {
                             break;
 
                         case 'ticket':
-                            // console.log("Сообщение удалено");
+                            fetchTickets();
                             break;
 
                         case 'pong':
@@ -753,39 +753,39 @@ const ChatComponent = ({ }) => {
     };
 
     // Функция для загрузки файла
-    const uploadFile = async (file) => {
-        const formData = new FormData();
-        formData.append('file', file);
-        const token = Cookies.get('jwt'); // Используем JWT токен для авторизации
+    // const uploadFileOLD = async (file) => {
+    //     const formData = new FormData();
+    //     formData.append('file', file);
+    //     const token = Cookies.get('jwt'); // Используем JWT токен для авторизации
 
-        console.log('Preparing to upload file...');
-        console.log('FormData:', formData);
+    //     console.log('Preparing to upload file...');
+    //     console.log('FormData:', formData);
 
-        try {
-            const response = await fetch('https://pandatur-api.com/messages/upload', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+    //     try {
+    //         const response = await fetch('https://pandatur-api.com/messages/upload', {
+    //             method: 'POST',
+    //             body: formData,
+    //             headers: {
+    //                 Authorization: `Bearer ${token}`,
+    //             },
+    //         });
 
-            console.log('Response status:', response.status);
+    //         console.log('Response status:', response.status);
 
-            if (response.ok) {
-                const data = await response.json();
-                console.log('File uploaded successfully:', data);
-                return data; // Сервер должен вернуть объект с полем `url`
-            } else {
-                const errorMessage = `Failed to upload file. Status: ${response.status}`;
-                console.error(errorMessage);
-                throw new Error(errorMessage);
-            }
-        } catch (error) {
-            console.error('Error uploading file:', error);
-            throw error;
-        }
-    };
+    //         if (response.ok) {
+    //             const data = await response.json();
+    //             console.log('File uploaded successfully:', data);
+    //             return data; // Сервер должен вернуть объект с полем `url`
+    //         } else {
+    //             const errorMessage = `Failed to upload file. Status: ${response.status}`;
+    //             console.error(errorMessage);
+    //             throw new Error(errorMessage);
+    //         }
+    //     } catch (error) {
+    //         console.error('Error uploading file:', error);
+    //         throw error;
+    //     }
+    // };
 
     // Обработчик выбора файла
     const handleFileSelect = async (e) => {
@@ -843,9 +843,44 @@ const ChatComponent = ({ }) => {
 
 
     // Отправка сообщения
+    const uploadFile = async (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        const token = Cookies.get('jwt'); // Используем JWT токен для авторизации
+
+        console.log('Подготовка к загрузке файла...');
+        console.log('FormData:', formData);
+
+        try {
+            const response = await fetch('https://pandatur-api.com/messages/upload', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            console.log('Статус ответа:', response.status);
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Файл успешно загружен:', data);
+                return data; // Ожидается объект с полем `url`
+            } else {
+                const errorMessage = `Ошибка загрузки файла. Статус: ${response.status}`;
+                console.error(errorMessage);
+                throw new Error(errorMessage);
+            }
+        } catch (error) {
+            console.error('Ошибка загрузки файла:', error);
+            throw error;
+        }
+    };
+
     const sendMessage = async (selectedFile) => {
         if (!managerMessage.trim() && !selectedFile) {
-            return; // Если нет сообщения или файла — ничего не отправляем
+            console.error('Ошибка: Отправка пустого сообщения невозможна.');
+            return;
         }
 
         // Функция для получения платформы последнего сообщения
@@ -857,29 +892,32 @@ const ChatComponent = ({ }) => {
                 )
                 : null;
 
-            return lastMessage?.platform || 'web'; // Возвращаем платформу или 'web' по умолчанию
+            return lastMessage?.platform || 'web';
         };
 
         const platform = analyzeLastMessagePlatform();
+        console.log(`Определённая платформа: ${platform}`);
 
-        console.log(`Отправка сообщения через платформу: ${platform}`);
         try {
-            const currentTime = new Date().toISOString();
             const messageData = {
                 sender_id: Number(userId),
                 client_id: selectClientId,
                 platform: platform,
-                message: selectedFile ? 'File URL' : managerMessage, // Контент сообщения
-                media_type:"",
-                media_url:""
+                message: managerMessage.trim(),
+                media_type: null,
+                media_url: "",
             };
 
+            // Если файл выбран, загружаем его и добавляем данные в messageData
             if (selectedFile) {
                 const uploadResponse = await uploadFile(selectedFile);
-                messageData.content = uploadResponse.url; // Добавляем URL файла
+                messageData.media_url = uploadResponse.url; // URL загруженного файла
+                messageData.media_type = getMediaType(selectedFile.type); // Определяем тип медиафайла
             }
 
-            await fetch('https://pandatur-api.com/messages/send', {
+            console.log('Отправляемые данные:', JSON.stringify(messageData, null, 2));
+
+            const response = await fetch('https://pandatur-api.com/messages/send', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -888,16 +926,32 @@ const ChatComponent = ({ }) => {
                 body: JSON.stringify(messageData),
             });
 
-            console.log('Сообщение успешно отправлено через fetch:', messageData);
+            const responseData = await response.json();
+
+            if (!response.ok) {
+                console.error('Ошибка с сервера:', responseData.message);
+                return;
+            }
+
+            console.log('Сообщение успешно отправлено:', messageData);
+
             setMessages1((prevMessages) => [
                 ...prevMessages,
-                { ...messageData, seenAt: false }, // Обновляем состояние сообщений
+                { ...messageData, seenAt: false },
             ]);
 
-            if (!selectedFile) setManagerMessage(''); // Очищаем текстовое поле
+            if (!selectedFile) setManagerMessage(''); // Очищаем поле сообщения
         } catch (error) {
-            console.error('Ошибка отправки через fetch:', error);
+            console.error('Ошибка отправки сообщения:', error);
         }
+    };
+
+    // Определение типа медиафайла
+    const getMediaType = (mimeType) => {
+        if (mimeType.startsWith('image/')) return 'image';
+        if (mimeType.startsWith('video/')) return 'video';
+        if (mimeType.startsWith('audio/')) return 'audio';
+        return 'file'; // По умолчанию тип "файл"
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1213,7 +1267,6 @@ const ChatComponent = ({ }) => {
                 <div className="chat-messages" ref={messageContainerRef}>
                     {messages1
                         .filter((msg) => {
-                            // Находим client_id текущего тикета
                             const clientId = tickets1.find((ticket) => ticket.id === selectedTicketId)?.client_id;
                             return msg.client_id === clientId;
                         })
@@ -1221,41 +1274,11 @@ const ChatComponent = ({ }) => {
                         .map((msg) => {
                             const uniqueKey = msg.id || `${msg.client_id}-${msg.time_sent}`;
 
-                            // Проверка типа контента
-                            const isImageUrl = /\.(jpeg|jpg|gif|png|webp|svg)$/i.test(msg.message);
-                            const isFileUrl = /\.(pdf|docx|xlsx|pptx)$/i.test(msg.message);
-                            const isAudioUrl = /\.(mp3)$/i.test(msg.message);
-
-                            // Функция открытия изображения
-                            const openImageInNewWindow = (url) => {
-                                const newWindow = window.open('', '_blank');
-                                newWindow.document.write(`
-                        <html>
-                            <head>
-                                <title>Просмотр изображения</title>
-                                <style>
-                                    body {
-                                        display: flex;
-                                        justify-content: center;
-                                        align-items: center;
-                                        height: 100vh;
-                                        margin: 0;
-                                        background-color: #f0f0f0;
-                                    }
-                                    img {
-                                        max-width: 80%;
-                                        max-height: 80%;
-                                        border-radius: 8px;
-                                    }
-                                </style>
-                            </head>
-                            <body>
-                                <img src="${url}" alt="Просмотр изображения" />
-                            </body>
-                        </html>
-                    `);
-                                newWindow.document.close();
-                            };
+                            // Проверка наличия message и типа контента
+                            const isImageUrl = msg.message?.endsWith('/image') || false;
+                            const isVideoUrl = msg.message?.endsWith('/video') || false;
+                            const isAudioUrl = msg.message?.endsWith('/audio') || false;
+                            const isTextMessage = msg.message && !isImageUrl && !isVideoUrl && !isAudioUrl;
 
                             const lastReaction = getLastReaction(msg);
 
@@ -1268,8 +1291,7 @@ const ChatComponent = ({ }) => {
                                     {({ ref }) => (
                                         <div
                                             ref={ref}
-                                            className={`message ${msg.sender_id == userId || msg.sender_id === 1 ? 'sent' : 'received'
-                                                }`}
+                                            className={`message ${msg.sender_id == userId || msg.sender_id === 1 ? 'sent' : 'received'}`}
                                         >
                                             <div className="message-content">
                                                 <div className="message-row">
@@ -1278,25 +1300,29 @@ const ChatComponent = ({ }) => {
                                                             <img
                                                                 src={msg.message}
                                                                 alt="Отправленное изображение"
-                                                                className="image-preview"
-                                                                onClick={() => openImageInNewWindow(msg.message)}
+                                                                className="image-preview-in-chat"
                                                             />
-                                                        ) : isFileUrl ? (
+                                                        ) : isVideoUrl ? (
+                                                            <video controls className="video-preview">
+                                                                <source src={msg.message} type="video/mp4" />
+                                                                Ваш браузер не поддерживает воспроизведение видео.
+                                                            </video>
+                                                        ) : isAudioUrl ? (
+                                                            <audio controls className="audio-preview">
+                                                                <source src={msg.message} type="audio/mpeg" />
+                                                                Ваш браузер не поддерживает воспроизведение аудио.
+                                                            </audio>
+                                                        ) : isTextMessage ? (
+                                                            <div className="text-message">{msg.message}</div> // Отображение текста
+                                                        ) : (
                                                             <a
                                                                 href={msg.message}
                                                                 target="_blank"
                                                                 rel="noopener noreferrer"
                                                                 className="file-link"
                                                             >
-                                                                Открыть файл: {msg.message.split('/').pop()}
+                                                                Открыть файл: {msg.message?.split('/').pop()}
                                                             </a>
-                                                        ) : isAudioUrl ? (
-                                                            <audio controls>
-                                                                <source src={msg.message} type="audio/mpeg" />
-                                                                Ваш браузер не поддерживает воспроизведение аудио.
-                                                            </audio>
-                                                        ) : (
-                                                            msg.message
                                                         )}
                                                         <div className="message-time">
                                                             <div
