@@ -1274,11 +1274,49 @@ const ChatComponent = ({ }) => {
                         .map((msg) => {
                             const uniqueKey = msg.id || `${msg.client_id}-${msg.time_sent}`;
 
-                            // Проверка наличия message и типа контента
-                            const isImageUrl = msg.message?.endsWith('/image') || false;
-                            const isVideoUrl = msg.message?.endsWith('/video') || false;
-                            const isAudioUrl = msg.message?.endsWith('/audio') || false;
-                            const isTextMessage = msg.message && !isImageUrl && !isVideoUrl && !isAudioUrl;
+                            // Определяем отображение контента на основе mtype
+                            const renderContent = () => {
+                                switch (msg.mtype) {
+                                    case "image":
+                                        return (
+                                            <img
+                                                src={msg.message}
+                                                alt="Отправленное изображение"
+                                                className="image-preview-in-chat"
+                                                onError={(e) => {
+                                                    e.target.src = "https://via.placeholder.com/300?text=Ошибка+загрузки";
+                                                }}
+                                            />
+                                        );
+                                    case "video":
+                                        return (
+                                            <video controls className="video-preview">
+                                                <source src={msg.message} type="video/mp4" />
+                                                Ваш браузер не поддерживает воспроизведение видео.
+                                            </video>
+                                        );
+                                    case "audio":
+                                        return (
+                                            <audio controls className="audio-preview">
+                                                <source src={msg.message} type="audio/mpeg" />
+                                                Ваш браузер не поддерживает воспроизведение аудио.
+                                            </audio>
+                                        );
+                                    case "file":
+                                        return (
+                                            <a
+                                                href={msg.message}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="file-link"
+                                            >
+                                                Открыть файл: {msg.message?.split("/").pop()}
+                                            </a>
+                                        );
+                                    default:
+                                        return <div className="text-message">{msg.message}</div>; // Отображение текста по умолчанию
+                                }
+                            };
 
                             const lastReaction = getLastReaction(msg);
 
@@ -1291,91 +1329,62 @@ const ChatComponent = ({ }) => {
                                     {({ ref }) => (
                                         <div
                                             ref={ref}
-                                            className={`message ${msg.sender_id == userId || msg.sender_id === 1 ? 'sent' : 'received'}`}
+                                            className={`message ${msg.sender_id == userId || msg.sender_id === 1 ? "sent" : "received"}`}
                                         >
                                             <div className="message-content">
                                                 <div className="message-row">
-                                                    <div className="text">
-                                                        {isImageUrl ? (
-                                                            <img
-                                                                src={msg.message}
-                                                                alt="Отправленное изображение"
-                                                                className="image-preview-in-chat"
-                                                            />
-                                                        ) : isVideoUrl ? (
-                                                            <video controls className="video-preview">
-                                                                <source src={msg.message} type="video/mp4" />
-                                                                Ваш браузер не поддерживает воспроизведение видео.
-                                                            </video>
-                                                        ) : isAudioUrl ? (
-                                                            <audio controls className="audio-preview">
-                                                                <source src={msg.message} type="audio/mpeg" />
-                                                                Ваш браузер не поддерживает воспроизведение аудио.
-                                                            </audio>
-                                                        ) : isTextMessage ? (
-                                                            <div className="text-message">{msg.message}</div> // Отображение текста
-                                                        ) : (
-                                                            <a
-                                                                href={msg.message}
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                                className="file-link"
-                                                            >
-                                                                Открыть файл: {msg.message?.split('/').pop()}
-                                                            </a>
-                                                        )}
-                                                        <div className="message-time">
-                                                            <div
-                                                                className="reaction-toggle-button"
-                                                                onClick={() =>
-                                                                    setSelectedMessageId(selectedMessageId === msg.id ? null : msg.id)
-                                                                }
-                                                            >
-                                                                {lastReaction || '☺'}
-                                                            </div>
-                                                            {new Date(msg.time_sent).toLocaleTimeString('ru-RU', {
-                                                                hour: '2-digit',
-                                                                minute: '2-digit',
-                                                            })}
-                                                        </div>
-                                                        {selectedMessageId === msg.id && (
-                                                            <div className="reaction-container" ref={reactionContainerRef}>
-                                                                <div className="reaction-buttons">
-                                                                    {['☺', '👍', '❤️', '😂', '😮', '😢', '😡'].map((reaction) => (
-                                                                        <div
-                                                                            key={reaction}
-                                                                            onClick={() => handleReactionClick(reaction, msg.id)}
-                                                                            className={
-                                                                                selectedReaction[msg.id] === reaction ? 'active' : ''
-                                                                            }
-                                                                        >
-                                                                            {reaction}
-                                                                        </div>
-                                                                    ))}
-                                                                </div>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                    {(msg.sender_id == userId || msg.sender_id === 1) && (
+                                                    <div className="text">{renderContent()}</div>
+                                                    <div className="message-time">
                                                         <div
-                                                            className="menu-container"
-                                                            ref={(el) => (menuRefs.current[msg.id] = el)}
+                                                            className="reaction-toggle-button"
+                                                            onClick={() =>
+                                                                setSelectedMessageId(selectedMessageId === msg.id ? null : msg.id)
+                                                            }
                                                         >
-                                                            <button
-                                                                className="menu-button"
-                                                                onClick={() => handleMenuToggle(msg.id)}
-                                                            >
-                                                                ⋮
-                                                            </button>
-                                                            {menuMessageId === msg.id && (
-                                                                <div className="menu-dropdown">
-                                                                    <button onClick={() => handleEdit(msg)}>✏️</button>
-                                                                    <button onClick={() => handleDelete(msg.id)}>🗑️</button>
-                                                                </div>
-                                                            )}
+                                                            {lastReaction || "☺"}
+                                                        </div>
+                                                        {new Date(msg.time_sent).toLocaleTimeString("ru-RU", {
+                                                            hour: "2-digit",
+                                                            minute: "2-digit",
+                                                        })}
+                                                    </div>
+                                                    {selectedMessageId === msg.id && (
+                                                        <div className="reaction-container" ref={reactionContainerRef}>
+                                                            <div className="reaction-buttons">
+                                                                {["☺", "👍", "❤️", "😂", "😮", "😢", "😡"].map((reaction) => (
+                                                                    <div
+                                                                        key={reaction}
+                                                                        onClick={() => handleReactionClick(reaction, msg.id)}
+                                                                        className={
+                                                                            selectedReaction[msg.id] === reaction ? "active" : ""
+                                                                        }
+                                                                    >
+                                                                        {reaction}
+                                                                    </div>
+                                                                ))}
+                                                            </div>
                                                         </div>
                                                     )}
                                                 </div>
+                                                {(msg.sender_id == userId || msg.sender_id === 1) && (
+                                                    <div
+                                                        className="menu-container"
+                                                        ref={(el) => (menuRefs.current[msg.id] = el)}
+                                                    >
+                                                        <button
+                                                            className="menu-button"
+                                                            onClick={() => handleMenuToggle(msg.id)}
+                                                        >
+                                                            ⋮
+                                                        </button>
+                                                        {menuMessageId === msg.id && (
+                                                            <div className="menu-dropdown">
+                                                                <button onClick={() => handleEdit(msg)}>✏️</button>
+                                                                <button onClick={() => handleDelete(msg.id)}>🗑️</button>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     )}
@@ -1401,9 +1410,9 @@ const ChatComponent = ({ }) => {
                         />
                         <input
                             type="file"
-                            accept="image/*,audio/mp3,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                            accept="image/*,audio/mp3,video/mp4,application/pdf"
                             onChange={handleFileSelect}
-                            style={{ display: 'none' }}
+                            style={{ display: "none" }}
                             id="file-input"
                         />
                         <label htmlFor="file-input" className="file-button">
