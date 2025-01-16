@@ -8,6 +8,11 @@
     width: 80px;
     height: 100vh;
     color: white;
+
+    position: fixed; /* Makes it stay on top of the front-end */
+    top: 0;          /* Aligns it to the top of the viewport */
+    left: 0;         /* Aligns it to the left of the viewport */
+    z-index: 4;   /* Ensures it's on top of other elements */
 }
 
 .menu-side-bar {
@@ -21,7 +26,6 @@
     flex-direction: column;
     gap: 20px;
 }
-
 
 .menu-item {
     display: flex;
@@ -64,7 +68,6 @@
     margin-top: 5px;
     transition: border-radius 0.3s ease-in-out;
 }
-
 
 .container-log-out {
     display: flex;

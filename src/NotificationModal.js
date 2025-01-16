@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import { useUser } from "./UserContext";
-import "./NotificationModal.css";
-import Icon from "./Components/Icon";
+import "./SlideInModal.css";
+import { FaTimes, FaBell } from "react-icons/fa";
 
 const NotificationModal = ({ isOpen, onClose }) => {
     const [notifications, setNotifications] = useState([]);
@@ -99,57 +99,64 @@ const NotificationModal = ({ isOpen, onClose }) => {
     }
 
     return (
-        <div className="modal-overlay-notifi" onClick={onClose}>
-            <div className="modal-content-notifi" onClick={(e) => e.stopPropagation()}>
-                <button className="close-button" onClick={onClose}>×</button>
-                <h2>Notifications</h2>
+        <div className="modal-overlay" onClick={onClose}>
+            <div
+                className="modal-container"
+                onClick={(e) => e.stopPropagation()}
+            >
+                <header className="modal-header">
+                    <h2>
+                        <FaBell /> Notifications
+                    </h2>
+                </header>
                 {error && <div className="error-message">{error}</div>}
 
-                {/* Форма для создания нового уведомления */}
                 <form className="notification-form" onSubmit={handleNotificationSubmit}>
-                    <div className="notification-input">
+                    <div className="input-group">
+                        <label>Date and Time</label>
                         <input
                             type="datetime-local"
                             value={notificationDate}
                             onChange={(e) => setNotificationDate(e.target.value)}
                             required
                         />
+                    </div>
+                    <div className="input-group">
+                        <label>Description</label>
                         <textarea
                             value={notificationContent}
                             onChange={(e) => setNotificationContent(e.target.value)}
-                            placeholder="Notification description"
+                            placeholder="Enter notification description"
                             rows="4"
                             required
                         ></textarea>
                     </div>
-                    <button type="submit">Add Notification</button>
+                    <button className="submit-button" type="submit">
+                        Add Notification
+                    </button>
                 </form>
 
-                {/* Динамическое отображение уведомлений */}
                 <ul className="notification-list">
                     {notifications.length === 0 ? (
-                        <li className="no-notifications">No notifications</li>
+                        <li className="no-notifications">No notifications available</li>
                     ) : (
                         notifications.map((notification) => (
                             <li
                                 key={notification.id}
-                                className={`notification-item ${notification.status ? "read" : "unread"}`}
+                                className={`notification-item ${notification.status ? "read" : "unread"
+                                    }`}
                             >
-                                <Icon name="notifi" />
                                 <div className="notification-content">
-                                    <div className="notification-description">{notification.description}</div>
-                                    <div className="notification-time">
+                                    <p className="description">{notification.description}</p>
+                                    <p className="time">
                                         {new Date(notification.scheduled_time).toLocaleString()}
-                                    </div>
-                                    <div
-                                        className={`notification-status ${notification.status ? "completed" : "pending"
-                                            }`}
-                                    >
+                                    </p>
+                                    <p className={`status ${notification.status ? "seen" : "unseen"}`}>
                                         {notification.status ? "Seen" : "Unseen"}
-                                    </div>
+                                    </p>
                                     {!notification.status && (
                                         <button
-                                            className="mark-as-seen-button"
+                                            className="mark-as-seen"
                                             onClick={() => handleMarkAsSeen(notification.id)}
                                         >
                                             Mark as Seen

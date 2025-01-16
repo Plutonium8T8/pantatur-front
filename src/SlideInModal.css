@@ -1,0 +1,194 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: stretch; /* Stretch from top to bottom */
+    z-index: 3; /* Higher than the sidebar */
+}
+
+.modal-container {
+    position: absolute; /* Ensure it is absolutely positioned */
+    top: 0;
+    left: 100px; /* Adjusted for the sidebar width */
+    background-color: #1f2937;
+    color: white;
+    width: 520px;
+    height: 100vh; /* Full height */
+    overflow-y: auto;
+    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.5s ease-in-out;
+    border-radius: 0; /* No border radius */
+    z-index: 4; /* Ensure modal content is above overlay */
+}
+
+
+/* Sliding animation */
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px; /* Increased padding for a more spacious look */
+  background-color: #2563eb;
+}
+
+.modal-header h2 {
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.notification-form {
+  padding: 20px; /* Increased padding for form elements */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Increased spacing between labels and inputs */
+}
+
+.input-group label {
+  font-size: 16px;
+  color: #cbd5e0;
+}
+
+.input-group input,
+.input-group textarea {
+  border: 1px solid #374151;
+  background: #111827;
+  color: white;
+  padding: 12px; /* Increased padding for inputs */
+  font-size: 16px;
+  border-radius: 5px; /* Optional for a rounded look */
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-group input:focus,
+.input-group textarea:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 4px rgba(37, 99, 235, 0.5);
+}
+
+.submit-button {
+  background-color: #2563eb;
+  color: white;
+  padding: 12px 20px; /* Increased padding for a larger button */
+  border: none;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.submit-button:hover {
+  background-color: #1e40af;
+  transform: scale(1.05);
+}
+
+.notification-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 20px 20px; /* Increased padding for better spacing */
+  max-height: calc(100vh - 200px); /* Adjust for header and form */
+  overflow-y: auto;
+}
+
+.notification-item {
+  background: #2d3748;
+  padding: 15px; /* Increased padding for items */
+  border-radius: 5px; /* Slightly rounded corners */
+  margin-bottom: 15px; /* More spacing between items */
+  transition: background-color 0.3s;
+}
+
+.notification-item.read {
+  background-color: #374151;
+}
+
+.notification-item.unread:hover {
+  background-color: #4b5563;
+}
+
+.notification-content p {
+  margin: 0;
+}
+
+.description {
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.time {
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+.status {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.status.seen {
+  color: #10b981;
+}
+
+.status.unseen {
+  color: #f87171;
+}
+
+.mark-as-seen {
+  background-color: #2563eb;
+  color: white;
+  padding: 8px 15px; /* Slightly larger button */
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.mark-as-seen:hover {
+  background-color: #1e40af;
+}
+
+.time-select {
+  display: flex;
+  gap: 15px; /* Increased spacing between dropdowns */
+}
+
+.time-select-input {
+  border: 1px solid #374151;
+  background: #111827;
+  color: white;
+  padding: 12px; /* Increased padding for dropdowns */
+  font-size: 16px;
+  border-radius: 5px;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.time-select-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 4px rgba(37, 99, 235, 0.5);
+}
+
