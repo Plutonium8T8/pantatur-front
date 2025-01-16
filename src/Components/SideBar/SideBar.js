@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import './SideBar.css';
 import { useUnreadMessages } from '../../Unread';
+import { FaUser, FaChartBar, FaTasks, FaComments, FaBell, FaClipboardList, FaSignOutAlt } from 'react-icons/fa';
 
 const CustomSidebar = ({ onOpenNotifications, onOpenTasks }) => {
     const location = useLocation();
@@ -33,53 +34,53 @@ const CustomSidebar = ({ onOpenNotifications, onOpenTasks }) => {
                         className={`menu-item ${isActive('account') ? 'active' : ''}`}
                         onClick={() => handleNavigate('account')}
                     >
-                        👤 <br />Account
+                        <FaUser size={24} />
+                        <span>Account</span>
                     </div>
                     <div
                         className={`menu-item ${isActive('dashboard') ? 'active' : ''}`}
                         onClick={() => handleNavigate('dashboard')}
                     >
-                        📊 <br />Dashboard
+                        <FaChartBar size={24} />
+                        <span>Dashboard</span>
                     </div>
                     <div
                         className={`menu-item ${isActive('leads') ? 'active' : ''}`}
                         onClick={() => handleNavigate('leads')}
                     >
-                        📝 <br />Leads
+                        <FaClipboardList size={24} />
+                        <span>Leads</span>
                     </div>
                     <div
                         className={`menu-item ${isActive('chat') ? 'active' : ''}`}
                         onClick={() => handleNavigate('chat')}
                     >
-                        💬 <br />Chat
+                        <FaComments size={24} />
+                        <span>Chat</span>
                         {unreadCount > 0 && (
                             <span className="unread-indicator">{unreadCount}</span>
                         )}
                     </div>
                     <div
                         className={`menu-item ${isActive('notifications') ? 'active' : ''}`}
-                        onClick={onOpenNotifications} // Вызываем функцию открытия модального окна
+                        onClick={onOpenNotifications}
                     >
-                        🔔 <br />Notifications
+                        <FaBell size={24} />
+                        <span>Notifications</span>
                     </div>
-                    {/* Новый компонент */}
                     <div
                         className={`menu-item ${isActive('tasks') ? 'active' : ''}`}
-                        onClick={onOpenTasks} // Функция открытия задач
+                        onClick={onOpenTasks}
                     >
-                        ✅ <br />Tasks
-                    </div>
-                    <div
-                        className={`menu-item ${isActive('admin-panel') ? 'active' : ''}`}
-                        onClick={() => handleNavigate('admin-panel')}
-                    >
-                        🗓️ <br />Admin Panel
+                        <FaTasks size={24} />
+                        <span>Tasks</span>
                     </div>
                 </div>
             </div>
             <div className="container-log-out">
                 <div className="menu-item" onClick={handleLogOut}>
-                    🚪 <br />Log Out
+                    <FaSignOutAlt size={24} />
+                    <span>Log Out</span>
                 </div>
             </div>
         </div>
