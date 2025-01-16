@@ -862,104 +862,45 @@ const ChatComponent = ({ }) => {
 
         const platform = analyzeLastMessagePlatform();
 
-        if (platform !== 'web') {
-            console.log('Платформа не web. Отправляем через fetch.');
-            try {
-                const currentTime = new Date().toISOString();
-                const messageData = {
-                    sender_id: Number(userId), // Используем `camelCase` для удобства работы
-                    client_id: selectClientId,
-                    platform: platform,
-                    message: selectedFile ? 'File URL' : managerMessage, // Контент сообщения
-                    // timestamp: currentTime, // Убедитесь, что сервер принимает это поле
-                };
+        console.log(`Отправка сообщения через платформу: ${platform}`);
+        try {
+            const currentTime = new Date().toISOString();
+            const messageData = {
+                sender_id: Number(userId),
+                client_id: selectClientId,
+                platform: platform,
+                message: selectedFile ? 'File URL' : managerMessage, // Контент сообщения
+                media_type:"",
+                media_url:""
+            };
 
-                if (selectedFile) {
-                    const uploadResponse = await uploadFile(selectedFile);
-                    messageData.content = uploadResponse.url;
-                }
-
-                await fetch('https://pandatur-api.com/messages/send', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${Cookies.get('jwt')}`,
-                    },
-                    body: JSON.stringify(messageData),
-                });
-
-                console.log('Сообщение успешно отправлено через fetch:', messageData);
-                setMessages1((prevMessages) => [
-                    ...prevMessages,
-                    { ...messageData, seenAt: false }, // Обновляем состояние сообщений
-                ]);
-
-                if (!selectedFile) setManagerMessage(''); // Очищаем текстовое поле
-            } catch (error) {
-                console.error('Ошибка отправки через fetch:', error);
+            if (selectedFile) {
+                const uploadResponse = await uploadFile(selectedFile);
+                messageData.content = uploadResponse.url; // Добавляем URL файла
             }
-        } else if (socket) {
-            console.log('Платформа web. Отправляем через WebSocket.');
 
-            if (socket.readyState === WebSocket.OPEN) {
-                const currentTime = new Date().toISOString();
-                try {
-                    if (selectedFile) {
-                        const uploadResponse = await uploadFile(selectedFile);
-                        const fileMessageData = {
-                            type: 'message',
-                            data: {
-                                sender_id: Number(userId),
-                                client_id: [selectedTicketId],
-                                platform: 'web',
-                                text: uploadResponse.url, // URL загруженного файла
-                                time_sent: currentTime,
-                            },
-                        };
-                        socket.send(JSON.stringify(fileMessageData));
-                        console.log('Файл отправлен через WebSocket:', fileMessageData);
-                        setMessages1((prevMessages) => [
-                            ...prevMessages,
-                            { ...fileMessageData.data, seen_at: false },
-                        ]);
-                        await getClientMessages();
-                    }
+            await fetch('https://pandatur-api.com/messages/send', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${Cookies.get('jwt')}`,
+                },
+                body: JSON.stringify(messageData),
+            });
 
-                    if (managerMessage.trim()) {
-                        const textMessageData = {
-                            type: 'message',
-                            data: {
-                                sender_id: Number(userId),
-                                client_id: [selectedTicketId],
-                                platform: 'web',
-                                text: managerMessage,
-                                time_sent: currentTime,
-                            },
-                        };
+            console.log('Сообщение успешно отправлено через fetch:', messageData);
+            setMessages1((prevMessages) => [
+                ...prevMessages,
+                { ...messageData, seenAt: false }, // Обновляем состояние сообщений
+            ]);
 
-                        socket.send(JSON.stringify(textMessageData));
-                        console.log('Текстовое сообщение отправлено через WebSocket:', textMessageData);
-
-                        setMessages1((prevMessages) => [
-                            ...prevMessages,
-                            { ...textMessageData.data, seen_at: false },
-                        ]);
-
-                        setManagerMessage(''); // Очищаем текстовое поле
-                        await getClientMessages();
-                    }
-                } catch (error) {
-                    console.error('Ошибка отправки через WebSocket:', error);
-                }
-            } else {
-                console.error('WebSocket не подключен. Пожалуйста, перезагрузите страницу.');
-            }
-        } else {
-            console.error('Соединение WebSocket отсутствует.');
+            if (!selectedFile) setManagerMessage(''); // Очищаем текстовое поле
+        } catch (error) {
+            console.error('Ошибка отправки через fetch:', error);
         }
     };
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // const sendMessageOLD prin socket = async (selectedFile) => {
 
