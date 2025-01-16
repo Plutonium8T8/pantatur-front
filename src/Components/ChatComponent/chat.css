@@ -444,7 +444,7 @@
 .text img {
     cursor: pointer;
     width: auto;
-    height: 100px;
+    height: 400px;
     background-color: white;
     color: black;
 }

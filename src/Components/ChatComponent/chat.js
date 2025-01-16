@@ -1310,7 +1310,7 @@ const ChatComponent = ({ }) => {
                                                 rel="noopener noreferrer"
                                                 className="file-link"
                                             >
-                                                Открыть файл: {msg.message?.split("/").pop()}
+                                                Открыть файл
                                             </a>
                                         );
                                     default:
