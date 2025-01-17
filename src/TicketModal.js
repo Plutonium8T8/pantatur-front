@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Priority from './Components/PriorityComponent/PriorityComponent';
 import Workflow from './Components/WorkFlowComponent/WorkflowComponent';
-import TagInput from './TagComponent';
+import TagInput from './Components/TagsComponent/TagComponent';
 import Cookies from 'js-cookie';
 import { updateTicket } from './Leads';
 import { useUser } from './UserContext';

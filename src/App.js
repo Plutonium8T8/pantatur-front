@@ -12,8 +12,8 @@ import UserProfile from './Components/UserPage/UserPage';
 import { SnackbarProvider, closeSnackbar } from 'notistack';
 import Notification from './Notification';
 import { UnreadMessagesProvider } from './Unread';
-import NotificationModal from './Components/SlideInComponents/NotificationModal'; // Модальное окно уведомлений
-import TaskComponent from './Components/SlideInComponents/TaskComponent'; // Используем TaskModal вместо TaskComponent
+import NotificationModal from './Components/SlideInComponent/NotificationModal'; // Модальное окно уведомлений
+import TaskComponent from './Components/SlideInComponent/TaskComponent'; // Используем TaskModal вместо TaskComponent
 import AdminPanel from './AdminPanel';
 import Dashboard from './Dashboard';
 
