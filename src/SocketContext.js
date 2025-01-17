@@ -18,7 +18,7 @@ export const useSocket = () => {
         return;
       }
 
-      const response = await fetch('https://pandatur-api.com/api/tickets', {
+      const response = await fetch('https://pandatur-api.com/tickets', {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -117,7 +117,7 @@ export const SocketProvider = ({ children, isLoggedIn }) => {
         return;
       }
 
-      const response = await fetch('https://pandatur-api.com/api/tickets', {
+      const response = await fetch('https://pandatur-api.com/tickets', {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,

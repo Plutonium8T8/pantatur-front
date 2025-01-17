@@ -82,7 +82,7 @@ const ChatComponent = ({ }) => {
         setIsLoading(true); // Показываем индикатор загрузки
         try {
             const token = Cookies.get('jwt');
-            const response = await fetch('https://pandatur-api.com/api/tickets', {
+            const response = await fetch('https://pandatur-api.com/tickets', {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -120,7 +120,7 @@ const ChatComponent = ({ }) => {
         setIsLoading(true); // Показываем индикатор загрузки
         try {
             const token = Cookies.get('jwt');
-            const response = await fetch(`https://pandatur-api.com/api/tickets/${selectedTicketId}`, {
+            const response = await fetch(`https://pandatur-api.com/tickets/${selectClientId}`, {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -161,7 +161,7 @@ const ChatComponent = ({ }) => {
     const fetchTicketExtraInfo = async (selectedTicketId) => {
         try {
             const token = Cookies.get('jwt');
-            const response = await fetch(`https://pandatur-api.com/ticket-info/${selectedTicketId}`, {
+            const response = await fetch(`https://pandatur-api.com/ticket-info/${selectClientId}`, {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -325,7 +325,7 @@ const ChatComponent = ({ }) => {
             }
 
             // Отправляем PATCH запрос
-            const response = await fetch(`https://pandatur-api.com/api/tickets/${updatedTicket.id}`, {
+            const response = await fetch(`https://pandatur-api.com/tickets/${updatedTicket.id}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
@@ -820,7 +820,7 @@ const ChatComponent = ({ }) => {
 
         try {
             const token = Cookies.get('jwt');
-            const response = await fetch(`https://pandatur-api.com/api/tickets/${selectedTicketId}`, {
+            const response = await fetch(`https://pandatur-api.com/tickets/${selectClientId}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',

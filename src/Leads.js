@@ -18,7 +18,7 @@ export const updateTicket = async (updateData) => {
             throw new Error('Токен отсутствует. Авторизация необходима.');
         }
 
-        const response = await fetch(`https://pandatur-api.com/api/tickets/${updateData.id}`, {
+        const response = await fetch(`https://pandatur-api.com/tickets/${updateData.id}`, {
             method: 'PATCH',
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -61,7 +61,7 @@ const Leads = (selectedTicketId) => {
         try {
             await new Promise(resolve => setTimeout(resolve, 1000));
             const token = Cookies.get('jwt');
-            const response = await fetch('https://pandatur-api.com/api/tickets', {
+            const response = await fetch('https://pandatur-api.com/tickets', {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token}`,

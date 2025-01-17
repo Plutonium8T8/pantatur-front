@@ -22,7 +22,7 @@ const TaskModal = ({ isOpen, onClose }) => {
     const fetchTicketsID = async () => {
         try {
             const token = Cookies.get("jwt");
-            const response = await fetch("https://pandatur-api.com/api/tickets", {
+            const response = await fetch("https://pandatur-api.com/tickets", {
                 method: "GET",
                 headers: { Authorization: `Bearer ${token}` },
             });

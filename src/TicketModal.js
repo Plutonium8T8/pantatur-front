@@ -9,7 +9,7 @@ import { useUser } from './UserContext';
 const deleteTicketById = async (id) => {
   try {
     const token = Cookies.get('jwt');
-    const response = await fetch(`https://pandatur-api.com/api/tickets/${id}`, {
+    const response = await fetch(`https://pandatur-api.com/tickets/${id}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -31,7 +31,7 @@ const saveTicketToServer = async (ticketData) => {
   try {
     const token = Cookies.get('jwt');
     console.log('Отправляемые данные:', ticketData);
-    const response = await fetch('https://pandatur-api.com/api/tickets', {
+    const response = await fetch('https://pandatur-api.com/tickets', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
