@@ -84,6 +84,11 @@ function App() {
           </button>
         </>
       )}
+      ContentProps={{
+        style: {
+          width: '300px', // Устанавливаем ширину
+        },
+      }}
     >
       <SocketProvider isLoggedIn={isLoggedIn}>
         <UserProvider>
