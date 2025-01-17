@@ -1125,10 +1125,18 @@ const ChatComponent = ({ }) => {
         document.querySelectorAll(".chat-item").forEach((item) => {
             const ticketId = item.querySelector(".tickets-descriptions div:nth-child(2)").textContent.toLowerCase();
             const ticketContact = item.querySelector(".tickets-descriptions div:nth-child(1)").textContent.toLowerCase();
-            if (ticketId.includes(filterValue) || ticketContact.includes(filterValue)) {
-                item.style.display = "block";
+            const tagsContainer = item.querySelector(".tags-ticket");
+            const tags = Array.from(tagsContainer?.querySelectorAll("span") || []).map(tag => tag.textContent.toLowerCase());
+
+            // Проверяем фильтр по ID, контакту и тегам
+            if (
+                ticketId.includes(filterValue) ||
+                ticketContact.includes(filterValue) ||
+                tags.some(tag => tag.includes(filterValue))
+            ) {
+                item.style.display = "block"; // Показываем элемент, если он соответствует фильтру
             } else {
-                item.style.display = "none";
+                item.style.display = "none"; // Скрываем элемент, если он не соответствует фильтру
             }
         });
     };
@@ -1157,7 +1165,7 @@ const ChatComponent = ({ }) => {
                 <div className="filter-container-chat">
                     <input
                         type="text"
-                        placeholder="Id or name"
+                        placeholder="Id or name or tag"
                         onInput={handleFilterInput}
                         className="ticket-filter-input"
                     />
