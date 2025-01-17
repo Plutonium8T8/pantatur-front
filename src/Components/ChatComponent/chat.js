@@ -418,7 +418,7 @@ const ChatComponent = ({ }) => {
     };
 
     const handleInView = (isVisible, msg) => {
-        if (isVisible && !msg.seen_at) {
+        if (isVisible) {
             const readMessageData = {
                 type: 'seen',
                 data: {
@@ -429,10 +429,13 @@ const ChatComponent = ({ }) => {
 
             try {
                 socket.send(JSON.stringify(readMessageData));
+
                 markMessagesAsRead(msg.client_id); // Локальное обновление
             } catch (error) {
                 console.error('Error sending mark as read:', error);
             }
+        } else {
+            console.log(`Message ${msg.id} not marked as read: isVisible=${isVisible}, seen_at=${msg.seen_at}`);
         }
     };
 
