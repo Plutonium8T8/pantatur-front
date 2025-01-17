@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import Priority from './Components/PriorityComponent/PriorityComponent';
-import Workflow from './Components/WorkFlowComponent/WorkflowComponent';
-import TagInput from './Components/TagsComponent/TagComponent';
+import Priority from '../PriorityComponent/PriorityComponent';
+import Workflow from '../WorkFlowComponent/WorkflowComponent';
+import TagInput from '../TagsComponent/TagComponent';
 import Cookies from 'js-cookie';
-import { updateTicket } from './Leads';
-import { useUser } from './UserContext';
+import { updateTicket } from '../LeadsComponent/Leads';
+import { useUser } from '../../UserContext';
 
 const deleteTicketById = async (id) => {
   try {

@@ -1,14 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react';
-import TicketModal from './TicketModal';
-import { workflowOptions } from './FormOptions/WorkFlowOption';
-import { priorityOptions } from './FormOptions/PriorityOption';
+import TicketModal from '../TicketComponent/TicketModal';
+import { workflowOptions } from '../../FormOptions/WorkFlowOption';
+import { priorityOptions } from '../../FormOptions/PriorityOption';
 import { useNavigate } from 'react-router-dom';
-import { useSocket } from './SocketContext'; // Используйте свой контекст для WebSocket
-import { useUser } from './UserContext';
+import { useSocket } from '../../SocketContext'; // Используйте свой контекст для WebSocket
+import { useUser } from '../../UserContext';
 import { useSnackbar } from 'notistack';
 import Cookies from 'js-cookie';
 
-import './App.css';
+import '../../App.css';
 
 export const updateTicket = async (updateData) => {
     try {

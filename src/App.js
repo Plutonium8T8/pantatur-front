@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Leads from './Leads';
+import Leads from './Components/LeadsComponent/Leads';
 import LoginForm from './Components/LoginComponent/LoginForm';
 import { UserProvider } from './UserContext';
 import CustomSidebar from './Components/SideBar/SideBar';
@@ -15,7 +15,7 @@ import { UnreadMessagesProvider } from './Unread';
 import NotificationModal from './Components/SlideInComponent/NotificationModal'; // Модальное окно уведомлений
 import TaskComponent from './Components/SlideInComponent/TaskComponent'; // Используем TaskModal вместо TaskComponent
 import AdminPanel from './Components/AdminPanelComponent/AdminPanel';
-import Dashboard from './Dashboard';
+import Dashboard from './Components/DashboardComponent/Dashboard';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
