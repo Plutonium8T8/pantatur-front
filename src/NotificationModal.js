@@ -152,6 +152,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
                             placeholder="Enter notification description"
                             rows="4"
                             required
+                            className="data-time-notifi"
                         ></textarea>
                     </div>
                     <div className="button-container">

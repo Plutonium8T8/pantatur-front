@@ -376,7 +376,7 @@ const Leads = (selectedTicketId) => {
                                                             <div><img className='foto-user' src="/user fon.png" alt="example" /></div>
                                                             <div className='tickets-descriptions'>
                                                                 <div>{ticket.contact || "no contact"}</div>
-                                                                <div>{ticket.id || "no id"}</div>
+                                                                <div>Id ticket:{ticket.id || "no id"}</div>
                                                                 {tags.length > 0 ? (
                                                                     <div>
                                                                         {tags.map((tag, index) => (

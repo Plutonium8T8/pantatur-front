@@ -72,7 +72,7 @@ function App() {
         info: '',
       }}
       autoHideDuration={null}
-      maxSnack={10}
+      maxSnack={5}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
       action={(snackbarId) => (
         <>
