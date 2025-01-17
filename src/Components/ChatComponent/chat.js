@@ -61,6 +61,7 @@ const ChatComponent = ({ }) => {
     const menuRefs = useRef({}); // Создаем объект для хранения ref всех меню
     const [filteredTickets, setFilteredTickets] = useState(tickets1);
     const [activeTab, setActiveTab] = useState('extraForm'); // По умолчанию вкладка Extra Form
+    const [showMyTickets, setShowMyTickets] = useState(false);
 
     useEffect(() => {
         // Если ticketId передан через URL, устанавливаем его как selectedTicketId
@@ -1100,39 +1101,72 @@ const ChatComponent = ({ }) => {
         }
     };
 
+    useEffect(() => {
+        if (showMyTickets) {
+            setFilteredTickets(tickets1.filter(ticket => ticket.technician_id === userId));
+        } else {
+            setFilteredTickets(tickets1);
+        }
+    }, [tickets1, showMyTickets, userId]);
+
+    const handleCheckboxChange = (e) => {
+        const checked = e.target.checked;
+        setShowMyTickets(checked);
+
+        if (checked) {
+            setFilteredTickets(tickets1.filter(ticket => ticket.technician_id === userId));
+        } else {
+            setFilteredTickets(tickets1);
+        }
+    };
+
+    const handleFilterInput = (e) => {
+        const filterValue = e.target.value.toLowerCase();
+        document.querySelectorAll(".chat-item").forEach((item) => {
+            const ticketId = item.querySelector(".tickets-descriptions div:nth-child(2)").textContent.toLowerCase();
+            const ticketContact = item.querySelector(".tickets-descriptions div:nth-child(1)").textContent.toLowerCase();
+            if (ticketId.includes(filterValue) || ticketContact.includes(filterValue)) {
+                item.style.display = "block";
+            } else {
+                item.style.display = "none";
+            }
+        });
+    };
+
+    const parseTags = (tags) => {
+        if (Array.isArray(tags)) return tags;
+        if (typeof tags === "string") {
+            if (tags.startsWith("{") && tags.endsWith("}")) {
+                const content = tags.slice(1, -1).trim();
+                return content ? content.split(",").map(tag => tag.trim()) : [];
+            }
+            try {
+                return JSON.parse(tags);
+            } catch (error) {
+                console.error("Ошибка разбора JSON:", error, tags);
+                return [];
+            }
+        }
+        return [];
+    };
+
     return (
         <div className="chat-container">
             <div className="users-container">
                 <h3>Chat List</h3>
-                <div className='filter-container-chat'>
+                <div className="filter-container-chat">
                     <input
                         type="text"
                         placeholder="Id or name"
-                        onInput={(e) => {
-                            const filterValue = e.target.value.toLowerCase();
-                            document.querySelectorAll(".chat-item").forEach((item) => {
-                                const ticketId = item.querySelector(".tickets-descriptions div:nth-child(2)").textContent.toLowerCase();
-                                const ticketContact = item.querySelector(".tickets-descriptions div:nth-child(1)").textContent.toLowerCase();
-                                if (ticketId.includes(filterValue) || ticketContact.includes(filterValue)) {
-                                    item.style.display = "block"; // Показываем элемент, если он соответствует фильтру
-                                } else {
-                                    item.style.display = "none"; // Скрываем элемент, если он не соответствует фильтру
-                                }
-                            });
-                        }}
+                        onInput={handleFilterInput}
                         className="ticket-filter-input"
                     />
                     <label>
                         <input
                             type="checkbox"
                             id="myTicketsCheckbox"
-                            onChange={(e) => {
-                                const showMyTickets = e.target.checked;
-                                const filtered = showMyTickets
-                                    ? tickets1.filter(ticket => ticket.technician_id === userId)
-                                    : tickets1;
-                                updateTickets(filtered);
-                            }}
+                            onChange={handleCheckboxChange}
+                            checked={showMyTickets}
                         />
                         My tickets
                     </label>
@@ -1141,8 +1175,8 @@ const ChatComponent = ({ }) => {
                     {Array.isArray(filteredTickets) && filteredTickets.length > 0 ? (
                         filteredTickets
                             .sort((a, b) => {
-                                const clientMessagesA = messages1.filter((msg) => msg.client_id === a.client_id);
-                                const clientMessagesB = messages1.filter((msg) => msg.client_id === b.client_id);
+                                const clientMessagesA = messages1.filter(msg => msg.client_id === a.client_id);
+                                const clientMessagesB = messages1.filter(msg => msg.client_id === b.client_id);
 
                                 const lastMessageA = clientMessagesA.length
                                     ? clientMessagesA.reduce((latest, current) =>
@@ -1158,11 +1192,11 @@ const ChatComponent = ({ }) => {
 
                                 return new Date(lastMessageB.time_sent) - new Date(lastMessageA.time_sent);
                             })
-                            .map((ticket) => {
-                                const clientMessages = messages1.filter((msg) => msg.client_id === ticket.client_id);
+                            .map(ticket => {
+                                const clientMessages = messages1.filter(msg => msg.client_id === ticket.client_id);
 
                                 const unreadCounts = clientMessages.filter(
-                                    (msg) =>
+                                    msg =>
                                         (!msg.seen_by || !msg.seen_by.includes(String(userId))) &&
                                         msg.sender_id !== Number(userId)
                                 ).length;
@@ -1171,45 +1205,21 @@ const ChatComponent = ({ }) => {
                                     ? clientMessages.reduce((latest, current) =>
                                         new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
                                     )
-                                    : { message: '', time_sent: null };
+                                    : { message: "", time_sent: null };
 
                                 const formattedTime = lastMessage.time_sent
-                                    ? new Date(lastMessage.time_sent).toLocaleTimeString('ru-RU', {
-                                        hour: '2-digit',
-                                        minute: '2-digit',
+                                    ? new Date(lastMessage.time_sent).toLocaleTimeString("ru-RU", {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
                                     })
                                     : null;
-
-                                const parseTags = (tags) => {
-                                    if (Array.isArray(tags)) {
-                                        return tags;
-                                    }
-                                    if (typeof tags === 'string') {
-                                        // Проверяем, начинается ли строка с '{' и заканчивается на '}'
-                                        if (tags.startsWith('{') && tags.endsWith('}')) {
-                                            const content = tags.slice(1, -1).trim(); // Убираем фигурные скобки и пробелы
-                                            if (content === '') {
-                                                return []; // Если содержимое пустое, возвращаем пустой массив
-                                            }
-                                            return content.split(',').map(tag => tag.trim()); // Разделяем по запятым и удаляем лишние пробелы
-                                        }
-
-                                        try {
-                                            return JSON.parse(tags); // Пробуем парсить строку как JSON
-                                        } catch (error) {
-                                            console.error('Ошибка разбора JSON:', error, tags);
-                                            return [];
-                                        }
-                                    }
-                                    return [];
-                                };
 
                                 const tags = parseTags(ticket.tags);
 
                                 return (
                                     <div
                                         key={ticket.id}
-                                        className={`chat-item ${ticket.id === selectedTicketId ? 'active' : ''}`}
+                                        className={`chat-item ${ticket.id === selectedTicketId ? "active" : ""}`}
                                         onClick={() => handleTicketClick(ticket.id)}
                                     >
                                         <div className="foto-description">
@@ -1224,13 +1234,13 @@ const ChatComponent = ({ }) => {
                                                             <span
                                                                 key={index}
                                                                 style={{
-                                                                    display: 'inline-block',
-                                                                    backgroundColor: '#007bff',
-                                                                    color: '#fff',
-                                                                    padding: '5px 10px',
-                                                                    borderRadius: '20px',
-                                                                    marginRight: '5px',
-                                                                    fontSize: '12px',
+                                                                    display: "inline-block",
+                                                                    backgroundColor: "#007bff",
+                                                                    color: "#fff",
+                                                                    padding: "5px 10px",
+                                                                    borderRadius: "20px",
+                                                                    marginRight: "5px",
+                                                                    fontSize: "12px",
                                                                 }}
                                                             >
                                                                 {tag}
@@ -1245,8 +1255,8 @@ const ChatComponent = ({ }) => {
                                         <div className="container-time-tasks-chat">
                                             <div className="info-message">
                                                 <div className="last-message-container">
-                                                    <div className="last-message-ticket">{lastMessage.message || 'No messages'}</div>
-                                                    <div>{formattedTime || '—'}</div>
+                                                    <div className="last-message-ticket">{lastMessage.message || "No messages"}</div>
+                                                    <div>{formattedTime || "—"}</div>
                                                     {unreadCounts > 0 && (
                                                         <div className="unread-count">{unreadCounts}</div>
                                                     )}
