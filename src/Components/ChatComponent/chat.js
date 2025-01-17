@@ -1111,7 +1111,7 @@ const ChatComponent = ({ }) => {
                                 const ticketId = item.querySelector(".tickets-descriptions div:nth-child(2)").textContent.toLowerCase();
                                 const ticketContact = item.querySelector(".tickets-descriptions div:nth-child(1)").textContent.toLowerCase();
                                 if (ticketId.includes(filterValue) || ticketContact.includes(filterValue)) {
-                                    item.style.display = "flex";
+                                    item.style.display = "none";
                                 } else {
                                     item.style.display = "none";
                                 }
