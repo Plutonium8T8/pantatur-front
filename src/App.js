@@ -69,7 +69,7 @@ function App() {
         success: '✅ ',
         error: '✖️ ',
         warning: '⚠️ ',
-        info: 'ℹ️ ',
+        info: '',
       }}
       autoHideDuration={null}
       maxSnack={10}

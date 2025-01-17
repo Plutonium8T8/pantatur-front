@@ -234,7 +234,7 @@ const Leads = (selectedTicketId) => {
                             if (message.data.sender_id !== userId) {
                                 const messageText = truncateText(message.data.text, 50); // Исправлено с message.data.text
                                 enqueueSnackbar(
-                                    `Новое сообщение от клиента ${message.data.client_id}: ${messageText}`,
+                                    `💬 Mesaj nou ${message.data.client_id}: ${messageText}`,
                                     { variant: 'info' }
                                 );
                             }
@@ -251,7 +251,7 @@ const Leads = (selectedTicketId) => {
 
                         case 'task':
                             // Показ уведомления о новой задаче
-                            enqueueSnackbar(`Новая задача: ${message.data.title}`, { variant: 'warning' });
+                            enqueueSnackbar(`Task nou: ${message.data.title}`, { variant: 'warning' });
                             break;
 
                         case 'ticket': {
@@ -268,7 +268,7 @@ const Leads = (selectedTicketId) => {
 
                                 // Показываем уведомление
                                 enqueueSnackbar(
-                                    `Новый тикет: ${message.data.client_id || 'Без названия'}`, // Если title отсутствует, выводим "Без названия"
+                                    `Ticket nou: ${message.data.client_id || 'Fara denumire'}`, // Если title отсутствует, выводим "Без названия"
                                     { variant: 'warning' }
 
                                 );
@@ -436,7 +436,7 @@ const Leads = (selectedTicketId) => {
                         borderRadius: '4px',
                     }}
                 >
-                    <button onClick={() => handleEditTicket(contextMenu.ticket)}>Редактировать</button>
+                    <button onClick={() => handleEditTicket(contextMenu.ticket)}>Editeaza</button>
                 </div>
             )}
             {currentTicket && (

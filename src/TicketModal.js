@@ -141,7 +141,7 @@ const TicketModal = ({ ticket, onClose }) => {
           <Workflow ticket={editedTicket} onChange={handleInputChange} />
         </div>
         <div>
-          <strong>Выбранные теги:</strong>
+          <strong>Tag-uri alese:</strong>
           <div
             style={{
               padding: '10px',

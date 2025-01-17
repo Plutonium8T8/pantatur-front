@@ -1492,7 +1492,7 @@ const ChatComponent = ({ }) => {
                                             onChange={handleWorkflowChange}
                                         />
                                         {isLoading ? (
-                                            <p>Загрузка...</p>
+                                            <p>Loading...</p>
                                         ) : (
                                             <TechnicianSelect
                                                 selectedTechnicianId={selectedTechnicianId}

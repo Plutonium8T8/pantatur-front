@@ -87,7 +87,7 @@ const TagInput = ({ initialTags = [], onChange }) => {
                 onChange={handleInputChange}
                 onFocus={handleFocus} // Показываем список тегов при фокусе
                 onBlur={handleBlur} // Скрываем список при потере фокуса
-                placeholder="Введите тэг..."
+                placeholder="Introduce tag..."
                 className="tag-input"
             />
             {showSuggestions && filteredSuggestions.length > 0 && (
@@ -105,7 +105,7 @@ const TagInput = ({ initialTags = [], onChange }) => {
             )}
             <div className="tag-buttons-container">
                 <button onClick={handleSaveTag} className="save-tag-button">
-                    Сохранить тэг
+                    Salveaza tag
                 </button>
                 <button
                     onClick={() => {
@@ -113,7 +113,7 @@ const TagInput = ({ initialTags = [], onChange }) => {
                     }}
                     className="add-tag-button"
                 >
-                    Добавить тэг
+                    Adauga tag
                 </button>
             </div>
         </div>
