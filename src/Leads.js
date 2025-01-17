@@ -355,8 +355,8 @@ const Leads = (selectedTicketId) => {
                                             .filter(ticket => ticket.workflow === workflow)
                                             .filter(ticket =>
                                             (ticket.contact?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                                ticket.transport?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                                ticket.country?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                                ticket.id?.toString().includes(searchTerm) ||
+                                                parseTags(ticket.tags).some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase())) ||
                                                 searchTerm.trim() === '')
                                             )
                                             .map(ticket => {
