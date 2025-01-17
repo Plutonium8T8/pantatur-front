@@ -11,7 +11,7 @@ const Notification = ({ selectedTicketId }) => {
   const truncateText = (text, maxLength = 100) => {
     if (!text || typeof text !== 'string') {
       console.warn('truncateText: Invalid input', text);
-      return 'Сообщение отсутствует';
+      return '<Mesaj inexistent>';
     }
     return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
   };
@@ -38,7 +38,7 @@ const Notification = ({ selectedTicketId }) => {
             case 'notification':
               // Показ уведомления
               const notificationText = truncateText(
-                message.data.description || 'Уведомление с пустым текстом!',
+                message.data.description || 'Notificare fara text!',
                 100
               );
               enqueueSnackbar(notificationText, { variant: 'info' });
@@ -46,7 +46,7 @@ const Notification = ({ selectedTicketId }) => {
 
             case 'task':
               // Показ уведомления о новой задаче
-              enqueueSnackbar(`Новая задача: ${message.data.title}`, { variant: 'warning' });
+              enqueueSnackbar(`Ticket nou: ${message.data.title}`, { variant: 'warning' });
               break;
 
             case 'ticket': {
@@ -81,7 +81,7 @@ const Notification = ({ selectedTicketId }) => {
               break;
 
             default:
-              console.warn('Неизвестный тип сообщения:', message.type);
+              console.warn('Undifined message type:', message.type);
           }
         } catch (error) {
           console.error('Ошибка при разборе сообщения WebSocket:', error);

@@ -1111,9 +1111,9 @@ const ChatComponent = ({ }) => {
                                 const ticketId = item.querySelector(".tickets-descriptions div:nth-child(2)").textContent.toLowerCase();
                                 const ticketContact = item.querySelector(".tickets-descriptions div:nth-child(1)").textContent.toLowerCase();
                                 if (ticketId.includes(filterValue) || ticketContact.includes(filterValue)) {
-                                    item.style.display = "flex";
+                                    item.style.display = "block"; // Показываем элемент, если он соответствует фильтру
                                 } else {
-                                    item.style.display = "none";
+                                    item.style.display = "none"; // Скрываем элемент, если он не соответствует фильтру
                                 }
                             });
                         }}
@@ -1286,6 +1286,9 @@ const ChatComponent = ({ }) => {
                                                 onError={(e) => {
                                                     e.target.src = "https://via.placeholder.com/300?text=Ошибка+загрузки";
                                                 }}
+                                                onClick={() => {
+                                                    window.open(msg.message, "_blank");
+                                                }}
                                             />
                                         );
                                     case "video":
@@ -1298,11 +1301,12 @@ const ChatComponent = ({ }) => {
                                     case "audio":
                                         return (
                                             <audio controls className="audio-preview">
-                                                <source src={msg.message} type="audio/mpeg" />
+                                                <source src={msg.message} type="audio/ogg" />
                                                 Ваш браузер не поддерживает воспроизведение аудио.
                                             </audio>
                                         );
                                     case "file":
+                                        const fileName = msg.message.split("/").pop(); // Извлекаем название файла из URL
                                         return (
                                             <a
                                                 href={msg.message}
@@ -1310,7 +1314,7 @@ const ChatComponent = ({ }) => {
                                                 rel="noopener noreferrer"
                                                 className="file-link"
                                             >
-                                                Открыть файл
+                                                Открыть файл: {fileName}
                                             </a>
                                         );
                                     default:
@@ -1412,7 +1416,7 @@ const ChatComponent = ({ }) => {
                         />
                         <input
                             type="file"
-                            accept="image/*,audio/mp3,video/mp4,application/pdf"
+                            accept="image/*,audio/mp3,video/mp4,application/pdf,audio/ogg"
                             onChange={handleFileSelect}
                             style={{ display: "none" }}
                             id="file-input"
@@ -1488,7 +1492,7 @@ const ChatComponent = ({ }) => {
                                             onChange={handleWorkflowChange}
                                         />
                                         {isLoading ? (
-                                            <p>Загрузка...</p>
+                                            <p>Loading...</p>
                                         ) : (
                                             <TechnicianSelect
                                                 selectedTechnicianId={selectedTechnicianId}
@@ -1699,7 +1703,7 @@ const ChatComponent = ({ }) => {
                     {activeTab === 'personalData' && (
                         <div className="personal-data-content">
                             <h3>Personal Data</h3>
-                            <form onSubmit={handlePersonalDataSubmit}>
+                            <form onSubmit={handlePersonalDataSubmit} className='personal-data-container'>
                                 <Input
                                     label="Name"
                                     type="text"

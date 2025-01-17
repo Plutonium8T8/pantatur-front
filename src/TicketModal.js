@@ -97,7 +97,7 @@ const TicketModal = ({ ticket, onClose }) => {
   const handleSave = async () => {
     const ticketData = {
       ...editedTicket,
-      client_id: userId,
+      client_id: editedTicket.client_id || userId, // Устанавливаем client_id равным userId, если он отсутствует
       technician_id: userId,
     };
 
@@ -141,7 +141,7 @@ const TicketModal = ({ ticket, onClose }) => {
           <Workflow ticket={editedTicket} onChange={handleInputChange} />
         </div>
         <div>
-          <strong>Выбранные теги:</strong>
+          <strong>Tag-uri alese:</strong>
           <div
             style={{
               padding: '10px',

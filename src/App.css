@@ -14,6 +14,7 @@
   overflow-y: scroll;
   padding-top: 10px;
 }
+
 .spinner-overlay {
   position: fixed;
   top: 0;
@@ -550,14 +551,20 @@ button {
   gap: 20px;
   margin-bottom: 10px;
 }
+
 .time-task {
-  background-color:lightblue;
+  background-color: lightblue;
   padding: 5px;
   border-radius: 8px;
 }
+
 .tags-container {
   display: flex;
   flex-direction: column;
   gap: 10px;
   padding-bottom: 20px;
+}
+
+.go1888806478.notistack-MuiContent.notistack-MuiContent-info.go167266335.go1930647212 {
+  max-width: 250px;
 }
