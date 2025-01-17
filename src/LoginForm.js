@@ -14,7 +14,25 @@ const LoginForm = ({ onLoginSuccess }) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const validateForm = () => {
+    if (!form.email || !/\S+@\S+\.\S+/.test(form.email)) {
+      setMessage('Invalid email address.');
+      return false;
+    }
+    if (!form.password || form.password.length < 6) {
+      setMessage('Password must be at least 6 characters long.');
+      return false;
+    }
+    if (!isLogin && !form.username) {
+      setMessage('Username is required for registration.');
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async () => {
+    if (!validateForm()) return;
+
     setIsLoading(true);
     const url = isLogin
       ? 'https://pandatur-api.com/api/login'
@@ -30,17 +48,28 @@ const LoginForm = ({ onLoginSuccess }) => {
       });
 
       const responseData = await response.json();
-      setMessage(responseData.message);
 
       if (response.ok) {
+        setMessage(responseData.message || 'Success!');
         if (isLogin) {
           Cookies.set('jwt', responseData.token, { expires: 7, secure: true, sameSite: 'strict' });
           setUserId(responseData.user_id);
           onLoginSuccess();
         }
+      } else {
+        switch (response.status) {
+          case 400:
+            setMessage('Bad request. Please check your input.');
+            break;
+          case 401:
+            setMessage('Unauthorized. Please check your credentials.');
+            break;
+          default:
+            setMessage('An unexpected error occurred.');
+        }
       }
     } catch (error) {
-      setMessage('An error occurred.');
+      setMessage('An error occurred while communicating with the server.');
     } finally {
       setIsLoading(false);
     }
@@ -48,6 +77,8 @@ const LoginForm = ({ onLoginSuccess }) => {
 
   const handleSwitch = () => {
     setIsLogin(!isLogin);
+    setForm({ ...form, username: '' });
+    setMessage('');
   };
 
   return (
@@ -56,13 +87,16 @@ const LoginForm = ({ onLoginSuccess }) => {
         <div className="login-form">
           <h2>{isLogin ? 'Login' : 'Register'}</h2>
 
-          <input
-            name="username"
-            value={form.username}
-            onChange={handleInputChange}
-            placeholder="Username"
-            className={`input-field-login ${isLogin ? 'hidden' : ''}`}
-          />
+          {!isLogin && (
+            <input
+              name="username"
+              value={form.username}
+              onChange={handleInputChange}
+              placeholder="Username"
+              className="input-field-login"
+              disabled={isLoading}
+            />
+          )}
 
           <input
             type="email"
@@ -70,7 +104,8 @@ const LoginForm = ({ onLoginSuccess }) => {
             value={form.email}
             onChange={handleInputChange}
             placeholder="Email"
-            className={`input-field-login ${isLogin ? 'slide' : ''}`}
+            className="input-field-login"
+            disabled={isLoading}
           />
 
           <input
@@ -79,7 +114,8 @@ const LoginForm = ({ onLoginSuccess }) => {
             value={form.password}
             onChange={handleInputChange}
             placeholder="Password"
-            className={`input-field-login ${isLogin ? 'slide' : ''}`}
+            className="input-field-login"
+            disabled={isLoading}
           />
 
           <div className="button-container">
@@ -87,11 +123,7 @@ const LoginForm = ({ onLoginSuccess }) => {
               {isLoading ? 'Loading...' : isLogin ? 'Login' : 'Register'}
             </button>
 
-            <button
-              onClick={handleSwitch}
-              className="switch-button"
-              disabled={isLoading}
-            >
+            <button onClick={handleSwitch} className="switch-button" disabled={isLoading}>
               Switch to {isLogin ? 'Register' : 'Login'}
             </button>
           </div>
