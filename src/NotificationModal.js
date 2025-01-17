@@ -69,6 +69,29 @@ const NotificationModal = ({ isOpen, onClose }) => {
         }
     };
 
+    const handleClearAllNotifications = async () => {
+        try {
+            const token = Cookies.get("jwt");
+            const response = await fetch("https://pandatur-api.com/notification/client", {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    client_id: userId,
+                }),
+            });
+            if (response.ok) {
+                setNotifications([]); // Clear the notifications from state
+            } else {
+                console.error(`Ошибка удаления уведомлений: ${response.status}`);
+            }
+        } catch (error) {
+            console.error("Ошибка удаления уведомлений:", error.message);
+        }
+    };    
+
     // Обновление статуса уведомления на "Seen" (PATCH)
     const handleMarkAsSeen = async (id) => {
         try {
@@ -131,9 +154,19 @@ const NotificationModal = ({ isOpen, onClose }) => {
                             required
                         ></textarea>
                     </div>
-                    <button className="submit-button" type="submit">
-                        Add Notification
-                    </button>
+                    <div className="button-container">
+                        <button className="submit-button">
+                            Add Notification
+                        </button>
+                        <button
+                            className="clear-button"
+                            type="button"
+                            onClick={handleClearAllNotifications}
+                        >
+                            Clear All
+                        </button>
+                    </div>
+
                 </form>
 
                 <ul className="notification-list">
@@ -147,21 +180,25 @@ const NotificationModal = ({ isOpen, onClose }) => {
                                     }`}
                             >
                                 <div className="notification-content">
-                                    <p className="description">{notification.description}</p>
-                                    <p className="time">
-                                        {new Date(notification.scheduled_time).toLocaleString()}
-                                    </p>
-                                    <p className={`status ${notification.status ? "seen" : "unseen"}`}>
-                                        {notification.status ? "Seen" : "Unseen"}
-                                    </p>
-                                    {!notification.status && (
-                                        <button
-                                            className="mark-as-seen"
-                                            onClick={() => handleMarkAsSeen(notification.id)}
-                                        >
-                                            Mark as Seen
-                                        </button>
-                                    )}
+                                    <div>
+                                        <p className="description">{notification.description}</p>
+                                        <p className="time">
+                                            {new Date(notification.scheduled_time).toLocaleString()}
+                                        </p>
+                                    </div>
+                                    <div className="action-group">
+                                        <p className={`status ${notification.status ? "seen" : "unseen"}`}>
+                                            {notification.status ? "Seen" : "Unseen"}
+                                        </p>
+                                        {!notification.status && (
+                                            <button
+                                                className="mark-as-seen"
+                                                onClick={() => handleMarkAsSeen(notification.id)}
+                                            >
+                                                Mark as Seen
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                             </li>
                         ))

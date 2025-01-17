@@ -242,6 +242,11 @@
     content: "x";
 }
 
+.input-grup label
+{
+    font: 20px;
+}
+
 .example-custom-input {
     display: flex;
     color: black;

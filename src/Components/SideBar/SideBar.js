@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import './SideBar.css';
 import { useUnreadMessages } from '../../Unread';
-import { FaUser, FaChartBar, FaTasks, FaComments, FaBell, FaClipboardList, FaSignOutAlt } from 'react-icons/fa';
+import { FaUser, FaChartBar, FaTasks, FaComments, FaBell, FaClipboardList, FaSignOutAlt, FaUserSecret } from 'react-icons/fa';
 
 const CustomSidebar = ({ onOpenNotifications, onOpenTasks }) => {
     const location = useLocation();
@@ -74,6 +74,13 @@ const CustomSidebar = ({ onOpenNotifications, onOpenTasks }) => {
                     >
                         <FaTasks size={24} />
                         <span>Tasks</span>
+                    </div>
+                    <div
+                        className={`menu-item ${isActive('admin-panel') ? 'active' : ''}`}
+                        onClick={() => handleNavigate('admin-panel')}
+                    >
+                        <FaUserSecret size={24} />
+                        <span>Admin</span>
                     </div>
                 </div>
             </div>
