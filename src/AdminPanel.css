@@ -23,7 +23,7 @@ h1 {
 }
 
 .week-navigation button {
-    background-color: #007bff;
+    background-color: #0f824c;
     color: white;
     border: none;
     padding: 10px 15px;
@@ -34,7 +34,7 @@ h1 {
 }
 
 .week-navigation button:hover {
-    background-color: #0056b3;
+    background-color: #0f824c;
 }
 
 .schedule-table {
