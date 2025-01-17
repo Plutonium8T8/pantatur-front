@@ -84,11 +84,6 @@ function App() {
           </button>
         </>
       )}
-      ContentProps={{
-        style: {
-          minWidth: '300px', // Устанавливаем ширину
-        },
-      }}
     >
       <SocketProvider isLoggedIn={isLoggedIn}>
         <UserProvider>
