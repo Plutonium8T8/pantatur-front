@@ -1703,7 +1703,7 @@ const ChatComponent = ({ }) => {
                     {activeTab === 'personalData' && (
                         <div className="personal-data-content">
                             <h3>Personal Data</h3>
-                            <form onSubmit={handlePersonalDataSubmit}>
+                            <form onSubmit={handlePersonalDataSubmit} className='personal-data-container'>
                                 <Input
                                     label="Name"
                                     type="text"
