@@ -129,8 +129,8 @@ const LoginForm = ({ onLoginSuccess }) => {
           </div>
 
           {isLoading && (
-            <div className="spinner-overlay">
-              <div className="spinner"></div>
+            <div className="spinner-overlay-login">
+              <div className="spinner-login"></div>
             </div>
           )}
           {message && <p className="message">{message}</p>}

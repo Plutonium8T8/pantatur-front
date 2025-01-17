@@ -17,25 +17,28 @@
 
 .spinner-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.2);
+  /* Чтобы спиннер был на экране независимо от родителя */
+  bottom: 20px;
+  /* Отступ от нижнего края */
+  right: 20px;
+  /* Отступ от правого края */
+  background-color: transparent;
+  /* Убираем затемнение фона */
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  border-radius: 0;
+  z-index: 9999;
+  /* Убедитесь, что спиннер находится выше остальных элементов */
 }
 
 .spinner {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #3498db;
+  width: 46px;
+  height: 46px;
+  border: 4.6px solid rgba(255, 255, 255, 0.1);
+  border-top: 4.6px solid #0f824c;
   border-radius: 50%;
-  width: 24px;
-  height: 24px;
   animation: spin 1s linear infinite;
-  margin: 1rem auto;
 }
 
 @keyframes spin {

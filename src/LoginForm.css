@@ -119,7 +119,7 @@
     color: #0f824c;
 }
 
-.spinner-overlay {
+.spinner-overlay-login {
     position: absolute;
     top: 0;
     left: 0;
@@ -132,7 +132,7 @@
     border-radius: 0;
 }
 
-.spinner {
+.spinner-login {
     width: 46px;
     height: 46px;
     border: 4.6px solid rgba(255, 255, 255, 0.1);
