@@ -97,7 +97,7 @@ const TicketModal = ({ ticket, onClose }) => {
   const handleSave = async () => {
     const ticketData = {
       ...editedTicket,
-      client_id: userId,
+      client_id: editedTicket.client_id || userId, // Устанавливаем client_id равным userId, если он отсутствует
       technician_id: userId,
     };
 

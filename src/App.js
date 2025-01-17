@@ -86,7 +86,7 @@ function App() {
       )}
       ContentProps={{
         style: {
-          width: '300px', // Устанавливаем ширину
+          minWidth: '300px', // Устанавливаем ширину
         },
       }}
     >
