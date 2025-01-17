@@ -1111,9 +1111,9 @@ const ChatComponent = ({ }) => {
                                 const ticketId = item.querySelector(".tickets-descriptions div:nth-child(2)").textContent.toLowerCase();
                                 const ticketContact = item.querySelector(".tickets-descriptions div:nth-child(1)").textContent.toLowerCase();
                                 if (ticketId.includes(filterValue) || ticketContact.includes(filterValue)) {
-                                    item.style.display = "none";
+                                    item.style.display = "block"; // Показываем элемент, если он соответствует фильтру
                                 } else {
-                                    item.style.display = "none";
+                                    item.style.display = "none"; // Скрываем элемент, если он не соответствует фильтру
                                 }
                             });
                         }}
