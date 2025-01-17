@@ -1317,7 +1317,7 @@ const ChatComponent = ({ }) => {
                                                 rel="noopener noreferrer"
                                                 className="file-link"
                                             >
-                                                Открыть файл: {fileName}
+                                                Открыть файл
                                             </a>
                                         );
                                     default:

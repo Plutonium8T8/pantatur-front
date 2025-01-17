@@ -234,7 +234,7 @@ const Leads = (selectedTicketId) => {
                             if (message.data.sender_id !== userId) {
                                 const messageText = truncateText(message.data.text, 50); // Исправлено с message.data.text
                                 enqueueSnackbar(
-                                    `💬 Mesaj nou de la ${message.data.client_id}: ${messageText}`,
+                                    `💬 Mesaj nou de la ${message.data.client_id}: ${messageText} `,
                                     { variant: 'info' }
                                 );
                             }
