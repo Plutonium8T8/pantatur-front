@@ -3,7 +3,7 @@ import { useSnackbar } from 'notistack';
 import { useSocket } from './SocketContext'; // Используйте свой контекст для WebSocket
 import { useUser } from './UserContext';
 
-const Notification = ({ selectedTicketId }) => {
+const Notification = ({ selectClientId }) => {
   const socket = useSocket(); // Получаем сокет из контекста
   const { enqueueSnackbar } = useSnackbar(); // Хук для отображения уведомлений
   const { userId } = useUser();
@@ -102,7 +102,7 @@ const Notification = ({ selectedTicketId }) => {
         socket.onclose = null;
       };
     }
-  }, [socket, selectedTicketId, enqueueSnackbar, userId]);
+  }, [socket, selectClientId, enqueueSnackbar, userId]);
 
   return null; // Компонент не отображает UI, только управляет уведомлениями
 };

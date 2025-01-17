@@ -105,7 +105,7 @@ function App() {
                       <Route path="/" element={<Navigate to="/leads" />} />
                       <Route path="/leads" element={<Leads />} />
                       <Route
-                        path="/chat/:ticketId?"
+                        path="/chat/:clientId?"
                         element={<ChatComponent />}
                       />
                       <Route path="/admin-panel" element={<AdminPanel />} />

@@ -43,7 +43,7 @@ export const updateTicket = async (updateData) => {
     }
 };
 
-const Leads = (selectedTicketId) => {
+const Leads = (selectClientId) => {
     const [tickets, setTickets] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [IsModalOpen, setIsModalOpen] = useState(false);
@@ -159,7 +159,7 @@ const Leads = (selectedTicketId) => {
 
     const handleTicketClick = (ticket) => {
         setCurrentTicket(ticket);
-        navigate(`/chat/${ticket.id}`)
+        navigate(`/chat/${ticket.client_id}`)
     };
 
     const closeModal = () => {
@@ -309,7 +309,7 @@ const Leads = (selectedTicketId) => {
                 socket.onclose = null;
             };
         }
-    }, [socket, selectedTicketId, enqueueSnackbar, userId]);
+    }, [socket, selectClientId, enqueueSnackbar, userId]);
 
     return (
         <div className='dashboard-container'>
