@@ -29,10 +29,10 @@ ChartJS.register(
 
 const Dashboard = () => {
     const barData = {
-        labels: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май'],
+        labels: ['Ianuarie', 'Februarie', 'Martie', 'Aprilie', 'Mai'],
         datasets: [
             {
-                label: 'Лиды',
+                label: 'Lead-uri',
                 data: [12, 19, 15, 22, 25],
                 backgroundColor: 'rgba(75, 192, 192, 0.5)',
                 borderColor: 'rgba(75, 192, 192, 1)',
@@ -42,10 +42,10 @@ const Dashboard = () => {
     };
 
     const lineData = {
-        labels: ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница'],
+        labels: ['Luni', 'Marți', 'Miercuri', 'Joi', 'Vineri'],
         datasets: [
             {
-                label: 'Активные лиды',
+                label: 'Lead-uri active',
                 data: [5, 10, 8, 12, 7],
                 fill: false,
                 borderColor: 'rgba(54, 162, 235, 1)',
@@ -55,7 +55,7 @@ const Dashboard = () => {
     };
 
     const pieData = {
-        labels: ['В работе', 'Закрыто успешно', 'Закрыто неуспешно'],
+        labels: ['În lucru', 'Încheiate cu succes', 'Încheiate fără succes'],
         datasets: [
             {
                 data: [30, 50, 20],
@@ -75,10 +75,10 @@ const Dashboard = () => {
     };
 
     const radarData = {
-        labels: ['Продажи', 'Маркетинг', 'Поддержка', 'Разработка', 'Управление'],
+        labels: ['Vânzări', 'Marketing', 'Suport', 'Dezvoltare', 'Management'],
         datasets: [
             {
-                label: 'Оценка по отделам',
+                label: 'Evaluare pe departamente',
                 data: [8, 7, 9, 6, 7],
                 backgroundColor: 'rgba(255, 159, 64, 0.5)',
                 borderColor: 'rgba(255, 159, 64, 1)',
@@ -106,7 +106,7 @@ const Dashboard = () => {
     };
 
     const polarData = {
-        labels: ['Россия', 'США', 'Европа', 'Азия'],
+        labels: ['Rusia', 'SUA', 'Europa', 'Asia'],
         datasets: [
             {
                 data: [25, 35, 20, 20],
@@ -128,30 +128,30 @@ const Dashboard = () => {
 
     return (
         <div className='container-dashboard'>
-            <h2>Дашборд</h2>
+            <h2>Tabloul de bord</h2>
             <div className='container-graf'>
                 <div style={{ marginBottom: '30px' }}>
-                    <h3>Лиды по месяцам</h3>
+                    <h3>Lead-uri pe luni</h3>
                     <Bar data={barData} />
                 </div>
                 <div style={{ marginBottom: '30px' }}>
-                    <h3>Активные лиды за неделю</h3>
+                    <h3>Lead-uri active pe săptămână</h3>
                     <Line data={lineData} />
                 </div>
                 <div style={{ marginBottom: '30px' }}>
-                    <h3>Статусы лидов</h3>
+                    <h3>Statusurile lead-urilor</h3>
                     <Pie data={pieData} />
                 </div>
                 <div style={{ marginBottom: '30px' }}>
-                    <h3>Оценка по отделам</h3>
+                    <h3>Evaluare pe departamente</h3>
                     <Radar data={radarData} />
                 </div>
                 <div style={{ marginBottom: '30px' }}>
-                    <h3>Распределение устройств</h3>
+                    <h3>Distribuția dispozitivelor</h3>
                     <Doughnut data={doughnutData} />
                 </div>
                 <div style={{ marginBottom: '30px' }}>
-                    <h3>Распределение продаж по регионам</h3>
+                    <h3>Distribuția vânzărilor pe regiuni</h3>
                     <PolarArea data={polarData} />
                 </div>
             </div>
