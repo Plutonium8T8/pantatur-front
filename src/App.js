@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Leads from './Leads';
-import LoginForm from './LoginForm';
+import LoginForm from './Components/LoginComponent/LoginForm';
 import { UserProvider } from './UserContext';
 import CustomSidebar from './Components/SideBar/SideBar';
 import ChatComponent from './Components/ChatComponent/chat';
@@ -14,7 +14,7 @@ import Notification from './Notification';
 import { UnreadMessagesProvider } from './Unread';
 import NotificationModal from './Components/SlideInComponent/NotificationModal'; // Модальное окно уведомлений
 import TaskComponent from './Components/SlideInComponent/TaskComponent'; // Используем TaskModal вместо TaskComponent
-import AdminPanel from './AdminPanel';
+import AdminPanel from './Components/AdminPanelComponent/AdminPanel';
 import Dashboard from './Dashboard';
 
 function App() {

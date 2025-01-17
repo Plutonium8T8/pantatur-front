@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './LoginForm.css';
 import Cookies from 'js-cookie';
-import { useUser } from './UserContext';
+import { useUser } from '../../UserContext';
 
 const LoginForm = ({ onLoginSuccess }) => {
   const [form, setForm] = useState({ email: '', username: '', password: '' });
