@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import Priority from '../PriorityComponent/PriorityComponent';
-import Workflow from '../WorkFlowComponent/WorkflowComponent';
-import TagInput from '../TagsComponent/TagComponent';
+import React, { useEffect, useRef, useState } from 'react';
+import Priority from '../../PriorityComponent/PriorityComponent';
+import Workflow from '../../WorkFlowComponent/WorkflowComponent';
+import TagInput from '../../TagsComponent/TagComponent';
 import Cookies from 'js-cookie';
-import { updateTicket } from '../LeadsComponent/Leads';
-import { useUser } from '../../UserContext';
+import { updateTicket } from '../LeadsComponent';
+import { useUser } from '../../../UserContext';
 
 const deleteTicketById = async (id) => {
   try {
@@ -18,19 +18,19 @@ const deleteTicketById = async (id) => {
     });
 
     if (!response.ok) {
-      throw new Error('Ошибка при удалении данных');
+      throw new Error('Error deleting ticket');
     }
 
     return await response.json();
   } catch (error) {
-    console.error('Ошибка:', error);
+    console.error('Error:', error);
   }
 };
 
 const saveTicketToServer = async (ticketData) => {
   try {
     const token = Cookies.get('jwt');
-    console.log('Отправляемые данные:', ticketData);
+    console.log('Sending data:', ticketData);
     const response = await fetch('https://pandatur-api.com/tickets', {
       method: 'POST',
       headers: {
@@ -41,30 +41,31 @@ const saveTicketToServer = async (ticketData) => {
     });
 
     if (!response.ok) {
-      throw new Error(`Ошибка: ${response.statusText}`);
+      throw new Error(`Error: ${response.statusText}`);
     }
 
     return await response.json();
   } catch (error) {
-    console.error('Ошибка при сохранении тикета на сервер:', error);
+    console.error('Error saving ticket:', error);
   }
 };
 
 const TicketModal = ({ ticket, onClose }) => {
+  const modalRef = useRef(null); // Ref for modal content
+
   const parseTags = (tags) => {
     if (Array.isArray(tags)) {
-      return tags; // Если это уже массив, возвращаем как есть
+      return tags;
     }
     if (typeof tags === 'string' && tags.startsWith('{') && tags.endsWith('}')) {
-      // Убираем фигурные скобки и разделяем строку по запятым
       return tags.slice(1, -1).split(',').map(tag => tag.trim());
     }
-    return []; // Если формат неизвестен, возвращаем пустой массив
+    return [];
   };
 
   const [editedTicket, setEditedTicket] = useState({
     ...ticket,
-    tags: parseTags(ticket?.tags), // Используем безопасный парсер
+    tags: parseTags(ticket?.tags),
   });
 
   const { userId } = useUser();
@@ -97,35 +98,48 @@ const TicketModal = ({ ticket, onClose }) => {
   const handleSave = async () => {
     const ticketData = {
       ...editedTicket,
-      client_id: editedTicket.client_id || userId, // Устанавливаем client_id равным userId, если он отсутствует
+      client_id: editedTicket.client_id || userId,
       technician_id: userId,
     };
-
-    console.log('Данные для отправки:', ticketData);
 
     try {
       const res = editedTicket?.id == null
         ? await saveTicketToServer(ticketData)
         : await updateTicket(ticketData);
-      console.log('Ответ сервера:', res);
+      console.log('Server response:', res);
       onClose();
     } catch (e) {
-      console.error('Ошибка при сохранении тикета:', e);
+      console.error('Error saving ticket:', e);
     }
   };
+
+  // Close modal when clicking outside
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        onClose();
+      }
+    };
+
+    document.addEventListener('mousedown', handleOutsideClick);
+
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, [onClose]);
 
   if (!editedTicket) return null;
 
   return (
     <div className="modal-overlay">
-      <div className="modal-content">
+      <div className="modal-content" ref={modalRef}>
         <div className="id-ticket">ID Ticket #{editedTicket.id}</div>
         <label>
           Nume Client
           <input
             type="text"
             name="contact"
-            value={editedTicket.contact || ""}
+            value={editedTicket.contact || ''}
             onChange={handleInputChange}
             placeholder="Nume Client"
             style={{
@@ -171,7 +185,7 @@ const TicketModal = ({ ticket, onClose }) => {
                 </span>
               ))
             ) : (
-              <em>Теги не выбраны</em>
+              <em>No tags selected</em>
             )}
           </div>
         </div>

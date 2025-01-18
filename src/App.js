@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Leads from './Components/LeadsComponent/Leads';
+import { Leads } from './Components/LeadsComponent/LeadsComponent';
 import LoginForm from './Components/LoginComponent/LoginForm';
 import { UserProvider } from './UserContext';
 import CustomSidebar from './Components/SideBar/SideBar';
