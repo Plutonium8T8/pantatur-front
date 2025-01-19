@@ -6,10 +6,10 @@ import Cookies from 'js-cookie';
 import { updateTicket } from './Leads';
 import { useUser } from './UserContext';
 
-const deleteTicketById = async (id) => {
+const deleteTicketById = async (client_id) => {
   try {
     const token = Cookies.get('jwt');
-    const response = await fetch(`https://pandatur-api.com/tickets/${id}`, {
+    const response = await fetch(`https://pandatur-api.com/tickets/${client_id}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -84,9 +84,9 @@ const TicketModal = ({ ticket, onClose }) => {
     }));
   };
 
-  const onDelete = async (ticketId) => {
+  const onDelete = async (clientId) => {
     try {
-      const res = await deleteTicketById(ticketId);
+      const res = await deleteTicketById(clientId);
       console.log(res);
       onClose();
     } catch (e) {
@@ -104,7 +104,7 @@ const TicketModal = ({ ticket, onClose }) => {
     console.log('Данные для отправки:', ticketData);
 
     try {
-      const res = editedTicket?.id == null
+      const res = editedTicket?.client_id == null
         ? await saveTicketToServer(ticketData)
         : await updateTicket(ticketData);
       console.log('Ответ сервера:', res);
@@ -119,7 +119,7 @@ const TicketModal = ({ ticket, onClose }) => {
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <div className="id-ticket">ID Ticket #{editedTicket.id}</div>
+        <div className="id-ticket">ID Ticket #{editedTicket.client_id}</div>
         <label>
           Nume Client
           <input
@@ -183,12 +183,12 @@ const TicketModal = ({ ticket, onClose }) => {
         </div>
         <div className="container-button-save-delete-close">
           {ticket?.id && (
-            <button onClick={() => onDelete(ticket.id)} className="button-delete">
+            <button onClick={() => onDelete(ticket.client_id)} className="button-delete">
               Delete
             </button>
           )}
           <button onClick={handleSave} className="button-save">
-            {!editedTicket.id ? 'Create' : 'Save'}
+            {!editedTicket.client_id ? 'Create' : 'Save'}
           </button>
           <button onClick={onClose} className="button-close">
             Close

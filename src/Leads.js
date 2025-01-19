@@ -90,18 +90,18 @@ const Leads = (selectClientId) => {
         }
     };
 
-    const updateTicketWorkflow = (ticketId, newWorkflow) => {
+    const updateTicketWorkflow = (clientId, newWorkflow) => {
 
         setTickets((prevTickets) => {
-            console.log("+", ticketId, newWorkflow);
+            console.log("+", clientId, newWorkflow);
             const updatedTickets = prevTickets.map((ticket) =>
-                ticket.id == ticketId ? { ...ticket, workflow: newWorkflow } : ticket
+                ticket.client_id == clientId ? { ...ticket, workflow: newWorkflow } : ticket
             ); console.log(updatedTickets);
 
             return updatedTickets;
         });
 
-        updateTicket({ id: ticketId, workflow: newWorkflow })
+        updateTicket({ id: clientId, workflow: newWorkflow })
             .then(res => {
                 console.log(res);
             })
@@ -146,15 +146,15 @@ const Leads = (selectClientId) => {
         "Contract incheiat": { backgroundColor: '#87f2c0', borderColor: '#2E7D32' },
     };
 
-    const handleDragStart = (e, ticketId) => {
-        e.dataTransfer.setData('ticketId', ticketId);
+    const handleDragStart = (e, clientId) => {
+        e.dataTransfer.setData('clientId', clientId);
     };
 
     const handleDrop = (e, workflow) => {
         e.preventDefault();
-        const ticketId = e.dataTransfer.getData('ticketId');
-        // console.log(ticketId, workflow);
-        updateTicketWorkflow(ticketId, workflow);
+        const clientId = e.dataTransfer.getData('clientId');
+        // console.log(clientId, workflow);
+        updateTicketWorkflow(clientId, workflow);
     };
 
     const handleTicketClick = (ticket) => {
@@ -355,7 +355,7 @@ const Leads = (selectClientId) => {
                                             .filter(ticket => ticket.workflow === workflow)
                                             .filter(ticket =>
                                             (ticket.contact?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                                ticket.id?.toString().includes(searchTerm) ||
+                                                ticket.client_id?.toString().includes(searchTerm) ||
                                                 parseTags(ticket.tags).some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase())) ||
                                                 searchTerm.trim() === '')
                                             )
@@ -365,11 +365,11 @@ const Leads = (selectClientId) => {
 
                                                 return (
                                                     <div
-                                                        key={ticket.id}
+                                                        key={ticket.client_id}
                                                         className="ticket"
                                                         onContextMenu={(e) => handleContextMenu(e, ticket)} // Контекстное меню
                                                         draggable
-                                                        onDragStart={(e) => handleDragStart(e, ticket.id)}
+                                                        onDragStart={(e) => handleDragStart(e, ticket.client_id)}
                                                         onClick={() => handleTicketClick(ticket)}
                                                     >
                                                         <div className='foto-description'>
