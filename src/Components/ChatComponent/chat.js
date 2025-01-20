@@ -1726,27 +1726,27 @@ const ChatComponent = ({ }) => {
                             <h3>Personal Data</h3>
                             <form onSubmit={handlePersonalDataSubmit} className='personal-data-container'>
                                 <Input
-                                    label="Name"
+                                    label="Nume"
                                     type="text"
                                     value={extraInfo[selectClientId]?.name || ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectClientId, 'name', e.target.value)
                                     }
                                     className="input-field"
-                                    placeholder="Enter name"
+                                    placeholder="Introduceți numele"
                                 />
                                 <Input
-                                    label="Surname"
+                                    label="Prenume"
                                     type="text"
                                     value={extraInfo[selectClientId]?.surname || ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectClientId, 'surname', e.target.value)
                                     }
                                     className="input-field"
-                                    placeholder="Enter surname"
+                                    placeholder="Introduceți prenumele"
                                 />
                                 <Input
-                                    label="Date of Birth"
+                                    label="Data nașterii"
                                     type="date"
                                     value={extraInfo[selectClientId]?.date_of_birth || ""}
                                     onChange={(e) =>
@@ -1755,27 +1755,27 @@ const ChatComponent = ({ }) => {
                                     className="input-field"
                                 />
                                 <Input
-                                    label="ID Card Series"
+                                    label="Seria buletinului"
                                     type="text"
                                     value={extraInfo[selectClientId]?.id_card_series || ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectClientId, 'id_card_series', e.target.value)
                                     }
                                     className="input-field"
-                                    placeholder="Enter ID card series"
+                                    placeholder="Introduceți seria buletinului"
                                 />
                                 <Input
-                                    label="ID Card Number"
+                                    label="Numărul buletinului"
                                     type="text"
                                     value={extraInfo[selectClientId]?.id_card_number || ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectClientId, 'id_card_number', e.target.value)
                                     }
                                     className="input-field"
-                                    placeholder="Enter ID card number"
+                                    placeholder="Introduceți numărul buletinului"
                                 />
                                 <Input
-                                    label="ID Card Release Date"
+                                    label="Data eliberării buletinului"
                                     type="date"
                                     value={extraInfo[selectClientId]?.id_card_release || ""}
                                     onChange={(e) =>
@@ -1791,30 +1791,30 @@ const ChatComponent = ({ }) => {
                                         handleSelectChange(selectClientId, 'idnp', e.target.value)
                                     }
                                     className="input-field"
-                                    placeholder="Enter IDNP"
+                                    placeholder="Introduceți IDNP"
                                 />
                                 <Input
-                                    label="Address"
+                                    label="Adresă"
                                     type="text"
                                     value={extraInfo[selectClientId]?.address || ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectClientId, 'address', e.target.value)
                                     }
                                     className="input-field"
-                                    placeholder="Enter address"
+                                    placeholder="Introduceți adresa"
                                 />
                                 <Input
-                                    label="Phone"
+                                    label="Telefon"
                                     type="tel"
                                     value={extraInfo[selectClientId]?.phone || ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectClientId, 'phone', e.target.value)
                                     }
                                     className="input-field"
-                                    placeholder="Enter phone number"
+                                    placeholder="Introduceți numărul de telefon"
                                 />
                                 <button type="submit" className="save-button">
-                                    Save Personal Data
+                                    Salvați datele personale
                                 </button>
                             </form>
                         </div>
