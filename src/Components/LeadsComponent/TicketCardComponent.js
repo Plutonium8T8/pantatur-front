@@ -57,7 +57,7 @@ const TicketCard = ({ ticket, onContextMenu, onEditTicket }) => {
                     </div>
                     <div className="ticket-column">
                         <div className="ticket-date">
-                            16.01.2025
+                            {ticket.last_interaction_date}
                         </div>
                         <div className="ticket-time">
                             13:00

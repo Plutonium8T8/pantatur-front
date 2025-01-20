@@ -43,11 +43,10 @@
 
 
 .ticket-body {
-    padding: 12px;
+    padding: 4px 8px;
     display: flex;
     gap: 16px;
     justify-content: space-between;
-    /* Ensures proper spacing between columns */
 }
 
 .ticket-column {
