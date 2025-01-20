@@ -87,9 +87,9 @@ const TicketModal = ({ ticket, onClose }) => {
     }));
   };
 
-  const onDelete = async (ticketId) => {
+  const onDelete = async (clientId) => {
     try {
-      const res = await deleteTicketById(ticketId);
+      const res = await deleteTicketById(clientId);
       console.log(res);
       onClose();
     } catch (e) {
@@ -105,7 +105,7 @@ const TicketModal = ({ ticket, onClose }) => {
     };
 
     try {
-      const res = editedTicket?.id == null
+      const res = editedTicket?.client_id == null
         ? await saveTicketToServer(ticketData)
         : await updateTicket(ticketData);
       console.log('Server response:', res);
@@ -135,7 +135,7 @@ const TicketModal = ({ ticket, onClose }) => {
   return (
     <div className="modal-overlay">
       <div className="modal-content" ref={modalRef}>
-        <div className="id-ticket">ID Ticket #{editedTicket.id}</div>
+        <div className="id-ticket">ID Ticket #{editedTicket.client_id}</div>
         <label>
           Nume Client
           <input
@@ -198,13 +198,13 @@ const TicketModal = ({ ticket, onClose }) => {
           />
         </div>
         <div className="container-button-save-delete-close">
-          {ticket?.id && (
-            <button onClick={() => onDelete(ticket.id)} className="button-delete">
+          {ticket?.client_id && (
+            <button onClick={() => onDelete(ticket.client_id)} className="button-delete">
               Delete
             </button>
           )}
           <button onClick={handleSave} className="button-save">
-            {!editedTicket.id ? 'Create' : 'Save'}
+            {!editedTicket.client_id ? 'Create' : 'Save'}
           </button>
           <button onClick={onClose} className="button-close">
             Close
