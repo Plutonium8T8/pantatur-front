@@ -246,7 +246,7 @@ const Leads = (selectClientId) => {
                                                     }}
                                                     style={{
                                                         background: 'none',
-                                                        color: '#007bff',
+                                                        color: 'green',
                                                         cursor: 'pointer',
                                                         marginRight: '10px',
                                                     }}
@@ -257,7 +257,7 @@ const Leads = (selectClientId) => {
                                                     onClick={() => closeSnackbar(snackbarId)}
                                                     style={{
                                                         background: 'none',
-                                                        color: '#dc3545',
+                                                        color: 'black',
                                                         cursor: 'pointer',
                                                     }}
                                                 >
