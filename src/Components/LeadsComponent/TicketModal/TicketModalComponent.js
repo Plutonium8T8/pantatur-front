@@ -57,10 +57,14 @@ const TicketModal = ({ ticket, onClose }) => {
 
   const parseTags = (tags) => {
     if (Array.isArray(tags)) {
-      return tags;
+      return tags.filter((tag) => tag.trim() !== ''); // Исключаем пустые теги
     }
     if (typeof tags === 'string' && tags.startsWith('{') && tags.endsWith('}')) {
-      return tags.slice(1, -1).split(',').map(tag => tag.trim());
+      return tags
+        .slice(1, -1)
+        .split(',')
+        .map((tag) => tag.trim())
+        .filter((tag) => tag !== ''); // Исключаем пустые теги
     }
     return [];
   };
