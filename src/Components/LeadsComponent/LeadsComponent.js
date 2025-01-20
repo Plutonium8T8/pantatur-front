@@ -284,6 +284,7 @@ const Leads = (selectClientId) => {
           ticket={currentTicket}
           onClose={closeModal}
           onSave={fetchTickets} // Reload tickets after saving
+          onDelete={fetchTickets} // Для обновления после удаления
         />
       )}
     </div>
