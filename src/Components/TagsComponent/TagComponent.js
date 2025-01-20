@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import './TagInput.css';
 
 const TagInput = ({ initialTags = [], onChange }) => {
-    const [tags, setTags] = useState(Array.isArray(initialTags) ? initialTags : []);
+    const [tags, setTags] = useState(
+        Array.isArray(initialTags) ? initialTags.filter((tag) => tag.trim() !== '') : []
+    );
     const [inputValue, setInputValue] = useState('');
     const [suggestions, setSuggestions] = useState([]);
 
@@ -45,7 +47,7 @@ const TagInput = ({ initialTags = [], onChange }) => {
     };
 
     const handleAddTag = (tag) => {
-        if (!tags.includes(tag)) {
+        if (tag.trim() && !tags.includes(tag)) {
             const updatedTags = [...tags, tag];
             setTags(updatedTags);
             onChange(updatedTags); // Передаем обновленный массив тегов
@@ -55,7 +57,7 @@ const TagInput = ({ initialTags = [], onChange }) => {
     };
 
     const handleSaveTag = () => {
-        if (inputValue && !suggestions.includes(inputValue)) {
+        if (inputValue.trim() && !suggestions.includes(inputValue)) {
             const updatedSuggestions = [...suggestions, inputValue];
             setSuggestions(updatedSuggestions); // Сохраняем новый тег в список доступных
         }
@@ -76,7 +78,7 @@ const TagInput = ({ initialTags = [], onChange }) => {
                     <div key={tag} className="tag-item">
                         {tag}
                         <button className="remove-tag-button" onClick={() => handleRemoveTag(tag)}>
-                            ×
+                            x
                         </button>
                     </div>
                 ))}
