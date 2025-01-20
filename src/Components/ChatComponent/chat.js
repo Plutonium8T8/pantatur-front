@@ -1762,7 +1762,7 @@ const ChatComponent = ({ }) => {
                                         handleSelectChange(selectClientId, 'id_card_series', e.target.value)
                                     }
                                     className="input-field"
-                                    placeholder="Introduceți seria buletinului"
+                                    placeholder="Seria buletinului"
                                 />
                                 <Input
                                     label="Numărul buletinului"
@@ -1772,7 +1772,7 @@ const ChatComponent = ({ }) => {
                                         handleSelectChange(selectClientId, 'id_card_number', e.target.value)
                                     }
                                     className="input-field"
-                                    placeholder="Introduceți numărul buletinului"
+                                    placeholder="Numărul buletinului"
                                 />
                                 <Input
                                     label="Data eliberării buletinului"
@@ -1791,7 +1791,7 @@ const ChatComponent = ({ }) => {
                                         handleSelectChange(selectClientId, 'idnp', e.target.value)
                                     }
                                     className="input-field"
-                                    placeholder="Introduceți IDNP"
+                                    placeholder="IDNP"
                                 />
                                 <Input
                                     label="Adresă"
@@ -1801,7 +1801,7 @@ const ChatComponent = ({ }) => {
                                         handleSelectChange(selectClientId, 'address', e.target.value)
                                     }
                                     className="input-field"
-                                    placeholder="Introduceți adresa"
+                                    placeholder="Adresa"
                                 />
                                 <Input
                                     label="Telefon"
@@ -1811,7 +1811,7 @@ const ChatComponent = ({ }) => {
                                         handleSelectChange(selectClientId, 'phone', e.target.value)
                                     }
                                     className="input-field"
-                                    placeholder="Introduceți numărul de telefon"
+                                    placeholder="Numărul de telefon"
                                 />
                                 <button type="submit" className="save-button">
                                     Salvați datele personale
