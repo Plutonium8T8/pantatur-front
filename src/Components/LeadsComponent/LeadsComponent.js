@@ -236,7 +236,7 @@ const Leads = (selectClientId) => {
           socket.onclose = null;
         };
       }
-    }, [socket, tickets, enqueueSnackbar, userId, navigate]);ƒ
+    }, [socket, tickets, enqueueSnackbar, userId, navigate]);
 
     return (
         <div className="dashboard-container">
