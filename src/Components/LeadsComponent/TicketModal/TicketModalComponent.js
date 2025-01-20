@@ -52,7 +52,7 @@ const saveTicketToServer = async (ticketData) => {
   }
 };
 
-const TicketModal = ({ ticket, onClose,onSave }) => {
+const TicketModal = ({ ticket, onClose, onSave }) => {
   const modalRef = useRef(null); // Ref for modal content
 
   const parseTags = (tags) => {
@@ -94,10 +94,15 @@ const TicketModal = ({ ticket, onClose,onSave }) => {
   const onDelete = async (clientId) => {
     try {
       const res = await deleteTicketById(clientId);
-      console.log(res);
-      onClose();
+      console.log('Ticket deleted:', res);
+
+      if (onDelete) {
+        onDelete(); // Выполняем fetchTickets после удаления
+      }
+
+      onClose(); // Закрываем модальное окно
     } catch (e) {
-      console.error(e);
+      console.error('Error deleting ticket:', e);
     }
   };
 
