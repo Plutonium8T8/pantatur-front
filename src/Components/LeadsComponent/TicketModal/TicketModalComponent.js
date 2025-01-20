@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useMemo } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Priority from '../../PriorityComponent/PriorityComponent';
 import Workflow from '../../WorkFlowComponent/WorkflowComponent';
 import TagInput from '../../TagsComponent/TagComponent';
@@ -9,7 +9,7 @@ import { useUser } from '../../../UserContext';
 const deleteTicketById = async (id) => {
   try {
     const token = Cookies.get('jwt');
-    const response = await fetch(`https://pandatur-api.com/tickets/${Number(id)}`, {
+    const response = await fetch(`https://pandatur-api.com/tickets/${id}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -52,28 +52,22 @@ const saveTicketToServer = async (ticketData) => {
   }
 };
 
-const TicketModal = ({ ticket, onClose, onSave }) => {
-  const modalRef = useRef(null);
+const TicketModal = ({ ticket, onClose }) => {
+  const modalRef = useRef(null); // Ref for modal content
 
   const parseTags = (tags) => {
     if (Array.isArray(tags)) {
-      return tags.filter((tag) => tag.trim() !== '');
+      return tags;
     }
     if (typeof tags === 'string' && tags.startsWith('{') && tags.endsWith('}')) {
-      return tags
-        .slice(1, -1)
-        .split(',')
-        .map((tag) => tag.trim())
-        .filter((tag) => tag !== '');
+      return tags.slice(1, -1).split(',').map(tag => tag.trim());
     }
     return [];
   };
 
-  const parsedTags = useMemo(() => parseTags(ticket?.tags), [ticket?.tags]);
-
   const [editedTicket, setEditedTicket] = useState({
     ...ticket,
-    tags: parsedTags,
+    tags: parseTags(ticket?.tags),
   });
 
   const { userId } = useUser();
@@ -96,15 +90,10 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
   const onDelete = async (clientId) => {
     try {
       const res = await deleteTicketById(clientId);
-      console.log('Ticket deleted:', res);
-
-      if (onSave) {
-        onSave();
-      }
-
+      console.log(res);
       onClose();
     } catch (e) {
-      console.error('Error deleting ticket:', e);
+      console.error(e);
     }
   };
 
@@ -119,23 +108,14 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
       const res = editedTicket?.client_id == null
         ? await saveTicketToServer(ticketData)
         : await updateTicket(ticketData);
-
-      if (!res) {
-        throw new Error('Failed to save ticket');
-      }
-
       console.log('Server response:', res);
-
-      if (onSave) {
-        onSave();
-      }
-
       onClose();
     } catch (e) {
       console.error('Error saving ticket:', e);
     }
   };
 
+  // Close modal when clicking outside
   useEffect(() => {
     const handleOutsideClick = (event) => {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
@@ -219,7 +199,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
         </div>
         <div className="container-button-save-delete-close">
           {ticket?.client_id && (
-            <button onClick={() => onDelete(Number(ticket.client_id))} className="button-delete">
+            <button onClick={() => onDelete(ticket.client_id)} className="button-delete">
               Delete
             </button>
           )}

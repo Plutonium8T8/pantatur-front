@@ -1,11 +1,6 @@
 import React, { forwardRef } from 'react';
 
 const ContextMenu = forwardRef(({ contextMenu, onEditTicket, onClose }, ref) => {
-  const handleEditClick = () => {
-    onEditTicket(contextMenu.ticket); // Вызываем редактирование тикета
-    onClose(); // Закрываем меню
-  };
-
   return (
     <div
       ref={ref}
@@ -20,7 +15,7 @@ const ContextMenu = forwardRef(({ contextMenu, onEditTicket, onClose }, ref) => 
         borderRadius: '4px',
       }}
     >
-      <button onClick={handleEditClick}>Edit Ticket</button>
+      <button onClick={() => onEditTicket(contextMenu.ticket)}>Edit Ticket</button>
       <button onClick={onClose}>Close</button>
     </div>
   );
