@@ -54,7 +54,7 @@ const Leads = (selectClientId) => {
     const contextMenuRef = useRef(null); // Ссылка на контекстное меню
     const socket = useSocket(); // Получаем сокет из контекста
     const { userId } = useUser();
-    const { enqueueSnackbar } = useSnackbar(); // Хук для отображения уведомлений
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     const fetchTickets = async () => {
         setIsLoading(true);
@@ -232,10 +232,40 @@ const Leads = (selectClientId) => {
                         case 'message':
                             // Обрабатываем новое сообщение
                             if (message.data.sender_id !== userId) {
-                                const messageText = truncateText(message.data.text, 50); // Исправлено с message.data.text
+                                const messageText = truncateText(message.data.text, 50); // Ограничение длины текста
                                 enqueueSnackbar(
-                                    `💬 Mesaj nou de la ${message.data.client_id}: ${messageText} `,
-                                    { variant: 'info' }
+                                    `💬 Mesaj nou de la ${message.data.client_id}: ${messageText}`,
+                                    {
+                                        variant: 'info',
+                                        action: (snackbarId) => (
+                                            <>
+                                                <button
+                                                    onClick={() => {
+                                                        navigate(`/chat/${message.data.client_id}`);
+                                                        closeSnackbar(snackbarId); // Закрываем уведомление при переходе
+                                                    }}
+                                                    style={{
+                                                        background: 'none',
+                                                        color: '#007bff',
+                                                        cursor: 'pointer',
+                                                        marginRight: '10px',
+                                                    }}
+                                                >
+                                                    Перейти к чату
+                                                </button>
+                                                <button
+                                                    onClick={() => closeSnackbar(snackbarId)}
+                                                    style={{
+                                                        background: 'none',
+                                                        color: '#dc3545',
+                                                        cursor: 'pointer',
+                                                    }}
+                                                >
+                                                    Закрыть
+                                                </button>
+                                            </>
+                                        ),
+                                    }
                                 );
                             }
                             break;

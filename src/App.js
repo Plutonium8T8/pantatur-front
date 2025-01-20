@@ -78,7 +78,12 @@ function App() {
         <>
           <button
             onClick={() => closeSnackbar(snackbarId)}
-            style={{ background: 'none', color: '#0f824c', cursor: 'pointer', marginRight: '10px' }}
+            style={{
+              background: 'none',
+              color: '#0f824c',
+              cursor: 'pointer',
+              marginRight: '10px',
+            }}
           >
             Закрыть ✖️
           </button>
