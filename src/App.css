@@ -95,7 +95,7 @@
 }
 
 .ticket-input:focus {
-  border-color: #007bff;
+  border-color: #0f824c;
   outline: none;
 }
 
@@ -107,14 +107,14 @@
   border: none;
   border-radius: 4px;
   color: white;
-  background-color: #007bff;
+  background-color: #0f824c;
   font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
 .ticket-button:hover {
-  background-color: #0056b3;
+  background-color: #14a15f;
 }
 
 .open-modal-button {
@@ -137,7 +137,7 @@
 }
 
 .search-input:focus {
-  border-color: #007bff;
+  border-color: #0f824c;
   outline: none;
 }
 
@@ -222,7 +222,7 @@
 }
 
 .button-add-ticket {
-  background-color: #32CD32;
+  background-color: #0f824c;
   border-radius: 4px;
   color: white;
   font-size: 1rem;

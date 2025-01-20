@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Cookies from "js-cookie";
-import { useUser } from "./UserContext";
+import { useUser } from "../../UserContext";
 import "./SlideInModal.css";
 
 const TaskModal = ({ isOpen, onClose }) => {

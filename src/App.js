@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Leads from './Leads';
-import LoginForm from './LoginForm';
+import Leads from './Components/LeadsComponent/Leads';
+import LoginForm from './Components/LoginComponent/LoginForm';
 import { UserProvider } from './UserContext';
 import CustomSidebar from './Components/SideBar/SideBar';
 import ChatComponent from './Components/ChatComponent/chat';
@@ -12,10 +12,10 @@ import UserProfile from './Components/UserPage/UserPage';
 import { SnackbarProvider, closeSnackbar } from 'notistack';
 import Notification from './Notification';
 import { UnreadMessagesProvider } from './Unread';
-import NotificationModal from './NotificationModal'; // Модальное окно уведомлений
-import TaskComponent from './TaskComponent'; // Используем TaskModal вместо TaskComponent
-import AdminPanel from './AdminPanel';
-import Dashboard from './Dashboard';
+import NotificationModal from './Components/SlideInComponent/NotificationModal'; // Модальное окно уведомлений
+import TaskComponent from './Components/SlideInComponent/TaskComponent'; // Используем TaskModal вместо TaskComponent
+import AdminPanel from './Components/AdminPanelComponent/AdminPanel';
+import Dashboard from './Components/DashboardComponent/Dashboard';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -78,7 +78,7 @@ function App() {
         <>
           <button
             onClick={() => closeSnackbar(snackbarId)}
-            style={{ background: 'none', color: 'blue', cursor: 'pointer', marginRight: '10px' }}
+            style={{ background: 'none', color: '#0f824c', cursor: 'pointer', marginRight: '10px' }}
           >
             Закрыть ✖️
           </button>

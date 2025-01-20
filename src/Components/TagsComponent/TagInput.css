@@ -20,7 +20,7 @@
     display: flex;
     align-items: center;
     padding: 2px 3px;
-    background-color: #007bff;
+    background-color: #0f824c;
     color: white;
     border-radius: 8px;
     font-size: 14px;
@@ -50,9 +50,9 @@
 }
 
 .tag-input:focus {
-    border-color: #007bff;
+    border-color: #0f824c;
     outline: none;
-    box-shadow: 0 0 4px rgba(0, 123, 255, 0.5);
+    box-shadow: 0 0 4px rgba(38, 255, 0, 0.5);
 }
 
 .suggestions-list {
@@ -112,10 +112,10 @@
 }
 
 .add-tag-button {
-    background-color: #007bff;
+    background-color: #0f824c;
     color: white;
 }
 
 .add-tag-button:hover {
-    background-color: #0056b3;
+    background-color: #14a561;
 }
