@@ -87,20 +87,23 @@ const Leads = (selectClientId) => {
     fetchTickets();
   }, []);
 
-  const updateTicketWorkflow = (clientId, newWorkflow) => {
-    // Update state locally for immediate UI feedback
+  const updateTicketWorkflow = async (clientId, newWorkflow) => {
+    // Обновляем состояние локально для быстрого отображения изменений
     setTickets((prevTickets) =>
       prevTickets.map((ticket) =>
         ticket.client_id === clientId ? { ...ticket, workflow: newWorkflow } : ticket
       )
     );
 
-    // Update the server
-    updateTicket({ id: clientId, workflow: newWorkflow }).catch((error) =>
-      console.error('Error updating ticket workflow:', error)
-    );
-
-    fetchTickets();
+    try {
+      // Выполняем PATCH-запрос
+      await updateTicket({ id: clientId, workflow: newWorkflow });
+    } catch (error) {
+      console.error('Error updating ticket workflow:', error);
+    } finally {
+      // В любом случае обновляем список тикетов
+      fetchTickets();
+    }
   };
 
   const openCreateTicketModal = () => {
