@@ -13,10 +13,25 @@
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
-.tickets-descriptions {
+.ticket .tickets-descriptions {
     display: flex;
-    flex-direction: column;
+    position: relative; /* Ensures the ribbon is positioned relative to this container */
+    flex-direction: row; /* Aligns the ribbon and body horizontally */
+    padding-left: 10px; /* Adds padding to prevent overlap with the ribbon */
+    border-radius: 8px; /* Optional: Rounded corners */
 }
+
+
+.ticket-ribbon {
+    background-color: yellow; /* Set the ribbon color */
+    width: 20px; /* Fixed width for the ribbon */
+    height: 100%; /* Stretch from top to bottom */
+    position: absolute; /* Ensure it stays positioned correctly */
+    top: 0; /* Start at the top */
+    left: 0; /* Align to the left side */
+    z-index: 1; /* Ensure it appears above other content */
+}
+
 
 .ticket-body {
     padding: 12px;

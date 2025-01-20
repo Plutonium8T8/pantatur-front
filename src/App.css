@@ -202,14 +202,6 @@
   max-height: 98vh;
 }
 
-.tickets-descriptions {
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-  gap: 5px;
-  padding-left: 5px;
-}
-
 .button-add-ticket {
   background-color: #0f824c;
   border-radius: 4px;

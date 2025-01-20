@@ -13,7 +13,7 @@ import TicketModal from './TicketModal/TicketModalComponent';
 import Cookies from 'js-cookie';
 import '../../App.css';
 import '../SnackBarComponent/SnackBarComponent.css'
-import { FaCircleNotch, FaEnvelope, FaTrash, FaXbox } from 'react-icons/fa';
+import { FaEnvelope, FaTrash } from 'react-icons/fa';
 
 export const updateTicket = async (updateData) => {
     try {
@@ -145,7 +145,7 @@ const Leads = (selectClientId) => {
                         case 'message':
                             // Обрабатываем новое сообщение
                             if (message.data.sender_id !== userId) {
-                                const messageText = truncateText(message.data.text, 50); // Ограничение длины текста
+                                const messageText = truncateText(message.data.text, 40); // Ограничение длины текста
                                 enqueueSnackbar(
                                     '',
                                     {
@@ -161,7 +161,6 @@ const Leads = (selectClientId) => {
                                                         <div className='snack-icon'>
                                                             <FaEnvelope />
                                                         </div>
-
 
                                                         <div className='snack-message'>
                                                             {message.data.client_id}: {messageText}

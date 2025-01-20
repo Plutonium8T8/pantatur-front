@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { truncateText, parseTags } from '../utils/stringUtils';
+import { getPriorityColor } from '../utils/ticketUtils';
 import './TicketCardComponent.css';
 
 const TicketCard = ({ ticket, onContextMenu, onEditTicket }) => {
@@ -26,7 +27,9 @@ const TicketCard = ({ ticket, onContextMenu, onEditTicket }) => {
             onDragStart={(e) => handleDragStart(e, ticket.client_id)}
         >
             <div className="tickets-descriptions">
-                <div className="ticket-ribbon" ></div>
+                <div className="ticket-ribbon" style={{ backgroundColor: getPriorityColor(ticket.priority) }}>
+                    
+                </div>
                 <div className="ticket-body">
                     <div className="ticket-column">
                         <div className="ticket-photo">
