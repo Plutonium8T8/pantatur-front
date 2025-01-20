@@ -3,7 +3,7 @@
     display: flex;
     align-items: center; /* Centers items vertically */
     justify-content: space-between; /* Ensures proper spacing between elements */
-    padding: 8px 16px 8px 8px; /* Adds some space around the content */
+    padding: 8px 0px 8px 8px; /* Adds some space around the content */
     width: 100%; /* Full width of the snackbar */
     gap: 8px; /* Adds space between elements */
     box-sizing: border-box; /* Includes padding in width calculation */

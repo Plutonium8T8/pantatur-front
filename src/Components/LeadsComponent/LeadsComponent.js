@@ -147,9 +147,15 @@ const Leads = (selectClientId) => {
                             if (message.data.sender_id !== userId) {
                                 const messageText = truncateText(message.data.text, 40); // Ограничение длины текста
 
-                                console.log(tickets.filter(ticket => ticket.client_id === message.client_id).some(ticket => ticket.technician_id === userId));
+                                console.log(tickets.filter(ticket => ticket.client_id === message.data.client_id).some(ticket => ticket.technician_id === userId));
 
-                                if (tickets.filter(ticket => ticket.client_id === message.client_id).some(ticket => ticket.technician_id === userId)) {
+                                console.log(tickets.filter(ticket => ticket.client_id === message.data.client_id))
+
+                                console.log(message.data.client_id)
+
+                                console.log(message)
+
+                                if (tickets.filter(ticket => ticket.client_id === message.data.client_id).some(ticket => ticket.technician_id === userId)) {
                                     enqueueSnackbar(
                                         '',
                                         {
