@@ -52,7 +52,7 @@ const saveTicketToServer = async (ticketData) => {
   }
 };
 
-const TicketModal = ({ ticket, onClose }) => {
+const TicketModal = ({ ticket, onClose,onSave }) => {
   const modalRef = useRef(null); // Ref for modal content
 
   const parseTags = (tags) => {
@@ -113,6 +113,11 @@ const TicketModal = ({ ticket, onClose }) => {
         ? await saveTicketToServer(ticketData)
         : await updateTicket(ticketData);
       console.log('Server response:', res);
+
+      if (onSave) {
+        onSave(); // Выполняем fetchTickets после сохранения
+      }
+
       onClose();
     } catch (e) {
       console.error('Error saving ticket:', e);
