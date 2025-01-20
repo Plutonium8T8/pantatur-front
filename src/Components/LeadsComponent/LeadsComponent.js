@@ -143,8 +143,11 @@ const Leads = (selectClientId) => {
 
           switch (message.type) {
             case 'message':
-              // Обрабатываем новое сообщение
-              if (message.data.sender_id !== userId) {
+              // Найти тикет по client_id
+              const ticket = tickets.find(t => t.client_id === message.data.client_id);
+
+              // Если тикет найден и technician_id совпадает с userId
+              if (ticket && ticket.technician_id === userId) {
                 const messageText = truncateText(message.data.text, 40); // Ограничение длины текста
                 enqueueSnackbar(
                   '',
@@ -179,6 +182,7 @@ const Leads = (selectClientId) => {
               }
               break;
 
+            // Остальные кейсы остаются без изменений
             case 'notification':
               const notificationText = truncateText(
                 message.data.description || 'Уведомление с пустым текстом!',
@@ -191,7 +195,7 @@ const Leads = (selectClientId) => {
               enqueueSnackbar(`Task nou: ${message.data.title}`, { variant: 'warning' });
               break;
 
-            case 'ticket': {
+            case 'ticket':
               if (message.data && message.data.client_id) {
                 const socketMessageClient = JSON.stringify({
                   type: 'connect',
@@ -200,24 +204,16 @@ const Leads = (selectClientId) => {
 
                 socket.send(socketMessageClient);
                 console.log(`Подключён к комнате клиента с ID: ${message.data.client_id}`);
-
-                // enqueueSnackbar(
-                //   `Ticket nou: ${message.data.client_id || 'Fara denumire'}`,
-                //   { variant: 'warning' }
-
-                // );
                 fetchTickets();
-
               } else {
                 console.warn('Неверное сообщение о тикете:', message);
               }
-              fetchTickets();
               break;
-            }
+
             case 'seen':
-              break;
             case 'pong':
               break;
+
             default:
               console.warn('Неизвестный тип сообщения:', message.type);
           }
@@ -240,7 +236,7 @@ const Leads = (selectClientId) => {
         socket.onclose = null;
       };
     }
-  }, [socket, selectClientId, enqueueSnackbar, userId]);
+  }, [socket, tickets, enqueueSnackbar, userId, navigate]);
 
   return (
     <div className="dashboard-container">
