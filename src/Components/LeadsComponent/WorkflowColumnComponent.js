@@ -3,11 +3,29 @@ import TicketCard from './TicketCardComponent';
 import { workflowStyles } from '../utils/workflowStyles';
 
 const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket, onContextMenu, onUpdateWorkflow }) => {
-    const filteredTickets = tickets.filter(
-        (ticket) =>
-            ticket.workflow === workflow &&
-            (ticket.contact?.toLowerCase().includes(searchTerm.toLowerCase()) || !searchTerm.trim())
-    );
+
+    const parseTags = (tags) => {
+        if (Array.isArray(tags)) {
+            return tags; // Если это массив, возвращаем как есть
+        }
+        if (typeof tags === 'string' && tags.startsWith('{') && tags.endsWith('}')) {
+            const content = tags.slice(1, -1).trim(); // Убираем фигурные скобки и пробелы
+            if (content === '') {
+                return []; // Если содержимое пустое, возвращаем пустой массив
+            }
+            return content.split(',').map(tag => tag.trim()); // Разделяем и обрезаем пробелы
+        }
+        return []; // Если формат неизвестен, возвращаем пустой массив
+    };
+
+    const filteredTickets = tickets
+        .filter((ticket) => ticket.workflow === workflow) // Фильтр по workflow
+        .filter((ticket) =>
+            ticket.contact?.toLowerCase().includes(searchTerm.toLowerCase()) || // Фильтр по contact
+            ticket.client_id?.toString().includes(searchTerm) || // Фильтр по client_id
+            parseTags(ticket.tags).some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase())) || // Фильтр по tags
+            searchTerm.trim() === '' // Если searchTerm пустой, показываем все
+        );
 
     const handleDrop = (e) => {
         e.preventDefault();
