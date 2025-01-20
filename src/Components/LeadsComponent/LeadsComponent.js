@@ -12,6 +12,8 @@ import ContextMenu from './ContextMenuComponent';
 import TicketModal from './TicketModal/TicketModalComponent';
 import Cookies from 'js-cookie';
 import '../../App.css';
+import '../SnackBarComponent/SnackBarComponent.css'
+import { FaCircleNotch, FaEnvelope, FaTrash, FaXbox } from 'react-icons/fa';
 
 export const updateTicket = async (updateData) => {
     try {
@@ -87,7 +89,7 @@ const Leads = (selectClientId) => {
         fetchTickets();
     }, []);
 
-    const updateTicketWorkflow = (clientId, newWorkflow) => {
+    const updateTicketWorkflow = async (clientId, newWorkflow) => {
         // Update state locally for immediate UI feedback
         setTickets((prevTickets) =>
             prevTickets.map((ticket) =>
@@ -96,7 +98,7 @@ const Leads = (selectClientId) => {
         );
 
         // Update the server
-        updateTicket({ id: clientId, workflow: newWorkflow }).catch((error) =>
+        await updateTicket({ id: clientId, workflow: newWorkflow }).catch((error) =>
             console.error('Error updating ticket workflow:', error)
         );
 
@@ -143,37 +145,34 @@ const Leads = (selectClientId) => {
                         case 'message':
                             // Обрабатываем новое сообщение
                             if (message.data.sender_id !== userId) {
-                                const messageText = truncateText(message.data.text, 50); // Ограничение длины текста
+                                const messageText = truncateText(message.data.text, 55); // Ограничение длины текста
                                 enqueueSnackbar(
-                                    `💬 Mesaj nou de la ${message.data.client_id}: ${messageText}`,
+                                    '',
                                     {
                                         variant: 'info',
                                         action: (snackbarId) => (
                                             <>
-                                                <button
-                                                    onClick={() => {
-                                                        navigate(`/chat/${message.data.client_id}`);
-                                                        closeSnackbar(snackbarId); // Закрываем уведомление при переходе
-                                                    }}
-                                                    style={{
-                                                        background: 'none',
-                                                        color: 'green',
-                                                        cursor: 'pointer',
-                                                        marginRight: '10px',
-                                                    }}
-                                                >
-                                                    Перейти к чату
-                                                </button>
-                                                <button
-                                                    onClick={() => closeSnackbar(snackbarId)}
-                                                    style={{
-                                                        background: 'none',
-                                                        color: 'black',
-                                                        cursor: 'pointer',
-                                                    }}
-                                                >
-                                                    Закрыть
-                                                </button>
+                                                <div className='snack-bar-notification'>
+                                                    <div className='snack-object'
+                                                        onClick={() => {
+                                                            navigate(`/chat/${message.data.client_id}`);
+                                                            closeSnackbar(snackbarId); // Закрываем уведомление при переходе
+                                                        }}>
+                                                        <div className='snack-icon'>
+                                                            <FaEnvelope />
+                                                        </div>
+
+
+                                                        <div className='snack-message'>
+                                                            {message.data.client_id}: {messageText}
+                                                        </div>
+                                                    </div>
+                                                    <div className='snack-close'>
+                                                        <button onClick={() => closeSnackbar(snackbarId)}>
+                                                            <FaTrash />
+                                                        </button>
+                                                    </div>
+                                                </div>
                                             </>
                                         ),
                                     }
@@ -182,7 +181,6 @@ const Leads = (selectClientId) => {
                             break;
 
                         case 'notification':
-                            // Показ уведомления
                             const notificationText = truncateText(
                                 message.data.description || 'Уведомление с пустым текстом!',
                                 100
@@ -191,25 +189,21 @@ const Leads = (selectClientId) => {
                             break;
 
                         case 'task':
-                            // Показ уведомления о новой задаче
                             enqueueSnackbar(`Task nou: ${message.data.title}`, { variant: 'warning' });
                             break;
 
                         case 'ticket': {
-                            // Убедимся, что message.data существует и содержит client_id
                             if (message.data && message.data.client_id) {
-                                // Подключение к комнате на основе client_id
                                 const socketMessageClient = JSON.stringify({
                                     type: 'connect',
                                     data: { client_id: [message.data.client_id] },
                                 });
 
-                                socket.send(socketMessageClient); // Отправка сообщения на сервер
+                                socket.send(socketMessageClient);
                                 console.log(`Подключён к комнате клиента с ID: ${message.data.client_id}`);
 
-                                // Показываем уведомление
                                 enqueueSnackbar(
-                                    `Ticket nou: ${message.data.client_id || 'Fara denumire'}`, // Если title отсутствует, выводим "Без названия"
+                                    `Ticket nou: ${message.data.client_id || 'Fara denumire'}`,
                                     { variant: 'warning' }
 
                                 );
@@ -219,15 +213,10 @@ const Leads = (selectClientId) => {
                             fetchTickets();
                             break;
                         }
-
                         case 'seen':
-                            // Обработать событие seen
                             break;
-
                         case 'pong':
-                            // Ответ на ping
                             break;
-
                         default:
                             console.warn('Неизвестный тип сообщения:', message.type);
                     }

@@ -16,6 +16,7 @@ import NotificationModal from './Components/SlideInComponent/NotificationModal';
 import TaskComponent from './Components/SlideInComponent/TaskComponent'; // Используем TaskModal вместо TaskComponent
 import AdminPanel from './Components/AdminPanelComponent/AdminPanel';
 import Dashboard from './Components/DashboardComponent/Dashboard';
+import { FaCircleNotch } from 'react-icons/fa';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -66,22 +67,17 @@ function App() {
   return (
     <SnackbarProvider
       iconVariant={{
-        success: '✅ ',
-        error: '✖️ ',
-        warning: '⚠️ ',
+        success: '',
+        error: '',
+        warning: '',
         info: '',
       }}
-      autoHideDuration={null}
+      autoHideDuration={60000}
       maxSnack={5}
-      anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-      action={(snackbarId) => (
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} 
+      action={() => (
         <>
-          <button
-            onClick={() => closeSnackbar(snackbarId)}
-            style={{ background: 'none', color: '#0f824c', cursor: 'pointer', marginRight: '10px' }}
-          >
-            Закрыть ✖️
-          </button>
+
         </>
       )}
     >
