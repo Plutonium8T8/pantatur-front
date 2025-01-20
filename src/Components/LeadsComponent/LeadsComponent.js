@@ -102,8 +102,8 @@ const Leads = (selectClientId) => {
             console.error('Error updating ticket workflow:', error)
         );
 
-        fetchTickets();
-    };
+    fetchTickets();
+  };
 
     const openCreateTicketModal = () => {
         setCurrentTicket({
