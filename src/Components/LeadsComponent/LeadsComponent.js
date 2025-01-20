@@ -130,6 +130,126 @@ const Leads = () => {
 
   const handleCloseContextMenu = () => setContextMenu(null);
 
+  useEffect(() => {
+          if (socket) {
+              const receiveMessage = (event) => {
+                  try {
+                      const message = JSON.parse(event.data);
+                      console.log('Parsed WebSocket message notifications:', message);
+  
+                      switch (message.type) {
+                          case 'message':
+                              // Обрабатываем новое сообщение
+                              if (message.data.sender_id !== userId) {
+                                  const messageText = truncateText(message.data.text, 50); // Ограничение длины текста
+                                  enqueueSnackbar(
+                                      `💬 Mesaj nou de la ${message.data.client_id}: ${messageText}`,
+                                      {
+                                          variant: 'info',
+                                          action: (snackbarId) => (
+                                              <>
+                                                  <button
+                                                      onClick={() => {
+                                                          navigate(`/chat/${message.data.client_id}`);
+                                                          closeSnackbar(snackbarId); // Закрываем уведомление при переходе
+                                                      }}
+                                                      style={{
+                                                          background: 'none',
+                                                          color: 'green',
+                                                          cursor: 'pointer',
+                                                          marginRight: '10px',
+                                                      }}
+                                                  >
+                                                      Перейти к чату
+                                                  </button>
+                                                  <button
+                                                      onClick={() => closeSnackbar(snackbarId)}
+                                                      style={{
+                                                          background: 'none',
+                                                          color: 'black',
+                                                          cursor: 'pointer',
+                                                      }}
+                                                  >
+                                                      Закрыть
+                                                  </button>
+                                              </>
+                                          ),
+                                      }
+                                  );
+                              }
+                              break;
+  
+                          case 'notification':
+                              // Показ уведомления
+                              const notificationText = truncateText(
+                                  message.data.description || 'Уведомление с пустым текстом!',
+                                  100
+                              );
+                              enqueueSnackbar(notificationText, { variant: 'info' });
+                              break;
+  
+                          case 'task':
+                              // Показ уведомления о новой задаче
+                              enqueueSnackbar(`Task nou: ${message.data.title}`, { variant: 'warning' });
+                              break;
+  
+                          case 'ticket': {
+                              // Убедимся, что message.data существует и содержит client_id
+                              if (message.data && message.data.client_id) {
+                                  // Подключение к комнате на основе client_id
+                                  const socketMessageClient = JSON.stringify({
+                                      type: 'connect',
+                                      data: { client_id: [message.data.client_id] },
+                                  });
+  
+                                  socket.send(socketMessageClient); // Отправка сообщения на сервер
+                                  console.log(`Подключён к комнате клиента с ID: ${message.data.client_id}`);
+  
+                                  // Показываем уведомление
+                                  enqueueSnackbar(
+                                      `Ticket nou: ${message.data.client_id || 'Fara denumire'}`, // Если title отсутствует, выводим "Без названия"
+                                      { variant: 'warning' }
+  
+                                  );
+                              } else {
+                                  console.warn('Неверное сообщение о тикете:', message);
+                              }
+                              fetchTickets();
+                              break;
+                          }
+  
+                          case 'seen':
+                              // Обработать событие seen
+                              break;
+  
+                          case 'pong':
+                              // Ответ на ping
+                              break;
+  
+                          default:
+                              console.warn('Неизвестный тип сообщения:', message.type);
+                      }
+                  } catch (error) {
+                      console.error('Ошибка при разборе сообщения WebSocket:', error);
+                  }
+              };
+  
+              // Устанавливаем обработчики WebSocket
+              socket.onopen = () => console.log('WebSocket подключен');
+              socket.onerror = (error) => console.error('WebSocket ошибка:', error);
+              socket.onclose = () => console.log('WebSocket закрыт');
+              socket.addEventListener('message', receiveMessage);
+  
+              // Очистка обработчиков при размонтировании
+              return () => {
+                  socket.removeEventListener('message', receiveMessage);
+                  socket.onopen = null;
+                  socket.onerror = null;
+                  socket.onclose = null;
+              };
+          }
+      }, [socket, selectClientId, enqueueSnackbar, userId]);
+
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
