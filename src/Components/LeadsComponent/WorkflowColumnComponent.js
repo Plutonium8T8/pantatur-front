@@ -24,7 +24,7 @@ const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket, onContext
             ticket.client_id?.toString().includes(searchTerm) || // Фильтр по client_id
             parseTags(ticket.tags).some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase())) || // Фильтр по tags
             searchTerm.trim() === '' // Если searchTerm пустой, показываем все
-    );
+        );
 
     const handleDrop = (e) => {
         e.preventDefault();

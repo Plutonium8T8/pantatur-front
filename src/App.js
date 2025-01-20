@@ -74,7 +74,7 @@ function App() {
       }}
       autoHideDuration={60000}
       maxSnack={5}
-      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} 
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       action={() => (
         <>
 

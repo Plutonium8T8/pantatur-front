@@ -109,7 +109,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
   };
 
 
-const handleSave = async () => {
+  const handleSave = async () => {
     const ticketData = {
       ...editedTicket,
       client_id: editedTicket.client_id || userId,

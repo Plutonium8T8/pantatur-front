@@ -28,7 +28,7 @@ const TicketCard = ({ ticket, onContextMenu, onEditTicket }) => {
         >
             <div className="tickets-descriptions">
                 <div className="ticket-ribbon" style={{ backgroundColor: getPriorityColor(ticket.priority) }}>
-                    
+
                 </div>
                 <div className="ticket-body">
                     <div className="ticket-column">

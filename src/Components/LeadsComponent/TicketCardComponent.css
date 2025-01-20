@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: column;
     background: #ffffff;
-    border: 1px solid #e0e0e0;
+    /* border: 1px solid #e0e0e0; */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     cursor: pointer;
@@ -14,22 +14,31 @@
 }
 
 .ticket .tickets-descriptions {
-    display: flex;
-    position: relative; /* Ensures the ribbon is positioned relative to this container */
-    flex-direction: row; /* Aligns the ribbon and body horizontally */
-    padding-left: 10px; /* Adds padding to prevent overlap with the ribbon */
-    border-radius: 8px; /* Optional: Rounded corners */
+    /* display: flex; */
+    position: relative;
+    /* Ensures the ribbon is positioned relative to this container */
+    padding-left: 10px;
+    /* Adds padding to prevent overlap with the ribbon */
+    border-radius: 8px;
+    /* Optional: Rounded corners */
 }
 
 
 .ticket-ribbon {
-    background-color: yellow; /* Set the ribbon color */
-    width: 20px; /* Fixed width for the ribbon */
-    height: 100%; /* Stretch from top to bottom */
-    position: absolute; /* Ensure it stays positioned correctly */
-    top: 0; /* Start at the top */
-    left: 0; /* Align to the left side */
-    z-index: 1; /* Ensure it appears above other content */
+    background-color: yellow;
+    /* Set the ribbon color */
+    width: 20px;
+    /* Fixed width for the ribbon */
+    height: 100%;
+    /* Stretch from top to bottom */
+    position: absolute;
+    /* Ensure it stays positioned correctly */
+    top: 0;
+    /* Start at the top */
+    left: 0;
+    /* Align to the left side */
+    z-index: 1;
+    /* Ensure it appears above other content */
 }
 
 
@@ -37,27 +46,34 @@
     padding: 12px;
     display: flex;
     gap: 16px;
-    justify-content: space-between; /* Ensures proper spacing between columns */
+    justify-content: space-between;
+    /* Ensures proper spacing between columns */
 }
 
 .ticket-column {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    flex-grow: 1; /* Ensures columns take up equal space */
-    justify-content: flex-start; /* Align content to the top of the column */
+    flex-grow: 1;
+    /* Ensures columns take up equal space */
+    justify-content: flex-start;
+    /* Align content to the top of the column */
 }
 
 /* First column: Center photo and ID */
 .ticket-column:first-child {
-    align-items: center; /* Center elements horizontally */
-    text-align: center; /* Ensure text aligns under the photo */
+    align-items: center;
+    /* Center elements horizontally */
+    text-align: center;
+    /* Ensure text aligns under the photo */
 }
 
 /* Third column: Anchor elements to the right */
 .ticket-column:last-child {
-    align-items: flex-end; /* Align items to the right within the column */
-    text-align: right; /* Right-align the text content */
+    align-items: flex-end;
+    /* Align items to the right within the column */
+    text-align: right;
+    /* Right-align the text content */
 }
 
 
@@ -65,8 +81,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 50px; /* Adjust size as needed */
-    height: 50px; /* Adjust size as needed */
+    width: 50px;
+    /* Adjust size as needed */
+    height: 50px;
+    /* Adjust size as needed */
     border-radius: 50%;
     overflow: hidden;
     background: #f0f0f0;
