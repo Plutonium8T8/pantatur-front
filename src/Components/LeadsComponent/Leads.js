@@ -3,7 +3,7 @@ import TicketModal from '../TicketComponent/TicketModal';
 import { workflowOptions } from '../../FormOptions/WorkFlowOption';
 import { priorityOptions } from '../../FormOptions/PriorityOption';
 import { useNavigate } from 'react-router-dom';
-import { useSocket } from '../../SocketContext'; // Используйте свой контекст для WebSocket
+import { useSocket } from '../../SocketContext';
 import { useUser } from '../../UserContext';
 import { useSnackbar } from 'notistack';
 import Cookies from 'js-cookie';
@@ -51,10 +51,10 @@ const Leads = (selectClientId) => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [contextMenu, setContextMenu] = useState(null);
-    const contextMenuRef = useRef(null); // Ссылка на контекстное меню
-    const socket = useSocket(); // Получаем сокет из контекста
+    const contextMenuRef = useRef(null);
+    const socket = useSocket();
     const { userId } = useUser();
-    const { enqueueSnackbar } = useSnackbar(); // Хук для отображения уведомлений
+    const { enqueueSnackbar } = useSnackbar();
 
     const fetchTickets = async () => {
         setIsLoading(true);
@@ -449,4 +449,4 @@ const Leads = (selectClientId) => {
     );
 };
 
-export default Leads;
+export { Leads, updateTicket };
