@@ -135,122 +135,108 @@ const Leads = (selectClientId) => {
     const handleCloseContextMenu = () => setContextMenu(null);
 
     useEffect(() => {
-        if (socket) {
-            const receiveMessage = (event) => {
-                try {
-                    const message = JSON.parse(event.data);
-                    console.log('Parsed WebSocket message notifications:', message);
-
-                    switch (message.type) {
-                        case 'message':
-                            const messageText = truncateText(message.data.text, 40); // Ограничение длины текста
-
-                            console.log(tickets.filter(ticket => ticket.client_id === message.data.client_id).some(ticket => ticket.technician_id === userId));
-
-                            console.log(tickets.filter(ticket => ticket.client_id === message.data.client_id))
-
-                            console.log(tickets)
-
-                            console.log(message.data.client_id)
-
-                            console.log(message)
-
-                            if (tickets.filter(ticket => ticket.client_id === message.data.client_id).some(ticket => ticket.technician_id === userId)) {
-                                enqueueSnackbar(
-                                    '',
-                                    {
-                                        variant: 'info',
-                                        action: (snackbarId) => (
-                                            <>
-                                                <div className='snack-bar-notification'>
-                                                    <div className='snack-object'
-                                                        onClick={() => {
-                                                            navigate(`/chat/${message.data.client_id}`);
-                                                            closeSnackbar(snackbarId); // Закрываем уведомление при переходе
-                                                        }}>
-                                                        <div className='snack-icon'>
-                                                            <FaEnvelope />
-                                                        </div>
-
-                                                        <div className='snack-message'>
-                                                            {message.data.client_id}: {messageText}
-                                                        </div>
-                                                    </div>
-                                                    <div className='snack-close'>
-                                                        <button onClick={() => closeSnackbar(snackbarId)}>
-                                                            <FaTrash />
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </>
-                                        ),
-                                    }
-                                );
-                            }
-                            break;
-
-                        case 'notification':
-                            const notificationText = truncateText(
-                                message.data.description || 'Уведомление с пустым текстом!',
-                                100
-                            );
-                            enqueueSnackbar(notificationText, { variant: 'info' });
-                            break;
-
-                        case 'task':
-                            enqueueSnackbar(`Task nou: ${message.data.title}`, { variant: 'warning' });
-                            break;
-
-                        case 'ticket': {
-                            if (message.data && message.data.client_id) {
-                                const socketMessageClient = JSON.stringify({
-                                    type: 'connect',
-                                    data: { client_id: [message.data.client_id] },
-                                });
-
-                                socket.send(socketMessageClient);
-                                console.log(`Подключён к комнате клиента с ID: ${message.data.client_id}`);
-
-                                // enqueueSnackbar(
-                                //   `Ticket nou: ${message.data.client_id || 'Fara denumire'}`,
-                                //   { variant: 'warning' }
-
-                                // );
-                                fetchTickets();
-
-                            } else {
-                                console.warn('Неверное сообщение о тикете:', message);
-                            }
-                            fetchTickets();
-                            break;
-                        }
-                        case 'seen':
-                            break;
-                        case 'pong':
-                            break;
-                        default:
-                            console.warn('Неизвестный тип сообщения:', message.type);
+      if (socket) {
+        const receiveMessage = (event) => {
+          try {
+            const message = JSON.parse(event.data);
+            console.log('Parsed WebSocket message notifications:', message);
+  
+            switch (message.type) {
+              case 'message':
+                // Найти тикет по client_id
+                const ticket = tickets.find(t => t.client_id === message.data.client_id);
+  
+                // Если тикет найден и technician_id совпадает с userId
+                if (ticket && ticket.technician_id === userId) {
+                  const messageText = truncateText(message.data.text, 40); // Ограничение длины текста
+                  enqueueSnackbar(
+                    '',
+                    {
+                      variant: 'info',
+                      action: (snackbarId) => (
+                        <>
+                          <div className='snack-bar-notification'>
+                            <div className='snack-object'
+                              onClick={() => {
+                                navigate(`/chat/${message.data.client_id}`);
+                                closeSnackbar(snackbarId); // Закрываем уведомление при переходе
+                              }}>
+                              <div className='snack-icon'>
+                                <FaEnvelope />
+                              </div>
+  
+                              <div className='snack-message'>
+                                {message.data.client_id}: {messageText}
+                              </div>
+                            </div>
+                            <div className='snack-close'>
+                              <button onClick={() => closeSnackbar(snackbarId)}>
+                                <FaTrash />
+                              </button>
+                            </div>
+                          </div>
+                        </>
+                      ),
                     }
-                } catch (error) {
-                    console.error('Ошибка при разборе сообщения WebSocket:', error);
+                  );
                 }
-            };
-
-            // Устанавливаем обработчики WebSocket
-            socket.onopen = () => console.log('WebSocket подключен');
-            socket.onerror = (error) => console.error('WebSocket ошибка:', error);
-            socket.onclose = () => console.log('WebSocket закрыт');
-            socket.addEventListener('message', receiveMessage);
-
-            // Очистка обработчиков при размонтировании
-            return () => {
-                socket.removeEventListener('message', receiveMessage);
-                socket.onopen = null;
-                socket.onerror = null;
-                socket.onclose = null;
-            };
-        }
-    }, [socket, selectClientId, enqueueSnackbar, userId]);
+                break;
+  
+              // Остальные кейсы остаются без изменений
+              case 'notification':
+                const notificationText = truncateText(
+                  message.data.description || 'Уведомление с пустым текстом!',
+                  100
+                );
+                enqueueSnackbar(notificationText, { variant: 'info' });
+                break;
+  
+              case 'task':
+                enqueueSnackbar(`Task nou: ${message.data.title}`, { variant: 'warning' });
+                break;
+  
+              case 'ticket':
+                if (message.data && message.data.client_id) {
+                  const socketMessageClient = JSON.stringify({
+                    type: 'connect',
+                    data: { client_id: [message.data.client_id] },
+                  });
+  
+                  socket.send(socketMessageClient);
+                  console.log(`Подключён к комнате клиента с ID: ${message.data.client_id}`);
+                  fetchTickets();
+                } else {
+                  console.warn('Неверное сообщение о тикете:', message);
+                }
+                break;
+  
+              case 'seen':
+              case 'pong':
+                break;
+  
+              default:
+                console.warn('Неизвестный тип сообщения:', message.type);
+            }
+          } catch (error) {
+            console.error('Ошибка при разборе сообщения WebSocket:', error);
+          }
+        };
+  
+        // Устанавливаем обработчики WebSocket
+        socket.onopen = () => console.log('WebSocket подключен');
+        socket.onerror = (error) => console.error('WebSocket ошибка:', error);
+        socket.onclose = () => console.log('WebSocket закрыт');
+        socket.addEventListener('message', receiveMessage);
+  
+        // Очистка обработчиков при размонтировании
+        return () => {
+          socket.removeEventListener('message', receiveMessage);
+          socket.onopen = null;
+          socket.onerror = null;
+          socket.onclose = null;
+        };
+      }
+    }, [socket, tickets, enqueueSnackbar, userId, navigate]);ƒ
 
     return (
         <div className="dashboard-container">
