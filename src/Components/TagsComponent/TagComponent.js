@@ -61,7 +61,7 @@ const TagInput = ({ initialTags = [], onChange }) => {
         }
         setInputValue('');
         setShowSuggestions(false);
-    };
+    }; 
 
     const handleRemoveTag = (tag) => {
         const updatedTags = tags.filter((t) => t !== tag);
