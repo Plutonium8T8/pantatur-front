@@ -14,18 +14,11 @@
 }
 
 .ticket .tickets-descriptions {
-    /* display: flex; */
     position: relative;
-    /* Ensures the ribbon is positioned relative to this container */
-    padding-left: 10px;
-    /* Adds padding to prevent overlap with the ribbon */
-    border-radius: 8px;
-    /* Optional: Rounded corners */
 }
 
 
 .ticket-ribbon {
-    background-color: yellow;
     /* Set the ribbon color */
     width: 20px;
     /* Fixed width for the ribbon */
@@ -43,10 +36,11 @@
 
 
 .ticket-body {
-    padding: 4px 8px;
+    padding: 6px 12px;
     display: flex;
-    gap: 16px;
+    gap: 12px;
     justify-content: space-between;
+    border-top: 3px solid #1f29371e;
 }
 
 .ticket-column {
@@ -80,9 +74,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 50px;
+    width: 45px;
     /* Adjust size as needed */
-    height: 50px;
+    height: 45px;
     /* Adjust size as needed */
     border-radius: 50%;
     overflow: hidden;
@@ -97,7 +91,6 @@
 }
 
 .ticket-id {
-    margin-top: 8px;
     font-size: 14px;
     font-weight: 600;
     color: #333333;
@@ -127,17 +120,12 @@
     text-overflow: ellipsis;
 }
 
-/* Third column: Anchor elements to the right */
-.ticket-column:last-child {
-    align-items: flex-end;
-    text-align: right;
-}
-
 .ticket-date,
 .ticket-time,
 .ticket-tasks {
     font-size: 12px;
     color: #999999;
+    width: 90px;
 }
 
 .ticket-tasks {

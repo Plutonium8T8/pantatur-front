@@ -17,14 +17,33 @@ const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket, onContext
         return []; // Если формат неизвестен, возвращаем пустой массив
     };
 
+    const priorityOrder = {
+        critical: 1,
+        high: 2,
+        medium: 3,
+        low: 4,
+    };
+    
     const filteredTickets = tickets
-        .filter((ticket) => ticket.workflow === workflow) // Фильтр по workflow
+        .filter((ticket) => ticket.workflow === workflow) // Filter by workflow
         .filter((ticket) =>
-            ticket.contact?.toLowerCase().includes(searchTerm.toLowerCase()) || // Фильтр по contact
-            ticket.client_id?.toString().includes(searchTerm) || // Фильтр по client_id
-            parseTags(ticket.tags).some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase())) || // Фильтр по tags
-            searchTerm.trim() === '' // Если searchTerm пустой, показываем все
-        );
+            ticket.contact?.toLowerCase().includes(searchTerm.toLowerCase()) || // Filter by contact
+            ticket.client_id?.toString().includes(searchTerm) || // Filter by client_id
+            parseTags(ticket.tags).some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase())) || // Filter by tags
+            searchTerm.trim() === '' // Show all if searchTerm is empty
+        )
+        .sort((a, b) => {
+            // Sort by priority first
+            const priorityDiff = (priorityOrder[a.priority] || 5) - (priorityOrder[b.priority] || 5);
+            if (priorityDiff !== 0) return priorityDiff;
+    
+            // Then sort by last_interaction (earliest date first)
+            const dateA = new Date(a.last_interaction);
+            const dateB = new Date(b.last_interaction);
+            if (!a.last_interaction) return 1; // Place undefined dates at the bottom
+            if (!b.last_interaction) return -1;
+            return dateA - dateB;
+        });    
 
     const handleDrop = (e) => {
         e.preventDefault();

@@ -173,31 +173,34 @@
   /* overflow-y: scroll;  */
   padding: 4px;
   width: 100%;
-  margin-top: 40px;
+  margin-top: 50px;
+  height: 100%;
 }
 
 /* Стиль для колонки (основного контейнера) */
 .colone-ticket {
   display: flex;
   flex-direction: column;
-  /* border-radius: 8px; */
-  width: 380px;
+  width: 350px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* Стиль для названия workflow */
 .name-workflow {
   text-align: center;
   font-weight: bold;
-  border-radius: 8px;
+  font-size: 18px;
+  padding: 8px 16px;
+  color: #1f2937; /* Dark gray text */
+  letter-spacing: 0.8px; /* Adds a slight spacing between letters */
+  margin-bottom: 4px; /* Optional: Adds space below the element */
 }
+
 
 /* Прокручиваемый список тикетов */
 .scrollable-list {
   display: flex;
   flex-direction: column;
   overflow-y: scroll;
-  padding: 10px 0px;
   gap: 10px;
   max-height: 98vh;
 }
