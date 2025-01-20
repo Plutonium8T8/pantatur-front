@@ -102,8 +102,8 @@ const Leads = (selectClientId) => {
       console.error('Error updating ticket workflow:', error)
     );
 
-        fetchTickets();
-    };
+    fetchTickets();
+  };
 
   const openCreateTicketModal = () => {
     setCurrentTicket({
@@ -141,54 +141,46 @@ const Leads = (selectClientId) => {
           const message = JSON.parse(event.data);
           console.log('Parsed WebSocket message notifications:', message);
 
-                    switch (message.type) {
-                        case 'message':
-                            // Обрабатываем новое сообщение
-                            if (message.data.sender_id !== userId) {
-                                const messageText = truncateText(message.data.text, 40); // Ограничение длины текста
+          switch (message.type) {
+            case 'message':
+              // Найти тикет по client_id
+              const ticket = tickets.find(t => t.client_id === message.data.client_id);
 
-                                console.log(tickets.filter(ticket => ticket.client_id === message.data.client_id).some(ticket => ticket.technician_id === userId));
+              // Если тикет найден и technician_id совпадает с userId
+              if (ticket && ticket.technician_id === userId) {
+                const messageText = truncateText(message.data.text, 40); // Ограничение длины текста
+                enqueueSnackbar(
+                  '',
+                  {
+                    variant: 'info',
+                    action: (snackbarId) => (
+                      <>
+                        <div className='snack-bar-notification'>
+                          <div className='snack-object'
+                            onClick={() => {
+                              navigate(`/chat/${message.data.client_id}`);
+                              closeSnackbar(snackbarId); // Закрываем уведомление при переходе
+                            }}>
+                            <div className='snack-icon'>
+                              <FaEnvelope />
+                            </div>
 
-                                console.log(tickets.filter(ticket => ticket.client_id === message.data.client_id))
-
-                                console.log(message.data.client_id)
-
-                                console.log(message)
-
-                                if (tickets.filter(ticket => ticket.client_id === message.data.client_id).some(ticket => ticket.technician_id === userId)) {
-                                    enqueueSnackbar(
-                                        '',
-                                        {
-                                            variant: 'info',
-                                            action: (snackbarId) => (
-                                                <>
-                                                    <div className='snack-bar-notification'>
-                                                        <div className='snack-object'
-                                                            onClick={() => {
-                                                                navigate(`/chat/${message.data.client_id}`);
-                                                                closeSnackbar(snackbarId); // Закрываем уведомление при переходе
-                                                            }}>
-                                                            <div className='snack-icon'>
-                                                                <FaEnvelope />
-                                                            </div>
-
-                                                            <div className='snack-message'>
-                                                                {message.data.client_id}: {messageText}
-                                                            </div>
-                                                        </div>
-                                                        <div className='snack-close'>
-                                                            <button onClick={() => closeSnackbar(snackbarId)}>
-                                                                <FaTrash />
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </>
-                                            ),
-                                        }
-                                    );
-                                }
-                            }
-                            break;
+                            <div className='snack-message'>
+                              {message.data.client_id}: {messageText}
+                            </div>
+                          </div>
+                          <div className='snack-close'>
+                            <button onClick={() => closeSnackbar(snackbarId)}>
+                              <FaTrash />
+                            </button>
+                          </div>
+                        </div>
+                      </>
+                    ),
+                  }
+                );
+              }
+              break;
 
             // Остальные кейсы остаются без изменений
             case 'notification':
