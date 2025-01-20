@@ -145,7 +145,7 @@ const Leads = (selectClientId) => {
                         case 'message':
                             // Обрабатываем новое сообщение
                             if (message.data.sender_id !== userId) {
-                                const messageText = truncateText(message.data.text, 55); // Ограничение длины текста
+                                const messageText = truncateText(message.data.text, 50); // Ограничение длины текста
                                 enqueueSnackbar(
                                     '',
                                     {
