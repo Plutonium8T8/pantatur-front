@@ -1,19 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { truncateText, parseTags } from '../utils/stringUtils';
 import './TicketCardComponent.css';
 
 const TicketCard = ({ ticket, onContextMenu, onEditTicket }) => {
+    const [currentTicket, setCurrentTicket] = useState(null);
     const tags = parseTags(ticket.tags);
+    const navigate = useNavigate();
 
     const handleDragStart = (e, clientId) => {
         e.dataTransfer.setData('clientId', clientId);
+    };
+
+    const handleTicketClick = (ticket) => {
+        setCurrentTicket(ticket);
+        navigate(`/chat/${ticket.client_id}`)
     };
 
     return (
         <div
             className="ticket"
             onContextMenu={(e) => onContextMenu(e, ticket)}
-            onClick={() => onEditTicket(ticket)}
+            onClick={() => handleTicketClick(ticket)}
             draggable
             onDragStart={(e) => handleDragStart(e, ticket.client_id)}
         >
