@@ -15,6 +15,7 @@ const deleteTicketById = async (id) => {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
     });
 
     if (!response.ok) {
@@ -37,6 +38,7 @@ const saveTicketToServer = async (ticketData) => {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
+      credentials: 'include',
       body: JSON.stringify(ticketData),
     });
 

@@ -5,8 +5,8 @@ import './TicketCardComponent.css';
 const TicketCard = ({ ticket, onContextMenu, onEditTicket }) => {
     const tags = parseTags(ticket.tags);
 
-    const handleDragStart = (e, ticketId) => {
-        e.dataTransfer.setData('ticketId', ticketId);
+    const handleDragStart = (e, clientId) => {
+        e.dataTransfer.setData('clientId', clientId);
     };
 
     return (
@@ -15,10 +15,10 @@ const TicketCard = ({ ticket, onContextMenu, onEditTicket }) => {
             onContextMenu={(e) => onContextMenu(e, ticket)}
             onClick={() => onEditTicket(ticket)}
             draggable
-            onDragStart={(e) => handleDragStart(e, ticket.id)}
+            onDragStart={(e) => handleDragStart(e, ticket.client_id)}
         >
             <div className="tickets-descriptions">
-                <div className="ticket-ribbon"></div>
+                <div className="ticket-ribbon" ></div>
                 <div className="ticket-body">
                     <div className="ticket-column">
                         <div className="ticket-photo">

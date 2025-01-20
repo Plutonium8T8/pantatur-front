@@ -9,8 +9,7 @@ import { useSnackbar } from 'notistack';
 import Cookies from 'js-cookie';
 
 import '../../App.css';
-
-export const updateTicket = async (updateData) => {
+const updateTicket = async (updateData) => {
     try {
         const token = Cookies.get('jwt');
 
@@ -449,4 +448,4 @@ const Leads = (selectClientId) => {
     );
 };
 
-export { Leads, updateTicket };
+export { Leads };

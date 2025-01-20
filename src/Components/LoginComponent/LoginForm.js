@@ -54,6 +54,7 @@ const LoginForm = ({ onLoginSuccess }) => {
         if (isLogin) {
           Cookies.set('jwt', responseData.token, { expires: 7, secure: true, sameSite: 'strict' });
           setUserId(responseData.user_id);
+          console.log(responseData.user_id);
           onLoginSuccess();
         }
       } else {

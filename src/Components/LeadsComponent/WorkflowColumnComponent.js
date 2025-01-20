@@ -11,9 +11,9 @@ const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket, onContext
 
     const handleDrop = (e) => {
         e.preventDefault();
-        const ticketId = e.dataTransfer.getData('ticketId');
-        if (ticketId) {
-            onUpdateWorkflow(ticketId, workflow); // Update workflow using parent handler
+        const clientId = e.dataTransfer.getData('clientId');
+        if (clientId) {
+            onUpdateWorkflow(clientId, workflow); // Update workflow using parent handler
         }
     };
 
@@ -33,7 +33,7 @@ const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket, onContext
             <div className="scrollable-list">
                 {filteredTickets.map((ticket) => (
                     <TicketCard
-                        key={ticket.id}
+                        key={ticket.client_id}
                         ticket={ticket}
                         onContextMenu={onContextMenu}
                         onEditTicket={onEditTicket}

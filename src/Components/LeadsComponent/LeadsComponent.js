@@ -27,6 +27,7 @@ export const updateTicket = async (updateData) => {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
       body: JSON.stringify(updateData),
     });
 
@@ -66,6 +67,7 @@ const Leads = () => {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
       });
 
       if (!response.ok) throw new Error('Failed to fetch tickets.');
@@ -83,18 +85,20 @@ const Leads = () => {
     fetchTickets();
   }, []);
 
-  const updateTicketWorkflow = (ticketId, newWorkflow) => {
+  const updateTicketWorkflow = (clientId, newWorkflow) => {
     // Update state locally for immediate UI feedback
     setTickets((prevTickets) =>
       prevTickets.map((ticket) =>
-        ticket.id === ticketId ? { ...ticket, workflow: newWorkflow } : ticket
+        ticket.client_id === clientId ? { ...ticket, workflow: newWorkflow } : ticket
       )
     );
 
     // Update the server
-    updateTicket({ id: ticketId, workflow: newWorkflow }).catch((error) =>
+    updateTicket({ id: clientId, workflow: newWorkflow }).catch((error) =>
       console.error('Error updating ticket workflow:', error)
     );
+
+    fetchTickets();
   };
 
   const openCreateTicketModal = () => {
