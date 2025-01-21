@@ -1205,8 +1205,7 @@ const ChatComponent = ({ }) => {
 
                                 const unreadCounts = clientMessages.filter(
                                     msg =>
-                                        (!msg.seen_by || !msg.seen_by.includes(String(userId))) &&
-                                        msg.sender_id !== Number(userId)
+                                        msg.seen_by != null && msg.seen_by == '{}' && msg.sender_id == msg.client_id
                                 ).length;
 
                                 const lastMessage = clientMessages.length

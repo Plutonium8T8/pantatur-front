@@ -16,7 +16,7 @@ import NotificationModal from './Components/SlideInComponent/NotificationModal';
 import TaskComponent from './Components/SlideInComponent/TaskComponent'; // Используем TaskModal вместо TaskComponent
 import AdminPanel from './Components/AdminPanelComponent/AdminPanel';
 import Dashboard from './Components/DashboardComponent/Dashboard';
-import { FaCircleNotch } from 'react-icons/fa';
+import { FaCircleNotch, FaTrash } from 'react-icons/fa';
 import UserPage from './Components/UserPage/UserPage';
 
 function App() {
@@ -77,9 +77,17 @@ function App() {
       autoHideDuration={60000}
       maxSnack={5}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-      action={() => (
+      action={(snackbarId) => (
         <>
-
+          <div className='snack-bar-notification'>
+            <div className='snack-object'>
+            </div>
+            <div className='snack-close'>
+              <button onClick={() => closeSnackbar(snackbarId)}>
+                <FaTrash />
+              </button>
+            </div>
+          </div>
         </>
       )}
     >
@@ -99,7 +107,6 @@ function App() {
                   />
                   <div className="page-content">
                     <Routes>
-                      {/* <Route path="/account" element={<UserProfile />} /> */}
                       <Route path="/dashboard" element={<Dashboard />} />
                       <Route path="/" element={<Navigate to="/leads" />} />
                       <Route path="/leads" element={<Leads />} />

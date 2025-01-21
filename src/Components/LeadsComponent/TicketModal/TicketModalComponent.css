@@ -7,29 +7,22 @@
     background-color: rgba(0, 0, 0, 0.6);
     display: flex;
     align-items: stretch;
-    /* Stretch from top to bottom */
-    z-index: 5;
-    /* Higher than the sidebar */
+    z-index: 9999;
   }
   
   .modal-container {
     position: absolute;
-    /* Ensure it is absolutely positioned */
     top: 0;
     left: 100px;
-    /* Adjusted for the sidebar width */
     background-color: #1f2937;
     color: white;
     width: 520px;
     height: 100vh;
-    /* Full height */
     overflow-y: auto;
     box-shadow: 4px 0 12px rgba(0, 0, 0, 0.3);
     animation: slideIn 0.5s ease-in-out;
     border-radius: 0;
-    /* No border radius */
-    z-index: 5;
-    /* Ensure modal content is above overlay */
+    z-index: 9999;
   }
   
   
