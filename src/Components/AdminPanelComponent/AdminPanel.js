@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { startOfWeek, addDays, format } from "date-fns";
 import Cookies from 'js-cookie';
+import ModalWithToggles from "./ModalWithToggles"; // Импортируем компонент модалки
 import './AdminPanel.css';
 
 const ScheduleComponent = () => {
@@ -11,6 +12,14 @@ const ScheduleComponent = () => {
   const [endTime, setEndTime] = useState("");
   const [currentWeekStart, setCurrentWeekStart] = useState(startOfWeek(new Date(), { weekStartsOn: 1 }));
   const [intervals, setIntervals] = useState([]); // Для хранения интервалов выбранного дня
+  const [isModalOpen, setIsModalOpen] = useState(false); // Состояние модалки
+  const [selectedUser, setSelectedUser] = useState(null); // Хранит выбранного пользователя
+
+  // Закрытие модалки
+  const closeModal = () => {
+    setSelectedUser(null);
+    setIsModalOpen(false);
+  };
 
   const handleShiftChange = (employeeIndex, dayIndex) => {
     setSelectedEmployee(employeeIndex);
@@ -327,7 +336,13 @@ const ScheduleComponent = () => {
         </thead>
         <tbody>
           {schedule.map((employee, employeeIndex) => (
-            <tr key={employeeIndex}>
+            <tr
+              key={employeeIndex}
+              onClick={() => {
+                setSelectedUser(employee); // Открываем модалку с данными пользователя
+                setIsModalOpen(true);
+              }}
+            >
               <td>
                 {employee.name} ({employee.id})
               </td>
@@ -335,7 +350,10 @@ const ScheduleComponent = () => {
                 <td
                   key={dayIndex}
                   className="shift-cell"
-                  onClick={() => handleShiftChange(employeeIndex, dayIndex)}
+                  onClick={(e) => {
+                    e.stopPropagation(); // Предотвращаем открытие модалки при клике на shift
+                    handleShiftChange(employeeIndex, dayIndex);
+                  }}
                 >
                   {shift || "-"}
                 </td>
@@ -345,6 +363,13 @@ const ScheduleComponent = () => {
           ))}
         </tbody>
       </table>
+      {/* Модалка с переключателями */}
+      {isModalOpen && selectedUser && (
+        <ModalWithToggles
+          employee={selectedUser} // Передаём выбранного пользователя
+          closeModal={closeModal} // Передаём функцию закрытия
+        />
+      )}
 
       {selectedEmployee !== null && selectedDay !== null && (
         <div className="modal-overlay">
