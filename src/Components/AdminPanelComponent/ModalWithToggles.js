@@ -81,16 +81,49 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                 throw new Error(`Ошибка: ${response.status}`);
             }
 
-            console.log(`Разрешение "${role}" успешно обновлено.`);
+            console.log(`Разрешение "${role}" успешно добавлено.`);
         } catch (error) {
-            console.error(`Ошибка при обновлении разрешения "${role}":`, error);
+            console.error(`Ошибка при добавлении разрешения "${role}":`, error);
         }
     };
 
-    const handleToggleChange = (setter, permission) => {
-        const newValue = !setter(false);
-        setter(newValue);
-        sendPermissionToServer(permission);
+    const deletePermissionToServer = async (role) => {
+        try {
+            const token = Cookies.get("jwt");
+            // const numericId = parseInt(employee.id, 10); // Преобразование ID в число
+
+            // console.log("Отправка DELETE с ID:", numericId);
+
+            const response = await fetch("https://pandatur-api.com/admin/users/roles", {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    id: employee.id, // Передача ID как числа
+                    role,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Ошибка: ${response.status}`);
+            }
+
+            console.log(`Разрешение "${role}" успешно удалено.`);
+        } catch (error) {
+            console.error(`Ошибка при удалении разрешения "${role}":`, error);
+        }
+    };
+
+    const handleToggleChange = (setter, permission, currentValue) => {
+        const newValue = !currentValue; // Инвертируем текущее значение
+        setter(newValue); // Устанавливаем новое состояние
+        if (newValue) {
+            sendPermissionToServer(permission); // Выполняем POST запрос
+        } else {
+            deletePermissionToServer(permission); // Выполняем DELETE запрос
+        }
     };
 
     return (
@@ -115,7 +148,7 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                     <input
                                         type="checkbox"
                                         checked={dashboardRead}
-                                        onChange={() => handleToggleChange(setDashboardRead, "DASHBOARD_READ")}
+                                        onChange={() => handleToggleChange(setDashboardRead, "DASHBOARD_READ", dashboardRead)}
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -126,7 +159,7 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                     <input
                                         type="checkbox"
                                         checked={dashboardEdit}
-                                        onChange={() => handleToggleChange(setDashboardEdit, "DASHBOARD_WRITE")}
+                                        onChange={() => handleToggleChange(setDashboardEdit, "DASHBOARD_WRITE", dashboardEdit)}
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -137,7 +170,7 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                     <input
                                         type="checkbox"
                                         checked={dashboardAdmin}
-                                        onChange={() => handleToggleChange(setDashboardAdmin, "DASHBOARD_ADMIN")}
+                                        onChange={() => handleToggleChange(setDashboardAdmin, "DASHBOARD_ADMIN", dashboardAdmin)}
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -151,7 +184,7 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                     <input
                                         type="checkbox"
                                         checked={leadRead}
-                                        onChange={() => handleToggleChange(setLeadRead, "LEAD_READ")}
+                                        onChange={() => handleToggleChange(setLeadRead, "LEAD_READ", leadRead)}
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -162,7 +195,7 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                     <input
                                         type="checkbox"
                                         checked={leadEdit}
-                                        onChange={() => handleToggleChange(setLeadEdit, "LEAD_WRITE")}
+                                        onChange={() => handleToggleChange(setLeadEdit, "LEAD_WRITE", leadEdit)}
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -173,7 +206,7 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                     <input
                                         type="checkbox"
                                         checked={leadAdmin}
-                                        onChange={() => handleToggleChange(setLeadAdmin, "LEAD_ADMIN")}
+                                        onChange={() => handleToggleChange(setLeadAdmin, "LEAD_ADMIN", leadAdmin)}
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -187,7 +220,7 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                     <input
                                         type="checkbox"
                                         checked={chatRead}
-                                        onChange={() => handleToggleChange(setChatRead, "CHAT_READ")}
+                                        onChange={() => handleToggleChange(setChatRead, "CHAT_READ", chatRead)}
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -198,7 +231,7 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                     <input
                                         type="checkbox"
                                         checked={chatEdit}
-                                        onChange={() => handleToggleChange(setChatEdit, "CHAT_WRITE")}
+                                        onChange={() => handleToggleChange(setChatEdit, "CHAT_WRITE", chatEdit)}
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -209,7 +242,7 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                     <input
                                         type="checkbox"
                                         checked={chatAdmin}
-                                        onChange={() => handleToggleChange(setChatAdmin, "CHAT_ADMIN")}
+                                        onChange={() => handleToggleChange(setChatAdmin, "CHAT_ADMIN", chatAdmin)}
                                     />
                                     <span className="slider"></span>
                                 </label>
