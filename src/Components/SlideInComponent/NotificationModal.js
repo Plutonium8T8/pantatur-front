@@ -54,12 +54,12 @@ const NotificationModal = ({ isOpen, onClose }) => {
                     time: notificationDate,
                     description: notificationContent,
                     client_id: userId,
-                    status: false, // Новое уведомление создаётся как "непрочитанное"
+                    status: false, 
                 }),
             });
             if (response.ok) {
-                fetchNotifications(); // Обновляем список уведомлений
-                setNotificationContent(""); // Очищаем поля формы
+                fetchNotifications();
+                setNotificationContent("");
                 setNotificationDate("");
             } else {
                 console.error(`Ошибка создания уведомления: ${response.status}`);

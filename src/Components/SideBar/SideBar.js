@@ -5,7 +5,7 @@ import './SideBar.css';
 import { useUnreadMessages } from '../../Unread';
 import { FaUser, FaChartBar, FaTasks, FaComments, FaBell, FaClipboardList, FaSignOutAlt, FaUserSecret } from 'react-icons/fa';
 
-const CustomSidebar = ({ onOpenNotifications, onOpenTasks }) => {
+const CustomSidebar = ({ onOpenNotifications, onOpenTasks, onOpenAccount }) => {
     const location = useLocation();
     const navigate = useNavigate();
     const { unreadCount } = useUnreadMessages();
@@ -32,7 +32,7 @@ const CustomSidebar = ({ onOpenNotifications, onOpenTasks }) => {
                 <div className="container-item-menu">
                     <div
                         className={`menu-item ${isActive('account') ? 'active' : ''}`}
-                        onClick={() => handleNavigate('account')}
+                        onClick={onOpenAccount}
                     >
                         <FaUser size={24} />
                         <span>Account</span>

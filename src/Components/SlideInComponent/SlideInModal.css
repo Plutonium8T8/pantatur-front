@@ -8,7 +8,7 @@
   display: flex;
   align-items: stretch;
   /* Stretch from top to bottom */
-  z-index: 3;
+  z-index: 5;
   /* Higher than the sidebar */
 }
 
@@ -28,7 +28,7 @@
   animation: slideIn 0.5s ease-in-out;
   border-radius: 0;
   /* No border radius */
-  z-index: 4;
+  z-index: 5;
   /* Ensure modal content is above overlay */
 }
 

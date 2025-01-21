@@ -17,12 +17,14 @@ import TaskComponent from './Components/SlideInComponent/TaskComponent'; // Ис
 import AdminPanel from './Components/AdminPanelComponent/AdminPanel';
 import Dashboard from './Components/DashboardComponent/Dashboard';
 import { FaCircleNotch } from 'react-icons/fa';
+import UserPage from './Components/UserPage/UserPage';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false); // Состояние модального окна уведомлений
   const [isTaskComponentOpen, setIsTaskComponentOpen] = useState(false); // Состояние модального окна задач
+  const [isAccountComponentOpen, setIsAccountComponentOpen] = useState(false); // Состояние модального окна задач
 
   // Проверка сессии
   useEffect(() => {
@@ -93,10 +95,11 @@ function App() {
                   <CustomSidebar
                     onOpenNotifications={() => setIsNotificationModalOpen(true)}
                     onOpenTasks={() => setIsTaskComponentOpen(true)} // Передаем функцию для открытия задач
+                    onOpenAccount={() => setIsAccountComponentOpen(true)} // Передаем функцию для открытия задач
                   />
                   <div className="page-content">
                     <Routes>
-                      <Route path="/account" element={<UserProfile />} />
+                      {/* <Route path="/account" element={<UserProfile />} /> */}
                       <Route path="/dashboard" element={<Dashboard />} />
                       <Route path="/" element={<Navigate to="/leads" />} />
                       <Route path="/leads" element={<Leads />} />
@@ -108,12 +111,14 @@ function App() {
                       <Route path="*" element={<div>Страница в разработке</div>} />
                     </Routes>
                   </div>
-                  {/* Модальное окно уведомлений */}
+                  <UserPage
+                    isOpen={isAccountComponentOpen}
+                    onClose={() => setIsAccountComponentOpen(false)}
+                  />
                   <NotificationModal
                     isOpen={isNotificationModalOpen}
                     onClose={() => setIsNotificationModalOpen(false)}
                   />
-                  {/* Модальное окно задач */}
                   <TaskComponent
                     isOpen={isTaskComponentOpen}
                     onClose={() => setIsTaskComponentOpen(false)}

@@ -58,6 +58,7 @@ const Leads = (selectClientId) => {
     const socket = useSocket();
     const { userId } = useUser();
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+      const [isAccountComponentOpen, setIsAccountComponentOpen] = useState(false);
 
     const navigate = useNavigate();
 
@@ -279,6 +280,7 @@ const Leads = (selectClientId) => {
             {currentTicket && (
                 <TicketModal
                     ticket={currentTicket}
+                    isOpen={true}
                     onClose={closeModal}
                     onSave={fetchTickets} // Reload tickets after saving
                 />
