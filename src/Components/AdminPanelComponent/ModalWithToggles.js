@@ -18,27 +18,26 @@ const ModalWithToggles = ({ employee, closeModal }) => {
     const [chatEdit, setChatEdit] = useState(false);
     const [chatAdmin, setChatAdmin] = useState(false);
 
-    // Функция для сохранения всех разрешений сразу
+    // Функция для сохранения всех разрешений на сервер
     const saveAllPermissions = async () => {
-        const permissions = {
-            dashboard_read: dashboardRead,
-            dashboard_edit: dashboardEdit,
-            dashboard_admin: dashboardAdmin,
-            lead_read: leadRead,
-            lead_edit: leadEdit,
-            lead_admin: leadAdmin,
-            chat_read: chatRead,
-            chat_edit: chatEdit,
-            chat_admin: chatAdmin,
+        const role = {
+            DASHBOARD_READ: dashboardRead,
+            DASHBOARD_WRITE: dashboardEdit,
+            DASHBOARD_ADMIN: dashboardAdmin,
+            LEAD_READ: leadRead,
+            LEAD_WRITE: leadEdit,
+            LEAD_ADMIN: leadAdmin,
+            CHAT_READ: chatRead,
+            CHAT_WRITE: chatEdit,
+            CHAT_ADMIN: chatAdmin,
         };
 
-        console.log("Подготовка данных для отправки...");
+        console.log("Подготовка данных для отправки на сервер:");
         console.log("Technician ID:", employee.id);
-        console.log("Permissions:", permissions);
+        console.log("Permissions:", role);
 
         try {
             const token = Cookies.get("jwt");
-            console.log("JWT Token:", token);
 
             const response = await fetch("https://pandatur-api.com/admin/users/roles", {
                 method: "POST",
@@ -47,8 +46,8 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                     Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({
-                    technician_id: employee.id, // ID выбранного пользователя
-                    permissions, // Все разрешения
+                    id: employee.id, // ID сотрудника
+                    role, // Все разрешения
                 }),
             });
 
@@ -56,9 +55,9 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                 throw new Error(`Ошибка: ${response.status}`);
             }
 
-            console.log("Все разрешения успешно сохранены:", permissions);
+            console.log("Все разрешения успешно сохранены:", role);
         } catch (error) {
-            console.error("Ошибка при сохранении всех разрешений на сервер:", error);
+            console.error("Ошибка при сохранении разрешений на сервер:", error);
         }
     };
 
@@ -164,7 +163,7 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                 </label>
                             </div>
                             <div className="toggle-item">
-                                Chat - send messages
+                                Chat - editare
                                 <label className="toggle-switch">
                                     <input
                                         type="checkbox"
