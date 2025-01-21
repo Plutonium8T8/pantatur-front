@@ -22,16 +22,3 @@ export const workflowStyles = {
   'Contract incheiat': { backgroundColor: '#cdeedd' }, // Pale Mint
 };
   
-  
-  const workflowColors = [
-    '#4A90E2', // Stage 1: Vibrant Blue
-    '#50C6D8', // Stage 2: Bright Aqua
-    '#7ED321', // Stage 3: Lively Green
-    '#F5A623', // Stage 4: Warm Orange
-    '#D0021B', // Stage 5: Bold Red
-    '#8B572A', // Stage 6: Vibrant Brown
-    '#BD10E0', // Stage 7: Electric Purple
-    '#417505', // Stage 8: Bright Olive
-    '#B8E986'  // Stage 9: Fresh Lime
-  ];
-  
