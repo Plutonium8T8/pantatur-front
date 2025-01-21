@@ -2,15 +2,20 @@ import React, { useState } from "react";
 import "./ModalWithToggles.css";
 
 const ModalWithToggles = ({ employee, closeModal }) => {
-    const [toggle1, setToggle1] = useState(false);
-    const [toggle2, setToggle2] = useState(false);
-    const [toggle3, setToggle3] = useState(false);
-    const [toggle4, setToggle4] = useState(false);
-    const [toggle5, setToggle5] = useState(false);
-    const [toggle6, setToggle6] = useState(false);
-    const [toggle7, setToggle7] = useState(false);
-    const [toggle8, setToggle8] = useState(false);
-    const [toggle9, setToggle9] = useState(false);
+    // Состояния для Dashboard
+    const [dashboardRead, setDashboardRead] = useState(false);
+    const [dashboardEdit, setDashboardEdit] = useState(false);
+    const [dashboardAdmin, setDashboardAdmin] = useState(false);
+
+    // Состояния для Lead
+    const [leadRead, setLeadRead] = useState(false);
+    const [leadEdit, setLeadEdit] = useState(false);
+    const [leadAdmin, setLeadAdmin] = useState(false);
+
+    // Состояния для Chat
+    const [chatRead, setChatRead] = useState(false);
+    const [chatEdit, setChatEdit] = useState(false);
+    const [chatAdmin, setChatAdmin] = useState(false);
 
     return (
         <div className="modal-overlay">
@@ -26,15 +31,15 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                         {employee.name} ({employee.id})
                     </p>
                     <div className="toggles-group-container">
+                        {/* Dashboard */}
                         <div className="toggles-group">
-                            {/* Dashboard*/}
                             <div className="toggle-item">
                                 Dashboard - citire
                                 <label className="toggle-switch">
                                     <input
                                         type="checkbox"
-                                        checked={toggle1}
-                                        onChange={() => setToggle1(!toggle1)}
+                                        checked={dashboardRead}
+                                        onChange={() => setDashboardRead(!dashboardRead)}
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -44,8 +49,8 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                 <label className="toggle-switch">
                                     <input
                                         type="checkbox"
-                                        checked={toggle2}
-                                        onChange={() => setToggle2(!toggle2)}
+                                        checked={dashboardEdit}
+                                        onChange={() => setDashboardEdit(!dashboardEdit)}
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -55,22 +60,22 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                 <label className="toggle-switch">
                                     <input
                                         type="checkbox"
-                                        checked={toggle3}
-                                        onChange={() => setToggle3(!toggle3)}
+                                        checked={dashboardAdmin}
+                                        onChange={() => setDashboardAdmin(!dashboardAdmin)}
                                     />
                                     <span className="slider"></span>
                                 </label>
                             </div>
                         </div>
-                        {/* Lead*/}
+                        {/* Lead */}
                         <div className="toggles-group">
                             <div className="toggle-item">
                                 Lead - citire
                                 <label className="toggle-switch">
                                     <input
                                         type="checkbox"
-                                        checked={toggle4}
-                                        onChange={() => setToggle4(!toggle4)}
+                                        checked={leadRead}
+                                        onChange={() => setLeadRead(!leadRead)}
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -80,8 +85,8 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                 <label className="toggle-switch">
                                     <input
                                         type="checkbox"
-                                        checked={toggle5}
-                                        onChange={() => setToggle5(!toggle5)}
+                                        checked={leadEdit}
+                                        onChange={() => setLeadEdit(!leadEdit)}
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -91,22 +96,22 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                 <label className="toggle-switch">
                                     <input
                                         type="checkbox"
-                                        checked={toggle6}
-                                        onChange={() => setToggle6(!toggle6)}
+                                        checked={leadAdmin}
+                                        onChange={() => setLeadAdmin(!leadAdmin)}
                                     />
                                     <span className="slider"></span>
                                 </label>
                             </div>
                         </div>
-                        {/* Chat*/}
+                        {/* Chat */}
                         <div className="toggles-group">
                             <div className="toggle-item">
                                 Chat - citire
                                 <label className="toggle-switch">
                                     <input
                                         type="checkbox"
-                                        checked={toggle7}
-                                        onChange={() => setToggle7(!toggle7)}
+                                        checked={chatRead}
+                                        onChange={() => setChatRead(!chatRead)}
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -116,8 +121,8 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                 <label className="toggle-switch">
                                     <input
                                         type="checkbox"
-                                        checked={toggle8}
-                                        onChange={() => setToggle8(!toggle8)}
+                                        checked={chatEdit}
+                                        onChange={() => setChatEdit(!chatEdit)}
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -127,8 +132,8 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                 <label className="toggle-switch">
                                     <input
                                         type="checkbox"
-                                        checked={toggle9}
-                                        onChange={() => setToggle9(!toggle9)}
+                                        checked={chatAdmin}
+                                        onChange={() => setChatAdmin(!chatAdmin)}
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -139,6 +144,15 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                 <div className="modal-footer">
                     <button className="close-button" onClick={closeModal}>
                         Close
+                    </button>
+
+                    <button
+                        className="save-button"
+                        onClick={() => {
+                            closeModal(); // Закрытие модального окна после сохранения
+                        }}
+                    >
+                        Save
                     </button>
                 </div>
             </div>
