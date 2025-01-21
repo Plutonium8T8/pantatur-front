@@ -340,7 +340,7 @@ const ScheduleComponent = () => {
                   {shift || "-"}
                 </td>
               ))}
-              <td>{employee.shifts.reduce((total, shift) => total + calculateWorkedHours(shift), 0).toFixed(2)} ч.</td>
+              <td>{employee.shifts.reduce((total, shift) => total + calculateWorkedHours(shift), 0).toFixed(2)} h.</td>
             </tr>
           ))}
         </tbody>
