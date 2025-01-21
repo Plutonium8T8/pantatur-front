@@ -164,7 +164,7 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                 </label>
                             </div>
                             <div className="toggle-item">
-                                Chat - editare
+                                Chat - send messages
                                 <label className="toggle-switch">
                                     <input
                                         type="checkbox"
