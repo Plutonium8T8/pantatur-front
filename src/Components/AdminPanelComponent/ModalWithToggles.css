@@ -193,7 +193,7 @@
 }
 
 .close-button {
-    background-color: #ccc;
+    background-color: transparent;
     color: black;
     border: none;
     padding: 10px 20px;
@@ -201,8 +201,4 @@
     cursor: pointer;
     font-size: 14px;
     transition: background-color 0.3s ease;
-}
-
-.close-button:hover {
-    background-color: #bbb;
 }

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Cookies from 'js-cookie';
 import "./ModalWithToggles.css";
 
 const ModalWithToggles = ({ employee, closeModal }) => {
@@ -16,6 +17,68 @@ const ModalWithToggles = ({ employee, closeModal }) => {
     const [chatRead, setChatRead] = useState(false);
     const [chatEdit, setChatEdit] = useState(false);
     const [chatAdmin, setChatAdmin] = useState(false);
+
+    // Функция для отправки данных на сервер
+    const sendPermissionToServer = async (permission, value) => {
+        try {
+            const token = Cookies.get("jwt");
+            const response = await fetch("https://pandatur-api.com/admin/users/roles", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    technician_id: employee.id, // ID выбранного пользователя
+                    permission, // Название разрешения
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Ошибка: ${response.status}`);
+            }
+
+            console.log(`Разрешение "${permission}" обновлено: ${value}`);
+        } catch (error) {
+            console.error("Ошибка при отправке разрешения на сервер:", error);
+        }
+    };
+
+    // Функция для сохранения всех разрешений сразу
+    const saveAllPermissions = async () => {
+        const permissions = {
+            dashboard_read: dashboardRead,
+            dashboard_edit: dashboardEdit,
+            dashboard_admin: dashboardAdmin,
+            lead_read: leadRead,
+            lead_edit: leadEdit,
+            lead_admin: leadAdmin,
+            chat_read: chatRead,
+            chat_edit: chatEdit,
+            chat_admin: chatAdmin,
+        };
+
+        try {
+            const response = await fetch("https://pandatur-api.com/admin/users/roles", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    technician_id: employee.id, // ID выбранного пользователя
+                    permissions, // Все разрешения
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Ошибка: ${response.status}`);
+            }
+
+            console.log("Все разрешения успешно сохранены:", permissions);
+        } catch (error) {
+            console.error("Ошибка при сохранении всех разрешений на сервер:", error);
+        }
+    };
 
     return (
         <div className="modal-overlay">
@@ -39,7 +102,11 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                     <input
                                         type="checkbox"
                                         checked={dashboardRead}
-                                        onChange={() => setDashboardRead(!dashboardRead)}
+                                        onChange={() => {
+                                            const newValue = !dashboardRead;
+                                            setDashboardRead(newValue);
+                                            sendPermissionToServer("dashboard_read", newValue);
+                                        }}
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -50,7 +117,11 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                     <input
                                         type="checkbox"
                                         checked={dashboardEdit}
-                                        onChange={() => setDashboardEdit(!dashboardEdit)}
+                                        onChange={() => {
+                                            const newValue = !dashboardEdit;
+                                            setDashboardEdit(newValue);
+                                            sendPermissionToServer("dashboard_edit", newValue);
+                                        }}
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -61,7 +132,11 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                     <input
                                         type="checkbox"
                                         checked={dashboardAdmin}
-                                        onChange={() => setDashboardAdmin(!dashboardAdmin)}
+                                        onChange={() => {
+                                            const newValue = !dashboardAdmin;
+                                            setDashboardAdmin(newValue);
+                                            sendPermissionToServer("dashboard_admin", newValue);
+                                        }}
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -75,7 +150,11 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                     <input
                                         type="checkbox"
                                         checked={leadRead}
-                                        onChange={() => setLeadRead(!leadRead)}
+                                        onChange={() => {
+                                            const newValue = !leadRead;
+                                            setLeadRead(newValue);
+                                            sendPermissionToServer("lead_read", newValue);
+                                        }}
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -86,7 +165,11 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                     <input
                                         type="checkbox"
                                         checked={leadEdit}
-                                        onChange={() => setLeadEdit(!leadEdit)}
+                                        onChange={() => {
+                                            const newValue = !leadEdit;
+                                            setLeadEdit(newValue);
+                                            sendPermissionToServer("lead_edit", newValue);
+                                        }}
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -97,7 +180,11 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                     <input
                                         type="checkbox"
                                         checked={leadAdmin}
-                                        onChange={() => setLeadAdmin(!leadAdmin)}
+                                        onChange={() => {
+                                            const newValue = !leadAdmin;
+                                            setLeadAdmin(newValue);
+                                            sendPermissionToServer("lead_admin", newValue);
+                                        }}
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -111,7 +198,11 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                     <input
                                         type="checkbox"
                                         checked={chatRead}
-                                        onChange={() => setChatRead(!chatRead)}
+                                        onChange={() => {
+                                            const newValue = !chatRead;
+                                            setChatRead(newValue);
+                                            sendPermissionToServer("chat_read", newValue);
+                                        }}
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -122,7 +213,11 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                     <input
                                         type="checkbox"
                                         checked={chatEdit}
-                                        onChange={() => setChatEdit(!chatEdit)}
+                                        onChange={() => {
+                                            const newValue = !chatEdit;
+                                            setChatEdit(newValue);
+                                            sendPermissionToServer("chat_edit", newValue);
+                                        }}
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -133,7 +228,11 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                     <input
                                         type="checkbox"
                                         checked={chatAdmin}
-                                        onChange={() => setChatAdmin(!chatAdmin)}
+                                        onChange={() => {
+                                            const newValue = !chatAdmin;
+                                            setChatAdmin(newValue);
+                                            sendPermissionToServer("chat_admin", newValue);
+                                        }}
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -149,7 +248,8 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                     <button
                         className="save-button"
                         onClick={() => {
-                            closeModal(); // Закрытие модального окна после сохранения
+                            saveAllPermissions(); // Сохранение всех изменений
+                            closeModal(); // Закрытие модального окна
                         }}
                     >
                         Save
