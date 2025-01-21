@@ -136,7 +136,25 @@
     align-items: flex-start;
     flex-direction: column;
     text-align: center;
+    border: 1px solid #ddd;
+    min-width: 150px;
+    padding: 10px;
+    /* Добавим отступ внутри элемента */
+    border-radius: 8px;
+    /* Скруглим углы */
+    background-color: #fff;
+    /* Зададим белый фон */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
+    /* Добавляем тени */
+    transition: box-shadow 0.3s ease;
+    /* Анимация для теней при наведении */
 }
+
+/* Тени при наведении */
+.toggle-item:hover {
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 
 .toggle-switch {
     margin: 5px 0;

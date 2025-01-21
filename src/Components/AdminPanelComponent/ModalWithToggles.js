@@ -29,7 +29,7 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                         <div className="toggles-group">
                             {/* Dashboard*/}
                             <div className="toggle-item">
-                                Dashboard-citire
+                                Dashboard - citire
                                 <label className="toggle-switch">
                                     <input
                                         type="checkbox"
@@ -40,7 +40,7 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                 </label>
                             </div>
                             <div className="toggle-item">
-                                Dashboard-editare
+                                Dashboard - editare
                                 <label className="toggle-switch">
                                     <input
                                         type="checkbox"
@@ -51,7 +51,7 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                 </label>
                             </div>
                             <div className="toggle-item">
-                                Dashboard-full acces
+                                Dashboard - full acces
                                 <label className="toggle-switch">
                                     <input
                                         type="checkbox"
@@ -65,7 +65,7 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                         {/* Lead*/}
                         <div className="toggles-group">
                             <div className="toggle-item">
-                                Lead-citire
+                                Lead - citire
                                 <label className="toggle-switch">
                                     <input
                                         type="checkbox"
@@ -76,7 +76,7 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                 </label>
                             </div>
                             <div className="toggle-item">
-                                Lead-editare
+                                Lead - editare
                                 <label className="toggle-switch">
                                     <input
                                         type="checkbox"
@@ -87,7 +87,7 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                 </label>
                             </div>
                             <div className="toggle-item">
-                                Lead-full acces
+                                Lead - full acces
                                 <label className="toggle-switch">
                                     <input
                                         type="checkbox"
@@ -101,7 +101,7 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                         {/* Chat*/}
                         <div className="toggles-group">
                             <div className="toggle-item">
-                                Chat-citire
+                                Chat - citire
                                 <label className="toggle-switch">
                                     <input
                                         type="checkbox"
@@ -112,7 +112,7 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                 </label>
                             </div>
                             <div className="toggle-item">
-                                Chat-editare
+                                Chat - editare
                                 <label className="toggle-switch">
                                     <input
                                         type="checkbox"
@@ -123,7 +123,7 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                 </label>
                             </div>
                             <div className="toggle-item">
-                                Chat-full acces
+                                Chat - full acces
                                 <label className="toggle-switch">
                                     <input
                                         type="checkbox"
