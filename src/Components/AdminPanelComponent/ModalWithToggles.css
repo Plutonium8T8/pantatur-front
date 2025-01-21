@@ -124,21 +124,27 @@
     background-color: #45a049;
 }
 
-/* Стили для групп переключателей */
 .toggles-group {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 20px;
-    /* Отступ между группами */
+    flex-direction: column;
+    gap: 10px;
 }
 
 .toggle-item {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     flex-direction: column;
     text-align: center;
 }
 
 .toggle-switch {
     margin: 5px 0;
+}
+
+.toggles-group-container {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    justify-content: space-between;
 }

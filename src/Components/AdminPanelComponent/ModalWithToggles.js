@@ -25,118 +25,120 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                     <p>
                         {employee.name} ({employee.id})
                     </p>
-                    <div className="toggles-group">
-                        {/* Dashboard*/}
-                        <div className="toggle-item">
-                            Dashboard-citire
-                            <label className="toggle-switch">
-                                <input
-                                    type="checkbox"
-                                    checked={toggle1}
-                                    onChange={() => setToggle1(!toggle1)}
-                                />
-                                <span className="slider"></span>
-                            </label>
+                    <div className="toggles-group-container">
+                        <div className="toggles-group">
+                            {/* Dashboard*/}
+                            <div className="toggle-item">
+                                Dashboard-citire
+                                <label className="toggle-switch">
+                                    <input
+                                        type="checkbox"
+                                        checked={toggle1}
+                                        onChange={() => setToggle1(!toggle1)}
+                                    />
+                                    <span className="slider"></span>
+                                </label>
+                            </div>
+                            <div className="toggle-item">
+                                Dashboard-editare
+                                <label className="toggle-switch">
+                                    <input
+                                        type="checkbox"
+                                        checked={toggle2}
+                                        onChange={() => setToggle2(!toggle2)}
+                                    />
+                                    <span className="slider"></span>
+                                </label>
+                            </div>
+                            <div className="toggle-item">
+                                Dashboard-full acces
+                                <label className="toggle-switch">
+                                    <input
+                                        type="checkbox"
+                                        checked={toggle3}
+                                        onChange={() => setToggle3(!toggle3)}
+                                    />
+                                    <span className="slider"></span>
+                                </label>
+                            </div>
                         </div>
-                        <div className="toggle-item">
-                            Dashboard-editare
-                            <label className="toggle-switch">
-                                <input
-                                    type="checkbox"
-                                    checked={toggle2}
-                                    onChange={() => setToggle2(!toggle2)}
-                                />
-                                <span className="slider"></span>
-                            </label>
+                        {/* Lead*/}
+                        <div className="toggles-group">
+                            <div className="toggle-item">
+                                Lead-citire
+                                <label className="toggle-switch">
+                                    <input
+                                        type="checkbox"
+                                        checked={toggle4}
+                                        onChange={() => setToggle4(!toggle4)}
+                                    />
+                                    <span className="slider"></span>
+                                </label>
+                            </div>
+                            <div className="toggle-item">
+                                Lead-editare
+                                <label className="toggle-switch">
+                                    <input
+                                        type="checkbox"
+                                        checked={toggle5}
+                                        onChange={() => setToggle5(!toggle5)}
+                                    />
+                                    <span className="slider"></span>
+                                </label>
+                            </div>
+                            <div className="toggle-item">
+                                Lead-full acces
+                                <label className="toggle-switch">
+                                    <input
+                                        type="checkbox"
+                                        checked={toggle6}
+                                        onChange={() => setToggle6(!toggle6)}
+                                    />
+                                    <span className="slider"></span>
+                                </label>
+                            </div>
                         </div>
-                        <div className="toggle-item">
-                            Dashboard-full acces
-                            <label className="toggle-switch">
-                                <input
-                                    type="checkbox"
-                                    checked={toggle3}
-                                    onChange={() => setToggle3(!toggle3)}
-                                />
-                                <span className="slider"></span>
-                            </label>
-                        </div>
-                    </div>
-                    {/* Lead*/}
-                    <div className="toggles-group">
-                        <div className="toggle-item">
-                            Lead-citire
-                            <label className="toggle-switch">
-                                <input
-                                    type="checkbox"
-                                    checked={toggle4}
-                                    onChange={() => setToggle4(!toggle4)}
-                                />
-                                <span className="slider"></span>
-                            </label>
-                        </div>
-                        <div className="toggle-item">
-                            Lead-editare
-                            <label className="toggle-switch">
-                                <input
-                                    type="checkbox"
-                                    checked={toggle5}
-                                    onChange={() => setToggle5(!toggle5)}
-                                />
-                                <span className="slider"></span>
-                            </label>
-                        </div>
-                        <div className="toggle-item">
-                            Lead-full acces
-                            <label className="toggle-switch">
-                                <input
-                                    type="checkbox"
-                                    checked={toggle6}
-                                    onChange={() => setToggle6(!toggle6)}
-                                />
-                                <span className="slider"></span>
-                            </label>
-                        </div>
-                    </div>
-                    {/* Chat*/}
-                    <div className="toggles-group">
-                        <div className="toggle-item">
-                            Chat-citire
-                            <label className="toggle-switch">
-                                <input
-                                    type="checkbox"
-                                    checked={toggle7}
-                                    onChange={() => setToggle7(!toggle7)}
-                                />
-                                <span className="slider"></span>
-                            </label>
-                        </div>
-                        <div className="toggle-item">
-                            Chat-editare
-                            <label className="toggle-switch">
-                                <input
-                                    type="checkbox"
-                                    checked={toggle8}
-                                    onChange={() => setToggle8(!toggle8)}
-                                />
-                                <span className="slider"></span>
-                            </label>
-                        </div>
-                        <div className="toggle-item">
-                            Chat-full acces
-                            <label className="toggle-switch">
-                                <input
-                                    type="checkbox"
-                                    checked={toggle9}
-                                    onChange={() => setToggle9(!toggle9)}
-                                />
-                                <span className="slider"></span>
-                            </label>
+                        {/* Chat*/}
+                        <div className="toggles-group">
+                            <div className="toggle-item">
+                                Chat-citire
+                                <label className="toggle-switch">
+                                    <input
+                                        type="checkbox"
+                                        checked={toggle7}
+                                        onChange={() => setToggle7(!toggle7)}
+                                    />
+                                    <span className="slider"></span>
+                                </label>
+                            </div>
+                            <div className="toggle-item">
+                                Chat-editare
+                                <label className="toggle-switch">
+                                    <input
+                                        type="checkbox"
+                                        checked={toggle8}
+                                        onChange={() => setToggle8(!toggle8)}
+                                    />
+                                    <span className="slider"></span>
+                                </label>
+                            </div>
+                            <div className="toggle-item">
+                                Chat-full acces
+                                <label className="toggle-switch">
+                                    <input
+                                        type="checkbox"
+                                        checked={toggle9}
+                                        onChange={() => setToggle9(!toggle9)}
+                                    />
+                                    <span className="slider"></span>
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div className="modal-footer">
                     <button className="close-button" onClick={closeModal}>
-                        Закрыть
+                        Close
                     </button>
                 </div>
             </div>
