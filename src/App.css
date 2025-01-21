@@ -231,6 +231,7 @@
 .container-select-priority-workflow {
   display: flex;
   flex-direction: column;
+  width: 100%;
   gap: 8px;
   text-align: center;
   justify-content: space-between;
@@ -238,16 +239,19 @@
 
 .priority-component {
   display: flex;
+  padding: 12px;
   flex-direction: column;
   justify-content: center;
 }
 
 .priority-select {
-  min-width: 255px;
+  padding: 12px;
+  font-size: 16px;
 }
 
 .workflow-select {
-  min-width: 255px;
+  padding: 12px;
+  font-size: 16px;
 }
 
 .container-button-save-delete-close {

@@ -74,6 +74,7 @@ export const UnreadMessagesProvider = ({ children, isLoggedIn }) => {
                             message.data['seen_by'] = '{}';
                             message.data['seen_at'] = '';
                             const updatedMessages = [...prev, message.data];
+                            fetchMessages();
                             updateUnreadCount(updatedMessages);
                             return updatedMessages;
                         });

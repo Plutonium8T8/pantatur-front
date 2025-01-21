@@ -1,177 +1,162 @@
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.6);
-    display: flex;
-    align-items: stretch;
-    z-index: 9999;
-  }
-  
-  .modal-container {
-    position: absolute;
-    top: 0;
-    left: 100px;
-    background-color: #1f2937;
-    color: white;
-    width: 520px;
-    height: 100vh;
-    overflow-y: auto;
-    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.3);
-    animation: slideIn 0.5s ease-in-out;
-    border-radius: 0;
-    z-index: 9999;
-  }
-  
-  
-  /* Sliding animation */
-  @keyframes slideIn {
-    from {
-      transform: translateX(-100%);
-      opacity: 0;
-    }
-  
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
-  }
-  
-  .modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
-    /* Increased padding for a more spacious look */
-    background-color: #0f824c;
-  }
-  
-  .modal-header h2 {
-    font-size: 20px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin: 0;
-  }
-  
-  .ticket-modal-form {
-    padding: 20px;
-    /* Increased padding for form elements */
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  
-  .input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    /* Increased spacing between labels and inputs */
-  }
-  
-  .input-group label {
-    font-size: 18px;
-    color: #cbd5e0;
-  }
-  
-  .button-container {
-    display: flex;
-    margin-bottom: 20px;
-    justify-content: flex-end;
-    /* Push the button to the right */
-    width: 100%;
-    /* Ensure it spans the full width of the form */
-  }
-  
-  .input-group input,
-  .input-group textarea {
-    border: 1px solid #374151;
-    /* background: #111827; */
-    color: black;
-    padding: 12px;
-    /* Increased padding for inputs */
-    font-size: 16px;
-    border-radius: 5px;
-    /* Optional for a rounded look */
-    outline: none;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  }
-  
-  .input-group input:focus,
-  .input-group textarea:focus {
-    border-color: #0f824c;
-    box-shadow: 0 0 4px rgba(37, 99, 235, 0.5);
-  }
-  
-  .submit-button {
-    background-color: #0f824c;
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
-  }
-  
-  .submit-button:hover {
-    background-color: #0d7444;
-    transform: scale(1.05);
-  }
-  
-  .button-container .submit-button {
-    width: 45%;
-    margin-left: 1%;
-  }
-  
-  .button-container {
-    display: flex;
-    justify-content: space-between;
-    /* Ensure space between buttons */
-    gap: 10px;
-    /* Adjust spacing as needed */
-  }
-  
-  .clear-button {
-    background-color: #972b2b;
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
-    width: 45%;
-    margin-right: 1%;
-  }
-  
-  .clear-button:hover {
-    background-color: #882626;
-    transform: scale(1.05);
-  }
-  
-  .ticket-modal-content p {
-    margin: 0;
-  }
-  
-  .ticket-modal-content {
-    display: flex;
-    justify-content: space-between;
-    /* Space between the description/time and actions */
-    align-items: center;
-    /* Vertically align items */
-    gap: 20px;
-    /* Optional: Adjust spacing between items */
-  }
-  
-  .action-group {
-    display: flex;
-    flex-direction: column;
-    /* Stack status and button vertically */
-    align-items: flex-end;
-    /* Align items to the right */
-    gap: 10px;
-    /* Spacing between the status and button */
-  }
+.tag-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  width: 100%;
+}
+
+.tags-display {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 12px;
+  padding: 12px 20px;
+  width: 100%;
+}
+
+.tag-item {
+  background-color: #0f824c;
+  color: white;
+  padding: 12px 18px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  overflow: hidden;
+  align-items: center;
+  font-size: 14px;
+  letter-spacing: 0.8px;
+  width: 24%;
+}
+
+.tag-text {
+  overflow: hidden;
+}
+
+.remove-tag-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+  padding-left: 6px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.tag-input,
+.textarea-input {
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #374151;
+  border-radius: 5px;
+  background-color: #fff;
+  color: #111827;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.tag-input:focus,
+.textarea-input:focus {
+  border-color: #0f824c;
+  box-shadow: 0 0 4px rgba(15, 130, 76, 0.5);
+}
+
+.suggestions-list {
+  list-style: none;
+  margin: 5px 0 0;
+  padding: 0;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  overflow-y: auto;
+  color: black;
+}
+
+.suggestion-item {
+  padding: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.suggestion-item:hover {
+  background-color: #e0e0e0;
+}
+
+.textarea-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.submit-button {
+  background-color: #0f824c;
+  color: white;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.3s;
+}
+
+.submit-button:hover {
+  background-color: #0d7444;
+  transform: scale(1.05);
+}
+
+.clear-button {
+  background-color: #972b2b;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  width: 45%;
+  margin-right: 1%;
+}
+
+.clear-button:hover {
+  background-color: #882626;
+  transform: scale(1.05);
+}
+
+.ticket-modal-form {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+
+.ticket-modal-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.action-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}

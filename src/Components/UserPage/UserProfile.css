@@ -20,7 +20,7 @@
   height: 100vh;
   overflow-y: auto;
   box-shadow: 4px 0 12px rgba(0, 0, 0, 0.3);
-  animation: slideIn 0.5s ease-in-out;
+  animation: slideIn 0.35s ease-in-out;
   border-radius: 0;
   z-index: 9999;
 }
@@ -42,7 +42,6 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px;
-  /* Increased padding for a more spacious look */
   background-color: #0f824c;
 }
 
@@ -56,17 +55,9 @@
 
 .user-form {
   padding: 20px;
-  /* Increased padding for form elements */
   display: flex;
   flex-direction: column;
   gap: 20px;
-}
-
-.input-group {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  /* Increased spacing between labels and inputs */
 }
 
 .input-group label {
@@ -78,21 +69,16 @@
   display: flex;
   margin-bottom: 20px;
   justify-content: flex-end;
-  /* Push the button to the right */
   width: 100%;
-  /* Ensure it spans the full width of the form */
 }
 
 .input-group input,
 .input-group textarea {
   border: 1px solid #374151;
-  /* background: #111827; */
   color: black;
   padding: 12px;
-  /* Increased padding for inputs */
   font-size: 16px;
   border-radius: 5px;
-  /* Optional for a rounded look */
   outline: none;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
@@ -103,33 +89,14 @@
   box-shadow: 0 0 4px rgba(37, 99, 235, 0.5);
 }
 
-.submit-button {
-  background-color: #0f824c;
-  color: white;
-  padding: 12px 20px;
-  border: none;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-}
-
-.submit-button:hover {
-  background-color: #0d7444;
-  transform: scale(1.05);
-}
-
 .button-container .submit-button {
-  width: 45%;
-  margin-left: 1%;
+  width: 47%;
 }
 
 .button-container {
   display: flex;
   justify-content: space-between;
-  /* Ensure space between buttons */
   gap: 10px;
-  /* Adjust spacing as needed */
 }
 
 .clear-button {
@@ -141,8 +108,7 @@
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s, transform 0.2s;
-  width: 45%;
-  margin-right: 1%;
+  width: 47%;
 }
 
 .clear-button:hover {
@@ -157,19 +123,6 @@
 .user-content {
   display: flex;
   justify-content: space-between;
-  /* Space between the description/time and actions */
   align-items: center;
-  /* Vertically align items */
   gap: 20px;
-  /* Optional: Adjust spacing between items */
-}
-
-.action-group {
-  display: flex;
-  flex-direction: column;
-  /* Stack status and button vertically */
-  align-items: flex-end;
-  /* Align items to the right */
-  gap: 10px;
-  /* Spacing between the status and button */
 }
