@@ -3,17 +3,7 @@ import Cookies from "js-cookie";
 import "./ModalWithToggles.css";
 
 const ModalWithToggles = ({ employee, closeModal }) => {
-    const [dashboardRead, setDashboardRead] = useState(false);
-    const [dashboardEdit, setDashboardEdit] = useState(false);
-    const [dashboardAdmin, setDashboardAdmin] = useState(false);
-
-    const [leadRead, setLeadRead] = useState(false);
-    const [leadEdit, setLeadEdit] = useState(false);
-    const [leadAdmin, setLeadAdmin] = useState(false);
-
-    const [chatRead, setChatRead] = useState(false);
-    const [chatEdit, setChatEdit] = useState(false);
-    const [chatAdmin, setChatAdmin] = useState(false);
+    const [roles, setRoles] = useState([]);
 
     const getSession = async () => {
         const token = Cookies.get("jwt");
@@ -34,22 +24,11 @@ const ModalWithToggles = ({ employee, closeModal }) => {
             const sessionData = await response.json();
             console.log("Сессия успешно получена:", sessionData);
 
-            // Проверяем, совпадает ли ID из сессии с ID сотрудника
             if (sessionData.user_id === employee.id) {
-                const roles = sessionData.roles || [];
-                setDashboardRead(roles.includes("DASHBOARD_READ"));
-                setDashboardEdit(roles.includes("DASHBOARD_WRITE"));
-                setDashboardAdmin(roles.includes("DASHBOARD_ADMIN"));
-
-                setLeadRead(roles.includes("LEAD_READ"));
-                setLeadEdit(roles.includes("LEAD_WRITE"));
-                setLeadAdmin(roles.includes("LEAD_ADMIN"));
-
-                setChatRead(roles.includes("CHAT_READ"));
-                setChatEdit(roles.includes("CHAT_WRITE"));
-                setChatAdmin(roles.includes("CHAT_ADMIN"));
+                setRoles(sessionData.roles || []);
             } else {
                 console.log(`ID из сессии (${sessionData.user_id}) не совпадает с ID сотрудника (${employee.id}).`);
+                setRoles([]); // Если ID не совпадает, очищаем роли
             }
         } catch (error) {
             console.error("Ошибка при получении сессии:", error);
@@ -61,8 +40,8 @@ const ModalWithToggles = ({ employee, closeModal }) => {
     }, []);
 
     const sendPermissionToServer = async (role) => {
+        const token = Cookies.get("jwt");
         try {
-            const token = Cookies.get("jwt");
             console.log(`Отправка: role=${role}`);
 
             const response = await fetch("https://pandatur-api.com/admin/users/roles", {
@@ -82,17 +61,16 @@ const ModalWithToggles = ({ employee, closeModal }) => {
             }
 
             console.log(`Разрешение "${role}" успешно добавлено.`);
+            await getSession(); // Обновляем роли после успешного запроса
         } catch (error) {
             console.error(`Ошибка при добавлении разрешения "${role}":`, error);
         }
     };
 
     const deletePermissionToServer = async (role) => {
+        const token = Cookies.get("jwt");
         try {
-            const token = Cookies.get("jwt");
-            // const numericId = parseInt(employee.id, 10); // Преобразование ID в число
-
-            // console.log("Отправка DELETE с ID:", numericId);
+            console.log(`Удаление: role=${role}`);
 
             const response = await fetch("https://pandatur-api.com/admin/users/roles", {
                 method: "DELETE",
@@ -101,7 +79,7 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                     Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({
-                    id: employee.id, // Передача ID как числа
+                    id: employee.id,
                     role,
                 }),
             });
@@ -111,20 +89,21 @@ const ModalWithToggles = ({ employee, closeModal }) => {
             }
 
             console.log(`Разрешение "${role}" успешно удалено.`);
+            await getSession(); // Обновляем роли после успешного запроса
         } catch (error) {
             console.error(`Ошибка при удалении разрешения "${role}":`, error);
         }
     };
 
-    const handleToggleChange = (setter, permission, currentValue) => {
-        const newValue = !currentValue; // Инвертируем текущее значение
-        setter(newValue); // Устанавливаем новое состояние
-        if (newValue) {
-            sendPermissionToServer(permission); // Выполняем POST запрос
+    const handleToggleChange = (permission, isActive) => {
+        if (isActive) {
+            deletePermissionToServer(permission);
         } else {
-            deletePermissionToServer(permission); // Выполняем DELETE запрос
+            sendPermissionToServer(permission);
         }
     };
+
+    const isRoleActive = (role) => roles.includes(role);
 
     return (
         <div className="modal-overlay">
@@ -147,8 +126,8 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                 <label className="toggle-switch">
                                     <input
                                         type="checkbox"
-                                        checked={dashboardRead}
-                                        onChange={() => handleToggleChange(setDashboardRead, "DASHBOARD_READ", dashboardRead)}
+                                        checked={isRoleActive("DASHBOARD_READ")}
+                                        onChange={() => handleToggleChange("DASHBOARD_READ", isRoleActive("DASHBOARD_READ"))}
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -158,8 +137,8 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                 <label className="toggle-switch">
                                     <input
                                         type="checkbox"
-                                        checked={dashboardEdit}
-                                        onChange={() => handleToggleChange(setDashboardEdit, "DASHBOARD_WRITE", dashboardEdit)}
+                                        checked={isRoleActive("DASHBOARD_WRITE")}
+                                        onChange={() => handleToggleChange("DASHBOARD_WRITE", isRoleActive("DASHBOARD_WRITE"))}
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -169,8 +148,8 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                 <label className="toggle-switch">
                                     <input
                                         type="checkbox"
-                                        checked={dashboardAdmin}
-                                        onChange={() => handleToggleChange(setDashboardAdmin, "DASHBOARD_ADMIN", dashboardAdmin)}
+                                        checked={isRoleActive("DASHBOARD_ADMIN")}
+                                        onChange={() => handleToggleChange("DASHBOARD_ADMIN", isRoleActive("DASHBOARD_ADMIN"))}
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -183,8 +162,8 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                 <label className="toggle-switch">
                                     <input
                                         type="checkbox"
-                                        checked={leadRead}
-                                        onChange={() => handleToggleChange(setLeadRead, "LEAD_READ", leadRead)}
+                                        checked={isRoleActive("LEAD_READ")}
+                                        onChange={() => handleToggleChange("LEAD_READ", isRoleActive("LEAD_READ"))}
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -194,8 +173,8 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                 <label className="toggle-switch">
                                     <input
                                         type="checkbox"
-                                        checked={leadEdit}
-                                        onChange={() => handleToggleChange(setLeadEdit, "LEAD_WRITE", leadEdit)}
+                                        checked={isRoleActive("LEAD_WRITE")}
+                                        onChange={() => handleToggleChange("LEAD_WRITE", isRoleActive("LEAD_WRITE"))}
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -205,8 +184,8 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                 <label className="toggle-switch">
                                     <input
                                         type="checkbox"
-                                        checked={leadAdmin}
-                                        onChange={() => handleToggleChange(setLeadAdmin, "LEAD_ADMIN", leadAdmin)}
+                                        checked={isRoleActive("LEAD_ADMIN")}
+                                        onChange={() => handleToggleChange("LEAD_ADMIN", isRoleActive("LEAD_ADMIN"))}
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -219,8 +198,8 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                 <label className="toggle-switch">
                                     <input
                                         type="checkbox"
-                                        checked={chatRead}
-                                        onChange={() => handleToggleChange(setChatRead, "CHAT_READ", chatRead)}
+                                        checked={isRoleActive("CHAT_READ")}
+                                        onChange={() => handleToggleChange("CHAT_READ", isRoleActive("CHAT_READ"))}
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -230,8 +209,8 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                 <label className="toggle-switch">
                                     <input
                                         type="checkbox"
-                                        checked={chatEdit}
-                                        onChange={() => handleToggleChange(setChatEdit, "CHAT_WRITE", chatEdit)}
+                                        checked={isRoleActive("CHAT_WRITE")}
+                                        onChange={() => handleToggleChange("CHAT_WRITE", isRoleActive("CHAT_WRITE"))}
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -241,8 +220,8 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                 <label className="toggle-switch">
                                     <input
                                         type="checkbox"
-                                        checked={chatAdmin}
-                                        onChange={() => handleToggleChange(setChatAdmin, "CHAT_ADMIN", chatAdmin)}
+                                        checked={isRoleActive("CHAT_ADMIN")}
+                                        onChange={() => handleToggleChange("CHAT_ADMIN", isRoleActive("CHAT_ADMIN"))}
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -252,7 +231,7 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                 </div>
                 <div className="modal-footer">
                     <button className="close-button-toggle" onClick={closeModal}>
-                        Cancel
+                        Close
                     </button>
                 </div>
             </div>
