@@ -1203,10 +1203,15 @@ const ChatComponent = ({ }) => {
                             .map(ticket => {
                                 const clientMessages = messages1.filter(msg => msg.client_id === ticket.client_id);
 
+                                // const unreadCounts = clientMessages.filter(msg => {
+                                //     const notSeen = !msg.seen_by; // Сообщение не отмечено как просмотренное
+                                //     const notSentByUser = msg.sender_id !== Number(userId); // Сообщение не отправлено текущим пользователем
+                                //     return notSeen && notSentByUser;
+                                // }).length;
+
                                 const unreadCounts = clientMessages.filter(
                                     msg =>
-                                        (!msg.seen_by || !msg.seen_by.includes(String(userId))) &&
-                                        msg.sender_id !== Number(userId)
+                                        msg.seen_by != null && msg.seen_by == '{}' && msg.sender_id == msg.client_id
                                 ).length;
 
                                 const lastMessage = clientMessages.length

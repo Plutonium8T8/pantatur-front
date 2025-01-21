@@ -96,6 +96,7 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                         type="checkbox"
                                         checked={dashboardEdit}
                                         onChange={() => setDashboardEdit(!dashboardEdit)}
+                                        disabled
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -107,6 +108,7 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                                         type="checkbox"
                                         checked={dashboardAdmin}
                                         onChange={() => setDashboardAdmin(!dashboardAdmin)}
+                                        disabled
                                     />
                                     <span className="slider"></span>
                                 </label>
@@ -187,8 +189,8 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                     </div>
                 </div>
                 <div className="modal-footer">
-                    <button className="close-button" onClick={closeModal}>
-                        Close
+                    <button className="close-button-toggle" onClick={closeModal}>
+                        Cancel
                     </button>
 
                     <button

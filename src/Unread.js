@@ -23,8 +23,8 @@ export const UnreadMessagesProvider = ({ children, isLoggedIn }) => {
 
         const unreadMessages = updatedMessages.filter(
             (msg) =>
-                (!msg.seen_at || !msg.seen_by?.includes(String(userId))) &&
-                msg.sender_id !== Number(userId)
+                msg.seen_by != null && msg.seen_by == '{}' && msg.sender_id == msg.client_id
+
         );
 
         setUnreadCount(unreadMessages.length);
@@ -71,6 +71,8 @@ export const UnreadMessagesProvider = ({ children, isLoggedIn }) => {
 
                     if (message.type === 'message') {
                         setMessages((prev = []) => {
+                            message.data['seen_by'] = '{}';
+                            message.data['seen_at'] = '';
                             const updatedMessages = [...prev, message.data];
                             updateUnreadCount(updatedMessages);
                             return updatedMessages;

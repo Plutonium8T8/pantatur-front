@@ -34,38 +34,86 @@
     margin: 0;
 }
 
-.close-button {
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    color: white;
-}
-
 .modal-body {
     margin-top: 20px;
 }
 
-.toggles-container {
+/* Общие стили для footer */
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* Кнопки */
+.button {
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border: none;
+}
+
+.save-button {
+    background-color: #4caf50;
+    color: white;
+}
+
+.save-button:hover {
+    background-color: #45a049;
+}
+
+.close-button {
+    background-color: transparent;
+    color: black;
+}
+
+.close-button:hover {
+    background-color: #f0f0f0;
+}
+
+/* Контейнеры */
+.toggles-group-container {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    justify-content: space-between;
+}
+
+.toggles-group {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
+/* Элемент переключателя */
 .toggle-item {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 14px;
+    align-items: flex-start;
+    flex-direction: column;
+    text-align: center;
+    border: 1px solid #ddd;
+    min-width: 150px;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
+    transition: box-shadow 0.3s ease;
 }
 
-/* Toggle switch стили */
+.toggle-item:hover {
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Переключатели */
 .toggle-switch {
     position: relative;
     display: inline-block;
     width: 50px;
     height: 24px;
-    margin-left: 10px;
+    margin: 5px 0;
 }
 
 .toggle-switch input {
@@ -104,101 +152,22 @@
     transform: translateX(26px);
 }
 
-.modal-footer {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 20px;
+/* Состояние disabled */
+.toggle-switch input[disabled]+.slider {
+    background-color: #e0e0e0;
+    cursor: not-allowed;
+    opacity: 0.6;
 }
 
-.modal-footer button {
-    background-color: #4caf50;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
+.toggle-switch input[disabled]+.slider:before {
+    background-color: #bdbdbd;
 }
 
-.modal-footer button:hover {
-    background-color: #45a049;
-}
-
-.toggles-group {
-    display: flex;
-    justify-content: space-between;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.toggle-item {
-    display: flex;
-    align-items: flex-start;
-    flex-direction: column;
-    text-align: center;
-    border: 1px solid #ddd;
-    min-width: 150px;
-    padding: 10px;
-    /* Добавим отступ внутри элемента */
-    border-radius: 8px;
-    /* Скруглим углы */
-    background-color: #fff;
-    /* Зададим белый фон */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
-    /* Добавляем тени */
-    transition: box-shadow 0.3s ease;
-    /* Анимация для теней при наведении */
-}
-
-/* Тени при наведении */
-.toggle-item:hover {
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-
-.toggle-switch {
-    margin: 5px 0;
-}
-
-.toggles-group-container {
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
-    justify-content: space-between;
-}
-
-.modal-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    /* Отступ между кнопками */
-    margin-top: 20px;
-}
-
-.save-button {
-    background-color: #4caf50;
-    /* Зеленый цвет для кнопки Save */
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s ease;
-}
-
-.save-button:hover {
-    background-color: #45a049;
-    /* Темнее при наведении */
-}
-
-.close-button {
-    background-color: transparent;
+.close-button-toggle {
     color: black;
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s ease;
+    background-color: #ddd;
 }
