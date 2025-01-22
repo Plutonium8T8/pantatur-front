@@ -1,8 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import CryptoJS from 'crypto-js';
-import AES from 'crypto-js/aes';
-import Utf8 from 'crypto-js/enc-utf8';
 import Select from '../SelectComponent/SelectComponent';
 import { useUser } from '../../UserContext';
 import Cookies from 'js-cookie';
