@@ -5,40 +5,6 @@ import "./ModalWithToggles.css";
 const ModalWithToggles = ({ employee, closeModal }) => {
     const [roles, setRoles] = useState([]);
 
-    const getSession = async () => {
-        const token = Cookies.get("jwt");
-        try {
-            const response = await fetch('https://pandatur-api.com/session', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-                credentials: 'include',
-            });
-
-            if (!response.ok) {
-                throw new Error(`Ошибка: ${response.status}`);
-            }
-
-            const sessionData = await response.json();
-            console.log("Сессия успешно получена:", sessionData);
-
-            if (sessionData.user_id === employee.id) {
-                setRoles(sessionData.roles || []);
-            } else {
-                console.log(`ID из сессии (${sessionData.user_id}) не совпадает с ID сотрудника (${employee.id}).`);
-                setRoles([]); // Если ID не совпадает, очищаем роли
-            }
-        } catch (error) {
-            console.error("Ошибка при получении сессии:", error);
-        }
-    };
-
-    useEffect(() => {
-        getSession();
-    }, []);
-
     const sendPermissionToServer = async (role) => {
         const token = Cookies.get("jwt");
         try {
@@ -61,7 +27,6 @@ const ModalWithToggles = ({ employee, closeModal }) => {
             }
 
             console.log(`Разрешение "${role}" успешно добавлено.`);
-            await getSession(); // Обновляем роли после успешного запроса
         } catch (error) {
             console.error(`Ошибка при добавлении разрешения "${role}":`, error);
         }
@@ -89,7 +54,6 @@ const ModalWithToggles = ({ employee, closeModal }) => {
             }
 
             console.log(`Разрешение "${role}" успешно удалено.`);
-            await getSession(); // Обновляем роли после успешного запроса
         } catch (error) {
             console.error(`Ошибка при удалении разрешения "${role}":`, error);
         }
