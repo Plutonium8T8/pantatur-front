@@ -62,13 +62,20 @@ const ChatComponent = ({ }) => {
     const [filteredTickets, setFilteredTickets] = useState(tickets1);
     const [activeTab, setActiveTab] = useState('extraForm'); // По умолчанию вкладка Extra Form
     const [showMyTickets, setShowMyTickets] = useState(false);
+    const activeChatRef = useRef(null);
 
     useEffect(() => {
-        // Если clientId передан через URL, устанавливаем его как selectClientId
         if (clientId) {
             setSelectClientId(Number(clientId));
         }
-    }, [clientId]);
+    }, [clientId, setSelectClientId]);
+
+    // Прокручиваем к активному чату, если selectClientId изменился и тикеты загружены
+    useEffect(() => {
+        if (!isLoading && activeChatRef.current) {
+            activeChatRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+    }, [selectClientId, isLoading, filteredTickets]);
 
     useEffect(() => {
         if (selectClientId) {
@@ -1233,6 +1240,7 @@ const ChatComponent = ({ }) => {
                                     <div
                                         key={ticket.client_id}
                                         className={`chat-item ${ticket.client_id === selectClientId ? "active" : ""}`}
+                                        ref={ticket.client_id === selectClientId ? activeChatRef : null}
                                         onClick={() => handleTicketClick(ticket.client_id)}
                                     >
                                         <div className="foto-description">
