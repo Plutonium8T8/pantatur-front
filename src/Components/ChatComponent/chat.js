@@ -33,7 +33,7 @@ const ChatComponent = ({ }) => {
     const [messages, setMessages] = useState([]); // Инициализируем как пустой массив
     const [selectClientId, setSelectClientId] = useState(null);
     const [extraInfo, setExtraInfo] = useState({}); // Состояние для дополнительной информации каждого тикета
-    const [tickets, setTickets] = useAppContext();
+    const { tickets, updateTicket, setTickets } = useAppContext();
     const messageContainerRef = useRef(null);
     const { clientId } = useParams(); // Получаем clientId из URL
     const [isLoading, setIsLoading] = useState(false); // Состояние загрузки
@@ -222,7 +222,7 @@ const ChatComponent = ({ }) => {
             return;
         }
 
-        // Проверяем, что tickets — это массив, и ищем тикет
+        // Находим тикет
         const updatedTicket = Array.isArray(tickets)
             ? tickets.find(ticket => ticket.client_id === selectClientId)
             : null;
@@ -234,48 +234,34 @@ const ChatComponent = ({ }) => {
         }
 
         try {
-            const token = Cookies.get("jwt");
-            if (!token) {
-                console.warn('Нет токена для авторизации.');
-                enqueueSnackbar('Ошибка: Нет токена.', { variant: 'error' });
-                return;
-            }
-
-            // Отправляем PATCH запрос
-            const response = await fetch(`https://pandatur-api.com/tickets/${updatedTicket.client_id}`, {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-                credentials: "include",
-                body: JSON.stringify({ workflow: newWorkflow }),
+            // Используем функцию updateTicket из AppContext
+            await updateTicket({
+                id: updatedTicket.client_id,
+                workflow: newWorkflow,
             });
 
-            if (!response.ok) {
-                throw new Error(`Ошибка при обновлении workflow: ${response.status} ${response.statusText}`);
-            }
-
-            const data = await response.json();
             enqueueSnackbar('Статус тикета обновлен!', { variant: 'success' });
 
-            // Обновляем локальное состояние
+            // Локально обновляем состояние тикетов
             setTickets((prevTickets) =>
                 Array.isArray(prevTickets)
                     ? prevTickets.map(ticket =>
-                        ticket.client_id === updatedTicket.client_id ? { ...ticket, workflow: newWorkflow } : ticket
+                        ticket.client_id === updatedTicket.client_id
+                            ? { ...ticket, workflow: newWorkflow }
+                            : ticket
                     )
                     : prevTickets
             );
 
-            console.log("Workflow обновлен:", data);
+            console.log("Workflow обновлен:", newWorkflow);
         } catch (error) {
             enqueueSnackbar('Ошибка: Статус тикета не обновлен.', { variant: 'error' });
             console.error('Ошибка при обновлении workflow:', error.message);
         }
     };
 
-    const updatedTicket = Array.isArray(tickets) && tickets.length > 0
+    // Определяем выбранный тикет
+    const updatedTicket = Array.isArray(tickets) && selectClientId
         ? tickets.find(ticket => ticket.client_id === selectClientId)
         : null;
 

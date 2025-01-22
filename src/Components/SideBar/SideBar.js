@@ -1,14 +1,23 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
+import { useAppContext } from '../../AppContext'; // Подключаем AppContext
 import './SideBar.css';
-import { useUnreadMessages } from '../../Unread';
-import { FaUser, FaChartBar, FaTasks, FaComments, FaBell, FaClipboardList, FaSignOutAlt, FaUserSecret } from 'react-icons/fa';
+import {
+    FaUser,
+    FaChartBar,
+    FaTasks,
+    FaComments,
+    FaBell,
+    FaClipboardList,
+    FaSignOutAlt,
+    FaUserSecret
+} from 'react-icons/fa';
 
 const CustomSidebar = ({ onOpenNotifications, onOpenTasks }) => {
     const location = useLocation();
     const navigate = useNavigate();
-    // const { unreadCount } = useUnreadMessages();
+    const { unreadCount } = useAppContext(); // Получаем unreadCount из AppContext
 
     const isActive = (page) => {
         if (page === 'chat') {
@@ -57,9 +66,9 @@ const CustomSidebar = ({ onOpenNotifications, onOpenTasks }) => {
                     >
                         <FaComments size={24} />
                         <span>Chat</span>
-                        {/* {unreadCount > 0 && (
+                        {unreadCount > 0 && (
                             <span className="unread-indicator">{unreadCount}</span>
-                        )} */}
+                        )}
                     </div>
                     <div
                         className={`menu-item ${isActive('notifications') ? 'active' : ''}`}

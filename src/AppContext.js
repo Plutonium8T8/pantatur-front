@@ -13,8 +13,9 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   const [socket, setSocket] = useState(null);
   const [tickets, setTickets] = useState([]);
   const [ticketIds, setTicketIds] = useState([]);
-  const [messages, setMessages] = useState([]); // Сообщения из WebSocket
+  const [messages, setMessages] = useState([]); // Все сообщения
   const [clientMessages, setClientMessages] = useState([]); // Сообщения клиента из API
+  const [unreadCount, setUnreadCount] = useState(0); // Непрочитанные сообщения
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [isLoading, setIsLoading] = useState(false);
   const { userId } = useUser(); // Получаем userId из UserContext
@@ -23,6 +24,41 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   useEffect(() => {
     ticketsRef.current = tickets;
   }, [tickets]);
+
+  // Обновление количества непрочитанных сообщений
+  const updateUnreadCount = (updatedMessages) => {
+    const unreadMessages = updatedMessages.filter((msg) => {
+      const isUnread = (!msg.seen_by || msg.seen_by === '{}') && msg.sender_id !== userId;
+      console.log("Сообщение ID:", msg.id);
+      console.log("client_id:", msg.client_id);
+      console.log("sender_id:", msg.sender_id);
+      console.log("seen_by:", msg.seen_by);
+      console.log("Учитывается как непрочитанное:", isUnread);
+      return isUnread;
+    });
+
+    console.log("Все сообщения:", updatedMessages);
+    console.log("Непрочитанные сообщения:", unreadMessages);
+    console.log("Общее количество непрочитанных сообщений:", unreadMessages.length);
+
+    setUnreadCount(unreadMessages.length);
+  };
+
+
+
+
+  // Отметить сообщения как прочитанные
+  const markMessagesAsRead = (clientId) => {
+    setMessages((prevMessages) => {
+      const updatedMessages = prevMessages.map((msg) =>
+        msg.client_id === clientId && msg.seen_by === '{}'
+          ? { ...msg, seen_by: `{${userId}}`, seen_at: new Date().toISOString() }
+          : msg
+      );
+      updateUnreadCount(updatedMessages);
+      return updatedMessages;
+    });
+  };
 
   // Функция загрузки тикетов
   const fetchTicketsAndSendSocket = async (socketInstance) => {
@@ -141,6 +177,11 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   const handleWebSocketMessage = (message) => {
     switch (message.type) {
       case 'message': {
+        setMessages((prevMessages) => {
+          const updatedMessages = [...prevMessages, message.data];
+          updateUnreadCount(updatedMessages);
+          return updatedMessages;
+        });
         const ticket = ticketsRef.current.find(t => t.client_id === message.data.client_id);
 
         if (ticket && ticket.technician_id === userId) {
@@ -177,6 +218,17 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         }
         break;
       }
+      case 'seen': {
+        const { client_id, seen_at } = message.data;
+        setMessages((prevMessages) => {
+          const updatedMessages = prevMessages.map((msg) =>
+            msg.client_id === client_id ? { ...msg, seen_at } : msg
+          );
+          updateUnreadCount(updatedMessages);
+          return updatedMessages;
+        });
+        break;
+      }
       case 'notification': {
         const notificationText = truncateText(
           message.data.description || 'Уведомление с пустым текстом!',
@@ -202,7 +254,6 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         }
         break;
       }
-      case 'seen':
       case 'pong':
         break;
       default:
@@ -216,10 +267,10 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       setTickets([]);
       setTicketIds([]);
       setMessages([]);
+      setUnreadCount(0);
       setClientMessages([]);
       if (socket) {
-        socket.close();
-        setSocket(null);
+        
       }
       return;
     }
@@ -236,7 +287,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         const message = JSON.parse(event.data);
         handleWebSocketMessage(message);
       } catch (error) {
-        // console.error('Ошибка обработки сообщения WebSocket:', error);
+        console.error('Ошибка обработки сообщения WebSocket:', error);
       }
     };
 
@@ -257,7 +308,20 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   }, [isLoggedIn]);
 
   return (
-    <AppContext.Provider value={{ socket, tickets, setTickets, ticketIds, messages, clientMessages, isLoading, updateTicket }}>
+    <AppContext.Provider
+      value={{
+        socket,
+        tickets,
+        setTickets,
+        ticketIds,
+        messages,
+        unreadCount,
+        markMessagesAsRead,
+        clientMessages,
+        isLoading,
+        updateTicket,
+      }}
+    >
       {children}
     </AppContext.Provider>
   );
