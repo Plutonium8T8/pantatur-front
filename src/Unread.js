@@ -86,9 +86,9 @@ export const UnreadMessagesProvider = ({ children, isLoggedIn }) => {
                                     ? { ...msg, seen_at }
                                     : msg
                             );
-                            fetchMessages();
                             return updatedMessages;
                         });
+                        fetchMessages();
                     }
                 } catch (error) {
                     console.error('Error handling new message:', error);

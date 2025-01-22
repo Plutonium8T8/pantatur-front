@@ -242,8 +242,7 @@
     content: "x";
 }
 
-.input-grup label
-{
+.input-grup label {
     font: 20px;
 }
 
@@ -276,7 +275,7 @@
 }
 
 .send-extra-info-button {
-    background-color: 0f824c;
+    background-color: #0f824c;
 }
 
 .chat-item-container {
@@ -513,8 +512,15 @@
     width: 100%;
     height: 400px;
 }
+
 .personal-data-container {
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+
+.text-message {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }

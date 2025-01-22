@@ -1,8 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import CryptoJS from 'crypto-js';
-import AES from 'crypto-js/aes';
-import Utf8 from 'crypto-js/enc-utf8';
 import Select from '../SelectComponent/SelectComponent';
 import { useUser } from '../../UserContext';
 import Cookies from 'js-cookie';
@@ -62,13 +59,20 @@ const ChatComponent = ({ }) => {
     const [filteredTickets, setFilteredTickets] = useState(tickets1);
     const [activeTab, setActiveTab] = useState('extraForm'); // По умолчанию вкладка Extra Form
     const [showMyTickets, setShowMyTickets] = useState(false);
+    const activeChatRef = useRef(null);
 
     useEffect(() => {
-        // Если clientId передан через URL, устанавливаем его как selectClientId
         if (clientId) {
             setSelectClientId(Number(clientId));
         }
-    }, [clientId]);
+    }, [clientId, setSelectClientId]);
+
+    // Прокручиваем к активному чату, если selectClientId изменился и тикеты загружены
+    useEffect(() => {
+        if (!isLoading && activeChatRef.current) {
+            activeChatRef.current.scrollIntoView({ behavior: "auto", block: "center" });
+        }
+    }, [selectClientId, isLoading, filteredTickets]);
 
     useEffect(() => {
         if (selectClientId) {
@@ -1203,6 +1207,12 @@ const ChatComponent = ({ }) => {
                             .map(ticket => {
                                 const clientMessages = messages1.filter(msg => msg.client_id === ticket.client_id);
 
+                                // const unreadCounts = clientMessages.filter(msg => {
+                                //     const notSeen = !msg.seen_by; // Сообщение не отмечено как просмотренное
+                                //     const notSentByUser = msg.sender_id !== Number(userId); // Сообщение не отправлено текущим пользователем
+                                //     return notSeen && notSentByUser;
+                                // }).length;
+
                                 const unreadCounts = clientMessages.filter(
                                     msg =>
                                         msg.seen_by != null && msg.seen_by == '{}' && msg.sender_id == msg.client_id
@@ -1227,6 +1237,7 @@ const ChatComponent = ({ }) => {
                                     <div
                                         key={ticket.client_id}
                                         className={`chat-item ${ticket.client_id === selectClientId ? "active" : ""}`}
+                                        ref={ticket.client_id === selectClientId ? activeChatRef : null}
                                         onClick={() => handleTicketClick(ticket.client_id)}
                                     >
                                         <div className="foto-description">
@@ -1725,27 +1736,27 @@ const ChatComponent = ({ }) => {
                             <h3>Personal Data</h3>
                             <form onSubmit={handlePersonalDataSubmit} className='personal-data-container'>
                                 <Input
-                                    label="Name"
+                                    label="Nume"
                                     type="text"
                                     value={extraInfo[selectClientId]?.name || ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectClientId, 'name', e.target.value)
                                     }
                                     className="input-field"
-                                    placeholder="Enter name"
+                                    placeholder="Introduceți numele"
                                 />
                                 <Input
-                                    label="Surname"
+                                    label="Prenume"
                                     type="text"
                                     value={extraInfo[selectClientId]?.surname || ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectClientId, 'surname', e.target.value)
                                     }
                                     className="input-field"
-                                    placeholder="Enter surname"
+                                    placeholder="Introduceți prenumele"
                                 />
                                 <Input
-                                    label="Date of Birth"
+                                    label="Data nașterii"
                                     type="date"
                                     value={extraInfo[selectClientId]?.date_of_birth || ""}
                                     onChange={(e) =>
@@ -1754,27 +1765,27 @@ const ChatComponent = ({ }) => {
                                     className="input-field"
                                 />
                                 <Input
-                                    label="ID Card Series"
+                                    label="Seria buletinului"
                                     type="text"
                                     value={extraInfo[selectClientId]?.id_card_series || ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectClientId, 'id_card_series', e.target.value)
                                     }
                                     className="input-field"
-                                    placeholder="Enter ID card series"
+                                    placeholder="Seria buletinului"
                                 />
                                 <Input
-                                    label="ID Card Number"
+                                    label="Numărul buletinului"
                                     type="text"
                                     value={extraInfo[selectClientId]?.id_card_number || ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectClientId, 'id_card_number', e.target.value)
                                     }
                                     className="input-field"
-                                    placeholder="Enter ID card number"
+                                    placeholder="Numărul buletinului"
                                 />
                                 <Input
-                                    label="ID Card Release Date"
+                                    label="Data eliberării buletinului"
                                     type="date"
                                     value={extraInfo[selectClientId]?.id_card_release || ""}
                                     onChange={(e) =>
@@ -1790,30 +1801,30 @@ const ChatComponent = ({ }) => {
                                         handleSelectChange(selectClientId, 'idnp', e.target.value)
                                     }
                                     className="input-field"
-                                    placeholder="Enter IDNP"
+                                    placeholder="IDNP"
                                 />
                                 <Input
-                                    label="Address"
+                                    label="Adresă"
                                     type="text"
                                     value={extraInfo[selectClientId]?.address || ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectClientId, 'address', e.target.value)
                                     }
                                     className="input-field"
-                                    placeholder="Enter address"
+                                    placeholder="Adresa"
                                 />
                                 <Input
-                                    label="Phone"
+                                    label="Telefon"
                                     type="tel"
                                     value={extraInfo[selectClientId]?.phone || ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectClientId, 'phone', e.target.value)
                                     }
                                     className="input-field"
-                                    placeholder="Enter phone number"
+                                    placeholder="Numărul de telefon"
                                 />
                                 <button type="submit" className="save-button">
-                                    Save Personal Data
+                                    Salvați datele personale
                                 </button>
                             </form>
                         </div>
