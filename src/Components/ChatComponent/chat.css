@@ -523,5 +523,4 @@
     word-wrap: break-word;
     overflow-wrap: break-word;
     word-break: break-word;
-    /* Прерывает слова на любом символе */
 }
