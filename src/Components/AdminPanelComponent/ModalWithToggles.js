@@ -44,7 +44,7 @@ const ModalWithToggles = ({ employee, closeModal }) => {
         try {
             console.log(`Отправка: role=${role}`);
 
-            const response = await fetch("https://pandatur-api.com/admin/users/roles", {
+            const response = await fetch("https://pandatur-api.com/admin/user/roles", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -72,7 +72,7 @@ const ModalWithToggles = ({ employee, closeModal }) => {
         try {
             console.log(`Удаление: role=${role}`);
 
-            const response = await fetch("https://pandatur-api.com/admin/users/roles", {
+            const response = await fetch("https://pandatur-api.com/admin/user/roles", {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
