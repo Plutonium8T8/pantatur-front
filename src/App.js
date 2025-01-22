@@ -7,11 +7,13 @@ import { UserProvider } from './UserContext';
 import CustomSidebar from './Components/SideBar/SideBar';
 import ChatComponent from './Components/ChatComponent/chat';
 import Cookies from 'js-cookie';
-import { AppProvider } from './AppContext'; // Импорт AppProvider
+import { SocketProvider } from './SocketContext';
 import UserProfile from './Components/UserPage/UserPage';
-import { SnackbarProvider } from 'notistack';
+import { SnackbarProvider, closeSnackbar } from 'notistack';
+import Notification from './Notification';
+import { UnreadMessagesProvider } from './Unread';
 import NotificationModal from './Components/SlideInComponent/NotificationModal'; // Модальное окно уведомлений
-import TaskComponent from './Components/SlideInComponent/TaskComponent'; // Модальное окно задач
+import TaskComponent from './Components/SlideInComponent/TaskComponent'; // Используем TaskModal вместо TaskComponent
 import AdminPanel from './Components/AdminPanelComponent/AdminPanel';
 import Dashboard from './Components/DashboardComponent/Dashboard';
 import { FaCircleNotch, FaTrash } from 'react-icons/fa';
@@ -61,11 +63,17 @@ function App() {
   };
 
   if (isLoading) {
-    return <div className="spinner">Загрузка...</div>;
+    return <div className="spinner"></div>;
   }
 
   return (
     <SnackbarProvider
+      iconVariant={{
+        success: '',
+        error: '',
+        warning: '',
+        info: '',
+      }}
       autoHideDuration={60000}
       maxSnack={5}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -83,8 +91,9 @@ function App() {
         </>
       )}
     >
-      <AppProvider isLoggedIn={isLoggedIn}>
+      <SocketProvider isLoggedIn={isLoggedIn}>
         <UserProvider>
+          <Notification />
           <Router>
             <UnreadMessagesProvider isLoggedIn={isLoggedIn}>
               {!isLoggedIn ? (
@@ -126,7 +135,7 @@ function App() {
             </UnreadMessagesProvider>
           </Router>
         </UserProvider>
-      </AppProvider>
+      </SocketProvider>
     </SnackbarProvider>
   );
 }

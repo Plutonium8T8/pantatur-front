@@ -4,8 +4,6 @@ import './TicketModalComponent.css';
 import Priority from '../../PriorityComponent/PriorityComponent';
 import Workflow from '../../WorkFlowComponent/WorkflowComponent';
 import TagInput from '../../TagsComponent/TagComponent';
-import Cookies from 'js-cookie';
-import { useAppContext } from '../../../AppContext'; // Используем AppContext для updateTicket
 import { useUser } from '../../../UserContext';
 import Cookies from 'js-cookie';
 
@@ -32,8 +30,16 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
     tags: useMemo(() => parseTags(ticket?.tags), [ticket?.tags]),
   });
 
-  const { userId } = useUser();
-  const { updateTicket } = useAppContext(); // Получаем updateTicket из AppContext
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (modalRef.current && !modalRef.current.contains(e.target)) {
+        onClose();
+      }
+    };
+
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, [onClose]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -50,21 +56,6 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
     }));
   };
 
-  const onDelete = async (clientId) => {
-    try {
-      const res = await deleteTicketById(clientId);
-      console.log('Ticket deleted:', res);
-
-      if (onSave) {
-        onSave();
-      }
-
-      onClose();
-    } catch (e) {
-      console.error('Error deleting ticket:', e);
-    }
-  };
-
   const handleSave = async () => {
     const ticketData = {
       ...editedTicket,
@@ -73,9 +64,19 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
     };
 
     try {
-      const res = editedTicket?.client_id == null
-        ? await saveTicketToServer(ticketData) // Создание нового тикета
-        : await updateTicket(ticketData); // Обновление существующего тикета
+      const token = Cookies.get('jwt');
+      const method = editedTicket?.client_id ? 'PUT' : 'POST';
+      const url = `https://pandatur-api.com/tickets/${editedTicket?.client_id || ''}`;
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        credentials: 'include',
+        body: JSON.stringify(ticketData),
+      });
 
       if (!response.ok) throw new Error('Failed to save ticket');
 
