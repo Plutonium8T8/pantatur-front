@@ -88,8 +88,8 @@ export const UnreadMessagesProvider = ({ children, isLoggedIn }) => {
                             );
                             return updatedMessages;
                         });
-                        fetchMessages();
                     }
+                    fetchMessages();
                 } catch (error) {
                     console.error('Error handling new message:', error);
                 }
