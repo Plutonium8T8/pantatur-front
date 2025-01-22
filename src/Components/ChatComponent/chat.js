@@ -73,7 +73,7 @@ const ChatComponent = ({ }) => {
     // Прокручиваем к активному чату, если selectClientId изменился и тикеты загружены
     useEffect(() => {
         if (!isLoading && activeChatRef.current) {
-            activeChatRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+            activeChatRef.current.scrollIntoView({ behavior: "auto", block: "center" });
         }
     }, [selectClientId, isLoading, filteredTickets]);
 
