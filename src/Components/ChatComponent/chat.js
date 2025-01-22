@@ -30,12 +30,10 @@ import Icon from '../../Components/Icon/index';
 const ChatComponent = ({ }) => {
     const { userId } = useUser();
     const [managerMessage, setManagerMessage] = useState('');
-    const [messages1, setMessages1] = useState([]);
-    // const [selectClientId, setselectClientId] = useState(null);
+    const [messages, setMessages] = useState([]); // Инициализируем как пустой массив
     const [selectClientId, setSelectClientId] = useState(null);
     const [extraInfo, setExtraInfo] = useState({}); // Состояние для дополнительной информации каждого тикета
-    const [personalData, setPersonalData] = useState({}); // Состояние для дополнительной информации каждого тикета
-    const [tickets1, setTickets1] = useState([]);
+    const [tickets, setTickets] = useAppContext();
     const messageContainerRef = useRef(null);
     const { clientId } = useParams(); // Получаем clientId из URL
     const [isLoading, setIsLoading] = useState(false); // Состояние загрузки
@@ -47,8 +45,6 @@ const ChatComponent = ({ }) => {
     const { markMessagesAsRead } = useUnreadMessages();
     const [menuMessageId, setMenuMessageId] = useState(null);
     const [editMessageId, setEditMessageId] = useState(null);
-    const [editedText, setEditedText] = useState('');
-    const [messages, setMessages] = useState(messages1); // предполагается, что `messages1` - это изначальный массив сообщений
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [emojiPickerPosition, setEmojiPickerPosition] = useState({ top: 0, left: 0 });
     const [selectedMessage, setSelectedMessage] = useState(null); // Выбранный шаблон из Select
@@ -56,7 +52,7 @@ const ChatComponent = ({ }) => {
     const [selectedReaction, setSelectedReaction] = useState({});
     const reactionContainerRef = useRef(null);
     const menuRefs = useRef({}); // Создаем объект для хранения ref всех меню
-    const [filteredTickets, setFilteredTickets] = useState(tickets1);
+    const [filteredTickets, setFilteredTickets] = useState(tickets);
     const [activeTab, setActiveTab] = useState('extraForm'); // По умолчанию вкладка Extra Form
     const [showMyTickets, setShowMyTickets] = useState(false);
     const activeChatRef = useRef(null);
@@ -106,7 +102,7 @@ const ChatComponent = ({ }) => {
 
             const data = await response.json();
             console.log("tickets+++++", data);
-            setTickets1(data); // Устанавливаем данные тикетов
+            setTickets(data); // Устанавливаем данные тикетов
         } catch (error) {
             console.error('Ошибка:', error);
         }
@@ -227,7 +223,7 @@ const ChatComponent = ({ }) => {
             console.log('Сообщения клиента:', data);
 
             // Обновляем состояние с сообщениями
-            setMessages1(data);
+            setMessages(data);
         } catch (error) {
             // Обработка ошибок
             enqueueSnackbar('Не удалось получить сообщения!', { variant: 'error' });
@@ -309,13 +305,13 @@ const ChatComponent = ({ }) => {
             return;
         }
 
-        // Проверяем, что tickets1 — это массив, и ищем тикет
-        const updatedTicket = Array.isArray(tickets1)
-            ? tickets1.find(ticket => ticket.client_id === selectClientId)
+        // Проверяем, что tickets — это массив, и ищем тикет
+        const updatedTicket = Array.isArray(tickets)
+            ? tickets.find(ticket => ticket.client_id === selectClientId)
             : null;
 
         if (!updatedTicket) {
-            console.error('Ticket not found or tickets1 is not an array:', tickets1);
+            console.error('Ticket not found or tickets is not an array:', tickets);
             enqueueSnackbar('Ошибка: Тикет не найден.', { variant: 'error' });
             return;
         }
@@ -347,7 +343,7 @@ const ChatComponent = ({ }) => {
             enqueueSnackbar('Статус тикета обновлен!', { variant: 'success' });
 
             // Обновляем локальное состояние
-            setTickets1((prevTickets) =>
+            setTickets((prevTickets) =>
                 Array.isArray(prevTickets)
                     ? prevTickets.map(ticket =>
                         ticket.client_id === updatedTicket.client_id ? { ...ticket, workflow: newWorkflow } : ticket
@@ -362,13 +358,13 @@ const ChatComponent = ({ }) => {
         }
     };
 
-    const updatedTicket = Array.isArray(tickets1) && tickets1.length > 0
-        ? tickets1.find(ticket => ticket.client_id === selectClientId)
+    const updatedTicket = Array.isArray(tickets) && tickets.length > 0
+        ? tickets.find(ticket => ticket.client_id === selectClientId)
         : null;
 
     // if (!updatedTicket) {
-    //     console.error('Ошибка: Тикет не найден или tickets1 не является массивом.', {
-    //         tickets1,
+    //     console.error('Ошибка: Тикет не найден или tickets не является массивом.', {
+    //         tickets,
     //         selectClientId,
     //     });
     //     // enqueueSnackbar('Ошибка: Тикет не найден.', { variant: 'error' });
@@ -382,7 +378,7 @@ const ChatComponent = ({ }) => {
 
     useEffect(() => {
         scrollToBottom();
-    }, [messages1, selectClientId]);
+    }, [messages, selectClientId]);
 
     const handleKeyDown = (event) => {
         if (event.key === 'Enter' && !event.shiftKey) {
@@ -406,7 +402,7 @@ const ChatComponent = ({ }) => {
     const handleTicketClick = (clientId) => {
         setSelectClientId(clientId);
 
-        const selectedTicket = tickets1.find((ticket) => ticket.client_id === clientId);
+        const selectedTicket = tickets.find((ticket) => ticket.client_id === clientId);
 
         if (selectedTicket) {
             setSelectedTechnicianId(selectedTicket.technician_id || null);
@@ -456,7 +452,7 @@ const ChatComponent = ({ }) => {
 
                     switch (message.type) {
                         case 'message': {
-                            setMessages1((prevMessages) => [...prevMessages, message.data]);
+                            setMessages((prevMessages) => [...prevMessages, message.data]);
 
                             if (message.data.client_id !== selectClientId && !message.data.seen_at) {
                                 setUnreadMessages((prevUnreadMessages) => {
@@ -893,7 +889,7 @@ const ChatComponent = ({ }) => {
 
         // Функция для получения платформы последнего сообщения
         const analyzeLastMessagePlatform = () => {
-            const clientMessages = messages1.filter((msg) => msg.client_id === selectClientId);
+            const clientMessages = messages.filter((msg) => msg.client_id === selectClientId);
             const lastMessage = clientMessages.length > 0
                 ? clientMessages.reduce((latest, current) =>
                     new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
@@ -943,7 +939,7 @@ const ChatComponent = ({ }) => {
 
             console.log('Сообщение успешно отправлено:', messageData);
 
-            setMessages1((prevMessages) => [
+            setMessages((prevMessages) => [
                 ...prevMessages,
                 { ...messageData, seenAt: false },
             ]);
@@ -1001,7 +997,7 @@ const ChatComponent = ({ }) => {
     //                         console.log('File message sent:', fileMessageData);
 
     //                         // Обновляем локальное состояние
-    //                         setMessages1((prevMessages) => [
+    //                         setMessages((prevMessages) => [
     //                             ...prevMessages,
     //                             { ...fileMessageData.data, seen_at: false },
     //                         ]);
@@ -1031,7 +1027,7 @@ const ChatComponent = ({ }) => {
     //                     socket.send(JSON.stringify(textMessageData));
     //                     console.log('Text message sent:', textMessageData);
 
-    //                     setMessages1((prevMessages) => [
+    //                     setMessages((prevMessages) => [
     //                         ...prevMessages,
     //                         { ...textMessageData.data, seen_at: false },
     //                     ]);
@@ -1054,8 +1050,8 @@ const ChatComponent = ({ }) => {
     // };
 
     useEffect(() => {
-        setFilteredTickets(tickets1); // Устанавливаем все тикеты по умолчанию
-    }, [tickets1]);
+        setFilteredTickets(tickets); // Устанавливаем все тикеты по умолчанию
+    }, [tickets]);
 
     const updateTickets = (tickets) => {
         setFilteredTickets(tickets);
@@ -1107,20 +1103,20 @@ const ChatComponent = ({ }) => {
 
     useEffect(() => {
         if (showMyTickets) {
-            setFilteredTickets(tickets1.filter(ticket => ticket.technician_id === userId));
+            setFilteredTickets(tickets.filter(ticket => ticket.technician_id === userId));
         } else {
-            setFilteredTickets(tickets1);
+            setFilteredTickets(tickets);
         }
-    }, [tickets1, showMyTickets, userId]);
+    }, [tickets, showMyTickets, userId]);
 
     const handleCheckboxChange = (e) => {
         const checked = e.target.checked;
         setShowMyTickets(checked);
 
         if (checked) {
-            setFilteredTickets(tickets1.filter(ticket => ticket.technician_id === userId));
+            setFilteredTickets(tickets.filter(ticket => ticket.technician_id === userId));
         } else {
-            setFilteredTickets(tickets1);
+            setFilteredTickets(tickets);
         }
     };
 
@@ -1187,8 +1183,8 @@ const ChatComponent = ({ }) => {
                     {Array.isArray(filteredTickets) && filteredTickets.length > 0 ? (
                         filteredTickets
                             .sort((a, b) => {
-                                const clientMessagesA = messages1.filter(msg => msg.client_id === a.client_id);
-                                const clientMessagesB = messages1.filter(msg => msg.client_id === b.client_id);
+                                const clientMessagesA = messages.filter(msg => msg.client_id === a.client_id);
+                                const clientMessagesB = messages.filter(msg => msg.client_id === b.client_id);
 
                                 const lastMessageA = clientMessagesA.length
                                     ? clientMessagesA.reduce((latest, current) =>
@@ -1205,7 +1201,7 @@ const ChatComponent = ({ }) => {
                                 return new Date(lastMessageB.time_sent) - new Date(lastMessageA.time_sent);
                             })
                             .map(ticket => {
-                                const clientMessages = messages1.filter(msg => msg.client_id === ticket.client_id);
+                                const clientMessages = messages.filter(msg => msg.client_id === ticket.client_id);
 
                                 // const unreadCounts = clientMessages.filter(msg => {
                                 //     const notSeen = !msg.seen_by; // Сообщение не отмечено как просмотренное
@@ -1296,9 +1292,9 @@ const ChatComponent = ({ }) => {
             </div>
             <div className="chat-area">
                 <div className="chat-messages" ref={messageContainerRef}>
-                    {messages1
+                    {messages
                         .filter((msg) => {
-                            const clientId = tickets1.find((ticket) => ticket.client_id === selectClientId)?.client_id;
+                            const clientId = tickets.find((ticket) => ticket.client_id === selectClientId)?.client_id;
                             return msg.client_id === clientId;
                         })
                         .sort((a, b) => new Date(a.time_sent) - new Date(b.time_sent))
