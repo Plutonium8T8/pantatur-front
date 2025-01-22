@@ -16,7 +16,6 @@ import NotificationModal from './Components/SlideInComponent/NotificationModal';
 import TaskComponent from './Components/SlideInComponent/TaskComponent'; // Используем TaskModal вместо TaskComponent
 import AdminPanel from './Components/AdminPanelComponent/AdminPanel';
 import Dashboard from './Components/DashboardComponent/Dashboard';
-import { FaCircleNotch } from 'react-icons/fa';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
