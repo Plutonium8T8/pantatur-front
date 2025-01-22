@@ -64,7 +64,7 @@ const TicketCard = ({ ticket, onContextMenu, onEditTicket }) => {
                                     </span>
                                 ))
                             ) : (
-                                <em>No tags</em>
+                                <em></em>
                             )}
                         </div>
                     </div>
