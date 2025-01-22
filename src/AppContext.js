@@ -92,12 +92,12 @@ export const AppProvider = ({ children, isLoggedIn }) => {
 
       const updatedTicket = await response.json();
 
-      // Локальное обновление тикетов
-      setTickets((prevTickets) =>
-        prevTickets.map((ticket) =>
-          ticket.client_id === updatedTicket.client_id ? updatedTicket : ticket
-        )
-      );
+      // // Локальное обновление тикетов
+      // setTickets((prevTickets) =>
+      //   prevTickets.map((ticket) =>
+      //     ticket.client_id === updatedTicket.client_id ? updatedTicket : ticket
+      //   )
+      // );
 
       // Синхронизация тикетов через WebSocket
       fetchTicketsAndSendSocket();
@@ -238,7 +238,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         const message = JSON.parse(event.data);
         handleWebSocketMessage(message);
       } catch (error) {
-        console.error('Ошибка обработки сообщения WebSocket:', error);
+        // console.error('Ошибка обработки сообщения WebSocket:', error);
       }
     };
 
