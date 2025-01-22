@@ -58,7 +58,6 @@ const Leads = (selectClientId) => {
     const socket = useSocket();
     const { userId } = useUser();
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-      const [isAccountComponentOpen, setIsAccountComponentOpen] = useState(false);
 
   const navigate = useNavigate();
 

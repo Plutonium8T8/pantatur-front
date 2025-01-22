@@ -194,6 +194,7 @@ const ScheduleComponent = () => {
           name: `${user.id.name} ${user.id.surname}`, // Используем имя и фамилию
           email: user.id.user.email, // Email из вложенного user
           username: user.id.user.username, // Имя пользователя
+          roles: user.id.user.roles, // Имя пользователя
           shifts,
         };
       });
@@ -366,7 +367,8 @@ const ScheduleComponent = () => {
       {/* Модалка с переключателями */}
       {isModalOpen && selectedUser && (
         <ModalWithToggles
-          employee={selectedUser} // Передаём выбранного пользователя
+          employee={selectedUser} 
+          isOpen={isModalOpen}// Передаём выбранного пользователя
           closeModal={closeModal} // Передаём функцию закрытия
         />
       )}

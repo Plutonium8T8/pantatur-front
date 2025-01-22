@@ -1,104 +1,13 @@
-/* Общие стили для модального окна */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.modal-content-toggle {
-    background: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    width: 600px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #4caf50;
-    color: white;
-    padding: 10px;
-    border-radius: 10px 10px 0 0;
-}
-
-.modal-header h3 {
-    margin: 0;
-}
-
-.modal-body {
-    margin-top: 20px;
-}
-
-/* Общие стили для footer */
-.modal-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-/* Кнопки */
-.button {
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    border: none;
-}
-
-.save-button {
-    background-color: #4caf50;
-    color: white;
-}
-
-.save-button:hover {
-    background-color: #45a049;
-}
-
-.close-button {
-    background-color: transparent;
-    color: black;
-}
-
-.close-button:hover {
-    background-color: #f0f0f0;
-}
-
-/* Контейнеры */
-.toggles-group-container {
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
-    justify-content: space-between;
-}
-
-.toggles-group {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-/* Элемент переключателя */
+/* General styles for toggle items */
 .toggle-item {
     display: flex;
-    align-items: flex-start;
-    flex-direction: column;
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
     text-align: center;
     border: 1px solid #ddd;
-    min-width: 150px;
-    padding: 10px;
-    border-radius: 8px;
-    background-color: #fff;
+    width: 80px;
+    padding: 6px;
+    border-radius: 12px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
     transition: box-shadow 0.3s ease;
 }
@@ -107,13 +16,14 @@
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Переключатели */
+/* Toggle switch styles */
 .toggle-switch {
     position: relative;
     display: inline-block;
     width: 50px;
     height: 24px;
     margin: 5px 0;
+    cursor: pointer;
 }
 
 .toggle-switch input {
@@ -122,18 +32,14 @@
 
 .toggle-switch .slider {
     position: absolute;
-    cursor: pointer;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     background-color: #ccc;
-    transition: 0.4s;
     border-radius: 24px;
-}
-
-.toggle-switch input:checked+.slider {
-    background-color: #4caf50;
+    transition: background-color 0.4s;
+    cursor: pointer;
 }
 
 .toggle-switch .slider:before {
@@ -144,30 +50,90 @@
     left: 3px;
     bottom: 3px;
     background-color: white;
-    transition: 0.4s;
     border-radius: 50%;
+    transition: transform 0.4s;
 }
 
-.toggle-switch input:checked+.slider:before {
+.toggle-switch input:checked + .slider {
+    background-color: #4caf50;
+}
+
+.toggle-switch input:checked + .slider:before {
     transform: translateX(26px);
 }
 
-/* Состояние disabled */
-.toggle-switch input[disabled]+.slider {
+/* Disabled state */
+.toggle-switch input[disabled] + .slider {
     background-color: #e0e0e0;
     cursor: not-allowed;
     opacity: 0.6;
 }
 
-.toggle-switch input[disabled]+.slider:before {
+.toggle-switch input[disabled] + .slider:before {
     background-color: #bdbdbd;
 }
 
-.close-button-toggle {
-    color: black;
-    border: none;
-    padding: 10px 20px;
+/* Permissions table grid layout */
+.permissions-table {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Evenly distribute all columns */
+    gap: 10px;
+    padding: 16px;
+}
+
+/* Header styles */
+.permissions-header,
+.permissions-rows {
+    display: contents;
+}
+
+.permissions-header-item {
+    padding: 10px;
+    background-color: #2d3748;
     border-radius: 5px;
-    cursor: pointer;
-    background-color: #ddd;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    display: flex; /* Added for centering */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+}
+
+/* Row and category styles */
+.permissions-row {
+    align-items: center;
+    display: contents;
+}
+
+.permissions-category {
+    padding: 10px;
+    background-color: #2d3748;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+    border-radius: 5px;
+    display: flex; /* Added for centering */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+}
+
+/* Toggle container styles */
+.permissions-toggle {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    padding: 10px;
+}
+
+/* Adjusted toggle-switch styling */
+.toggle-switch .slider {
+    width: 50px;
+    height: 24px;
+    background-color: #ccc;
+    border-radius: 11px;
+    transition: background-color 0.2s;
+}
+
+.toggle-switch input[type="checkbox"]:checked + .slider {
+    background-color: #0f824c;
 }
