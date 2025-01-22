@@ -1,35 +1,79 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { FaUser, FaTrash } from 'react-icons/fa';
-import './TicketModalComponent.css';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import Priority from '../../PriorityComponent/PriorityComponent';
 import Workflow from '../../WorkFlowComponent/WorkflowComponent';
 import TagInput from '../../TagsComponent/TagComponent';
 import Cookies from 'js-cookie';
 import { useAppContext } from '../../../AppContext'; // Используем AppContext для updateTicket
 import { useUser } from '../../../UserContext';
-import Cookies from 'js-cookie';
 
-const parseTags = (tags) => {
-  if (Array.isArray(tags)) {
-    return tags.filter((tag) => tag.trim() !== '');
+const deleteTicketById = async (id) => {
+  try {
+    const token = Cookies.get('jwt');
+    const response = await fetch(`https://pandatur-api.com/tickets/${Number(id)}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      throw new Error('Error deleting ticket');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error:', error);
   }
-  if (typeof tags === 'string' && tags.startsWith('{') && tags.endsWith('}')) {
-    return tags
-      .slice(1, -1)
-      .split(',')
-      .map((tag) => tag.trim())
-      .filter((tag) => tag !== '');
+};
+
+const saveTicketToServer = async (ticketData) => {
+  try {
+    const token = Cookies.get('jwt');
+    console.log('Sending data:', ticketData);
+    const response = await fetch('https://pandatur-api.com/tickets', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      credentials: 'include',
+      body: JSON.stringify(ticketData),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error saving ticket:', error);
   }
-  return [];
 };
 
 const TicketModal = ({ ticket, onClose, onSave }) => {
   const modalRef = useRef(null);
-  const { userId } = useUser();
+
+  const parseTags = (tags) => {
+    if (Array.isArray(tags)) {
+      return tags.filter((tag) => tag.trim() !== '');
+    }
+    if (typeof tags === 'string' && tags.startsWith('{') && tags.endsWith('}')) {
+      return tags
+        .slice(1, -1)
+        .split(',')
+        .map((tag) => tag.trim())
+        .filter((tag) => tag !== '');
+    }
+    return [];
+  };
+
+  const parsedTags = useMemo(() => parseTags(ticket?.tags), [ticket?.tags]);
 
   const [editedTicket, setEditedTicket] = useState({
     ...ticket,
-    tags: useMemo(() => parseTags(ticket?.tags), [ticket?.tags]),
+    tags: parsedTags,
   });
 
   const { userId } = useUser();
@@ -77,74 +121,114 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
         ? await saveTicketToServer(ticketData) // Создание нового тикета
         : await updateTicket(ticketData); // Обновление существующего тикета
 
-      if (!response.ok) throw new Error('Failed to save ticket');
+      if (!res) {
+        throw new Error('Failed to save ticket');
+      }
 
-      const result = await response.json();
-      if (onSave) onSave(result);
+      console.log('Server response:', res);
+
+      if (onSave) {
+        onSave();
+      }
+
       onClose();
-    } catch (error) {
-      console.error('Error saving ticket:', error);
+    } catch (e) {
+      console.error('Error saving ticket:', e);
     }
   };
 
-  if (!editedTicket) return null;
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        onClose();
+      }
+    };
 
+    document.addEventListener('mousedown', handleOutsideClick);
+
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, [onClose]);
+
+  if (!editedTicket) return null;
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div
-        className="modal-container"
-        ref={modalRef}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <header className="modal-header">
-          <h2>
-            <FaUser /> Ticket #{ticket?.id || 'New'}
-          </h2>
-        </header>
-        <div className="ticket-modal-form">
-          <div className="input-group">
-            <label>Name:</label>
-            <input
-              type="text"
-              name="name"
-              value={editedTicket.name || ''}
-              onChange={handleInputChange}
-              placeholder="Client Name"
-            />
+    <div className="modal-overlay">
+      <div className="modal-content" ref={modalRef}>
+        <div className="id-ticket">ID Ticket #{editedTicket.client_id}</div>
+        <label>
+          Nume Client
+          <input
+            type="text"
+            name="contact"
+            value={editedTicket.contact || ''}
+            onChange={handleInputChange}
+            placeholder="Nume Client"
+            style={{
+              display: 'block',
+              width: '100%',
+              padding: '0.5rem',
+              marginBottom: '1rem',
+            }}
+          />
+        </label>
+        <div className="container-select-priority-workflow">
+          <Priority ticket={editedTicket} onChange={handleInputChange} />
+          <Workflow ticket={editedTicket} onChange={handleInputChange} />
+        </div>
+        <div>
+          <strong>Tag-uri alese:</strong>
+          <div
+            style={{
+              padding: '10px',
+              backgroundColor: '#f9f9f9',
+              border: '1px solid #ddd',
+              borderRadius: '5px',
+              marginTop: '10px',
+              maxHeight: '100px',
+              overflowY: 'auto',
+            }}
+          >
+            {editedTicket.tags.length > 0 ? (
+              editedTicket.tags.map((tag, index) => (
+                <span
+                  key={index}
+                  style={{
+                    display: 'inline-block',
+                    backgroundColor: '#007bff',
+                    color: '#fff',
+                    padding: '5px 10px',
+                    borderRadius: '20px',
+                    margin: '5px',
+                    fontSize: '12px',
+                  }}
+                >
+                  {tag}
+                </span>
+              ))
+            ) : (
+              <em>No tags selected</em>
+            )}
           </div>
-          <div className="input-group">
-            <label>Description:</label>
-            <textarea
-              name="description"
-              value={editedTicket.description || ''}
-              onChange={handleInputChange}
-              placeholder="Add ticket details"
-            />
-          </div>
-          <div className="container-select-priority-workflow">
-            <Priority ticket={editedTicket} onChange={handleInputChange} />
-            <Workflow ticket={editedTicket} onChange={handleInputChange} />
-          </div>
+        </div>
+        <div className="tags-container">
           <TagInput
             initialTags={editedTicket.tags}
             onChange={handleTagsChange}
           />
-          <div className="button-container">
-            {ticket?.id && (
-              <button
-                className="clear-button"
-                onClick={() => onSave(null)}
-              >
-                <FaTrash /> Delete
-              </button>
-            )}
-            <button
-              className="submit-button"
-              onClick={handleSave}
-            >
-              {ticket?.id ? 'Save' : 'Create'}
+        </div>
+        <div className="container-button-save-delete-close">
+          {ticket?.client_id && (
+            <button onClick={() => onDelete(Number(ticket.client_id))} className="button-delete">
+              Delete
             </button>
-          </div>
+          )}
+          <button onClick={handleSave} className="button-save">
+            {!editedTicket.client_id ? 'Create' : 'Save'}
+          </button>
+          <button onClick={onClose} className="button-close">
+            Close
+          </button>
         </div>
       </div>
     </div>
