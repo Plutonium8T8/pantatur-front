@@ -4,7 +4,6 @@ import { useSnackbar } from 'notistack';
 import { FaEnvelope, FaTrash } from 'react-icons/fa';
 import { useUser } from './UserContext';
 import { truncateText } from './stringUtils';
-// import { useNavigate } from 'react-router-dom';
 
 const AppContext = createContext();
 
@@ -19,7 +18,6 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [isLoading, setIsLoading] = useState(false);
   const { userId } = useUser(); // Получаем userId из UserContext
-  // const navigate = useNavigate();
   const ticketsRef = useRef(tickets);
 
   useEffect(() => {
