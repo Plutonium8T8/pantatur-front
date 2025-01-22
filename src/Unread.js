@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { useSocket } from './SocketContext'; // Импортируем сокет-контекст
+import { useAppContext } from './AppContext';
 import { useUser } from './UserContext'; // Получаем контекст пользователя
 
 const UnreadMessagesContext = createContext();
@@ -12,7 +12,7 @@ export const UnreadMessagesProvider = ({ children, isLoggedIn }) => {
     const [unreadCount, setUnreadCount] = useState(0);
     const [messages, setMessages] = useState([]); // Инициализируем как пустой массив
     const { userId } = useUser(); // Получаем userId из UserContext
-    const socket = useSocket(); // Получаем WebSocket из SocketContext
+    const { socket } = useAppContext(); // Доступ к WebSocket
 
     const updateUnreadCount = (updatedMessages) => {
         if (!Array.isArray(updatedMessages)) {

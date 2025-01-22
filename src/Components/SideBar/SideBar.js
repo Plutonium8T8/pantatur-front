@@ -8,7 +8,7 @@ import { FaUser, FaChartBar, FaTasks, FaComments, FaBell, FaClipboardList, FaSig
 const CustomSidebar = ({ onOpenNotifications, onOpenTasks, onOpenAccount }) => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { unreadCount } = useUnreadMessages();
+    // const { unreadCount } = useUnreadMessages();
 
     const isActive = (page) => {
         if (page === 'chat') {
@@ -57,9 +57,9 @@ const CustomSidebar = ({ onOpenNotifications, onOpenTasks, onOpenAccount }) => {
                     >
                         <FaComments size={24} />
                         <span>Chat</span>
-                        {unreadCount > 0 && (
+                        {/* {unreadCount > 0 && (
                             <span className="unread-indicator">{unreadCount}</span>
-                        )}
+                        )} */}
                     </div>
                     <div
                         className={`menu-item ${isActive('notifications') ? 'active' : ''}`}

@@ -18,7 +18,7 @@ import DatePicker from 'react-datepicker';
 import Input from '../InputComponent/InputComponent';
 import Workflow from '../WorkFlowComponent/WorkflowComponent';
 import "react-datepicker/dist/react-datepicker.css";
-import { useSocket } from '../../SocketContext';
+import { useAppContext } from '../../AppContext'; // Подключение AppContext
 import { InView } from 'react-intersection-observer';
 import { useSnackbar } from 'notistack';
 import './chat.css';
@@ -40,7 +40,7 @@ const ChatComponent = ({ }) => {
     const { clientId } = useParams(); // Получаем clientId из URL
     const [isLoading, setIsLoading] = useState(false); // Состояние загрузки
     const [selectedTechnicianId, setSelectedTechnicianId] = useState('');
-    const socket = useSocket(); // Получаем WebSocket из контекста
+    const { socket } = useAppContext(); // Доступ к WebSocket
     const [unreadMessages, setUnreadMessages] = useState({});
     const { enqueueSnackbar } = useSnackbar();
     const navigate = useNavigate(); // Хук для навигации
