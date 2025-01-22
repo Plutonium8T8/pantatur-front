@@ -3,7 +3,7 @@ import Priority from '../../PriorityComponent/PriorityComponent';
 import Workflow from '../../WorkFlowComponent/WorkflowComponent';
 import TagInput from '../../TagsComponent/TagComponent';
 import Cookies from 'js-cookie';
-import { updateTicket } from '../LeadsComponent';
+import { useAppContext } from '../../../AppContext'; // Используем AppContext для updateTicket
 import { useUser } from '../../../UserContext';
 
 const deleteTicketById = async (id) => {
@@ -77,6 +77,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
   });
 
   const { userId } = useUser();
+  const { updateTicket } = useAppContext(); // Получаем updateTicket из AppContext
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -108,7 +109,6 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
     }
   };
 
-
   const handleSave = async () => {
     const ticketData = {
       ...editedTicket,
@@ -118,8 +118,8 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
 
     try {
       const res = editedTicket?.client_id == null
-        ? await saveTicketToServer(ticketData)
-        : await updateTicket(ticketData);
+        ? await saveTicketToServer(ticketData) // Создание нового тикета
+        : await updateTicket(ticketData); // Обновление существующего тикета
 
       if (!res) {
         throw new Error('Failed to save ticket');

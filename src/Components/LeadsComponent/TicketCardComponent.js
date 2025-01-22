@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { truncateText, parseTags } from '../utils/stringUtils';
+// import { truncateText, parseTags } from '../../stringUtils';
 import { getPriorityColor } from '../utils/ticketUtils';
 import './TicketCardComponent.css';
 
 const TicketCard = ({ ticket, onContextMenu, onEditTicket }) => {
     const [currentTicket, setCurrentTicket] = useState(null);
-    const tags = parseTags(ticket.tags);
+    // const tags = parseTags(ticket.tags);
     const navigate = useNavigate();
 
     const handleDragStart = (e, clientId) => {
@@ -48,11 +48,10 @@ const TicketCard = ({ ticket, onContextMenu, onEditTicket }) => {
                             {ticket.contact || 'Unknown Contact'}
                         </div>
                         <div className="ticket-tags">
-                            {tags.map((tag, index) => (
+                            {/* {tags.map((tag, index) => (
                                 <span key={index} className="tag">
-                                    {truncateText(tag, 15)}
                                 </span>
-                            ))}
+                            ))} */}
                         </div>
                     </div>
                     <div className="ticket-column">

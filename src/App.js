@@ -7,13 +7,11 @@ import { UserProvider } from './UserContext';
 import CustomSidebar from './Components/SideBar/SideBar';
 import ChatComponent from './Components/ChatComponent/chat';
 import Cookies from 'js-cookie';
-import { SocketProvider } from './SocketContext';
+import { AppProvider } from './AppContext'; // Импорт AppProvider
 import UserProfile from './Components/UserPage/UserPage';
-import { SnackbarProvider, closeSnackbar } from 'notistack';
-import Notification from './Notification';
-import { UnreadMessagesProvider } from './Unread';
+import { SnackbarProvider } from 'notistack';
 import NotificationModal from './Components/SlideInComponent/NotificationModal'; // Модальное окно уведомлений
-import TaskComponent from './Components/SlideInComponent/TaskComponent'; // Используем TaskModal вместо TaskComponent
+import TaskComponent from './Components/SlideInComponent/TaskComponent'; // Модальное окно задач
 import AdminPanel from './Components/AdminPanelComponent/AdminPanel';
 import Dashboard from './Components/DashboardComponent/Dashboard';
 
@@ -60,69 +58,55 @@ function App() {
   };
 
   if (isLoading) {
-    return <div className="spinner"></div>;
+    return <div className="spinner">Загрузка...</div>;
   }
 
   return (
     <SnackbarProvider
-      iconVariant={{
-        success: '',
-        error: '',
-        warning: '',
-        info: '',
-      }}
       autoHideDuration={60000}
       maxSnack={5}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-      action={() => (
-        <>
-
-        </>
-      )}
     >
-      <SocketProvider isLoggedIn={isLoggedIn}>
+      <AppProvider isLoggedIn={isLoggedIn}>
         <UserProvider>
-          <Notification />
           <Router>
-            <UnreadMessagesProvider isLoggedIn={isLoggedIn}>
-              {!isLoggedIn ? (
-                <LoginForm onLoginSuccess={handleLogin} />
-              ) : (
-                <div className="app-container">
-                  <CustomSidebar
-                    onOpenNotifications={() => setIsNotificationModalOpen(true)}
-                    onOpenTasks={() => setIsTaskComponentOpen(true)} // Передаем функцию для открытия задач
-                  />
-                  <div className="page-content">
-                    <Routes>
-                      <Route path="/account" element={<UserProfile />} />
-                      <Route path="/dashboard" element={<Dashboard />} />
-                      <Route path="/" element={<Navigate to="/leads" />} />
-                      <Route path="/leads" element={<Leads />} />
-                      <Route
-                        path="/chat/:clientId?"
-                        element={<ChatComponent />}
-                      />
-                      <Route path="/admin-panel" element={<AdminPanel />} />
-                      <Route path="*" element={<div>Страница в разработке</div>} />
-                    </Routes>
-                  </div>
-                  {/* Модальное окно уведомлений */}
-                  <NotificationModal
-                    isOpen={isNotificationModalOpen}
-                    onClose={() => setIsNotificationModalOpen(false)}
-                  />
-                  {/* Модальное окно задач */}
-                  <TaskComponent
-                    isOpen={isTaskComponentOpen}
-                    onClose={() => setIsTaskComponentOpen(false)}
-                  />
+            {!isLoggedIn ? (
+              <LoginForm onLoginSuccess={handleLogin} />
+            ) : (
+              <div className="app-container">
+                <CustomSidebar
+                  onOpenNotifications={() => setIsNotificationModalOpen(true)}
+                  onOpenTasks={() => setIsTaskComponentOpen(true)} // Передаем функцию для открытия задач
+                />
+                <div className="page-content">
+                  <Routes>
+                    <Route path="/account" element={<UserProfile />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/" element={<Navigate to="/leads" />} />
+                    <Route path="/leads" element={<Leads />} />
+                    <Route
+                      path="/chat/:clientId?"
+                      element={<ChatComponent />}
+                    />
+                    <Route path="/admin-panel" element={<AdminPanel />} />
+                    <Route path="*" element={<div>Страница в разработке</div>} />
+                  </Routes>
                 </div>
-              )}
-            </UnreadMessagesProvider>
+                {/* Модальное окно уведомлений */}
+                <NotificationModal
+                  isOpen={isNotificationModalOpen}
+                  onClose={() => setIsNotificationModalOpen(false)}
+                />
+                {/* Модальное окно задач */}
+                <TaskComponent
+                  isOpen={isTaskComponentOpen}
+                  onClose={() => setIsTaskComponentOpen(false)}
+                />
+              </div>
+            )}
           </Router>
         </UserProvider>
-      </SocketProvider>
+      </AppProvider>
     </SnackbarProvider>
   );
 }
