@@ -77,40 +77,6 @@ const ChatComponent = ({ }) => {
     }, [selectClientId]);
 
 
-    // Получение тикетов через fetch
-    const fetchTickets = async () => {
-        setIsLoading(true); // Показываем индикатор загрузки
-        try {
-            const token = Cookies.get('jwt');
-            const response = await fetch('https://pandatur-api.com/tickets', {
-                method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            if (response.status === 401) {
-                console.warn('Ошибка 401: Неавторизован. Перенаправляем на логин.');
-                // window.location.reload(); // Перезагрузка страницы
-                return;
-            }
-
-            if (!response.ok) {
-                throw new Error('Ошибка при получении данных');
-            }
-
-            const data = await response.json();
-            console.log("tickets+++++", data);
-            setTickets(data); // Устанавливаем данные тикетов
-        } catch (error) {
-            console.error('Ошибка:', error);
-        }
-        finally {
-            setIsLoading(false);
-        }
-    };
-
     const fetchTicketsDetail = async () => {
         if (!selectClientId) {
             console.warn('Не выбран Ticket ID для запроса.');
@@ -186,55 +152,6 @@ const ChatComponent = ({ }) => {
             console.error('Ошибка при получении дополнительной информации:', error);
         }
     };
-
-
-    // Загружаем тикеты при монтировании компонента
-    useEffect(() => {
-        fetchTickets();
-    }, []);
-
-    const getClientMessages = async () => {
-        try {
-            // Получаем токен из cookies
-            const token = Cookies.get('jwt');
-            if (!token) {
-                console.warn('Нет токена. Пропускаем загрузку сообщений.');
-                return;
-            }
-
-            // Отправляем запрос на сервер
-            const response = await fetch('https://pandatur-api.com/messages', {
-                method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            // Проверяем, успешен ли запрос
-            if (!response.ok) {
-                throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
-            }
-
-            // Парсим данные
-            const data = await response.json();
-
-            // Логируем полученные данные (опционально)
-            console.log('Сообщения клиента:', data);
-
-            // Обновляем состояние с сообщениями
-            setMessages(data);
-        } catch (error) {
-            // Обработка ошибок
-            enqueueSnackbar('Не удалось получить сообщения!', { variant: 'error' });
-            console.error('Ошибка при получении сообщений:', error.message);
-        }
-    };
-
-    // Вызываем функцию (например, через useEffect)
-    useEffect(() => {
-        getClientMessages();
-    }, []);
 
     // Обработчик изменения значения в селекте для выбранного тикета
     const handleSelectChange = (clientId, field, value) => {
@@ -362,14 +279,6 @@ const ChatComponent = ({ }) => {
         ? tickets.find(ticket => ticket.client_id === selectClientId)
         : null;
 
-    // if (!updatedTicket) {
-    //     console.error('Ошибка: Тикет не найден или tickets не является массивом.', {
-    //         tickets,
-    //         selectClientId,
-    //     });
-    //     // enqueueSnackbar('Ошибка: Тикет не найден.', { variant: 'error' });
-    // }
-
     const scrollToBottom = () => {
         if (messageContainerRef.current) {
             messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
@@ -393,10 +302,10 @@ const ChatComponent = ({ }) => {
 
     const handleClick = (clientId) => {
         sendMessage();
-        getClientMessages();
+        // getClientMessages();
         markMessagesAsRead(clientId); // Помечаем сообщения клиента как прочитанные
         // fetchTicketsID();
-        fetchTickets();
+        // fetchTickets();
     };
 
     const handleTicketClick = (clientId) => {
@@ -415,7 +324,7 @@ const ChatComponent = ({ }) => {
 
         console.log('Selected Client ID:', selectedTicket?.client_id || "No change");
         navigate(`/chat/${clientId}`);
-        getClientMessages();
+        // getClientMessages();
     };
 
     const handleInView = (isVisible, msg) => {
@@ -439,80 +348,6 @@ const ChatComponent = ({ }) => {
             console.log(`Message ${msg.id} not marked as read: isVisible=${isVisible}, seen_at=${msg.seen_at}`);
         }
     };
-
-    useEffect(() => {
-        if (socket) {
-            const handleSocketMessage = (event) => {
-                // console.log('Raw WebSocket message received:', event.data);
-                getClientMessages();
-
-                try {
-                    const message = JSON.parse(event.data);
-                    console.log('Parsed WebSocket message:', message);
-
-                    switch (message.type) {
-                        case 'message': {
-                            setMessages((prevMessages) => [...prevMessages, message.data]);
-
-                            if (message.data.client_id !== selectClientId && !message.data.seen_at) {
-                                setUnreadMessages((prevUnreadMessages) => {
-                                    const updatedUnreadMessages = { ...prevUnreadMessages };
-                                    const clientId = message.data.client_id;
-
-                                    // Увеличиваем счётчик для непрочитанных сообщений
-                                    updatedUnreadMessages[clientId] =
-                                        (updatedUnreadMessages[clientId] || 0) + 1;
-                                    console.log('Updated unread messages:', updatedUnreadMessages);
-                                    return updatedUnreadMessages;
-                                });
-                            }
-                            break;
-                        }
-
-                        case 'seen':
-                            console.log("Сообщение отмечено как прочитанное");
-                            break;
-
-                        case 'react':
-                            console.log("Реакция на сообщение");
-                            break;
-
-                        case 'edit':
-                            console.log('Сообщения обновлены после редактирования.');
-                            break;
-
-                        case 'delete':
-                            console.log("Сообщение удалено");
-                            break;
-
-                        case 'ticket':
-                            fetchTickets();
-                            break;
-
-                        case 'pong':
-                            // console.log("Сообщение удалено");
-                            break;
-
-                        default:
-                            console.warn('Неизвестный тип сообщения:', message);
-                    }
-                } catch (error) {
-                    console.error('Ошибка при разборе WebSocket сообщения:', error);
-                }
-            };
-
-            // Назначаем обработчик
-            socket.onmessage = handleSocketMessage;
-
-            return () => {
-                if (socket) {
-                    socket.onmessage = null;
-                    socket.onerror = null;
-                    socket.onclose = null;
-                }
-            };
-        }
-    }, [socket, selectClientId, getClientMessages, enqueueSnackbar]);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -756,41 +591,6 @@ const ChatComponent = ({ }) => {
         }
     };
 
-    // Функция для загрузки файла
-    // const uploadFileOLD = async (file) => {
-    //     const formData = new FormData();
-    //     formData.append('file', file);
-    //     const token = Cookies.get('jwt'); // Используем JWT токен для авторизации
-
-    //     console.log('Preparing to upload file...');
-    //     console.log('FormData:', formData);
-
-    //     try {
-    //         const response = await fetch('https://pandatur-api.com/messages/upload', {
-    //             method: 'POST',
-    //             body: formData,
-    //             headers: {
-    //                 Authorization: `Bearer ${token}`,
-    //             },
-    //         });
-
-    //         console.log('Response status:', response.status);
-
-    //         if (response.ok) {
-    //             const data = await response.json();
-    //             console.log('File uploaded successfully:', data);
-    //             return data; // Сервер должен вернуть объект с полем `url`
-    //         } else {
-    //             const errorMessage = `Failed to upload file. Status: ${response.status}`;
-    //             console.error(errorMessage);
-    //             throw new Error(errorMessage);
-    //         }
-    //     } catch (error) {
-    //         console.error('Error uploading file:', error);
-    //         throw error;
-    //     }
-    // };
-
     // Обработчик выбора файла
     const handleFileSelect = async (e) => {
         const selectedFile = e.target.files[0];
@@ -837,8 +637,7 @@ const ChatComponent = ({ }) => {
             const updatedTicket = await response.json();
             console.log('Тикет успешно обновлён:', updatedTicket);
 
-            // Вызов fetchTickets для обновления списка тикетов
-            await fetchTickets();
+            // await fetchTickets();
             console.log('Список тикетов успешно обновлён.');
         } catch (error) {
             console.error('Ошибка при обновлении technician_id:', error.message);
@@ -959,95 +758,6 @@ const ChatComponent = ({ }) => {
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    // const sendMessageOLD prin socket = async (selectedFile) => {
-
-    //     if (!managerMessage.trim() && !selectedFile) {
-    //         return; // Если нет сообщения или файла — ничего не отправляем
-    //     }
-
-    //     if (socket) {
-    //         console.log('WebSocket state before sending message:', socket.readyState);
-
-    //         if (socket.readyState === WebSocket.OPEN) {
-    //             const currentTime = new Date().toISOString();
-
-    //             try {
-    //                 let fileUrl = null;
-
-    //                 // Если передан файл, загружаем его и получаем URL
-    //                 if (selectedFile) {
-    //                     try {
-    //                         const uploadResponse = await uploadFile(selectedFile);
-    //                         fileUrl = uploadResponse.url;
-    //                         console.log('File URL received:', fileUrl);
-
-    //                         const fileMessageData = {
-    //                             type: 'message',
-    //                             data: {
-    //                                 sender_id: Number(userId),
-    //                                 client_id: [selectClientId],
-    //                                 platform: 'web',
-    //                                 text: fileUrl, // URL файла
-    //                                 time_sent: currentTime,
-    //                             },
-    //                         };
-
-    //                         socket.send(JSON.stringify(fileMessageData));
-    //                         console.log('File message sent:', fileMessageData);
-
-    //                         // Обновляем локальное состояние
-    //                         setMessages((prevMessages) => [
-    //                             ...prevMessages,
-    //                             { ...fileMessageData.data, seen_at: false },
-    //                         ]);
-
-    //                         // Загружаем обновленный список сообщений
-    //                         await getClientMessages();
-    //                     } catch (error) {
-    //                         console.error('Error uploading file:', error);
-    //                         alert('Ошибка при загрузке файла. Попробуйте снова.');
-    //                         return;
-    //                     }
-    //                 }
-
-    //                 // Если есть текстовое сообщение, отправляем его отдельно
-    //                 if (managerMessage.trim()) {
-    //                     const textMessageData = {
-    //                         type: 'message',
-    //                         data: {
-    //                             sender_id: Number(userId),
-    //                             client_id: [selectClientId],
-    //                             platform: 'web',
-    //                             text: managerMessage,
-    //                             time_sent: currentTime,
-    //                         },
-    //                     };
-
-    //                     socket.send(JSON.stringify(textMessageData));
-    //                     console.log('Text message sent:', textMessageData);
-
-    //                     setMessages((prevMessages) => [
-    //                         ...prevMessages,
-    //                         { ...textMessageData.data, seen_at: false },
-    //                     ]);
-
-    //                     setManagerMessage(''); // Очищаем текстовое сообщение
-
-    //                     // Загружаем обновленный список сообщений
-    //                     await getClientMessages();
-    //                 }
-    //             } catch (error) {
-    //                 console.error('Error sending message:', error);
-    //             }
-    //         } else {
-    //             console.error('WebSocket is not open. Please reload the page.');
-    //             alert('WebSocket is not open. Please reload the page.');
-    //         }
-    //     } else {
-    //         console.error('Socket is null.');
-    //     }
-    // };
 
     useEffect(() => {
         setFilteredTickets(tickets); // Устанавливаем все тикеты по умолчанию
