@@ -938,7 +938,7 @@ const ChatComponent = ({ }) => {
                         })
                         .sort((a, b) => new Date(a.time_sent) - new Date(b.time_sent))
                         .map((msg) => {
-                            const uniqueKey = `${msg.id}`;
+                            const uniqueKey = msg.id || `${msg.client_id}-${msg.time_sent}`;
 
                             // Определяем отображение контента на основе mtype
                             const renderContent = () => {

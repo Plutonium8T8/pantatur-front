@@ -10,7 +10,7 @@ const AppContext = createContext();
 export const useAppContext = () => useContext(AppContext);
 
 export const AppProvider = ({ children, isLoggedIn }) => {
-  const [socket, setSocket] = useState(null);
+  const [socket, setSocket] = useState();
   const [tickets, setTickets] = useState([]);
   const [ticketIds, setTicketIds] = useState([]);
   const [messages, setMessages] = useState([]); // Все сообщения
@@ -54,8 +54,6 @@ export const AppProvider = ({ children, isLoggedIn }) => {
           updatedUnreadMap.delete(msg.id);
         }
       });
-      console.log("Обновленные сообщения после чтения:", updatedMessages);
-
 
       setUnreadMessages(updatedUnreadMap);
       return updatedMessages;
@@ -319,7 +317,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     if (isLoggedIn) {
       getClientMessages();
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, unreadMessages]);
 
   return (
     <AppContext.Provider
