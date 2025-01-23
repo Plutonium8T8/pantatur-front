@@ -4,6 +4,10 @@ h1 {
     margin-bottom: 20px;
 }
 
+.schedule-container {
+    padding:  18px 18px 0 18px;
+}
+
 .week-navigation {
     margin-bottom: 20px;
     display: flex;
@@ -26,11 +30,17 @@ h1 {
     background-color: #0f824c;
 }
 
-.schedule-table {
+.table-wrapper {
     width: 100%;
-    border-collapse: collapse;
+    overflow-x:scroll; /* Enables horizontal scrolling */
+    overflow-y:scroll; /* Enables horizontal scrolling */
     margin-top: 20px;
-    table-layout: fixed; /* Ensures all columns have equal width */
+}
+
+.schedule-table {
+    width: 100%; 
+    border-collapse: collapse;
+    /* table-layout: fixed;  */
 }
 
 .schedule-table th,
@@ -39,8 +49,9 @@ h1 {
     padding: 10px;
     text-align: center;
     font-size: 14px;
-    height: 50px; /* Set a consistent height for all cells */
-    word-wrap: break-word; /* Handle text overflow */
+    height: 50px; 
+    min-width: 175px; 
+    word-wrap: break-word; 
 }
 
 .schedule-table th {

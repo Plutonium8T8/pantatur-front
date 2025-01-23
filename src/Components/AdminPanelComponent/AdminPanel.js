@@ -4,6 +4,7 @@ import Cookies from 'js-cookie';
 import ModalWithToggles from "./ModalWithToggles"; // Импортируем компонент модалки
 import './AdminPanel.css';
 import { FaMinus, FaPlus, FaTrash } from "react-icons/fa";
+import { translations } from "../utils/translations";
 
 const ScheduleComponent = () => {
   const [schedule, setSchedule] = useState([]);
@@ -16,6 +17,8 @@ const ScheduleComponent = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // Состояние модалки
   const [selectedUser, setSelectedUser] = useState(null); // Хранит выбранного пользователя
   const [error, setError] = useState(null);
+
+  const language = localStorage.getItem('language') || 'RO';
 
   // Закрытие модалки
   const closeModal = () => {
@@ -319,22 +322,23 @@ const ScheduleComponent = () => {
 
   return (
     <div className="schedule-container">
-      <div className="header-component">Grafic de lucru</div>
+      <div className="header-component">{translations['Grafic de lucru'][language]}</div>
       <div className="week-navigation">
-        <button onClick={goToPreviousWeek}>Saptamana Trecuta</button>
+        <button onClick={goToPreviousWeek}>{translations['săptămâna'][language]} {translations['trecută'][language]}</button>
         <span>
-          Saptamana {format(currentWeekStart, "dd.MM.yyyy")} - {format(addDays(currentWeekStart, 6), "dd.MM.yyyy")}
+          {translations['săptămâna'][language]} {format(currentWeekStart, "dd.MM.yyyy")} - {format(addDays(currentWeekStart, 6), "dd.MM.yyyy")}
         </span>
-        <button onClick={goToNextWeek}>Saptamana viitoare</button>
+        <button onClick={goToNextWeek}>{translations['săptămâna'][language]} {translations['viitoare'][language]}</button>
       </div>
+      <div class="table-wrapper">
       <table className="schedule-table">
         <thead>
           <tr>
-            <th>Angajat</th>
+            <th>{translations['Angajat'][language]}</th>
             {getWeekDays().map((day, index) => (
-              <th key={index}>{format(day, "EEEE, dd.MM")}</th>
+              <th key={index}>{translations[format(day, "EEEE")][language]}, {format(day, "dd.MM")}</th>
             ))}
-            <th>Ore de lucru</th>
+            <th>{translations['Ore de lucru'][language]}</th>
           </tr>
         </thead>
         <tbody>
@@ -351,6 +355,7 @@ const ScheduleComponent = () => {
               </td>
               {employee.shifts.map((shift, dayIndex) => (
                 <td
+                  // key={translations[dayIndex][language]}
                   key={dayIndex}
                   className="shift-cell"
                   onClick={(e) => {
@@ -366,6 +371,7 @@ const ScheduleComponent = () => {
           ))}
         </tbody>
       </table>
+      </div>
       {/* Модалка с переключателями */}
       {isModalOpen && selectedUser && (
         <ModalWithToggles
@@ -388,7 +394,8 @@ const ScheduleComponent = () => {
             <header className="modal-header">
               <h2>
                 {schedule[selectedEmployee].name} ({schedule[selectedEmployee].id}),{" "}
-                {format(getWeekDays()[selectedDay], "EEEE, dd.MM")}
+                {translations[format(getWeekDays()[selectedDay], "EEEE")][language]} , {format(getWeekDays()[selectedDay], "dd.MM")}
+                
               </h2>
             </header>
             {error && <div className="error-message">{error}</div>}
@@ -456,7 +463,7 @@ const ScheduleComponent = () => {
                 </div>
                 <div className="button-container">
                   <button className="submit-button" onClick={saveShift}>
-                    Save
+                  {translations['Salvează'][language]}
                   </button>
                   <button
                     className="clear-button"
@@ -466,7 +473,7 @@ const ScheduleComponent = () => {
                       setIntervals([]);
                     }}
                   >
-                    Cancel
+                    {translations['Închide'][language]}
                   </button>
                 </div>
               </div>

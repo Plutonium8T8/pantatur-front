@@ -178,6 +178,10 @@ export const translations = {
         'RO': 'Nici o notificare',
         'RU': 'Нет уведомлений'
     },
+    'Nici un task': {
+        'RO': 'Nici un task',
+        'RU': 'Нет задач'
+    },
     'Văzut': {
         'RO': 'Văzut',
         'RU': 'Просмотрено'
@@ -206,9 +210,57 @@ export const translations = {
         'RO': 'Adaugă task',
         'RU': 'Добавить задачу'
     },
-    'Nici un task': {
-        'RO': 'Nici un  task',
-        'RU': 'Нет задач'
+    'Grafic de lucru': {
+        'RO': 'Grafic de lucru',
+        'RU': 'График работы'
+    },
+    'săptămâna': {
+        'RO': 'săptămâna',
+        'RU': 'неделя'
+    },
+    'trecută': {
+        'RO': 'trecută',
+        'RU': 'предыдущая'
+    },
+    'viitoare': {
+        'RO': 'viitoare',
+        'RU': 'следующая'
+    },
+    'Angajat': {
+        'RO': 'Angajat',
+        'RU': 'Сотрудник'
+    },
+    'Ore de lucru': {
+        'RO': 'Ore de lucru',
+        'RU': 'Рабочее время'
+    },
+    'Monday': {
+        'RO': 'Luni',
+        'RU': 'Понедельник'
+    },
+    'Tuesday': {
+        'RO': 'Marți',
+        'RU': 'Вторник'
+    },
+    'Wednesday': {
+        'RO': 'Miercuri',
+        'RU': 'Среда'
+    },
+    'Thursday': {
+        'RO': 'Joi',
+        'RU': 'Четверг'
+    },
+    'Friday': {
+        'RO': 'Vineri',
+        'RU': 'Пятница'
+    },
+    'Saturday': {
+        'RO': 'Sâmbătă',
+        'RU': 'Суббота'
+    },
+    'Sunday': {
+        'RO': 'Duminică',
+        'RU': 'Воскресенье'
     },
 };
 
