@@ -64,10 +64,6 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     });
   };
 
-  useEffect(() => {
-    console.log('Количество непрочитанных сообщений:', unreadMessages.size);
-  }, [unreadMessages]);
-
   // Функция загрузки тикетов
   const fetchTicketsAndSendSocket = async (socketInstance) => {
     try {
@@ -96,6 +92,8 @@ export const AppProvider = ({ children, isLoggedIn }) => {
 
       setTickets(data);
       setTicketIds(ticketIds);
+
+      console.log("tickets", data);
 
       if (socketInstance && socketInstance.readyState === WebSocket.OPEN) {
         const socketMessage = JSON.stringify({ type: 'connect', data: { client_id: ticketIds } });
@@ -326,6 +324,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         setTickets,
         ticketIds,
         messages,
+        setMessages,
         unreadCount,
         markMessagesAsRead,
         clientMessages,

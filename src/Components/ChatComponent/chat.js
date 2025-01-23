@@ -29,10 +29,9 @@ import Icon from '../../Components/Icon/index';
 const ChatComponent = ({ }) => {
     const { userId } = useUser();
     const [managerMessage, setManagerMessage] = useState('');
-    const [messages, setMessages] = useState([]); // Инициализируем как пустой массив
+    const { tickets, updateTicket, setTickets, messages, setMessages } = useAppContext();
     const [selectClientId, setSelectClientId] = useState(null);
     const [extraInfo, setExtraInfo] = useState({}); // Состояние для дополнительной информации каждого тикета
-    const { tickets, updateTicket, setTickets } = useAppContext();
     const messageContainerRef = useRef(null);
     const { clientId } = useParams(); // Получаем clientId из URL
     const [isLoading, setIsLoading] = useState(false); // Состояние загрузки
