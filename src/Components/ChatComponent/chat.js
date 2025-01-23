@@ -1007,7 +1007,7 @@ const ChatComponent = ({ }) => {
                                                     >
                                                         {lastReaction || "☺"}
                                                     </div>
-                                                    {new Date(msg.time_sent).toLocaleTimeString("ru-RU", {
+                                                    {new Date(msg.time_sent).toLocaleTimeString("ro-Ro", {
                                                         hour: "2-digit",
                                                         minute: "2-digit",
                                                     })}

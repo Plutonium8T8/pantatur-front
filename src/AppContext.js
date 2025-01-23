@@ -34,9 +34,6 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         msg.seen_by != null && msg.seen_by == '{}' && msg.sender_id == msg.client_id
 
     );
-    console.log("Все сообщения:", newMessages);
-    console.log("Непрочитанные сообщения:", unread);
-    console.log("Количество непрочитанных:", unread.length);
 
     setUnreadCount(unread.length);
   };
