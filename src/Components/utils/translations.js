@@ -48,7 +48,10 @@ export const translations = {
         'RU': 'Лиды'
     },
     'Notificări': {
-        'RO': 'Notificări',
+        'RO': {
+            0: 'Notificări',
+            1: 'Notificări'
+        },
         'RU': {
             0: 'Уведомления',
             1: 'Увед-я'
