@@ -14,7 +14,7 @@ const ModalWithToggles = ({ employee, closeModal }) => {
     const fetchRoles = async () => {
             try {
                 const token = Cookies.get("jwt");
-                const response = await fetch(`https://pandatur-api.com/admin/users/${employee.id}`, {
+                const response = await fetch(`https://pandatur-api.com/users/${employee.id}`, {
                     method: "GET",
                     headers: {
                         Authorization: `Bearer ${token}`,

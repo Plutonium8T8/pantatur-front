@@ -14,8 +14,7 @@ const UserPage = ({ isOpen, onClose }) => {
   // User data states
   const [users, setUsers] = useState({
     username: "",
-    email: "",
-    password: "",
+    email: ""
   });
 
   const [usersExtended, setUsersExtended] = useState({
@@ -48,7 +47,7 @@ const UserPage = ({ isOpen, onClose }) => {
       const token = Cookies.get("jwt");
 
       // Fetch user basic information
-      const userResponse = await fetch(`https://pandatur-api.com/user/${userId}`, {
+      const userResponse = await fetch(`https://pandatur-api.com/users/${userId}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -63,8 +62,10 @@ const UserPage = ({ isOpen, onClose }) => {
         console.error(`Error fetching user: ${userResponse.status} - ${userResponse.statusText}`);
       }
 
+      console.log(users);
+
       // Fetch extended user information
-      const extendedResponse = await fetch(`https://pandatur-api.com/user_extended/${userId}`, {
+      const extendedResponse = await fetch(`https://pandatur-api.com/users-extended/${userId}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -80,7 +81,7 @@ const UserPage = ({ isOpen, onClose }) => {
       }
 
       // Fetch technician user information
-      const technicianResponse = await fetch(`https://pandatur-api.com/user_technician/${userId}`, {
+      const technicianResponse = await fetch(`https://pandatur-api.com/users-technician/${userId}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -121,16 +122,15 @@ const UserPage = ({ isOpen, onClose }) => {
     e.preventDefault();
     try {
       const token = Cookies.get("jwt");
-      const response = await fetch("https://pandatur-api.com/user", {
-        method: "POST",
+      const response = await fetch(`https://pandatur-api.com/users/${userId}`, {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          users,
-          users_extended: usersExtended,
-          users_technician: usersTechnician,
+          "email":users.email, 
+          "username":users.username
         }),
       });
 
@@ -139,6 +139,51 @@ const UserPage = ({ isOpen, onClose }) => {
       }
 
       console.log("User data saved successfully");
+
+      response = await fetch(`https://pandatur-api.com/users-extended/${userId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          "name":usersExtended.name, 
+          "surname":usersExtended.surname, 
+          "address":usersExtended.address, 
+          "date_of_birth":usersExtended.date_of_birth, 
+          "id_card_number":usersExtended.id_card_number, 
+          "id_card_release":usersExtended.id_card_release, 
+          "id_card_series":usersExtended.id_card_series, 
+          "idnp":usersExtended.idnp, 
+          "phone":usersExtended.phone
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+
+      console.log("User data saved successfully");
+
+      response = await fetch(`https://pandatur-api.com/users-technician/${userId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          "department":usersTechnician.department, 
+          "job_title":usersTechnician.job_title, 
+          "personal_exemption_number":usersTechnician.personal_exemption_number, 
+          "policy_number":usersTechnician.policy_number
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+
+      console.log("User Tech data saved successfully");
       onClose();
     } catch (error) {
       console.error("Error saving user data:", error.message);
@@ -159,12 +204,10 @@ const UserPage = ({ isOpen, onClose }) => {
               <FaUser />{translations['Gestionare utilizatori'][language]}
             </h2>
           </header>
-          {error && <div className="error-message">{error}</div>}
-
           <form className="user-form" onSubmit={handleSubmit}>
             <div className="input-group">
               <h3>{translations['Informații utilizator'][language]}</h3>
-              {Object.keys(users).map((key) => (
+              {Object.keys(users).filter(attribute => !['password', 'roles', 'email_confirmed', 'password_reset_token', 'password_reset_requested_at', 'id'].includes(attribute)).map((key) => (
                 <input
                   key={key}
                   type="text"
@@ -178,10 +221,10 @@ const UserPage = ({ isOpen, onClose }) => {
 
             <div className="input-group">
               <h3>{translations['Informații extinse'][language]}</h3>
-              {Object.keys(usersExtended).map((key) => (
+              {Object.keys(usersExtended).filter(attribute => !['user', 'photo', 'id'].includes(attribute)).map((key) => (
                 <input
                   key={key}
-                  type={key === "date_of_birth" ? "date" : "text"}
+                  type={["date_of_birth", "id_card_release"].includes(key) ? "date" : "text"}
                   name={key}
                   placeholder={translations[key][language]}
                   value={usersExtended[key]}
@@ -191,9 +234,8 @@ const UserPage = ({ isOpen, onClose }) => {
             </div>
 
             <div className="input-group">
-              <h3>{['Informații manager'][language]}</h3>
-              <label>{translations['Informații tehnician'][language]}:</label>
-              {Object.keys(usersTechnician).map((key) => (
+            <h3>{translations['Informații manager'][language]}</h3>
+              {Object.keys(usersTechnician).filter(attribute => !['id', 'salary'].includes(attribute)).map((key) => (
                 <input
                   key={key}
                   type="text"

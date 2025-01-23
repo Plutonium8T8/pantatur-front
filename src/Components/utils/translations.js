@@ -326,7 +326,7 @@ export const translations = {
         'RO': 'telefon',
         'RU': 'телефон'
     },
-    'Informații tehnician': {
+    'Informații manager': {
         'RO': 'Informații manager',
         'RU': 'Информация менеджера'
     },
