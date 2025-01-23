@@ -58,7 +58,7 @@ function App() {
   };
 
   if (isLoading) {
-    return <div className="spinner">Загрузка...</div>;
+    return <div className="spinner"></div>;
   }
 
   return (

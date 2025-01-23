@@ -20,45 +20,53 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { userId } = useUser(); // Получаем userId из UserContext
   const ticketsRef = useRef(tickets);
+  const [unreadMessages, setUnreadMessages] = useState(new Map()); // Оптимизированное хранение непрочитанных сообщений
 
   useEffect(() => {
-    ticketsRef.current = tickets;
-  }, [tickets]);
+    console.log("Количество непрочитанных сообщений:", unreadCount);
+    // Здесь можно выполнить любое действие при изменении unreadCount
+  }, [unreadCount]);
 
-  // Обновление количества непрочитанных сообщений
-  const updateUnreadCount = (updatedMessages) => {
-    const unreadMessages = updatedMessages.filter((msg) => {
-      const isUnread = (!msg.seen_by || msg.seen_by === '{}') && msg.sender_id !== userId;
-      console.log("Сообщение ID:", msg.id);
-      console.log("client_id:", msg.client_id);
-      console.log("sender_id:", msg.sender_id);
-      console.log("seen_by:", msg.seen_by);
-      console.log("Учитывается как непрочитанное:", isUnread);
-      return isUnread;
-    });
 
-    console.log("Все сообщения:", updatedMessages);
-    console.log("Непрочитанные сообщения:", unreadMessages);
-    console.log("Общее количество непрочитанных сообщений:", unreadMessages.length);
+  const updateUnreadMessages = (newMessages) => {
+    const unread = newMessages.filter(
+      (msg) => (!msg.seen_by || msg.seen_by === '{}') && msg.sender_id !== userId
+    );
 
-    setUnreadCount(unreadMessages.length);
+    console.log("Все сообщения:", newMessages);
+    console.log("Непрочитанные сообщения:", unread);
+    console.log("Количество непрочитанных:", unread.length);
+
+    setUnreadCount(unread.length);
   };
 
 
-
-
-  // Отметить сообщения как прочитанные
   const markMessagesAsRead = (clientId) => {
     setMessages((prevMessages) => {
       const updatedMessages = prevMessages.map((msg) =>
-        msg.client_id === clientId && msg.seen_by === '{}'
+        msg.client_id === clientId && (!msg.seen_by || msg.seen_by === '{}')
           ? { ...msg, seen_by: `{${userId}}`, seen_at: new Date().toISOString() }
           : msg
       );
-      updateUnreadCount(updatedMessages);
+
+      // Удаляем прочитанные сообщения из `unreadMessages`
+      const updatedUnreadMap = new Map(unreadMessages);
+      updatedMessages.forEach((msg) => {
+        if (msg.client_id === clientId && msg.seen_by !== '{}') {
+          updatedUnreadMap.delete(msg.id);
+        }
+      });
+      console.log("Обновленные сообщения после чтения:", updatedMessages);
+
+
+      setUnreadMessages(updatedUnreadMap);
       return updatedMessages;
     });
   };
+
+  useEffect(() => {
+    console.log('Количество непрочитанных сообщений:', unreadMessages.size);
+  }, [unreadMessages]);
 
   // Функция загрузки тикетов
   const fetchTicketsAndSendSocket = async (socketInstance) => {
@@ -165,8 +173,10 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       }
 
       const data = await response.json();
-      console.log('Сообщения клиента:', data); // Логируем полученные данные
-      setClientMessages(data); // Обновляем состояние
+      console.log("Сообщения, загруженные из API:", data);
+
+      setMessages(data); // Обновляем состояние всех сообщений
+      updateUnreadMessages(data); // Считаем непрочитанные сообщения
     } catch (error) {
       enqueueSnackbar('Не удалось получить сообщения!', { variant: 'error' });
       console.error('Ошибка при получении сообщений:', error.message);
@@ -177,9 +187,10 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   const handleWebSocketMessage = (message) => {
     switch (message.type) {
       case 'message': {
+        console.log("Новое сообщение из WebSocket:", message.data);
         setMessages((prevMessages) => {
           const updatedMessages = [...prevMessages, message.data];
-          updateUnreadCount(updatedMessages);
+          updateUnreadMessages(updatedMessages);
           return updatedMessages;
         });
         const ticket = ticketsRef.current.find(t => t.client_id === message.data.client_id);
@@ -224,7 +235,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
           const updatedMessages = prevMessages.map((msg) =>
             msg.client_id === client_id ? { ...msg, seen_at } : msg
           );
-          updateUnreadCount(updatedMessages);
+          updateUnreadMessages(updatedMessages); // Исправление
           return updatedMessages;
         });
         break;
@@ -270,7 +281,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       setUnreadCount(0);
       setClientMessages([]);
       if (socket) {
-        
+
       }
       return;
     }
@@ -297,7 +308,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     setSocket(socketInstance);
 
     return () => {
-      socketInstance.close();
+
     };
   }, [isLoggedIn]);
 
@@ -320,6 +331,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         clientMessages,
         isLoading,
         updateTicket,
+        // unreadCount: unreadMessages.size, // Количество непрочитанных сообщений
       }}
     >
       {children}
