@@ -1030,7 +1030,7 @@ const ChatComponent = ({ }) => {
                                                     </div>
                                                 )}
                                             </div>
-                                            {(msg.sender_id === userId || msg.sender_id === 1) && (
+                                            {/* {(msg.sender_id === userId || msg.sender_id === 1) && (
                                                 <div
                                                     className="menu-container"
                                                     ref={(el) => (menuRefs.current[msg.id] = el)}
@@ -1048,7 +1048,7 @@ const ChatComponent = ({ }) => {
                                                         </div>
                                                     )}
                                                 </div>
-                                            )}
+                                            )} */}
                                         </div>
                                     </div>
                                 </div>
