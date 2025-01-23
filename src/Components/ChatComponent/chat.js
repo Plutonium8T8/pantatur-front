@@ -37,7 +37,6 @@ const ChatComponent = ({ }) => {
     const [isLoading, setIsLoading] = useState(false); // Состояние загрузки
     const [selectedTechnicianId, setSelectedTechnicianId] = useState('');
     const { socket } = useAppContext(); // Доступ к WebSocket
-    const [unreadMessages, setUnreadMessages] = useState({});
     const { enqueueSnackbar } = useSnackbar();
     const navigate = useNavigate(); // Хук для навигации
     const { markMessagesAsRead } = useAppContext();
