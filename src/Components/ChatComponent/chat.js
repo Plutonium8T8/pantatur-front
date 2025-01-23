@@ -19,7 +19,7 @@ import Input from '../InputComponent/InputComponent';
 import Workflow from '../WorkFlowComponent/WorkflowComponent';
 import "react-datepicker/dist/react-datepicker.css";
 import { useAppContext } from '../../AppContext'; // Подключение AppContext
-import { InView } from 'react-intersection-observer';
+// import { InView } from 'react-intersection-observer';
 import { useSnackbar } from 'notistack';
 import './chat.css';
 import EmojiPicker from 'emoji-picker-react';
@@ -70,53 +70,6 @@ const ChatComponent = ({ }) => {
     useEffect(() => {
         if (selectClientId) {
             fetchTicketExtraInfo(selectClientId); // Загружаем дополнительную информацию при изменении тикета
-        }
-    }, [selectClientId]);
-
-
-    const fetchTicketsDetail = async () => {
-        if (!selectClientId) {
-            console.warn('Не выбран Ticket ID для запроса.');
-            return;
-        }
-
-        setIsLoading(true); // Показываем индикатор загрузки
-        try {
-            const token = Cookies.get('jwt');
-            const response = await fetch(`https://pandatur-api.com/tickets/${selectClientId}`, {
-                method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            if (response.status === 401) {
-                console.warn('Ошибка 401: Неавторизован. Перенаправляем на логин.');
-                return;
-            }
-
-            if (!response.ok) {
-                throw new Error('Ошибка при получении данных');
-            }
-
-            const data = await response.json();
-            console.log("Ticket Details:", data);
-            console.log("setSelectedTechnicianId", data.technician_id);
-            // Предположим, что сервер возвращает technician_id, связанный с этим тикетом
-            if (data.technician_id) {
-                setSelectedTechnicianId(data.technician_id); // Обновляем ID техника в состоянии
-            }
-        } catch (error) {
-            console.error('Ошибка:', error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        if (selectClientId) {
-            fetchTicketsDetail();
         }
     }, [selectClientId]);
 
@@ -302,38 +255,35 @@ const ChatComponent = ({ }) => {
         } else {
             console.warn('Тикет не найден!');
             setSelectedTechnicianId(null);
-            // Не сбрасываем client_id, если тикет не найден
         }
 
         console.log('Selected Client ID:', selectedTicket?.client_id || "No change");
         navigate(`/chat/${clientId}`);
-        // getClientMessages();
-    };
 
-    const handleInView = (isVisible, msg) => {
-        if (isVisible) {
-            const readMessageData = {
-                type: 'seen',
-                data: {
-                    client_id: msg.client_id,
-                    sender_id: Number(userId),
-                },
-            };
+        // Отправка события seen через WebSocket
+        const readMessageData = {
+            type: 'seen',
+            data: {
+                client_id: clientId,
+                sender_id: Number(userId),
+            },
+        };
 
-            try {
-                if (socket && socket.readyState === WebSocket.OPEN) {
-                    socket.send(JSON.stringify(readMessageData)); // Отправляем событие в WebSocket
-                    console.log(`Сообщение ${msg.id} помечено как прочитанное.`);
-                }
-
-                markMessagesAsRead(msg.client_id); // Локальное обновление в AppContext
-            } catch (error) {
-                console.error('Ошибка при отправке события о прочтении:', error);
+        try {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify(readMessageData)); // Отправляем событие в WebSocket
+                console.log(`Все сообщения в чате с client_id=${clientId} помечены как прочитанные.`);
+            } else {
+                console.warn('WebSocket не подключен или закрыт.');
             }
-        } else {
-            console.log(`Сообщение ${msg.id} не отмечено как прочитанное.`);
+
+            // Локальное обновление сообщений как прочитанных
+            markMessagesAsRead(clientId);
+        } catch (error) {
+            console.error('Ошибка при отправке события о прочтении:', error);
         }
     };
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -995,7 +945,7 @@ const ChatComponent = ({ }) => {
                         })
                         .sort((a, b) => new Date(a.time_sent) - new Date(b.time_sent))
                         .map((msg) => {
-                            const uniqueKey = msg.id || `${msg.client_id}-${msg.time_sent}`;
+                            const uniqueKey = `${msg.id}`;
 
                             // Определяем отображение контента на основе mtype
                             const renderContent = () => {
@@ -1029,7 +979,6 @@ const ChatComponent = ({ }) => {
                                             </audio>
                                         );
                                     case "file":
-                                        const fileName = msg.message.split("/").pop(); // Извлекаем название файла из URL
                                         return (
                                             <a
                                                 href={msg.message}
@@ -1041,83 +990,75 @@ const ChatComponent = ({ }) => {
                                             </a>
                                         );
                                     default:
-                                        return <div className="text-message">{msg.message}</div>; // Отображение текста по умолчанию
+                                        return <div className="text-message">{msg.message}</div>;
                                 }
                             };
 
                             const lastReaction = getLastReaction(msg);
 
                             return (
-                                <InView
+                                <div
                                     key={uniqueKey}
-                                    onChange={(inView) => handleInView(inView, msg)}
-                                    threshold={0.1}
+                                    className={`message ${msg.sender_id === userId || msg.sender_id === 1 ? "sent" : "received"}`}
                                 >
-                                    {({ ref }) => (
-                                        <div
-                                            ref={ref}
-                                            className={`message ${msg.sender_id == userId || msg.sender_id === 1 ? "sent" : "received"}`}
-                                        >
-                                            <div className="message-content">
-                                                <div className="message-row">
-                                                    <div className="text">
-                                                        {renderContent()}
-                                                        <div className="message-time">
-                                                            <div
-                                                                className="reaction-toggle-button"
-                                                                onClick={() =>
-                                                                    setSelectedMessageId(selectedMessageId === msg.id ? null : msg.id)
-                                                                }
-                                                            >
-                                                                {lastReaction || "☺"}
-                                                            </div>
-                                                            {new Date(msg.time_sent).toLocaleTimeString("ru-RU", {
-                                                                hour: "2-digit",
-                                                                minute: "2-digit",
-                                                            })}
-                                                        </div>
-                                                        {selectedMessageId === msg.id && (
-                                                            <div className="reaction-container" ref={reactionContainerRef}>
-                                                                <div className="reaction-buttons">
-                                                                    {["☺", "👍", "❤️", "😂", "😮", "😢", "😡"].map((reaction) => (
-                                                                        <div
-                                                                            key={reaction}
-                                                                            onClick={() => handleReactionClick(reaction, msg.id)}
-                                                                            className={
-                                                                                selectedReaction[msg.id] === reaction ? "active" : ""
-                                                                            }
-                                                                        >
-                                                                            {reaction}
-                                                                        </div>
-                                                                    ))}
-                                                                </div>
-                                                            </div>
-                                                        )}
+                                    <div className="message-content">
+                                        <div className="message-row">
+                                            <div className="text">
+                                                {renderContent()}
+                                                <div className="message-time">
+                                                    <div
+                                                        className="reaction-toggle-button"
+                                                        onClick={() =>
+                                                            setSelectedMessageId(selectedMessageId === msg.id ? null : msg.id)
+                                                        }
+                                                    >
+                                                        {lastReaction || "☺"}
                                                     </div>
-                                                    {(msg.sender_id == userId || msg.sender_id === 1) && (
-                                                        <div
-                                                            className="menu-container"
-                                                            ref={(el) => (menuRefs.current[msg.id] = el)}
-                                                        >
-                                                            <button
-                                                                className="menu-button"
-                                                                onClick={() => handleMenuToggle(msg.id)}
-                                                            >
-                                                                ⋮
-                                                            </button>
-                                                            {menuMessageId === msg.id && (
-                                                                <div className="menu-dropdown">
-                                                                    <button onClick={() => handleEdit(msg)}>✏️</button>
-                                                                    <button onClick={() => handleDelete(msg.id)}>🗑️</button>
+                                                    {new Date(msg.time_sent).toLocaleTimeString("ru-RU", {
+                                                        hour: "2-digit",
+                                                        minute: "2-digit",
+                                                    })}
+                                                </div>
+                                                {selectedMessageId === msg.id && (
+                                                    <div className="reaction-container" ref={reactionContainerRef}>
+                                                        <div className="reaction-buttons">
+                                                            {["☺", "👍", "❤️", "😂", "😮", "😢", "😡"].map((reaction) => (
+                                                                <div
+                                                                    key={reaction}
+                                                                    onClick={() => handleReactionClick(reaction, msg.id)}
+                                                                    className={
+                                                                        selectedReaction[msg.id] === reaction ? "active" : ""
+                                                                    }
+                                                                >
+                                                                    {reaction}
                                                                 </div>
-                                                            )}
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            {(msg.sender_id === userId || msg.sender_id === 1) && (
+                                                <div
+                                                    className="menu-container"
+                                                    ref={(el) => (menuRefs.current[msg.id] = el)}
+                                                >
+                                                    <button
+                                                        className="menu-button"
+                                                        onClick={() => handleMenuToggle(msg.id)}
+                                                    >
+                                                        ⋮
+                                                    </button>
+                                                    {menuMessageId === msg.id && (
+                                                        <div className="menu-dropdown">
+                                                            <button onClick={() => handleEdit(msg)}>✏️</button>
+                                                            <button onClick={() => handleDelete(msg.id)}>🗑️</button>
                                                         </div>
                                                     )}
                                                 </div>
-                                            </div>
+                                            )}
                                         </div>
-                                    )}
-                                </InView>
+                                    </div>
+                                </div>
                             );
                         })}
                 </div>

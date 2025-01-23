@@ -187,11 +187,19 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     switch (message.type) {
       case 'message': {
         console.log("Новое сообщение из WebSocket:", message.data);
+
+        // Преобразуем структуру сообщения
+        const transformedMessage = {
+          ...message.data,
+          message: message.data.text, // Преобразуем поле text в message
+        };
+
         setMessages((prevMessages) => {
-          const updatedMessages = [...prevMessages, message.data];
+          const updatedMessages = [...prevMessages, transformedMessage];
           updateUnreadMessages(updatedMessages);
           return updatedMessages;
         });
+
         const ticket = ticketsRef.current.find(t => t.client_id === message.data.client_id);
 
         if (ticket && ticket.technician_id === userId) {
@@ -205,7 +213,6 @@ export const AppProvider = ({ children, isLoggedIn }) => {
                   <div
                     className="snack-object"
                     onClick={() => {
-                      // navigate(`/chat/${message.data.client_id}`);
                       closeSnackbar(snackbarId);
                     }}
                   >
@@ -234,7 +241,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
           const updatedMessages = prevMessages.map((msg) =>
             msg.client_id === client_id ? { ...msg, seen_at } : msg
           );
-          updateUnreadMessages(updatedMessages); // Исправление
+          updateUnreadMessages(updatedMessages);
           return updatedMessages;
         });
         break;
@@ -301,7 +308,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       }
     };
 
-    socketInstance.onclose = () => console.log('WebSocket закрыт');
+    socketInstance.onclose = () => alert('WebSocket закрыт');
     socketInstance.onerror = (error) => console.error('WebSocket ошибка:', error);
 
     setSocket(socketInstance);
