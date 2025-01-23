@@ -929,7 +929,7 @@ const ChatComponent = ({ }) => {
                                     <div
                                         key={ticket.client_id}
                                         className={`chat-item ${ticket.client_id === selectClientId ? "active" : ""}`}
-                                        ref={ticket.client_id === selectClientId ? activeChatRef : null}
+                                        // ref={ticket.client_id === selectClientId ? activeChatRef : null}
                                         onClick={() => handleTicketClick(ticket.client_id)}
                                     >
                                         <div className="foto-description">
