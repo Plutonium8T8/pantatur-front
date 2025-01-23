@@ -188,14 +188,8 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       case 'message': {
         console.log("Новое сообщение из WebSocket:", message.data);
 
-        // Преобразуем структуру сообщения
-        const transformedMessage = {
-          ...message.data,
-          message: message.data.text, // Преобразуем поле text в message
-        };
-
         setMessages((prevMessages) => {
-          const updatedMessages = [...prevMessages, transformedMessage];
+          const updatedMessages = [...prevMessages, message.data];
           updateUnreadMessages(updatedMessages);
           return updatedMessages;
         });
@@ -203,7 +197,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         const ticket = ticketsRef.current.find(t => t.client_id === message.data.client_id);
 
         if (ticket && ticket.technician_id === userId) {
-          const messageText = truncateText(message.data.text, 40); // Ограничение длины текста
+          const messageText = truncateText(message.data.message, 40);
           enqueueSnackbar(
             '',
             {
@@ -212,9 +206,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
                 <div className="snack-bar-notification">
                   <div
                     className="snack-object"
-                    onClick={() => {
-                      closeSnackbar(snackbarId);
-                    }}
+                    onClick={() => closeSnackbar(snackbarId)}
                   >
                     <div className="snack-icon">
                       <FaEnvelope />
@@ -246,6 +238,12 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         });
         break;
       }
+      case 'ticket': {
+        console.log("Обновление тикета через WebSocket:", message.data);
+
+        fetchTicketsAndSendSocket(socket);
+        break;
+      }
       case 'notification': {
         const notificationText = truncateText(
           message.data.description || 'Уведомление с пустым текстом!',
@@ -255,20 +253,8 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         break;
       }
       case 'task': {
-        enqueueSnackbar(`Task nou: ${message.data.title}`, { variant: 'warning' });
-        break;
-      }
-      case 'ticket': {
-        if (message.data && message.data.client_id) {
-          const socketMessageClient = JSON.stringify({
-            type: 'connect',
-            data: { client_id: [message.data.client_id] },
-          });
-
-          socket.send(socketMessageClient);
-          console.log(`Подключён к комнате клиента с ID: ${message.data.client_id}`);
-          fetchTicketsAndSendSocket(socket);
-        }
+        enqueueSnackbar(`Новое задание: ${message.data.title}`, { variant: 'warning' });
+        fetchTicketsAndSendSocket();
         break;
       }
       case 'pong':
