@@ -22,7 +22,6 @@ import { useAppContext } from '../../AppContext'; // Подключение AppC
 import { InView } from 'react-intersection-observer';
 import { useSnackbar } from 'notistack';
 import './chat.css';
-import { useUnreadMessages } from '../../Unread';
 import EmojiPicker from 'emoji-picker-react';
 import ReactDOM from "react-dom";
 import Icon from '../../Components/Icon/index';
@@ -42,7 +41,7 @@ const ChatComponent = ({ }) => {
     const [unreadMessages, setUnreadMessages] = useState({});
     const { enqueueSnackbar } = useSnackbar();
     const navigate = useNavigate(); // Хук для навигации
-    const { markMessagesAsRead } = useUnreadMessages();
+    const { markMessagesAsRead } = useAppContext();
     const [menuMessageId, setMenuMessageId] = useState(null);
     const [editMessageId, setEditMessageId] = useState(null);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -324,14 +323,17 @@ const ChatComponent = ({ }) => {
             };
 
             try {
-                socket.send(JSON.stringify(readMessageData));
+                if (socket && socket.readyState === WebSocket.OPEN) {
+                    socket.send(JSON.stringify(readMessageData)); // Отправляем событие в WebSocket
+                    console.log(`Сообщение ${msg.id} помечено как прочитанное.`);
+                }
 
-                markMessagesAsRead(msg.client_id); // Локальное обновление
+                markMessagesAsRead(msg.client_id); // Локальное обновление в AppContext
             } catch (error) {
-                console.error('Error sending mark as read:', error);
+                console.error('Ошибка при отправке события о прочтении:', error);
             }
         } else {
-            console.log(`Message ${msg.id} not marked as read: isVisible=${isVisible}, seen_at=${msg.seen_at}`);
+            console.log(`Сообщение ${msg.id} не отмечено как прочитанное.`);
         }
     };
 
