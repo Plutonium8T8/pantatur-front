@@ -21,10 +21,10 @@ const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket, onContext
     };
 
     const priorityOrder = {
-        critical: 1,
-        high: 2,
-        medium: 3,
-        low: 4,
+        'joasă': 1,
+        'medie': 2,
+        'înaltă': 3,
+        'critică': 4,
     };
 
     const filteredTickets = tickets
@@ -35,7 +35,7 @@ const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket, onContext
             parseTags(ticket.tags).some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase())) ||
             searchTerm.trim() === ''
         ).sort((a, b) => {
-            const priorityDiff = (priorityOrder[a.priority] || 5) - (priorityOrder[b.priority] || 5);
+            const priorityDiff = (priorityOrder[b.priority] || 5) - (priorityOrder[a.priority] || 5);
             if (priorityDiff !== 0) return priorityDiff;
         
             const dateA = a.last_interaction_date ? Date.parse(a.last_interaction_date) : Number.POSITIVE_INFINITY;

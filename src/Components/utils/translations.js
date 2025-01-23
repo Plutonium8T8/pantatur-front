@@ -262,6 +262,91 @@ export const translations = {
         'RO': 'Duminică',
         'RU': 'Воскресенье'
     },
+
+    'Gestionare utilizatori': {
+        'RO': 'Gestionare utilizatori',
+        'RU': 'Управление пользователями'
+    },
+    'Informații utilizator': {
+        'RO': 'Informații utilizator',
+        'RU': 'Информация о пользователе'
+    },
+    'username': {
+        'RO': 'nume de utilizator',
+        'RU': 'имя пользователя'
+    },
+    'email': {
+        'RO': 'email',
+        'RU': 'электронная почта'
+    },
+    'password': {
+        'RO': 'parolă',
+        'RU': 'пароль'
+    },
+    'Informații extinse': {
+        'RO': 'Informații extinse',
+        'RU': 'Расширенная информация'
+    },
+    'name': {
+        'RO': 'nume',
+        'RU': 'имя'
+    },
+    'surname': {
+        'RO': 'prenume',
+        'RU': 'фамилия'
+    },
+    'date_of_birth': {
+        'RO': 'data nașterii',
+        'RU': 'дата рождения'
+    },
+    'id_card_series': {
+        'RO': 'seria cărții de identitate',
+        'RU': 'серия удостоверения личности'
+    },
+    'id_card_number': {
+        'RO': 'numărul cărții de identitate',
+        'RU': 'номер удостоверения личности'
+    },
+    'id_card_release': {
+        'RO': 'data eliberării cărții de identitate',
+        'RU': 'дата выдачи удостоверения личности'
+    },
+    'idnp': {
+        'RO': 'IDNP',
+        'RU': 'IDNP'
+    },
+    'address': {
+        'RO': 'adresa',
+        'RU': 'адрес'
+    },
+    'phone': {
+        'RO': 'telefon',
+        'RU': 'телефон'
+    },
+    'Informații tehnician': {
+        'RO': 'Informații manager',
+        'RU': 'Информация менеджера'
+    },
+    'policy_number': {
+        'RO': 'număr de poliță',
+        'RU': 'номер полиса'
+    },
+    'personal_exemption_number': {
+        'RO': 'numărul de scutire personală',
+        'RU': 'номер личного освобождения'
+    },
+    'job_title': {
+        'RO': 'funcție',
+        'RU': 'должность'
+    },
+    'department': {
+        'RO': 'departament',
+        'RU': 'отдел'
+    },
+    'Nume': {
+        'RO': 'Nume',
+        'RU': 'Имя'
+    },
 };
 
 // import { translations } from "../utils/translations";

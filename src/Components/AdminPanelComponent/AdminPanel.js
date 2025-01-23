@@ -330,7 +330,7 @@ const ScheduleComponent = () => {
         </span>
         <button onClick={goToNextWeek}>{translations['săptămâna'][language]} {translations['viitoare'][language]}</button>
       </div>
-      <div class="table-wrapper">
+      <div className="schedule-table-container">
       <table className="schedule-table">
         <thead>
           <tr>

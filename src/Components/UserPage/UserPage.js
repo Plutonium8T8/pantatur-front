@@ -3,10 +3,13 @@ import Cookies from "js-cookie";
 import { useUser } from "../../UserContext";
 import "./UserProfile.css";
 import { FaUser } from "react-icons/fa";
+import { translations } from "../utils/translations";
 
 const UserPage = ({ isOpen, onClose }) => {
   const { userId } = useUser();
   const [error, setError] = useState(null);
+
+  const language = localStorage.getItem('language') || 'RO';
 
   // User data states
   const [users, setUsers] = useState({
@@ -153,20 +156,20 @@ const UserPage = ({ isOpen, onClose }) => {
         <div className="modal-container" onClick={(e) => e.stopPropagation()}>
           <header className="modal-header">
             <h2>
-              <FaUser /> User Management
+              <FaUser />{translations['Gestionare utilizatori'][language]}
             </h2>
           </header>
           {error && <div className="error-message">{error}</div>}
 
           <form className="user-form" onSubmit={handleSubmit}>
             <div className="input-group">
-              <h3>Basic User Information</h3>
+              <h3>{translations['Informații utilizator'][language]}</h3>
               {Object.keys(users).map((key) => (
                 <input
                   key={key}
                   type="text"
                   name={key}
-                  placeholder={key.replace(/_/g, " ")}
+                  placeholder={translations[key][language]}
                   value={users[key]}
                   onChange={handleUsersChange}
                 />
@@ -174,13 +177,13 @@ const UserPage = ({ isOpen, onClose }) => {
             </div>
 
             <div className="input-group">
-              <h3>Extended User Information</h3>
+              <h3>{translations['Informații extinse'][language]}</h3>
               {Object.keys(usersExtended).map((key) => (
                 <input
                   key={key}
                   type={key === "date_of_birth" ? "date" : "text"}
                   name={key}
-                  placeholder={key.replace(/_/g, " ")}
+                  placeholder={translations[key][language]}
                   value={usersExtended[key]}
                   onChange={handleUsersExtendedChange}
                 />
@@ -188,14 +191,14 @@ const UserPage = ({ isOpen, onClose }) => {
             </div>
 
             <div className="input-group">
-              <h3>Technician Information</h3>
-              <label>Name:</label>
+              <h3>{['Informații manager'][language]}</h3>
+              <label>{translations['Informații tehnician'][language]}:</label>
               {Object.keys(usersTechnician).map((key) => (
                 <input
                   key={key}
                   type="text"
                   name={key}
-                  placeholder={key.replace(/_/g, " ")}
+                  placeholder={translations[key][language]}
                   value={usersTechnician[key]}
                   onChange={handleUsersTechnicianChange}
                 />
@@ -204,10 +207,10 @@ const UserPage = ({ isOpen, onClose }) => {
 
             <div className="button-container">
               <button type="submit" className="submit-button">
-                Save
+                {translations['Salvează'][language]}
               </button>
               <button type="button" className="clear-button" onClick={onClose}>
-                Close
+                {translations['Închide'][language]}
               </button>
             </div>
           </form>
