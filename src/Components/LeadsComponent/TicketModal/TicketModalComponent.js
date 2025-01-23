@@ -6,6 +6,7 @@ import Workflow from '../../WorkFlowComponent/WorkflowComponent';
 import TagInput from '../../TagsComponent/TagComponent';
 import { useUser } from '../../../UserContext';
 import Cookies from 'js-cookie';
+import { translations } from "../../utils/translations";
 
 const parseTags = (tags) => {
   if (Array.isArray(tags)) {
@@ -24,6 +25,42 @@ const parseTags = (tags) => {
 const TicketModal = ({ ticket, onClose, onSave }) => {
   const modalRef = useRef(null);
   const { userId } = useUser();
+
+  const language = localStorage.getItem('language') || 'RO';
+
+  useEffect(() => {
+    const fetchTicketData = async () => {
+      if (ticket?.client_id) {
+        try {
+          const token = Cookies.get('jwt');
+          const response = await fetch(`https://pandatur-api.com/tickets/${ticket.client_id}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (!response.ok) throw new Error('Failed to load ticket data');
+
+          const result = await response.json();
+          setEditedTicket({
+            ...result,
+            tags: parseTags(result.tags), // Parse tags if necessary
+          });
+        } catch (error) {
+          console.error('Error fetching ticket data:', error);
+        }
+      } else {
+        setEditedTicket({
+          ...ticket,
+          tags: [],
+        });
+      }
+    };
+
+    fetchTicketData();
+  }, [ticket]);
 
   const [editedTicket, setEditedTicket] = useState({
     ...ticket,
@@ -65,7 +102,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
 
     try {
       const token = Cookies.get('jwt');
-      const method = editedTicket?.client_id ? 'PUT' : 'POST';
+      const method = editedTicket?.client_id ? 'PATCH' : 'POST';
       const url = `https://pandatur-api.com/tickets/${editedTicket?.client_id || ''}`;
 
       const response = await fetch(url, {
@@ -99,51 +136,51 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
       >
         <header className="modal-header">
           <h2>
-            <FaUser /> Ticket #{ticket?.id || 'New'}
+            <FaUser /> {translations['Lead nou'][language]}
           </h2>
         </header>
         <div className="ticket-modal-form">
           <div className="input-group">
-            <label>Name:</label>
+            <label>{translations['Contact'][language]}:</label>
             <input
               type="text"
               name="name"
-              value={editedTicket.name || ''}
+              value={editedTicket.contact}
               onChange={handleInputChange}
-              placeholder="Client Name"
+              placeholder={translations['Contact'][language]}
             />
           </div>
+          <TagInput
+            initialTags={editedTicket.tags}
+            onChange={handleTagsChange}
+          />
           <div className="input-group">
-            <label>Description:</label>
+            <label>{translations['Descriere'][language]}:</label>
             <textarea
               name="description"
-              value={editedTicket.description || ''}
+              value={editedTicket.description}
               onChange={handleInputChange}
-              placeholder="Add ticket details"
+              placeholder={translations['Adaugă descriere lead'][language]}
             />
           </div>
           <div className="container-select-priority-workflow">
             <Priority ticket={editedTicket} onChange={handleInputChange} />
             <Workflow ticket={editedTicket} onChange={handleInputChange} />
           </div>
-          <TagInput
-            initialTags={editedTicket.tags}
-            onChange={handleTagsChange}
-          />
           <div className="button-container">
             {ticket?.id && (
               <button
                 className="clear-button"
                 onClick={() => onSave(null)}
               >
-                <FaTrash /> Delete
+                <FaTrash /> {translations['Șterge'][language]}
               </button>
             )}
             <button
               className="submit-button"
               onClick={handleSave}
             >
-              {ticket?.id ? 'Save' : 'Create'}
+              {ticket?.id ? translations['Salvează'][language] : translations['Creează'][language]}
             </button>
           </div>
         </div>

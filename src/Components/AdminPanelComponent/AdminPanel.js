@@ -3,6 +3,7 @@ import { startOfWeek, addDays, format } from "date-fns";
 import Cookies from 'js-cookie';
 import ModalWithToggles from "./ModalWithToggles"; // Импортируем компонент модалки
 import './AdminPanel.css';
+import { FaMinus, FaPlus, FaTrash } from "react-icons/fa";
 
 const ScheduleComponent = () => {
   const [schedule, setSchedule] = useState([]);
@@ -14,6 +15,7 @@ const ScheduleComponent = () => {
   const [intervals, setIntervals] = useState([]); // Для хранения интервалов выбранного дня
   const [isModalOpen, setIsModalOpen] = useState(false); // Состояние модалки
   const [selectedUser, setSelectedUser] = useState(null); // Хранит выбранного пользователя
+  const [error, setError] = useState(null);
 
   // Закрытие модалки
   const closeModal = () => {
@@ -367,108 +369,108 @@ const ScheduleComponent = () => {
       {/* Модалка с переключателями */}
       {isModalOpen && selectedUser && (
         <ModalWithToggles
-          employee={selectedUser} 
+          employee={selectedUser}
           isOpen={isModalOpen}// Передаём выбранного пользователя
           closeModal={closeModal} // Передаём функцию закрытия
         />
       )}
 
       {selectedEmployee !== null && selectedDay !== null && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h3>Schimba orar</h3>
-              <button
-                className="close-button"
-                onClick={() => {
-                  setSelectedEmployee(null);
-                  setSelectedDay(null);
-                  setIntervals([]);
-                }}
-              >
-                ×
-              </button>
-            </div>
-            <p>
-              {schedule[selectedEmployee].name} ({schedule[selectedEmployee].id}),{" "}
-              {format(getWeekDays()[selectedDay], "EEEE, dd.MM")}
-              <p>Intervalul in care angajatul este la munca.</p>
-            </p>
-            <div className="time-inputs">
-              {intervals.map((interval, index) => (
-                <div key={index} className="time-interval">
-                  <label>
-                    Start
-                    <input
-                      type="time"
-                      value={interval.start}
-                      onChange={(e) => {
-                        const updatedIntervals = [...intervals];
-                        updatedIntervals[index].start = e.target.value;
-                        setIntervals(updatedIntervals);
-                      }}
-                    />
-                  </label>
-                  <label>
-                    End
-                    <input
-                      type="time"
-                      value={interval.end}
-                      onChange={(e) => {
-                        const updatedIntervals = [...intervals];
-                        updatedIntervals[index].end = e.target.value;
-                        setIntervals(updatedIntervals);
-                      }}
-                    />
-                  </label>
+        <div className="modal-overlay" onClick={() => {
+          setSelectedEmployee(null);
+          setSelectedDay(null);
+          setIntervals([]);
+        }}>
+          <div
+            className="modal-container"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <header className="modal-header">
+              <h2>
+                {schedule[selectedEmployee].name} ({schedule[selectedEmployee].id}),{" "}
+                {format(getWeekDays()[selectedDay], "EEEE, dd.MM")}
+              </h2>
+            </header>
+            {error && <div className="error-message">{error}</div>}
+            <form className="notification-form" onSubmit={null}>
+              <div className="input-group">
+                <div className="time-inputs">
+                  {intervals.map((interval, index) => (
+                    <div key={index} className="time-interval">
+                      <label>
+                        Start
+                        <input
+                          type="time"
+                          value={interval.start}
+                          onChange={(e) => {
+                            const updatedIntervals = [...intervals];
+                            updatedIntervals[index].start = e.target.value;
+                            setIntervals(updatedIntervals);
+                          }}
+                        />
+                      </label>
+                      <label>
+                        End
+                        <input
+                          type="time"
+                          value={interval.end}
+                          onChange={(e) => {
+                            const updatedIntervals = [...intervals];
+                            updatedIntervals[index].end = e.target.value;
+                            setIntervals(updatedIntervals);
+                          }}
+                        />
+                      </label>
+                      <button
+                        className="delete-button"
+                        onClick={() => removeInterval(index)}
+                      >
+                        <FaTrash/>
+                      </button>
+                    </div>
+                  ))}
+                  <div className="add-interval">
+                    <label>
+                      Start
+                      <input
+                        type="time"
+                        value={startTime}
+                        onChange={(e) => setStartTime(e.target.value)}
+                      />
+                    </label>
+                    <label>
+                      End
+                      <input
+                        type="time"
+                        value={endTime}
+                        onChange={(e) => setEndTime(e.target.value)}
+                      />
+                    </label>
+                    <button className="add-button-plus" onClick={AddInterval}>
+                      <FaPlus/>
+                    </button>
+                    <button className="add-button-minus" onClick={cutInterval}>
+                      <FaMinus/>
+                    </button>
+                  </div>
+                </div>
+                <div className="button-container">
+                  <button className="submit-button" onClick={saveShift}>
+                    Save
+                  </button>
                   <button
-                    className="delete-button"
-                    onClick={() => removeInterval(index)}
+                    className="clear-button"
+                    onClick={() => {
+                      setSelectedEmployee(null);
+                      setSelectedDay(null);
+                      setIntervals([]);
+                    }}
                   >
-                    Delete
+                    Cancel
                   </button>
                 </div>
-              ))}
-              <div className="add-interval">
-                <label>
-                  Start
-                  <input
-                    type="time"
-                    value={startTime}
-                    onChange={(e) => setStartTime(e.target.value)}
-                  />
-                </label>
-                <label>
-                  End
-                  <input
-                    type="time"
-                    value={endTime}
-                    onChange={(e) => setEndTime(e.target.value)}
-                  />
-                </label>
-                <button className="add-button-plus" onClick={AddInterval}>
-                  Adauga
-                </button>
-                <button className="add-button-minus" onClick={cutInterval}>
-                  Micșorează
-                </button>
               </div>
-            </div>
-            <div className="modal-footer">
-              <button className="save-button" onClick={saveShift}>
-                Save
-              </button>
-              <button
-                className="cancel-button"
-                onClick={() => {
-                  setSelectedEmployee(null);
-                  setSelectedDay(null);
-                  setIntervals([]);
-                }}
-              >
-                Cancel
-              </button>
-            </div>
+            </form>
           </div>
         </div>
       )}

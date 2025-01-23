@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import './TagInput.css';
 import { FaTrash } from 'react-icons/fa';
+import { translations } from "../utils/translations";
 
 const TagInput = ({ initialTags = [], onChange }) => {
+    const language = localStorage.getItem('language') || 'RO';
+
     const [tags, setTags] = useState(
         Array.isArray(initialTags) ? initialTags.filter((tag) => tag.trim() !== '') : []
     );
@@ -17,7 +20,7 @@ const TagInput = ({ initialTags = [], onChange }) => {
         if (savedSuggestions) {
             setSuggestions(JSON.parse(savedSuggestions));
         } else {
-            setSuggestions(['Tag1', 'Tag2', 'Tag3']); // Default initial tags
+            setSuggestions([]);
         }
     }, []);
 
@@ -73,6 +76,7 @@ const TagInput = ({ initialTags = [], onChange }) => {
     return (
         <div className="tag-input-container">
             <div className="tags-display">
+            {tags.length == 0 && (<div>{translations['Nici un tag selectat'][language]}</div>)}
                 {tags.map((tag) => (
                     <div key={tag} className="tag-item">
                         <div className='tag-text'>
@@ -91,7 +95,7 @@ const TagInput = ({ initialTags = [], onChange }) => {
                     onChange={handleInputChange}
                     onFocus={handleFocus}
                     onBlur={handleBlur}
-                    placeholder="Introduce tag..."
+                    placeholder={translations['Introduce tag'][language]}
                     className="tag-input"
                 />
                 {showSuggestions && filteredSuggestions.length > 0 && (
@@ -110,7 +114,7 @@ const TagInput = ({ initialTags = [], onChange }) => {
             </div>
             <div className="button-container">
                 <button onClick={handleSaveTag} className="submit-button">
-                    Save Tag
+                {translations['Adaugă tag'][language]}
                 </button>
                 <button
                     onClick={() => {
@@ -118,7 +122,7 @@ const TagInput = ({ initialTags = [], onChange }) => {
                     }}
                     className="submit-button"
                 >
-                    Add Tag
+                    {translations['Salvează tag'][language]}
                 </button>
             </div>
         </div>

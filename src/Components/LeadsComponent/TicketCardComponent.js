@@ -39,11 +39,8 @@ const TicketCard = ({ ticket, onContextMenu, onEditTicket }) => {
                                 className="ticket-photo-image"
                             />
                         </div>
-                        <div className="ticket-id">
-                            {ticket.id}
-                        </div>
                     </div>
-                    <div className="ticket-column">
+                    <div className="ticket-column-2">
                         <div className="ticket-contact">
                             {ticket.contact || 'Unknown Contact'}
                         </div>
@@ -57,13 +54,20 @@ const TicketCard = ({ ticket, onContextMenu, onEditTicket }) => {
                     </div>
                     <div className="ticket-column">
                         <div className="ticket-date">
+                            {ticket.creation_date}
+                        </div>
+                        <div
+                            className="ticket-date"
+                            style={{
+                                color: ticket.creation_date === ticket.last_interaction_date ? 'red' : 'green',
+                                textShadow: '1px 1px 2px black',
+                            }}
+                        >
                             {ticket.last_interaction_date}
                         </div>
-                        <div className="ticket-time">
-                            13:00
-                        </div>
-                        <div className="ticket-tasks">
-                            <p>Tasks: {ticket.id}</p>
+
+                        <div className="ticket-id">
+                            #{ticket.id}
                         </div>
                     </div>
                 </div>

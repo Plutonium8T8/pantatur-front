@@ -125,7 +125,7 @@ const LoginForm = ({ onLoginSuccess }) => {
             </button>
 
             <button onClick={handleSwitch} className="switch-button" disabled={isLoading}>
-              Switch to {isLogin ? 'Register' : 'Login'}
+              {isLogin ? 'Register' : 'Login'}
             </button>
           </div>
 

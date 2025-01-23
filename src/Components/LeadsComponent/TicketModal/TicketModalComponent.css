@@ -4,7 +4,41 @@
   gap: 16px;
   align-items: center;
   width: 100%;
+  padding: 18px; /* Add inner padding for spacing */
+  background-color: #374151;
+  border-radius: 6px;
+  box-sizing: border-box; /* Ensure padding doesn't affect the width */
 }
+
+.suggestions-list {
+  display: none; /* Initially hidden */
+  opacity: 0;
+  transform: translateY(-20px); /* Start slightly above */
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.suggestions-list.show {
+  display: block; /* Make it visible */
+  opacity: 1; /* Fully visible */
+  transform: translateY(0); /* Slide to its normal position */
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.suggestions-list {
+  display: block;
+  animation: slideDown 0.3s ease forwards;
+}
+
 
 .tags-display {
   display: flex;
@@ -12,8 +46,30 @@
   gap: 12px;
   justify-content: center;
   margin-bottom: 12px;
-  padding: 12px 20px;
+  padding: 5% 0px;
   width: 100%;
+}
+
+.tag-input {
+  width: 100%;
+}
+
+.input-group {
+  width: 100%;
+}
+
+.tag-input-container .input-group {
+  width: 100%;
+}
+
+.tag-input-container .input-group .tag-input{
+  width: auto;
+}
+
+.container-select-priority-workflow
+{
+  font-size: 18;
+  text-align: left;
 }
 
 .tag-item {
@@ -27,7 +83,7 @@
   align-items: center;
   font-size: 14px;
   letter-spacing: 0.8px;
-  width: 24%;
+  width: 22%;
 }
 
 .tag-text {
@@ -42,14 +98,6 @@
   cursor: pointer;
   padding: 0;
   padding-left: 6px;
-}
-
-.input-group {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  gap: 10px;
-  margin-bottom: 12px;
 }
 
 .tag-input,
@@ -94,49 +142,6 @@
 .textarea-container {
   display: flex;
   flex-direction: column;
-}
-
-.button-container {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 20px;
-  width: 100%;
-}
-
-.submit-button {
-  background-color: #0f824c;
-  color: white;
-  padding: 12px 20px;
-  font-size: 16px;
-  font-weight: bold;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: transform 0.2s, background-color 0.3s;
-}
-
-.submit-button:hover {
-  background-color: #0d7444;
-  transform: scale(1.05);
-}
-
-.clear-button {
-  background-color: #972b2b;
-  color: white;
-  padding: 12px 20px;
-  border: none;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-  width: 45%;
-  margin-right: 1%;
-}
-
-.clear-button:hover {
-  background-color: #882626;
-  transform: scale(1.05);
 }
 
 .ticket-modal-form {

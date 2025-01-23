@@ -14,6 +14,7 @@ import Cookies from 'js-cookie';
 import '../../App.css';
 import '../SnackBarComponent/SnackBarComponent.css'
 import { FaEnvelope, FaTrash } from 'react-icons/fa';
+import { translations } from "../utils/translations";
 
 export const updateTicket = async (updateData) => {
   try {
@@ -60,6 +61,8 @@ const Leads = (selectClientId) => {
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const navigate = useNavigate();
+
+  const language = localStorage.getItem('language') || 'RO';
 
   const fetchTickets = async () => {
     setIsLoading(true);
@@ -243,13 +246,13 @@ const Leads = (selectClientId) => {
             <div className="dashboard-header">
                 <div className="header">
                     <button onClick={openCreateTicketModal} className="button-add-ticket">
-                        Add Ticket
+                        {translations['Adaugă lead'][language]}
                     </button>
                     <input
                         type="text"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        placeholder="Search tickets..."
+                        placeholder={translations['Caută leaduri'][language]}
                         className="search-input"
                     />
                 </div>
