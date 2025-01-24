@@ -10,7 +10,7 @@ const AppContext = createContext();
 export const useAppContext = () => useContext(AppContext);
 
 export const AppProvider = ({ children, isLoggedIn }) => {
-  const [socket, setSocket] = useState(null);
+  const socketRef = useRef(null); // Вместо useState
   const [tickets, setTickets] = useState([]);
   const [ticketIds, setTicketIds] = useState([]);
   const [messages, setMessages] = useState([]); // Все сообщения
@@ -21,6 +21,71 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   const { userId } = useUser(); // Получаем userId из UserContext
   const ticketsRef = useRef(tickets);
   const [unreadMessages, setUnreadMessages] = useState(new Map()); // Оптимизированное хранение непрочитанных сообщений
+
+  // Инициализация WebSocket
+  // Инициализация WebSocket и подключение к чат-румам при логине
+  useEffect(() => {
+    if (!isLoggedIn) {
+      setTickets([]);
+      setTicketIds([]);
+      setMessages([]);
+      setUnreadCount(0);
+      setClientMessages([]);
+      if (socketRef.current) {
+        socketRef.current.close();
+        socketRef.current = null;
+      }
+      return;
+    }
+
+    const connectToChatRooms = (ticketIds) => {
+      const socketInstance = socketRef.current; // Используем socketRef.current
+      if (!socketInstance || socketInstance.readyState !== WebSocket.OPEN) {
+        console.warn('WebSocket не подключён или недоступен.');
+        return;
+      }
+
+      if (!ticketIds || ticketIds.length === 0) {
+        console.warn('Нет client_id для подключения к комнатам.');
+        return;
+      }
+
+      const socketMessage = JSON.stringify({
+        type: 'connect',
+        data: { client_id: ticketIds },
+      });
+
+      socketInstance.send(socketMessage);
+      console.log('Подключён к комнатам клиентов:', ticketIds);
+    };
+
+    if (!socketRef.current) {
+      const socketInstance = new WebSocket('ws://34.88.101.80:8080');
+      socketRef.current = socketInstance;
+
+      socketInstance.onopen = async () => {
+        console.log('WebSocket подключен');
+        const tickets = await fetchTickets();
+        const ticketIds = tickets.map((ticket) => ticket.client_id);
+        connectToChatRooms(ticketIds);
+      };
+
+      socketInstance.onmessage = (event) => {
+        const message = JSON.parse(event.data);
+        handleWebSocketMessage(message);
+      };
+
+      socketInstance.onclose = () => console.warn('WebSocket закрыт');
+      socketInstance.onerror = (error) => console.error('WebSocket ошибка:', error);
+    }
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.close();
+        socketRef.current = null;
+      }
+    };
+  }, [isLoggedIn]);
 
   useEffect(() => {
     console.log("Количество непрочитанных сообщений:", unreadCount);
@@ -102,26 +167,6 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const connectToChatRooms = (socketInstance, ticketIds) => {
-    if (!socketInstance || socketInstance.readyState !== WebSocket.OPEN) {
-      console.warn('WebSocket не подключён или недоступен.');
-      return;
-    }
-
-    if (!ticketIds || ticketIds.length === 0) {
-      console.warn('Нет client_id для подключения к комнатам.');
-      return;
-    }
-
-    const socketMessage = JSON.stringify({
-      type: 'connect',
-      data: { client_id: ticketIds },
-    });
-
-    socketInstance.send(socketMessage);
-    console.log('Подключён к комнатам клиентов:', ticketIds);
   };
 
   const updateTicket = async (updateData) => {
@@ -217,7 +262,9 @@ export const AppProvider = ({ children, isLoggedIn }) => {
           return updatedMessages;
         });
 
-        const ticket = ticketsRef.current.find(t => t.client_id === message.data.client_id);
+        const ticket = ticketsRef.current.find(
+          (t) => t.client_id === message.data.client_id
+        );
 
         if (ticket && ticket.technician_id === userId) {
           const messageText = truncateText(message.data.message, 40);
@@ -262,22 +309,36 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         break;
       }
       case 'ticket': {
-        console.log("пришел тикет", message.data);
-        // Получаем тикеты
-        fetchTickets().then((tickets) => {
-          const ticketIds = tickets.map((ticket) => ticket.client_id); // Извлекаем client_id
+        fetchTickets();
+        console.log("Пришел тикет:", message.data);
 
+        // Извлекаем client_id из сообщения
+        const clientId = message.data.client_id;
+
+        if (!clientId) {
+          console.warn("Не удалось извлечь client_id из сообщения типа 'ticket'.");
+          break;
+        }
+
+        const socketInstance = socketRef.current; // Используем socketRef.current
+        if (socketInstance && socketInstance.readyState === WebSocket.OPEN) {
           const socketMessage = JSON.stringify({
             type: 'connect',
-            data: { client_id: ticketIds },
+            data: { client_id: [clientId] }, // Подключаемся только к комнате с этим client_id
           });
 
-          // Отправляем сообщение в сокет
-          if (socket && socket.readyState === WebSocket.OPEN) {
-            socket.send(socketMessage);
-            console.log("Подключено к комнатам клиентов:", ticketIds);
-          }
-        });
+          socketInstance.send(socketMessage);
+          console.log(
+            `Подключено к комнате клиента с client_id=${clientId}. Отправлено сообщение:`,
+            socketMessage
+          );
+        } else {
+          console.warn("Не удалось подключиться к комнатам. WebSocket не готов.");
+          console.log(
+            "Состояние WebSocket:",
+            socketInstance ? socketInstance.readyState : "Нет WebSocket соединения"
+          );
+        }
         break;
       }
       case 'notification': {
@@ -299,55 +360,6 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     }
   };
 
-  // Инициализация WebSocket
-  // Инициализация WebSocket и подключение к чат-румам при логине
-  useEffect(() => {
-    if (!isLoggedIn) {
-      // Очистка данных при разлогине
-      setTickets([]);
-      setTicketIds([]);
-      setMessages([]);
-      setUnreadCount(0);
-      setClientMessages([]);
-      if (socket) {
-        socket.close();
-      }
-      return;
-    }
-
-    const socketInstance = new WebSocket('ws://34.88.101.80:8080');
-
-    socketInstance.onopen = async () => {
-      console.log('WebSocket подключен');
-
-      try {
-        // Загружаем тикеты
-        const tickets = await fetchTickets();
-        const ticketIds = tickets.map((ticket) => ticket.client_id);
-
-        // Подключаемся к комнатам
-        connectToChatRooms(socketInstance, ticketIds);
-      } catch (error) {
-        console.error('Ошибка при загрузке тикетов или подключении к комнатам:', error);
-      }
-    };
-
-    socketInstance.onmessage = (event) => {
-      try {
-        const message = JSON.parse(event.data);
-        handleWebSocketMessage(message);
-      } catch (error) {
-        console.error('Ошибка обработки сообщения WebSocket:', error);
-      }
-    };
-
-    socketInstance.onclose = () => console.warn('WebSocket закрыт');
-    socketInstance.onerror = (error) => console.error('WebSocket ошибка:', error);
-
-    setSocket(socketInstance);
-
-  }, [isLoggedIn]);
-
   useEffect(() => {
     if (isLoggedIn) {
       getClientMessages();
@@ -357,7 +369,6 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   return (
     <AppContext.Provider
       value={{
-        socket,
         tickets,
         setTickets,
         ticketIds,
@@ -369,6 +380,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         isLoading,
         updateTicket,
         fetchTickets,
+        socketRef
         // unreadCount: unreadMessages.size, // Количество непрочитанных сообщений
       }}
     >

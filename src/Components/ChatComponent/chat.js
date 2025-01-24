@@ -28,7 +28,7 @@ import Icon from '../../Components/Icon/index';
 const ChatComponent = ({ }) => {
     const { userId } = useUser();
     const [managerMessage, setManagerMessage] = useState('');
-    const { tickets, updateTicket, setTickets, messages, setMessages, socket, markMessagesAsRead } = useAppContext();
+    const { tickets, updateTicket, setTickets, messages, setMessages, socket, markMessagesAsRead, socketRef } = useAppContext();
     const [selectClientId, setSelectClientId] = useState(null);
     const [extraInfo, setExtraInfo] = useState({}); // Состояние для дополнительной информации каждого тикета
     const messageContainerRef = useRef(null);
@@ -263,9 +263,12 @@ const ChatComponent = ({ }) => {
         };
 
         try {
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                socket.send(JSON.stringify(readMessageData)); // Отправляем событие в WebSocket
-                console.log(`Все сообщения в чате с client_id=${clientId} помечены как прочитанные.`);
+            const socketInstance = socketRef.current; // Используем socketRef.current
+            if (socketInstance && socketInstance.readyState === WebSocket.OPEN) {
+                socketInstance.send(JSON.stringify(readMessageData)); // Отправляем событие в WebSocket
+                console.log(
+                    `Все сообщения в чате с client_id=${clientId} помечены как прочитанные.`
+                );
             } else {
                 console.warn('WebSocket не подключен или закрыт.');
             }
