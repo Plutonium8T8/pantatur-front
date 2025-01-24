@@ -31,7 +31,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
   });
 
   const { userId } = useUser();
-  const { updateTicket, fetchTicketsAndSendSocket } = useAppContext(); // Получаем updateTicket из AppContext
+  const { updateTicket, fetchTickets } = useAppContext(); // Получаем updateTicket из AppContext
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -122,7 +122,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
       if (!response.ok) {
         throw new Error('Error deleting ticket');
       }
-      fetchTicketsAndSendSocket();
+      fetchTickets();
 
       return await response.json();
     } catch (error) {

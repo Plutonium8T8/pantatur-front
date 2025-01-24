@@ -66,13 +66,14 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   };
 
   // Функция загрузки тикетов
-  const fetchTicketsAndSendSocket = async (socketInstance) => {
+  const fetchTickets = async () => {
     try {
       setIsLoading(true);
       const token = Cookies.get('jwt');
+
       if (!token) {
         console.warn('Нет токена. Пропускаем загрузку тикетов.');
-        return;
+        return [];
       }
 
       const response = await fetch('https://pandatur-api.com/tickets', {
@@ -89,22 +90,38 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       }
 
       const data = await response.json();
-      const ticketIds = data.map((ticket) => ticket.client_id);
+      console.log("Загруженные тикеты:", data);
 
-      setTickets(data);
-      setTicketIds(ticketIds);
+      setTickets(data); // Сохраняем тикеты в состоянии
+      setTicketIds(data.map((ticket) => ticket.client_id)); // Сохраняем client_id
 
-      console.log("tickets", data);
-
-      if (socketInstance && socketInstance.readyState === WebSocket.OPEN) {
-        const socketMessage = JSON.stringify({ type: 'connect', data: { client_id: ticketIds } });
-        socketInstance.send(socketMessage);
-      }
+      return data; // Возвращаем массив тикетов
     } catch (error) {
       console.error('Ошибка при загрузке тикетов:', error);
+      return [];
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const connectToChatRooms = (socketInstance, ticketIds) => {
+    if (!socketInstance || socketInstance.readyState !== WebSocket.OPEN) {
+      console.warn('WebSocket не подключён или недоступен.');
+      return;
+    }
+
+    if (!ticketIds || ticketIds.length === 0) {
+      console.warn('Нет client_id для подключения к комнатам.');
+      return;
+    }
+
+    const socketMessage = JSON.stringify({
+      type: 'connect',
+      data: { client_id: ticketIds },
+    });
+
+    socketInstance.send(socketMessage);
+    console.log('Подключён к комнатам клиентов:', ticketIds);
   };
 
   const updateTicket = async (updateData) => {
@@ -141,7 +158,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       // );
 
       // Синхронизация тикетов через WebSocket
-      fetchTicketsAndSendSocket();
+      fetchTickets();
 
       return updatedTicket;
     } catch (error) {
@@ -239,9 +256,12 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         break;
       }
       case 'ticket': {
-        console.log("Обновление тикета через WebSocket:", message.data);
-
-        fetchTicketsAndSendSocket(socket);
+        // Получаем тикеты
+        fetchTickets().then((tickets) => {
+          const ticketIds = tickets.map((ticket) => ticket.client_id);
+          // Подключаемся к комнатам
+          connectToChatRooms(socket, ticketIds);
+        });
         break;
       }
       case 'notification': {
@@ -254,7 +274,6 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       }
       case 'task': {
         enqueueSnackbar(`Новое задание: ${message.data.title}`, { variant: 'warning' });
-        fetchTicketsAndSendSocket();
         break;
       }
       case 'pong':
@@ -265,24 +284,36 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   };
 
   // Инициализация WebSocket
+  // Инициализация WebSocket и подключение к чат-румам при логине
   useEffect(() => {
     if (!isLoggedIn) {
+      // Очистка данных при разлогине
       setTickets([]);
       setTicketIds([]);
       setMessages([]);
       setUnreadCount(0);
       setClientMessages([]);
       if (socket) {
-
+        socket.close();
       }
       return;
     }
 
     const socketInstance = new WebSocket('ws://34.88.101.80:8080');
 
-    socketInstance.onopen = () => {
+    socketInstance.onopen = async () => {
       console.log('WebSocket подключен');
-      fetchTicketsAndSendSocket(socketInstance);
+
+      try {
+        // Загружаем тикеты
+        const tickets = await fetchTickets();
+        const ticketIds = tickets.map((ticket) => ticket.client_id);
+
+        // Подключаемся к комнатам
+        connectToChatRooms(socketInstance, ticketIds);
+      } catch (error) {
+        console.error('Ошибка при загрузке тикетов или подключении к комнатам:', error);
+      }
     };
 
     socketInstance.onmessage = (event) => {
@@ -294,14 +325,11 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       }
     };
 
-    socketInstance.onclose = () => alert('WebSocket закрыт');
+    socketInstance.onclose = () => console.warn('WebSocket закрыт');
     socketInstance.onerror = (error) => console.error('WebSocket ошибка:', error);
 
     setSocket(socketInstance);
 
-    return () => {
-
-    };
   }, [isLoggedIn]);
 
   useEffect(() => {
@@ -324,7 +352,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         clientMessages,
         isLoading,
         updateTicket,
-        fetchTicketsAndSendSocket,
+        fetchTickets,
         // unreadCount: unreadMessages.size, // Количество непрочитанных сообщений
       }}
     >

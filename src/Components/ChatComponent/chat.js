@@ -940,8 +940,8 @@ const ChatComponent = ({ }) => {
                 <div className="chat-messages" ref={messageContainerRef}>
                     {messages
                         .filter((msg) => {
-                            const clientId = tickets.find((ticket) => ticket.client_id === selectClientId)?.client_id;
-                            return msg.client_id === clientId;
+                            const clientId = tickets.find((ticket) => ticket.client_id == selectClientId)?.client_id;
+                            return msg.client_id == clientId;
                         })
                         .sort((a, b) => new Date(a.time_sent) - new Date(b.time_sent))
                         .map((msg) => {
@@ -1014,7 +1014,7 @@ const ChatComponent = ({ }) => {
                                                     >
                                                         {lastReaction || "☺"}
                                                     </div>
-                                                    {new Date(msg.time_sent).toLocaleTimeString("ru-RU", {
+                                                    {new Date(msg.time_sent).toLocaleTimeString("ro-RO", {
                                                         hour: "2-digit",
                                                         minute: "2-digit",
                                                     })}
@@ -1037,7 +1037,7 @@ const ChatComponent = ({ }) => {
                                                     </div>
                                                 )}
                                             </div>
-                                            {(msg.sender_id === userId || msg.sender_id === 1) && (
+                                            {/* {(msg.sender_id === userId || msg.sender_id === 1) && (
                                                 <div
                                                     className="menu-container"
                                                     ref={(el) => (menuRefs.current[msg.id] = el)}
@@ -1055,7 +1055,7 @@ const ChatComponent = ({ }) => {
                                                         </div>
                                                     )}
                                                 </div>
-                                            )}
+                                            )} */}
                                         </div>
                                     </div>
                                 </div>
