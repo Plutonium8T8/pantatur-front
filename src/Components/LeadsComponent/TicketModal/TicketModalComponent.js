@@ -6,52 +6,6 @@ import Cookies from 'js-cookie';
 import { useAppContext } from '../../../AppContext'; // Используем AppContext для updateTicket
 import { useUser } from '../../../UserContext';
 
-const deleteTicketById = async (id) => {
-  try {
-    const token = Cookies.get('jwt');
-    const response = await fetch(`https://pandatur-api.com/tickets/${Number(id)}`, {
-      method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-    });
-
-    if (!response.ok) {
-      throw new Error('Error deleting ticket');
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error('Error:', error);
-  }
-};
-
-const saveTicketToServer = async (ticketData) => {
-  try {
-    const token = Cookies.get('jwt');
-    console.log('Sending data:', ticketData);
-    const response = await fetch('https://pandatur-api.com/tickets', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      credentials: 'include',
-      body: JSON.stringify(ticketData),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Error: ${response.statusText}`);
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error('Error saving ticket:', error);
-  }
-};
-
 const TicketModal = ({ ticket, onClose, onSave }) => {
   const modalRef = useRef(null);
 
@@ -77,7 +31,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
   });
 
   const { userId } = useUser();
-  const { updateTicket } = useAppContext(); // Получаем updateTicket из AppContext
+  const { updateTicket, fetchTicketsAndSendSocket } = useAppContext(); // Получаем updateTicket из AppContext
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -152,6 +106,53 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
   }, [onClose]);
 
   if (!editedTicket) return null;
+
+  const deleteTicketById = async (id) => {
+    try {
+      const token = Cookies.get('jwt');
+      const response = await fetch(`https://pandatur-api.com/tickets/${Number(id)}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        throw new Error('Error deleting ticket');
+      }
+      fetchTicketsAndSendSocket();
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  const saveTicketToServer = async (ticketData) => {
+    try {
+      const token = Cookies.get('jwt');
+      console.log('Sending data:', ticketData);
+      const response = await fetch('https://pandatur-api.com/tickets', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        credentials: 'include',
+        body: JSON.stringify(ticketData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error saving ticket:', error);
+    }
+  };
 
   return (
     <div className="modal-overlay">

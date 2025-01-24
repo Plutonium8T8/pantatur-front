@@ -324,6 +324,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         clientMessages,
         isLoading,
         updateTicket,
+        fetchTicketsAndSendSocket,
         // unreadCount: unreadMessages.size, // Количество непрочитанных сообщений
       }}
     >
