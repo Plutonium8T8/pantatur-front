@@ -19,7 +19,9 @@ import {
 const CustomSidebar = ({ onOpenNotifications, onOpenTasks, onOpenAccount }) => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { unreadCount } = useAppContext(); // Получаем unreadCount из AppContext
+    const { unreadCount } = useAppContext();
+
+    const language = localStorage.getItem('language') || 'RO';
 
     const isActive = (page) => {
         if (page === 'chat') {
