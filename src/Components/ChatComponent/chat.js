@@ -370,54 +370,54 @@ const ChatComponent = ({ }) => {
         }));
 
         // Отправляем реакцию на сервер
-        sendReaction(messageId, userId, reaction);
+        // sendReaction(messageId, userId, reaction);
     };
 
     // Пример функции sendReaction с подтверждением от сервера
-    const sendReaction = (messageId, senderId, reaction) => {
-        return new Promise((resolve, reject) => {
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                const payload = {
-                    type: 'react',
-                    data: {
-                        message_id: messageId,
-                        sender_id: senderId,
-                        reaction: { senderId, reaction },
-                    },
-                };
+    // const sendReaction = (messageId, senderId, reaction) => {
+    //     return new Promise((resolve, reject) => {
+    //         if (socket && socket.readyState === WebSocket.OPEN) {
+    //             const payload = {
+    //                 type: 'react',
+    //                 data: {
+    //                     message_id: messageId,
+    //                     sender_id: senderId,
+    //                     reaction: { senderId, reaction },
+    //                 },
+    //             };
 
-                console.log('Отправка реакции на сервер:', JSON.stringify(payload, null, 2)); // Лог отправляемых данных
+    //             console.log('Отправка реакции на сервер:', JSON.stringify(payload, null, 2)); // Лог отправляемых данных
 
-                socket.send(JSON.stringify(payload));
+    //             socket.send(JSON.stringify(payload));
 
-                // Ожидание подтверждения от сервера
-                socket.onmessage = (event) => {
-                    console.log('Получен ответ от сервера:', event.data); // Лог ответа сервера
+    //             // Ожидание подтверждения от сервера
+    //             socket.onmessage = (event) => {
+    //                 console.log('Получен ответ от сервера:', event.data); // Лог ответа сервера
 
-                    try {
-                        const response = JSON.parse(event.data);
+    //                 try {
+    //                     const response = JSON.parse(event.data);
 
-                        if (
-                            response.type === 'react' &&
-                            response.data.message_id === messageId
-                        ) {
-                            console.log('Реакция успешно обработана:', response.data); // Лог успешного результата
-                            resolve(response.data); // Сервер подтвердил реакцию
-                        } else {
-                            console.error('Неверный тип ответа или несоответствие ID:', response);
-                            reject(new Error('Неверный ответ от сервера.'));
-                        }
-                    } catch (error) {
-                        console.error('Ошибка при разборе ответа от сервера:', error); // Лог ошибок парсинга
-                        reject(new Error('Ошибка обработки ответа сервера.'));
-                    }
-                };
-            } else {
-                console.error('Ошибка: Соединение с WebSocket отсутствует.'); // Лог при отсутствии соединения
-                reject(new Error('Соединение с WebSocket отсутствует.'));
-            }
-        });
-    };
+    //                     if (
+    //                         response.type === 'react' &&
+    //                         response.data.message_id === messageId
+    //                     ) {
+    //                         console.log('Реакция успешно обработана:', response.data); // Лог успешного результата
+    //                         resolve(response.data); // Сервер подтвердил реакцию
+    //                     } else {
+    //                         console.error('Неверный тип ответа или несоответствие ID:', response);
+    //                         reject(new Error('Неверный ответ от сервера.'));
+    //                     }
+    //                 } catch (error) {
+    //                     console.error('Ошибка при разборе ответа от сервера:', error); // Лог ошибок парсинга
+    //                     reject(new Error('Ошибка обработки ответа сервера.'));
+    //                 }
+    //             };
+    //         } else {
+    //             console.error('Ошибка: Соединение с WebSocket отсутствует.'); // Лог при отсутствии соединения
+    //             reject(new Error('Соединение с WebSocket отсутствует.'));
+    //         }
+    //     });
+    // };
 
     const getLastReaction = (message) => {
         if (!message.reactions) {
