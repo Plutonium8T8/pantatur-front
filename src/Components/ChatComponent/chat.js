@@ -18,11 +18,10 @@ import DatePicker from 'react-datepicker';
 import Input from '../InputComponent/InputComponent';
 import Workflow from '../WorkFlowComponent/WorkflowComponent';
 import "react-datepicker/dist/react-datepicker.css";
-import { useSocket } from '../../SocketContext';
-import { InView } from 'react-intersection-observer';
+import { useAppContext } from '../../AppContext'; // Подключение AppContext
+// import { InView } from 'react-intersection-observer';
 import { useSnackbar } from 'notistack';
 import './chat.css';
-import { useUnreadMessages } from '../../Unread';
 import EmojiPicker from 'emoji-picker-react';
 import ReactDOM from "react-dom";
 import Icon from '../../Components/Icon/index';
@@ -30,25 +29,19 @@ import Icon from '../../Components/Icon/index';
 const ChatComponent = ({ }) => {
     const { userId } = useUser();
     const [managerMessage, setManagerMessage] = useState('');
-    const [messages1, setMessages1] = useState([]);
-    // const [selectClientId, setselectClientId] = useState(null);
+    const { tickets, updateTicket, setTickets, messages, setMessages } = useAppContext();
     const [selectClientId, setSelectClientId] = useState(null);
     const [extraInfo, setExtraInfo] = useState({}); // Состояние для дополнительной информации каждого тикета
-    const [personalData, setPersonalData] = useState({}); // Состояние для дополнительной информации каждого тикета
-    const [tickets1, setTickets1] = useState([]);
     const messageContainerRef = useRef(null);
     const { clientId } = useParams(); // Получаем clientId из URL
     const [isLoading, setIsLoading] = useState(false); // Состояние загрузки
     const [selectedTechnicianId, setSelectedTechnicianId] = useState('');
-    const socket = useSocket(); // Получаем WebSocket из контекста
-    const [unreadMessages, setUnreadMessages] = useState({});
+    const { socket } = useAppContext(); // Доступ к WebSocket
     const { enqueueSnackbar } = useSnackbar();
     const navigate = useNavigate(); // Хук для навигации
-    const { markMessagesAsRead } = useUnreadMessages();
+    const { markMessagesAsRead } = useAppContext();
     const [menuMessageId, setMenuMessageId] = useState(null);
     const [editMessageId, setEditMessageId] = useState(null);
-    const [editedText, setEditedText] = useState('');
-    const [messages, setMessages] = useState(messages1); // предполагается, что `messages1` - это изначальный массив сообщений
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [emojiPickerPosition, setEmojiPickerPosition] = useState({ top: 0, left: 0 });
     const [selectedMessage, setSelectedMessage] = useState(null); // Выбранный шаблон из Select
@@ -56,7 +49,7 @@ const ChatComponent = ({ }) => {
     const [selectedReaction, setSelectedReaction] = useState({});
     const reactionContainerRef = useRef(null);
     const menuRefs = useRef({}); // Создаем объект для хранения ref всех меню
-    const [filteredTickets, setFilteredTickets] = useState(tickets1);
+    const [filteredTickets, setFilteredTickets] = useState(tickets);
     const [activeTab, setActiveTab] = useState('extraForm'); // По умолчанию вкладка Extra Form
     const [showMyTickets, setShowMyTickets] = useState(false);
     const activeChatRef = useRef(null);
@@ -77,87 +70,6 @@ const ChatComponent = ({ }) => {
     useEffect(() => {
         if (selectClientId) {
             fetchTicketExtraInfo(selectClientId); // Загружаем дополнительную информацию при изменении тикета
-        }
-    }, [selectClientId]);
-
-
-    // Получение тикетов через fetch
-    const fetchTickets = async () => {
-        setIsLoading(true); // Показываем индикатор загрузки
-        try {
-            const token = Cookies.get('jwt');
-            const response = await fetch('https://pandatur-api.com/tickets', {
-                method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            if (response.status === 401) {
-                console.warn('Ошибка 401: Неавторизован. Перенаправляем на логин.');
-                // window.location.reload(); // Перезагрузка страницы
-                return;
-            }
-
-            if (!response.ok) {
-                throw new Error('Ошибка при получении данных');
-            }
-
-            const data = await response.json();
-            console.log("tickets+++++", data);
-            setTickets1(data); // Устанавливаем данные тикетов
-        } catch (error) {
-            console.error('Ошибка:', error);
-        }
-        finally {
-            setIsLoading(false);
-        }
-    };
-
-    const fetchTicketsDetail = async () => {
-        if (!selectClientId) {
-            console.warn('Не выбран Ticket ID для запроса.');
-            return;
-        }
-
-        setIsLoading(true); // Показываем индикатор загрузки
-        try {
-            const token = Cookies.get('jwt');
-            const response = await fetch(`https://pandatur-api.com/tickets/${selectClientId}`, {
-                method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            if (response.status === 401) {
-                console.warn('Ошибка 401: Неавторизован. Перенаправляем на логин.');
-                return;
-            }
-
-            if (!response.ok) {
-                throw new Error('Ошибка при получении данных');
-            }
-
-            const data = await response.json();
-            console.log("Ticket Details:", data);
-            console.log("setSelectedTechnicianId", data.technician_id);
-            // Предположим, что сервер возвращает technician_id, связанный с этим тикетом
-            if (data.technician_id) {
-                setSelectedTechnicianId(data.technician_id); // Обновляем ID техника в состоянии
-            }
-        } catch (error) {
-            console.error('Ошибка:', error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        if (selectClientId) {
-            fetchTicketsDetail();
         }
     }, [selectClientId]);
 
@@ -190,55 +102,6 @@ const ChatComponent = ({ }) => {
             console.error('Ошибка при получении дополнительной информации:', error);
         }
     };
-
-
-    // Загружаем тикеты при монтировании компонента
-    useEffect(() => {
-        fetchTickets();
-    }, []);
-
-    const getClientMessages = async () => {
-        try {
-            // Получаем токен из cookies
-            const token = Cookies.get('jwt');
-            if (!token) {
-                console.warn('Нет токена. Пропускаем загрузку сообщений.');
-                return;
-            }
-
-            // Отправляем запрос на сервер
-            const response = await fetch('https://pandatur-api.com/messages', {
-                method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            // Проверяем, успешен ли запрос
-            if (!response.ok) {
-                throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
-            }
-
-            // Парсим данные
-            const data = await response.json();
-
-            // Логируем полученные данные (опционально)
-            console.log('Сообщения клиента:', data);
-
-            // Обновляем состояние с сообщениями
-            setMessages1(data);
-        } catch (error) {
-            // Обработка ошибок
-            enqueueSnackbar('Не удалось получить сообщения!', { variant: 'error' });
-            console.error('Ошибка при получении сообщений:', error.message);
-        }
-    };
-
-    // Вызываем функцию (например, через useEffect)
-    useEffect(() => {
-        getClientMessages();
-    }, []);
 
     // Обработчик изменения значения в селекте для выбранного тикета
     const handleSelectChange = (clientId, field, value) => {
@@ -309,70 +172,48 @@ const ChatComponent = ({ }) => {
             return;
         }
 
-        // Проверяем, что tickets1 — это массив, и ищем тикет
-        const updatedTicket = Array.isArray(tickets1)
-            ? tickets1.find(ticket => ticket.client_id === selectClientId)
+        // Находим тикет
+        const updatedTicket = Array.isArray(tickets)
+            ? tickets.find(ticket => ticket.client_id === selectClientId)
             : null;
 
         if (!updatedTicket) {
-            console.error('Ticket not found or tickets1 is not an array:', tickets1);
+            console.error('Ticket not found or tickets is not an array:', tickets);
             enqueueSnackbar('Ошибка: Тикет не найден.', { variant: 'error' });
             return;
         }
 
         try {
-            const token = Cookies.get("jwt");
-            if (!token) {
-                console.warn('Нет токена для авторизации.');
-                enqueueSnackbar('Ошибка: Нет токена.', { variant: 'error' });
-                return;
-            }
-
-            // Отправляем PATCH запрос
-            const response = await fetch(`https://pandatur-api.com/tickets/${updatedTicket.client_id}`, {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-                credentials: "include",
-                body: JSON.stringify({ workflow: newWorkflow }),
+            // Используем функцию updateTicket из AppContext
+            await updateTicket({
+                id: updatedTicket.client_id,
+                workflow: newWorkflow,
             });
 
-            if (!response.ok) {
-                throw new Error(`Ошибка при обновлении workflow: ${response.status} ${response.statusText}`);
-            }
-
-            const data = await response.json();
             enqueueSnackbar('Статус тикета обновлен!', { variant: 'success' });
 
-            // Обновляем локальное состояние
-            setTickets1((prevTickets) =>
+            // Локально обновляем состояние тикетов
+            setTickets((prevTickets) =>
                 Array.isArray(prevTickets)
                     ? prevTickets.map(ticket =>
-                        ticket.client_id === updatedTicket.client_id ? { ...ticket, workflow: newWorkflow } : ticket
+                        ticket.client_id === updatedTicket.client_id
+                            ? { ...ticket, workflow: newWorkflow }
+                            : ticket
                     )
                     : prevTickets
             );
 
-            console.log("Workflow обновлен:", data);
+            console.log("Workflow обновлен:", newWorkflow);
         } catch (error) {
             enqueueSnackbar('Ошибка: Статус тикета не обновлен.', { variant: 'error' });
             console.error('Ошибка при обновлении workflow:', error.message);
         }
     };
 
-    const updatedTicket = Array.isArray(tickets1) && tickets1.length > 0
-        ? tickets1.find(ticket => ticket.client_id === selectClientId)
+    // Определяем выбранный тикет
+    const updatedTicket = Array.isArray(tickets) && selectClientId
+        ? tickets.find(ticket => ticket.client_id === selectClientId)
         : null;
-
-    // if (!updatedTicket) {
-    //     console.error('Ошибка: Тикет не найден или tickets1 не является массивом.', {
-    //         tickets1,
-    //         selectClientId,
-    //     });
-    //     // enqueueSnackbar('Ошибка: Тикет не найден.', { variant: 'error' });
-    // }
 
     const scrollToBottom = () => {
         if (messageContainerRef.current) {
@@ -382,7 +223,7 @@ const ChatComponent = ({ }) => {
 
     useEffect(() => {
         scrollToBottom();
-    }, [messages1, selectClientId]);
+    }, [messages, selectClientId]);
 
     const handleKeyDown = (event) => {
         if (event.key === 'Enter' && !event.shiftKey) {
@@ -397,16 +238,16 @@ const ChatComponent = ({ }) => {
 
     const handleClick = (clientId) => {
         sendMessage();
-        getClientMessages();
+        // getClientMessages();
         markMessagesAsRead(clientId); // Помечаем сообщения клиента как прочитанные
         // fetchTicketsID();
-        fetchTickets();
+        // fetchTickets();
     };
 
     const handleTicketClick = (clientId) => {
         setSelectClientId(clientId);
 
-        const selectedTicket = tickets1.find((ticket) => ticket.client_id === clientId);
+        const selectedTicket = tickets.find((ticket) => ticket.client_id === clientId);
 
         if (selectedTicket) {
             setSelectedTechnicianId(selectedTicket.technician_id || null);
@@ -414,109 +255,35 @@ const ChatComponent = ({ }) => {
         } else {
             console.warn('Тикет не найден!');
             setSelectedTechnicianId(null);
-            // Не сбрасываем client_id, если тикет не найден
         }
 
         console.log('Selected Client ID:', selectedTicket?.client_id || "No change");
         navigate(`/chat/${clientId}`);
-        getClientMessages();
-    };
 
-    const handleInView = (isVisible, msg) => {
-        if (isVisible) {
-            const readMessageData = {
-                type: 'seen',
-                data: {
-                    client_id: msg.client_id,
-                    sender_id: Number(userId),
-                },
-            };
+        // Отправка события seen через WebSocket
+        const readMessageData = {
+            type: 'seen',
+            data: {
+                client_id: clientId,
+                sender_id: Number(userId),
+            },
+        };
 
-            try {
-                socket.send(JSON.stringify(readMessageData));
-
-                markMessagesAsRead(msg.client_id); // Локальное обновление
-            } catch (error) {
-                console.error('Error sending mark as read:', error);
+        try {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify(readMessageData)); // Отправляем событие в WebSocket
+                console.log(`Все сообщения в чате с client_id=${clientId} помечены как прочитанные.`);
+            } else {
+                console.warn('WebSocket не подключен или закрыт.');
             }
-        } else {
-            console.log(`Message ${msg.id} not marked as read: isVisible=${isVisible}, seen_at=${msg.seen_at}`);
+
+            // Локальное обновление сообщений как прочитанных
+            markMessagesAsRead(clientId);
+        } catch (error) {
+            console.error('Ошибка при отправке события о прочтении:', error);
         }
     };
 
-    useEffect(() => {
-        if (socket) {
-            const handleSocketMessage = (event) => {
-                // console.log('Raw WebSocket message received:', event.data);
-                getClientMessages();
-
-                try {
-                    const message = JSON.parse(event.data);
-                    console.log('Parsed WebSocket message:', message);
-
-                    switch (message.type) {
-                        case 'message': {
-                            setMessages1((prevMessages) => [...prevMessages, message.data]);
-
-                            if (message.data.client_id !== selectClientId && !message.data.seen_at) {
-                                setUnreadMessages((prevUnreadMessages) => {
-                                    const updatedUnreadMessages = { ...prevUnreadMessages };
-                                    const clientId = message.data.client_id;
-
-                                    // Увеличиваем счётчик для непрочитанных сообщений
-                                    updatedUnreadMessages[clientId] =
-                                        (updatedUnreadMessages[clientId] || 0) + 1;
-                                    console.log('Updated unread messages:', updatedUnreadMessages);
-                                    return updatedUnreadMessages;
-                                });
-                            }
-                            break;
-                        }
-
-                        case 'seen':
-                            console.log("Сообщение отмечено как прочитанное");
-                            break;
-
-                        case 'react':
-                            console.log("Реакция на сообщение");
-                            break;
-
-                        case 'edit':
-                            console.log('Сообщения обновлены после редактирования.');
-                            break;
-
-                        case 'delete':
-                            console.log("Сообщение удалено");
-                            break;
-
-                        case 'ticket':
-                            fetchTickets();
-                            break;
-
-                        case 'pong':
-                            // console.log("Сообщение удалено");
-                            break;
-
-                        default:
-                            console.warn('Неизвестный тип сообщения:', message);
-                    }
-                } catch (error) {
-                    console.error('Ошибка при разборе WebSocket сообщения:', error);
-                }
-            };
-
-            // Назначаем обработчик
-            socket.onmessage = handleSocketMessage;
-
-            return () => {
-                if (socket) {
-                    socket.onmessage = null;
-                    socket.onerror = null;
-                    socket.onclose = null;
-                }
-            };
-        }
-    }, [socket, selectClientId, getClientMessages, enqueueSnackbar]);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -760,41 +527,6 @@ const ChatComponent = ({ }) => {
         }
     };
 
-    // Функция для загрузки файла
-    // const uploadFileOLD = async (file) => {
-    //     const formData = new FormData();
-    //     formData.append('file', file);
-    //     const token = Cookies.get('jwt'); // Используем JWT токен для авторизации
-
-    //     console.log('Preparing to upload file...');
-    //     console.log('FormData:', formData);
-
-    //     try {
-    //         const response = await fetch('https://pandatur-api.com/messages/upload', {
-    //             method: 'POST',
-    //             body: formData,
-    //             headers: {
-    //                 Authorization: `Bearer ${token}`,
-    //             },
-    //         });
-
-    //         console.log('Response status:', response.status);
-
-    //         if (response.ok) {
-    //             const data = await response.json();
-    //             console.log('File uploaded successfully:', data);
-    //             return data; // Сервер должен вернуть объект с полем `url`
-    //         } else {
-    //             const errorMessage = `Failed to upload file. Status: ${response.status}`;
-    //             console.error(errorMessage);
-    //             throw new Error(errorMessage);
-    //         }
-    //     } catch (error) {
-    //         console.error('Error uploading file:', error);
-    //         throw error;
-    //     }
-    // };
-
     // Обработчик выбора файла
     const handleFileSelect = async (e) => {
         const selectedFile = e.target.files[0];
@@ -841,8 +573,7 @@ const ChatComponent = ({ }) => {
             const updatedTicket = await response.json();
             console.log('Тикет успешно обновлён:', updatedTicket);
 
-            // Вызов fetchTickets для обновления списка тикетов
-            await fetchTickets();
+            // await fetchTickets();
             console.log('Список тикетов успешно обновлён.');
         } catch (error) {
             console.error('Ошибка при обновлении technician_id:', error.message);
@@ -893,7 +624,7 @@ const ChatComponent = ({ }) => {
 
         // Функция для получения платформы последнего сообщения
         const analyzeLastMessagePlatform = () => {
-            const clientMessages = messages1.filter((msg) => msg.client_id === selectClientId);
+            const clientMessages = messages.filter((msg) => msg.client_id === selectClientId);
             const lastMessage = clientMessages.length > 0
                 ? clientMessages.reduce((latest, current) =>
                     new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
@@ -943,7 +674,7 @@ const ChatComponent = ({ }) => {
 
             console.log('Сообщение успешно отправлено:', messageData);
 
-            setMessages1((prevMessages) => [
+            setMessages((prevMessages) => [
                 ...prevMessages,
                 { ...messageData, seenAt: false },
             ]);
@@ -964,98 +695,9 @@ const ChatComponent = ({ }) => {
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // const sendMessageOLD prin socket = async (selectedFile) => {
-
-    //     if (!managerMessage.trim() && !selectedFile) {
-    //         return; // Если нет сообщения или файла — ничего не отправляем
-    //     }
-
-    //     if (socket) {
-    //         console.log('WebSocket state before sending message:', socket.readyState);
-
-    //         if (socket.readyState === WebSocket.OPEN) {
-    //             const currentTime = new Date().toISOString();
-
-    //             try {
-    //                 let fileUrl = null;
-
-    //                 // Если передан файл, загружаем его и получаем URL
-    //                 if (selectedFile) {
-    //                     try {
-    //                         const uploadResponse = await uploadFile(selectedFile);
-    //                         fileUrl = uploadResponse.url;
-    //                         console.log('File URL received:', fileUrl);
-
-    //                         const fileMessageData = {
-    //                             type: 'message',
-    //                             data: {
-    //                                 sender_id: Number(userId),
-    //                                 client_id: [selectClientId],
-    //                                 platform: 'web',
-    //                                 text: fileUrl, // URL файла
-    //                                 time_sent: currentTime,
-    //                             },
-    //                         };
-
-    //                         socket.send(JSON.stringify(fileMessageData));
-    //                         console.log('File message sent:', fileMessageData);
-
-    //                         // Обновляем локальное состояние
-    //                         setMessages1((prevMessages) => [
-    //                             ...prevMessages,
-    //                             { ...fileMessageData.data, seen_at: false },
-    //                         ]);
-
-    //                         // Загружаем обновленный список сообщений
-    //                         await getClientMessages();
-    //                     } catch (error) {
-    //                         console.error('Error uploading file:', error);
-    //                         alert('Ошибка при загрузке файла. Попробуйте снова.');
-    //                         return;
-    //                     }
-    //                 }
-
-    //                 // Если есть текстовое сообщение, отправляем его отдельно
-    //                 if (managerMessage.trim()) {
-    //                     const textMessageData = {
-    //                         type: 'message',
-    //                         data: {
-    //                             sender_id: Number(userId),
-    //                             client_id: [selectClientId],
-    //                             platform: 'web',
-    //                             text: managerMessage,
-    //                             time_sent: currentTime,
-    //                         },
-    //                     };
-
-    //                     socket.send(JSON.stringify(textMessageData));
-    //                     console.log('Text message sent:', textMessageData);
-
-    //                     setMessages1((prevMessages) => [
-    //                         ...prevMessages,
-    //                         { ...textMessageData.data, seen_at: false },
-    //                     ]);
-
-    //                     setManagerMessage(''); // Очищаем текстовое сообщение
-
-    //                     // Загружаем обновленный список сообщений
-    //                     await getClientMessages();
-    //                 }
-    //             } catch (error) {
-    //                 console.error('Error sending message:', error);
-    //             }
-    //         } else {
-    //             console.error('WebSocket is not open. Please reload the page.');
-    //             alert('WebSocket is not open. Please reload the page.');
-    //         }
-    //     } else {
-    //         console.error('Socket is null.');
-    //     }
-    // };
-
     useEffect(() => {
-        setFilteredTickets(tickets1); // Устанавливаем все тикеты по умолчанию
-    }, [tickets1]);
+        setFilteredTickets(tickets); // Устанавливаем все тикеты по умолчанию
+    }, [tickets]);
 
     const updateTickets = (tickets) => {
         setFilteredTickets(tickets);
@@ -1107,20 +749,20 @@ const ChatComponent = ({ }) => {
 
     useEffect(() => {
         if (showMyTickets) {
-            setFilteredTickets(tickets1.filter(ticket => ticket.technician_id === userId));
+            setFilteredTickets(tickets.filter(ticket => ticket.technician_id === userId));
         } else {
-            setFilteredTickets(tickets1);
+            setFilteredTickets(tickets);
         }
-    }, [tickets1, showMyTickets, userId]);
+    }, [tickets, showMyTickets, userId]);
 
     const handleCheckboxChange = (e) => {
         const checked = e.target.checked;
         setShowMyTickets(checked);
 
         if (checked) {
-            setFilteredTickets(tickets1.filter(ticket => ticket.technician_id === userId));
+            setFilteredTickets(tickets.filter(ticket => ticket.technician_id === userId));
         } else {
-            setFilteredTickets(tickets1);
+            setFilteredTickets(tickets);
         }
     };
 
@@ -1187,8 +829,8 @@ const ChatComponent = ({ }) => {
                     {Array.isArray(filteredTickets) && filteredTickets.length > 0 ? (
                         filteredTickets
                             .sort((a, b) => {
-                                const clientMessagesA = messages1.filter(msg => msg.client_id === a.client_id);
-                                const clientMessagesB = messages1.filter(msg => msg.client_id === b.client_id);
+                                const clientMessagesA = messages.filter(msg => msg.client_id === a.client_id);
+                                const clientMessagesB = messages.filter(msg => msg.client_id === b.client_id);
 
                                 const lastMessageA = clientMessagesA.length
                                     ? clientMessagesA.reduce((latest, current) =>
@@ -1205,7 +847,7 @@ const ChatComponent = ({ }) => {
                                 return new Date(lastMessageB.time_sent) - new Date(lastMessageA.time_sent);
                             })
                             .map(ticket => {
-                                const clientMessages = messages1.filter(msg => msg.client_id === ticket.client_id);
+                                const clientMessages = messages.filter(msg => msg.client_id === ticket.client_id);
 
                                 // const unreadCounts = clientMessages.filter(msg => {
                                 //     const notSeen = !msg.seen_by; // Сообщение не отмечено как просмотренное
@@ -1237,7 +879,7 @@ const ChatComponent = ({ }) => {
                                     <div
                                         key={ticket.client_id}
                                         className={`chat-item ${ticket.client_id === selectClientId ? "active" : ""}`}
-                                        ref={ticket.client_id === selectClientId ? activeChatRef : null}
+                                        // ref={ticket.client_id === selectClientId ? activeChatRef : null}
                                         onClick={() => handleTicketClick(ticket.client_id)}
                                     >
                                         <div className="foto-description">
@@ -1296,14 +938,14 @@ const ChatComponent = ({ }) => {
             </div>
             <div className="chat-area">
                 <div className="chat-messages" ref={messageContainerRef}>
-                    {messages1
+                    {messages
                         .filter((msg) => {
-                            const clientId = tickets1.find((ticket) => ticket.client_id === selectClientId)?.client_id;
+                            const clientId = tickets.find((ticket) => ticket.client_id === selectClientId)?.client_id;
                             return msg.client_id === clientId;
                         })
                         .sort((a, b) => new Date(a.time_sent) - new Date(b.time_sent))
                         .map((msg) => {
-                            const uniqueKey = msg.id || `${msg.client_id}-${msg.time_sent}`;
+                            const uniqueKey = `${msg.id}`;
 
                             // Определяем отображение контента на основе mtype
                             const renderContent = () => {
@@ -1337,7 +979,6 @@ const ChatComponent = ({ }) => {
                                             </audio>
                                         );
                                     case "file":
-                                        const fileName = msg.message.split("/").pop(); // Извлекаем название файла из URL
                                         return (
                                             <a
                                                 href={msg.message}
@@ -1349,83 +990,75 @@ const ChatComponent = ({ }) => {
                                             </a>
                                         );
                                     default:
-                                        return <div className="text-message">{msg.message}</div>; // Отображение текста по умолчанию
+                                        return <div className="text-message">{msg.message}</div>;
                                 }
                             };
 
                             const lastReaction = getLastReaction(msg);
 
                             return (
-                                <InView
+                                <div
                                     key={uniqueKey}
-                                    onChange={(inView) => handleInView(inView, msg)}
-                                    threshold={0.1}
+                                    className={`message ${msg.sender_id === userId || msg.sender_id === 1 ? "sent" : "received"}`}
                                 >
-                                    {({ ref }) => (
-                                        <div
-                                            ref={ref}
-                                            className={`message ${msg.sender_id == userId || msg.sender_id === 1 ? "sent" : "received"}`}
-                                        >
-                                            <div className="message-content">
-                                                <div className="message-row">
-                                                    <div className="text">
-                                                        {renderContent()}
-                                                        <div className="message-time">
-                                                            <div
-                                                                className="reaction-toggle-button"
-                                                                onClick={() =>
-                                                                    setSelectedMessageId(selectedMessageId === msg.id ? null : msg.id)
-                                                                }
-                                                            >
-                                                                {lastReaction || "☺"}
-                                                            </div>
-                                                            {new Date(msg.time_sent).toLocaleTimeString("ru-RU", {
-                                                                hour: "2-digit",
-                                                                minute: "2-digit",
-                                                            })}
-                                                        </div>
-                                                        {selectedMessageId === msg.id && (
-                                                            <div className="reaction-container" ref={reactionContainerRef}>
-                                                                <div className="reaction-buttons">
-                                                                    {["☺", "👍", "❤️", "😂", "😮", "😢", "😡"].map((reaction) => (
-                                                                        <div
-                                                                            key={reaction}
-                                                                            onClick={() => handleReactionClick(reaction, msg.id)}
-                                                                            className={
-                                                                                selectedReaction[msg.id] === reaction ? "active" : ""
-                                                                            }
-                                                                        >
-                                                                            {reaction}
-                                                                        </div>
-                                                                    ))}
-                                                                </div>
-                                                            </div>
-                                                        )}
+                                    <div className="message-content">
+                                        <div className="message-row">
+                                            <div className="text">
+                                                {renderContent()}
+                                                <div className="message-time">
+                                                    <div
+                                                        className="reaction-toggle-button"
+                                                        onClick={() =>
+                                                            setSelectedMessageId(selectedMessageId === msg.id ? null : msg.id)
+                                                        }
+                                                    >
+                                                        {lastReaction || "☺"}
                                                     </div>
-                                                    {(msg.sender_id == userId || msg.sender_id === 1) && (
-                                                        <div
-                                                            className="menu-container"
-                                                            ref={(el) => (menuRefs.current[msg.id] = el)}
-                                                        >
-                                                            <button
-                                                                className="menu-button"
-                                                                onClick={() => handleMenuToggle(msg.id)}
-                                                            >
-                                                                ⋮
-                                                            </button>
-                                                            {menuMessageId === msg.id && (
-                                                                <div className="menu-dropdown">
-                                                                    <button onClick={() => handleEdit(msg)}>✏️</button>
-                                                                    <button onClick={() => handleDelete(msg.id)}>🗑️</button>
+                                                    {new Date(msg.time_sent).toLocaleTimeString("ru-RU", {
+                                                        hour: "2-digit",
+                                                        minute: "2-digit",
+                                                    })}
+                                                </div>
+                                                {selectedMessageId === msg.id && (
+                                                    <div className="reaction-container" ref={reactionContainerRef}>
+                                                        <div className="reaction-buttons">
+                                                            {["☺", "👍", "❤️", "😂", "😮", "😢", "😡"].map((reaction) => (
+                                                                <div
+                                                                    key={reaction}
+                                                                    onClick={() => handleReactionClick(reaction, msg.id)}
+                                                                    className={
+                                                                        selectedReaction[msg.id] === reaction ? "active" : ""
+                                                                    }
+                                                                >
+                                                                    {reaction}
                                                                 </div>
-                                                            )}
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            {(msg.sender_id === userId || msg.sender_id === 1) && (
+                                                <div
+                                                    className="menu-container"
+                                                    ref={(el) => (menuRefs.current[msg.id] = el)}
+                                                >
+                                                    <button
+                                                        className="menu-button"
+                                                        onClick={() => handleMenuToggle(msg.id)}
+                                                    >
+                                                        ⋮
+                                                    </button>
+                                                    {menuMessageId === msg.id && (
+                                                        <div className="menu-dropdown">
+                                                            <button onClick={() => handleEdit(msg)}>✏️</button>
+                                                            <button onClick={() => handleDelete(msg.id)}>🗑️</button>
                                                         </div>
                                                     )}
                                                 </div>
-                                            </div>
+                                            )}
                                         </div>
-                                    )}
-                                </InView>
+                                    </div>
+                                </div>
                             );
                         })}
                 </div>

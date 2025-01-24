@@ -68,13 +68,7 @@ function App() {
 
   return (
     <SnackbarProvider
-      iconVariant={{
-        success: '',
-        error: '',
-        warning: '',
-        info: '',
-      }}
-      autoHideDuration={60000}
+      autoHideDuration={5000}
       maxSnack={5}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       action={(snackbarId) => (
