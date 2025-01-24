@@ -256,11 +256,21 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         break;
       }
       case 'ticket': {
+        console.log("пришел тикет");
         // Получаем тикеты
         fetchTickets().then((tickets) => {
-          const ticketIds = tickets.map((ticket) => ticket.client_id);
-          // Подключаемся к комнатам
-          connectToChatRooms(socket, ticketIds);
+          const ticketIds = tickets.map((ticket) => ticket.client_id); // Извлекаем client_id
+
+          const socketMessage = JSON.stringify({
+            type: 'connect',
+            data: { client_id: ticketIds },
+          });
+
+          // Отправляем сообщение в сокет
+          if (socket && socket.readyState === WebSocket.OPEN) {
+            socket.send(socketMessage);
+            console.log("Подключено к комнатам клиентов:", ticketIds);
+          }
         });
         break;
       }
