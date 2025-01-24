@@ -1,0 +1,168 @@
+.tag-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  width: 100%;
+  padding: 18px; /* Add inner padding for spacing */
+  background-color: #374151;
+  border-radius: 6px;
+  box-sizing: border-box; /* Ensure padding doesn't affect the width */
+}
+
+.suggestions-list {
+  display: none; /* Initially hidden */
+  opacity: 0;
+  transform: translateY(-20px); /* Start slightly above */
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.suggestions-list.show {
+  display: block; /* Make it visible */
+  opacity: 1; /* Fully visible */
+  transform: translateY(0); /* Slide to its normal position */
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.suggestions-list {
+  display: block;
+  animation: slideDown 0.3s ease forwards;
+}
+
+
+.tags-display {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 12px;
+  padding: 5% 0px;
+  width: 100%;
+}
+
+.tag-input {
+  width: 100%;
+}
+
+.input-group {
+  width: 100%;
+}
+
+.tag-input-container .input-group {
+  width: 100%;
+}
+
+.tag-input-container .input-group .tag-input{
+  width: auto;
+}
+
+.container-select-priority-workflow
+{
+  font-size: 18;
+  text-align: left;
+}
+
+.tag-item {
+  background-color: #0f824c;
+  color: white;
+  padding: 12px 18px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  overflow: hidden;
+  align-items: center;
+  font-size: 14px;
+  letter-spacing: 0.8px;
+  width: 22%;
+}
+
+.tag-text {
+  overflow: hidden;
+}
+
+.remove-tag-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+  padding-left: 6px;
+}
+
+.tag-input,
+.task-select,
+.textarea-input {
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #374151;
+  border-radius: 5px;
+  background-color: #fff;
+  color: #111827;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.tag-input:focus,
+.textarea-input:focus {
+  border-color: #0f824c;
+  box-shadow: 0 0 4px rgba(15, 130, 76, 0.5);
+}
+
+.suggestions-list {
+  list-style: none;
+  margin: 5px 0 0;
+  padding: 0;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  overflow-y: auto;
+  color: black;
+}
+
+.suggestion-item {
+  padding: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.suggestion-item:hover {
+  background-color: #e0e0e0;
+}
+
+.textarea-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.ticket-modal-form {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+
+.ticket-modal-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.action-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}

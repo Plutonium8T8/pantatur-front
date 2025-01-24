@@ -1,23 +1,13 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { truncateText, parseTags } from '../utils/stringUtils';
 import { getPriorityColor } from '../utils/ticketUtils';
 import './TicketCardComponent.css';
 
 const TicketCard = ({ ticket, onContextMenu, onEditTicket }) => {
     const [currentTicket, setCurrentTicket] = useState(null);
+    const tags = parseTags(ticket.tags);
     const navigate = useNavigate();
-
-    // Обработка тегов
-    const tags = useMemo(() => {
-        if (typeof ticket.tags === 'string' && ticket.tags.startsWith('{') && ticket.tags.endsWith('}')) {
-            return ticket.tags
-                .slice(1, -1) // Убираем { и }
-                .split(',') // Разделяем по запятой
-                .map((tag) => tag.trim()) // Удаляем пробелы
-                .filter((tag) => tag !== ''); // Убираем пустые значения
-        }
-        return [];
-    }, [ticket.tags]);
 
     const handleDragStart = (e, clientId) => {
         e.dataTransfer.setData('clientId', clientId);
@@ -25,7 +15,7 @@ const TicketCard = ({ ticket, onContextMenu, onEditTicket }) => {
 
     const handleTicketClick = (ticket) => {
         setCurrentTicket(ticket);
-        navigate(`/chat/${ticket.client_id}`);
+        navigate(`/chat/${ticket.client_id}`)
     };
 
     return (
@@ -38,6 +28,7 @@ const TicketCard = ({ ticket, onContextMenu, onEditTicket }) => {
         >
             <div className="tickets-descriptions">
                 <div className="ticket-ribbon" style={{ backgroundColor: getPriorityColor(ticket.priority) }}>
+
                 </div>
                 <div className="ticket-body">
                     <div className="ticket-column">
@@ -48,35 +39,35 @@ const TicketCard = ({ ticket, onContextMenu, onEditTicket }) => {
                                 className="ticket-photo-image"
                             />
                         </div>
-                        <div className="ticket-id">
-                            {ticket.id}
-                        </div>
                     </div>
-                    <div className="ticket-column">
+                    <div className="ticket-column-2">
                         <div className="ticket-contact">
                             {ticket.contact || 'Unknown Contact'}
                         </div>
                         <div className="ticket-tags">
-                            {tags.length > 0 ? (
-                                tags.map((tag, index) => (
-                                    <span key={index} className="tag">
-                                        {tag}
-                                    </span>
-                                ))
-                            ) : (
-                                <em></em>
-                            )}
+                            {tags.map((tag, index) => (
+                                <span key={index} className="tag">
+                                    {truncateText(tag, 15)}
+                                </span>
+                            ))}
                         </div>
                     </div>
                     <div className="ticket-column">
                         <div className="ticket-date">
+                            {ticket.creation_date}
+                        </div>
+                        <div
+                            className="ticket-date"
+                            style={{
+                                color: ticket.creation_date === ticket.last_interaction_date ? 'red' : 'green',
+                                textShadow: '1px 1px 2px black',
+                            }}
+                        >
                             {ticket.last_interaction_date}
                         </div>
-                        <div className="ticket-time">
-                            13:00
-                        </div>
-                        <div className="ticket-tasks">
-                            <p>Tasks: {ticket.id}</p>
+
+                        <div className="ticket-id">
+                            #{ticket.id}
                         </div>
                     </div>
                 </div>

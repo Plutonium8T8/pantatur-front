@@ -3,6 +3,8 @@ import { startOfWeek, addDays, format } from "date-fns";
 import Cookies from 'js-cookie';
 import ModalWithToggles from "./ModalWithToggles"; // Импортируем компонент модалки
 import './AdminPanel.css';
+import { FaMinus, FaPlus, FaTrash } from "react-icons/fa";
+import { translations } from "../utils/translations";
 
 const ScheduleComponent = () => {
   const [schedule, setSchedule] = useState([]);
@@ -14,6 +16,9 @@ const ScheduleComponent = () => {
   const [intervals, setIntervals] = useState([]); // Для хранения интервалов выбранного дня
   const [isModalOpen, setIsModalOpen] = useState(false); // Состояние модалки
   const [selectedUser, setSelectedUser] = useState(null); // Хранит выбранного пользователя
+  const [error, setError] = useState(null);
+
+  const language = localStorage.getItem('language') || 'RO';
 
   // Закрытие модалки
   const closeModal = () => {
@@ -194,6 +199,7 @@ const ScheduleComponent = () => {
           name: `${user.id.name} ${user.id.surname}`, // Используем имя и фамилию
           email: user.id.user.email, // Email из вложенного user
           username: user.id.user.username, // Имя пользователя
+          roles: user.id.user.roles, // Имя пользователя
           shifts,
         };
       });
@@ -316,22 +322,23 @@ const ScheduleComponent = () => {
 
   return (
     <div className="schedule-container">
-      <div className="header-component">Grafic de lucru</div>
+      <div className="header-component">{translations['Grafic de lucru'][language]}</div>
       <div className="week-navigation">
-        <button onClick={goToPreviousWeek}>Saptamana Trecuta</button>
+        <button onClick={goToPreviousWeek}>{translations['săptămâna'][language]} {translations['trecută'][language]}</button>
         <span>
-          Saptamana {format(currentWeekStart, "dd.MM.yyyy")} - {format(addDays(currentWeekStart, 6), "dd.MM.yyyy")}
+          {translations['săptămâna'][language]} {format(currentWeekStart, "dd.MM.yyyy")} - {format(addDays(currentWeekStart, 6), "dd.MM.yyyy")}
         </span>
-        <button onClick={goToNextWeek}>Saptamana viitoare</button>
+        <button onClick={goToNextWeek}>{translations['săptămâna'][language]} {translations['viitoare'][language]}</button>
       </div>
+      <div className="schedule-table-container">
       <table className="schedule-table">
         <thead>
           <tr>
-            <th>Angajat</th>
+            <th>{translations['Angajat'][language]}</th>
             {getWeekDays().map((day, index) => (
-              <th key={index}>{format(day, "EEEE, dd.MM")}</th>
+              <th key={index}>{translations[format(day, "EEEE")][language]}, {format(day, "dd.MM")}</th>
             ))}
-            <th>Ore de lucru</th>
+            <th>{translations['Ore de lucru'][language]}</th>
           </tr>
         </thead>
         <tbody>
@@ -348,6 +355,7 @@ const ScheduleComponent = () => {
               </td>
               {employee.shifts.map((shift, dayIndex) => (
                 <td
+                  // key={translations[dayIndex][language]}
                   key={dayIndex}
                   className="shift-cell"
                   onClick={(e) => {
@@ -363,110 +371,113 @@ const ScheduleComponent = () => {
           ))}
         </tbody>
       </table>
+      </div>
       {/* Модалка с переключателями */}
       {isModalOpen && selectedUser && (
         <ModalWithToggles
-          employee={selectedUser} // Передаём выбранного пользователя
+          employee={selectedUser}
+          isOpen={isModalOpen}// Передаём выбранного пользователя
           closeModal={closeModal} // Передаём функцию закрытия
         />
       )}
 
       {selectedEmployee !== null && selectedDay !== null && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h3>Schimba orar</h3>
-              <button
-                className="close-button"
-                onClick={() => {
-                  setSelectedEmployee(null);
-                  setSelectedDay(null);
-                  setIntervals([]);
-                }}
-              >
-                ×
-              </button>
-            </div>
-            <p>
-              {schedule[selectedEmployee].name} ({schedule[selectedEmployee].id}),{" "}
-              {format(getWeekDays()[selectedDay], "EEEE, dd.MM")}
-              <p>Intervalul in care angajatul este la munca.</p>
-            </p>
-            <div className="time-inputs">
-              {intervals.map((interval, index) => (
-                <div key={index} className="time-interval">
-                  <label>
-                    Start
-                    <input
-                      type="time"
-                      value={interval.start}
-                      onChange={(e) => {
-                        const updatedIntervals = [...intervals];
-                        updatedIntervals[index].start = e.target.value;
-                        setIntervals(updatedIntervals);
-                      }}
-                    />
-                  </label>
-                  <label>
-                    End
-                    <input
-                      type="time"
-                      value={interval.end}
-                      onChange={(e) => {
-                        const updatedIntervals = [...intervals];
-                        updatedIntervals[index].end = e.target.value;
-                        setIntervals(updatedIntervals);
-                      }}
-                    />
-                  </label>
+        <div className="modal-overlay" onClick={() => {
+          setSelectedEmployee(null);
+          setSelectedDay(null);
+          setIntervals([]);
+        }}>
+          <div
+            className="modal-container"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <header className="modal-header">
+              <h2>
+                {schedule[selectedEmployee].name} ({schedule[selectedEmployee].id}),{" "}
+                {translations[format(getWeekDays()[selectedDay], "EEEE")][language]} , {format(getWeekDays()[selectedDay], "dd.MM")}
+                
+              </h2>
+            </header>
+            {error && <div className="error-message">{error}</div>}
+            <form className="notification-form" onSubmit={null}>
+              <div className="input-group">
+                <div className="time-inputs">
+                  {intervals.map((interval, index) => (
+                    <div key={index} className="time-interval">
+                      <label>
+                        Start
+                        <input
+                          type="time"
+                          value={interval.start}
+                          onChange={(e) => {
+                            const updatedIntervals = [...intervals];
+                            updatedIntervals[index].start = e.target.value;
+                            setIntervals(updatedIntervals);
+                          }}
+                        />
+                      </label>
+                      <label>
+                        End
+                        <input
+                          type="time"
+                          value={interval.end}
+                          onChange={(e) => {
+                            const updatedIntervals = [...intervals];
+                            updatedIntervals[index].end = e.target.value;
+                            setIntervals(updatedIntervals);
+                          }}
+                        />
+                      </label>
+                      <button
+                        className="delete-button"
+                        onClick={() => removeInterval(index)}
+                      >
+                        <FaTrash/>
+                      </button>
+                    </div>
+                  ))}
+                  <div className="add-interval">
+                    <label>
+                      Start
+                      <input
+                        type="time"
+                        value={startTime}
+                        onChange={(e) => setStartTime(e.target.value)}
+                      />
+                    </label>
+                    <label>
+                      End
+                      <input
+                        type="time"
+                        value={endTime}
+                        onChange={(e) => setEndTime(e.target.value)}
+                      />
+                    </label>
+                    <button className="add-button-plus" onClick={AddInterval}>
+                      <FaPlus/>
+                    </button>
+                    <button className="add-button-minus" onClick={cutInterval}>
+                      <FaMinus/>
+                    </button>
+                  </div>
+                </div>
+                <div className="button-container">
+                  <button className="submit-button" onClick={saveShift}>
+                  {translations['Salvează'][language]}
+                  </button>
                   <button
-                    className="delete-button"
-                    onClick={() => removeInterval(index)}
+                    className="clear-button"
+                    onClick={() => {
+                      setSelectedEmployee(null);
+                      setSelectedDay(null);
+                      setIntervals([]);
+                    }}
                   >
-                    Delete
+                    {translations['Închide'][language]}
                   </button>
                 </div>
-              ))}
-              <div className="add-interval">
-                <label>
-                  Start
-                  <input
-                    type="time"
-                    value={startTime}
-                    onChange={(e) => setStartTime(e.target.value)}
-                  />
-                </label>
-                <label>
-                  End
-                  <input
-                    type="time"
-                    value={endTime}
-                    onChange={(e) => setEndTime(e.target.value)}
-                  />
-                </label>
-                <button className="add-button-plus" onClick={AddInterval}>
-                  Adauga
-                </button>
-                <button className="add-button-minus" onClick={cutInterval}>
-                  Micșorează
-                </button>
               </div>
-            </div>
-            <div className="modal-footer">
-              <button className="save-button" onClick={saveShift}>
-                Save
-              </button>
-              <button
-                className="cancel-button"
-                onClick={() => {
-                  setSelectedEmployee(null);
-                  setSelectedDay(null);
-                  setIntervals([]);
-                }}
-              >
-                Cancel
-              </button>
-            </div>
+            </form>
           </div>
         </div>
       )}

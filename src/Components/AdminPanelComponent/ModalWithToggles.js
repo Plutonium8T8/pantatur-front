@@ -1,9 +1,36 @@
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import "./ModalWithToggles.css";
+import { FaHandshake } from "react-icons/fa";
 
 const ModalWithToggles = ({ employee, closeModal }) => {
     const [roles, setRoles] = useState([]);
+        const [error, setError] = useState(null);
+
+    useEffect(() => {
+        fetchRoles();
+    }, []);
+
+    const fetchRoles = async () => {
+            try {
+                const token = Cookies.get("jwt");
+                const response = await fetch(`https://pandatur-api.com/users/${employee.id}`, {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setRoles(data.roles);
+                } else {
+                    console.error(`Ошибка: ${response.status} - ${response.statusText}`);
+                }
+            } catch (error) {
+                console.error("Ошибка загрузки уведомлений:", error.message);
+            }
+        };
 
     const sendPermissionToServer = async (role) => {
         const token = Cookies.get("jwt");
@@ -26,7 +53,7 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                 throw new Error(`Ошибка: ${response.status}`);
             }
 
-            console.log(`Разрешение "${role}" успешно добавлено.`);
+            fetchRoles();
         } catch (error) {
             console.error(`Ошибка при добавлении разрешения "${role}":`, error);
         }
@@ -53,7 +80,7 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                 throw new Error(`Ошибка: ${response.status}`);
             }
 
-            console.log(`Разрешение "${role}" успешно удалено.`);
+            fetchRoles();
         } catch (error) {
             console.error(`Ошибка при удалении разрешения "${role}":`, error);
         }
@@ -70,133 +97,52 @@ const ModalWithToggles = ({ employee, closeModal }) => {
     const isRoleActive = (role) => roles.includes(role);
 
     return (
-        <div className="modal-overlay">
-            <div className="modal-content-toggle">
+        <div className="modal-overlay" onClick={closeModal}>
+            <div
+                className="modal-container"
+                onClick={(e) => e.stopPropagation()}
+            >
                 <div className="modal-header">
-                    <h3>Permesiuni angajat</h3>
-                    <button className="close-button" onClick={closeModal}>
-                        ×
-                    </button>
+                    <h2>
+                        <FaHandshake /> Permisiuni {employee.name}
+                    </h2>
                 </div>
+                {error && <div className="error-message">{error}</div>}
                 <div className="modal-body">
-                    <p>
-                        {employee.name} ({employee.id})
-                    </p>
-                    <div className="toggles-group-container">
-                        {/* Dashboard */}
-                        <div className="toggles-group">
-                            <div className="toggle-item">
-                                Dashboard - citire
-                                <label className="toggle-switch">
-                                    <input
-                                        type="checkbox"
-                                        checked={isRoleActive("DASHBOARD_READ")}
-                                        onChange={() => handleToggleChange("DASHBOARD_READ", isRoleActive("DASHBOARD_READ"))}
-                                    />
-                                    <span className="slider"></span>
-                                </label>
-                            </div>
-                            <div className="toggle-item">
-                                Dashboard - editare
-                                <label className="toggle-switch">
-                                    <input
-                                        type="checkbox"
-                                        checked={isRoleActive("DASHBOARD_WRITE")}
-                                        onChange={() => handleToggleChange("DASHBOARD_WRITE", isRoleActive("DASHBOARD_WRITE"))}
-                                    />
-                                    <span className="slider"></span>
-                                </label>
-                            </div>
-                            <div className="toggle-item">
-                                Dashboard - full acces
-                                <label className="toggle-switch">
-                                    <input
-                                        type="checkbox"
-                                        checked={isRoleActive("DASHBOARD_ADMIN")}
-                                        onChange={() => handleToggleChange("DASHBOARD_ADMIN", isRoleActive("DASHBOARD_ADMIN"))}
-                                    />
-                                    <span className="slider"></span>
-                                </label>
-                            </div>
+                    <div className="permissions-table">
+                        <div className="permissions-header">
+                            <div className="permissions-header-item"></div>
+                            {["READ", "WRITE", "ADMIN"].map((action) => (
+                                <div className="permissions-header-item" key={action}>
+                                    {action}
+                                </div>
+                            ))}
                         </div>
-                        {/* Lead */}
-                        <div className="toggles-group">
-                            <div className="toggle-item">
-                                Lead - citire
-                                <label className="toggle-switch">
-                                    <input
-                                        type="checkbox"
-                                        checked={isRoleActive("LEAD_READ")}
-                                        onChange={() => handleToggleChange("LEAD_READ", isRoleActive("LEAD_READ"))}
-                                    />
-                                    <span className="slider"></span>
-                                </label>
-                            </div>
-                            <div className="toggle-item">
-                                Lead - editare
-                                <label className="toggle-switch">
-                                    <input
-                                        type="checkbox"
-                                        checked={isRoleActive("LEAD_WRITE")}
-                                        onChange={() => handleToggleChange("LEAD_WRITE", isRoleActive("LEAD_WRITE"))}
-                                    />
-                                    <span className="slider"></span>
-                                </label>
-                            </div>
-                            <div className="toggle-item">
-                                Lead - full acces
-                                <label className="toggle-switch">
-                                    <input
-                                        type="checkbox"
-                                        checked={isRoleActive("LEAD_ADMIN")}
-                                        onChange={() => handleToggleChange("LEAD_ADMIN", isRoleActive("LEAD_ADMIN"))}
-                                    />
-                                    <span className="slider"></span>
-                                </label>
-                            </div>
-                        </div>
-                        {/* Chat */}
-                        <div className="toggles-group">
-                            <div className="toggle-item">
-                                Chat - citire
-                                <label className="toggle-switch">
-                                    <input
-                                        type="checkbox"
-                                        checked={isRoleActive("CHAT_READ")}
-                                        onChange={() => handleToggleChange("CHAT_READ", isRoleActive("CHAT_READ"))}
-                                    />
-                                    <span className="slider"></span>
-                                </label>
-                            </div>
-                            <div className="toggle-item">
-                                Chat - editare
-                                <label className="toggle-switch">
-                                    <input
-                                        type="checkbox"
-                                        checked={isRoleActive("CHAT_WRITE")}
-                                        onChange={() => handleToggleChange("CHAT_WRITE", isRoleActive("CHAT_WRITE"))}
-                                    />
-                                    <span className="slider"></span>
-                                </label>
-                            </div>
-                            <div className="toggle-item">
-                                Chat - full acces
-                                <label className="toggle-switch">
-                                    <input
-                                        type="checkbox"
-                                        checked={isRoleActive("CHAT_ADMIN")}
-                                        onChange={() => handleToggleChange("CHAT_ADMIN", isRoleActive("CHAT_ADMIN"))}
-                                    />
-                                    <span className="slider"></span>
-                                </label>
-                            </div>
+                        <div className="permissions-rows">
+                            {["CHAT", "LEAD", "DASHBOARD"].map((category) => (
+                                <div className="permissions-row" key={category}>
+                                    <div className="permissions-category">{category}</div>
+                                    {["READ", "WRITE", "ADMIN"].map((action) => {
+                                        const role = `${category}_${action}`;
+                                        return (
+                                            <div className="permissions-toggle" key={role}>
+                                                <label className="toggle-switch">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={isRoleActive(role)}
+                                                        onChange={() =>
+                                                            handleToggleChange(role, isRoleActive(role))
+                                                        }
+                                                    />
+                                                    <span className="slider"></span>
+                                                </label>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            ))}
                         </div>
                     </div>
-                </div>
-                <div className="modal-footer">
-                    <button className="close-button-toggle" onClick={closeModal}>
-                        Close
-                    </button>
                 </div>
             </div>
         </div>

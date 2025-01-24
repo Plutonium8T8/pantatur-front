@@ -7,19 +7,24 @@ import { UserProvider } from './UserContext';
 import CustomSidebar from './Components/SideBar/SideBar';
 import ChatComponent from './Components/ChatComponent/chat';
 import Cookies from 'js-cookie';
-import { AppProvider } from './AppContext'; // Импорт AppProvider
+import { SocketProvider } from './SocketContext';
 import UserProfile from './Components/UserPage/UserPage';
-import { SnackbarProvider } from 'notistack';
+import { SnackbarProvider, closeSnackbar } from 'notistack';
+import Notification from './Notification';
+import { UnreadMessagesProvider } from './Unread';
 import NotificationModal from './Components/SlideInComponent/NotificationModal'; // Модальное окно уведомлений
-import TaskComponent from './Components/SlideInComponent/TaskComponent'; // Модальное окно задач
+import TaskComponent from './Components/SlideInComponent/TaskComponent'; // Используем TaskModal вместо TaskComponent
 import AdminPanel from './Components/AdminPanelComponent/AdminPanel';
 import Dashboard from './Components/DashboardComponent/Dashboard';
+import { FaCircleNotch, FaTrash } from 'react-icons/fa';
+import UserPage from './Components/UserPage/UserPage';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false); // Состояние модального окна уведомлений
   const [isTaskComponentOpen, setIsTaskComponentOpen] = useState(false); // Состояние модального окна задач
+  const [isAccountComponentOpen, setIsAccountComponentOpen] = useState(false); // Состояние модального окна задач
 
   // Проверка сессии
   useEffect(() => {
@@ -63,50 +68,78 @@ function App() {
 
   return (
     <SnackbarProvider
+<<<<<<< HEAD
       autoHideDuration={5000}
+=======
+      iconVariant={{
+        success: '',
+        error: '',
+        warning: '',
+        info: '',
+      }}
+      autoHideDuration={60000}
+>>>>>>> Restyle4
       maxSnack={5}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      action={(snackbarId) => (
+        <>
+          <div className='snack-bar-notification'>
+            <div className='snack-object'>
+            </div>
+            <div className='snack-close'>
+              <button onClick={() => closeSnackbar(snackbarId)}>
+                <FaTrash />
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     >
-      <AppProvider isLoggedIn={isLoggedIn}>
+      <SocketProvider isLoggedIn={isLoggedIn}>
         <UserProvider>
+          <Notification />
           <Router>
-            {!isLoggedIn ? (
-              <LoginForm onLoginSuccess={handleLogin} />
-            ) : (
-              <div className="app-container">
-                <CustomSidebar
-                  onOpenNotifications={() => setIsNotificationModalOpen(true)}
-                  onOpenTasks={() => setIsTaskComponentOpen(true)} // Передаем функцию для открытия задач
-                />
-                <div className="page-content">
-                  <Routes>
-                    <Route path="/account" element={<UserProfile />} />
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/" element={<Navigate to="/leads" />} />
-                    <Route path="/leads" element={<Leads />} />
-                    <Route
-                      path="/chat/:clientId?"
-                      element={<ChatComponent />}
-                    />
-                    <Route path="/admin-panel" element={<AdminPanel />} />
-                    <Route path="*" element={<div>Страница в разработке</div>} />
-                  </Routes>
+            <UnreadMessagesProvider isLoggedIn={isLoggedIn}>
+              {!isLoggedIn ? (
+                <LoginForm onLoginSuccess={handleLogin} />
+              ) : (
+                <div className="app-container">
+                  <CustomSidebar
+                    onOpenNotifications={() => setIsNotificationModalOpen(true)}
+                    onOpenTasks={() => setIsTaskComponentOpen(true)} // Передаем функцию для открытия задач
+                    onOpenAccount={() => setIsAccountComponentOpen(true)} // Передаем функцию для открытия задач
+                  />
+                  <div className="page-content">
+                    <Routes>
+                      <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/" element={<Navigate to="/leads" />} />
+                      <Route path="/leads" element={<Leads />} />
+                      <Route
+                        path="/chat/:clientId?"
+                        element={<ChatComponent />}
+                      />
+                      <Route path="/admin-panel" element={<AdminPanel />} />
+                      <Route path="*" element={<div>Страница в разработке</div>} />
+                    </Routes>
+                  </div>
+                  <UserPage
+                    isOpen={isAccountComponentOpen}
+                    onClose={() => setIsAccountComponentOpen(false)}
+                  />
+                  <NotificationModal
+                    isOpen={isNotificationModalOpen}
+                    onClose={() => setIsNotificationModalOpen(false)}
+                  />
+                  <TaskComponent
+                    isOpen={isTaskComponentOpen}
+                    onClose={() => setIsTaskComponentOpen(false)}
+                  />
                 </div>
-                {/* Модальное окно уведомлений */}
-                <NotificationModal
-                  isOpen={isNotificationModalOpen}
-                  onClose={() => setIsNotificationModalOpen(false)}
-                />
-                {/* Модальное окно задач */}
-                <TaskComponent
-                  isOpen={isTaskComponentOpen}
-                  onClose={() => setIsTaskComponentOpen(false)}
-                />
-              </div>
-            )}
+              )}
+            </UnreadMessagesProvider>
           </Router>
         </UserProvider>
-      </AppProvider>
+      </SocketProvider>
     </SnackbarProvider>
   );
 }
