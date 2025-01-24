@@ -19,7 +19,6 @@ import Input from '../InputComponent/InputComponent';
 import Workflow from '../WorkFlowComponent/WorkflowComponent';
 import "react-datepicker/dist/react-datepicker.css";
 import { useAppContext } from '../../AppContext'; // Подключение AppContext
-// import { InView } from 'react-intersection-observer';
 import { useSnackbar } from 'notistack';
 import './chat.css';
 import EmojiPicker from 'emoji-picker-react';
@@ -29,17 +28,15 @@ import Icon from '../../Components/Icon/index';
 const ChatComponent = ({ }) => {
     const { userId } = useUser();
     const [managerMessage, setManagerMessage] = useState('');
-    const { tickets, updateTicket, setTickets, messages, setMessages } = useAppContext();
+    const { tickets, updateTicket, setTickets, messages, setMessages, socket, markMessagesAsRead } = useAppContext();
     const [selectClientId, setSelectClientId] = useState(null);
     const [extraInfo, setExtraInfo] = useState({}); // Состояние для дополнительной информации каждого тикета
     const messageContainerRef = useRef(null);
     const { clientId } = useParams(); // Получаем clientId из URL
     const [isLoading, setIsLoading] = useState(false); // Состояние загрузки
     const [selectedTechnicianId, setSelectedTechnicianId] = useState('');
-    const { socket } = useAppContext(); // Доступ к WebSocket
     const { enqueueSnackbar } = useSnackbar();
     const navigate = useNavigate(); // Хук для навигации
-    const { markMessagesAsRead } = useAppContext();
     const [menuMessageId, setMenuMessageId] = useState(null);
     const [editMessageId, setEditMessageId] = useState(null);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -63,7 +60,7 @@ const ChatComponent = ({ }) => {
     // Прокручиваем к активному чату, если selectClientId изменился и тикеты загружены
     useEffect(() => {
         if (!isLoading && activeChatRef.current) {
-            activeChatRef.current.scrollIntoView({ behavior: "auto", block: "center" });
+            activeChatRef.current.scrollIntoView({ behavior: "auto" });
         }
     }, [selectClientId, isLoading, filteredTickets]);
 
@@ -236,12 +233,8 @@ const ChatComponent = ({ }) => {
         }
     };
 
-    const handleClick = (clientId) => {
+    const handleClick = () => {
         sendMessage();
-        // getClientMessages();
-        markMessagesAsRead(clientId); // Помечаем сообщения клиента как прочитанные
-        // fetchTicketsID();
-        // fetchTickets();
     };
 
     const handleTicketClick = (clientId) => {
@@ -940,15 +933,18 @@ const ChatComponent = ({ }) => {
                 <div className="chat-messages" ref={messageContainerRef}>
                     {messages
                         .filter((msg) => {
-                            const clientId = tickets.find((ticket) => ticket.client_id == selectClientId)?.client_id;
-                            return msg.client_id == clientId;
+                            const clientId = tickets.find((ticket) => ticket.client_id === selectClientId)?.client_id;
+                            return msg.client_id === clientId;
                         })
                         .sort((a, b) => new Date(a.time_sent) - new Date(b.time_sent))
                         .map((msg) => {
-                            const uniqueKey = `${msg.id}`;
+                            const uniqueKey = `${msg.id || msg.client_id}-${msg.time_sent}`;
 
                             // Определяем отображение контента на основе mtype
                             const renderContent = () => {
+                                if (!msg.message) {
+                                    return <div className="text-message">Сообщение отсутствует</div>;
+                                }
                                 switch (msg.mtype) {
                                     case "image":
                                         return (
