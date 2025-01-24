@@ -3,19 +3,19 @@ steps:
   args:
   - build
   - '-t'
-  - 'gcr.io/$PROJECT_ID/pandaturcrm'
+  - 'gcr.io/pandatur-api/pandaturcrm'
   - '.'
 - name: 'gcr.io/cloud-builders/docker'
   args:
   - push
-  - 'gcr.io/$PROJECT_ID/pandaturcrm'
+  - 'gcr.io/pandatur-api/pandaturcrm'
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   args:
   - run
   - deploy
   - pandaturcrm
   - '--image'
-  - 'gcr.io/$PROJECT_ID/pandaturcrm'
+  - 'gcr.io/pandatur-api/pandaturcrm'
   - '--platform'
   - managed
   - '--region'
