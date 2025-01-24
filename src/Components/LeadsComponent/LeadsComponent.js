@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSocket } from '../../SocketContext';
 import { useUser } from '../../UserContext';
 import { useSnackbar } from 'notistack';
-import { truncateText } from '../utils/stringUtils';
+import { truncateText } from '../../stringUtils';
 import { priorityOptions } from '../../FormOptions/PriorityOption';
 import { workflowOptions } from '../../FormOptions/WorkFlowOption';
 import SpinnerOverlay from './SpinnerOverlayComponent';

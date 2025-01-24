@@ -2,8 +2,9 @@ import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { useAppContext } from '../../AppContext'; // Подключаем AppContext
+import { translations } from '../utils/translations';
 import './SideBar.css';
-<<<<<<< HEAD
+import LanguageToggle from './LanguageToggle'
 import {
     FaUser,
     FaChartBar,
@@ -14,23 +15,13 @@ import {
     FaSignOutAlt,
     FaUserSecret
 } from 'react-icons/fa';
-=======
-import { useUnreadMessages } from '../../Unread';
-import { FaUser, FaChartBar, FaTasks, FaComments, FaBell, FaClipboardList, FaSignOutAlt, FaUserSecret } from 'react-icons/fa';
-import LanguageToggle from './LanguageToggle';
-import { translations } from "../utils/translations";
->>>>>>> Restyle4
 
 const CustomSidebar = ({ onOpenNotifications, onOpenTasks, onOpenAccount }) => {
     const location = useLocation();
     const navigate = useNavigate();
-<<<<<<< HEAD
     const { unreadCount } = useAppContext(); // Получаем unreadCount из AppContext
-=======
-    const { unreadCount } = useUnreadMessages();
 
     const language = localStorage.getItem('language') || 'RO';
->>>>>>> Restyle4
 
     const isActive = (page) => {
         if (page === 'chat') {
@@ -78,11 +69,7 @@ const CustomSidebar = ({ onOpenNotifications, onOpenTasks, onOpenAccount }) => {
                         onClick={() => handleNavigate('chat')}
                     >
                         <FaComments size={24} />
-<<<<<<< HEAD
-                        <span>Chat</span>
-=======
                         <span>{translations['Chat'][language]}</span>
->>>>>>> Restyle4
                         {unreadCount > 0 && (
                             <span className="unread-indicator">{unreadCount}</span>
                         )}

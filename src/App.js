@@ -68,17 +68,7 @@ function App() {
 
   return (
     <SnackbarProvider
-<<<<<<< HEAD
       autoHideDuration={5000}
-=======
-      iconVariant={{
-        success: '',
-        error: '',
-        warning: '',
-        info: '',
-      }}
-      autoHideDuration={60000}
->>>>>>> Restyle4
       maxSnack={5}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       action={(snackbarId) => (

@@ -18,13 +18,8 @@ import DatePicker from 'react-datepicker';
 import Input from '../InputComponent/InputComponent';
 import Workflow from '../WorkFlowComponent/WorkflowComponent';
 import "react-datepicker/dist/react-datepicker.css";
-<<<<<<< HEAD
 import { useAppContext } from '../../AppContext'; // Подключение AppContext
 // import { InView } from 'react-intersection-observer';
-=======
-import { useSocket } from '../../SocketContext';
-import { InView } from 'react-intersection-observer';
->>>>>>> Restyle4
 import { useSnackbar } from 'notistack';
 import './chat.css';
 import EmojiPicker from 'emoji-picker-react';
@@ -41,12 +36,7 @@ const ChatComponent = ({ }) => {
     const { clientId } = useParams(); // Получаем clientId из URL
     const [isLoading, setIsLoading] = useState(false); // Состояние загрузки
     const [selectedTechnicianId, setSelectedTechnicianId] = useState('');
-<<<<<<< HEAD
     const { socket } = useAppContext(); // Доступ к WebSocket
-=======
-    const socket = useSocket(); // Получаем WebSocket из контекста
-    const [unreadMessages, setUnreadMessages] = useState({});
->>>>>>> Restyle4
     const { enqueueSnackbar } = useSnackbar();
     const navigate = useNavigate(); // Хук для навигации
     const { markMessagesAsRead } = useAppContext();

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { truncateText, parseTags } from '../utils/stringUtils';
+import { truncateText, parseTags } from '../../stringUtils';
 import { getPriorityColor } from '../utils/ticketUtils';
 import './TicketCardComponent.css';
 
