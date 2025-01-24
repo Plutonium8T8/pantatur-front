@@ -3,7 +3,7 @@ import Cookies from 'js-cookie';
 import { useSnackbar } from 'notistack';
 import { FaEnvelope, FaTrash } from 'react-icons/fa';
 import { useUser } from './UserContext';
-import { truncateText } from './stringUtils';
+import { truncateText } from './Components/utils/stringUtils';
 
 const AppContext = createContext();
 

@@ -1,7 +1,9 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
-import { useAppContext } from '../../AppContext'; // Подключаем AppContext
+import { useAppContext } from '../../AppContext';
+import { translations } from '../utils/translations';
+import LanguageToggle from './LanguageToggle'
 import './SideBar.css';
 import {
     FaUser,

@@ -11,7 +11,6 @@ import { SocketProvider } from './SocketContext';
 import UserProfile from './Components/UserPage/UserPage';
 import { SnackbarProvider, closeSnackbar } from 'notistack';
 import Notification from './Notification';
-import { UnreadMessagesProvider } from './Unread';
 import NotificationModal from './Components/SlideInComponent/NotificationModal'; // Модальное окно уведомлений
 import TaskComponent from './Components/SlideInComponent/TaskComponent'; // Используем TaskModal вместо TaskComponent
 import AdminPanel from './Components/AdminPanelComponent/AdminPanel';
@@ -89,7 +88,6 @@ function App() {
         <UserProvider>
           <Notification />
           <Router>
-            <UnreadMessagesProvider isLoggedIn={isLoggedIn}>
               {!isLoggedIn ? (
                 <LoginForm onLoginSuccess={handleLogin} />
               ) : (
@@ -126,7 +124,6 @@ function App() {
                   />
                 </div>
               )}
-            </UnreadMessagesProvider>
           </Router>
         </UserProvider>
       </SocketProvider>
