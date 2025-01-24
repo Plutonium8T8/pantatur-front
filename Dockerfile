@@ -2,7 +2,7 @@
 FROM node:16-alpine
 
 # Set the working directory
-WORKDIR /app
+WORKDIR /
 
 # Copy package.json and package-lock.json
 COPY package*.json ./
@@ -16,14 +16,5 @@ COPY . .
 # Build the React app
 RUN npm run build
 
-# Install a simple HTTP server
-RUN npm install -g serve
-
-ENV PORT=9000
-
-EXPOSE 9000
-
-# Serve the built app
-CMD ["serve", "-s", "build", "-l", "9000"]
-
-
+# Serve the app on the port provided by Cloud Run
+CMD ["sh", "-c", "npm start"]
