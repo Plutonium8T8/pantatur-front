@@ -158,8 +158,6 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       // );
 
       // Синхронизация тикетов через WebSocket
-      fetchTickets();
-
       return updatedTicket;
     } catch (error) {
       console.error('Error updating ticket:', error.message || error);
@@ -207,7 +205,15 @@ export const AppProvider = ({ children, isLoggedIn }) => {
 
         setMessages((prevMessages) => {
           const updatedMessages = [...prevMessages, message.data];
-          updateUnreadMessages(updatedMessages);
+
+          // Проверяем, если сообщение от оператора
+          if (message.data.sender_id === 1) {
+            console.log("Сообщение от оператора через WebSocket:", message.data);
+          } else {
+            // Если сообщение от клиента, обновляем непрочитанные
+            updateUnreadMessages(updatedMessages);
+          }
+
           return updatedMessages;
         });
 
@@ -256,7 +262,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         break;
       }
       case 'ticket': {
-        console.log("пришел тикет",message.data);
+        console.log("пришел тикет", message.data);
         // Получаем тикеты
         fetchTickets().then((tickets) => {
           const ticketIds = tickets.map((ticket) => ticket.client_id); // Извлекаем client_id
