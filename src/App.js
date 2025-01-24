@@ -7,16 +7,12 @@ import { UserProvider } from './UserContext';
 import CustomSidebar from './Components/SideBar/SideBar';
 import ChatComponent from './Components/ChatComponent/chat';
 import Cookies from 'js-cookie';
-import { SocketProvider } from './SocketContext';
-import UserProfile from './Components/UserPage/UserPage';
-import { SnackbarProvider, closeSnackbar } from 'notistack';
-import Notification from './Notification';
-import { UnreadMessagesProvider } from './Unread';
+import { AppProvider } from './AppContext'; // Импорт AppProvider
+import { SnackbarProvider } from 'notistack';
 import NotificationModal from './Components/SlideInComponent/NotificationModal'; // Модальное окно уведомлений
 import TaskComponent from './Components/SlideInComponent/TaskComponent'; // Используем TaskModal вместо TaskComponent
 import AdminPanel from './Components/AdminPanelComponent/AdminPanel';
 import Dashboard from './Components/DashboardComponent/Dashboard';
-import { FaCircleNotch, FaTrash } from 'react-icons/fa';
 import UserPage from './Components/UserPage/UserPage';
 
 function App() {
@@ -70,26 +66,10 @@ function App() {
     <SnackbarProvider
       autoHideDuration={5000}
       maxSnack={5}
-      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-      action={(snackbarId) => (
-        <>
-          <div className='snack-bar-notification'>
-            <div className='snack-object'>
-            </div>
-            <div className='snack-close'>
-              <button onClick={() => closeSnackbar(snackbarId)}>
-                <FaTrash />
-              </button>
-            </div>
-          </div>
-        </>
-      )}
-    >
-      <SocketProvider isLoggedIn={isLoggedIn}>
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+      <AppProvider isLoggedIn={isLoggedIn}>
         <UserProvider>
-          <Notification />
           <Router>
-            <UnreadMessagesProvider isLoggedIn={isLoggedIn}>
               {!isLoggedIn ? (
                 <LoginForm onLoginSuccess={handleLogin} />
               ) : (
@@ -97,7 +77,7 @@ function App() {
                   <CustomSidebar
                     onOpenNotifications={() => setIsNotificationModalOpen(true)}
                     onOpenTasks={() => setIsTaskComponentOpen(true)} // Передаем функцию для открытия задач
-                    onOpenAccount={() => setIsAccountComponentOpen(true)} // Передаем функцию для открытия задач
+                    onOpenAccount={() => setIsAccountComponentOpen(true)}
                   />
                   <div className="page-content">
                     <Routes>
@@ -126,10 +106,9 @@ function App() {
                   />
                 </div>
               )}
-            </UnreadMessagesProvider>
           </Router>
         </UserProvider>
-      </SocketProvider>
+      </AppProvider>
     </SnackbarProvider>
   );
 }
