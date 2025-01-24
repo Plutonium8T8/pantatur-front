@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Bar, Line, Pie, Radar, Doughnut, PolarArea } from 'react-chartjs-2';
+import Cookies from 'js-cookie';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -27,7 +28,69 @@ ChartJS.register(
     RadialLinearScale
 );
 
+const platformColors = {
+    facebook: {
+        background: 'rgba(16, 46, 216, 0.5)', // Facebook's signature blue
+        border: 'rgb(39, 64, 204)',
+    },
+    viber: {
+        background: 'rgba(104, 41, 229, 0.5)', // Viber's purple-blue
+        border: 'rgb(142, 54, 235)',
+    },
+    whatsapp: {
+        background: 'rgba(37, 211, 102, 0.5)', // WhatsApp's green
+        border: 'rgba(37, 211, 102, 1)',
+    },
+    instagram: {
+        background: 'rgba(255, 99, 132, 0.5)', // Instagram's reddish-pink
+        border: 'rgba(255, 99, 132, 1)',
+    },
+    telegram: {
+        background: 'rgba(0, 136, 204, 0.5)', // Telegram's blue
+        border: 'rgba(0, 136, 204, 1)',
+    },
+};
+
+
 const Dashboard = () => {
+    const [statistics, setStatistics] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const fetchStatistics = useCallback(async () => {
+        setIsLoading(true);
+        try {
+            const token = Cookies.get('jwt');
+            const statsResponse = await fetch('https://pandatur-api.com/dashboard/statistics', {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+            });
+
+            if (!statsResponse.ok) throw new Error('Failed to fetch statistics.');
+
+            const statsData = await statsResponse.json();
+            console.log('StatsData:', statsData[0]);
+
+            setStatistics(statsData[0]); // Correctly update the state
+        } catch (error) {
+            console.error('Error fetching statistics:', error);
+            setStatistics([]); // Reset statistics on error
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchStatistics();
+    }, []);
+
+    useEffect(() => {
+        console.log('Updated statistics state:', statistics);
+    }, [statistics]);
+
     const barData = {
         labels: ['Ianuarie', 'Februarie', 'Martie', 'Aprilie', 'Mai'],
         datasets: [
@@ -55,20 +118,20 @@ const Dashboard = () => {
     };
 
     const pieData = {
-        labels: ['În lucru', 'Încheiate cu succes', 'Încheiate fără succes'],
+        labels: statistics.map((stat) => stat.platform)
+            ? statistics.map((stat) => stat.platform)
+            : ['No messages'],
         datasets: [
             {
-                data: [30, 50, 20],
-                backgroundColor: [
-                    'rgba(75, 192, 192, 0.5)',
-                    'rgba(54, 162, 235, 0.5)',
-                    'rgba(255, 99, 132, 0.5)',
-                ],
-                borderColor: [
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 99, 132, 1)',
-                ],
+                data: statistics.length
+                    ? statistics.map((stat) => stat.distinct_clients || 0)
+                    : [1],
+                    backgroundColor: statistics.map(
+                        (stat) => platformColors[stat.platform]?.background || 'rgba(200, 200, 200, 0.5)' // Default gray
+                    ),
+                    borderColor: statistics.map(
+                        (stat) => platformColors[stat.platform]?.border || 'rgba(200, 200, 200, 1)' // Default gray
+                    ),
                 borderWidth: 1,
             },
         ],
@@ -138,9 +201,9 @@ const Dashboard = () => {
                     <h3>Lead-uri active pe săptămână</h3>
                     <Line data={lineData} />
                 </div>
-                <div style={{ marginBottom: '30px' }}>
+                <div className='pie-chart' style={{ marginBottom: '30px' }}>
                     <h3>Statusurile lead-urilor</h3>
-                    <Pie data={pieData} />
+                    <Pie data={pieData}/>
                 </div>
                 <div style={{ marginBottom: '30px' }}>
                     <h3>Evaluare pe departamente</h3>

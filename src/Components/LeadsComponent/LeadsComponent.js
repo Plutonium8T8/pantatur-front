@@ -49,16 +49,17 @@ export const updateTicket = async (updateData) => {
 };
 
 const Leads = (selectClientId) => {
-    const [tickets, setTickets] = useState([]);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [currentTicket, setCurrentTicket] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const [contextMenu, setContextMenu] = useState(null);
-    const contextMenuRef = useRef(null);
-    const socket = useSocket();
-    const { userId } = useUser();
-    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const [tickets, setTickets] = useState([]);
+  const [statistics, setStatistics] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentTicket, setCurrentTicket] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [contextMenu, setContextMenu] = useState(null);
+  const contextMenuRef = useRef(null);
+  const socket = useSocket();
+  const { userId } = useUser();
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const navigate = useNavigate();
 
@@ -68,7 +69,9 @@ const Leads = (selectClientId) => {
     setIsLoading(true);
     try {
       const token = Cookies.get('jwt');
-      const response = await fetch('https://pandatur-api.com/tickets', {
+  
+      // Fetch tickets
+      const ticketsResponse = await fetch('https://pandatur-api.com/tickets', {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -76,13 +79,34 @@ const Leads = (selectClientId) => {
         },
         credentials: 'include',
       });
+  
+      if (!ticketsResponse.ok) throw new Error('Failed to fetch tickets.');
+      const ticketsData = await ticketsResponse.json();
+      setTickets(ticketsData);
+  
+      // Fetch statistics
+      const statsResponse = await fetch('https://pandatur-api.com/tickets/statistics', {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
+  
+      if (!statsResponse.ok) throw new Error('Failed to fetch statistics.');
+      const statsData = await statsResponse.json();
 
-      if (!response.ok) throw new Error('Failed to fetch tickets.');
-
-      const data = await response.json();
-      setTickets(data);
+      console.log('StatsData: ', statsData);
+  
+      if (Array.isArray(statsData)) {
+        setStatistics(statsData); // Ensure statsData is an array
+      } else {
+        setStatistics([]); // Default to empty array if statsData is not an array
+      }
     } catch (error) {
-      console.error('Error fetching tickets:', error);
+      console.error('Error fetching tickets or statistics:', error);
+      setStatistics([]); // Handle errors gracefully
     } finally {
       setIsLoading(false);
     }
@@ -241,54 +265,68 @@ const Leads = (selectClientId) => {
     }
   }, [socket, tickets, enqueueSnackbar, userId, navigate]);
 
-    return (
-        <div className="dashboard-container">
-            <div className="dashboard-header">
-                <div className="header">
-                    <button onClick={openCreateTicketModal} className="button-add-ticket">
-                        {translations['Adaugă lead'][language]}
-                    </button>
-                    <input
-                        type="text"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        placeholder={translations['Caută leaduri'][language]}
-                        className="search-input"
-                    />
-                </div>
-            </div>
-            <div className="container-tickets">
-                {workflowOptions.map((workflow) => (
-                    <WorkflowColumn
-                        key={workflow}
-                        workflow={workflow}
-                        tickets={tickets}
-                        searchTerm={searchTerm}
-                        onUpdateWorkflow={updateTicketWorkflow}
-                        onEditTicket={setCurrentTicket}
-                        onContextMenu={handleContextMenu}
-                    />
-                ))}
-            </div>
-            {isLoading && <SpinnerOverlay />}
-            {contextMenu && (
-                <ContextMenu
-                    contextMenu={contextMenu}
-                    onClose={handleCloseContextMenu}
-                    onEditTicket={setCurrentTicket}
-                    ref={contextMenuRef}
-                />
-            )}
-            {currentTicket && (
-                <TicketModal
-                    ticket={currentTicket}
-                    isOpen={true}
-                    onClose={closeModal}
-                    onSave={fetchTickets} // Reload tickets after saving
-                />
-            )}
+  return (
+    <div className="dashboard-container">
+      <div className="dashboard-header">
+        <div className="header">
+          <button onClick={openCreateTicketModal} className="button-add-ticket">
+            {translations['Adaugă lead'][language]}
+          </button>
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder={translations['Caută leaduri'][language]}
+            className="search-input"
+          />
         </div>
-    );
+      </div>
+
+      {/* Statistics Section */}
+      {/* <div className="statistics-section">
+        <h2>Statistici</h2>
+        <div className="statistics-grid">
+          {statistics &&
+            Object.entries(statistics).map(([key, value]) => (
+              <div key={key} className="stat-item">
+                <span className="stat-value">{value}</span>
+              </div>
+            ))}
+        </div>
+      </div> */}
+
+      <div className="container-tickets">
+        {workflowOptions.map((workflow) => (
+          <WorkflowColumn
+            key={workflow}
+            workflow={workflow}
+            tickets={tickets}
+            searchTerm={searchTerm}
+            onUpdateWorkflow={updateTicketWorkflow}
+            onEditTicket={setCurrentTicket}
+            onContextMenu={handleContextMenu}
+          />
+        ))}
+      </div>
+      {isLoading && <SpinnerOverlay />}
+      {contextMenu && (
+        <ContextMenu
+          contextMenu={contextMenu}
+          onClose={handleCloseContextMenu}
+          onEditTicket={setCurrentTicket}
+          ref={contextMenuRef}
+        />
+      )}
+      {currentTicket && (
+        <TicketModal
+          ticket={currentTicket}
+          isOpen={true}
+          onClose={closeModal}
+          onSave={fetchTickets} // Reload tickets after saving
+        />
+      )}
+    </div>
+  );
 };
 
 export default Leads;
