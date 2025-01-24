@@ -1,6 +1,9 @@
 import React, { forwardRef } from 'react';
+import { translations } from "../utils/translations";
 
 const ContextMenu = forwardRef(({ contextMenu, onEditTicket, onClose }, ref) => {
+  const language = localStorage.getItem('language') || 'RO';
+
   const handleEditClick = () => {
     onEditTicket(contextMenu.ticket); // Вызываем редактирование тикета
     onClose(); // Закрываем меню
@@ -20,8 +23,8 @@ const ContextMenu = forwardRef(({ contextMenu, onEditTicket, onClose }, ref) => 
         borderRadius: '4px',
       }}
     >
-      <button onClick={handleEditClick}>Edit Ticket</button>
-      <button onClick={onClose}>Close</button>
+      <button onClick={handleEditClick}>{translations['Editează'][language]}</button>
+      <button onClick={onClose}>{translations['Închide'][language]}</button>
     </div>
   );
 });

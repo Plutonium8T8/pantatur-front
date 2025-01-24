@@ -120,12 +120,12 @@ const LoginForm = ({ onLoginSuccess }) => {
           />
 
           <div className="button-container">
-            <button onClick={handleSubmit} className="submit-button" disabled={isLoading}>
+            <button onClick={handleSubmit} className="submit-button" id='login-button' disabled={isLoading}>
               {isLoading ? 'Loading...' : isLogin ? 'Login' : 'Register'}
             </button>
 
             <button onClick={handleSwitch} className="switch-button" disabled={isLoading}>
-              Switch to {isLogin ? 'Register' : 'Login'}
+              {isLogin ? 'Register' : 'Login'}
             </button>
           </div>
 

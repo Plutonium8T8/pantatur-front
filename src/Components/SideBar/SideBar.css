@@ -35,7 +35,7 @@
     cursor: pointer;
     transition: background-color 0.3s, transform 0.3s;
     border-radius: 8px; /* Only round the right side */
-    width: 100%;
+    width: 70px;
     aspect-ratio: 1; /* Ensures height matches width */
     justify-content: center;
 }
@@ -76,4 +76,8 @@
     margin-top: auto;
     margin-bottom: 20px; 
     overflow: hidden;
+}
+
+.language-toggle-button{
+    font-size: 32px;
 }

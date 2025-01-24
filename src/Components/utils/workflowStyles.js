@@ -1,12 +1,24 @@
 export const workflowStyles = {
-    Interesat: { backgroundColor: '#ffff88', borderColor: '#1B5E20' },
-    'Apel de intrare': { backgroundColor: '#89C0FE', borderColor: '#388E3C' },
-    'De prelucrat': { backgroundColor: '#ff8f92', borderColor: '#43A047' },
-    'Luat in lucru': { backgroundColor: '#ebffb1', borderColor: '#2E7D32' },
-    'Oferta trimisa': { backgroundColor: '#ffcc66', borderColor: '#2E7D32' },
-    'Aprobat cu client': { backgroundColor: '#ffc8c8', borderColor: '#2E7D32' },
-    'Contract semnat': { backgroundColor: '#ff8f92', borderColor: '#2E7D32' },
-    'Plata primita': { backgroundColor: '#fff000', borderColor: '#2E7D32' },
-    'Contract incheiat': { backgroundColor: '#87f2c0', borderColor: '#2E7D32' },
-  };
+  'Interesat': { backgroundColor: '#ffffcc' }, // Pale Yellow
+  'Apel de intrare': { backgroundColor: '#cde6fc' }, // Pale Blue
+  'De prelucrat': { backgroundColor: '#ffd5d6' }, // Pale Pink-Red
+  'Luat în lucru': { backgroundColor: '#f5ffdc' }, // Pale Lime
+  'Ofertă trimisă': { backgroundColor: '#ffeebb' }, // Pale Orange
+  'Aprobat cu client': { backgroundColor: '#ffe5e5' }, // Pale Peach
+  'Contract semnat': { backgroundColor: '#ffd5d6' }, // Pale Pink-Red (same as 'De prelucrat')
+  'Plată primită': { backgroundColor: '#fffacc' }, // Pale Yellow-Gold
+  'Contract încheiat': { backgroundColor: '#cdeedd' }, // Pale Mint
+};
+
+export const workflowBrightStyles = {
+  'Interesat': { backgroundColor: '#ffff99' }, // Brighter Yellow
+  'Apel de intrare': { backgroundColor: '#a3d4fc' }, // Brighter Blue
+  'De prelucrat': { backgroundColor: '#ffb3b4' }, // Brighter Pink-Red
+  'Luat în lucru': { backgroundColor: '#eaffb3' }, // Brighter Lime
+  'Ofertă trimisă': { backgroundColor: '#ffd480' }, // Brighter Orange
+  'Aprobat cu client': { backgroundColor: '#ffc1c1' }, // Brighter Peach
+  'Contract semnat': { backgroundColor: '#ffb3b4' }, // Brighter Pink-Red (same as 'De prelucrat')
+  'Plată primită': { backgroundColor: '#ffea80' }, // Brighter Yellow-Gold
+  'Contract încheiat': { backgroundColor: '#a8e6c1' }, // Brighter Mint
+};
   

@@ -3,6 +3,7 @@ import Cookies from "js-cookie";
 import { useUser } from "../../UserContext";
 import "./SlideInModal.css";
 import { FaTimes, FaBell } from "react-icons/fa";
+import { translations } from "../utils/translations";
 
 const NotificationModal = ({ isOpen, onClose }) => {
     const [notifications, setNotifications] = useState([]);
@@ -10,6 +11,8 @@ const NotificationModal = ({ isOpen, onClose }) => {
     const [notificationDate, setNotificationDate] = useState("");
     const { userId } = useUser();
     const [error, setError] = useState(null);
+
+    const language = localStorage.getItem('language') || 'RO';
 
     useEffect(() => {
         if (isOpen) {
@@ -54,12 +57,12 @@ const NotificationModal = ({ isOpen, onClose }) => {
                     time: notificationDate,
                     description: notificationContent,
                     client_id: userId,
-                    status: false, // Новое уведомление создаётся как "непрочитанное"
+                    status: false, 
                 }),
             });
             if (response.ok) {
-                fetchNotifications(); // Обновляем список уведомлений
-                setNotificationContent(""); // Очищаем поля формы
+                fetchNotifications();
+                setNotificationContent("");
                 setNotificationDate("");
             } else {
                 console.error(`Ошибка создания уведомления: ${response.status}`);
@@ -83,7 +86,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
                 }),
             });
             if (response.ok) {
-                setNotifications([]); // Clear the notifications from state
+                setNotifications([]);
             } else {
                 console.error(`Ошибка удаления уведомлений: ${response.status}`);
             }
@@ -92,7 +95,6 @@ const NotificationModal = ({ isOpen, onClose }) => {
         }
     };    
 
-    // Обновление статуса уведомления на "Seen" (PATCH)
     const handleMarkAsSeen = async (id) => {
         try {
             const token = Cookies.get("jwt");
@@ -104,11 +106,11 @@ const NotificationModal = ({ isOpen, onClose }) => {
                 },
                 body: JSON.stringify({
                     id: id,
-                    status: true, // Обновляем статус на "Seen"
+                    status: true,
                 }),
             });
             if (response.ok) {
-                fetchNotifications(); // Обновляем список уведомлений
+                fetchNotifications(); 
             } else {
                 console.error(`Ошибка обновления статуса: ${response.status}`);
             }
@@ -129,14 +131,14 @@ const NotificationModal = ({ isOpen, onClose }) => {
             >
                 <header className="modal-header">
                     <h2>
-                        <FaBell /> Notifications
+                        <FaBell /> {translations['Notificări'][language][0]}
                     </h2>
                 </header>
                 {error && <div className="error-message">{error}</div>}
 
                 <form className="notification-form" onSubmit={handleNotificationSubmit}>
                     <div className="input-group">
-                        <label>Date and Time</label>
+                        <label>{translations['Dată și oră'][language]}</label>
                         <input
                             type="datetime-local"
                             value={notificationDate}
@@ -145,11 +147,11 @@ const NotificationModal = ({ isOpen, onClose }) => {
                         />
                     </div>
                     <div className="input-group">
-                        <label>Description</label>
+                        <label>{translations['Descriere'][language]}</label>
                         <textarea
                             value={notificationContent}
                             onChange={(e) => setNotificationContent(e.target.value)}
-                            placeholder="Enter notification description"
+                            placeholder={translations['Introduceți descrierea notificării'][language]}
                             rows="4"
                             required
                             className="data-time-notifi"
@@ -157,14 +159,14 @@ const NotificationModal = ({ isOpen, onClose }) => {
                     </div>
                     <div className="button-container">
                         <button className="submit-button">
-                            Add Notification
+                            {translations['Adaugă notificare'][language]}
                         </button>
                         <button
                             className="clear-button"
                             type="button"
                             onClick={handleClearAllNotifications}
                         >
-                            Clear All
+                            {translations['Șterge toate'][language]}
                         </button>
                     </div>
 
@@ -172,7 +174,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
 
                 <ul className="notification-list">
                     {notifications.length === 0 ? (
-                        <li className="no-notifications">No notifications available</li>
+                        <li className="no-notifications">{translations['Nici o notificare'][language]}</li>
                     ) : (
                         notifications.map((notification) => (
                             <li
@@ -189,14 +191,14 @@ const NotificationModal = ({ isOpen, onClose }) => {
                                     </div>
                                     <div className="action-group">
                                         <p className={`status ${notification.status ? "seen" : "unseen"}`}>
-                                            {notification.status ? "Seen" : "Unseen"}
+                                            {notification.status ? translations['Văzut'][language] : translations['Nevăzut'][language]}
                                         </p>
                                         {!notification.status && (
                                             <button
                                                 className="mark-as-seen"
                                                 onClick={() => handleMarkAsSeen(notification.id)}
                                             >
-                                                Mark as Seen
+                                                {translations['Marchează'][language]}
                                             </button>
                                         )}
                                     </div>

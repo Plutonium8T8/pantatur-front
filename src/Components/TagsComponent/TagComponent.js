@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import './TagInput.css';
+import { FaTrash } from 'react-icons/fa';
+import { translations } from "../utils/translations";
 
 const TagInput = ({ initialTags = [], onChange }) => {
+    const language = localStorage.getItem('language') || 'RO';
+
     const [tags, setTags] = useState(
         Array.isArray(initialTags) ? initialTags.filter((tag) => tag.trim() !== '') : []
     );
@@ -11,17 +15,15 @@ const TagInput = ({ initialTags = [], onChange }) => {
     const [filteredSuggestions, setFilteredSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
 
-    // Загрузка сохраненных тегов из localStorage при монтировании
     useEffect(() => {
         const savedSuggestions = localStorage.getItem('tagsSuggestions');
         if (savedSuggestions) {
             setSuggestions(JSON.parse(savedSuggestions));
         } else {
-            setSuggestions(['Tag1', 'Tag2', 'Tag3']); // Начальные теги по умолчанию
+            setSuggestions([]);
         }
     }, []);
 
-    // Сохранение тегов в localStorage при их обновлении
     useEffect(() => {
         localStorage.setItem('tagsSuggestions', JSON.stringify(suggestions));
     }, [suggestions]);
@@ -38,19 +40,19 @@ const TagInput = ({ initialTags = [], onChange }) => {
     };
 
     const handleFocus = () => {
-        setFilteredSuggestions(suggestions); // Показываем весь список при фокусе
+        setFilteredSuggestions(suggestions);
         setShowSuggestions(true);
     };
 
     const handleBlur = () => {
-        setTimeout(() => setShowSuggestions(false), 200); // Задержка для клика на элемент
+        setTimeout(() => setShowSuggestions(false), 200); // Delay for click handling
     };
 
     const handleAddTag = (tag) => {
         if (tag.trim() && !tags.includes(tag)) {
             const updatedTags = [...tags, tag];
             setTags(updatedTags);
-            onChange(updatedTags); // Передаем обновленный массив тегов
+            onChange(updatedTags);
         }
         setInputValue('');
         setShowSuggestions(false);
@@ -59,7 +61,7 @@ const TagInput = ({ initialTags = [], onChange }) => {
     const handleSaveTag = () => {
         if (inputValue.trim() && !suggestions.includes(inputValue)) {
             const updatedSuggestions = [...suggestions, inputValue];
-            setSuggestions(updatedSuggestions); // Сохраняем новый тег в список доступных
+            setSuggestions(updatedSuggestions);
         }
         setInputValue('');
         setShowSuggestions(false);
@@ -68,54 +70,59 @@ const TagInput = ({ initialTags = [], onChange }) => {
     const handleRemoveTag = (tag) => {
         const updatedTags = tags.filter((t) => t !== tag);
         setTags(updatedTags);
-        onChange(updatedTags); // Передаем обновленный массив тегов
+        onChange(updatedTags);
     };
 
     return (
         <div className="tag-input-container">
-            <div className="tags-container">
+            <div className="tags-display">
+            {tags.length == 0 && (<div>{translations['Nici un tag selectat'][language]}</div>)}
                 {tags.map((tag) => (
                     <div key={tag} className="tag-item">
-                        {tag}
+                        <div className='tag-text'>
+                            {tag}
+                        </div>
                         <button className="remove-tag-button" onClick={() => handleRemoveTag(tag)}>
-                            x
+                            <FaTrash />
                         </button>
                     </div>
                 ))}
             </div>
-            <input
-                type="text"
-                value={inputValue}
-                onChange={handleInputChange}
-                onFocus={handleFocus} // Показываем список тегов при фокусе
-                onBlur={handleBlur} // Скрываем список при потере фокуса
-                placeholder="Introduce tag..."
-                className="tag-input"
-            />
-            {showSuggestions && filteredSuggestions.length > 0 && (
-                <ul className="suggestions-list">
-                    {filteredSuggestions.map((suggestion) => (
-                        <li
-                            key={suggestion}
-                            onClick={() => handleAddTag(suggestion)}
-                            className="suggestion-item"
-                        >
-                            {suggestion}
-                        </li>
-                    ))}
-                </ul>
-            )}
-            <div className="tag-buttons-container">
-                <button onClick={handleSaveTag} className="save-tag-button">
-                    Salveaza tag
+            <div className="input-group">
+                <input
+                    type="text"
+                    value={inputValue}
+                    onChange={handleInputChange}
+                    onFocus={handleFocus}
+                    onBlur={handleBlur}
+                    placeholder={translations['Introduce tag'][language]}
+                    className="tag-input"
+                />
+                {showSuggestions && filteredSuggestions.length > 0 && (
+                    <ul className="suggestions-list">
+                        {filteredSuggestions.map((suggestion) => (
+                            <li
+                                key={suggestion}
+                                onClick={() => handleAddTag(suggestion)}
+                                className="suggestion-item"
+                            >
+                                {suggestion}
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </div>
+            <div className="button-container">
+                <button onClick={handleSaveTag} className="submit-button">
+                {translations['Adaugă tag'][language]}
                 </button>
                 <button
                     onClick={() => {
                         if (inputValue.trim()) handleAddTag(inputValue);
                     }}
-                    className="add-tag-button"
+                    className="submit-button"
                 >
-                    Adauga tag
+                    {translations['Salvează tag'][language]}
                 </button>
             </div>
         </div>

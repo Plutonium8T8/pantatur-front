@@ -8,18 +8,19 @@ import CustomSidebar from './Components/SideBar/SideBar';
 import ChatComponent from './Components/ChatComponent/chat';
 import Cookies from 'js-cookie';
 import { AppProvider } from './AppContext'; // Импорт AppProvider
-import UserProfile from './Components/UserPage/UserPage';
 import { SnackbarProvider } from 'notistack';
 import NotificationModal from './Components/SlideInComponent/NotificationModal'; // Модальное окно уведомлений
-import TaskComponent from './Components/SlideInComponent/TaskComponent'; // Модальное окно задач
+import TaskComponent from './Components/SlideInComponent/TaskComponent'; // Используем TaskModal вместо TaskComponent
 import AdminPanel from './Components/AdminPanelComponent/AdminPanel';
 import Dashboard from './Components/DashboardComponent/Dashboard';
+import UserPage from './Components/UserPage/UserPage';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false); // Состояние модального окна уведомлений
   const [isTaskComponentOpen, setIsTaskComponentOpen] = useState(false); // Состояние модального окна задач
+  const [isAccountComponentOpen, setIsAccountComponentOpen] = useState(false); // Состояние модального окна задач
 
   // Проверка сессии
   useEffect(() => {
@@ -65,45 +66,46 @@ function App() {
     <SnackbarProvider
       autoHideDuration={5000}
       maxSnack={5}
-      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-    >
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
       <AppProvider isLoggedIn={isLoggedIn}>
         <UserProvider>
           <Router>
-            {!isLoggedIn ? (
-              <LoginForm onLoginSuccess={handleLogin} />
-            ) : (
-              <div className="app-container">
-                <CustomSidebar
-                  onOpenNotifications={() => setIsNotificationModalOpen(true)}
-                  onOpenTasks={() => setIsTaskComponentOpen(true)} // Передаем функцию для открытия задач
-                />
-                <div className="page-content">
-                  <Routes>
-                    <Route path="/account" element={<UserProfile />} />
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/" element={<Navigate to="/leads" />} />
-                    <Route path="/leads" element={<Leads />} />
-                    <Route
-                      path="/chat/:clientId?"
-                      element={<ChatComponent />}
-                    />
-                    <Route path="/admin-panel" element={<AdminPanel />} />
-                    <Route path="*" element={<div>Страница в разработке</div>} />
-                  </Routes>
+              {!isLoggedIn ? (
+                <LoginForm onLoginSuccess={handleLogin} />
+              ) : (
+                <div className="app-container">
+                  <CustomSidebar
+                    onOpenNotifications={() => setIsNotificationModalOpen(true)}
+                    onOpenTasks={() => setIsTaskComponentOpen(true)} // Передаем функцию для открытия задач
+                    onOpenAccount={() => setIsAccountComponentOpen(true)}
+                  />
+                  <div className="page-content">
+                    <Routes>
+                      <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/" element={<Navigate to="/leads" />} />
+                      <Route path="/leads" element={<Leads />} />
+                      <Route
+                        path="/chat/:clientId?"
+                        element={<ChatComponent />}
+                      />
+                      <Route path="/admin-panel" element={<AdminPanel />} />
+                      <Route path="*" element={<div>Страница в разработке</div>} />
+                    </Routes>
+                  </div>
+                  <UserPage
+                    isOpen={isAccountComponentOpen}
+                    onClose={() => setIsAccountComponentOpen(false)}
+                  />
+                  <NotificationModal
+                    isOpen={isNotificationModalOpen}
+                    onClose={() => setIsNotificationModalOpen(false)}
+                  />
+                  <TaskComponent
+                    isOpen={isTaskComponentOpen}
+                    onClose={() => setIsTaskComponentOpen(false)}
+                  />
                 </div>
-                {/* Модальное окно уведомлений */}
-                <NotificationModal
-                  isOpen={isNotificationModalOpen}
-                  onClose={() => setIsNotificationModalOpen(false)}
-                />
-                {/* Модальное окно задач */}
-                <TaskComponent
-                  isOpen={isTaskComponentOpen}
-                  onClose={() => setIsTaskComponentOpen(false)}
-                />
-              </div>
-            )}
+              )}
           </Router>
         </UserProvider>
       </AppProvider>

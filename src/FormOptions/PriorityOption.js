@@ -1,6 +1,6 @@
 export const priorityOptions = [
-    "low",
-    "medium",
-    "high",
-    "critical"
+    "joasă",
+    "medie",
+    "înaltă",
+    "critică"
 ]

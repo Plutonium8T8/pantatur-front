@@ -1,36 +1,61 @@
 import React from 'react';
 import TicketCard from './TicketCardComponent';
-import { workflowStyles } from '../utils/workflowStyles';
+import { workflowStyles, workflowBrightStyles } from '../utils/workflowStyles';
+import { translations } from "../utils/translations";
 
 const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket, onContextMenu, onUpdateWorkflow }) => {
+    const language = localStorage.getItem('language') || 'RO';
+
     const parseTags = (tags) => {
         if (Array.isArray(tags)) {
-            return tags; // Если это массив, возвращаем как есть
+            return tags;
         }
         if (typeof tags === 'string' && tags.startsWith('{') && tags.endsWith('}')) {
-            const content = tags.slice(1, -1).trim(); // Убираем фигурные скобки и пробелы
+            const content = tags.slice(1, -1).trim();
             if (content === '') {
-                return []; // Если содержимое пустое, возвращаем пустой массив
+                return [];
             }
-            return content.split(',').map(tag => tag.trim()); // Разделяем и обрезаем пробелы
+            return content.split(',').map(tag => tag.trim());
         }
-        return []; // Если формат неизвестен, возвращаем пустой массив
+        return [];
+    };
+
+    const priorityOrder = {
+        'joasă': 1,
+        'medie': 2,
+        'înaltă': 3,
+        'critică': 4,
     };
 
     const filteredTickets = tickets
-        .filter((ticket) => ticket.workflow === workflow) // Фильтр по workflow
+        .filter((ticket) => ticket.workflow === workflow)
         .filter((ticket) =>
-            ticket.contact?.toLowerCase().includes(searchTerm.toLowerCase()) || // Фильтр по contact
-            ticket.client_id?.toString().includes(searchTerm) || // Фильтр по client_id
-            parseTags(ticket.tags).some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase())) || // Фильтр по tags
-            searchTerm.trim() === '' // Если searchTerm пустой, показываем все
-        );
+            ticket.contact?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            ticket.client_id?.toString().includes(searchTerm) ||
+            parseTags(ticket.tags).some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            searchTerm.trim() === ''
+        ).sort((a, b) => {
+            const priorityDiff = (priorityOrder[b.priority] || 5) - (priorityOrder[a.priority] || 5);
+            if (priorityDiff !== 0) return priorityDiff;
+        
+            const dateA = a.last_interaction_date ? Date.parse(a.last_interaction_date) : Number.POSITIVE_INFINITY;
+            const dateB = b.last_interaction_date ? Date.parse(b.last_interaction_date) : Number.POSITIVE_INFINITY;
+        
+            if (isNaN(dateA) && isNaN(dateB)) return 0;
+            if (isNaN(dateA)) return -1;
+            if (isNaN(dateB)) return 1;
+        
+            return dateB - dateA;
+        });
+        
+        
+        
 
     const handleDrop = (e) => {
         e.preventDefault();
         const clientId = e.dataTransfer.getData('clientId');
         if (clientId) {
-            onUpdateWorkflow(clientId, workflow); // Update workflow using parent handler
+            onUpdateWorkflow(clientId, workflow);
         }
     };
 
@@ -38,14 +63,28 @@ const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket, onContext
         <div
             className="colone-ticket"
             onDrop={handleDrop}
-            onDragOver={(e) => e.preventDefault()} // Prevent default to allow drop
+            onDragOver={(e) => e.preventDefault()}
             style={{
                 backgroundColor: workflowStyles[workflow]?.backgroundColor || '',
             }}
         >
 
-            <div className="name-workflow">
-                {workflow} ({filteredTickets.length})
+            <div className="name-workflow"
+                style={{
+                    backgroundColor: workflowBrightStyles[workflow]?.backgroundColor || '',
+                }}>
+                {translations[workflow][language]}
+
+                <div className="ticket-counter-display">
+                    <div className="ticket-counter ticket-counter-red">
+                        {filteredTickets.filter((ticket) => ticket.creation_date === ticket.last_interaction_date).length}
+                    </div>
+                    /
+                    <div className="ticket-counter ticket-counter-green">
+                        {filteredTickets.length}
+                    </div>
+                </div>
+
             </div>
             <div className="scrollable-list">
                 {filteredTickets.map((ticket) => (

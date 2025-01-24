@@ -2,10 +2,10 @@ export const workflowOptions = [
     "Interesat",
     "Apel de intrare",
     "De prelucrat",
-    "Luat in lucru",
-    "Oferta trimisa",
+    "Luat în lucru",
+    "Ofertă trimisă",
     "Aprobat cu client",
     "Contract semnat",
-    "Plata primita",
-    "Contract incheiat"
+    "Plată primită",
+    "Contract încheiat"
 ]

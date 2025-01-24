@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import { useUser } from "../../UserContext";
 import "./SlideInModal.css";
+import { translations } from "../utils/translations";
 
 const TaskModal = ({ isOpen, onClose }) => {
     const [tasks, setTasks] = useState([]);
@@ -11,6 +12,8 @@ const TaskModal = ({ isOpen, onClose }) => {
     const [ticketId, setTicketId] = useState(null);
     const { userId } = useUser();
     const [error, setError] = useState(null);
+
+    const language = localStorage.getItem('language') || 'RO';
 
     useEffect(() => {
         if (isOpen) {
@@ -115,13 +118,13 @@ const TaskModal = ({ isOpen, onClose }) => {
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-container" onClick={(e) => e.stopPropagation()}>
                 <header className="modal-header">
-                    <h2>Tasks</h2>
+                    <h2>{translations['Taskuri'][language]}</h2>
                 </header>
                 {error && <div className="error-message">{error}</div>}
 
                 <form className="notification-form" onSubmit={handleTaskSubmit}>
                     <div className="input-group">
-                        <label htmlFor="ticket-select">Ticket ID</label>
+                        <label htmlFor="ticket-select">{translations['Lead'][language]} ID</label>
                         <select
                             id="ticket-select"
                             className="task-select"
@@ -130,7 +133,7 @@ const TaskModal = ({ isOpen, onClose }) => {
                             required
                         >
                             <option value="" disabled>
-                                {tickets.length === 0 ? "Loading tickets..." : "Choose ticket ID"}
+                                {tickets.length === 0 ? translations['Încărcăm leadurile'][language] : translations['Alege ID lead'][language]}
                             </option>
                             {tickets.map((ticket) => (
                                 <option key={ticket.id} value={ticket.id}>
@@ -140,7 +143,7 @@ const TaskModal = ({ isOpen, onClose }) => {
                         </select>
                     </div>
                     <div className="input-group">
-                        <label htmlFor="task-date">Task Date</label>
+                        <label htmlFor="task-date">{translations['Dată și oră'][language]}</label>
                         <input
                             id="task-date"
                             type="datetime-local"
@@ -151,34 +154,34 @@ const TaskModal = ({ isOpen, onClose }) => {
                         />
                     </div>
                     <div className="input-group">
-                        <label htmlFor="task-content">Task Description</label>
+                        <label htmlFor="task-content">{translations['Descriere task'][language]}</label>
                         <textarea
                             id="task-content"
                             className="task-textarea"
                             value={taskContent}
                             onChange={(e) => setTaskContent(e.target.value)}
-                            placeholder="Task description"
+                            placeholder={translations['Descriere task'][language]}
                             rows="4"
                             required
                         />
                     </div>
                     <div className="button-container">
                         <button className="submit-button" type="submit">
-                            Add Task
+                            {translations['Adaugă task'][language]}
                         </button>
                         <button
                             className="clear-button"
                             type="button"
                             onClick={handleClearAllTasks}
                         >
-                            Clear All
+                            {translations['Șterge toate'][language]}
                         </button>
                     </div>
                 </form>
 
                 <ul className="notification-list">
                     {tasks.length === 0 ? (
-                        <li className="no-notifications">No tasks available</li>
+                        <li className="no-notifications">{translations['Nici un task'][language]}</li>
                     ) : (
                         tasks.map((task) => (
                             <li key={task.id} className="notification-item">
@@ -188,7 +191,7 @@ const TaskModal = ({ isOpen, onClose }) => {
                                             <strong>ID:</strong> {task.id}
                                         </p>
                                         <p className="description">
-                                            <strong>Description:</strong> {task.description}
+                                            <strong>{translations['Descriere'][language]}:</strong> {task.description}
                                         </p>
                                         <p className="time">{new Date(task.time).toLocaleString()}</p>
                                     </div>
