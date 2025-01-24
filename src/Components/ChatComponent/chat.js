@@ -226,7 +226,7 @@ const ChatComponent = ({ }) => {
         if (event.key === 'Enter' && !event.shiftKey) {
             event.preventDefault(); // Предотвращаем переход на новую строку
             if (editMessageId) {
-                handleSave(); // Сохраняем изменения, если редактируем сообщение
+                // handleSave(); // Сохраняем изменения, если редактируем сообщение
             } else {
                 handleClick(selectClientId); // Отправляем новое сообщение
             }
@@ -270,8 +270,8 @@ const ChatComponent = ({ }) => {
                 console.warn('WebSocket не подключен или закрыт.');
             }
 
-            // Локальное обновление сообщений как прочитанных
             markMessagesAsRead(clientId);
+            // Локальное обновление сообщений как прочитанных
         } catch (error) {
             console.error('Ошибка при отправке события о прочтении:', error);
         }
@@ -304,22 +304,22 @@ const ChatComponent = ({ }) => {
         setMenuMessageId(menuMessageId === msgId ? null : msgId);
     };
 
-    const handleDelete = (msgId) => {
-        setMenuMessageId(null);
-        if (socket && socket.readyState === WebSocket.OPEN) {
-            socket.send(
-                JSON.stringify({
-                    type: 'delete',
-                    data: {
-                        message_id: msgId,
-                        client_id: userId,
-                    },
-                })
-            );
-        } else {
-            alert('Соединение с WebSocket отсутствует');
-        }
-    };
+    // const handleDelete = (msgId) => {
+    //     setMenuMessageId(null);
+    //     if (socket && socket.readyState === WebSocket.OPEN) {
+    //         socket.send(
+    //             JSON.stringify({
+    //                 type: 'delete',
+    //                 data: {
+    //                     message_id: msgId,
+    //                     client_id: userId,
+    //                 },
+    //             })
+    //         );
+    //     } else {
+    //         alert('Соединение с WebSocket отсутствует');
+    //     }
+    // };
 
     const handleEdit = (msg) => {
         setMenuMessageId(null);
@@ -327,34 +327,34 @@ const ChatComponent = ({ }) => {
         setManagerMessage(msg.message); // Устанавливаем текст сообщения в textarea
     };
 
-    const handleSave = () => {
-        if (managerMessage.trim() === '') {
-            alert('Сообщение не может быть пустым');
-            return;
-        }
+    // const handleSave = () => {
+    //     if (managerMessage.trim() === '') {
+    //         alert('Сообщение не может быть пустым');
+    //         return;
+    //     }
 
-        if (socket && socket.readyState === WebSocket.OPEN) {
-            const payload = {
-                type: 'edit',
-                data: {
-                    message_id: editMessageId, // Используется правильный идентификатор сообщения
-                    sender_id: userId,
-                    new_text: managerMessage,
-                    edited_at: new Date().toISOString(),
-                },
-            };
+    //     if (socket && socket.readyState === WebSocket.OPEN) {
+    //         const payload = {
+    //             type: 'edit',
+    //             data: {
+    //                 message_id: editMessageId, // Используется правильный идентификатор сообщения
+    //                 sender_id: userId,
+    //                 new_text: managerMessage,
+    //                 edited_at: new Date().toISOString(),
+    //             },
+    //         };
 
-            try {
-                socket.send(JSON.stringify(payload));
-                setEditMessageId(null); // Сбрасываем состояние редактирования
-                setManagerMessage(''); // Очищаем textarea
-            } catch (error) {
-                console.error('Ошибка при сохранении:', error);
-            }
-        } else {
-            alert('WebSocket не подключен');
-        }
-    };
+    //         try {
+    //             socket.send(JSON.stringify(payload));
+    //             setEditMessageId(null); // Сбрасываем состояние редактирования
+    //             setManagerMessage(''); // Очищаем textarea
+    //         } catch (error) {
+    //             console.error('Ошибка при сохранении:', error);
+    //         }
+    //     } else {
+    //         alert('WebSocket не подключен');
+    //     }
+    // };
 
     const handleCancel = () => {
         setEditMessageId(null);
@@ -1071,7 +1071,8 @@ const ChatComponent = ({ }) => {
                         <Icon
                             name={"button-send"}
                             className="send-button"
-                            onClick={editMessageId ? handleSave : handleClick}
+                            onClick={handleClick}
+                            // onClick={editMessageId ? handleSave : handleClick}
                             disabled={!selectClientId}
                         />
                         <input

@@ -256,7 +256,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         break;
       }
       case 'ticket': {
-        console.log("пришел тикет");
+        console.log("пришел тикет",message.data);
         // Получаем тикеты
         fetchTickets().then((tickets) => {
           const ticketIds = tickets.map((ticket) => ticket.client_id); // Извлекаем client_id
