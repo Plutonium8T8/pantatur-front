@@ -7,11 +7,26 @@ import TagInput from '../../TagsComponent/TagComponent';
 import { useUser } from '../../../UserContext';
 import Cookies from 'js-cookie';
 import { translations } from "../../utils/translations";
+import { useAppContext } from '../../../AppContext'; // Используем AppContext для updateTicket
 
 const TicketModal = ({ ticket, onClose, onSave }) => {
   const modalRef = useRef(null);
 
   const language = localStorage.getItem('language') || 'RO';
+
+  const parseTags = (tags) => {
+    if (Array.isArray(tags)) {
+      return tags.filter((tag) => tag.trim() !== '');
+    }
+    if (typeof tags === 'string' && tags.startsWith('{') && tags.endsWith('}')) {
+      return tags
+        .slice(1, -1)
+        .split(',')
+        .map((tag) => tag.trim())
+        .filter((tag) => tag !== '');
+    }
+    return [];
+  };
 
   useEffect(() => {
     const fetchTicketData = async () => {
