@@ -22,7 +22,30 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   const ticketsRef = useRef(tickets);
   const [unreadMessages, setUnreadMessages] = useState(new Map()); // Оптимизированное хранение непрочитанных сообщений
 
-  // Инициализация WebSocket
+  useEffect(() => {
+    let pingInterval;
+
+    if (socketRef.current) {
+      // Отправка пинга через каждые 4 минуты
+      pingInterval = setInterval(() => {
+        if (socketRef.current.readyState === WebSocket.OPEN) {
+          const pingMessage = JSON.stringify({ type: 'ping' });
+          socketRef.current.send(pingMessage);
+        }
+      }, 5000); // Пинг каждые 4 минуты
+
+      // Очистка интервала при размонтировании компонента или закрытии сокета
+      return () => {
+        clearInterval(pingInterval);
+        if (socketRef.current) {
+          socketRef.current.onmessage = null; // Очищаем обработчик сообщений
+        }
+      };
+    }
+
+    return () => { }; // Очистка, если сокет не подключен
+  }, []); // useEffect без зависимости от socket, поскольку socketRef.current всегда актуален
+
   // Инициализация WebSocket и подключение к чат-румам при логине
   useEffect(() => {
     if (!isLoggedIn) {
@@ -354,6 +377,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         break;
       }
       case 'pong':
+        console.log("пришел понг");
         break;
       default:
         console.warn('Неизвестный тип сообщения:', message.type);
