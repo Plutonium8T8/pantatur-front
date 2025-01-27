@@ -163,7 +163,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         console.warn('Нет токена. Пропускаем загрузку тикетов.');
         return [];
       }
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const response = await fetch('https://pandatur-api.com/tickets', {
         method: 'GET',
@@ -188,6 +188,46 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     } catch (error) {
       console.error('Ошибка при загрузке тикетов:', error);
       return [];
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchSingleTicket = async (clientId) => {
+    try {
+      setIsLoading(true);
+      const token = Cookies.get('jwt');
+
+      if (!token) {
+        console.warn('Нет токена. Пропускаем загрузку тикета.');
+        return null;
+      }
+
+      const response = await fetch(`https://pandatur-api.com/tickets/${clientId}`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        throw new Error(`Ошибка при получении тикета. Код статуса: ${response.status}`);
+      }
+
+      const ticket = await response.json();
+      console.log("Загруженный тикет:", ticket);
+
+      // Обновляем тикет в состоянии (если нужно)
+      setTickets((prevTickets) =>
+        prevTickets.map((t) => (t.client_id === clientId ? ticket : t))
+      );
+
+      return ticket; // Возвращаем полученный тикет
+    } catch (error) {
+      console.error('Ошибка при загрузке тикета:', error);
+      return null;
     } finally {
       setIsLoading(false);
     }
@@ -350,7 +390,6 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         break;
       }
       case 'ticket': {
-        fetchTickets();
         console.log("Пришел тикет:", message.data);
 
         // Извлекаем client_id из сообщения
@@ -360,6 +399,9 @@ export const AppProvider = ({ children, isLoggedIn }) => {
           console.warn("Не удалось извлечь client_id из сообщения типа 'ticket'.");
           break;
         }
+
+        // Запрашиваем тикет по client_id
+        fetchSingleTicket(clientId);
 
         const socketInstance = socketRef.current; // Используем socketRef.current
         if (socketInstance && socketInstance.readyState === WebSocket.OPEN) {

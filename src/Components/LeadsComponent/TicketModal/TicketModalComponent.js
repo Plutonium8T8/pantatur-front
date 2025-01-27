@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import { FaUser, FaTrash } from 'react-icons/fa';
 import './TicketModalComponent.css';
 import Priority from '../../PriorityComponent/PriorityComponent';
@@ -7,12 +7,15 @@ import TagInput from '../../TagsComponent/TagComponent';
 import { useUser } from '../../../UserContext';
 import Cookies from 'js-cookie';
 import { translations } from "../../utils/translations";
-import { useAppContext } from '../../../AppContext'; // Используем AppContext для updateTicket
+import { useAppContext } from '../../../AppContext'; // Используем AppContext для работы с tickets
 
 const TicketModal = ({ ticket, onClose, onSave }) => {
   const modalRef = useRef(null);
 
   const language = localStorage.getItem('language') || 'RO';
+
+  const { tickets, updateTicket } = useAppContext(); // Берём tickets из AppContext
+  const { userId } = useUser();
 
   const parseTags = (tags) => {
     if (Array.isArray(tags)) {
@@ -28,47 +31,26 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
     return [];
   };
 
-  useEffect(() => {
-    const fetchTicketData = async () => {
-      if (ticket?.client_id) {
-        try {
-          const token = Cookies.get('jwt');
-          const response = await fetch(`https://pandatur-api.com/tickets/${ticket.client_id}`, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-          });
-
-          if (!response.ok) throw new Error('Failed to load ticket data');
-
-          const result = await response.json();
-          setEditedTicket({
-            ...result,
-            tags: parseTags(result.tags), // Parse tags if necessary
-          });
-        } catch (error) {
-          console.error('Error fetching ticket data:', error);
-        }
-      } else {
-        setEditedTicket({
-          ...ticket,
-          tags: [],
-        });
-      }
+  const initializeTicket = (ticket) => {
+    const defaultTicket = {
+      contact: '',
+      description: '',
+      tags: [],
+      priority: '',
+      workflow: '',
     };
 
-    fetchTicketData();
-  }, [ticket]);
+    return {
+      ...defaultTicket,
+      ...ticket,
+      tags: parseTags(ticket?.tags),
+    };
+  };
 
-  const [editedTicket, setEditedTicket] = useState({
-    ...ticket,
-    tags: useMemo(() => parseTags(ticket?.tags), [ticket?.tags]),
+  const [editedTicket, setEditedTicket] = useState(() => {
+    const existingTicket = tickets.find((t) => t.client_id === ticket?.client_id);
+    return initializeTicket(existingTicket || ticket);
   });
-
-  const { userId } = useUser();
-  const { updateTicket, fetchTickets } = useAppContext(); // Получаем updateTicket из AppContext
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -125,8 +107,6 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
     }
   };
 
-  if (!editedTicket) return null;
-
   const deleteTicketById = async () => {
     try {
       const token = Cookies.get('jwt');
@@ -144,13 +124,14 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
       }
 
       onClose();
-      fetchTickets();
 
       return await response.json();
     } catch (error) {
       console.error('Error:', error);
     }
   };
+
+  if (!editedTicket) return null;
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -169,8 +150,8 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
             <label>{translations['Contact'][language]}:</label>
             <input
               type="text"
-              name="contact" // Должно быть "contact", а не "name"
-              value={editedTicket.contact || ''} // Защита от undefined
+              name="contact"
+              value={editedTicket.contact || ''}
               onChange={handleInputChange}
               placeholder={translations['Contact'][language]}
             />
@@ -183,7 +164,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
             <label>{translations['Descriere'][language]}:</label>
             <textarea
               name="description"
-              value={editedTicket.description}
+              value={editedTicket.description || ''} // Используем пустую строку, если значение null или undefined
               onChange={handleInputChange}
               placeholder={translations['Adaugă descriere lead'][language]}
             />

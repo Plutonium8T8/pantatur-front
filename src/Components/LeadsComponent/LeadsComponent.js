@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import { useAppContext } from '../../AppContext'; // Подключение AppContext
 import { priorityOptions } from '../../FormOptions/PriorityOption';
 import { workflowOptions } from '../../FormOptions/WorkFlowOption';
@@ -10,25 +10,34 @@ import '../../App.css';
 import '../SnackBarComponent/SnackBarComponent.css';
 
 const Leads = () => {
-  const { tickets, isLoading, setTickets, updateTicket } = useAppContext(); // Данные из AppContext
+  const { tickets, isLoading, setTickets, updateTicket, fetchSingleTicket } = useAppContext(); // Данные из AppContext
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentTicket, setCurrentTicket] = useState(null);
   const [contextMenu, setContextMenu] = useState(null);
   const contextMenuRef = useRef(null);
 
-  // Функция обновления тикета (с локальным обновлением и запросом к серверу)
+  // Фильтрация тикетов по поисковому запросу
+  const filteredTickets = useMemo(
+    () =>
+      tickets.filter((ticket) =>
+        ticket.contact.toLowerCase().includes(searchTerm.toLowerCase())
+      ),
+    [tickets, searchTerm]
+  );
+
+  // Обновление workflow тикета
   const updateTicketWorkflow = async (clientId, newWorkflow) => {
     try {
-      // Локальное обновление состояния для мгновенной обратной связи
+      // Обновление на сервере
+      const updatedTicket = await updateTicket({ id: clientId, workflow: newWorkflow });
+
+      // Локальное обновление состояния с использованием ответа сервера
       setTickets((prevTickets) =>
         prevTickets.map((ticket) =>
-          ticket.client_id === clientId ? { ...ticket, workflow: newWorkflow } : ticket
+          ticket.client_id === clientId ? updatedTicket : ticket
         )
       );
-
-      // Отправка обновлений на сервер
-      await updateTicket({ id: clientId, workflow: newWorkflow });
     } catch (error) {
       console.error('Ошибка при обновлении тикета:', error);
     }
@@ -53,6 +62,7 @@ const Leads = () => {
   };
 
   const handleContextMenu = (event, ticket) => {
+    if (!ticket) return; // Игнорируем пустую область
     event.preventDefault();
     setContextMenu({
       mouseX: event.clientX - 2,
@@ -62,6 +72,24 @@ const Leads = () => {
   };
 
   const handleCloseContextMenu = () => setContextMenu(null);
+
+  const handleSaveTicket = async (updatedTicket) => {
+    try {
+      // Сохраняем тикет через API
+      const savedTicket = await fetchSingleTicket(updatedTicket.client_id);
+
+      // Обновляем тикет в состоянии
+      setTickets((prevTickets) =>
+        prevTickets.map((ticket) =>
+          ticket.client_id === savedTicket.client_id ? savedTicket : ticket
+        )
+      );
+
+      closeModal();
+    } catch (error) {
+      console.error('Ошибка при сохранении тикета:', error);
+    }
+  };
 
   return (
     <div className="dashboard-container">
@@ -84,10 +112,13 @@ const Leads = () => {
           <WorkflowColumn
             key={workflow}
             workflow={workflow}
-            tickets={tickets}
+            tickets={filteredTickets}
             searchTerm={searchTerm}
             onUpdateWorkflow={updateTicketWorkflow}
-            onEditTicket={setCurrentTicket}
+            onEditTicket={(ticket) => {
+              setCurrentTicket(ticket);
+              setIsModalOpen(true);
+            }}
             onContextMenu={handleContextMenu}
           />
         ))}
@@ -97,15 +128,18 @@ const Leads = () => {
         <ContextMenu
           contextMenu={contextMenu}
           onClose={handleCloseContextMenu}
-          onEditTicket={setCurrentTicket}
+          onEditTicket={(ticket) => {
+            setCurrentTicket(ticket);
+            setIsModalOpen(true);
+          }}
           ref={contextMenuRef}
         />
       )}
-      {currentTicket && (
+      {isModalOpen && currentTicket && (
         <TicketModal
           ticket={currentTicket}
           onClose={closeModal}
-          onSave={() => { }} // Тикеты обновляются автоматически через контекст
+          onSave={handleSaveTicket}
         />
       )}
     </div>
