@@ -53,7 +53,11 @@ const LoginForm = ({ onLoginSuccess }) => {
       if (response.ok) {
         setMessage(responseData.message || 'Success!');
         if (isLogin) {
-          Cookies.set('jwt', responseData.token, { expires: 7, secure: true, sameSite: 'strict' });
+          Cookies.set('jwt', responseData.token, {
+            secure: true, // Ensures the cookie is sent over HTTPS
+            sameSite: 'None', // Allows cross-origin requests
+            expires: 1, // Cookie expiration in days
+          });
           setUserId(responseData.user_id);
           console.log(responseData.user_id);
           onLoginSuccess();

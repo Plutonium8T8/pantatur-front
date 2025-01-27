@@ -33,7 +33,7 @@ function App() {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
-          Origin: 'https://plutonium8t8.github.io'
+          Origin: 'https://plutonium8t8.github.io',
         },
         credentials: 'include',
       })
@@ -61,18 +61,25 @@ function App() {
     setIsLoading(false);
   };
 
+  const NotFound = () => (
+    <div style={{ textAlign: 'center', marginTop: '20px' }}>
+      <h1>404</h1>
+      <p>Страница не найдена</p>
+    </div>
+  );
+
   if (isLoading) {
     return <div className="spinner"></div>;
   }
 
   return (
+    <Router basename="/pantatur-front">
     <AppProvider isLoggedIn={isLoggedIn}>
       <SnackbarProvider
         autoHideDuration={5000}
         maxSnack={5}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
         <UserProvider>
-          <Router>
             {!isLoggedIn ? (
               <LoginForm onLoginSuccess={handleLogin} />
             ) : (
@@ -92,7 +99,7 @@ function App() {
                       element={<ChatComponent />}
                     />
                     <Route path="/admin-panel" element={<AdminPanel />} />
-                    <Route path="*" element={<div>Страница в разработке</div>} />
+                    <Route path="*" element={<Leads />} />;
                   </Routes>
                 </div>
                 <UserPage
@@ -109,10 +116,10 @@ function App() {
                 />
               </div>
             )}
-          </Router>
         </UserProvider>
       </SnackbarProvider>
     </AppProvider>
+    </Router>
   );
 }
 
