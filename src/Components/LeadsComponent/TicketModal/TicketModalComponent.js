@@ -112,7 +112,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
       const result = await response.json();
       if (onSave) onSave(result);
       onClose();
-      fetchTickets();
+      // fetchTickets();
 
     } catch (e) {
       console.error('Error saving ticket:', e);
@@ -121,10 +121,10 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
 
   if (!editedTicket) return null;
 
-  const deleteTicketById = async (id) => {
+  const deleteTicketById = async () => {
     try {
       const token = Cookies.get('jwt');
-      const response = await fetch(`https://pandatur-api.com/tickets/${Number(id)}`, {
+      const response = await fetch(`https://pandatur-api.com/tickets/${editedTicket?.client_id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -136,36 +136,13 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
       if (!response.ok) {
         throw new Error('Error deleting ticket');
       }
+
+      onClose();
       fetchTickets();
 
       return await response.json();
     } catch (error) {
       console.error('Error:', error);
-    }
-  };
-
-  const saveTicketToServer = async (ticketData) => {
-    try {
-      const token = Cookies.get('jwt');
-      console.log('Sending data:', ticketData);
-      const response = await fetch('https://pandatur-api.com/tickets', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        credentials: 'include',
-        body: JSON.stringify(ticketData),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`);
-      }
-      fetchTickets();
-
-      return await response.json();
-    } catch (error) {
-      console.error('Error saving ticket:', error);
     }
   };
 
@@ -213,7 +190,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
             {ticket?.id && (
               <button
                 className="clear-button"
-                onClick={() => onSave(null)}
+                onClick={() => deleteTicketById()}
               >
                 <FaTrash /> {translations['Șterge'][language]}
               </button>
