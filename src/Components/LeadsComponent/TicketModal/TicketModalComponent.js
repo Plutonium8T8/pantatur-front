@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { FaUser, FaTrash } from 'react-icons/fa';
 import './TicketModalComponent.css';
 import Priority from '../../PriorityComponent/PriorityComponent';
@@ -11,27 +11,12 @@ import { useAppContext } from '../../../AppContext'; // Используем App
 
 const TicketModal = ({ ticket, onClose, onSave }) => {
   const modalRef = useRef(null);
-
   const language = localStorage.getItem('language') || 'RO';
 
-  const { tickets, updateTicket } = useAppContext(); // Берём tickets из AppContext
+  const { setTickets } = useAppContext(); // Обновление тикетов через контекст
   const { userId } = useUser();
 
-  const parseTags = (tags) => {
-    if (Array.isArray(tags)) {
-      return tags.filter((tag) => tag.trim() !== '');
-    }
-    if (typeof tags === 'string' && tags.startsWith('{') && tags.endsWith('}')) {
-      return tags
-        .slice(1, -1)
-        .split(',')
-        .map((tag) => tag.trim())
-        .filter((tag) => tag !== '');
-    }
-    return [];
-  };
-
-  const initializeTicket = (ticket) => {
+  const [editedTicket, setEditedTicket] = useState(() => {
     const defaultTicket = {
       contact: '',
       description: '',
@@ -43,13 +28,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
     return {
       ...defaultTicket,
       ...ticket,
-      tags: parseTags(ticket?.tags),
     };
-  };
-
-  const [editedTicket, setEditedTicket] = useState(() => {
-    const existingTicket = tickets.find((t) => t.client_id === ticket?.client_id);
-    return initializeTicket(existingTicket || ticket);
   });
 
   const handleInputChange = (e) => {
@@ -70,9 +49,9 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
   const handleSave = async () => {
     const ticketData = {
       ...editedTicket,
-      client_id: editedTicket.client_id || userId, // Используем существующий client_id или создаём новый
-      technician_id: userId, // Привязываем к текущему пользователю
-      contact: editedTicket.contact || '', // Убедимся, что contact не пустой
+      client_id: editedTicket.client_id || userId,
+      technician_id: userId,
+      contact: editedTicket.contact || '',
     };
 
     try {
@@ -80,8 +59,8 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
       const isEditing = Boolean(editedTicket?.client_id); // Проверяем, редактируем ли тикет
       const method = isEditing ? 'PATCH' : 'POST'; // Выбираем метод
       const url = isEditing
-        ? `https://pandatur-api.com/tickets/${editedTicket.client_id}` // URL для PATCH
-        : `https://pandatur-api.com/tickets`; // URL для POST
+        ? `https://pandatur-api.com/tickets/${editedTicket.client_id}`
+        : `https://pandatur-api.com/tickets`;
 
       const response = await fetch(url, {
         method,
@@ -98,12 +77,26 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
         throw new Error(`Failed to save ticket: ${response.status}. ${error.message}`);
       }
 
-      const result = await response.json();
-      if (onSave) onSave(result); // Колбэк успешного сохранения
-      onClose(); // Закрываем модальное окно
+      const updatedTicket = await response.json();
 
+      // Локально обновляем тикеты
+      setTickets((prevTickets) => {
+        if (isEditing) {
+          // Обновляем тикет в списке
+          return prevTickets.map((ticket) =>
+            ticket.client_id === updatedTicket.client_id ? updatedTicket : ticket
+          );
+        } else {
+          // Добавляем новый тикет в список
+          return [...prevTickets, updatedTicket];
+        }
+      });
+
+      console.log('Тикеты локально обновлены:', updatedTicket);
+
+      onClose();
     } catch (e) {
-      console.error('Error saving ticket:', e);
+      console.error('Ошибка при сохранении тикета:', e);
     }
   };
 
@@ -123,15 +116,14 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
         throw new Error('Error deleting ticket');
       }
 
-      onClose();
+      // Локальное обновление списка тикетов
+      setTickets((prevTickets) => prevTickets.filter((t) => t.client_id !== editedTicket.client_id));
 
-      return await response.json();
+      onClose(); // Закрыть модальное окно
     } catch (error) {
       console.error('Error:', error);
     }
   };
-
-  if (!editedTicket) return null;
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -164,7 +156,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
             <label>{translations['Descriere'][language]}:</label>
             <textarea
               name="description"
-              value={editedTicket.description || ''} // Используем пустую строку, если значение null или undefined
+              value={editedTicket.description || ''}
               onChange={handleInputChange}
               placeholder={translations['Adaugă descriere lead'][language]}
             />

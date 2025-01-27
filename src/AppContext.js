@@ -401,7 +401,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         }
 
         // Запрашиваем тикет по client_id
-        fetchSingleTicket(clientId);
+        // fetchSingleTicket(clientId);
 
         const socketInstance = socketRef.current; // Используем socketRef.current
         if (socketInstance && socketInstance.readyState === WebSocket.OPEN) {

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import { useAppContext } from '../../AppContext'; // Подключение AppContext
 import { priorityOptions } from '../../FormOptions/PriorityOption';
 import { workflowOptions } from '../../FormOptions/WorkFlowOption';
@@ -6,11 +6,12 @@ import SpinnerOverlay from './SpinnerOverlayComponent';
 import WorkflowColumn from './WorkflowColumnComponent';
 import ContextMenu from './ContextMenuComponent';
 import TicketModal from './TicketModal/TicketModalComponent';
+import Cookies from 'js-cookie';
 import '../../App.css';
 import '../SnackBarComponent/SnackBarComponent.css';
 
 const Leads = () => {
-  const { tickets, isLoading, setTickets, updateTicket, fetchSingleTicket } = useAppContext(); // Данные из AppContext
+  const { tickets, isLoading, setTickets } = useAppContext(); // Данные из AppContext
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentTicket, setCurrentTicket] = useState(null);
@@ -26,20 +27,36 @@ const Leads = () => {
     [tickets, searchTerm]
   );
 
-  // Обновление workflow тикета
-  const updateTicketWorkflow = async (clientId, newWorkflow) => {
+  const updateWorkflow = async (clientId, newWorkflow) => {
     try {
-      // Обновление на сервере
-      const updatedTicket = await updateTicket({ id: clientId, workflow: newWorkflow });
+      const token = Cookies.get('jwt');
+      const response = await fetch(`https://pandatur-api.com/tickets/${clientId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        credentials: 'include',
+        body: JSON.stringify({ workflow: newWorkflow }),
+      });
 
-      // Локальное обновление состояния с использованием ответа сервера
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(`Failed to update workflow: ${response.status}. ${error.message}`);
+      }
+
+      const updatedTicket = await response.json();
+
+      // Локально обновляем тикеты
       setTickets((prevTickets) =>
         prevTickets.map((ticket) =>
-          ticket.client_id === clientId ? updatedTicket : ticket
+          ticket.client_id === updatedTicket.client_id ? updatedTicket : ticket
         )
       );
+
+      console.log('Workflow updated locally for clientId:', clientId);
     } catch (error) {
-      console.error('Ошибка при обновлении тикета:', error);
+      console.error('Error updating workflow:', error);
     }
   };
 
@@ -73,24 +90,6 @@ const Leads = () => {
 
   const handleCloseContextMenu = () => setContextMenu(null);
 
-  const handleSaveTicket = async (updatedTicket) => {
-    try {
-      // Сохраняем тикет через API
-      const savedTicket = await fetchSingleTicket(updatedTicket.client_id);
-
-      // Обновляем тикет в состоянии
-      setTickets((prevTickets) =>
-        prevTickets.map((ticket) =>
-          ticket.client_id === savedTicket.client_id ? savedTicket : ticket
-        )
-      );
-
-      closeModal();
-    } catch (error) {
-      console.error('Ошибка при сохранении тикета:', error);
-    }
-  };
-
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
@@ -114,12 +113,12 @@ const Leads = () => {
             workflow={workflow}
             tickets={filteredTickets}
             searchTerm={searchTerm}
-            onUpdateWorkflow={updateTicketWorkflow}
             onEditTicket={(ticket) => {
               setCurrentTicket(ticket);
               setIsModalOpen(true);
             }}
             onContextMenu={handleContextMenu}
+            onUpdateWorkflow={updateWorkflow}
           />
         ))}
       </div>
@@ -139,7 +138,14 @@ const Leads = () => {
         <TicketModal
           ticket={currentTicket}
           onClose={closeModal}
-          onSave={handleSaveTicket}
+          onSave={(updatedTicket) => {
+            // Локальное обновление тикетов через setTickets
+            setTickets((prevTickets) =>
+              prevTickets.map((ticket) =>
+                ticket.client_id === updatedTicket.client_id ? updatedTicket : ticket
+              )
+            );
+          }}
         />
       )}
     </div>

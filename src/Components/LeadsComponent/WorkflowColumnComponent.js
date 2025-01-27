@@ -2,7 +2,6 @@ import React from 'react';
 import TicketCard from './TicketCardComponent';
 import { workflowStyles, workflowBrightStyles } from '../utils/workflowStyles';
 import { translations } from "../utils/translations";
-import Cookies from 'js-cookie';
 
 const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket, onContextMenu, onUpdateWorkflow }) => {
     const language = localStorage.getItem('language') || 'RO';
@@ -49,39 +48,14 @@ const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket, onContext
             return dateB - dateA;
         });
 
-
-
-
-    const handleDrop = async (e) => {
+    const handleDrop = (e) => {
         e.preventDefault();
         const clientId = e.dataTransfer.getData('clientId');
         console.log('Dropped clientId:', clientId);
 
         if (clientId) {
-            try {
-                const token = Cookies.get('jwt');
-                const url = `https://pandatur-api.com/tickets/${clientId}`;
-                const updatedData = { workflow };
-
-                const response = await fetch(url, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
-                    },
-                    credentials: 'include',
-                    body: JSON.stringify(updatedData),
-                });
-
-                if (!response.ok) throw new Error('Failed to update workflow');
-
-                console.log('Workflow updated for clientId:', clientId);
-
-                // Обновляем тикеты через fetchTickets или аналогичный метод
-                onUpdateWorkflow(clientId, workflow); // Локальное обновление
-            } catch (error) {
-                console.error('Error updating workflow:', error);
-            }
+            // Вызываем onUpdateWorkflow, чтобы передать clientId и новое значение workflow
+            onUpdateWorkflow(clientId, workflow);
         }
     };
 
@@ -94,7 +68,6 @@ const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket, onContext
                 backgroundColor: workflowStyles[workflow]?.backgroundColor || '',
             }}
         >
-
             <div className="name-workflow"
                 style={{
                     backgroundColor: workflowBrightStyles[workflow]?.backgroundColor || '',
@@ -110,7 +83,6 @@ const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket, onContext
                         {filteredTickets.length}
                     </div>
                 </div>
-
             </div>
             <div className="scrollable-list">
                 {filteredTickets.map((ticket) => (
