@@ -65,11 +65,11 @@ function App() {
   }
 
   return (
-    <SnackbarProvider
-      autoHideDuration={5000}
-      maxSnack={5}
-      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
-      <AppProvider isLoggedIn={isLoggedIn}>
+    <AppProvider isLoggedIn={isLoggedIn}>
+      <SnackbarProvider
+        autoHideDuration={5000}
+        maxSnack={5}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
         <UserProvider>
           <Router>
             {!isLoggedIn ? (
@@ -110,8 +110,8 @@ function App() {
             )}
           </Router>
         </UserProvider>
-      </AppProvider>
-    </SnackbarProvider>
+      </SnackbarProvider>
+    </AppProvider>
   );
 }
 

@@ -237,10 +237,6 @@ const Leads = (selectClientId) => {
               }
               break;
 
-            case 'seen':
-            case 'pong':
-              break;
-
             default:
               console.warn('Неизвестный тип сообщения:', message.type);
           }
