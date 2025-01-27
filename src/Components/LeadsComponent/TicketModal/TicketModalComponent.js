@@ -88,14 +88,18 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
   const handleSave = async () => {
     const ticketData = {
       ...editedTicket,
-      client_id: editedTicket.client_id || userId,
-      technician_id: userId,
+      client_id: editedTicket.client_id || userId, // Используем существующий client_id или создаём новый
+      technician_id: userId, // Привязываем к текущему пользователю
+      contact: editedTicket.contact || '', // Убедимся, что contact не пустой
     };
 
     try {
       const token = Cookies.get('jwt');
-      const method = editedTicket?.client_id ? 'PATCH' : 'POST';
-      const url = `https://pandatur-api.com/tickets/${editedTicket?.client_id || ''}`;
+      const isEditing = Boolean(editedTicket?.client_id); // Проверяем, редактируем ли тикет
+      const method = isEditing ? 'PATCH' : 'POST'; // Выбираем метод
+      const url = isEditing
+        ? `https://pandatur-api.com/tickets/${editedTicket.client_id}` // URL для PATCH
+        : `https://pandatur-api.com/tickets`; // URL для POST
 
       const response = await fetch(url, {
         method,
@@ -107,11 +111,14 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
         body: JSON.stringify(ticketData),
       });
 
-      if (!response.ok) throw new Error('Failed to save ticket');
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(`Failed to save ticket: ${response.status}. ${error.message}`);
+      }
 
       const result = await response.json();
-      if (onSave) onSave(result);
-      onClose();
+      if (onSave) onSave(result); // Колбэк успешного сохранения
+      onClose(); // Закрываем модальное окно
 
     } catch (e) {
       console.error('Error saving ticket:', e);
@@ -137,7 +144,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
       }
 
       onClose();
-      // fetchTickets();
+      fetchTickets();
 
       return await response.json();
     } catch (error) {
@@ -162,8 +169,8 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
             <label>{translations['Contact'][language]}:</label>
             <input
               type="text"
-              name="name"
-              value={editedTicket.contact}
+              name="contact" // Должно быть "contact", а не "name"
+              value={editedTicket.contact || ''} // Защита от undefined
               onChange={handleInputChange}
               placeholder={translations['Contact'][language]}
             />
@@ -186,7 +193,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
             <Workflow ticket={editedTicket} onChange={handleInputChange} />
           </div>
           <div className="button-container">
-            {ticket?.id && (
+            {ticket?.client_id && (
               <button
                 className="clear-button"
                 onClick={() => deleteTicketById()}
@@ -198,7 +205,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
               className="submit-button"
               onClick={handleSave}
             >
-              {ticket?.id ? translations['Salvează'][language] : translations['Creează'][language]}
+              {ticket?.client_id ? translations['Salvează'][language] : translations['Creează'][language]}
             </button>
           </div>
         </div>
