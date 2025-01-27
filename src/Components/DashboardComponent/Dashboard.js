@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Bar, Line, Pie, Radar, Doughnut, PolarArea } from 'react-chartjs-2';
+import GridLayout from "react-grid-layout";
+import "react-grid-layout/css/styles.css";
+import "react-resizable/css/styles.css";
 import Cookies from 'js-cookie';
 import {
     Chart as ChartJS,
@@ -53,31 +56,33 @@ const platformColors = {
 
 
 const Dashboard = () => {
-    const [statistics, setStatistics] = useState([]);
+    const [statistics, setStatistics] = useState([]); // Array of 8 statistic arrays
     const [isLoading, setIsLoading] = useState(false);
+    const [containerWidth, setContainerWidth] = useState(0);
+    const [containerHeight, setContainerHeight] = useState(0);
 
     const fetchStatistics = useCallback(async () => {
         setIsLoading(true);
         try {
-            const token = Cookies.get('jwt');
-            const statsResponse = await fetch('https://pandatur-api.com/dashboard/statistics', {
-                method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-            });
-
-            if (!statsResponse.ok) throw new Error('Failed to fetch statistics.');
-
-            const statsData = await statsResponse.json();
-            console.log('StatsData:', statsData[0]);
-
-            setStatistics(statsData[0]); // Correctly update the state
+            const token = Cookies.get("jwt");
+            const response = await fetch(
+                "https://pandatur-api.com/dashboard/statistics",
+                {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                    credentials: "include",
+                }
+            );
+            if (!response.ok) throw new Error("Failed to fetch statistics.");
+            const statsData = await response.json();
+            console.log('Stats: ', statsData[0]);
+            setStatistics(statsData[0]); // Assuming `statsData` is an array of 8 arrays
         } catch (error) {
-            console.error('Error fetching statistics:', error);
-            setStatistics([]); // Reset statistics on error
+            console.error("Error fetching statistics:", error);
+            setStatistics([]);
         } finally {
             setIsLoading(false);
         }
@@ -85,139 +90,85 @@ const Dashboard = () => {
 
     useEffect(() => {
         fetchStatistics();
-    }, []);
+    }, [fetchStatistics]);
 
     useEffect(() => {
-        console.log('Updated statistics state:', statistics);
-    }, [statistics]);
+        const updateContainerDimensions = () => {
+            const container = document.querySelector(".page-content");
+            if (container) {
+                setContainerWidth(container.offsetWidth);
+                setContainerHeight(container.offsetHeight);
+            }
+        };
+        updateContainerDimensions();
+        window.addEventListener("resize", updateContainerDimensions);
+        return () => window.removeEventListener("resize", updateContainerDimensions);
+    }, []);
 
-    const barData = {
-        labels: ['Ianuarie', 'Februarie', 'Martie', 'Aprilie', 'Mai'],
-        datasets: [
-            {
-                label: 'Lead-uri',
-                data: [12, 19, 15, 22, 25],
-                backgroundColor: 'rgba(75, 192, 192, 0.5)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1,
-            },
-        ],
-    };
+    const cols = 3; // Number of columns
+    const rowHeight = containerHeight / cols;
 
-    const lineData = {
-        labels: ['Luni', 'Marți', 'Miercuri', 'Joi', 'Vineri'],
-        datasets: [
-            {
-                label: 'Lead-uri active',
-                data: [5, 10, 8, 12, 7],
-                fill: false,
-                borderColor: 'rgba(54, 162, 235, 1)',
-                backgroundColor: 'rgba(54, 162, 235, 0.5)',
-            },
-        ],
-    };
+    // Dynamically generate layout for 8 charts
+    const layout = Array.from({ length: 8 }, (_, index) => ({
+        i: 1,
+        x: index % cols,
+        y: Math.floor(index / cols),
+        w: 1,
+        h: 1,
+    }));
 
-    const pieData = {
-        labels: statistics.map((stat) => stat.platform)
-            ? statistics.map((stat) => stat.platform)
-            : ['No messages'],
-        datasets: [
-            {
-                data: statistics.length
-                    ? statistics.map((stat) => stat.distinct_clients || 0)
-                    : [1],
-                    backgroundColor: statistics.map(
-                        (stat) => platformColors[stat.platform]?.background || 'rgba(200, 200, 200, 0.5)' // Default gray
-                    ),
-                    borderColor: statistics.map(
-                        (stat) => platformColors[stat.platform]?.border || 'rgba(200, 200, 200, 1)' // Default gray
-                    ),
-                borderWidth: 1,
-            },
-        ],
-    };
-
-    const radarData = {
-        labels: ['Vânzări', 'Marketing', 'Suport', 'Dezvoltare', 'Management'],
-        datasets: [
-            {
-                label: 'Evaluare pe departamente',
-                data: [8, 7, 9, 6, 7],
-                backgroundColor: 'rgba(255, 159, 64, 0.5)',
-                borderColor: 'rgba(255, 159, 64, 1)',
-            },
-        ],
-    };
-
-    const doughnutData = {
-        labels: ['Desktop', 'Mobile', 'Tablet'],
-        datasets: [
-            {
-                data: [55, 30, 15],
-                backgroundColor: [
-                    'rgba(54, 162, 235, 0.5)',
-                    'rgba(75, 192, 192, 0.5)',
-                    'rgba(255, 205, 86, 0.5)',
-                ],
-                borderColor: [
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(255, 205, 86, 1)',
-                ],
-            },
-        ],
-    };
-
-    const polarData = {
-        labels: ['Rusia', 'SUA', 'Europa', 'Asia'],
-        datasets: [
-            {
-                data: [25, 35, 20, 20],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.5)',
-                    'rgba(54, 162, 235, 0.5)',
-                    'rgba(255, 205, 86, 0.5)',
-                    'rgba(75, 192, 192, 0.5)',
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 205, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                ],
-            },
-        ],
-    };
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
 
     return (
-        <div className='container-dashboard'>
-            <h2>Tabloul de bord</h2>
-            <div className='container-graf'>
-                <div style={{ marginBottom: '30px' }}>
-                    <h3>Lead-uri pe luni</h3>
-                    <Bar data={barData} />
-                </div>
-                <div style={{ marginBottom: '30px' }}>
-                    <h3>Lead-uri active pe săptămână</h3>
-                    <Line data={lineData} />
-                </div>
-                <div className='pie-chart' style={{ marginBottom: '30px' }}>
-                    <h3>Statusurile lead-urilor</h3>
-                    <Pie data={pieData}/>
-                </div>
-                <div style={{ marginBottom: '30px' }}>
-                    <h3>Evaluare pe departamente</h3>
-                    <Radar data={radarData} />
-                </div>
-                <div style={{ marginBottom: '30px' }}>
-                    <h3>Distribuția dispozitivelor</h3>
-                    <Doughnut data={doughnutData} />
-                </div>
-                <div style={{ marginBottom: '30px' }}>
-                    <h3>Distribuția vânzărilor pe regiuni</h3>
-                    <PolarArea data={polarData} />
-                </div>
-            </div>
+        <div style={{ width: "100%", height: "100%" }}>
+            <GridLayout
+                className="layout"
+                layout={layout}
+                cols={cols}
+                rowHeight={rowHeight}
+                width={containerWidth}
+                isResizable={true}
+                isDraggable={true}
+            >
+                {statistics.map((statArray, index) => {
+                    // Prepare data for each chart
+                    const pieData = {
+                        labels: statArray.map((stat) => stat.platform),
+                        datasets: [
+                            {
+                                data: statArray.map((stat) => stat.distinct_clients || 0),
+                                backgroundColor: statArray.map(
+                                    (stat) =>
+                                        platformColors[stat.platform]?.background ||
+                                        "rgba(200, 200, 200, 0.5)"
+                                ),
+                                borderColor: statArray.map(
+                                    (stat) =>
+                                        platformColors[stat.platform]?.border ||
+                                        "rgba(200, 200, 200, 1)"
+                                ),
+                                borderWidth: 1,
+                            },
+                        ],
+                    };
+
+                    return (
+                        <div key={1} style={{ width: "100%", height: "100%" }}>
+                            <div
+                                className="chart-container"
+                                style={{
+                                    height: "100%",
+                                    width: "100%",
+                                }}
+                            >
+                                <Pie data={pieData} />
+                            </div>
+                        </div>
+                    );
+                })}
+            </GridLayout>
         </div>
     );
 };

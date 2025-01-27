@@ -3,15 +3,20 @@
 } */
 .app-container {
   display: flex;
-  flex-direction: row;
+  flex-direction: row; /* Ensures horizontal layout */
   gap: 20px;
-  height: 100vh;
-  margin-left: 100px;
+  height: 100vh; /* Full viewport height */
+  margin-left: 100px; /* Maintains spacing */
+  overflow: hidden; /* Prevents unnecessary scrolling */
 }
+
 
 .page-content {
   display: flex;
-  overflow-y: scroll;
+  flex: 1; /* Takes the remaining space in the flex container */
+  overflow-y: scroll; /* Keeps scrolling for content overflow */
+  position: relative; /* Ensures positioning for child elements */
+  height: 100%; /* Matches parent's height */
 }
 
 .spinner-overlay {

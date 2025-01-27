@@ -203,7 +203,7 @@
 }
 
 .chat-item.active {
-    background-color: #0f824c;
+    background-color: #0f824c77;
     color: #ffffff;
 }
 
@@ -218,7 +218,7 @@
     overflow-y: auto;
     border-left: 1px solid #ccc;
     width: 25%;
-    background-color: #dfefd9f9;
+    background-color: #0f824c5a;
 }
 
 .personal-data-container {
@@ -356,7 +356,7 @@
     flex-direction: row;
     justify-content: space-between;
     width: 100%;
-    color: coral;
+    color: black;
 }
 
 .unread-count {

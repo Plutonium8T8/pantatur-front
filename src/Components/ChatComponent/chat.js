@@ -336,34 +336,34 @@ const ChatComponent = ({ }) => {
         setManagerMessage(msg.message); // Устанавливаем текст сообщения в textarea
     };
 
-    // const handleSave = () => {
-    //     if (managerMessage.trim() === '') {
-    //         alert('Сообщение не может быть пустым');
-    //         return;
-    //     }
+    const handleSave = () => {
+        if (managerMessage.trim() === '') {
+            alert('Сообщение не может быть пустым');
+            return;
+        }
 
-    //     if (socket && socket.readyState === WebSocket.OPEN) {
-    //         const payload = {
-    //             type: 'edit',
-    //             data: {
-    //                 message_id: editMessageId, // Используется правильный идентификатор сообщения
-    //                 sender_id: userId,
-    //                 new_text: managerMessage,
-    //                 edited_at: new Date().toISOString(),
-    //             },
-    //         };
+        // if (socket && socket.readyState === WebSocket.OPEN) {
+        //     const payload = {
+        //         type: 'edit',
+        //         data: {
+        //             message_id: editMessageId, // Используется правильный идентификатор сообщения
+        //             sender_id: userId,
+        //             new_text: managerMessage,
+        //             edited_at: new Date().toISOString(),
+        //         },
+        //     };
 
-    //         try {
-    //             socket.send(JSON.stringify(payload));
-    //             setEditMessageId(null); // Сбрасываем состояние редактирования
-    //             setManagerMessage(''); // Очищаем textarea
-    //         } catch (error) {
-    //             console.error('Ошибка при сохранении:', error);
-    //         }
-    //     } else {
-    //         alert('WebSocket не подключен');
-    //     }
-    // };
+        //     try {
+        //         socket.send(JSON.stringify(payload));
+        //         setEditMessageId(null); // Сбрасываем состояние редактирования
+        //         setManagerMessage(''); // Очищаем textarea
+        //     } catch (error) {
+        //         console.error('Ошибка при сохранении:', error);
+        //     }
+        // } else {
+        //     alert('WebSocket не подключен');
+        // }
+    };
 
     const handleCancel = () => {
         setEditMessageId(null);
@@ -382,20 +382,20 @@ const ChatComponent = ({ }) => {
         // sendReaction(messageId, userId, reaction);
     };
 
-    // Пример функции sendReaction с подтверждением от сервера
-    const sendReaction = (messageId, senderId, reaction) => {
-        const language = localStorage.getItem('language') || 'RO';
+    // // Пример функции sendReaction с подтверждением от сервера
+    // const sendReaction = (messageId, senderId, reaction) => {
+    //     const language = localStorage.getItem('language') || 'RO';
 
-        return new Promise((resolve, reject) => {
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                const payload = {
-                    type: 'react',
-                    data: {
-                        message_id: messageId,
-                        sender_id: senderId,
-                        reaction: { senderId, reaction },
-                    },
-                };
+    //     return new Promise((resolve, reject) => {
+    //         if (socket && socket.readyState === WebSocket.OPEN) {
+    //             const payload = {
+    //                 type: 'react',
+    //                 data: {
+    //                     message_id: messageId,
+    //                     sender_id: senderId,
+    //                     reaction: { senderId, reaction },
+    //                 },
+    //             };
 
     //             console.log('Отправка реакции на сервер:', JSON.stringify(payload, null, 2)); // Лог отправляемых данных
 
@@ -429,6 +429,7 @@ const ChatComponent = ({ }) => {
     //         }
     //     });
     // };
+    
 
     const getLastReaction = (message) => {
         if (!message.reactions) {
@@ -934,7 +935,7 @@ const ChatComponent = ({ }) => {
                                                                 : "No messages"}
                                                     </div>
 
-                                                    <div>{formattedTime || "—"}</div>
+                                                    <div className='chat-time'>{formattedTime || "—"}</div>
                                                     {unreadCounts > 0 && (
                                                         <div className="unread-count">{unreadCounts}</div>
                                                     )}
@@ -1087,8 +1088,15 @@ const ChatComponent = ({ }) => {
                     <textarea class="text-area-message" placeholder={translations['Introduceți mesaj'][language]}></textarea>
                     <div class="message-options">
                         <div class="button-row">
-                            <button class="action-button send-button"><FaPaperPlane/></button>
-                            <button class="action-button emoji-button"><FaSmile/></button>
+                            <button 
+                                class="action-button send-button"
+                                onClick={editMessageId ? handleSave : handleClick}
+                                disabled={!selectClientId}>
+                                    <FaPaperPlane/>
+                            </button>
+                            <button class="action-button emoji-button">
+                                <FaSmile/>
+                            </button>
                             {showEmojiPicker &&
                                 ReactDOM.createPortal(
                                     <div
@@ -1106,7 +1114,16 @@ const ChatComponent = ({ }) => {
                                     </div>,
                                     document.body
                                 )}
-                            <button class="action-button file-button"><FaFile/></button>
+                            <input
+                                type="file"
+                                accept="image/*,audio/mp3,video/mp4,application/pdf,audio/ogg"
+                                onChange={handleFileSelect}
+                                style={{ display: "none" }}
+                                id="file-input"
+                            />
+
+                            <button htmlFor="file-input" class="action-button file-button"
+                            ><FaFile/></button>
                         </div>
 
                         <div class="select-row">
