@@ -33,6 +33,7 @@ function App() {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
+          Origin: 'https://plutonium8t8.github.io'
         },
         credentials: 'include',
       })

@@ -85,6 +85,7 @@ const ChatComponent = ({ }) => {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json',
+                    Origin: 'https://plutonium8t8.github.io',
                 },
             });
 
@@ -138,6 +139,7 @@ const ChatComponent = ({ }) => {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
+                    Origin: 'https://plutonium8t8.github.io',
                 },
                 body: JSON.stringify({
                     ...ticketExtraInfo, // Сначала добавляем все свойства из ticketExtraInfo
@@ -577,6 +579,7 @@ const ChatComponent = ({ }) => {
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
+                    Origin: 'https://plutonium8t8.github.io',
                 },
                 credentials: "include",
                 body: JSON.stringify({ technician_id: newTechnicianId }),
@@ -677,6 +680,7 @@ const ChatComponent = ({ }) => {
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${Cookies.get('jwt')}`,
+                    Origin: 'https://plutonium8t8.github.io',
                 },
                 body: JSON.stringify(messageData),
             });
@@ -748,6 +752,7 @@ const ChatComponent = ({ }) => {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
+                    Origin: 'https://plutonium8t8.github.io',
                 },
                 body: JSON.stringify(payload),
             });

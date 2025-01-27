@@ -54,6 +54,7 @@ const UserPage = ({ isOpen, onClose }) => {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
+            Origin: 'https://plutonium8t8.github.io',
           },
         }
       );
@@ -81,6 +82,7 @@ const UserPage = ({ isOpen, onClose }) => {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
+            Origin: 'https://plutonium8t8.github.io',
           },
         }
       );
@@ -113,6 +115,7 @@ const UserPage = ({ isOpen, onClose }) => {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
+            Origin: 'https://plutonium8t8.github.io',
           },
         }
       );
@@ -163,6 +166,7 @@ const UserPage = ({ isOpen, onClose }) => {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
+            Origin: 'https://plutonium8t8.github.io',
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
@@ -184,6 +188,7 @@ const UserPage = ({ isOpen, onClose }) => {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
+            Origin: 'https://plutonium8t8.github.io',
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
@@ -212,6 +217,7 @@ const UserPage = ({ isOpen, onClose }) => {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
+            Origin: 'https://plutonium8t8.github.io',
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({

@@ -49,6 +49,7 @@ const TaskModal = ({ isOpen, onClose }) => {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "application/json",
+                    Origin: 'https://plutonium8t8.github.io',
                 },
             });
 
@@ -71,6 +72,7 @@ const TaskModal = ({ isOpen, onClose }) => {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    Origin: 'https://plutonium8t8.github.io',
                     Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({

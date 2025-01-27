@@ -58,6 +58,7 @@ const ScheduleComponent = () => {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
+          Origin: 'https://plutonium8t8.github.io',
         },
         body: JSON.stringify({
           start: intervalToDelete.start,
@@ -152,6 +153,7 @@ const ScheduleComponent = () => {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
+          Origin: 'https://plutonium8t8.github.io',
         },
       });
       const usersData = await usersResponse.json();
@@ -162,6 +164,7 @@ const ScheduleComponent = () => {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
+          Origin: 'https://plutonium8t8.github.io',
         },
       });
       const scheduleData = await scheduleResponse.json();
@@ -252,6 +255,7 @@ const ScheduleComponent = () => {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
+          Origin: 'https://plutonium8t8.github.io',
         },
         body: JSON.stringify(newInterval), // Отправляем сам объект напрямую
       });
@@ -297,6 +301,7 @@ const ScheduleComponent = () => {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
+          Origin: 'https://plutonium8t8.github.io',
         },
         body: JSON.stringify(newInterval), // Отправляем сам объект напрямую
       });

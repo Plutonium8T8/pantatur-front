@@ -43,6 +43,7 @@ const LoginForm = ({ onLoginSuccess }) => {
       const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        Origin: 'https://plutonium8t8.github.io',
         body: JSON.stringify(data),
         credentials: 'include',
       });

@@ -19,6 +19,7 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                     headers: {
                         Authorization: `Bearer ${token}`,
                         "Content-Type": "application/json",
+                        Origin: 'https://plutonium8t8.github.io',
                     },
                 });
                 if (response.ok) {
@@ -42,6 +43,7 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
+                    Origin: 'https://plutonium8t8.github.io',
                 },
                 body: JSON.stringify({
                     id: employee.id,
@@ -69,6 +71,7 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
+                    Origin: 'https://plutonium8t8.github.io',
                 },
                 body: JSON.stringify({
                     id: employee.id,

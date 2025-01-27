@@ -170,6 +170,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
+          Origin: 'https://plutonium8t8.github.io'
         },
         credentials: 'include',
       });
@@ -208,6 +209,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
+          Origin: 'https://plutonium8t8.github.io'
         },
         credentials: 'include',
       });
@@ -245,6 +247,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
+          Origin: 'https://plutonium8t8.github.io'
         },
         credentials: 'include',
         body: JSON.stringify(updateData),
@@ -288,6 +291,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
+          Origin: 'https://plutonium8t8.github.io'
         },
       });
 

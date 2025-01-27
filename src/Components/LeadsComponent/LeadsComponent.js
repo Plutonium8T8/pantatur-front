@@ -34,6 +34,7 @@ const Leads = () => {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
+          Origin: 'https://plutonium8t8.github.io',
           Authorization: `Bearer ${token}`,
         },
         credentials: 'include',

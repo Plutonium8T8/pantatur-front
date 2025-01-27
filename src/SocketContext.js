@@ -23,6 +23,7 @@ export const useSocket = () => {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
+          Origin: 'https://plutonium8t8.github.io'
         },
       });
 
@@ -122,6 +123,7 @@ export const SocketProvider = ({ children, isLoggedIn }) => {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
+          Origin: 'https://plutonium8t8.github.io'
         },
       });
 

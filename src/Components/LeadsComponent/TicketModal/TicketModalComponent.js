@@ -66,6 +66,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
         method,
         headers: {
           'Content-Type': 'application/json',
+          Origin: 'https://plutonium8t8.github.io',
           Authorization: `Bearer ${token}`,
         },
         credentials: 'include',
@@ -108,6 +109,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
+          Origin: 'https://plutonium8t8.github.io',
         },
         credentials: 'include',
       });
