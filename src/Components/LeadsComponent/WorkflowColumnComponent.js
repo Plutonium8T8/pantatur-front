@@ -2,6 +2,7 @@ import React from 'react';
 import TicketCard from './TicketCardComponent';
 import { workflowStyles, workflowBrightStyles } from '../utils/workflowStyles';
 import { translations } from "../utils/translations";
+import Cookies from 'js-cookie';
 
 const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket, onContextMenu, onUpdateWorkflow }) => {
     const language = localStorage.getItem('language') || 'RO';
@@ -37,25 +38,50 @@ const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket, onContext
         ).sort((a, b) => {
             const priorityDiff = (priorityOrder[b.priority] || 5) - (priorityOrder[a.priority] || 5);
             if (priorityDiff !== 0) return priorityDiff;
-        
+
             const dateA = a.last_interaction_date ? Date.parse(a.last_interaction_date) : Number.POSITIVE_INFINITY;
             const dateB = b.last_interaction_date ? Date.parse(b.last_interaction_date) : Number.POSITIVE_INFINITY;
-        
+
             if (isNaN(dateA) && isNaN(dateB)) return 0;
             if (isNaN(dateA)) return -1;
             if (isNaN(dateB)) return 1;
-        
+
             return dateB - dateA;
         });
-        
-        
-        
 
-    const handleDrop = (e) => {
+
+
+
+    const handleDrop = async (e) => {
         e.preventDefault();
         const clientId = e.dataTransfer.getData('clientId');
+        console.log('Dropped clientId:', clientId);
+
         if (clientId) {
-            onUpdateWorkflow(clientId, workflow);
+            try {
+                const token = Cookies.get('jwt');
+                const url = `https://pandatur-api.com/tickets/${clientId}`;
+                const updatedData = { workflow };
+
+                const response = await fetch(url, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(updatedData),
+                });
+
+                if (!response.ok) throw new Error('Failed to update workflow');
+
+                console.log('Workflow updated for clientId:', clientId);
+
+                // Обновляем тикеты через fetchTickets или аналогичный метод
+                onUpdateWorkflow(clientId, workflow); // Локальное обновление
+            } catch (error) {
+                console.error('Error updating workflow:', error);
+            }
         }
     };
 

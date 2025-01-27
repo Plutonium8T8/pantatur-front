@@ -112,7 +112,6 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
       const result = await response.json();
       if (onSave) onSave(result);
       onClose();
-      // fetchTickets();
 
     } catch (e) {
       console.error('Error saving ticket:', e);
@@ -138,7 +137,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
       }
 
       onClose();
-      fetchTickets();
+      // fetchTickets();
 
       return await response.json();
     } catch (error) {
