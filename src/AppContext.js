@@ -163,6 +163,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         console.warn('Нет токена. Пропускаем загрузку тикетов.');
         return [];
       }
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const response = await fetch('https://pandatur-api.com/tickets', {
         method: 'GET',
