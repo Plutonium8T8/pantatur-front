@@ -33,9 +33,13 @@
     padding: 15px;
     overflow-y: auto;
     scroll-behavior: smooth;
-    width: 39vw;
+    width: 97%;
     height: 100vh;
     scroll-behavior: auto;
+}
+
+.manager-send-message-container .task-select {
+    border: 1px solid #ddd;
 }
 
 /* Стили для каждого сообщения */
@@ -75,55 +79,117 @@
     text-align: right;
 }
 
-/* Контейнер для поля ввода сообщения */
+.manager-send-message-container .message-options label {
+    color: black
+}
+
+.css-1m2ja5o-control {
+    padding: 4px;
+}
+
 .manager-send-message-container {
     display: flex;
     padding: 10px;
     background-color: #fff;
     border-top: 1px solid #ddd;
-    align-items: center;
-    gap: 20px;
+    gap: 10px;
+    height: auto;
+    align-items: flex-start;
 }
 
-/* Поле ввода сообщения */
+/* Left Column (Message Input) */
 .text-area-message {
-    flex: 1;
+    flex: 7;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 5px;
     resize: none;
     outline: none;
-    height: 100px;
-    width: fit-content;
+    min-height: 120px;
+    width: 100%;
 }
 
-/* Кнопки отправки и вложений */
-.btn-send-message {
+/* Right Column (Options) */
+.message-options {
+    flex: 3;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     gap: 10px;
 }
 
-.send-button {
-    border: 1px solid #ddd;
-    padding: 12px;
+/* First Row: Buttons */
+.button-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 5px;
+    flex: 1;
 }
 
-.send-button:hover {
-    background-color: #0f824c;
-    transition: background-color 0.3s;
-}
-
-.file-button {
+.action-button {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     text-align: center;
-    border: 1px solid gray;
-    border-radius: 8px;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 5px;
     transition: background-color 0.3s;
-    padding: 3px;
+    font-size: 16px;
+    cursor: pointer;
 }
 
-.file-button:hover {
+.action-button:hover {
     background-color: #0f824c;
+    color: #fff;
+}
+
+/* Second Row: Selector */
+.select-row {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+}
+
+.select-label {
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.extra-info-content .input-group {
+    margin-top: 16px;
+}
+
+.task-select {
+    width: 100%;
+}
+
+.task-select:focus {
+    border-color: #0f824c;
+    box-shadow: 0 0 5px rgba(15, 130, 76, 0.5);
+}
+
+.extra-info .input-group label {
+    color: black;
+}
+
+.selects-container .container-options-component label {
+    display: none;
+}
+
+.selects-container .container-options-component {
+    margin-top: 16px;
+}
+
+.selects-container .container-options-component .css-16rgkxs-control{
+    padding: 4px;
+}
+
+.container-options-component {
+    text-align: left;
 }
 
 .chat-item {
@@ -149,11 +215,14 @@
 .extra-info {
     display: flex;
     flex-direction: column;
-    padding: 10px;
-    border-left: 1px solid #ddd;
     overflow-y: auto;
-    border-radius: 8px;
+    border-left: 1px solid #ccc;
     width: 25%;
+    background-color: #dfefd9f9;
+}
+
+.personal-data-container {
+    margin-top: 16px;
 }
 
 .extra-info h4 {
@@ -234,24 +303,25 @@
     content: "x";
 }
 
-.input-grup label {
-    font: 20px;
+.react-datepicker__view-calendar-icon input {
+    padding: 12px;
 }
 
-.example-custom-input {
-    display: flex;
-    color: black;
-    font-size: 15px;
-    padding: 4px;
-    border-radius: 10px;
-    border: 1px solid gray;
+.react-datepicker__input-container .react-datepicker__calendar-icon {
+    padding: 16px;
 }
 
-.date-go-back {
+.example-custom-input react-datepicker-ignore-onclickoutside {
+    width: 300px;
+}
+
+.react-datepicker__input-container
+{
+    width: 1000px;
+}
+
+.react-datepicker-wrapper {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 10px 0px;
 }
 
 .date-contract-container {
@@ -396,17 +466,6 @@
     border: 1px solid #0f824c;
 }
 
-.emoji-button {
-    display: flex;
-    background-color: white;
-    justify-content: center;
-    align-items: center;
-    border: 1px solid #ddd;
-    width: 40px;
-    height: 51px;
-    margin-top: 10px;
-}
-
 .select-shablon {
     display: flex;
     padding-bottom: 2px;
@@ -460,17 +519,24 @@
 
 .tabs {
     display: flex;
-    margin-bottom: 1rem;
 }
 
-.tab-button {
-    padding: 10px 20px;
+.extra-info .tab-button {
+    padding: 15px 20px;
     border: 1px solid #ccc;
     background-color: #f9f9f9;
     cursor: pointer;
     flex: 1;
     text-align: center;
     transition: background-color 0.3s;
+    font-size: 18px;
+}
+
+.users-container .extra-info-title,
+.extra-info .extra-info-title {
+    font-size: 24px;
+    letter-spacing: 1px;
+    font-weight: 600;
 }
 
 .tab-button.active {
@@ -480,14 +546,7 @@
 }
 
 .tab-content {
-    border: 1px solid #ccc;
     padding: 20px;
-    background-color: #ffffff;
-}
-
-.extra-info-content,
-.personal-data-content {
-    margin-top: 1rem;
 }
 
 .image-preview-in-chat {

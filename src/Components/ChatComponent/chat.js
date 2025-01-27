@@ -25,6 +25,8 @@ import './chat.css';
 import EmojiPicker from 'emoji-picker-react';
 import ReactDOM from "react-dom";
 import Icon from '../../Components/Icon/index';
+import { FaFile, FaPaperPlane, FaSmile } from 'react-icons/fa';
+import { translations } from '../utils/translations';
 
 const ChatComponent = ({ }) => {
     const { userId } = useUser();
@@ -382,6 +384,8 @@ const ChatComponent = ({ }) => {
 
     // Пример функции sendReaction с подтверждением от сервера
     const sendReaction = (messageId, senderId, reaction) => {
+        const language = localStorage.getItem('language') || 'RO';
+
         return new Promise((resolve, reject) => {
             if (socket && socket.readyState === WebSocket.OPEN) {
                 const payload = {
@@ -546,6 +550,17 @@ const ChatComponent = ({ }) => {
     };
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    const getMessageTypeLabel = (type) => {
+        const typeLabels = {
+            text: "Text Message",
+            image: "Image Message",
+            video: "Video Message",
+            file: "File Message",
+        };
+    
+        return typeLabels[type] || "Unknown Message";
+    };
+
     const handleTechnicianChange = async (newTechnicianId) => {
         setSelectedTechnicianId(newTechnicianId);
 
@@ -685,6 +700,8 @@ const ChatComponent = ({ }) => {
         }
     };
 
+    const language = localStorage.getItem('language') || 'RO';
+
     // Определение типа медиафайла
     const getMediaType = (mimeType) => {
         if (mimeType.startsWith('image/')) return 'image';
@@ -807,7 +824,7 @@ const ChatComponent = ({ }) => {
     return (
         <div className="chat-container">
             <div className="users-container">
-                <h3>Chat List</h3>
+                <div className='extra-info-title'>Chat</div>
                 <div className="filter-container-chat">
                     <input
                         type="text"
@@ -848,12 +865,6 @@ const ChatComponent = ({ }) => {
                             })
                             .map(ticket => {
                                 const clientMessages = messages.filter(msg => msg.client_id === ticket.client_id);
-
-                                // const unreadCounts = clientMessages.filter(msg => {
-                                //     const notSeen = !msg.seen_by; // Сообщение не отмечено как просмотренное
-                                //     const notSentByUser = msg.sender_id !== Number(userId); // Сообщение не отправлено текущим пользователем
-                                //     return notSeen && notSentByUser;
-                                // }).length;
 
                                 const unreadCounts = clientMessages.filter(
                                     msg =>
@@ -915,7 +926,14 @@ const ChatComponent = ({ }) => {
                                         <div className="container-time-tasks-chat">
                                             <div className="info-message">
                                                 <div className="last-message-container">
-                                                    <div className="last-message-ticket">{lastMessage.message || "No messages"}</div>
+                                                    <div className="last-message-ticket">
+                                                        {lastMessage?.mtype === 'text'
+                                                            ? lastMessage.message
+                                                            : lastMessage?.mtype
+                                                                ? getMessageTypeLabel(lastMessage.mtype)
+                                                                : "No messages"}
+                                                    </div>
+
                                                     <div>{formattedTime || "—"}</div>
                                                     {unreadCounts > 0 && (
                                                         <div className="unread-count">{unreadCounts}</div>
@@ -1062,42 +1080,12 @@ const ChatComponent = ({ }) => {
                             );
                         })}
                 </div>
-
-                <div className="manager-send-message-container">
-                    <textarea
-                        className="text-area-message"
-                        value={managerMessage}
-                        onChange={(e) => setManagerMessage(e.target.value)}
-                        placeholder="Введите сообщение..."
-                        onKeyDown={handleKeyDown}
-                    />
-                    <div className="btn-send-message">
-                        <Icon
-                            name={"button-send"}
-                            className="send-button"
-                            onClick={editMessageId ? handleSave : handleClick}
-                            disabled={!selectClientId}
-                        />
-                        <input
-                            type="file"
-                            accept="image/*,audio/mp3,video/mp4,application/pdf,audio/ogg"
-                            onChange={handleFileSelect}
-                            style={{ display: "none" }}
-                            id="file-input"
-                        />
-                        <label htmlFor="file-input" className="file-button">
-                            📎
-                        </label>
-                    </div>
-                    <div className="container-template">
-                        <div className="emoji-picker-container">
-                            <button
-                                className="emoji-button"
-                                onClick={handleEmojiClickButton}
-                                disabled={!selectClientId}
-                            >
-                                😊
-                            </button>
+                <div class="manager-send-message-container">
+                    <textarea class="text-area-message" placeholder={translations['Introduceți mesaj'][language]}></textarea>
+                    <div class="message-options">
+                        <div class="button-row">
+                            <button class="action-button send-button"><FaPaperPlane/></button>
+                            <button class="action-button emoji-button"><FaSmile/></button>
                             {showEmojiPicker &&
                                 ReactDOM.createPortal(
                                     <div
@@ -1115,19 +1103,23 @@ const ChatComponent = ({ }) => {
                                     </div>,
                                     document.body
                                 )}
+                            <button class="action-button file-button"><FaFile/></button>
                         </div>
-                        <div className="select-shablon">
+
+                        <div class="select-row">
                             <Select
                                 options={templateOptions}
                                 id="message-template"
+                                label="Șablon"
                                 value={selectedMessage ?? undefined}
                                 onChange={handleSelectTChange}
-                                placeholder="Выберите сообщение"
+                                placeholder="Introduceți mesaj"
                                 customClassName="custom-select-1"
                             />
                         </div>
                     </div>
                 </div>
+
             </div>
             <div className="extra-info">
                 <div className="tabs">
@@ -1135,19 +1127,19 @@ const ChatComponent = ({ }) => {
                         className={`tab-button ${activeTab === 'extraForm' ? 'active' : ''}`}
                         onClick={() => setActiveTab('extraForm')}
                     >
-                        Extra Form
+                        {translations['Informații suplimentare'][language]}
                     </button>
                     <button
                         className={`tab-button ${activeTab === 'personalData' ? 'active' : ''}`}
                         onClick={() => setActiveTab('personalData')}
                     >
-                        Personal Data
+                        {translations['Date personale'][language]}
                     </button>
                 </div>
                 <div className="tab-content">
                     {activeTab === 'extraForm' && (
                         <div className="extra-info-content">
-                            <h3>Additional Information</h3>
+                            <div className='extra-info-title'>{translations['Informații suplimentare'][language]}</div>
                             {selectClientId && (
                                 <>
                                     <div className="selects-container">
@@ -1164,20 +1156,21 @@ const ChatComponent = ({ }) => {
                                             />
                                         )}
                                         <Input
-                                            label="Sale"
+                                            label="Vânzare"
                                             type="number"
                                             value={extraInfo[selectClientId]?.sale || ""}
                                             onChange={(e) =>
                                                 handleSelectChange(selectClientId, 'sale', e.target.value)
                                             }
                                             className="input-field"
-                                            placeholder="Indicati suma in euro"
+                                            placeholder="Indicați suma în euro"
                                             id="sale-input"
                                         />
                                         <Select
                                             options={sourceOfLeadOptions}
-                                            label="Lead Source"
+                                            label="Sursă lead"
                                             id="lead-source-select"
+                                            className="input-field"
                                             value={extraInfo[selectClientId]?.lead_source || ""}
                                             onChange={(value) =>
                                                 handleSelectChange(selectClientId, 'lead_source', value)
@@ -1187,6 +1180,7 @@ const ChatComponent = ({ }) => {
                                             options={promoOptions}
                                             label="Promo"
                                             id="promo-select"
+                                            className="input-field"
                                             value={extraInfo[selectClientId]?.promo || ""}
                                             onChange={(value) =>
                                                 handleSelectChange(selectClientId, 'promo', value)
@@ -1196,6 +1190,7 @@ const ChatComponent = ({ }) => {
                                             options={marketingOptions}
                                             label="Marketing"
                                             id="marketing-select"
+                                            className="input-field"
                                             value={extraInfo[selectClientId]?.marketing || ""}
                                             onChange={(value) =>
                                                 handleSelectChange(selectClientId, 'marketing', value)
@@ -1203,8 +1198,9 @@ const ChatComponent = ({ }) => {
                                         />
                                         <Select
                                             options={serviceTypeOptions}
-                                            label="Service"
+                                            label="Serviciu"
                                             id="service-select"
+                                            className="input-field"
                                             value={extraInfo[selectClientId]?.service || ""}
                                             onChange={(value) =>
                                                 handleSelectChange(selectClientId, 'service', value)
@@ -1212,8 +1208,9 @@ const ChatComponent = ({ }) => {
                                         />
                                         <Select
                                             options={countryOptions}
-                                            label="Country"
+                                            label="Țară"
                                             id="country-select"
+                                            className="input-field"
                                             value={extraInfo[selectClientId]?.country || ""}
                                             onChange={(value) =>
                                                 handleSelectChange(selectClientId, 'country', value)
@@ -1223,6 +1220,7 @@ const ChatComponent = ({ }) => {
                                             options={transportOptions}
                                             label="Transport"
                                             id="transport-select"
+                                            className="input-field"
                                             value={extraInfo[selectClientId]?.transport || ""}
                                             onChange={(value) =>
                                                 handleSelectChange(selectClientId, 'transport', value)
@@ -1232,45 +1230,35 @@ const ChatComponent = ({ }) => {
                                             options={nameExcursionOptions}
                                             label="Excursie"
                                             id="excursie-select"
+                                            className="input-field"
                                             value={extraInfo[selectClientId]?.excursion || ""}
                                             onChange={(value) =>
                                                 handleSelectChange(selectClientId, 'excursion', value)
                                             }
                                         />
-                                        <div className="date-go-back">
-                                            <div className="label-data-go">
-                                                <div>Data plecarii</div>
-                                                <DatePicker
-                                                    showIcon
-                                                    selected={extraInfo[selectClientId]?.leave_date || null}
-                                                    onChange={(date) =>
-                                                        handleSelectChange(selectClientId, 'leave_date', date)
-                                                    }
-                                                    isClearable
-                                                    placeholderText="Alegeti data și ora plecării"
-                                                    dateFormat="dd.MM.yyyy"
-                                                    customInput={<input className="example-custom-input" />}
-                                                />
-                                            </div>
-                                            <div className="label-data-back">
-                                                <div>Data intoarcerii</div>
-                                                <DatePicker
-                                                    showIcon
-                                                    selected={extraInfo[selectClientId]?.arrive_date || null}
-                                                    onChange={(date) =>
-                                                        handleSelectChange(selectClientId, 'arrive_date', date)
-                                                    }
-                                                    isClearable
-                                                    placeholderText="Alegeti data si ora intoarcerii"
-                                                    dateFormat="dd.MM.yyyy"
-                                                    customInput={<input className="example-custom-input" />}
-                                                />
-                                            </div>
-                                        </div>
+                                        <Input
+                                            label="Data și ora plecării"
+                                            type="date"
+                                            value={extraInfo[selectClientId]?.leave_date || ""}
+                                            onChange={(date) =>
+                                                handleSelectChange(selectClientId, 'leave_date', date)
+                                            }
+                                            className="input-field"
+                                        />
+                                                                                <Input
+                                            label="Data și ora întoarcerii"
+                                            type="date"
+                                            value={extraInfo[selectClientId]?.arrive_date || ""}
+                                            onChange={(date) =>
+                                                handleSelectChange(selectClientId, 'arrive_date', date)
+                                            }
+                                            className="input-field"
+                                        />
                                         <Select
                                             options={purchaseProcessingOptions}
-                                            label="Purchase"
+                                            label="Achiziție"
                                             id="purchase-select"
+                                            className="input-field"
                                             value={extraInfo[selectClientId]?.purchase || ""}
                                             onChange={(value) =>
                                                 handleSelectChange(selectClientId, 'purchase', value)
@@ -1284,32 +1272,27 @@ const ChatComponent = ({ }) => {
                                                 handleSelectChange(selectClientId, 'contract_id', e.target.value)
                                             }
                                             className="input-field"
-                                            placeholder="Nr contract"
+                                            placeholder="Nr de contract"
                                             id="contract-number-input"
                                         />
-                                        <div className="date-contract-container">
-                                            <div>Data contractului</div>
-                                            <DatePicker
-                                                showIcon
-                                                selected={extraInfo[selectClientId]?.contract_date || null}
-                                                onChange={(date) =>
-                                                    handleSelectChange(selectClientId, 'contract_date', date)
-                                                }
-                                                isClearable
-                                                placeholderText="Data contractului"
-                                                dateFormat="dd.MM.yyyy"
-                                                customInput={<input className="example-custom-input" />}
-                                            />
-                                        </div>
                                         <Input
-                                            label="Tour operator"
+                                            label="Data contractului"
+                                            type="date"
+                                            value={extraInfo[selectClientId]?.contract_date || ""}
+                                            onChange={(date) =>
+                                                handleSelectChange(selectClientId, 'contract_date', date)
+                                            }
+                                            className="input-field"
+                                        />
+                                        <Input
+                                            label="Operator turistic"
                                             type="text"
                                             value={extraInfo[selectClientId]?.tour_operator || ""}
                                             onChange={(e) =>
                                                 handleSelectChange(selectClientId, 'tour_operator', e.target.value)
                                             }
                                             className="input-field"
-                                            placeholder="Tour operator"
+                                            placeholder="Operator turistic"
                                             id="tour-operator-input"
                                         />
                                         <Input
@@ -1324,14 +1307,14 @@ const ChatComponent = ({ }) => {
                                             id="tour-operator-input"
                                         />
                                         <Input
-                                            label="Pret neto (euro)"
+                                            label="Preț netto (euro)"
                                             type="number"
                                             value={extraInfo[selectClientId]?.price_netto || ""}
                                             onChange={(e) =>
                                                 handleSelectChange(selectClientId, 'price_netto', e.target.value)
                                             }
                                             className="input-field"
-                                            placeholder="Pret neto"
+                                            placeholder="Preț netto (euro)"
                                             id="price-neto-input"
                                         />
                                         <Input
@@ -1342,12 +1325,12 @@ const ChatComponent = ({ }) => {
                                                 handleSelectChange(selectClientId, 'commission', e.target.value)
                                             }
                                             className="input-field"
-                                            placeholder="Comision"
+                                            placeholder="Comision companie"
                                             id="commission-input"
                                         />
                                         <Select
                                             options={paymentStatusOptions}
-                                            label="Payment"
+                                            label="Plată primită"
                                             id="payment-select"
                                             value={extraInfo[selectClientId]?.payment_method || ""}
                                             onChange={(value) =>
@@ -1355,9 +1338,9 @@ const ChatComponent = ({ }) => {
                                             }
                                         />
                                     </div>
-                                    <div className="extra-info-actions">
-                                        <button onClick={sendExtraInfo} className="send-extra-info-button">
-                                            {isLoading ? 'Waiting...' : 'Actualizare'}
+                                    <div className="input-group">
+                                        <button onClick={sendExtraInfo} className="submit-button">
+                                            {isLoading ? translations['Încărcăm...'][language] : translations['Actualizare'][language]}
                                         </button>
                                     </div>
                                 </>
@@ -1366,7 +1349,7 @@ const ChatComponent = ({ }) => {
                     )}
                     {activeTab === 'personalData' && (
                         <div className="personal-data-content">
-                            <h3>Personal Data</h3>
+                            <div className='extra-info-title'>{translations['Date personale'][language]}</div>
                             <form onSubmit={handlePersonalDataSubmit} className='personal-data-container'>
                                 <Input
                                     label="Nume"
@@ -1376,7 +1359,7 @@ const ChatComponent = ({ }) => {
                                         handleSelectChange(selectClientId, 'name', e.target.value)
                                     }
                                     className="input-field"
-                                    placeholder="Introduceți numele"
+                                    placeholder="Nume"
                                 />
                                 <Input
                                     label="Prenume"
@@ -1386,7 +1369,7 @@ const ChatComponent = ({ }) => {
                                         handleSelectChange(selectClientId, 'surname', e.target.value)
                                     }
                                     className="input-field"
-                                    placeholder="Introduceți prenumele"
+                                    placeholder="Prenume"
                                 />
                                 <Input
                                     label="Data nașterii"
@@ -1444,7 +1427,7 @@ const ChatComponent = ({ }) => {
                                         handleSelectChange(selectClientId, 'address', e.target.value)
                                     }
                                     className="input-field"
-                                    placeholder="Adresa"
+                                    placeholder="Adresă"
                                 />
                                 <Input
                                     label="Telefon"
@@ -1454,10 +1437,10 @@ const ChatComponent = ({ }) => {
                                         handleSelectChange(selectClientId, 'phone', e.target.value)
                                     }
                                     className="input-field"
-                                    placeholder="Numărul de telefon"
+                                    placeholder="Telefon"
                                 />
-                                <button type="submit" className="save-button">
-                                    Salvați datele personale
+                                <button type="submit" className="submit-button">
+                                    {translations['Salvați datele personale'][language]}
                                 </button>
                             </form>
                         </div>

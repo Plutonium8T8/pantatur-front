@@ -1,6 +1,6 @@
 import React from 'react';
 import './InputComponent.css';
-
+import { translations } from '../utils/translations';
 
 const Input = ({
     label,         // Текст метки
@@ -11,18 +11,20 @@ const Input = ({
     placeholder = '', // Подсказка внутри поля
     id,            // Уникальный идентификатор
 }) => {
+    const language = localStorage.getItem('language') || 'RO';
+
     return (
-        <label htmlFor={id} className="input-label">
-            <div>{label}</div>
+        <div className="input-group">
+            <label htmlFor={id}>{translations[label][language] ?? label}</label>
             <input
                 id={id}
                 type={type}
                 value={value}
                 onChange={onChange}
-                className={`input-field ${className}`}
-                placeholder={placeholder}
+                className={className}
+                placeholder={translations[placeholder]?.[language] ?? placeholder}
             />
-        </label>
+        </div>
     );
 };
 

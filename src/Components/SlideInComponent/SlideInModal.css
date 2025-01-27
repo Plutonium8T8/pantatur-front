@@ -93,6 +93,7 @@
 }
 
 .input-group input,
+.example-custom-input,
 .input-group textarea {
   border: 1px solid #374151;
   /* background: #111827; */

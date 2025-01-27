@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
+import { translations } from '../Components/utils/translations';
 
 const TechnicianSelect = ({ onTechnicianChange, selectedTechnicianId }) => {
     const [technicians, setTechnicians] = useState([]);
     const [selectedTechnician, setSelectedTechnician] = useState("");
     const [isLoading, setIsLoading] = useState(true);
+    const language = localStorage.getItem('language') || 'RO';
 
     const fetchTechnicians = async () => {
         const token = Cookies.get('jwt');
@@ -43,9 +45,8 @@ const TechnicianSelect = ({ onTechnicianChange, selectedTechnicianId }) => {
     }, []);
 
     useEffect(() => {
-        // Синхронизируем состояние с props
         if (selectedTechnicianId === null || selectedTechnicianId === undefined) {
-            setSelectedTechnician(""); // Сбросить выбор
+            setSelectedTechnician("");
         } else {
             setSelectedTechnician(selectedTechnicianId);
         }
@@ -58,25 +59,24 @@ const TechnicianSelect = ({ onTechnicianChange, selectedTechnicianId }) => {
     };
 
     return (
-        <div className='tech-container'>
-            <label htmlFor="technician-select">Responsabil lead:</label>
-            {isLoading ? (
-                <p>Загрузка...</p>
-            ) : (
-                <select
-                    id="technician-select"
-                    value={selectedTechnician}
-                    onChange={handleChange}
-                    className='tech-select'
-                >
-                    <option value="">Select</option>
-                    {technicians.map((technician) => (
-                        <option key={technician.id} value={technician.id}>
-                            {technician.name} ({technician.id})
-                        </option>
-                    ))}
-                </select>
-            )}
+        <div className="input-group">
+            <label htmlFor="extra-info-select">{translations['Manager responsabil'].language}</label>
+            <select
+                id="extra-info-select"
+                className="technician-select"
+                value={selectedTechnician || ""}
+                onChange={handleChange}
+                required
+            >
+                <option value="" disabled>
+                    {technicians.length === 0 ? translations['Încărcăm...'][language] : translations['Manager responsabil'][language]}
+                </option>
+                {technicians.map((technician) => (
+                    <option key={technician.id} value={technician.id}>
+                        #{technician.id} {technician.name}
+                    </option>
+                ))}
+            </select>
         </div>
     );
 };

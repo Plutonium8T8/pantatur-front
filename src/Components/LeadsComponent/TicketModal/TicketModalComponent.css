@@ -101,7 +101,9 @@
 }
 
 .tag-input,
+.technician-select,
 .task-select,
+.ticket-filter-input,
 .textarea-input {
   padding: 12px;
   font-size: 16px;

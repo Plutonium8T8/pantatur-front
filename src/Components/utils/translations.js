@@ -302,6 +302,14 @@ export const translations = {
         'RO': 'data nașterii',
         'RU': 'дата рождения'
     },
+    'date_of_birth': {
+        'RO': 'data nașterii',
+        'RU': 'дата рождения'
+    },
+    'date_of_birth': {
+        'RO': 'data nașterii',
+        'RU': 'дата рождения'
+    },
     'id_card_series': {
         'RO': 'seria cărții de identitate',
         'RU': 'серия удостоверения личности'
@@ -350,9 +358,177 @@ export const translations = {
         'RO': 'Nume',
         'RU': 'Имя'
     },
+    'Prenume': {
+        'RO': 'Prenume',
+        'RU': 'Фамилия'
+    },
+    'Tag': {
+        'RO': 'Tag',
+        'RU': 'Тег'
+    },
+    'My leads': {
+        'RO': 'Leadurile mele',
+        'RU': 'Мои лиды'
+    },
+    'Introduceți mesaj': {
+        'RO': 'Introduceți mesaj',
+        'RU': 'Введите сообщение'
+    },
+    'Șablon': {
+        'RO': 'Șablon',
+        'RU': 'Шаблон'
+    },
+    'Informații despre lead': {
+        'RO': 'Informații despre lead',
+        'RU': 'Информация о лиде'
+    },
+    'Date personale': {
+        'RO': 'Date personale',
+        'RU': 'Персональные данные'
+    },
+    'Informații suplimentare': {
+        'RO': 'Informații suplimentare',
+        'RU': 'Дополнительная информация'
+    },
+    'Manager responsabil': {
+        'RO': 'Manager responsabil',
+        'RU': 'Ответственный менеджер'
+    },
+    'Vânzare': {
+        'RO': 'Vânzare',
+        'RU': 'Продажа'
+    },
+    'Sursă lead': {
+        'RO': 'Sursă lead',
+        'RU': 'Источник лида'
+    },
+    'Promo': {
+        'RO': 'Promo',
+        'RU': 'Промо'
+    },
+    'Marketing': {
+        'RO': 'Marketing',
+        'RU': 'Маркетинг'
+    },
+    'Serviciu': {
+        'RO': 'Serviciu',
+        'RU': 'Услуга'
+    },
+    'Țară': {
+        'RO': 'Țară',
+        'RU': 'Страна'
+    },
+    'Transport': {
+        'RO': 'Transport',
+        'RU': 'Транспорт'
+    },
+    'Excursie': {
+        'RO': 'Excursie',
+        'RU': 'Экскурсия'
+    },
+    'Data plecarii': {
+        'RO': 'Data plecării',
+        'RU': 'Дата выезда'
+    },
+    'Data intoarcerii': {
+        'RO': 'Data întoarcerii',
+        'RU': 'Дата возвращения'
+    },
+    'Achiziție': {
+        'RO': 'Achiziție',
+        'RU': 'Покупка'
+    },
+    'Nr de contract': {
+        'RO': 'Nr de contract',
+        'RU': 'Номер контракта'
+    },
+    'Data contractului': {
+        'RO': 'Data contractului',
+        'RU': 'Дата контракта'
+    },
+    'Operator turistic': {
+        'RO': 'Operator turistic',
+        'RU': 'Туроператор'
+    },
+    'Nr cererii de la operator': {
+        'RO': 'Nr cererii de la operator',
+        'RU': 'Номер заявки от оператора'
+    },
+    'Preț netto (euro)': {
+        'RO': 'Preț netto (euro)',
+        'RU': 'Нетто цена (евро)'
+    },
+    'Comision companie': {
+        'RO': 'Comision companie',
+        'RU': 'Комиссия компании'
+    },
+    'Plată': {
+        'RO': 'Plată',
+        'RU': 'Оплата'
+    },
+    'Actualizare': {
+        'RO': 'Actualizare',
+        'RU': 'Обновление'
+    },
+    'Încărcăm...': {
+        'RO': 'Încărcăm...',
+        'RU': 'Загружаем...'
+    },
+    'Indicați suma în euro': {
+        'RO': 'Indicați suma în euro',
+        'RU': 'Укажите сумму в евро'
+    },
+    "Data nașterii": {
+        "RO": "Data nașterii",
+        "RU": "Дата рождения"
+    },
+    "Seria buletinului": {
+        "RO": "Seria buletinului",
+        "RU": "Серия удостоверения"
+    },
+    "Numărul buletinului": {
+        "RO": "Numărul buletinului",
+        "RU": "Номер удостоверения"
+    },
+    "Data eliberării buletinului": {
+        "RO": "Data eliberării buletinului",
+        "RU": "Дата выдачи удостоверения"
+    },
+    "IDNP": {
+        "RO": "IDNP",
+        "RU": "IDNP"
+    },
+    "Adresă": {
+        "RO": "Adresă",
+        "RU": "Адрес"
+    },
+    "Telefon": {
+        "RO": "Telefon",
+        "RU": "Телефон"
+    },
+    "Salvați datele personale": {
+        "RO": "Salvați datele personale",
+        "RU": "Сохраните личные данные"
+    },
+    "Data și ora plecării": {
+        "RO": "Data și ora plecării",
+        "RU": "Выберите дату и время отправления"
+    },
+    "Data și ora întoarcerii": {
+        "RO": "Data și ora întoarcerii",
+        "RU": "Дата и время возвращения"
+    },
+    "Data contractului": {
+        "RO": "Data contractului",
+        "RU": "Дата контракта"
+    },
+"Select...": {
+    "RO": "Introduceți...",
+    "RU": "Введите..."
+},
 };
 
-// import { translations } from "../utils/translations";
+// import { translations } from '../utils/translations';
 
 // const language = localStorage.getItem('language') || 'RO';
 
