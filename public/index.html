@@ -1,25 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/Panda Tur JPG.jpg" />
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <title>Panda Tur CRM</title>
-  </head>
-  <body>
-    <script>
-      const redirectTo = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1) + "index.html";
-      if (window.location.pathname !== "/" && !window.location.pathname.endsWith(".html")) {
-        window.location.href = redirectTo;
-      }
-   </script>    
-    <div id="root"></div>
-  </body>
+
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="Web site created using create-react-app" />
+  <link rel="apple-touch-icon" href="%PUBLIC_URL%/Panda Tur JPG.jpg" />
+  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+  <title>Panda Tur CRM</title>
+</head>
+
+<body>
+  <script>
+    const redirectTo = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1) + "leads";
+    if (window.location.pathname !== "/" && !window.location.pathname.endsWith(".html")) {
+      window.location.href = redirectTo;
+    }
+  </script>
+  <div id="root"></div>
+</body>
+
 </html>
