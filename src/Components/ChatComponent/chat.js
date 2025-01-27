@@ -232,7 +232,7 @@ const ChatComponent = ({ }) => {
         if (event.key === 'Enter' && !event.shiftKey) {
             event.preventDefault(); // Предотвращаем переход на новую строку
             if (editMessageId) {
-                // handleSave(); // Сохраняем изменения, если редактируем сообщение
+                handleSave(); // Сохраняем изменения, если редактируем сообщение
             } else {
                 handleClick(selectClientId); // Отправляем новое сообщение
             }
