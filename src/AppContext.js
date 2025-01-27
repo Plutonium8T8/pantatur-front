@@ -325,13 +325,28 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       }
       case 'seen': {
         const { client_id, seen_at } = message.data;
+
+        console.log('Received "seen" event:', { client_id, seen_at });
+
         setMessages((prevMessages) => {
-          const updatedMessages = prevMessages.map((msg) =>
-            msg.client_id === client_id ? { ...msg, seen_at } : msg
-          );
+          const updatedMessages = prevMessages.map((msg) => {
+            if (msg.client_id === client_id) {
+              console.log(`Updating message for client_id ${client_id}:`, {
+                ...msg,
+                seen_at,
+              });
+              return { ...msg, seen_at };
+            }
+            return msg;
+          });
+
+          console.log('Updated messages after "seen" event:', updatedMessages);
+
           updateUnreadMessages(updatedMessages);
+
           return updatedMessages;
         });
+
         break;
       }
       case 'ticket': {
