@@ -1,23 +1,59 @@
 import React from "react";
-import { workflowOptions } from "../../WorkFlowOption";
+import Select from "react-select";
+import { workflowOptions as rawWorkflowOptions } from '../../FormOptions/WorkFlowOption';
+import { workflowStyles } from "../utils/workflowStyles";
+import { translations } from "../utils/translations";
 
-export const Workflow = ({ticket, onChange = () => {}}) => {
-    return (
-        <div className="container-options-component">
-        <label>
-            Workflow:
-            <select
-                name="workflow"
-                value={ticket ? ticket.workflow : workflowOptions[0]}
-                onChange={onChange}
-                className="workflow-select"
-                style={{ display: 'block', width: '100%', padding: '0.5rem', marginBottom: '1rem' }}
-            >
-                {workflowOptions.map(workflow => <option key={workflow} value={workflow}>{workflow}</option>)}
-            </select>
+const workflowOptions = rawWorkflowOptions.map((workflow) => ({
+  value: workflow,
+  label: workflow,
+}));
+
+export const Workflow = ({ ticket, onChange = () => { } }) => {
+  const language = localStorage.getItem('language') || 'RO';
+
+  const customStyles = {
+    option: (provided, state) => ({
+      ...provided,
+      backgroundColor: state.isFocused
+        ? workflowStyles[state.data.value]?.backgroundColor || '#f0f0f0'
+        : workflowStyles[state.data.value]?.backgroundColor || '#fff',
+      color: '#000',
+      padding: '10px',
+      cursor: 'pointer',
+    }),
+    control: (provided, state) => ({
+      ...provided,
+      borderColor: workflowStyles[ticket?.workflow]?.borderColor || '#ccc',
+      backgroundColor: workflowStyles[ticket?.workflow]?.backgroundColor || '#fff',
+      color: '#000',
+      boxShadow: state.isFocused ? `0 0 0 2px ${workflowStyles[ticket?.workflow]?.borderColor || '#aaa'}` : 'none',
+      '&:hover': {
+        borderColor: workflowStyles[ticket?.workflow]?.borderColor || '#aaa',
+      },
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      color: '#000',
+    }),
+  };
+
+  return (
+    <div className="container-options-component">
+      <label>
+            {translations['Etapa de lucru'][language]}
         </label>
-        </div>
-    )
-}
+      <Select
+        options={workflowOptions}
+        value={workflowOptions.find((option) => option.value === ticket?.workflow) || ""}
+        onChange={(selected) =>
+          onChange({ target: { name: 'workflow', value: selected.value } })
+        }
+        styles={customStyles}
+        isSearchable={false}
+      />
+    </div>
+  );
+};
 
 export default Workflow;

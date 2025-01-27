@@ -1,0 +1,151 @@
+.ticket {
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    /* border: 1px solid #e0e0e0; */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+.ticket:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.ticket .tickets-descriptions {
+    position: relative;
+}
+
+
+.ticket-ribbon {
+    /* Set the ribbon color */
+    width: 20px;
+    /* Fixed width for the ribbon */
+    height: 100%;
+    /* Stretch from top to bottom */
+    position: absolute;
+    /* Ensure it stays positioned correctly */
+    top: 0;
+    /* Start at the top */
+    left: 0;
+    /* Align to the left side */
+    z-index: 1;
+    /* Ensure it appears above other content */
+}
+
+
+.ticket-body {
+    padding: 6px 12px;
+    display: flex;
+    gap: 4px;
+    justify-content: space-between;
+    border-top: 3px solid #1f29371e;
+}
+
+.ticket-column, .ticket-column-2 {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    /* flex-grow: 1; */
+    justify-content: space-between; /* Distributes items evenly throughout the height */
+    align-items: flex-start; /* Ensures items align to the left */
+    height: 82px
+}
+
+
+/* First column: Center photo and ID */
+.ticket-column:first-child {
+    align-items: center;
+    /* Center elements horizontally */
+    text-align: center;
+    width: 20%;
+    /* Ensure text aligns under the photo */
+}
+.ticket-column-2 {
+    width: 50%;
+}
+
+/* Third column: Anchor elements to the right */
+.ticket-column:last-child {
+    align-items: flex-end;
+    /* Align items to the right within the column */
+    text-align: right;
+    width: 130px;
+    /* Right-align the text content */
+}
+
+
+.ticket-photo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 56px;
+    /* Adjust size as needed */
+    height: 56px;
+    /* Adjust size as needed */
+    border-radius: 50%;
+    overflow: hidden;
+    background: #f0f0f0;
+    border: 2px solid #e0e0e0;
+    margin-top: 10px;
+}
+
+.ticket-photo-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ticket-id {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333333;
+}
+
+/* Second column: Centered contact and tags */
+.ticket-contact {
+    font-weight: 500;
+    font-size: 16px;
+    color: #555555;
+}
+
+.ticket-tags {
+    display: flex;
+    flex-wrap: wrap; /* Allows wrapping of elements */
+    gap: 8px; /* Space between elements */
+    justify-content: center; /* Horizontally center elements */
+    align-items: center; /* Vertically center elements */
+}
+
+
+.tag {
+    background-color: #f5f5f5;
+    color: #777777;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* width: 23%; */
+}
+
+.ticket-date,
+.ticket-time,
+.ticket-tasks {
+    font-size: 12px;
+    color: #999999;
+    width: 100%;
+}
+
+.ticket-tasks {
+    font-weight: 500;
+    font-size: 14px;
+    color: #333333;
+}
+
+.ticket-ribbon {
+    height: 100%;
+    width: 3%
+}
