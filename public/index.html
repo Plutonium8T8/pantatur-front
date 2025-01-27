@@ -27,7 +27,13 @@
     <title>Panda Tur CRM</title>
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <script>
+      const redirectTo = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1) + "index.html";
+      if (window.location.pathname !== "/" && !window.location.pathname.endsWith(".html")) {
+        window.location.href = redirectTo;
+      }
+    </script>
+    
     <div id="root"></div>
     <!--
       This HTML file is a template.
