@@ -19,7 +19,6 @@ import Input from '../InputComponent/InputComponent';
 import Workflow from '../WorkFlowComponent/WorkflowComponent';
 import "react-datepicker/dist/react-datepicker.css";
 import { useAppContext } from '../../AppContext'; // Подключение AppContext
-// import { InView } from 'react-intersection-observer';
 import { useSnackbar } from 'notistack';
 import './chat.css';
 import EmojiPicker from 'emoji-picker-react';
@@ -31,17 +30,15 @@ import { translations } from '../utils/translations';
 const ChatComponent = ({ }) => {
     const { userId } = useUser();
     const [managerMessage, setManagerMessage] = useState('');
-    const { tickets, updateTicket, setTickets, messages, setMessages } = useAppContext();
+    const { tickets, updateTicket, setTickets, messages, setMessages, markMessagesAsRead, socketRef } = useAppContext();
     const [selectClientId, setSelectClientId] = useState(null);
     const [extraInfo, setExtraInfo] = useState({}); // Состояние для дополнительной информации каждого тикета
     const messageContainerRef = useRef(null);
     const { clientId } = useParams(); // Получаем clientId из URL
     const [isLoading, setIsLoading] = useState(false); // Состояние загрузки
     const [selectedTechnicianId, setSelectedTechnicianId] = useState('');
-    const { socket } = useAppContext(); // Доступ к WebSocket
     const { enqueueSnackbar } = useSnackbar();
     const navigate = useNavigate(); // Хук для навигации
-    const { markMessagesAsRead } = useAppContext();
     const [menuMessageId, setMenuMessageId] = useState(null);
     const [editMessageId, setEditMessageId] = useState(null);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -57,6 +54,10 @@ const ChatComponent = ({ }) => {
     const activeChatRef = useRef(null);
 
     useEffect(() => {
+        enqueueSnackbar("Тестовое уведомление работает!", { variant: "success" });
+    }, []);
+
+    useEffect(() => {
         if (clientId) {
             setSelectClientId(Number(clientId));
         }
@@ -65,7 +66,7 @@ const ChatComponent = ({ }) => {
     // Прокручиваем к активному чату, если selectClientId изменился и тикеты загружены
     useEffect(() => {
         if (!isLoading && activeChatRef.current) {
-            activeChatRef.current.scrollIntoView({ behavior: "auto", block: "center" });
+            activeChatRef.current.scrollIntoView({ behavior: "auto" });
         }
     }, [selectClientId, isLoading, filteredTickets]);
 
@@ -231,19 +232,15 @@ const ChatComponent = ({ }) => {
         if (event.key === 'Enter' && !event.shiftKey) {
             event.preventDefault(); // Предотвращаем переход на новую строку
             if (editMessageId) {
-                handleSave(); // Сохраняем изменения, если редактируем сообщение
+                // handleSave(); // Сохраняем изменения, если редактируем сообщение
             } else {
                 handleClick(selectClientId); // Отправляем новое сообщение
             }
         }
     };
 
-    const handleClick = (clientId) => {
+    const handleClick = () => {
         sendMessage();
-        // getClientMessages();
-        markMessagesAsRead(clientId); // Помечаем сообщения клиента как прочитанные
-        // fetchTicketsID();
-        // fetchTickets();
     };
 
     const handleTicketClick = (clientId) => {
@@ -272,15 +269,18 @@ const ChatComponent = ({ }) => {
         };
 
         try {
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                socket.send(JSON.stringify(readMessageData)); // Отправляем событие в WebSocket
-                console.log(`Все сообщения в чате с client_id=${clientId} помечены как прочитанные.`);
+            const socketInstance = socketRef.current; // Используем socketRef.current
+            if (socketInstance && socketInstance.readyState === WebSocket.OPEN) {
+                socketInstance.send(JSON.stringify(readMessageData)); // Отправляем событие в WebSocket
+                console.log(
+                    `Все сообщения в чате с client_id=${clientId} помечены как прочитанные.`
+                );
             } else {
                 console.warn('WebSocket не подключен или закрыт.');
             }
 
-            // Локальное обновление сообщений как прочитанных
             markMessagesAsRead(clientId);
+            // Локальное обновление сообщений как прочитанных
         } catch (error) {
             console.error('Ошибка при отправке события о прочтении:', error);
         }
@@ -313,22 +313,22 @@ const ChatComponent = ({ }) => {
         setMenuMessageId(menuMessageId === msgId ? null : msgId);
     };
 
-    const handleDelete = (msgId) => {
-        setMenuMessageId(null);
-        if (socket && socket.readyState === WebSocket.OPEN) {
-            socket.send(
-                JSON.stringify({
-                    type: 'delete',
-                    data: {
-                        message_id: msgId,
-                        client_id: userId,
-                    },
-                })
-            );
-        } else {
-            alert('Соединение с WebSocket отсутствует');
-        }
-    };
+    // const handleDelete = (msgId) => {
+    //     setMenuMessageId(null);
+    //     if (socket && socket.readyState === WebSocket.OPEN) {
+    //         socket.send(
+    //             JSON.stringify({
+    //                 type: 'delete',
+    //                 data: {
+    //                     message_id: msgId,
+    //                     client_id: userId,
+    //                 },
+    //             })
+    //         );
+    //     } else {
+    //         alert('Соединение с WebSocket отсутствует');
+    //     }
+    // };
 
     const handleEdit = (msg) => {
         setMenuMessageId(null);
@@ -336,34 +336,34 @@ const ChatComponent = ({ }) => {
         setManagerMessage(msg.message); // Устанавливаем текст сообщения в textarea
     };
 
-    const handleSave = () => {
-        if (managerMessage.trim() === '') {
-            alert('Сообщение не может быть пустым');
-            return;
-        }
+    // const handleSave = () => {
+    //     if (managerMessage.trim() === '') {
+    //         alert('Сообщение не может быть пустым');
+    //         return;
+    //     }
 
-        if (socket && socket.readyState === WebSocket.OPEN) {
-            const payload = {
-                type: 'edit',
-                data: {
-                    message_id: editMessageId, // Используется правильный идентификатор сообщения
-                    sender_id: userId,
-                    new_text: managerMessage,
-                    edited_at: new Date().toISOString(),
-                },
-            };
+    //     if (socket && socket.readyState === WebSocket.OPEN) {
+    //         const payload = {
+    //             type: 'edit',
+    //             data: {
+    //                 message_id: editMessageId, // Используется правильный идентификатор сообщения
+    //                 sender_id: userId,
+    //                 new_text: managerMessage,
+    //                 edited_at: new Date().toISOString(),
+    //             },
+    //         };
 
-            try {
-                socket.send(JSON.stringify(payload));
-                setEditMessageId(null); // Сбрасываем состояние редактирования
-                setManagerMessage(''); // Очищаем textarea
-            } catch (error) {
-                console.error('Ошибка при сохранении:', error);
-            }
-        } else {
-            alert('WebSocket не подключен');
-        }
-    };
+    //         try {
+    //             socket.send(JSON.stringify(payload));
+    //             setEditMessageId(null); // Сбрасываем состояние редактирования
+    //             setManagerMessage(''); // Очищаем textarea
+    //         } catch (error) {
+    //             console.error('Ошибка при сохранении:', error);
+    //         }
+    //     } else {
+    //         alert('WebSocket не подключен');
+    //     }
+    // };
 
     const handleCancel = () => {
         setEditMessageId(null);
@@ -379,7 +379,7 @@ const ChatComponent = ({ }) => {
         }));
 
         // Отправляем реакцию на сервер
-        sendReaction(messageId, userId, reaction);
+        // sendReaction(messageId, userId, reaction);
     };
 
     // Пример функции sendReaction с подтверждением от сервера
@@ -397,38 +397,38 @@ const ChatComponent = ({ }) => {
                     },
                 };
 
-                console.log('Отправка реакции на сервер:', JSON.stringify(payload, null, 2)); // Лог отправляемых данных
+    //             console.log('Отправка реакции на сервер:', JSON.stringify(payload, null, 2)); // Лог отправляемых данных
 
-                socket.send(JSON.stringify(payload));
+    //             socket.send(JSON.stringify(payload));
 
-                // Ожидание подтверждения от сервера
-                socket.onmessage = (event) => {
-                    console.log('Получен ответ от сервера:', event.data); // Лог ответа сервера
+    //             // Ожидание подтверждения от сервера
+    //             socket.onmessage = (event) => {
+    //                 console.log('Получен ответ от сервера:', event.data); // Лог ответа сервера
 
-                    try {
-                        const response = JSON.parse(event.data);
+    //                 try {
+    //                     const response = JSON.parse(event.data);
 
-                        if (
-                            response.type === 'react' &&
-                            response.data.message_id === messageId
-                        ) {
-                            console.log('Реакция успешно обработана:', response.data); // Лог успешного результата
-                            resolve(response.data); // Сервер подтвердил реакцию
-                        } else {
-                            console.error('Неверный тип ответа или несоответствие ID:', response);
-                            reject(new Error('Неверный ответ от сервера.'));
-                        }
-                    } catch (error) {
-                        console.error('Ошибка при разборе ответа от сервера:', error); // Лог ошибок парсинга
-                        reject(new Error('Ошибка обработки ответа сервера.'));
-                    }
-                };
-            } else {
-                console.error('Ошибка: Соединение с WebSocket отсутствует.'); // Лог при отсутствии соединения
-                reject(new Error('Соединение с WebSocket отсутствует.'));
-            }
-        });
-    };
+    //                     if (
+    //                         response.type === 'react' &&
+    //                         response.data.message_id === messageId
+    //                     ) {
+    //                         console.log('Реакция успешно обработана:', response.data); // Лог успешного результата
+    //                         resolve(response.data); // Сервер подтвердил реакцию
+    //                     } else {
+    //                         console.error('Неверный тип ответа или несоответствие ID:', response);
+    //                         reject(new Error('Неверный ответ от сервера.'));
+    //                     }
+    //                 } catch (error) {
+    //                     console.error('Ошибка при разборе ответа от сервера:', error); // Лог ошибок парсинга
+    //                     reject(new Error('Ошибка обработки ответа сервера.'));
+    //                 }
+    //             };
+    //         } else {
+    //             console.error('Ошибка: Соединение с WebSocket отсутствует.'); // Лог при отсутствии соединения
+    //             reject(new Error('Соединение с WebSocket отсутствует.'));
+    //         }
+    //     });
+    // };
 
     const getLastReaction = (message) => {
         if (!message.reactions) {
@@ -963,10 +963,13 @@ const ChatComponent = ({ }) => {
                         })
                         .sort((a, b) => new Date(a.time_sent) - new Date(b.time_sent))
                         .map((msg) => {
-                            const uniqueKey = `${msg.id}`;
+                            const uniqueKey = `${msg.id || msg.client_id}-${msg.time_sent}`;
 
                             // Определяем отображение контента на основе mtype
                             const renderContent = () => {
+                                if (!msg.message) {
+                                    return <div className="text-message">Сообщение отсутствует</div>;
+                                }
                                 switch (msg.mtype) {
                                     case "image":
                                         return (
@@ -1032,7 +1035,7 @@ const ChatComponent = ({ }) => {
                                                     >
                                                         {lastReaction || "☺"}
                                                     </div>
-                                                    {new Date(msg.time_sent).toLocaleTimeString("ru-RU", {
+                                                    {new Date(msg.time_sent).toLocaleTimeString("ro-RO", {
                                                         hour: "2-digit",
                                                         minute: "2-digit",
                                                     })}
@@ -1055,7 +1058,7 @@ const ChatComponent = ({ }) => {
                                                     </div>
                                                 )}
                                             </div>
-                                            {(msg.sender_id === userId || msg.sender_id === 1) && (
+                                            {/* {(msg.sender_id === userId || msg.sender_id === 1) && (
                                                 <div
                                                     className="menu-container"
                                                     ref={(el) => (menuRefs.current[msg.id] = el)}
@@ -1073,7 +1076,7 @@ const ChatComponent = ({ }) => {
                                                         </div>
                                                     )}
                                                 </div>
-                                            )}
+                                            )} */}
                                         </div>
                                     </div>
                                 </div>

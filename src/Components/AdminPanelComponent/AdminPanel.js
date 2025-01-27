@@ -331,46 +331,46 @@ const ScheduleComponent = () => {
         <button onClick={goToNextWeek}>{translations['săptămâna'][language]} {translations['viitoare'][language]}</button>
       </div>
       <div className="schedule-table-container">
-      <table className="schedule-table">
-        <thead>
-          <tr>
-            <th>{translations['Angajat'][language]}</th>
-            {getWeekDays().map((day, index) => (
-              <th key={index}>{translations[format(day, "EEEE")][language]}, {format(day, "dd.MM")}</th>
-            ))}
-            <th>{translations['Ore de lucru'][language]}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {schedule.map((employee, employeeIndex) => (
-            <tr
-              key={employeeIndex}
-              onClick={() => {
-                setSelectedUser(employee); // Открываем модалку с данными пользователя
-                setIsModalOpen(true);
-              }}
-            >
-              <td>
-                {employee.name} ({employee.id})
-              </td>
-              {employee.shifts.map((shift, dayIndex) => (
-                <td
-                  // key={translations[dayIndex][language]}
-                  key={dayIndex}
-                  className="shift-cell"
-                  onClick={(e) => {
-                    e.stopPropagation(); // Предотвращаем открытие модалки при клике на shift
-                    handleShiftChange(employeeIndex, dayIndex);
-                  }}
-                >
-                  {shift || "-"}
-                </td>
+        <table className="schedule-table">
+          <thead>
+            <tr>
+              <th>{translations['Angajat'][language]}</th>
+              {getWeekDays().map((day, index) => (
+                <th key={index}>{translations[format(day, "EEEE")][language]}, {format(day, "dd.MM")}</th>
               ))}
-              <td>{employee.shifts.reduce((total, shift) => total + calculateWorkedHours(shift), 0).toFixed(2)} h.</td>
+              <th>{translations['Ore de lucru'][language]}</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {schedule.map((employee, employeeIndex) => (
+              <tr
+                key={employeeIndex}
+                onClick={() => {
+                  setSelectedUser(employee); // Открываем модалку с данными пользователя
+                  setIsModalOpen(true);
+                }}
+              >
+                <td>
+                  {employee.name} ({employee.id})
+                </td>
+                {employee.shifts.map((shift, dayIndex) => (
+                  <td
+                    // key={translations[dayIndex][language]}
+                    key={dayIndex}
+                    className="shift-cell"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Предотвращаем открытие модалки при клике на shift
+                      handleShiftChange(employeeIndex, dayIndex);
+                    }}
+                  >
+                    {shift || "-"}
+                  </td>
+                ))}
+                <td>{employee.shifts.reduce((total, shift) => total + calculateWorkedHours(shift), 0).toFixed(2)} h.</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
       {/* Модалка с переключателями */}
       {isModalOpen && selectedUser && (
@@ -395,11 +395,17 @@ const ScheduleComponent = () => {
               <h2>
                 {schedule[selectedEmployee].name} ({schedule[selectedEmployee].id}),{" "}
                 {translations[format(getWeekDays()[selectedDay], "EEEE")][language]} , {format(getWeekDays()[selectedDay], "dd.MM")}
-                
+
               </h2>
             </header>
             {error && <div className="error-message">{error}</div>}
-            <form className="notification-form" onSubmit={null}>
+            <form
+              className="notification-form"
+              onSubmit={(e) => {
+                e.preventDefault(); // Предотвращаем действие по умолчанию
+                // Ваш код сохранения данных
+              }}
+            >
               <div className="input-group">
                 <div className="time-inputs">
                   {intervals.map((interval, index) => (
@@ -429,10 +435,11 @@ const ScheduleComponent = () => {
                         />
                       </label>
                       <button
+                        type="button" // Предотвращаем отправку формы
                         className="delete-button"
                         onClick={() => removeInterval(index)}
                       >
-                        <FaTrash/>
+                        <FaTrash />
                       </button>
                     </div>
                   ))}
@@ -453,19 +460,32 @@ const ScheduleComponent = () => {
                         onChange={(e) => setEndTime(e.target.value)}
                       />
                     </label>
-                    <button className="add-button-plus" onClick={AddInterval}>
-                      <FaPlus/>
+                    <button
+                      type="button" // Добавлено, чтобы предотвратить отправку формы
+                      className="add-button-plus"
+                      onClick={AddInterval}
+                    >
+                      <FaPlus />
                     </button>
-                    <button className="add-button-minus" onClick={cutInterval}>
-                      <FaMinus/>
+                    <button
+                      type="button" // Добавлено, чтобы предотвратить отправку формы
+                      className="add-button-minus"
+                      onClick={cutInterval}
+                    >
+                      <FaMinus />
                     </button>
                   </div>
                 </div>
                 <div className="button-container">
-                  <button className="submit-button" onClick={saveShift}>
-                  {translations['Salvează'][language]}
+                  <button
+                    type="submit" // Если нужно отправить форму
+                    className="submit-button"
+                    onClick={saveShift}
+                  >
+                    {translations['Salvează'][language]}
                   </button>
                   <button
+                    type="button" // Добавлено, чтобы избежать отправки формы
                     className="clear-button"
                     onClick={() => {
                       setSelectedEmployee(null);

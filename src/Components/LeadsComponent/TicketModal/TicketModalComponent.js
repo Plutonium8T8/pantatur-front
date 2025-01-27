@@ -7,26 +7,26 @@ import TagInput from '../../TagsComponent/TagComponent';
 import { useUser } from '../../../UserContext';
 import Cookies from 'js-cookie';
 import { translations } from "../../utils/translations";
-
-const parseTags = (tags) => {
-  if (Array.isArray(tags)) {
-    return tags.filter((tag) => tag.trim() !== '');
-  }
-  if (typeof tags === 'string' && tags.startsWith('{') && tags.endsWith('}')) {
-    return tags
-      .slice(1, -1)
-      .split(',')
-      .map((tag) => tag.trim())
-      .filter((tag) => tag !== '');
-  }
-  return [];
-};
+import { useAppContext } from '../../../AppContext'; // Используем AppContext для updateTicket
 
 const TicketModal = ({ ticket, onClose, onSave }) => {
   const modalRef = useRef(null);
-  const { userId } = useUser();
 
   const language = localStorage.getItem('language') || 'RO';
+
+  const parseTags = (tags) => {
+    if (Array.isArray(tags)) {
+      return tags.filter((tag) => tag.trim() !== '');
+    }
+    if (typeof tags === 'string' && tags.startsWith('{') && tags.endsWith('}')) {
+      return tags
+        .slice(1, -1)
+        .split(',')
+        .map((tag) => tag.trim())
+        .filter((tag) => tag !== '');
+    }
+    return [];
+  };
 
   useEffect(() => {
     const fetchTicketData = async () => {
@@ -67,16 +67,8 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
     tags: useMemo(() => parseTags(ticket?.tags), [ticket?.tags]),
   });
 
-  useEffect(() => {
-    const handleOutsideClick = (e) => {
-      if (modalRef.current && !modalRef.current.contains(e.target)) {
-        onClose();
-      }
-    };
-
-    document.addEventListener('mousedown', handleOutsideClick);
-    return () => document.removeEventListener('mousedown', handleOutsideClick);
-  }, [onClose]);
+  const { userId } = useUser();
+  const { updateTicket, fetchTickets } = useAppContext(); // Получаем updateTicket из AppContext
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -96,14 +88,18 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
   const handleSave = async () => {
     const ticketData = {
       ...editedTicket,
-      client_id: editedTicket.client_id || userId,
-      technician_id: userId,
+      client_id: editedTicket.client_id || userId, // Используем существующий client_id или создаём новый
+      technician_id: userId, // Привязываем к текущему пользователю
+      contact: editedTicket.contact || '', // Убедимся, что contact не пустой
     };
 
     try {
       const token = Cookies.get('jwt');
-      const method = editedTicket?.client_id ? 'PATCH' : 'POST';
-      const url = `https://pandatur-api.com/tickets/${editedTicket?.client_id || ''}`;
+      const isEditing = Boolean(editedTicket?.client_id); // Проверяем, редактируем ли тикет
+      const method = isEditing ? 'PATCH' : 'POST'; // Выбираем метод
+      const url = isEditing
+        ? `https://pandatur-api.com/tickets/${editedTicket.client_id}` // URL для PATCH
+        : `https://pandatur-api.com/tickets`; // URL для POST
 
       const response = await fetch(url, {
         method,
@@ -115,17 +111,46 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
         body: JSON.stringify(ticketData),
       });
 
-      if (!response.ok) throw new Error('Failed to save ticket');
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(`Failed to save ticket: ${response.status}. ${error.message}`);
+      }
 
       const result = await response.json();
-      if (onSave) onSave(result);
-      onClose();
-    } catch (error) {
-      console.error('Error saving ticket:', error);
+      if (onSave) onSave(result); // Колбэк успешного сохранения
+      onClose(); // Закрываем модальное окно
+
+    } catch (e) {
+      console.error('Error saving ticket:', e);
     }
   };
 
   if (!editedTicket) return null;
+
+  const deleteTicketById = async () => {
+    try {
+      const token = Cookies.get('jwt');
+      const response = await fetch(`https://pandatur-api.com/tickets/${editedTicket?.client_id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        throw new Error('Error deleting ticket');
+      }
+
+      onClose();
+      fetchTickets();
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -144,8 +169,8 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
             <label>{translations['Contact'][language]}:</label>
             <input
               type="text"
-              name="name"
-              value={editedTicket.contact}
+              name="contact" // Должно быть "contact", а не "name"
+              value={editedTicket.contact || ''} // Защита от undefined
               onChange={handleInputChange}
               placeholder={translations['Contact'][language]}
             />
@@ -168,10 +193,10 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
             <Workflow ticket={editedTicket} onChange={handleInputChange} />
           </div>
           <div className="button-container">
-            {ticket?.id && (
+            {ticket?.client_id && (
               <button
                 className="clear-button"
-                onClick={() => onSave(null)}
+                onClick={() => deleteTicketById()}
               >
                 <FaTrash /> {translations['Șterge'][language]}
               </button>
@@ -180,7 +205,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
               className="submit-button"
               onClick={handleSave}
             >
-              {ticket?.id ? translations['Salvează'][language] : translations['Creează'][language]}
+              {ticket?.client_id ? translations['Salvează'][language] : translations['Creează'][language]}
             </button>
           </div>
         </div>

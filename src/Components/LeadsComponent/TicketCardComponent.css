@@ -128,7 +128,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    width: 23%;
+    /* width: 23%; */
 }
 
 .ticket-date,
