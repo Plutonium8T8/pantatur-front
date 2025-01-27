@@ -277,7 +277,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
 
           // Проверяем, если сообщение от оператора
           if (message.data.sender_id === 1) {
-            console.log("Сообщение от оператора через WebSocket:", message.data);
+            // console.log("Сообщение от оператора через WebSocket:", message.data);
           } else {
             // Если сообщение от клиента, обновляем непрочитанные
             updateUnreadMessages(updatedMessages);
