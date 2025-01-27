@@ -52,6 +52,10 @@ const ChatComponent = ({ }) => {
     const activeChatRef = useRef(null);
 
     useEffect(() => {
+        enqueueSnackbar("Тестовое уведомление работает!", { variant: "success" });
+    }, []);
+
+    useEffect(() => {
         if (clientId) {
             setSelectClientId(Number(clientId));
         }

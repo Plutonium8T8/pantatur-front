@@ -285,14 +285,16 @@ export const AppProvider = ({ children, isLoggedIn }) => {
           return updatedMessages;
         });
 
+        // Проверяем, связан ли тикет с текущим пользователем
         const ticket = ticketsRef.current.find(
           (t) => t.client_id === message.data.client_id
         );
 
         if (ticket && ticket.technician_id === userId) {
           const messageText = truncateText(message.data.message, 40);
+
           enqueueSnackbar(
-            '',
+            '', // Текст можно оставить пустым, так как используется кастомное отображение
             {
               variant: 'info',
               action: (snackbarId) => (
@@ -305,7 +307,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
                       <FaEnvelope />
                     </div>
                     <div className="snack-message">
-                      {message.data.client_id}: {messageText}
+                      <strong>Клиент {message.data.client_id}</strong>: {messageText}
                     </div>
                   </div>
                   <div className="snack-close">
