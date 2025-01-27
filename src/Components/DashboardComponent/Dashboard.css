@@ -1,3 +1,19 @@
-.canvas {
-    min-width: 600px;
-}
+.layout {
+    background-color: #e0e0e0;
+    border: 1px solid #ccc;
+  }
+  
+  .layout > div {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+    text-align: center;
+  }
+
+  .react-grid-layout {
+    width: 100%; /* Match the parent width */
+    height: auto; /* Adjust dynamically based on grid height */
+    position: relative; /* Prevent any absolute positioning issues */
+  }
+  

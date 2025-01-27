@@ -38,6 +38,10 @@ export const Workflow = ({ ticket, onChange = () => { } }) => {
     }),
   };
 
+  const selectedOption = workflowOptions.find(
+    (option) => option.value === ticket?.workflow
+  );
+
   return (
     <div className="container-options-component">
       <label>
@@ -45,12 +49,13 @@ export const Workflow = ({ ticket, onChange = () => { } }) => {
         </label>
       <Select
         options={workflowOptions}
-        value={workflowOptions.find((option) => option.value === ticket?.workflow) || ""}
+        value={selectedOption || null}
         onChange={(selected) =>
           onChange({ target: { name: 'workflow', value: selected.value } })
         }
         styles={customStyles}
         isSearchable={false}
+        getOptionLabel={(e) => translations[e.value]?.[language] || e.label}
       />
     </div>
   );

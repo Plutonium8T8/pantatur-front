@@ -26,6 +26,10 @@ h1 {
     transition: background-color 0.3s ease;
 }
 
+.schedule-container .button-container {
+    margin-top: 22px;
+}
+
 .week-navigation button:hover {
     background-color: #0f824c;
 }
