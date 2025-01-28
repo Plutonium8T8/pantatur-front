@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/pantatur-front/static/css/main.ec8c5776.css",
-    "main.js": "/pantatur-front/static/js/main.87aac03e.js",
+    "main.css": "/pantatur-front/static/css/main.0d7af904.css",
+    "main.js": "/pantatur-front/static/js/main.5d8ae4e6.js",
     "static/media/logo.svg": "/pantatur-front/static/media/logo.1d0a92b77650e2a10f3769be9bab7572.svg",
     "static/media/grid.svg": "/pantatur-front/static/media/grid.5d808aac30d28bd2316f1d082cf7eb0b.svg",
     "static/media/tg-settings.svg": "/pantatur-front/static/media/tg-settings.623e309866d796cd905dff25ab3a3b60.svg",
@@ -77,11 +77,11 @@
     "static/media/add.svg": "/pantatur-front/static/media/add.f6a9ab3f1da0a8c1339874808120436d.svg",
     "static/media/chevron-right.svg": "/pantatur-front/static/media/chevron-right.14e6271e05eda2893eb13cefc57c1f56.svg",
     "static/media/arrow.svg": "/pantatur-front/static/media/arrow.b19647a7f3b21622fefb4582866d72df.svg",
-    "main.ec8c5776.css.map": "/pantatur-front/static/css/main.ec8c5776.css.map",
-    "main.87aac03e.js.map": "/pantatur-front/static/js/main.87aac03e.js.map"
+    "main.0d7af904.css.map": "/pantatur-front/static/css/main.0d7af904.css.map",
+    "main.5d8ae4e6.js.map": "/pantatur-front/static/js/main.5d8ae4e6.js.map"
   },
   "entrypoints": [
-    "static/css/main.ec8c5776.css",
-    "static/js/main.87aac03e.js"
+    "static/css/main.0d7af904.css",
+    "static/js/main.5d8ae4e6.js"
   ]
 }
