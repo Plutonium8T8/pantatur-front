@@ -12,15 +12,20 @@ const TaskModal = ({ isOpen, onClose }) => {
     const [ticketId, setTicketId] = useState(null);
     const { userId } = useUser();
     const [error, setError] = useState(null);
+    const [ticketIds, setTicketIds] = useState([]);
 
     const language = localStorage.getItem('language') || 'RO';
 
     useEffect(() => {
-        if (isOpen) {
-            fetchTicketsID();
+        if (isOpen && userId) {
+            console.log("Modal is open. Fetching data...");
             fetchTasks();
+            fetchTicketsID();
+        } else {
+            console.log("Modal not open or userId missing.");
         }
-    }, [isOpen]);
+    }, [isOpen, userId]);
+
 
     const fetchTicketsID = async () => {
         try {
@@ -32,7 +37,8 @@ const TaskModal = ({ isOpen, onClose }) => {
 
             if (response.ok) {
                 const data = await response.json();
-                setTickets(data || []);
+                setTicketIds(data.map((ticket) => ticket.client_id)); // Сохраняем client_id
+                console.log("Client IDs:", data.map((ticket) => ticket.client_id));
             } else {
                 console.error("Error fetching tickets:", response.statusText);
             }
@@ -59,6 +65,7 @@ const TaskModal = ({ isOpen, onClose }) => {
 
             const data = await response.json();
             setTasks(data);
+            console.log("tasksssssss", data);
         } catch (error) {
             console.error("Error fetching tasks:", error.message);
         }
@@ -79,7 +86,7 @@ const TaskModal = ({ isOpen, onClose }) => {
                     ticket_id: ticketId,
                     time: taskDate,
                     description: taskContent,
-                    tags: ["tag1", "tag2"],
+                    tags: [""],
                 }),
             });
             if (response.ok) {
@@ -93,23 +100,50 @@ const TaskModal = ({ isOpen, onClose }) => {
     };
 
     const handleClearAllTasks = async () => {
-        // try {
-        //     const token = Cookies.get("jwt");
-        //     const response = await fetch(`https://pandatur-api.com/task/user/${userId}`, {
-        //         method: "DELETE",
-        //         headers: {
-        //             "Content-Type": "application/json",
-        //             Authorization: `Bearer ${token}`,
-        //         },
-        //     });
-        //     if (response.ok) {
-        //         setTasks([]); // Clear tasks from state
-        //     } else {
-        //         console.error(`Error clearing tasks: ${response.status}`);
-        //     }
-        // } catch (error) {
-        //     console.error("Error clearing tasks:", error.message);
-        // }
+        try {
+            const token = Cookies.get("jwt");
+            const response = await fetch(`https://pandatur-api.com/task/clear`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    client_id: userId,
+                }),
+            });
+            if (response.ok) {
+                setTasks([]); // Clear tasks from state
+            } else {
+                console.error(`Error clearing tasks: ${response.status}`);
+            }
+        } catch (error) {
+            console.error("Error clearing tasks:", error.message);
+        }
+    };
+
+    const handleMarkAsSeenTask = async (id) => {
+        try {
+            const token = Cookies.get("jwt");
+            const response = await fetch("https://pandatur-api.com/task", {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    id: id,
+                    status: true,
+                }),
+            });
+            if (response.ok) {
+                fetchTasks();
+            } else {
+                console.error(`Ошибка обновления статуса: ${response.status}`);
+            }
+        } catch (error) {
+            console.error("Ошибка обновления статуса:", error.message);
+        }
     };
 
     if (!isOpen) {
@@ -135,11 +169,11 @@ const TaskModal = ({ isOpen, onClose }) => {
                             required
                         >
                             <option value="" disabled>
-                                {tickets.length === 0 ? translations['Încărcăm leadurile'][language] : translations['Alege ID lead'][language]}
+                                {ticketIds.length === 0 ? translations['Încărcăm leadurile'][language] : translations['Alege ID lead'][language]}
                             </option>
-                            {tickets.map((ticket) => (
-                                <option key={ticket.id} value={ticket.id}>
-                                    {ticket.id}
+                            {ticketIds.map((id, index) => (
+                                <option key={index} value={id}>
+                                    {id}
                                 </option>
                             ))}
                         </select>
@@ -193,10 +227,26 @@ const TaskModal = ({ isOpen, onClose }) => {
                                             <strong>ID:</strong> {task.id}
                                         </p>
                                         <p className="description">
+                                            <strong>TASK FOR TICKET:</strong> {task.ticket_id}
+                                        </p>
+                                        <p className="description">
                                             <strong>{translations['Descriere'][language]}:</strong> {task.description}
                                         </p>
-                                        <p className="time">{new Date(task.time).toLocaleString()}</p>
+                                        <p className="time">{new Date(task.scheduled_time).toLocaleString()}</p>
                                     </div>
+                                </div>
+                                <div className="action-group">
+                                    <p className={`status ${task.status ? "seen" : "unseen"}`}>
+                                        {task.status ? translations['Văzut'][language] : translations['Nevăzut'][language]}
+                                    </p>
+                                    {!task.status && (
+                                        <button
+                                            className="mark-as-seen"
+                                            onClick={() => handleMarkAsSeenTask(task.id)}
+                                        >
+                                            {translations['Marchează'][language]}
+                                        </button>
+                                    )}
                                 </div>
                             </li>
                         ))

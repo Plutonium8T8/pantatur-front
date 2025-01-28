@@ -16,6 +16,21 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
   const { setTickets } = useAppContext(); // Обновление тикетов через контекст
   const { userId } = useUser();
 
+  // Функция для обработки тегов
+  const parseTags = (tags) => {
+    if (Array.isArray(tags)) {
+      return tags;
+    }
+    if (typeof tags === 'string' && tags.startsWith('{') && tags.endsWith('}')) {
+      return tags
+        .slice(1, -1) // Убираем `{` и `}`
+        .split(',') // Разделяем по запятой
+        .map((tag) => tag.trim()) // Убираем пробелы
+        .filter((tag) => tag !== ''); // Убираем пустые строки
+    }
+    return []; // Если формат неизвестен, возвращаем пустой массив
+  };
+
   const [editedTicket, setEditedTicket] = useState(() => {
     const defaultTicket = {
       contact: '',
@@ -28,6 +43,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
     return {
       ...defaultTicket,
       ...ticket,
+      tags: parseTags(ticket?.tags), // Преобразуем теги в массив
     };
   });
 
@@ -151,7 +167,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
             />
           </div>
           <TagInput
-            initialTags={editedTicket.tags}
+            initialTags={editedTicket.tags || []} // Передаем массив тегов
             onChange={handleTagsChange}
           />
           <div className="input-group">

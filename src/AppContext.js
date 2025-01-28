@@ -219,12 +219,21 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       }
 
       const ticket = await response.json();
-      console.log("Загруженный тикет:", ticket);
+      console.log('Загруженный тикет:', ticket);
 
-      // Обновляем тикет в состоянии (если нужно)
-      setTickets((prevTickets) =>
-        prevTickets.map((t) => (t.client_id === clientId ? ticket : t))
-      );
+      // Обновляем или добавляем тикет в состояние
+      setTickets((prevTickets) => {
+        const existingTicket = prevTickets.find((t) => t.client_id === clientId);
+        if (existingTicket) {
+          // Обновляем существующий тикет
+          return prevTickets.map((t) =>
+            t.client_id === clientId ? ticket : t
+          );
+        } else {
+          // Добавляем новый тикет
+          return [...prevTickets, ticket];
+        }
+      });
 
       return ticket; // Возвращаем полученный тикет
     } catch (error) {
@@ -405,7 +414,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         }
 
         // Запрашиваем тикет по client_id
-        // fetchSingleTicket(clientId);
+        fetchSingleTicket(clientId);
 
         const socketInstance = socketRef.current; // Используем socketRef.current
         if (socketInstance && socketInstance.readyState === WebSocket.OPEN) {
@@ -468,7 +477,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         isLoading,
         updateTicket,
         fetchTickets,
-        socketRef
+        socketRef,
         // unreadCount: unreadMessages.size, // Количество непрочитанных сообщений
       }}
     >

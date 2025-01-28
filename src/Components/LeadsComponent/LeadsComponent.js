@@ -141,11 +141,14 @@ const Leads = () => {
           onClose={closeModal}
           onSave={(updatedTicket) => {
             // Локальное обновление тикетов через setTickets
-            setTickets((prevTickets) =>
-              prevTickets.map((ticket) =>
-                ticket.client_id === updatedTicket.client_id ? updatedTicket : ticket
-              )
-            );
+            setTickets((prevTickets) => {
+              const isEditing = Boolean(updatedTicket.client_id);
+              return isEditing
+                ? prevTickets.map((ticket) =>
+                  ticket.client_id === updatedTicket.client_id ? updatedTicket : ticket
+                )
+                : [...prevTickets, updatedTicket]; // Добавляем новый тикет
+            });
           }}
         />
       )}
