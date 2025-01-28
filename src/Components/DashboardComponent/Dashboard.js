@@ -39,6 +39,44 @@ const platformColors = {
   telegram: { background: "rgba(0, 136, 204, 0.5)", border: "rgba(0, 136, 204, 1)" },
 };
 
+const weekdaysColors = {
+  Sunday: { background: "rgba(255, 99, 132, 0.5)", border: "rgba(255, 99, 132, 1)" }, // Red
+  Monday: { background: "rgba(54, 162, 235, 0.5)", border: "rgba(54, 162, 235, 1)" }, // Blue
+  Tuesday: { background: "rgba(255, 206, 86, 0.5)", border: "rgba(255, 206, 86, 1)" }, // Yellow
+  Wednesday: { background: "rgba(75, 192, 192, 0.5)", border: "rgba(75, 192, 192, 1)" }, // Teal
+  Thursday: { background: "rgba(153, 102, 255, 0.5)", border: "rgba(153, 102, 255, 1)" }, // Purple
+  Friday: { background: "rgba(255, 159, 64, 0.5)", border: "rgba(255, 159, 64, 1)" }, // Orange
+  Saturday: { background: "rgba(199, 199, 199, 0.5)", border: "rgba(199, 199, 199, 1)" }, // Grey
+};
+
+const monthsColors = {
+  January: { background: "rgba(255, 99, 132, 0.5)", border: "rgba(255, 99, 132, 1)" }, // Red
+  February: { background: "rgba(54, 162, 235, 0.5)", border: "rgba(54, 162, 235, 1)" }, // Blue
+  March: { background: "rgba(255, 206, 86, 0.5)", border: "rgba(255, 206, 86, 1)" }, // Yellow
+  April: { background: "rgba(75, 192, 192, 0.5)", border: "rgba(75, 192, 192, 1)" }, // Teal
+  May: { background: "rgba(153, 102, 255, 0.5)", border: "rgba(153, 102, 255, 1)" }, // Purple
+  June: { background: "rgba(255, 159, 64, 0.5)", border: "rgba(255, 159, 64, 1)" }, // Orange
+  July: { background: "rgba(255, 99, 132, 0.5)", border: "rgba(255, 99, 132, 1)" }, // Red
+  August: { background: "rgba(54, 162, 235, 0.5)", border: "rgba(54, 162, 235, 1)" }, // Blue
+  September: { background: "rgba(255, 206, 86, 0.5)", border: "rgba(255, 206, 86, 1)" }, // Yellow
+  October: { background: "rgba(38, 201, 201, 0.5)", border: "rgba(75, 192, 192, 1)" }, // Teal
+  November: { background: "rgba(153, 102, 255, 0.5)", border: "rgba(153, 102, 255, 1)" }, // Purple
+  December: { background: "rgba(255, 159, 64, 0.5)", border: "rgba(255, 159, 64, 1)" }, // Orange
+};
+
+
+const workflowColors = {
+  "Interesat": { background: "rgba(54, 162, 235, 0.5)", border: "rgba(54, 162, 235, 1)" }, // Blue
+  "Aprobat cu client": { background: "rgba(75, 192, 192, 0.5)", border: "rgba(75, 192, 192, 1)" }, // Teal
+  "Contract semnat": { background: "rgba(255, 206, 86, 0.5)", border: "rgba(255, 206, 86, 1)" }, // Yellow
+  "Apel de intrare": { background: "rgba(153, 102, 255, 0.5)", border: "rgba(153, 102, 255, 1)" }, // Purple
+  "Plată primită": { background: "rgba(255, 159, 64, 0.5)", border: "rgba(255, 159, 64, 1)" }, // Orange
+  "Contract încheiat": { background: "rgba(46, 204, 113, 0.5)", border: "rgba(46, 204, 113, 1)" }, // Green
+  "De prelucrat": { background: "rgba(231, 76, 60, 0.5)", border: "rgba(231, 76, 60, 1)" }, // Red
+  "Luati în lucru": { background: "rgba(52, 152, 219, 0.5)", border: "rgba(52, 152, 219, 1)" }, // Light Blue
+  "Ofertă trimisă": { background: "rgba(155, 89, 182, 0.5)", border: "rgba(155, 89, 182, 1)" }, // Violet
+};
+
 const Dashboard = () => {
   const [statistics, setStatistics] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -61,6 +99,7 @@ const Dashboard = () => {
       );
       if (!response.ok) throw new Error("Failed to fetch statistics.");
       const statsData = await response.json();
+      console.log(statsData[0]);
       setStatistics(statsData[0] || []); 
     } catch (error) {
       console.error("Error fetching statistics:", error);
@@ -96,24 +135,32 @@ const Dashboard = () => {
   const datasetLabels = [
     "Leaduri per platforma",
     "Leaduri per zi",
+    "Comision per luna",
+    "Leaduri per luna",
     "Leaduri per etapa de lucru",
-    "Workflow Steps",
-    "Workflow Steps",
   ];
 
   const datasetTypes = [
     "pie",
     "bar",
-    "bar",
     "line",
-    "line"
+    "bar",
+    "bar"
+  ];
+
+  const datasetWidths = [
+    1,
+    2,
+    2,
+    2,
+    2
   ];
 
   const layout = statistics.map((_, index) => ({
     i: `${index + 1}`,
     x: index % cols,
     y: Math.floor(index / cols),
-    w: index === 0 ? 1 : 2,
+    w: datasetWidths[index],
     h: 1,
     type: datasetTypes[index],
     label: datasetLabels[index] || `Chart ${index + 1}`
@@ -171,15 +218,25 @@ const Dashboard = () => {
               ],
             };
           } else {
-            // Bar chart (time_period/month/workflow-based)
             chartData = {
-              labels: statArray.map((stat) => stat.time_period || stat.month || stat.workflow),
+              labels: statArray.map((stat) => stat.week_period || stat.workflow || stat.month_period || stat.month),
               datasets: [
                 {
-                  label: chartLabel, // Descriptive label
+                  label: chartLabel,
                   data: statArray.map((stat) => stat.tickets_count || stat.total_commission || 0),
-                  backgroundColor: "rgba(54, 162, 235, 0.5)",
-                  borderColor: "rgba(54, 162, 235, 1)",
+                  backgroundColor: statArray.map(
+                    (stat) => weekdaysColors[stat.week_period]?.background ||
+                              workflowColors[stat.workflow]?.background ||
+                              workflowColors[stat.time_period]?.background ||
+                              monthsColors[stat.month_period]?.background ||
+                              "rgba(200, 200, 200, 0.5)"
+                  ),
+                  borderColor: statArray.map(
+                    (stat) => weekdaysColors[stat.week_period]?.border ||
+                              workflowColors[stat.workflow]?.border ||
+                              monthsColors[stat.month_period]?.border ||
+                              "rgba(200, 200, 200, 1)"
+                  ),
                   borderWidth: 1,
                 },
               ],
