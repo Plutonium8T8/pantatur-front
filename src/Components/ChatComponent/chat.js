@@ -431,7 +431,7 @@ const ChatComponent = ({ }) => {
     //         }
     //     });
     // };
-    
+
 
     const getLastReaction = (message) => {
         if (!message.reactions) {
@@ -560,7 +560,7 @@ const ChatComponent = ({ }) => {
             video: "Video Message",
             file: "File Message",
         };
-    
+
         return typeLabels[type] || "Unknown Message";
     };
 
@@ -1093,14 +1093,14 @@ const ChatComponent = ({ }) => {
                     <textarea className="text-area-message" placeholder={translations['Introduceți mesaj'][language]}></textarea>
                     <div className="message-options">
                         <div className="button-row">
-                            <button 
+                            <button
                                 className="action-button send-button"
                                 onClick={editMessageId ? handleSave : handleClick}
                                 disabled={!selectClientId}>
-                                    <FaPaperPlane/>
+                                <FaPaperPlane />
                             </button>
                             <button className="action-button emoji-button">
-                                <FaSmile/>
+                                <FaSmile />
                             </button>
                             {showEmojiPicker &&
                                 ReactDOM.createPortal(
@@ -1128,7 +1128,7 @@ const ChatComponent = ({ }) => {
                             />
 
                             <button htmlFor="file-input" className="action-button file-button"
-                            ><FaFile/></button>
+                            ><FaFile /></button>
                         </div>
 
                         <div class="select-row">
@@ -1263,16 +1263,16 @@ const ChatComponent = ({ }) => {
                                         />
                                         <Input
                                             label="Data și ora plecării"
-                                            type="date"
+                                            type="datetime-local"
                                             value={extraInfo[selectClientId]?.leave_date || ""}
                                             onChange={(date) =>
                                                 handleSelectChange(selectClientId, 'leave_date', date)
                                             }
                                             className="input-field"
                                         />
-                                                                                <Input
+                                        <Input
                                             label="Data și ora întoarcerii"
-                                            type="date"
+                                            type="datetime-local"
                                             value={extraInfo[selectClientId]?.arrive_date || ""}
                                             onChange={(date) =>
                                                 handleSelectChange(selectClientId, 'arrive_date', date)
