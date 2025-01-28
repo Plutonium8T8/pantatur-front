@@ -161,7 +161,7 @@ export const SocketProvider = ({ children, isLoggedIn }) => {
     }
 
     // Устанавливаем соединение WebSocket после логина
-    const socketInstance = new WebSocket('wss://34.88.101.80:9090');
+    const socketInstance = new WebSocket('ws://34.88.101.80:9090');
 
     socketInstance.onopen = () => {
       console.log('WebSocket подключен');

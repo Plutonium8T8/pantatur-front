@@ -15,7 +15,7 @@
 <body>
   <script>
     const redirectTo = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1) + "leads";
-    if (window.location.pathname !== "/" && !window.location.pathname.endsWith(".html")) {
+    if (window.location.pathname.endsWith(".html")) {
       window.location.href = redirectTo;
     }
   </script>
