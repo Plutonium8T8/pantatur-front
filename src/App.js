@@ -65,53 +65,76 @@ function App() {
   }
 
   return (
-    <AppProvider isLoggedIn={isLoggedIn}>
-      <SnackbarProvider
-        autoHideDuration={5000}
-        maxSnack={5}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
-        <UserProvider>
-          <Router>
-            {!isLoggedIn ? (
-              <LoginForm onLoginSuccess={handleLogin} />
-            ) : (
-              <div className="app-container">
-                <CustomSidebar
-                  onOpenNotifications={() => setIsNotificationModalOpen(true)}
-                  onOpenTasks={() => setIsTaskComponentOpen(true)} // Передаем функцию для открытия задач
-                  onOpenAccount={() => setIsAccountComponentOpen(true)}
-                />
-                <div className="page-content">
-                  <Routes>
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/" element={<Navigate to="/leads" />} />
-                    <Route path="/leads" element={<Leads />} />
-                    <Route
-                      path="/chat/:clientId?"
-                      element={<ChatComponent />}
-                    />
-                    <Route path="/admin-panel" element={<AdminPanel />} />
-                    <Route path="*" element={<div>Страница в разработке</div>} />
-                  </Routes>
+    <SnackbarProvider
+      iconVariant={{
+        success: '',
+        error: '',
+        warning: '',
+        info: '',
+      }}
+      autoHideDuration={60000}
+      maxSnack={5}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      action={(snackbarId) => (
+        <>
+          <div className='snack-bar-notification'>
+            <div className='snack-object'>
+            </div>
+            <div className='snack-close'>
+              <button onClick={() => closeSnackbar(snackbarId)}>
+                <FaTrash />
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+    >
+        <SocketProvider isLoggedIn={isLoggedIn}>
+          <UserProvider>
+            <Notification />
+            <Router>
+            <UnreadMessagesProvider isLoggedIn={isLoggedIn}>
+              {!isLoggedIn ? (
+                <LoginForm onLoginSuccess={handleLogin} />
+              ) : (
+                <div className="app-container">
+                  <CustomSidebar
+                    onOpenNotifications={() => setIsNotificationModalOpen(true)}
+                    onOpenTasks={() => setIsTaskComponentOpen(true)} // Передаем функцию для открытия задач
+                    onOpenAccount={() => setIsAccountComponentOpen(true)} // Передаем функцию для открытия задач
+                  />
+                  <div className="page-content">
+                    <Routes>
+                      <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/" element={<Navigate to="/leads" />} />
+                      <Route path="/leads" element={<Leads />} />
+                      <Route
+                        path="/chat/:clientId?"
+                        element={<ChatComponent />}
+                      />
+                      <Route path="/admin-panel" element={<AdminPanel />} />
+                      <Route path="*" element={<div>Страница в разработке</div>} />
+                    </Routes>
+                  </div>
+                  <UserPage
+                    isOpen={isAccountComponentOpen}
+                    onClose={() => setIsAccountComponentOpen(false)}
+                  />
+                  <NotificationModal
+                    isOpen={isNotificationModalOpen}
+                    onClose={() => setIsNotificationModalOpen(false)}
+                  />
+                  <TaskComponent
+                    isOpen={isTaskComponentOpen}
+                    onClose={() => setIsTaskComponentOpen(false)}
+                  />
                 </div>
-                <UserPage
-                  isOpen={isAccountComponentOpen}
-                  onClose={() => setIsAccountComponentOpen(false)}
-                />
-                <NotificationModal
-                  isOpen={isNotificationModalOpen}
-                  onClose={() => setIsNotificationModalOpen(false)}
-                />
-                <TaskComponent
-                  isOpen={isTaskComponentOpen}
-                  onClose={() => setIsTaskComponentOpen(false)}
-                />
-              </div>
-            )}
-          </Router>
-        </UserProvider>
-      </SnackbarProvider>
-    </AppProvider>
+              )}
+            </UnreadMessagesProvider>
+            </Router >
+          </UserProvider>
+        </SocketProvider>
+    </SnackbarProvider>
   );
 }
 
