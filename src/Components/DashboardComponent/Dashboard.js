@@ -94,9 +94,9 @@ const Dashboard = () => {
   const rowHeight = containerWidth / cols;
 
   const datasetLabels = [
-    "Lead dupa platforma",
-    "Days of the Week",
-    "Monthly Data",
+    "Leaduri per platforma",
+    "Leaduri per zi",
+    "Leaduri per etapa de lucru",
     "Workflow Steps",
     "Workflow Steps",
   ];
