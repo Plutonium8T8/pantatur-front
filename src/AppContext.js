@@ -83,7 +83,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     };
 
     if (!socketRef.current) {
-      const socketInstance = new WebSocket('wss://34.88.101.80:8080');
+      const socketInstance = new WebSocket('ws://34.88.101.80:8080');
       socketRef.current = socketInstance;
 
       socketInstance.onopen = async () => {

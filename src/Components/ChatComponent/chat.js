@@ -900,7 +900,7 @@ const ChatComponent = ({ }) => {
                                         onClick={() => handleTicketClick(ticket.client_id)}
                                     >
                                         <div className="foto-description">
-                                            <img className="foto-user" src="/user fon.png" alt="example" />
+                                            <img className="foto-user" src="https://storage.googleapis.com/pandatur_bucket/utils/icon-5359554_640.webp" alt="example" />
                                             <div className="tickets-descriptions">
                                                 <div>{ticket.contact || "no contact"}</div>
                                                 <div>{ticket.id ? `Lead: #${ticket.id}` : "no id"}</div>
@@ -1089,17 +1089,17 @@ const ChatComponent = ({ }) => {
                             );
                         })}
                 </div>
-                <div class="manager-send-message-container">
-                    <textarea class="text-area-message" placeholder={translations['Introduceți mesaj'][language]}></textarea>
-                    <div class="message-options">
-                        <div class="button-row">
+                <div className="manager-send-message-container">
+                    <textarea className="text-area-message" placeholder={translations['Introduceți mesaj'][language]}></textarea>
+                    <div className="message-options">
+                        <div className="button-row">
                             <button 
-                                class="action-button send-button"
+                                className="action-button send-button"
                                 onClick={editMessageId ? handleSave : handleClick}
                                 disabled={!selectClientId}>
                                     <FaPaperPlane/>
                             </button>
-                            <button class="action-button emoji-button">
+                            <button className="action-button emoji-button">
                                 <FaSmile/>
                             </button>
                             {showEmojiPicker &&
@@ -1127,7 +1127,7 @@ const ChatComponent = ({ }) => {
                                 id="file-input"
                             />
 
-                            <button htmlFor="file-input" class="action-button file-button"
+                            <button htmlFor="file-input" className="action-button file-button"
                             ><FaFile/></button>
                         </div>
 

@@ -34,7 +34,7 @@ const TicketCard = ({ ticket, onContextMenu, onEditTicket }) => {
                     <div className="ticket-column">
                         <div className="ticket-photo">
                             <img
-                                src={'/user fon.png'} // Default round photo
+                                src={'https://storage.googleapis.com/pandatur_bucket/utils/icon-5359554_640.webp'} // Default round photo
                                 alt="User"
                                 className="ticket-photo-image"
                             />
