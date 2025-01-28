@@ -1131,7 +1131,7 @@ const ChatComponent = ({ }) => {
                             ><FaFile /></button>
                         </div>
 
-                        <div class="select-row">
+                        <div className="select-row">
                             <Select
                                 options={templateOptions}
                                 id="message-template"
