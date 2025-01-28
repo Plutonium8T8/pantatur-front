@@ -473,7 +473,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         isLoading,
         updateTicket,
         fetchTickets,
-        socketRef
+        socketRef,
         // unreadCount: unreadMessages.size, // Количество непрочитанных сообщений
       }}
     >
