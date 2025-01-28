@@ -508,11 +508,14 @@ const ChatComponent = ({ }) => {
 
     // Обработчик клика вне области эмодзи-пикера, чтобы закрыть пикер
     const handleClickOutside = (event) => {
-        // Закрытие пикера только если клик был вне области контейнера пикера
-        if (!event.target.closest('.emoji-picker-container') && !event.target.closest('.emoji-picker-popup')) {
-            setShowEmojiPicker(false);
+        if (
+            !event.target.closest('.emoji-button') && // Проверяем клик по кнопке
+            !event.target.closest('.emoji-picker-popup') // Проверяем клик внутри меню эмодзи
+        ) {
+            setShowEmojiPicker(false); // Закрываем меню только если клик был вне
         }
     };
+
 
     // Добавляем обработчик события для клика вне пикера
     useEffect(() => {
@@ -1090,16 +1093,27 @@ const ChatComponent = ({ }) => {
                         })}
                 </div>
                 <div className="manager-send-message-container">
-                    <textarea className="text-area-message" placeholder={translations['Introduceți mesaj'][language]}></textarea>
+                    <textarea
+                        className="text-area-message"
+                        value={managerMessage}
+                        onChange={(e) => setManagerMessage(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        placeholder={translations['Introduceți mesaj'][language]}
+                        disabled={!selectClientId}
+                    >
+                    </textarea>
                     <div className="message-options">
                         <div className="button-row">
                             <button
                                 className="action-button send-button"
-                                onClick={editMessageId ? handleSave : handleClick}
+                                onClick={handleClick}
                                 disabled={!selectClientId}>
                                 <FaPaperPlane />
                             </button>
-                            <button className="action-button emoji-button">
+                            <button
+                                className="action-button emoji-button"
+                                onClick={handleEmojiClickButton}
+                                disabled={!selectClientId}>
                                 <FaSmile />
                             </button>
                             {showEmojiPicker &&
@@ -1126,11 +1140,14 @@ const ChatComponent = ({ }) => {
                                 style={{ display: "none" }}
                                 id="file-input"
                             />
-
-                            <button htmlFor="file-input" className="action-button file-button"
-                            ><FaFile /></button>
+                            <button
+                                htmlFor="file-input"
+                                className="action-button file-button"
+                                disabled={!selectClientId}
+                            >
+                                <FaFile />
+                            </button>
                         </div>
-
                         <div className="select-row">
                             <Select
                                 options={templateOptions}
