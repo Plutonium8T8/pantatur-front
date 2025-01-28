@@ -319,6 +319,47 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     }
   };
 
+  // Функция для получения сообщений для конкретного client_id
+  const getClientMessagesSingle = async (client_id) => {
+    try {
+      const token = Cookies.get('jwt');
+      if (!token) {
+        console.warn('Нет токена. Пропускаем загрузку сообщений.');
+        return;
+      }
+
+      const response = await fetch(`https://pandatur-api.com/messages/client/${client_id}`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          Origin: 'https://plutonium8t8.github.io',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log(`Сообщения для клиента ${client_id}, загруженные из API:`, data);
+
+      // Обновляем только сообщения для указанного client_id
+      setMessages((prevMessages) => {
+        // Фильтруем существующие сообщения, исключая старые сообщения этого client_id
+        const otherMessages = prevMessages.filter((msg) => msg.client_id !== client_id);
+
+        // Объединяем с новыми сообщениями для client_id
+        return [...otherMessages, ...data];
+      });
+
+      updateUnreadMessages(data); // Обновляем счетчик непрочитанных сообщений
+    } catch (error) {
+      enqueueSnackbar('Не удалось получить сообщения!', { variant: 'error' });
+      console.error('Ошибка при получении сообщений:', error.message);
+    }
+  };
+
   // Обработка сообщений через WebSocket
   const handleWebSocketMessage = (message) => {
     switch (message.type) {
@@ -378,6 +419,8 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       }
       case 'seen': {
         const { client_id, seen_at } = message.data;
+
+        getClientMessagesSingle();
 
         console.log('Received "seen" event:', { client_id, seen_at });
 
