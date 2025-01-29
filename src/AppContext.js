@@ -126,7 +126,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     console.log("Непрочитанные сообщения:", unread);
     console.log("Количество непрочитанных:", unread.length);
 
-    setUnreadCount(unread.length);
+    setUnreadCount(unread.length); // Обновляем глобальный счетчик
   };
 
 
@@ -327,6 +327,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         console.warn('Нет токена. Пропускаем загрузку сообщений.');
         return;
       }
+      console.log("client_id din zapros", client_id);
 
       const response = await fetch(`https://pandatur-api.com/messages/client/${client_id}`, {
         method: 'GET',
@@ -420,7 +421,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       case 'seen': {
         const { client_id, seen_at } = message.data;
 
-        getClientMessagesSingle();
+        // getClientMessagesSingle(client_id);
 
         console.log('Received "seen" event:', { client_id, seen_at });
 
