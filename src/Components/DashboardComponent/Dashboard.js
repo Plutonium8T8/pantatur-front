@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Bar, Pie, Line } from "react-chartjs-2";
+import { Bar, Pie, Line, PolarArea } from "react-chartjs-2";
 import GridLayout from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
@@ -126,11 +126,11 @@ const Dashboard = () => {
       window.removeEventListener("resize", updateContainerDimensions);
   }, []);
 
-  let cols = 2;
+  let cols = 4;
   if (containerWidth > 1400) {
-    cols = 4;
+    cols = 8;
   }
-  const rowHeight = containerWidth / cols;
+  const rowHeight = containerWidth / cols + 50;
 
   const datasetLabels = [
     "Leaduri per platforma",
@@ -138,6 +138,7 @@ const Dashboard = () => {
     "Comision per luna",
     "Leaduri per luna",
     "Leaduri per etapa de lucru",
+    "Ore mediu prelucrare etapa"
   ];
 
   const datasetTypes = [
@@ -145,23 +146,52 @@ const Dashboard = () => {
     "bar",
     "line",
     "bar",
+    "bar",
     "bar"
   ];
 
   const datasetWidths = [
-    1,
     2,
+    2,
+    2,
+    4,
+    4,
+    4
+  ];
+
+  const datasetHeights = [
+    2,
+    1,
+    1,
     2,
     2,
     2
   ];
 
+  const positionX = [
+    1,
+    3,
+    3,
+    5,
+    1,
+    5
+  ];
+
+  const positionY = [
+    1,
+    1,
+    2,
+    1,
+    3,
+    3
+  ];
+
   const layout = statistics.map((_, index) => ({
     i: `${index + 1}`,
-    x: index % cols,
-    y: Math.floor(index / cols),
+    x: positionX[index] - 1,
+    y: positionY[index] - 1,
     w: datasetWidths[index],
-    h: 1,
+    h: datasetHeights[index],
     type: datasetTypes[index],
     label: datasetLabels[index] || `Chart ${index + 1}`
   }));
@@ -170,7 +200,8 @@ const Dashboard = () => {
   const chartComponents = {
     pie: Pie,
     bar: Bar,
-    line: Line
+    line: Line,
+    polar: PolarArea
   };
 
   if (isLoading) {
@@ -178,7 +209,17 @@ const Dashboard = () => {
   }
 
   return (
-    <div style={{ width: "100%", height: "100%" }}>
+    <div
+  className="chart-container"
+  style={{
+    width: "100%",  // Ensure it stretches fully in the grid cell
+    height: "100%", // Match the height dynamically
+    justifyContent: "center",
+    alignItems: "center",
+    padding: "5px",
+  }}
+>
+
       <GridLayout
         className="layout"
         layout={layout}
@@ -195,7 +236,7 @@ const Dashboard = () => {
 
           let chartData = {};
 
-          if (chartType === "pie") {
+          if (chartType === "pie" || chartType === "polar") {
             // Pie chart (platform-based)
             chartData = {
               labels: statArray.map((stat) => stat.platform),
@@ -229,13 +270,13 @@ const Dashboard = () => {
                               workflowColors[stat.workflow]?.background ||
                               workflowColors[stat.time_period]?.background ||
                               monthsColors[stat.month_period]?.background ||
-                              "rgba(200, 200, 200, 0.5)"
+                              "rgba(86, 244, 96, 0.69)"
                   ),
                   borderColor: statArray.map(
                     (stat) => weekdaysColors[stat.week_period]?.border ||
                               workflowColors[stat.workflow]?.border ||
                               monthsColors[stat.month_period]?.border ||
-                              "rgba(200, 200, 200, 1)"
+                              "rgb(3, 202, 0)"
                   ),
                   borderWidth: 1,
                 },
@@ -244,12 +285,12 @@ const Dashboard = () => {
           }
 
           return (
-            <div key={layout[index].i} style={{ width: "100%", height: "100%" }}>
+            <div key={layout[index].i} style={{ width: "100%", height: "100%", alignItems: "center" }}>
               <div
                 className="chart-container"
                 style={{
-                  height: "90%",
-                  width: "90%",
+                  height: "100%",
+                  width: "100%",
                 }}
               >
                 <h3 style={{ textAlign: "center", marginBottom: "10px" }}>{chartLabel}</h3>
