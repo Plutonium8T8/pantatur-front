@@ -75,7 +75,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
 
       const socketMessage = JSON.stringify({
         type: 'connect',
-        data: { id: ticketIds },
+        data: { client_id: ticketIds },
       });
 
       socketInstance.send(socketMessage);
@@ -83,7 +83,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     };
 
     if (!socketRef.current) {
-      const socketInstance = new WebSocket('ws://34.88.101.80:443');
+      const socketInstance = new WebSocket('wss://pandaturws.com');
       socketRef.current = socketInstance;
 
       socketInstance.onopen = async () => {
@@ -463,7 +463,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         if (socketInstance && socketInstance.readyState === WebSocket.OPEN) {
           const socketMessage = JSON.stringify({
             type: 'connect',
-            data: { client_id: [clientId] }, // Подключаемся только к комнате с этим client_id
+            data: { client_id: [ticketId] }, // Подключаемся только к комнате с этим client_id
           });
 
           socketInstance.send(socketMessage);

@@ -246,6 +246,36 @@ const ChatComponent = ({ }) => {
         sendMessage();
     };
 
+    const sendSeenEvent = (ticketId, clientId) => {
+        if (!ticketId || !clientId) {
+            console.warn("Отправка seen не выполнена: ticketId или clientId отсутствует.");
+            return;
+        }
+
+        const readMessageData = {
+            type: 'seen',
+            data: {
+                ticket_id: ticketId,
+                // client_id: clientId,
+                sender_id: Number(userId),
+            },
+        };
+
+        try {
+            const socketInstance = socketRef.current;
+            if (socketInstance && socketInstance.readyState === WebSocket.OPEN) {
+                socketInstance.send(JSON.stringify(readMessageData));
+                console.log(`✅ Seen отправлен для ticket_id=${ticketId}, client_id=${clientId}`);
+            } else {
+                console.warn('WebSocket не подключен или закрыт.');
+            }
+
+            markMessagesAsRead(ticketId);
+        } catch (error) {
+            console.error('❌ Ошибка при отправке события о прочтении:', error);
+        }
+    };
+
     const handleTicketClick = (ticketId) => {
         setSelectTicketId(ticketId);
 
@@ -253,40 +283,25 @@ const ChatComponent = ({ }) => {
 
         if (selectedTicket) {
             setSelectedTechnicianId(selectedTicket.technician_id || null);
-            setSelectTicketId(selectedTicket.id); // Сохраняем client_id в состоянии
         } else {
             console.warn('Тикет не найден!');
             setSelectedTechnicianId(null);
         }
 
-        console.log('Selected Client ID:', selectedTicket?.id || "No change");
+        console.log('🎯 Selected Ticket ID:', selectedTicket?.id || "No change");
+        console.log("📌 Raw clientId:", selectedTicket?.client_id);
+
+        // Убираем `{}` из client_id, если они есть
+        const parsedClientId = selectedTicket?.client_id
+            ? Number(String(selectedTicket.client_id).replace(/[{}]/g, '')) // Очищаем и приводим к числу
+            : null;
+
+        console.log("🔍 Parsed Client ID:", parsedClientId);
+
         navigate(`/chat/${ticketId}`);
 
-        // Отправка события seen через WebSocket
-        const readMessageData = {
-            type: 'seen',
-            data: {
-                client_id: clientId,
-                sender_id: Number(userId),
-            },
-        };
-
-        try {
-            const socketInstance = socketRef.current; // Используем socketRef.current
-            if (socketInstance && socketInstance.readyState === WebSocket.OPEN) {
-                socketInstance.send(JSON.stringify(readMessageData)); // Отправляем событие в WebSocket
-                console.log(
-                    `Все сообщения в чате с client_id=${ticketId} помечены как прочитанные.`
-                );
-            } else {
-                console.warn('WebSocket не подключен или закрыт.');
-            }
-
-            markMessagesAsRead(clientId);
-            // Локальное обновление сообщений как прочитанных
-        } catch (error) {
-            console.error('Ошибка при отправке события о прочтении:', error);
-        }
+        // Вызываем sendSeenEvent отдельно
+        sendSeenEvent(ticketId, parsedClientId);
     };
 
 
@@ -965,133 +980,163 @@ const ChatComponent = ({ }) => {
             </div>
             <div className="chat-area">
                 <div className="chat-messages" ref={messageContainerRef}>
-                    {selectTicketId ? ( // ✅ Если тикет выбран, показываем сообщения
+                    {selectTicketId ? (
                         (() => {
-                            const groupedMessages = messages
-                                .filter((msg) => msg.ticket_id === selectTicketId) // ✅ Фильтруем сообщения по ticket_id
-                                .sort((a, b) => new Date(a.time_sent) - new Date(b.time_sent)) // Сортируем по времени
-                                .reduce((acc, msg) => {
-                                    const messageDate = new Date(msg.time_sent).toLocaleDateString("ru-RU", {
-                                        year: "numeric",
-                                        month: "long",
-                                        day: "numeric",
-                                    });
+                            // Получаем тикет и его client_id (может быть 1 или 2)
+                            const selectedTicket = tickets.find(ticket => ticket.id === selectTicketId);
+                            const clientIds = selectedTicket
+                                ? selectedTicket.client_id.toString().replace(/[{}]/g, "").split(',').map(id => Number(id))
+                                : [];
 
-                                    if (!acc[messageDate]) {
-                                        acc[messageDate] = [];
-                                    }
-                                    acc[messageDate].push(msg);
-                                    return acc;
-                                }, {});
+                            // Фильтруем сообщения по ticket_id и сортируем по времени
+                            const sortedMessages = messages
+                                .filter(msg => msg.ticket_id === selectTicketId)
+                                .sort((a, b) => new Date(a.time_sent) - new Date(b.time_sent));
 
-                            return Object.entries(groupedMessages).map(([date, msgs]) => (
-                                <div key={date}>
-                                    <div className="message-date-separator">{date}</div> {/* Заголовок даты */}
-                                    {msgs.map((msg) => {
-                                        const uniqueKey = `${msg.id || msg.ticket_id}-${msg.time_sent}`;
+                            // Группируем по дате и разделяем по client_id с сохранением порядка
+                            const groupedMessages = sortedMessages.reduce((acc, msg) => {
+                                const messageDate = new Date(msg.time_sent).toLocaleDateString("ru-RU", {
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                });
 
-                                        // Определяем отображение контента на основе mtype
-                                        const renderContent = () => {
-                                            if (!msg.message) {
-                                                return <div className="text-message">Message nu sunt</div>;
+                                if (!acc[messageDate]) acc[messageDate] = [];
+                                acc[messageDate].push(msg);
+                                return acc;
+                            }, {});
+
+                            return Object.entries(groupedMessages).map(([date, msgs]) => {
+                                let lastClientId = null; // Переменная для отслеживания смены клиентов
+
+                                return (
+                                    <div key={date}>
+                                        <div className="message-date-separator">{date}</div> {/* Заголовок даты */}
+                                        {msgs.map((msg, index) => {
+                                            const uniqueKey = `${msg.id || msg.ticket_id}-${msg.time_sent}`;
+
+                                            // Определяем, нужно ли вставлять заголовок клиента
+                                            let showClientHeader = false;
+                                            if (msg.client_id !== lastClientId) {
+                                                showClientHeader = true;
+                                                lastClientId = msg.client_id;
                                             }
-                                            switch (msg.mtype) {
-                                                case "image":
-                                                    return (
-                                                        <img
-                                                            src={msg.message}
-                                                            alt="Отправленное изображение"
-                                                            className="image-preview-in-chat"
-                                                            onError={(e) => {
-                                                                e.target.src = "https://via.placeholder.com/300?text=Ошибка+загрузки";
-                                                            }}
-                                                            onClick={() => {
-                                                                window.open(msg.message, "_blank");
-                                                            }}
-                                                        />
-                                                    );
-                                                case "video":
-                                                    return (
-                                                        <video controls className="video-preview">
-                                                            <source src={msg.message} type="video/mp4" />
-                                                            Ваш браузер не поддерживает воспроизведение видео.
-                                                        </video>
-                                                    );
-                                                case "audio":
-                                                    return (
-                                                        <audio controls className="audio-preview">
-                                                            <source src={msg.message} type="audio/ogg" />
-                                                            Ваш браузер не поддерживает воспроизведение аудио.
-                                                        </audio>
-                                                    );
-                                                case "file":
-                                                    return (
-                                                        <a
-                                                            href={msg.message}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="file-link"
-                                                        >
-                                                            Открыть файл
-                                                        </a>
-                                                    );
-                                                default:
-                                                    return <div className="text-message">{msg.message}</div>;
-                                            }
-                                        };
 
-                                        const lastReaction = getLastReaction(msg);
+                                            // Определяем отображение контента на основе mtype
+                                            const renderContent = () => {
+                                                if (!msg.message) {
+                                                    return <div className="text-message">Сообщение отсутствует</div>;
+                                                }
+                                                switch (msg.mtype) {
+                                                    case "image":
+                                                        return (
+                                                            <img
+                                                                src={msg.message}
+                                                                alt="Изображение"
+                                                                className="image-preview-in-chat"
+                                                                onError={(e) => {
+                                                                    e.target.src = "https://via.placeholder.com/300?text=Ошибка+загрузки";
+                                                                }}
+                                                                onClick={() => {
+                                                                    window.open(msg.message, "_blank");
+                                                                }}
+                                                            />
+                                                        );
+                                                    case "video":
+                                                        return (
+                                                            <video controls className="video-preview">
+                                                                <source src={msg.message} type="video/mp4" />
+                                                                Ваш браузер не поддерживает воспроизведение видео.
+                                                            </video>
+                                                        );
+                                                    case "audio":
+                                                        return (
+                                                            <audio controls className="audio-preview">
+                                                                <source src={msg.message} type="audio/ogg" />
+                                                                Ваш браузер не поддерживает воспроизведение аудио.
+                                                            </audio>
+                                                        );
+                                                    case "file":
+                                                        return (
+                                                            <a
+                                                                href={msg.message}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="file-link"
+                                                            >
+                                                                Открыть файл
+                                                            </a>
+                                                        );
+                                                    default:
+                                                        return <div className="text-message">{msg.message}</div>;
+                                                }
+                                            };
 
-                                        return (
-                                            <div
-                                                key={uniqueKey}
-                                                className={`message ${msg.sender_id === userId || msg.sender_id === 1 ? "sent" : "received"}`}
-                                            >
-                                                <div className="message-content">
-                                                    <div className="message-row">
-                                                        <div className="text">
-                                                            {renderContent()}
-                                                            <div className="message-time">
-                                                                <div
-                                                                    className="reaction-toggle-button"
-                                                                    onClick={() =>
-                                                                        setSelectedMessageId(selectedMessageId === msg.id ? null : msg.id)
-                                                                    }
-                                                                >
-                                                                    {lastReaction || "☺"}
-                                                                </div>
-                                                                {new Date(msg.time_sent).toLocaleTimeString("ru-RU", {
-                                                                    hour: "2-digit",
-                                                                    minute: "2-digit",
-                                                                })}
-                                                            </div>
-                                                            {selectedMessageId === msg.id && (
-                                                                <div className="reaction-container" ref={reactionContainerRef}>
-                                                                    <div className="reaction-buttons">
-                                                                        {["☺", "👍", "❤️", "😂", "😮", "😢", "😡"].map((reaction) => (
-                                                                            <div
-                                                                                key={reaction}
-                                                                                onClick={() => handleReactionClick(reaction, msg.id)}
-                                                                                className={
-                                                                                    selectedReaction[msg.id] === reaction ? "active" : ""
-                                                                                }
-                                                                            >
-                                                                                {reaction}
-                                                                            </div>
-                                                                        ))}
+                                            const lastReaction = getLastReaction(msg);
+
+                                            return (
+                                                <div
+                                                    key={uniqueKey}
+                                                    className='container-messages-client' >
+                                                    {/* Показываем заголовок клиента, если сменился client_id */}
+                                                    {showClientHeader && (
+                                                        <div className="client-header">
+                                                            {msg.client_id !== "unknown"
+                                                                ? `Сообщения клиента #${msg.client_id}`
+                                                                : "Неизвестный клиент"}
+                                                        </div>
+                                                    )}
+
+                                                    <div
+                                                        className={`message ${msg.sender_id === userId || msg.sender_id === 1 ? "sent" : "received"}`}
+                                                    >
+                                                        <div className="message-content">
+                                                            <div className="message-row">
+                                                                <div className="text">
+                                                                    {renderContent()}
+                                                                    <div className="message-time">
+                                                                        <div
+                                                                            className="reaction-toggle-button"
+                                                                            onClick={() =>
+                                                                                setSelectedMessageId(selectedMessageId === msg.id ? null : msg.id)
+                                                                            }
+                                                                        >
+                                                                            {lastReaction || "☺"}
+                                                                        </div>
+                                                                        {new Date(msg.time_sent).toLocaleTimeString("ru-RU", {
+                                                                            hour: "2-digit",
+                                                                            minute: "2-digit",
+                                                                        })}
                                                                     </div>
+                                                                    {selectedMessageId === msg.id && (
+                                                                        <div className="reaction-container" ref={reactionContainerRef}>
+                                                                            <div className="reaction-buttons">
+                                                                                {["☺", "👍", "❤️", "😂", "😮", "😢", "😡"].map((reaction) => (
+                                                                                    <div
+                                                                                        key={reaction}
+                                                                                        onClick={() => handleReactionClick(reaction, msg.id)}
+                                                                                        className={
+                                                                                            selectedReaction[msg.id] === reaction ? "active" : ""
+                                                                                        }
+                                                                                    >
+                                                                                        {reaction}
+                                                                                    </div>
+                                                                                ))}
+                                                                            </div>
+                                                                        </div>
+                                                                    )}
                                                                 </div>
-                                                            )}
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            ));
+                                            );
+                                        })}
+                                    </div>
+                                );
+                            });
                         })()
-                    ) : ( // ✅ Если тикет не выбран, просто показываем пустой контейнер
+                    ) : (
                         <div className="empty-chat">
                             <p>Выберите тикет для просмотра сообщений</p>
                         </div>
