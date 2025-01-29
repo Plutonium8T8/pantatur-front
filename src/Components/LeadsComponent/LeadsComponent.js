@@ -22,7 +22,7 @@ const Leads = () => {
   const filteredTickets = useMemo(
     () =>
       tickets.filter((ticket) =>
-        ticket.contact.toLowerCase().includes(searchTerm.toLowerCase())
+        (ticket.contact?.toLowerCase() || "").includes((searchTerm || "").toLowerCase())
       ),
     [tickets, searchTerm]
   );
