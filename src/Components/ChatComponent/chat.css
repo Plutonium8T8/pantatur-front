@@ -590,8 +590,36 @@
     /* width: fit-content; */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-.container-messages-client {
+
+.message-group-container-chat {
     display: flex;
-    border: 1px solid red;
+    gap: 20px;
     flex-direction: column;
+    background-color: white;
+    padding: 10px;
+}
+
+.client-message-group {
+    display: flex;
+    flex-direction: column;
+    background-color: #7fc8a6;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+.client-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: #0f824c;
+    background-color: #e6f7f1;
+    border-radius: 20px;
+    padding: 6px 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    /* width: fit-content; */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }

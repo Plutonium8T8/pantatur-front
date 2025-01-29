@@ -982,18 +982,17 @@ const ChatComponent = ({ }) => {
                 <div className="chat-messages" ref={messageContainerRef}>
                     {selectTicketId ? (
                         (() => {
-                            // Получаем тикет и его client_id (может быть 1 или 2)
                             const selectedTicket = tickets.find(ticket => ticket.id === selectTicketId);
                             const clientIds = selectedTicket
                                 ? selectedTicket.client_id.toString().replace(/[{}]/g, "").split(',').map(id => Number(id))
                                 : [];
 
-                            // Фильтруем сообщения по ticket_id и сортируем по времени
+                            // Фильтруем и сортируем по времени
                             const sortedMessages = messages
                                 .filter(msg => msg.ticket_id === selectTicketId)
                                 .sort((a, b) => new Date(a.time_sent) - new Date(b.time_sent));
 
-                            // Группируем по дате и разделяем по client_id с сохранением порядка
+                            // Группировка по датам
                             const groupedMessages = sortedMessages.reduce((acc, msg) => {
                                 const messageDate = new Date(msg.time_sent).toLocaleDateString("ru-RU", {
                                     year: "numeric",
@@ -1007,131 +1006,131 @@ const ChatComponent = ({ }) => {
                             }, {});
 
                             return Object.entries(groupedMessages).map(([date, msgs]) => {
-                                let lastClientId = null; // Переменная для отслеживания смены клиентов
+                                let groupedByClient = [];
+                                let lastClientId = null;
+                                let currentGroup = [];
+
+                                msgs.forEach((msg) => {
+                                    if (msg.client_id !== lastClientId) {
+                                        if (currentGroup.length) {
+                                            groupedByClient.push({ clientId: lastClientId, messages: currentGroup });
+                                        }
+                                        currentGroup = [];
+                                        lastClientId = msg.client_id;
+                                    }
+                                    currentGroup.push(msg);
+                                });
+
+                                if (currentGroup.length) {
+                                    groupedByClient.push({ clientId: lastClientId, messages: currentGroup });
+                                }
 
                                 return (
-                                    <div key={date}>
-                                        <div className="message-date-separator">{date}</div> {/* Заголовок даты */}
-                                        {msgs.map((msg, index) => {
-                                            const uniqueKey = `${msg.id || msg.ticket_id}-${msg.time_sent}`;
+                                    <div key={date} className='message-group-container-chat'>
+                                        <div className="message-date-separator">📆 {date}</div>
+                                        {groupedByClient.map(({ clientId, messages }) => (
+                                            <div key={clientId} className="client-message-group">
+                                                <div className="client-header">👤 Сообщения клиента #{clientId}</div>
+                                                {messages.map((msg) => {
+                                                    const uniqueKey = `${msg.id || msg.ticket_id}-${msg.time_sent}`;
 
-                                            // Определяем, нужно ли вставлять заголовок клиента
-                                            let showClientHeader = false;
-                                            if (msg.client_id !== lastClientId) {
-                                                showClientHeader = true;
-                                                lastClientId = msg.client_id;
-                                            }
+                                                    const renderContent = () => {
+                                                        if (!msg.message) {
+                                                            return <div className="text-message">Сообщение отсутствует</div>;
+                                                        }
+                                                        switch (msg.mtype) {
+                                                            case "image":
+                                                                return (
+                                                                    <img
+                                                                        src={msg.message}
+                                                                        alt="Изображение"
+                                                                        className="image-preview-in-chat"
+                                                                        onError={(e) => {
+                                                                            e.target.src = "https://via.placeholder.com/300?text=Ошибка+загрузки";
+                                                                        }}
+                                                                        onClick={() => {
+                                                                            window.open(msg.message, "_blank");
+                                                                        }}
+                                                                    />
+                                                                );
+                                                            case "video":
+                                                                return (
+                                                                    <video controls className="video-preview">
+                                                                        <source src={msg.message} type="video/mp4" />
+                                                                        Ваш браузер не поддерживает воспроизведение видео.
+                                                                    </video>
+                                                                );
+                                                            case "audio":
+                                                                return (
+                                                                    <audio controls className="audio-preview">
+                                                                        <source src={msg.message} type="audio/ogg" />
+                                                                        Ваш браузер не поддерживает воспроизведение аудио.
+                                                                    </audio>
+                                                                );
+                                                            case "file":
+                                                                return (
+                                                                    <a
+                                                                        href={msg.message}
+                                                                        target="_blank"
+                                                                        rel="noopener noreferrer"
+                                                                        className="file-link"
+                                                                    >
+                                                                        Открыть файл
+                                                                    </a>
+                                                                );
+                                                            default:
+                                                                return <div className="text-message">{msg.message}</div>;
+                                                        }
+                                                    };
 
-                                            // Определяем отображение контента на основе mtype
-                                            const renderContent = () => {
-                                                if (!msg.message) {
-                                                    return <div className="text-message">Сообщение отсутствует</div>;
-                                                }
-                                                switch (msg.mtype) {
-                                                    case "image":
-                                                        return (
-                                                            <img
-                                                                src={msg.message}
-                                                                alt="Изображение"
-                                                                className="image-preview-in-chat"
-                                                                onError={(e) => {
-                                                                    e.target.src = "https://via.placeholder.com/300?text=Ошибка+загрузки";
-                                                                }}
-                                                                onClick={() => {
-                                                                    window.open(msg.message, "_blank");
-                                                                }}
-                                                            />
-                                                        );
-                                                    case "video":
-                                                        return (
-                                                            <video controls className="video-preview">
-                                                                <source src={msg.message} type="video/mp4" />
-                                                                Ваш браузер не поддерживает воспроизведение видео.
-                                                            </video>
-                                                        );
-                                                    case "audio":
-                                                        return (
-                                                            <audio controls className="audio-preview">
-                                                                <source src={msg.message} type="audio/ogg" />
-                                                                Ваш браузер не поддерживает воспроизведение аудио.
-                                                            </audio>
-                                                        );
-                                                    case "file":
-                                                        return (
-                                                            <a
-                                                                href={msg.message}
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                                className="file-link"
-                                                            >
-                                                                Открыть файл
-                                                            </a>
-                                                        );
-                                                    default:
-                                                        return <div className="text-message">{msg.message}</div>;
-                                                }
-                                            };
+                                                    const lastReaction = getLastReaction(msg);
 
-                                            const lastReaction = getLastReaction(msg);
-
-                                            return (
-                                                <div
-                                                    key={uniqueKey}
-                                                    className='container-messages-client' >
-                                                    {/* Показываем заголовок клиента, если сменился client_id */}
-                                                    {showClientHeader && (
-                                                        <div className="client-header">
-                                                            {msg.client_id !== "unknown"
-                                                                ? `Сообщения клиента #${msg.client_id}`
-                                                                : "Неизвестный клиент"}
-                                                        </div>
-                                                    )}
-
-                                                    <div
-                                                        className={`message ${msg.sender_id === userId || msg.sender_id === 1 ? "sent" : "received"}`}
-                                                    >
-                                                        <div className="message-content">
-                                                            <div className="message-row">
-                                                                <div className="text">
-                                                                    {renderContent()}
-                                                                    <div className="message-time">
-                                                                        <div
-                                                                            className="reaction-toggle-button"
-                                                                            onClick={() =>
-                                                                                setSelectedMessageId(selectedMessageId === msg.id ? null : msg.id)
-                                                                            }
-                                                                        >
-                                                                            {lastReaction || "☺"}
-                                                                        </div>
-                                                                        {new Date(msg.time_sent).toLocaleTimeString("ru-RU", {
-                                                                            hour: "2-digit",
-                                                                            minute: "2-digit",
-                                                                        })}
-                                                                    </div>
-                                                                    {selectedMessageId === msg.id && (
-                                                                        <div className="reaction-container" ref={reactionContainerRef}>
-                                                                            <div className="reaction-buttons">
-                                                                                {["☺", "👍", "❤️", "😂", "😮", "😢", "😡"].map((reaction) => (
-                                                                                    <div
-                                                                                        key={reaction}
-                                                                                        onClick={() => handleReactionClick(reaction, msg.id)}
-                                                                                        className={
-                                                                                            selectedReaction[msg.id] === reaction ? "active" : ""
-                                                                                        }
-                                                                                    >
-                                                                                        {reaction}
-                                                                                    </div>
-                                                                                ))}
+                                                    return (
+                                                        <div
+                                                            key={uniqueKey}
+                                                            className={`message ${msg.sender_id === userId || msg.sender_id === 1 ? "sent" : "received"}`}
+                                                        >
+                                                            <div className="message-content">
+                                                                <div className="message-row">
+                                                                    <div className="text">
+                                                                        {renderContent()}
+                                                                        <div className="message-time">
+                                                                            <div
+                                                                                className="reaction-toggle-button"
+                                                                                onClick={() =>
+                                                                                    setSelectedMessageId(selectedMessageId === msg.id ? null : msg.id)
+                                                                                }
+                                                                            >
+                                                                                {lastReaction || "☺"}
                                                                             </div>
+                                                                            {new Date(msg.time_sent).toLocaleTimeString("ru-RU", {
+                                                                                hour: "2-digit",
+                                                                                minute: "2-digit",
+                                                                            })}
                                                                         </div>
-                                                                    )}
+                                                                        {selectedMessageId === msg.id && (
+                                                                            <div className="reaction-container" ref={reactionContainerRef}>
+                                                                                <div className="reaction-buttons">
+                                                                                    {["☺", "👍", "❤️", "😂", "😮", "😢", "😡"].map((reaction) => (
+                                                                                        <div
+                                                                                            key={reaction}
+                                                                                            onClick={() => handleReactionClick(reaction, msg.id)}
+                                                                                            className={selectedReaction[msg.id] === reaction ? "active" : ""}
+                                                                                        >
+                                                                                            {reaction}
+                                                                                        </div>
+                                                                                    ))}
+                                                                                </div>
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                </div>
-                                            );
-                                        })}
+                                                    );
+                                                })}
+                                            </div>
+                                        ))}
                                     </div>
                                 );
                             });
