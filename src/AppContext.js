@@ -271,13 +271,6 @@ export const AppProvider = ({ children, isLoggedIn }) => {
 
       const updatedTicket = await response.json();
 
-      // // Локальное обновление тикетов
-      // setTickets((prevTickets) =>
-      //   prevTickets.map((ticket) =>
-      //     ticket.client_id === updatedTicket.client_id ? updatedTicket : ticket
-      //   )
-      // );
-
       // Синхронизация тикетов через WebSocket
       return updatedTicket;
     } catch (error) {
@@ -345,16 +338,17 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       const data = await response.json();
       console.log(`Сообщения для клиента ${client_id}, загруженные из API:`, data);
 
-      // Обновляем только сообщения для указанного client_id
-      setMessages((prevMessages) => {
-        // Фильтруем существующие сообщения, исключая старые сообщения этого client_id
-        const otherMessages = prevMessages.filter((msg) => msg.client_id !== client_id);
+      if (Array.isArray(data) && data.length > 0) {
+        setMessages((prevMessages) => {
+          const otherMessages = prevMessages.filter((msg) => msg.client_id !== client_id);
+          const updatedMessages = [...otherMessages, ...data];
 
-        // Объединяем с новыми сообщениями для client_id
-        return [...otherMessages, ...data];
-      });
+          // Обновляем счетчик непрочитанных сообщений после обновления состояния
+          setTimeout(() => updateUnreadMessages(updatedMessages), 0);
 
-      updateUnreadMessages(data); // Обновляем счетчик непрочитанных сообщений
+          return updatedMessages;
+        });
+      }
     } catch (error) {
       enqueueSnackbar('Не удалось получить сообщения!', { variant: 'error' });
       console.error('Ошибка при получении сообщений:', error.message);
@@ -421,7 +415,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       case 'seen': {
         const { client_id, seen_at } = message.data;
 
-        // getClientMessagesSingle(client_id);
+        getClientMessagesSingle(client_id);
 
         console.log('Received "seen" event:', { client_id, seen_at });
 
