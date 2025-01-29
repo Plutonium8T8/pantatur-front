@@ -19,18 +19,20 @@ const Leads = () => {
   const contextMenuRef = useRef(null);
 
   // Фильтрация тикетов по поисковому запросу
-  const filteredTickets = useMemo(
-    () =>
-      tickets.filter((ticket) =>
-        (ticket.contact?.toLowerCase() || "").includes((searchTerm || "").toLowerCase())
-      ),
-    [tickets, searchTerm]
-  );
+  const filteredTickets = useMemo(() => {
+    return tickets.filter((ticket) => {
+      const search = (searchTerm || "").toLowerCase();
+      return (
+        (ticket.contact?.toLowerCase() || "").includes(search) ||  // 🔍 Фильтр по contact
+        String(ticket.id).includes(search)  // 🔍 Фильтр по ticket_id
+      );
+    });
+  }, [tickets, searchTerm]);
 
-  const updateWorkflow = async (clientId, newWorkflow) => {
+  const updateWorkflow = async (ticketId, newWorkflow) => {
     try {
       const token = Cookies.get('jwt');
-      const response = await fetch(`https://pandatur-api.com/tickets/${clientId}`, {
+      const response = await fetch(`https://pandatur-api.com/tickets/${ticketId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -51,11 +53,11 @@ const Leads = () => {
       // Локально обновляем тикеты
       setTickets((prevTickets) =>
         prevTickets.map((ticket) =>
-          ticket.client_id === updatedTicket.client_id ? updatedTicket : ticket
+          ticket.id === updatedTicket.ticket_id ? updatedTicket : ticket
         )
       );
 
-      console.log('Workflow updated locally for clientId:', clientId);
+      console.log('Workflow updated locally for ticketId:', ticketId);
     } catch (error) {
       console.error('Error updating workflow:', error);
     }
@@ -142,10 +144,10 @@ const Leads = () => {
           onSave={(updatedTicket) => {
             // Локальное обновление тикетов через setTickets
             setTickets((prevTickets) => {
-              const isEditing = Boolean(updatedTicket.client_id);
+              const isEditing = Boolean(updatedTicket.ticket_id);
               return isEditing
                 ? prevTickets.map((ticket) =>
-                  ticket.client_id === updatedTicket.client_id ? updatedTicket : ticket
+                  ticket.id === updatedTicket.ticket_id ? updatedTicket : ticket
                 )
                 : [...prevTickets, updatedTicket]; // Добавляем новый тикет
             });

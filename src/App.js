@@ -76,7 +76,7 @@ function App() {
     <Router basename="/pantatur-front">
     <AppProvider isLoggedIn={isLoggedIn}>
       <SnackbarProvider
-        autoHideDuration={5000}
+        autoHideDuration={3000}
         maxSnack={5}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
         <UserProvider>
@@ -95,7 +95,7 @@ function App() {
                     <Route path="/" element={<Navigate to="/leads" />} />
                     <Route path="/leads" element={<Leads />} />
                     <Route
-                      path="/chat/:clientId?"
+                      path="/chat/:ticketId?"
                       element={<ChatComponent />}
                     />
                     <Route path="/admin-panel" element={<AdminPanel />} />

@@ -69,13 +69,13 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       }
 
       if (!ticketIds || ticketIds.length === 0) {
-        console.warn('Нет client_id для подключения к комнатам.');
+        console.warn('Нет id для подключения к комнатам.');
         return;
       }
 
       const socketMessage = JSON.stringify({
         type: 'connect',
-        data: { client_id: ticketIds },
+        data: { id: ticketIds },
       });
 
       socketInstance.send(socketMessage);
@@ -83,13 +83,13 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     };
 
     if (!socketRef.current) {
-      const socketInstance = new WebSocket('ws://34.88.101.80:8080');
+      const socketInstance = new WebSocket('ws://34.88.101.80:443');
       socketRef.current = socketInstance;
 
       socketInstance.onopen = async () => {
         console.log('WebSocket подключен');
         const tickets = await fetchTickets();
-        const ticketIds = tickets.map((ticket) => ticket.client_id);
+        const ticketIds = tickets.map((ticket) => ticket.id);
         connectToChatRooms(ticketIds);
       };
 
@@ -183,7 +183,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       console.log("Загруженные тикеты:", data);
 
       setTickets(data); // Сохраняем тикеты в состоянии
-      setTicketIds(data.map((ticket) => ticket.client_id)); // Сохраняем client_id
+      setTicketIds(data.map((ticket) => ticket.id)); // Сохраняем ticket.id
 
       return data; // Возвращаем массив тикетов
     } catch (error) {
@@ -194,7 +194,11 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     }
   };
 
-  const fetchSingleTicket = async (clientId) => {
+  useEffect(() => {
+    fetchTickets();
+  }, []);
+
+  const fetchSingleTicket = async (ticketId) => {
     try {
       setIsLoading(true);
       const token = Cookies.get('jwt');
@@ -204,7 +208,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         return null;
       }
 
-      const response = await fetch(`https://pandatur-api.com/tickets/${clientId}`, {
+      const response = await fetch(`https://pandatur-api.com/tickets/${ticketId}`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -223,11 +227,11 @@ export const AppProvider = ({ children, isLoggedIn }) => {
 
       // Обновляем или добавляем тикет в состояние
       setTickets((prevTickets) => {
-        const existingTicket = prevTickets.find((t) => t.client_id === clientId);
+        const existingTicket = prevTickets.find((t) => t.id === ticketId);
         if (existingTicket) {
           // Обновляем существующий тикет
           return prevTickets.map((t) =>
-            t.client_id === clientId ? ticket : t
+            t.id === ticketId ? ticket : t
           );
         } else {
           // Добавляем новый тикет
@@ -413,11 +417,11 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         break;
       }
       case 'seen': {
-        const { client_id, seen_at } = message.data;
+        const { ticket_id, seen_at, client_id } = message.data;
 
         getClientMessagesSingle(client_id);
 
-        console.log('Received "seen" event:', { client_id, seen_at });
+        console.log('Received "seen" event:', { ticket_id, seen_at, client_id });
 
         setMessages((prevMessages) => {
           const updatedMessages = prevMessages.map((msg) => {
@@ -444,15 +448,16 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         console.log("Пришел тикет:", message.data);
 
         // Извлекаем client_id из сообщения
+        const ticketId = message.data.ticket_id;
         const clientId = message.data.client_id;
 
-        if (!clientId) {
-          console.warn("Не удалось извлечь client_id из сообщения типа 'ticket'.");
+        if (!ticketId) {
+          console.warn("Не удалось извлечь ticket_id из сообщения типа 'ticket'.");
           break;
         }
 
-        // Запрашиваем тикет по client_id
-        fetchSingleTicket(clientId);
+        // Запрашиваем тикет по ticket_id
+        fetchSingleTicket(ticketId);
 
         const socketInstance = socketRef.current; // Используем socketRef.current
         if (socketInstance && socketInstance.readyState === WebSocket.OPEN) {
