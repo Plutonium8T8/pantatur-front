@@ -194,10 +194,6 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     }
   };
 
-  useEffect(() => {
-    fetchTickets();
-  }, []);
-
   const fetchSingleTicket = async (ticketId) => {
     try {
       setIsLoading(true);

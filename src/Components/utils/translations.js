@@ -522,10 +522,14 @@ export const translations = {
         "RO": "Data contractului",
         "RU": "Дата контракта"
     },
-"Select...": {
-    "RO": "Introduceți...",
-    "RU": "Введите..."
-},
+    "Select...": {
+        "RO": "Introduceți...",
+        "RU": "Введите..."
+    },
+    "Alege client": {
+        "RO": "Alege client",
+        "RU": "Выберите клиента"
+    },
 };
 
 // import { translations } from '../utils/translations';

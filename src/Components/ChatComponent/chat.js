@@ -51,8 +51,8 @@ const ChatComponent = ({ }) => {
     const [activeTab, setActiveTab] = useState('extraForm'); // По умолчанию вкладка Extra Form
     const [showMyTickets, setShowMyTickets] = useState(false);
     const activeChatRef = useRef(null);
-    const selectedTicket = tickets.find(ticket => ticket.id === selectTicketId);
-    const clientId = selectedTicket ? selectedTicket.client_id : null;
+    const currentTicket = tickets.find(ticket => ticket.id === ticketId);
+
 
     useEffect(() => {
         enqueueSnackbar("Тестовое уведомление работает!", { variant: "success" });
@@ -256,7 +256,7 @@ const ChatComponent = ({ }) => {
             type: 'seen',
             data: {
                 ticket_id: ticketId,
-                // client_id: clientId,
+                client_id: clientId,
                 sender_id: Number(userId),
             },
         };
@@ -846,6 +846,11 @@ const ChatComponent = ({ }) => {
         return [];
     };
 
+    const handleClientClick = (id) => {
+        console.log("Выбран клиент:", id);
+        // Тут можно добавить переход в профиль клиента или фильтрацию сообщений
+    };
+
     return (
         <div className="chat-container">
             <div className="users-container">
@@ -1028,8 +1033,8 @@ const ChatComponent = ({ }) => {
                                 return (
                                     <div key={date} className='message-group-container-chat'>
                                         <div className="message-date-separator">📆 {date}</div>
-                                        {groupedByClient.map(({ clientId, messages }) => (
-                                            <div key={clientId} className="client-message-group">
+                                        {groupedByClient.map(({ clientId, messages }, index) => (
+                                            <div key={`${clientId}-${date}-${index}`} className="client-message-group">
                                                 <div className="client-header">👤 Сообщения клиента #{clientId}</div>
                                                 {messages.map((msg) => {
                                                     const uniqueKey = `${msg.id || msg.ticket_id}-${msg.time_sent}`;
@@ -1149,8 +1154,7 @@ const ChatComponent = ({ }) => {
                         onKeyDown={handleKeyDown}
                         placeholder={translations['Introduceți mesaj'][language]}
                         disabled={!selectTicketId}
-                    >
-                    </textarea>
+                    />
                     <div className="message-options">
                         <div className="button-row">
                             <button
@@ -1208,6 +1212,20 @@ const ChatComponent = ({ }) => {
                                 customClassName="custom-select-1"
                             />
                         </div>
+                        {tickets && tickets.find(ticket => ticket.id === selectTicketId)?.client_id && (
+                            <div className="client-buttons">
+                                {tickets.find(ticket => ticket.id === selectTicketId).client_id.replace(/[{}]/g, "").split(",").map(id => (
+                                    <button
+                                        key={id.trim()}
+                                        className="client-id-button"
+                                        onClick={() => handleClientClick(id.trim())}
+                                    >
+                                        Клиент {id.trim()}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+
                     </div>
                 </div>
 

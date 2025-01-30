@@ -623,3 +623,35 @@
     /* width: fit-content; */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+.client-buttons {
+    display: flex;
+    flex-direction: row;
+    /* flex-wrap: wrap; */
+    gap: 8px;
+    /* padding: 10px; */
+    background: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.client-id-button {
+    background: linear-gradient(135deg, #4CAF50, #2E7D32);
+    color: white;
+    border: none;
+    padding: 2px 4px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    font-weight: 500;
+}
+
+.client-id-button:hover {
+    background: linear-gradient(135deg, #388E3C, #1B5E20);
+    transform: scale(1.05);
+}
+
+.client-id-button:active {
+    transform: scale(0.95);
+    background: #1B5E20;
+}
