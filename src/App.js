@@ -7,10 +7,10 @@ import { UserProvider } from './UserContext';
 import CustomSidebar from './Components/SideBar/SideBar';
 import ChatComponent from './Components/ChatComponent/chat';
 import Cookies from 'js-cookie';
-import { AppProvider } from './AppContext'; // Импорт AppProvider
+import { AppProvider } from './AppContext';
 import { SnackbarProvider } from 'notistack';
-import NotificationModal from './Components/SlideInComponent/NotificationModal'; // Модальное окно уведомлений
-import TaskComponent from './Components/SlideInComponent/TaskComponent'; // Используем TaskModal вместо TaskComponent
+import NotificationModal from './Components/SlideInComponent/NotificationModal';
+import TaskComponent from './Components/SlideInComponent/TaskComponent';
 import AdminPanel from './Components/AdminPanelComponent/AdminPanel';
 import Dashboard from './Components/DashboardComponent/Dashboard';
 import UserPage from './Components/UserPage/UserPage';
@@ -19,12 +19,11 @@ import { useSnackbar } from 'notistack';
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false); // Состояние модального окна уведомлений
-  const [isTaskComponentOpen, setIsTaskComponentOpen] = useState(false); // Состояние модального окна задач
-  const [isAccountComponentOpen, setIsAccountComponentOpen] = useState(false); // Состояние модального окна задач
+  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
+  const [isTaskComponentOpen, setIsTaskComponentOpen] = useState(false);
+  const [isAccountComponentOpen, setIsAccountComponentOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
-  // Проверка сессии
   useEffect(() => {
     const token = Cookies.get('jwt');
     if (token) {
@@ -55,7 +54,6 @@ function App() {
     }
   }, []);
 
-  // Обработка логина
   const handleLogin = () => {
     setIsLoggedIn(true);
     setIsLoading(false);
@@ -73,7 +71,7 @@ function App() {
   }
 
   return (
-    <Router basename="/pantatur-front">
+    <Router basename="/">
     <AppProvider isLoggedIn={isLoggedIn}>
       <SnackbarProvider
         autoHideDuration={5000}
@@ -86,7 +84,7 @@ function App() {
               <div className="app-container">
                 <CustomSidebar
                   onOpenNotifications={() => setIsNotificationModalOpen(true)}
-                  onOpenTasks={() => setIsTaskComponentOpen(true)} // Передаем функцию для открытия задач
+                  onOpenTasks={() => setIsTaskComponentOpen(true)}
                   onOpenAccount={() => setIsAccountComponentOpen(true)}
                 />
                 <div className="page-content">
@@ -99,7 +97,7 @@ function App() {
                       element={<ChatComponent />}
                     />
                     <Route path="/admin-panel" element={<AdminPanel />} />
-                    <Route path="*" element={<Leads />} />;
+                    <Route path="*" element={<Navigate to="/index.html" />} />;
                   </Routes>
                 </div>
                 <UserPage
