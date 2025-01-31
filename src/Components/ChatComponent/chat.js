@@ -875,14 +875,16 @@ const ChatComponent = ({ }) => {
     };
 
     const fetchClientDataPersonal = async (selectedClient) => {
-        const url = `https://pandatur-api.com/users-extended/${selectedClient}`;
-        const headers = {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer YOUR_ACCESS_TOKEN` // если нужен токен
-        };
-
         try {
-            const response = await fetch(url, { method: 'GET', headers });
+            const token = Cookies.get('jwt');
+
+            const response = await fetch(`https://pandatur-api.com/users-extended/${selectedClient}`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                    Origin: 'https://plutonium8t8.github.io',
+                },
+            });
 
             if (!response.ok) {
                 throw new Error(`Ошибка: ${response.status}`);
@@ -899,8 +901,8 @@ const ChatComponent = ({ }) => {
 
     useEffect(() => {
         if (selectedClient) {
-            console.log("selected client id",selectedClient);
-            fetchClientDataPersonal();
+            console.log("selected client id", selectedClient);
+            fetchClientDataPersonal(selectedClient);
         }
     }, [selectedClient]); // Вызываем при изменении `selectedClient`
 
@@ -1327,7 +1329,7 @@ const ChatComponent = ({ }) => {
                             <div className="client-select-container">
                                 <select
                                     className="client-select"
-                                    value={selectedClient} // Автоматически выбранный клиент
+                                    value={selectedClient}
                                     onChange={(e) => setSelectedClient(e.target.value)}
                                 >
                                     <option value="" disabled>Выберите клиента</option>
