@@ -119,8 +119,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   const updateUnreadMessages = (newMessages) => {
     const unread = newMessages.filter(
       (msg) =>
-        msg.seen_by != null && msg.seen_by == '{}' && msg.sender_id == msg.client_id
-
+        msg.seen_by != null && msg.seen_by == '{}' && msg.sender_id !== 1 && msg.sender_id !== userId
     );
     // console.log("Все сообщения:", newMessages);
     // console.log("Непрочитанные сообщения:", unread);
