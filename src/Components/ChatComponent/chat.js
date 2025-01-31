@@ -51,12 +51,18 @@ const ChatComponent = ({ }) => {
     const [activeTab, setActiveTab] = useState('extraForm'); // По умолчанию вкладка Extra Form
     const [showMyTickets, setShowMyTickets] = useState(false);
     const activeChatRef = useRef(null);
-    const currentTicket = tickets.find(ticket => ticket.id === ticketId);
+    const [selectedClient, setSelectedClient] = useState(null);
+    const fileInputRef = useRef(null);
 
+    const handleClientClick = (id) => {
+        setSelectedClient(id);
+        console.log("Выбран клиент:", id);
+        // Здесь можно добавить дополнительную логику, например, фильтрацию сообщений
+    };
 
-    useEffect(() => {
-        enqueueSnackbar("Тестовое уведомление работает!", { variant: "success" });
-    }, []);
+    // useEffect(() => {
+    //     enqueueSnackbar("Тестовое уведомление работает!", { variant: "success" });
+    // }, []);
 
     useEffect(() => {
         if (ticketId) {
@@ -118,7 +124,7 @@ const ChatComponent = ({ }) => {
                     [field]: value,
                 },
             };
-            console.log("Обновленное состояние extraInfo:", newState);
+            // console.log("Обновленное состояние extraInfo:", newState);
             return newState;
         });
     };
@@ -242,10 +248,6 @@ const ChatComponent = ({ }) => {
         }
     };
 
-    const handleClick = () => {
-        sendMessage();
-    };
-
     const sendSeenEvent = (ticketId, clientId) => {
         if (!ticketId || !clientId) {
             console.warn("Отправка seen не выполнена: ticketId или clientId отсутствует.");
@@ -288,15 +290,10 @@ const ChatComponent = ({ }) => {
             setSelectedTechnicianId(null);
         }
 
-        console.log('🎯 Selected Ticket ID:', selectedTicket?.id || "No change");
-        console.log("📌 Raw clientId:", selectedTicket?.client_id);
-
         // Убираем `{}` из client_id, если они есть
         const parsedClientId = selectedTicket?.client_id
             ? Number(String(selectedTicket.client_id).replace(/[{}]/g, '')) // Очищаем и приводим к числу
             : null;
-
-        console.log("🔍 Parsed Client ID:", parsedClientId);
 
         navigate(`/chat/${ticketId}`);
 
@@ -570,6 +567,12 @@ const ChatComponent = ({ }) => {
             console.log('No file selected.');
         }
     };
+
+    const handleFileButtonClick = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const getMessageTypeLabel = (type) => {
@@ -654,47 +657,93 @@ const ChatComponent = ({ }) => {
         }
     };
 
-    const sendMessage = async (selectedFile) => {
+    const handleClick = () => {
+        if (!selectedClient) {
+            console.error("⚠️ Ошибка: Клиент не выбран!");
+            return;
+        }
+
+        const analyzeLastMessagePlatform = () => {
+            console.log("🔍 Анализируем платформу последнего сообщения...");
+            console.log("📌 selectedClient:", selectedClient);
+
+            // Проверяем, загружены ли сообщения
+            if (!Array.isArray(messages)) {
+                console.error("❌ Ошибка: messages не является массивом!", messages);
+                return "web";
+            }
+
+            console.log("📩 Всего сообщений в системе:", messages.length);
+
+            // 🔹 Преобразуем `selectedClient` в число, если нужно
+            const clientId = Number(selectedClient);
+
+            // 🔹 Фильтруем сообщения от текущего клиента
+            const clientMessages = messages.filter((msg) => Number(msg.client_id) === clientId);
+
+            if (!clientMessages || clientMessages.length === 0) {
+                console.warn("⚠️ Нет сообщений от клиента, выбираем платформу (web)");
+                return "web";
+            }
+
+            console.log("🔎 Найдено сообщений от клиента:", clientMessages.length);
+
+            // Находим последнее сообщение по времени
+            const lastMessage = clientMessages.reduce((latest, current) =>
+                new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
+            );
+
+            console.log("🕵️‍♂️ Последнее сообщение:", lastMessage);
+            console.log("📡 Определённая платформа:", lastMessage?.platform || "web");
+
+            return lastMessage?.platform || "web";
+        };
+
+        const platform = analyzeLastMessagePlatform();
+        console.log(`🚀 Определённая платформа для отправки: ${platform}`);
+
+        sendMessage(null, platform);
+    };
+
+    const sendMessage = async (selectedFile, platform) => {
         if (!managerMessage.trim() && !selectedFile) {
             console.error('Ошибка: Отправка пустого сообщения невозможна.');
             return;
         }
 
-        // Функция для получения платформы последнего сообщения
-        const analyzeLastMessagePlatform = () => {
-            const clientMessages = messages.filter((msg) => msg.client_id === selectClientId);
-            const lastMessage = clientMessages.length > 0
-                ? clientMessages.reduce((latest, current) =>
-                    new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
-                )
-                : null;
-
-            return lastMessage?.platform || 'web';
-        };
-
-        const platform = analyzeLastMessagePlatform();
-        console.log(`Определённая платформа: ${platform}`);
-
         try {
             const messageData = {
                 sender_id: Number(userId),
-                client_id: selectClientId,
-                platform: platform,
+                client_id: selectedClient,
+                platform: platform, // Динамическая платформа
                 message: managerMessage.trim(),
                 media_type: null,
                 media_url: "",
             };
 
-            // Если файл выбран, загружаем его и добавляем данные в messageData
+            // 🔹 Если файл выбран, загружаем его
             if (selectedFile) {
+                console.log('Загрузка файла...');
                 const uploadResponse = await uploadFile(selectedFile);
+
+                if (!uploadResponse || !uploadResponse.url) {
+                    console.error('Ошибка загрузки файла');
+                    return;
+                }
+
                 messageData.media_url = uploadResponse.url; // URL загруженного файла
                 messageData.media_type = getMediaType(selectedFile.type); // Определяем тип медиафайла
             }
 
             console.log('Отправляемые данные:', JSON.stringify(messageData, null, 2));
 
-            const response = await fetch('https://pandatur-api.com/messages/send', {
+            // 🔹 Определяем API в зависимости от платформы
+            const apiUrl = platform === "telegram"
+                ? 'https://pandatur-api.com/messages/send/telegram'
+                : 'https://pandatur-api.com/messages/send';
+
+            // 🔹 Отправка сообщения
+            const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -704,21 +753,19 @@ const ChatComponent = ({ }) => {
                 body: JSON.stringify(messageData),
             });
 
-            const responseData = await response.json();
-
             if (!response.ok) {
+                const responseData = await response.json();
                 console.error('Ошибка с сервера:', responseData.message);
                 return;
             }
 
-            console.log('Сообщение успешно отправлено:', messageData);
+            console.log(`✅ Сообщение успешно отправлено через API ${apiUrl}:`, messageData);
 
-            setMessages((prevMessages) => [
-                ...prevMessages,
-                { ...messageData, seenAt: false },
-            ]);
+            // 🔹 Добавляем сообщение в локальный state
+            setMessages((prevMessages) => [...prevMessages, { ...messageData, seenAt: false }]);
 
-            if (!selectedFile) setManagerMessage(''); // Очищаем поле сообщения
+            // 🔹 Очищаем поле ввода, если файл не отправляется
+            if (!selectedFile) setManagerMessage('');
         } catch (error) {
             console.error('Ошибка отправки сообщения:', error);
         }
@@ -752,21 +799,26 @@ const ChatComponent = ({ }) => {
     const handlePersonalDataSubmit = async (event) => {
         event.preventDefault();
 
+        if (!selectedClient) {
+            alert("Выберите клиента!");
+            return;
+        }
+
         const payload = {
-            name: extraInfo[selectTicketId]?.name || "",
-            surname: extraInfo[selectTicketId]?.surname || "",
-            date_of_birth: extraInfo[selectTicketId]?.date_of_birth || "",
-            id_card_series: extraInfo[selectTicketId]?.id_card_series || "",
-            id_card_number: extraInfo[selectTicketId]?.id_card_number || "",
-            id_card_release: extraInfo[selectTicketId]?.id_card_release || "",
-            idnp: extraInfo[selectTicketId]?.idnp || "",
-            address: extraInfo[selectTicketId]?.address || "",
-            phone: extraInfo[selectTicketId]?.phone || "",
+            name: extraInfo[selectedClient]?.name || "",
+            surname: extraInfo[selectedClient]?.surname || "",
+            date_of_birth: extraInfo[selectedClient]?.date_of_birth || "",
+            id_card_series: extraInfo[selectedClient]?.id_card_series || "",
+            id_card_number: extraInfo[selectedClient]?.id_card_number || "",
+            id_card_release: extraInfo[selectedClient]?.id_card_release || "",
+            idnp: extraInfo[selectedClient]?.idnp || "",
+            address: extraInfo[selectedClient]?.address || "",
+            phone: extraInfo[selectedClient]?.phone || "",
         };
 
         try {
             const token = Cookies.get('jwt');
-            const response = await fetch(`https://pandatur-api.com/users-extended/${selectTicketId}`, {
+            const response = await fetch(`https://pandatur-api.com/users-extended/${selectedClient}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
@@ -844,11 +896,6 @@ const ChatComponent = ({ }) => {
             }
         }
         return [];
-    };
-
-    const handleClientClick = (id) => {
-        console.log("Выбран клиент:", id);
-        // Тут можно добавить переход в профиль клиента или фильтрацию сообщений
     };
 
     return (
@@ -1190,13 +1237,13 @@ const ChatComponent = ({ }) => {
                                 type="file"
                                 accept="image/*,audio/mp3,video/mp4,application/pdf,audio/ogg"
                                 onChange={handleFileSelect}
+                                ref={fileInputRef}
                                 style={{ display: "none" }}
-                                id="file-input"
                             />
                             <button
-                                htmlFor="file-input"
                                 className="action-button file-button"
                                 disabled={!selectTicketId}
+                                onClick={handleFileButtonClick}
                             >
                                 <FaFile />
                             </button>
@@ -1212,17 +1259,20 @@ const ChatComponent = ({ }) => {
                                 customClassName="custom-select-1"
                             />
                         </div>
+
                         {tickets && tickets.find(ticket => ticket.id === selectTicketId)?.client_id && (
-                            <div className="client-buttons">
-                                {tickets.find(ticket => ticket.id === selectTicketId).client_id.replace(/[{}]/g, "").split(",").map(id => (
-                                    <button
-                                        key={id.trim()}
-                                        className="client-id-button"
-                                        onClick={() => handleClientClick(id.trim())}
-                                    >
-                                        Клиент {id.trim()}
-                                    </button>
-                                ))}
+                            <div className="client-select-container">
+                                <select
+                                    className="client-select"
+                                    onChange={(e) => handleClientClick(e.target.value)}
+                                >
+                                    <option value="" disabled selected>Выберите клиента</option>
+                                    {tickets.find(ticket => ticket.id === selectTicketId).client_id.replace(/[{}]/g, "").split(",").map(id => (
+                                        <option key={id.trim()} value={id.trim()}>
+                                            Клиент {id.trim()}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
                         )}
 
@@ -1456,16 +1506,16 @@ const ChatComponent = ({ }) => {
                             )}
                         </div>
                     )}
-                    {activeTab === 'personalData' && (
+                    {activeTab === 'personalData' && selectedClient && (
                         <div className="personal-data-content">
                             <div className='extra-info-title'>{translations['Date personale'][language]}</div>
                             <form onSubmit={handlePersonalDataSubmit} className='personal-data-container'>
                                 <Input
                                     label="Nume"
                                     type="text"
-                                    value={extraInfo[selectClientId]?.name || ""}
+                                    value={extraInfo[selectedClient]?.name || ""}
                                     onChange={(e) =>
-                                        handleSelectChange(selectClientId, 'name', e.target.value)
+                                        handleSelectChange(selectedClient, 'name', e.target.value)
                                     }
                                     className="input-field"
                                     placeholder="Nume"
@@ -1473,9 +1523,9 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="Prenume"
                                     type="text"
-                                    value={extraInfo[selectClientId]?.surname || ""}
+                                    value={extraInfo[selectedClient]?.surname || ""}
                                     onChange={(e) =>
-                                        handleSelectChange(selectClientId, 'surname', e.target.value)
+                                        handleSelectChange(selectedClient, 'surname', e.target.value)
                                     }
                                     className="input-field"
                                     placeholder="Prenume"
@@ -1483,18 +1533,18 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="Data nașterii"
                                     type="date"
-                                    value={extraInfo[selectClientId]?.date_of_birth || ""}
+                                    value={extraInfo[selectedClient]?.date_of_birth || ""}
                                     onChange={(e) =>
-                                        handleSelectChange(selectClientId, 'date_of_birth', e.target.value)
+                                        handleSelectChange(selectedClient, 'date_of_birth', e.target.value)
                                     }
                                     className="input-field"
                                 />
                                 <Input
                                     label="Seria buletinului"
                                     type="text"
-                                    value={extraInfo[selectClientId]?.id_card_series || ""}
+                                    value={extraInfo[selectedClient]?.id_card_series || ""}
                                     onChange={(e) =>
-                                        handleSelectChange(selectClientId, 'id_card_series', e.target.value)
+                                        handleSelectChange(selectedClient, 'id_card_series', e.target.value)
                                     }
                                     className="input-field"
                                     placeholder="Seria buletinului"
@@ -1502,9 +1552,9 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="Numărul buletinului"
                                     type="text"
-                                    value={extraInfo[selectClientId]?.id_card_number || ""}
+                                    value={extraInfo[selectedClient]?.id_card_number || ""}
                                     onChange={(e) =>
-                                        handleSelectChange(selectClientId, 'id_card_number', e.target.value)
+                                        handleSelectChange(selectedClient, 'id_card_number', e.target.value)
                                     }
                                     className="input-field"
                                     placeholder="Numărul buletinului"
@@ -1512,18 +1562,18 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="Data eliberării buletinului"
                                     type="date"
-                                    value={extraInfo[selectClientId]?.id_card_release || ""}
+                                    value={extraInfo[selectedClient]?.id_card_release || ""}
                                     onChange={(e) =>
-                                        handleSelectChange(selectClientId, 'id_card_release', e.target.value)
+                                        handleSelectChange(selectedClient, 'id_card_release', e.target.value)
                                     }
                                     className="input-field"
                                 />
                                 <Input
                                     label="IDNP"
                                     type="text"
-                                    value={extraInfo[selectClientId]?.idnp || ""}
+                                    value={extraInfo[selectedClient]?.idnp || ""}
                                     onChange={(e) =>
-                                        handleSelectChange(selectClientId, 'idnp', e.target.value)
+                                        handleSelectChange(selectedClient, 'idnp', e.target.value)
                                     }
                                     className="input-field"
                                     placeholder="IDNP"
@@ -1531,9 +1581,9 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="Adresă"
                                     type="text"
-                                    value={extraInfo[selectClientId]?.address || ""}
+                                    value={extraInfo[selectedClient]?.address || ""}
                                     onChange={(e) =>
-                                        handleSelectChange(selectClientId, 'address', e.target.value)
+                                        handleSelectChange(selectedClient, 'address', e.target.value)
                                     }
                                     className="input-field"
                                     placeholder="Adresă"
@@ -1541,9 +1591,9 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="Telefon"
                                     type="tel"
-                                    value={extraInfo[selectClientId]?.phone || ""}
+                                    value={extraInfo[selectedClient]?.phone || ""}
                                     onChange={(e) =>
-                                        handleSelectChange(selectClientId, 'phone', e.target.value)
+                                        handleSelectChange(selectedClient, 'phone', e.target.value)
                                     }
                                     className="input-field"
                                     placeholder="Telefon"
