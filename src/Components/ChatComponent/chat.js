@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { FaFile, FaPaperPlane, FaSmile } from 'react-icons/fa';
 import Select from '../SelectComponent/SelectComponent';
 import { useUser } from '../../UserContext';
 import Cookies from 'js-cookie';
@@ -22,7 +23,6 @@ import { useSnackbar } from 'notistack';
 import './chat.css';
 import EmojiPicker from 'emoji-picker-react';
 import ReactDOM from "react-dom";
-import { FaFile, FaPaperPlane, FaSmile } from 'react-icons/fa';
 import { translations } from '../utils/translations';
 
 const ChatComponent = ({ }) => {
@@ -30,8 +30,8 @@ const ChatComponent = ({ }) => {
     const [managerMessage, setManagerMessage] = useState('');
     const { tickets, updateTicket, setTickets, messages, setMessages, markMessagesAsRead, socketRef } = useAppContext();
     const [selectTicketId, setSelectTicketId] = useState(null);
-    const [selectClientId, setSelectClientId] = useState(null);
     const [extraInfo, setExtraInfo] = useState({}); // Состояние для дополнительной информации каждого тикета
+    const [personalInfo, setPersonalInfo] = useState({});
     const messageContainerRef = useRef(null);
     const { ticketId } = useParams(); // Получаем clientId из URL
     const [isLoading, setIsLoading] = useState(false); // Состояние загрузки
@@ -838,19 +838,25 @@ const ChatComponent = ({ }) => {
         }
 
         const payload = {
-            name: extraInfo[selectedClient]?.name || "",
-            surname: extraInfo[selectedClient]?.surname || "",
-            date_of_birth: extraInfo[selectedClient]?.date_of_birth || "",
-            id_card_series: extraInfo[selectedClient]?.id_card_series || "",
-            id_card_number: extraInfo[selectedClient]?.id_card_number || "",
-            id_card_release: extraInfo[selectedClient]?.id_card_release || "",
-            idnp: extraInfo[selectedClient]?.idnp || "",
-            address: extraInfo[selectedClient]?.address || "",
-            phone: extraInfo[selectedClient]?.phone || "",
+            name: personalInfo[selectedClient]?.name?.trim() || "",
+            surname: personalInfo[selectedClient]?.surname?.trim() || "",
+            date_of_birth: personalInfo[selectedClient]?.date_of_birth || "",
+            id_card_series: personalInfo[selectedClient]?.id_card_series?.trim() || "",
+            id_card_number: personalInfo[selectedClient]?.id_card_number?.trim() || "",
+            id_card_release: personalInfo[selectedClient]?.id_card_release || "",
+            idnp: personalInfo[selectedClient]?.idnp?.trim() || "",
+            address: personalInfo[selectedClient]?.address?.trim() || "",
+            phone: personalInfo[selectedClient]?.phone?.trim() || "",
         };
 
         try {
             const token = Cookies.get('jwt');
+
+            if (!token) {
+                alert("Ошибка: отсутствует токен аутентификации.");
+                return;
+            }
+
             const response = await fetch(`https://pandatur-api.com/users-extended/${selectedClient}`, {
                 method: "PATCH",
                 headers: {
@@ -862,19 +868,27 @@ const ChatComponent = ({ }) => {
             });
 
             if (!response.ok) {
-                throw new Error(`Failed to submit data: ${response.statusText}`);
+                const errorText = await response.text(); // Получаем текст ошибки
+                throw new Error(`Ошибка при отправке данных: ${response.status} - ${errorText}`);
             }
 
             const result = await response.json();
-            console.log("Data submitted successfully:", result);
-            alert("Personal data saved successfully!");
+            console.log("Данные успешно обновлены:", result);
+            alert("Личные данные успешно сохранены!");
+
+            // Опционально обновляем состояние personalInfo после успешного сохранения
+            setPersonalInfo(prev => ({
+                ...prev,
+                [selectedClient]: result
+            }));
+
         } catch (error) {
-            console.error("Error submitting data:", error);
-            alert("Failed to save personal data.");
+            console.error("Ошибка при сохранении данных:", error);
+            alert("Не удалось сохранить личные данные.");
         }
     };
 
-    const fetchClientDataPersonal = async (selectedClient) => {
+    const fetchClientDataPersonal = async (selectedClient, setPersonalInfo) => {
         try {
             const token = Cookies.get('jwt');
 
@@ -891,20 +905,24 @@ const ChatComponent = ({ }) => {
             }
 
             const data = await response.json();
-            console.log('Данные клиента:', data);
-            return data;
+            console.log('Полученные данные клиента:', data);
+
+            // Устанавливаем полученные данные в `personalInfo`
+            setPersonalInfo(prev => ({
+                ...prev,
+                [selectedClient]: { ...data } // Обновляем данные для выбранного клиента
+            }));
+
         } catch (error) {
             console.error('Ошибка при получении данных клиента:', error);
-            return null;
         }
     };
 
     useEffect(() => {
         if (selectedClient) {
-            console.log("selected client id", selectedClient);
-            fetchClientDataPersonal(selectedClient);
+            fetchClientDataPersonal(selectedClient, setPersonalInfo);
         }
-    }, [selectedClient]); // Вызываем при изменении `selectedClient`
+    }, [selectedClient]);
 
     useEffect(() => {
         if (showMyTickets) {
@@ -1582,7 +1600,7 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="Nume"
                                     type="text"
-                                    value={extraInfo[selectedClient]?.name || ""}
+                                    value={personalInfo[selectedClient]?.name ?? ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectedClient, 'name', e.target.value)
                                     }
@@ -1592,7 +1610,7 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="Prenume"
                                     type="text"
-                                    value={extraInfo[selectedClient]?.surname || ""}
+                                    value={personalInfo[selectedClient]?.surname ?? ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectedClient, 'surname', e.target.value)
                                     }
@@ -1602,7 +1620,7 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="Data nașterii"
                                     type="date"
-                                    value={extraInfo[selectedClient]?.date_of_birth || ""}
+                                    value={personalInfo[selectedClient]?.date_of_birth ?? ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectedClient, 'date_of_birth', e.target.value)
                                     }
@@ -1611,7 +1629,7 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="Seria buletinului"
                                     type="text"
-                                    value={extraInfo[selectedClient]?.id_card_series || ""}
+                                    value={personalInfo[selectedClient]?.id_card_series ?? ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectedClient, 'id_card_series', e.target.value)
                                     }
@@ -1621,7 +1639,7 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="Numărul buletinului"
                                     type="text"
-                                    value={extraInfo[selectedClient]?.id_card_number || ""}
+                                    value={personalInfo[selectedClient]?.id_card_number ?? ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectedClient, 'id_card_number', e.target.value)
                                     }
@@ -1631,7 +1649,7 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="Data eliberării buletinului"
                                     type="date"
-                                    value={extraInfo[selectedClient]?.id_card_release || ""}
+                                    value={personalInfo[selectedClient]?.id_card_release ?? ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectedClient, 'id_card_release', e.target.value)
                                     }
@@ -1640,7 +1658,7 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="IDNP"
                                     type="text"
-                                    value={extraInfo[selectedClient]?.idnp || ""}
+                                    value={personalInfo[selectedClient]?.idnp ?? ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectedClient, 'idnp', e.target.value)
                                     }
@@ -1650,7 +1668,7 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="Adresă"
                                     type="text"
-                                    value={extraInfo[selectedClient]?.address || ""}
+                                    value={personalInfo[selectedClient]?.address ?? ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectedClient, 'address', e.target.value)
                                     }
@@ -1660,7 +1678,7 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="Telefon"
                                     type="tel"
-                                    value={extraInfo[selectedClient]?.phone || ""}
+                                    value={personalInfo[selectedClient]?.phone ?? ""}
                                     onChange={(e) =>
                                         handleSelectChange(selectedClient, 'phone', e.target.value)
                                     }
