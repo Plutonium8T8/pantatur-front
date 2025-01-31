@@ -75,7 +75,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
 
       const socketMessage = JSON.stringify({
         type: 'connect',
-        data: { client_id: ticketIds },
+        data: { ticket_id: ticketIds },
       });
 
       socketInstance.send(socketMessage);
@@ -459,7 +459,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         if (socketInstance && socketInstance.readyState === WebSocket.OPEN) {
           const socketMessage = JSON.stringify({
             type: 'connect',
-            data: { client_id: [ticketId] }, // Подключаемся только к комнате с этим client_id
+            data: { ticket_id: [ticketId] }, // Подключаемся только к комнате с этим client_id
           });
 
           socketInstance.send(socketMessage);
