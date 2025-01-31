@@ -1038,7 +1038,8 @@ const ChatComponent = ({ }) => {
 
                                 const unreadCounts = ticketMessages.filter(
                                     msg =>
-                                        msg.seen_by != null && msg.seen_by == '{}' && msg.sender_id !== userId
+                                        msg.seen_by != null && msg.seen_by == '{}' && msg.sender_id !== 1 && // Сообщение НЕ от оператора (id 1)
+                                        msg.sender_id !== userId // Сообщение НЕ от текущего пользователя
                                 ).length;
 
                                 const lastMessage = ticketMessages.length
