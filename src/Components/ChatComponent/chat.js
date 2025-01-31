@@ -114,20 +114,20 @@ const ChatComponent = ({ }) => {
         }
     };
 
-    // // Обработчик изменения значения в селекте для выбранного тикета
-    // const handleSelectChange = (ticketId, field, value) => {
-    //     setExtraInfo((prevState) => {
-    //         const newState = {
-    //             ...prevState,
-    //             [ticketId]: {
-    //                 ...prevState[ticketId],
-    //                 [field]: value,
-    //             },
-    //         };
-    //         // console.log("Обновленное состояние extraInfo:", newState);
-    //         return newState;
-    //     });
-    // };
+    // Обработчик изменения значения в селекте для выбранного тикета
+    const handleSelectChangeExtra = (ticketId, field, value) => {
+        setExtraInfo((prevState) => {
+            const newState = {
+                ...prevState,
+                [ticketId]: {
+                    ...prevState[ticketId],
+                    [field]: value,
+                },
+            };
+            // console.log("Обновленное состояние extraInfo:", newState);
+            return newState;
+        });
+    };
 
     // отправка данных формы в бэк
     const sendExtraInfo = async () => {
@@ -1416,7 +1416,7 @@ const ChatComponent = ({ }) => {
                                             type="number"
                                             value={extraInfo[selectTicketId]?.sale || ""}
                                             onChange={(e) =>
-                                                handleSelectChange(selectTicketId, 'sale', e.target.value)
+                                                handleSelectChangeExtra(selectTicketId, 'sale', e.target.value)
                                             }
                                             className="input-field"
                                             placeholder="Indicați suma în euro"
@@ -1429,7 +1429,7 @@ const ChatComponent = ({ }) => {
                                             className="input-field"
                                             value={extraInfo[selectTicketId]?.lead_source || ""}
                                             onChange={(value) =>
-                                                handleSelectChange(selectTicketId, 'lead_source', value)
+                                                handleSelectChangeExtra(selectTicketId, 'lead_source', value)
                                             }
                                         />
                                         <Select
@@ -1439,7 +1439,7 @@ const ChatComponent = ({ }) => {
                                             className="input-field"
                                             value={extraInfo[selectTicketId]?.promo || ""}
                                             onChange={(value) =>
-                                                handleSelectChange(selectTicketId, 'promo', value)
+                                                handleSelectChangeExtra(selectTicketId, 'promo', value)
                                             }
                                         />
                                         <Select
@@ -1449,7 +1449,7 @@ const ChatComponent = ({ }) => {
                                             className="input-field"
                                             value={extraInfo[selectTicketId]?.marketing || ""}
                                             onChange={(value) =>
-                                                handleSelectChange(selectTicketId, 'marketing', value)
+                                                handleSelectChangeExtra(selectTicketId, 'marketing', value)
                                             }
                                         />
                                         <Select
@@ -1459,7 +1459,7 @@ const ChatComponent = ({ }) => {
                                             className="input-field"
                                             value={extraInfo[selectTicketId]?.service || ""}
                                             onChange={(value) =>
-                                                handleSelectChange(selectTicketId, 'service', value)
+                                                handleSelectChangeExtra(selectTicketId, 'service', value)
                                             }
                                         />
                                         <Select
@@ -1469,7 +1469,7 @@ const ChatComponent = ({ }) => {
                                             className="input-field"
                                             value={extraInfo[selectTicketId]?.country || ""}
                                             onChange={(value) =>
-                                                handleSelectChange(selectTicketId, 'country', value)
+                                                handleSelectChangeExtra(selectTicketId, 'country', value)
                                             }
                                         />
                                         <Select
@@ -1479,7 +1479,7 @@ const ChatComponent = ({ }) => {
                                             className="input-field"
                                             value={extraInfo[selectTicketId]?.transport || ""}
                                             onChange={(value) =>
-                                                handleSelectChange(selectTicketId, 'transport', value)
+                                                handleSelectChangeExtra(selectTicketId, 'transport', value)
                                             }
                                         />
                                         <Select
@@ -1489,7 +1489,7 @@ const ChatComponent = ({ }) => {
                                             className="input-field"
                                             value={extraInfo[selectTicketId]?.excursion || ""}
                                             onChange={(value) =>
-                                                handleSelectChange(selectTicketId, 'excursion', value)
+                                                handleSelectChangeExtra(selectTicketId, 'excursion', value)
                                             }
                                         />
                                         <Input
@@ -1497,7 +1497,7 @@ const ChatComponent = ({ }) => {
                                             type="datetime-local"
                                             value={extraInfo[selectTicketId]?.leave_date || ""}
                                             onChange={(date) =>
-                                                handleSelectChange(selectTicketId, 'leave_date', date)
+                                                handleSelectChangeExtra(selectTicketId, 'leave_date', date)
                                             }
                                             className="input-field"
                                         />
@@ -1506,7 +1506,7 @@ const ChatComponent = ({ }) => {
                                             type="datetime-local"
                                             value={extraInfo[selectTicketId]?.arrive_date || ""}
                                             onChange={(date) =>
-                                                handleSelectChange(selectTicketId, 'arrive_date', date)
+                                                handleSelectChangeExtra(selectTicketId, 'arrive_date', date)
                                             }
                                             className="input-field"
                                         />
@@ -1517,7 +1517,7 @@ const ChatComponent = ({ }) => {
                                             className="input-field"
                                             value={extraInfo[selectTicketId]?.purchase || ""}
                                             onChange={(value) =>
-                                                handleSelectChange(selectTicketId, 'purchase', value)
+                                                handleSelectChangeExtra(selectTicketId, 'purchase', value)
                                             }
                                         />
                                         <Input
@@ -1525,7 +1525,7 @@ const ChatComponent = ({ }) => {
                                             type="text"
                                             value={extraInfo[selectTicketId]?.contract_id || ""}
                                             onChange={(e) =>
-                                                handleSelectChange(selectTicketId, 'contract_id', e.target.value)
+                                                handleSelectChangeExtra(selectTicketId, 'contract_id', e.target.value)
                                             }
                                             className="input-field"
                                             placeholder="Nr de contract"
@@ -1536,7 +1536,7 @@ const ChatComponent = ({ }) => {
                                             type="date"
                                             value={extraInfo[selectTicketId]?.contract_date || ""}
                                             onChange={(date) =>
-                                                handleSelectChange(selectTicketId, 'contract_date', date)
+                                                handleSelectChangeExtra(selectTicketId, 'contract_date', date)
                                             }
                                             className="input-field"
                                         />
@@ -1545,7 +1545,7 @@ const ChatComponent = ({ }) => {
                                             type="text"
                                             value={extraInfo[selectTicketId]?.tour_operator || ""}
                                             onChange={(e) =>
-                                                handleSelectChange(selectTicketId, 'tour_operator', e.target.value)
+                                                handleSelectChangeExtra(selectTicketId, 'tour_operator', e.target.value)
                                             }
                                             className="input-field"
                                             placeholder="Operator turistic"
@@ -1556,7 +1556,7 @@ const ChatComponent = ({ }) => {
                                             type="text"
                                             value={extraInfo[selectTicketId]?.request_id || ""}
                                             onChange={(e) =>
-                                                handleSelectChange(selectTicketId, 'request_id', e.target.value)
+                                                handleSelectChangeExtra(selectTicketId, 'request_id', e.target.value)
                                             }
                                             className="input-field"
                                             placeholder="Nr cererii de la operator"
@@ -1567,7 +1567,7 @@ const ChatComponent = ({ }) => {
                                             type="number"
                                             value={extraInfo[selectTicketId]?.price_netto || ""}
                                             onChange={(e) =>
-                                                handleSelectChange(selectTicketId, 'price_netto', e.target.value)
+                                                handleSelectChangeExtra(selectTicketId, 'price_netto', e.target.value)
                                             }
                                             className="input-field"
                                             placeholder="Preț netto (euro)"
@@ -1578,7 +1578,7 @@ const ChatComponent = ({ }) => {
                                             type="number"
                                             value={extraInfo[selectTicketId]?.commission || ""}
                                             onChange={(e) =>
-                                                handleSelectChange(selectTicketId, 'commission', e.target.value)
+                                                handleSelectChangeExtra(selectTicketId, 'commission', e.target.value)
                                             }
                                             className="input-field"
                                             placeholder="Comision companie"
@@ -1590,7 +1590,7 @@ const ChatComponent = ({ }) => {
                                             id="payment-select"
                                             value={extraInfo[selectTicketId]?.payment_method || ""}
                                             onChange={(value) =>
-                                                handleSelectChange(selectTicketId, 'payment_method', value)
+                                                handleSelectChangeExtra(selectTicketId, 'payment_method', value)
                                             }
                                         />
                                     </div>
