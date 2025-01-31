@@ -672,7 +672,7 @@ const ChatComponent = ({ }) => {
             new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
         );
 
-        console.log("🕵️‍♂️ Последнее сообщение отправил клиент:", lastMessage.client_id);
+        // console.log("🕵️‍♂️ Последнее сообщение отправил клиент:", lastMessage.client_id);
         return lastMessage.client_id;
     };
 
@@ -915,7 +915,7 @@ const ChatComponent = ({ }) => {
             }
 
             const data = await response.json();
-            console.log('Полученные данные клиента:', data);
+            // console.log('Полученные данные клиента:', data);
 
             // Устанавливаем полученные данные в `personalInfo`
             setPersonalInfo(prev => ({

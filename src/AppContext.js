@@ -79,7 +79,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       });
 
       socketInstance.send(socketMessage);
-      console.log('Подключён к комнатам клиентов:', ticketIds);
+      // console.log('Подключён к комнатам клиентов:', ticketIds);
     };
 
     if (!socketRef.current) {
@@ -122,9 +122,9 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         msg.seen_by != null && msg.seen_by == '{}' && msg.sender_id == msg.client_id
 
     );
-    console.log("Все сообщения:", newMessages);
-    console.log("Непрочитанные сообщения:", unread);
-    console.log("Количество непрочитанных:", unread.length);
+    // console.log("Все сообщения:", newMessages);
+    // console.log("Непрочитанные сообщения:", unread);
+    // console.log("Количество непрочитанных:", unread.length);
 
     setUnreadCount(unread.length); // Обновляем глобальный счетчик
   };
@@ -180,7 +180,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       }
 
       const data = await response.json();
-      console.log("Загруженные тикеты:", data);
+      // console.log("Загруженные тикеты:", data);
 
       setTickets(data); // Сохраняем тикеты в состоянии
       setTicketIds(data.map((ticket) => ticket.id)); // Сохраняем ticket.id
@@ -302,7 +302,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       }
 
       const data = await response.json();
-      console.log("Сообщения, загруженные из API:", data);
+      // console.log("Сообщения, загруженные из API:", data);
 
       setMessages(data); // Обновляем состояние всех сообщений
       updateUnreadMessages(data); // Считаем непрочитанные сообщения
@@ -415,28 +415,35 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       case 'seen': {
         const { ticket_id, seen_at, client_id } = message.data;
 
-        getClientMessagesSingle(client_id);
+        console.log('🔄 Получен `seen` из WebSocket:', { ticket_id, seen_at, client_id });
 
-        console.log('Received "seen" event:', { ticket_id, seen_at, client_id });
-
+        // Обновляем `messages`
         setMessages((prevMessages) => {
           const updatedMessages = prevMessages.map((msg) => {
-            if (msg.client_id === client_id) {
-              console.log(`Updating message for client_id ${client_id}:`, {
-                ...msg,
-                seen_at,
-              });
-              return { ...msg, seen_at };
+            if (msg.client_id === client_id && msg.ticket_id === ticket_id) {
+              return { ...msg, seen_at, seen_by: JSON.stringify({ [userId]: true }) };
             }
             return msg;
           });
 
-          console.log('Updated messages after "seen" event:', updatedMessages);
-
-          updateUnreadMessages(updatedMessages);
-
-          return updatedMessages;
+          return [...updatedMessages]; // Создаем новый массив для ререндера
         });
+
+        // Обновляем `unreadMessages` через `setTimeout`, чтобы дождаться обновления `messages`
+        setTimeout(() => {
+          setUnreadMessages((prevUnreadMessages) => {
+            const updatedUnreadMap = new Map(prevUnreadMessages);
+
+            updatedUnreadMap.forEach((msg, msgId) => {
+              if (msg.client_id === client_id && msg.ticket_id === ticket_id) {
+                updatedUnreadMap.delete(msgId);
+              }
+            });
+
+            console.log("✅ Обновленные `unreadMessages` после `seen`:", updatedUnreadMap.size);
+            return updatedUnreadMap;
+          });
+        }, 100);
 
         break;
       }
@@ -463,10 +470,10 @@ export const AppProvider = ({ children, isLoggedIn }) => {
           });
 
           socketInstance.send(socketMessage);
-          console.log(
-            `Подключено к комнате клиента с client_id=${clientId}. Отправлено сообщение:`,
-            socketMessage
-          );
+          // console.log(
+          //   `Подключено к комнате клиента с client_id=${clientId}. Отправлено сообщение:`,
+          //   socketMessage
+          // );
         } else {
           console.warn("Не удалось подключиться к комнатам. WebSocket не готов.");
           console.log(
