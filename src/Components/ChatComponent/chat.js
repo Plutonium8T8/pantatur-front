@@ -114,20 +114,20 @@ const ChatComponent = ({ }) => {
         }
     };
 
-    // Обработчик изменения значения в селекте для выбранного тикета
-    const handleSelectChange = (ticketId, field, value) => {
-        setExtraInfo((prevState) => {
-            const newState = {
-                ...prevState,
-                [ticketId]: {
-                    ...prevState[ticketId],
-                    [field]: value,
-                },
-            };
-            // console.log("Обновленное состояние extraInfo:", newState);
-            return newState;
-        });
-    };
+    // // Обработчик изменения значения в селекте для выбранного тикета
+    // const handleSelectChange = (ticketId, field, value) => {
+    //     setExtraInfo((prevState) => {
+    //         const newState = {
+    //             ...prevState,
+    //             [ticketId]: {
+    //                 ...prevState[ticketId],
+    //                 [field]: value,
+    //             },
+    //         };
+    //         // console.log("Обновленное состояние extraInfo:", newState);
+    //         return newState;
+    //     });
+    // };
 
     // отправка данных формы в бэк
     const sendExtraInfo = async () => {
@@ -827,6 +827,16 @@ const ChatComponent = ({ }) => {
     const handleTicketSelect = (ticket) => {
         setSelectTicketId(ticket.id);
         setSelectedTechnicianId(ticket.technician_id || null); // Если technician_id нет, передаем null
+    };
+
+    const handleSelectChange = (clientId, field, value) => {
+        setPersonalInfo(prev => ({
+            ...prev,
+            [clientId]: {
+                ...prev[clientId],
+                [field]: value
+            }
+        }));
     };
 
     const handlePersonalDataSubmit = async (event) => {
