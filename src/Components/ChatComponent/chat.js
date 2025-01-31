@@ -874,6 +874,36 @@ const ChatComponent = ({ }) => {
         }
     };
 
+    const fetchClientDataPersonal = async (selectedClient) => {
+        const url = `https://pandatur-api.com/users-extended/${selectedClient}`;
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer YOUR_ACCESS_TOKEN` // если нужен токен
+        };
+
+        try {
+            const response = await fetch(url, { method: 'GET', headers });
+
+            if (!response.ok) {
+                throw new Error(`Ошибка: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('Данные клиента:', data);
+            return data;
+        } catch (error) {
+            console.error('Ошибка при получении данных клиента:', error);
+            return null;
+        }
+    };
+
+    useEffect(() => {
+        if (selectedClient) {
+            console.log("selected client id",selectedClient);
+            fetchClientDataPersonal();
+        }
+    }, [selectedClient]); // Вызываем при изменении `selectedClient`
+
     useEffect(() => {
         if (showMyTickets) {
             setFilteredTickets(tickets.filter(ticket => ticket.technician_id === userId));
