@@ -129,27 +129,92 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   };
 
 
-  const markMessagesAsRead = (clientId) => {
+  // const markMessagesAsRead = (ticketId) => {
+  //   if (!ticketId) return;
+
+  //   // **Отправляем `seen` в WebSocket**
+  //   const socketInstance = socketRef.current;
+  //   if (socketInstance && socketInstance.readyState === WebSocket.OPEN) {
+  //     const readMessageData = {
+  //       type: 'seen',
+  //       data: {
+  //         ticket_id: ticketId,
+  //         sender_id: Number(userId),
+  //       },
+  //     };
+  //     socketInstance.send(JSON.stringify(readMessageData));
+  //     console.log(`✅ Seen отправлен для ticket_id=${ticketId}`);
+  //   } else {
+  //     console.warn('WebSocket не подключен или закрыт.');
+  //   }
+  // };
+
+  const markMessagesAsRead = (ticketId) => {
+    if (!ticketId) return;
+
+    // **Отправляем `seen` в WebSocket**
+    const socketInstance = socketRef.current;
+    if (socketInstance && socketInstance.readyState === WebSocket.OPEN) {
+      const readMessageData = {
+        type: 'seen',
+        data: {
+          ticket_id: ticketId,
+          sender_id: Number(userId),
+        },
+      };
+      socketInstance.send(JSON.stringify(readMessageData));
+      console.log(`✅ Seen отправлен для ticket_id=${ticketId}`);
+    } else {
+      console.warn('WebSocket не подключен или закрыт.');
+    }
+
+    // **Локально обновляем `messages` (UI обновляется мгновенно)**
     setMessages((prevMessages) => {
-      const updatedMessages = prevMessages.map((msg) =>
-        msg.client_id === clientId && (!msg.seen_by || msg.seen_by === '{}')
-          ? { ...msg, seen_by: `{${userId}}`, seen_at: new Date().toISOString() }
-          : msg
-      );
+      const updatedMessages = prevMessages.map((msg) => {
+        let seenBy = msg.seen_by;
 
-      // Удаляем прочитанные сообщения из `unreadMessages`
-      const updatedUnreadMap = new Map(unreadMessages);
-      updatedMessages.forEach((msg) => {
-        if (msg.client_id === clientId && msg.seen_by !== '{}') {
-          updatedUnreadMap.delete(msg.id);
+        // **Исправление: Проверяем `seen_by`, прежде чем делать `JSON.parse()`**
+        if (typeof seenBy === "string" && seenBy.trim() !== "") {
+          try {
+            seenBy = JSON.parse(seenBy);
+          } catch (error) {
+            console.error("❌ Ошибка при разборе `seen_by`:", msg.seen_by, error);
+            seenBy = {}; // Устанавливаем пустой объект в случае ошибки
+          }
+        } else {
+          seenBy = {}; // Если `seen_by` пуст, делаем его `{}` (объект)
         }
+
+        if (msg.ticket_id === ticketId && Object.keys(seenBy).length === 0) {
+          return {
+            ...msg,
+            seen_by: JSON.stringify({ [userId]: true }),
+            seen_at: new Date().toISOString()
+          };
+        }
+        return msg;
       });
-      console.log("Обновленные сообщения после чтения:", updatedMessages);
 
-
-      setUnreadMessages(updatedUnreadMap);
-      return updatedMessages;
+      return [...updatedMessages]; // Принудительный ререндер
     });
+
+    // **Обновляем `unreadMessages` и `unreadCount`**
+    setTimeout(() => {
+      setUnreadMessages((prevUnreadMessages) => {
+        const updatedUnreadMap = new Map(prevUnreadMessages);
+
+        updatedUnreadMap.forEach((msg, msgId) => {
+          if (msg.ticket_id === ticketId) {
+            updatedUnreadMap.delete(msgId);
+          }
+        });
+
+        console.log("✅ Обновленные `unreadMessages` после клика:", updatedUnreadMap.size);
+        return updatedUnreadMap;
+      });
+
+      updateUnreadMessages(messages); // Гарантируем обновление `unreadCount`
+    }, 100);
   };
 
   // Функция загрузки тикетов
@@ -416,25 +481,24 @@ export const AppProvider = ({ children, isLoggedIn }) => {
 
         console.log('🔄 Получен `seen` из WebSocket:', { ticket_id, seen_at, client_id });
 
-        // Обновляем `messages`
         setMessages((prevMessages) => {
           const updatedMessages = prevMessages.map((msg) => {
-            if (msg.client_id === client_id && msg.ticket_id === ticket_id) {
+            if (msg.ticket_id === ticket_id) {
               return { ...msg, seen_at, seen_by: JSON.stringify({ [userId]: true }) };
             }
             return msg;
           });
 
-          return [...updatedMessages]; // Создаем новый массив для ререндера
+          return [...updatedMessages]; // Принудительный ререндер
         });
 
-        // Обновляем `unreadMessages` через `setTimeout`, чтобы дождаться обновления `messages`
+        // **Обновляем `unreadMessages` и `unreadCount` после `seen`**
         setTimeout(() => {
           setUnreadMessages((prevUnreadMessages) => {
             const updatedUnreadMap = new Map(prevUnreadMessages);
 
             updatedUnreadMap.forEach((msg, msgId) => {
-              if (msg.client_id === client_id && msg.ticket_id === ticket_id) {
+              if (msg.ticket_id === ticket_id) {
                 updatedUnreadMap.delete(msgId);
               }
             });
@@ -442,6 +506,11 @@ export const AppProvider = ({ children, isLoggedIn }) => {
             console.log("✅ Обновленные `unreadMessages` после `seen`:", updatedUnreadMap.size);
             return updatedUnreadMap;
           });
+
+          // Пересчитываем `unreadCount` сразу после обновления `messages`
+          setTimeout(() => {
+            updateUnreadMessages(messages);
+          }, 50);
         }, 100);
 
         break;

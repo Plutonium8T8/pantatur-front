@@ -248,36 +248,6 @@ const ChatComponent = ({ }) => {
         }
     };
 
-    const sendSeenEvent = (ticketId, clientId) => {
-        if (!ticketId || !clientId) {
-            console.warn("Отправка seen не выполнена: ticketId или clientId отсутствует.");
-            return;
-        }
-
-        const readMessageData = {
-            type: 'seen',
-            data: {
-                ticket_id: ticketId,
-                client_id: clientId,
-                sender_id: Number(userId),
-            },
-        };
-
-        try {
-            const socketInstance = socketRef.current;
-            if (socketInstance && socketInstance.readyState === WebSocket.OPEN) {
-                socketInstance.send(JSON.stringify(readMessageData));
-                console.log(`✅ Seen отправлен для ticket_id=${ticketId}, client_id=${clientId}`);
-            } else {
-                console.warn('WebSocket не подключен или закрыт.');
-            }
-
-            markMessagesAsRead(ticketId);
-        } catch (error) {
-            console.error('❌ Ошибка при отправке события о прочтении:', error);
-        }
-    };
-
     const handleTicketClick = (ticketId) => {
         setSelectTicketId(ticketId);
 
@@ -289,18 +259,9 @@ const ChatComponent = ({ }) => {
             console.warn('Тикет не найден!');
             setSelectedTechnicianId(null);
         }
-
-        // Убираем `{}` из client_id, если они есть
-        const parsedClientId = selectedTicket?.client_id
-            ? Number(String(selectedTicket.client_id).replace(/[{}]/g, '')) // Очищаем и приводим к числу
-            : null;
-
-        navigate(`/chat/${ticketId}`);
-
-        // Вызываем sendSeenEvent отдельно
-        sendSeenEvent(ticketId, parsedClientId);
+        // Помечаем все сообщения как прочитанные (отправляем `seen`)
+        markMessagesAsRead(ticketId);
     };
-
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1038,8 +999,7 @@ const ChatComponent = ({ }) => {
 
                                 const unreadCounts = ticketMessages.filter(
                                     msg =>
-                                        msg.seen_by != null && msg.seen_by == '{}' && msg.sender_id !== 1 && // Сообщение НЕ от оператора (id 1)
-                                        msg.sender_id !== userId // Сообщение НЕ от текущего пользователя
+                                        msg.seen_by != null && msg.seen_by == '{}' && msg.sender_id !== 1 && msg.sender_id !== userId
                                 ).length;
 
                                 const lastMessage = ticketMessages.length
