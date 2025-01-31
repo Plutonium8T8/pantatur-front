@@ -656,6 +656,33 @@ const ChatComponent = ({ }) => {
             throw error;
         }
     };
+    const getLastActiveClient = () => {
+        if (!Array.isArray(messages) || messages.length === 0) return null;
+
+        // Фильтруем сообщения только по выбранному тикету
+        const ticketMessages = messages.filter((msg) => msg.ticket_id === selectTicketId);
+
+        if (ticketMessages.length === 0) {
+            console.warn("⚠️ Нет сообщений в данном тикете.");
+            return null;
+        }
+
+        // Находим последнее сообщение по времени
+        const lastMessage = ticketMessages.reduce((latest, current) =>
+            new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
+        );
+
+        console.log("🕵️‍♂️ Последнее сообщение отправил клиент:", lastMessage.client_id);
+        return lastMessage.client_id;
+    };
+
+    // Автоустановка клиента при изменении тикета
+    useEffect(() => {
+        const lastClient = getLastActiveClient();
+        if (lastClient) {
+            setSelectedClient(String(lastClient)); // Устанавливаем клиента в селект
+        }
+    }, [messages, selectTicketId]); // Следим за изменением сообщений и выбранного тикета
 
     const handleClick = () => {
         if (!selectedClient) {
@@ -738,9 +765,15 @@ const ChatComponent = ({ }) => {
             console.log('Отправляемые данные:', JSON.stringify(messageData, null, 2));
 
             // 🔹 Определяем API в зависимости от платформы
-            const apiUrl = platform === "telegram"
-                ? 'https://pandatur-api.com/messages/send/telegram'
-                : 'https://pandatur-api.com/messages/send';
+            let apiUrl = 'https://pandatur-api.com/messages/send'; // API по умолчанию
+
+            if (platform === "telegram") {
+                apiUrl = 'https://pandatur-api.com/messages/send/telegram';
+            } else if (platform === "viber") {
+                apiUrl = 'https://pandatur-api.com/messages/send/viber';
+            }
+
+            console.log(`📡 Отправка сообщения через API: ${apiUrl}`);
 
             // 🔹 Отправка сообщения
             const response = await fetch(apiUrl, {
@@ -1264,14 +1297,18 @@ const ChatComponent = ({ }) => {
                             <div className="client-select-container">
                                 <select
                                     className="client-select"
-                                    onChange={(e) => handleClientClick(e.target.value)}
+                                    value={selectedClient} // Автоматически выбранный клиент
+                                    onChange={(e) => setSelectedClient(e.target.value)}
                                 >
-                                    <option value="" disabled selected>Выберите клиента</option>
-                                    {tickets.find(ticket => ticket.id === selectTicketId).client_id.replace(/[{}]/g, "").split(",").map(id => (
-                                        <option key={id.trim()} value={id.trim()}>
-                                            Клиент {id.trim()}
-                                        </option>
-                                    ))}
+                                    <option value="" disabled>Выберите клиента</option>
+                                    {tickets.find(ticket => ticket.id === selectTicketId).client_id
+                                        .replace(/[{}]/g, "")
+                                        .split(",")
+                                        .map(id => (
+                                            <option key={id.trim()} value={id.trim()}>
+                                                Клиент {id.trim()}
+                                            </option>
+                                        ))}
                                 </select>
                             </div>
                         )}
