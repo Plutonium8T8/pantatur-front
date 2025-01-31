@@ -9,13 +9,13 @@ const TicketCard = ({ ticket, onContextMenu, onEditTicket }) => {
     const tags = parseTags(ticket.tags);
     const navigate = useNavigate();
 
-    const handleDragStart = (e, clientId) => {
-        e.dataTransfer.setData('clientId', clientId);
+    const handleDragStart = (e, ticketId) => {
+        e.dataTransfer.setData('ticketId', ticketId);
     };
 
     const handleTicketClick = (ticket) => {
         setCurrentTicket(ticket);
-        navigate(`/chat/${ticket.client_id}`)
+        navigate(`/chat/${ticket.id}`)
     };
 
     return (
@@ -24,7 +24,7 @@ const TicketCard = ({ ticket, onContextMenu, onEditTicket }) => {
             onContextMenu={(e) => onContextMenu(e, ticket)}
             onClick={() => handleTicketClick(ticket)}
             draggable
-            onDragStart={(e) => handleDragStart(e, ticket.client_id)}
+            onDragStart={(e) => handleDragStart(e, ticket.id)}
         >
             <div className="tickets-descriptions">
                 <div className="ticket-ribbon" style={{ backgroundColor: getPriorityColor(ticket.priority) }}>

@@ -65,17 +65,17 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
   const handleSave = async () => {
     const ticketData = {
       ...editedTicket,
-      client_id: editedTicket.client_id || userId,
+      ticket_id: editedTicket.id || userId,
       technician_id: userId,
       contact: editedTicket.contact || '',
     };
 
     try {
       const token = Cookies.get('jwt');
-      const isEditing = Boolean(editedTicket?.client_id); // Проверяем, редактируем ли тикет
+      const isEditing = Boolean(editedTicket?.id); // Проверяем, редактируем ли тикет
       const method = isEditing ? 'PATCH' : 'POST'; // Выбираем метод
       const url = isEditing
-        ? `https://pandatur-api.com/tickets/${editedTicket.client_id}`
+        ? `https://pandatur-api.com/tickets/${editedTicket.id}`
         : `https://pandatur-api.com/tickets`;
 
       const response = await fetch(url, {
@@ -101,7 +101,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
         if (isEditing) {
           // Обновляем тикет в списке
           return prevTickets.map((ticket) =>
-            ticket.client_id === updatedTicket.client_id ? updatedTicket : ticket
+            ticket.id === updatedTicket.id ? updatedTicket : ticket
           );
         } else {
           // Добавляем новый тикет в список
@@ -120,7 +120,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
   const deleteTicketById = async () => {
     try {
       const token = Cookies.get('jwt');
-      const response = await fetch(`https://pandatur-api.com/tickets/${editedTicket?.client_id}`, {
+      const response = await fetch(`https://pandatur-api.com/tickets/${editedTicket?.id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -135,7 +135,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
       }
 
       // Локальное обновление списка тикетов
-      setTickets((prevTickets) => prevTickets.filter((t) => t.client_id !== editedTicket.client_id));
+      setTickets((prevTickets) => prevTickets.filter((t) => t.id !== editedTicket.id));
 
       onClose(); // Закрыть модальное окно
     } catch (error) {
@@ -184,7 +184,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
             <Workflow ticket={editedTicket} onChange={handleInputChange} />
           </div>
           <div className="button-container">
-            {ticket?.client_id && (
+            {ticket?.id && (
               <button
                 className="clear-button"
                 onClick={() => deleteTicketById()}
@@ -196,7 +196,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
               className="submit-button"
               onClick={handleSave}
             >
-              {ticket?.client_id ? translations['Salvează'][language] : translations['Creează'][language]}
+              {ticket?.id ? translations['Salvează'][language] : translations['Creează'][language]}
             </button>
           </div>
         </div>

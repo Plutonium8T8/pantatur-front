@@ -184,7 +184,7 @@
     margin-top: 16px;
 }
 
-.selects-container .container-options-component .css-16rgkxs-control{
+.selects-container .container-options-component .css-16rgkxs-control {
     padding: 4px;
 }
 
@@ -315,8 +315,7 @@
     width: 300px;
 }
 
-.react-datepicker__input-container
-{
+.react-datepicker__input-container {
     width: 1000px;
 }
 
@@ -573,4 +572,54 @@
     word-wrap: break-word;
     overflow-wrap: break-word;
     word-break: break-word;
+}
+
+.message-date-separator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: #0f824c;
+    background-color: #e6f7f1;
+    border-radius: 20px;
+    padding: 6px 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    /* width: fit-content; */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.message-group-container-chat {
+    display: flex;
+    gap: 20px;
+    flex-direction: column;
+    background-color: white;
+    padding: 10px;
+}
+
+.client-message-group {
+    display: flex;
+    flex-direction: column;
+    background-color: #7fc8a6;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+.client-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: #0f824c;
+    background-color: #e6f7f1;
+    border-radius: 20px;
+    padding: 6px 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    /* width: fit-content; */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }

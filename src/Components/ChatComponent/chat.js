@@ -14,7 +14,6 @@ import { sourceOfLeadOptions } from '../../FormOptions/SourceOfLeadOptions';
 import { promoOptions } from '../../FormOptions/PromoOptions';
 import { templateOptions } from '../../FormOptions/MessageTemplate';
 import TechnicianSelect from '../../FormOptions/ResponsabilLead';
-import DatePicker from 'react-datepicker';
 import Input from '../InputComponent/InputComponent';
 import Workflow from '../WorkFlowComponent/WorkflowComponent';
 import "react-datepicker/dist/react-datepicker.css";
@@ -23,7 +22,6 @@ import { useSnackbar } from 'notistack';
 import './chat.css';
 import EmojiPicker from 'emoji-picker-react';
 import ReactDOM from "react-dom";
-import Icon from '../../Components/Icon/index';
 import { FaFile, FaPaperPlane, FaSmile } from 'react-icons/fa';
 import { translations } from '../utils/translations';
 
@@ -31,10 +29,11 @@ const ChatComponent = ({ }) => {
     const { userId } = useUser();
     const [managerMessage, setManagerMessage] = useState('');
     const { tickets, updateTicket, setTickets, messages, setMessages, markMessagesAsRead, socketRef } = useAppContext();
+    const [selectTicketId, setSelectTicketId] = useState(null);
     const [selectClientId, setSelectClientId] = useState(null);
     const [extraInfo, setExtraInfo] = useState({}); // Состояние для дополнительной информации каждого тикета
     const messageContainerRef = useRef(null);
-    const { clientId } = useParams(); // Получаем clientId из URL
+    const { ticketId } = useParams(); // Получаем clientId из URL
     const [isLoading, setIsLoading] = useState(false); // Состояние загрузки
     const [selectedTechnicianId, setSelectedTechnicianId] = useState('');
     const { enqueueSnackbar } = useSnackbar();
@@ -52,35 +51,43 @@ const ChatComponent = ({ }) => {
     const [activeTab, setActiveTab] = useState('extraForm'); // По умолчанию вкладка Extra Form
     const [showMyTickets, setShowMyTickets] = useState(false);
     const activeChatRef = useRef(null);
+    const [selectedClient, setSelectedClient] = useState(null);
+    const fileInputRef = useRef(null);
+
+    const handleClientClick = (id) => {
+        setSelectedClient(id);
+        console.log("Выбран клиент:", id);
+        // Здесь можно добавить дополнительную логику, например, фильтрацию сообщений
+    };
+
+    // useEffect(() => {
+    //     enqueueSnackbar("Тестовое уведомление работает!", { variant: "success" });
+    // }, []);
 
     useEffect(() => {
-        enqueueSnackbar("Тестовое уведомление работает!", { variant: "success" });
-    }, []);
-
-    useEffect(() => {
-        if (clientId) {
-            setSelectClientId(Number(clientId));
+        if (ticketId) {
+            setSelectTicketId(Number(ticketId));
         }
-    }, [clientId, setSelectClientId]);
+    }, [ticketId, setSelectTicketId]);
 
-    // Прокручиваем к активному чату, если selectClientId изменился и тикеты загружены
+    // Прокручиваем к активному чату, если selectTicketId изменился и тикеты загружены
     useEffect(() => {
         if (!isLoading && activeChatRef.current) {
             activeChatRef.current.scrollIntoView({ behavior: "auto" });
         }
-    }, [selectClientId, isLoading, filteredTickets]);
+    }, [selectTicketId, isLoading, filteredTickets]);
 
     useEffect(() => {
-        if (selectClientId) {
-            fetchTicketExtraInfo(selectClientId); // Загружаем дополнительную информацию при изменении тикета
+        if (selectTicketId) {
+            fetchTicketExtraInfo(selectTicketId); // Загружаем дополнительную информацию при изменении тикета
         }
-    }, [selectClientId]);
+    }, [selectTicketId]);
 
     // Получение дополнительной информации для тикета
-    const fetchTicketExtraInfo = async (selectClientId) => {
+    const fetchTicketExtraInfo = async (selectTicketId) => {
         try {
             const token = Cookies.get('jwt');
-            const response = await fetch(`https://pandatur-api.com/ticket-info/${selectClientId}`, {
+            const response = await fetch(`https://pandatur-api.com/ticket-info/${selectTicketId}`, {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -98,7 +105,7 @@ const ChatComponent = ({ }) => {
             // Обновляем состояние с дополнительной информацией о тикете
             setExtraInfo((prevState) => ({
                 ...prevState,
-                [selectClientId]: data, // Сохраняем информацию для текущего тикета
+                [selectTicketId]: data, // Сохраняем информацию для текущего тикета
             }));
 
         } catch (error) {
@@ -108,16 +115,16 @@ const ChatComponent = ({ }) => {
     };
 
     // Обработчик изменения значения в селекте для выбранного тикета
-    const handleSelectChange = (clientId, field, value) => {
+    const handleSelectChange = (ticketId, field, value) => {
         setExtraInfo((prevState) => {
             const newState = {
                 ...prevState,
-                [clientId]: {
-                    ...prevState[clientId],
+                [ticketId]: {
+                    ...prevState[ticketId],
                     [field]: value,
                 },
             };
-            console.log("Обновленное состояние extraInfo:", newState);
+            // console.log("Обновленное состояние extraInfo:", newState);
             return newState;
         });
     };
@@ -125,7 +132,7 @@ const ChatComponent = ({ }) => {
     // отправка данных формы в бэк
     const sendExtraInfo = async () => {
         const token = Cookies.get('jwt'); // Получение токена из cookie
-        const ticketExtraInfo = extraInfo[selectClientId]; // Получаем информацию для выбранного тикета
+        const ticketExtraInfo = extraInfo[selectTicketId]; // Получаем информацию для выбранного тикета
 
         if (!ticketExtraInfo) {
             console.warn('Нет дополнительной информации для выбранного тикета.', ticketExtraInfo);
@@ -134,7 +141,7 @@ const ChatComponent = ({ }) => {
         setIsLoading(true); // Устанавливаем состояние загрузки в true
 
         try {
-            const response = await fetch(`https://pandatur-api.com/ticket-info/${selectClientId}`, {
+            const response = await fetch(`https://pandatur-api.com/ticket-info/${selectTicketId}`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -171,7 +178,7 @@ const ChatComponent = ({ }) => {
     const handleWorkflowChange = async (event) => {
         const newWorkflow = event.target.value;
 
-        if (!selectClientId) {
+        if (!selectTicketId) {
             console.warn('Тикет не выбран.');
             enqueueSnackbar('Ошибка: Тикет не выбран.', { variant: 'error' });
             return;
@@ -179,7 +186,7 @@ const ChatComponent = ({ }) => {
 
         // Находим тикет
         const updatedTicket = Array.isArray(tickets)
-            ? tickets.find(ticket => ticket.client_id === selectClientId)
+            ? tickets.find(ticket => ticket.id === selectTicketId)
             : null;
 
         if (!updatedTicket) {
@@ -191,7 +198,7 @@ const ChatComponent = ({ }) => {
         try {
             // Используем функцию updateTicket из AppContext
             await updateTicket({
-                id: updatedTicket.client_id,
+                id: updatedTicket.id,
                 workflow: newWorkflow,
             });
 
@@ -201,7 +208,7 @@ const ChatComponent = ({ }) => {
             setTickets((prevTickets) =>
                 Array.isArray(prevTickets)
                     ? prevTickets.map(ticket =>
-                        ticket.client_id === updatedTicket.client_id
+                        ticket.id === updatedTicket.id
                             ? { ...ticket, workflow: newWorkflow }
                             : ticket
                     )
@@ -216,8 +223,8 @@ const ChatComponent = ({ }) => {
     };
 
     // Определяем выбранный тикет
-    const updatedTicket = Array.isArray(tickets) && selectClientId
-        ? tickets.find(ticket => ticket.client_id === selectClientId)
+    const updatedTicket = Array.isArray(tickets) && selectTicketId
+        ? tickets.find(ticket => ticket.id === selectTicketId)
         : null;
 
     const scrollToBottom = () => {
@@ -228,7 +235,7 @@ const ChatComponent = ({ }) => {
 
     useEffect(() => {
         scrollToBottom();
-    }, [messages, selectClientId]);
+    }, [messages, selectTicketId]);
 
     const handleKeyDown = (event) => {
         if (event.key === 'Enter' && !event.shiftKey) {
@@ -236,56 +243,62 @@ const ChatComponent = ({ }) => {
             if (editMessageId) {
                 handleSave(); // Сохраняем изменения, если редактируем сообщение
             } else {
-                handleClick(selectClientId); // Отправляем новое сообщение
+                handleClick(selectTicketId); // Отправляем новое сообщение
             }
         }
     };
 
-    const handleClick = () => {
-        sendMessage();
-    };
-
-    const handleTicketClick = (clientId) => {
-        setSelectClientId(clientId);
-
-        const selectedTicket = tickets.find((ticket) => ticket.client_id === clientId);
-
-        if (selectedTicket) {
-            setSelectedTechnicianId(selectedTicket.technician_id || null);
-            setSelectClientId(selectedTicket.client_id); // Сохраняем client_id в состоянии
-        } else {
-            console.warn('Тикет не найден!');
-            setSelectedTechnicianId(null);
+    const sendSeenEvent = (ticketId, clientId) => {
+        if (!ticketId || !clientId) {
+            console.warn("Отправка seen не выполнена: ticketId или clientId отсутствует.");
+            return;
         }
 
-        console.log('Selected Client ID:', selectedTicket?.client_id || "No change");
-        navigate(`/chat/${clientId}`);
-
-        // Отправка события seen через WebSocket
         const readMessageData = {
             type: 'seen',
             data: {
+                ticket_id: ticketId,
                 client_id: clientId,
                 sender_id: Number(userId),
             },
         };
 
         try {
-            const socketInstance = socketRef.current; // Используем socketRef.current
+            const socketInstance = socketRef.current;
             if (socketInstance && socketInstance.readyState === WebSocket.OPEN) {
-                socketInstance.send(JSON.stringify(readMessageData)); // Отправляем событие в WebSocket
-                console.log(
-                    `Все сообщения в чате с client_id=${clientId} помечены как прочитанные.`
-                );
+                socketInstance.send(JSON.stringify(readMessageData));
+                console.log(`✅ Seen отправлен для ticket_id=${ticketId}, client_id=${clientId}`);
             } else {
                 console.warn('WebSocket не подключен или закрыт.');
             }
 
-            markMessagesAsRead(clientId);
-            // Локальное обновление сообщений как прочитанных
+            markMessagesAsRead(ticketId);
         } catch (error) {
-            console.error('Ошибка при отправке события о прочтении:', error);
+            console.error('❌ Ошибка при отправке события о прочтении:', error);
         }
+    };
+
+    const handleTicketClick = (ticketId) => {
+        setSelectTicketId(ticketId);
+
+        const selectedTicket = tickets.find((ticket) => ticket.id === ticketId);
+
+        if (selectedTicket) {
+            setSelectedTechnicianId(selectedTicket.technician_id || null);
+        } else {
+            console.warn('Тикет не найден!');
+            setSelectedTechnicianId(null);
+        }
+
+        // Убираем `{}` из client_id, если они есть
+        const parsedClientId = selectedTicket?.client_id
+            ? Number(String(selectedTicket.client_id).replace(/[{}]/g, '')) // Очищаем и приводим к числу
+            : null;
+
+        navigate(`/chat/${ticketId}`);
+
+        // Вызываем sendSeenEvent отдельно
+        sendSeenEvent(ticketId, parsedClientId);
     };
 
 
@@ -431,7 +444,7 @@ const ChatComponent = ({ }) => {
     //         }
     //     });
     // };
-    
+
 
     const getLastReaction = (message) => {
         if (!message.reactions) {
@@ -508,11 +521,14 @@ const ChatComponent = ({ }) => {
 
     // Обработчик клика вне области эмодзи-пикера, чтобы закрыть пикер
     const handleClickOutside = (event) => {
-        // Закрытие пикера только если клик был вне области контейнера пикера
-        if (!event.target.closest('.emoji-picker-container') && !event.target.closest('.emoji-picker-popup')) {
-            setShowEmojiPicker(false);
+        if (
+            !event.target.closest('.emoji-button') && // Проверяем клик по кнопке
+            !event.target.closest('.emoji-picker-popup') // Проверяем клик внутри меню эмодзи
+        ) {
+            setShowEmojiPicker(false); // Закрываем меню только если клик был вне
         }
     };
+
 
     // Добавляем обработчик события для клика вне пикера
     useEffect(() => {
@@ -551,6 +567,12 @@ const ChatComponent = ({ }) => {
             console.log('No file selected.');
         }
     };
+
+    const handleFileButtonClick = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const getMessageTypeLabel = (type) => {
@@ -560,21 +582,21 @@ const ChatComponent = ({ }) => {
             video: "Video Message",
             file: "File Message",
         };
-    
+
         return typeLabels[type] || "Unknown Message";
     };
 
     const handleTechnicianChange = async (newTechnicianId) => {
         setSelectedTechnicianId(newTechnicianId);
 
-        if (!selectClientId || !newTechnicianId) {
+        if (!selectTicketId || !newTechnicianId) {
             console.warn('Не выбран тикет или техник.');
             return;
         }
 
         try {
             const token = Cookies.get('jwt');
-            const response = await fetch(`https://pandatur-api.com/tickets/${selectClientId}`, {
+            const response = await fetch(`https://pandatur-api.com/tickets/${selectTicketId}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -634,48 +656,127 @@ const ChatComponent = ({ }) => {
             throw error;
         }
     };
+    const getLastActiveClient = () => {
+        if (!Array.isArray(messages) || messages.length === 0) return null;
 
-    const sendMessage = async (selectedFile) => {
+        // Фильтруем сообщения только по выбранному тикету
+        const ticketMessages = messages.filter((msg) => msg.ticket_id === selectTicketId);
+
+        if (ticketMessages.length === 0) {
+            console.warn("⚠️ Нет сообщений в данном тикете.");
+            return null;
+        }
+
+        // Находим последнее сообщение по времени
+        const lastMessage = ticketMessages.reduce((latest, current) =>
+            new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
+        );
+
+        console.log("🕵️‍♂️ Последнее сообщение отправил клиент:", lastMessage.client_id);
+        return lastMessage.client_id;
+    };
+
+    // Автоустановка клиента при изменении тикета
+    useEffect(() => {
+        const lastClient = getLastActiveClient();
+        if (lastClient) {
+            setSelectedClient(String(lastClient)); // Устанавливаем клиента в селект
+        }
+    }, [messages, selectTicketId]); // Следим за изменением сообщений и выбранного тикета
+
+    const handleClick = () => {
+        if (!selectedClient) {
+            console.error("⚠️ Ошибка: Клиент не выбран!");
+            return;
+        }
+
+        const analyzeLastMessagePlatform = () => {
+            console.log("🔍 Анализируем платформу последнего сообщения...");
+            console.log("📌 selectedClient:", selectedClient);
+
+            // Проверяем, загружены ли сообщения
+            if (!Array.isArray(messages)) {
+                console.error("❌ Ошибка: messages не является массивом!", messages);
+                return "web";
+            }
+
+            console.log("📩 Всего сообщений в системе:", messages.length);
+
+            // 🔹 Преобразуем `selectedClient` в число, если нужно
+            const clientId = Number(selectedClient);
+
+            // 🔹 Фильтруем сообщения от текущего клиента
+            const clientMessages = messages.filter((msg) => Number(msg.client_id) === clientId);
+
+            if (!clientMessages || clientMessages.length === 0) {
+                console.warn("⚠️ Нет сообщений от клиента, выбираем платформу (web)");
+                return "web";
+            }
+
+            console.log("🔎 Найдено сообщений от клиента:", clientMessages.length);
+
+            // Находим последнее сообщение по времени
+            const lastMessage = clientMessages.reduce((latest, current) =>
+                new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
+            );
+
+            console.log("🕵️‍♂️ Последнее сообщение:", lastMessage);
+            console.log("📡 Определённая платформа:", lastMessage?.platform || "web");
+
+            return lastMessage?.platform || "web";
+        };
+
+        const platform = analyzeLastMessagePlatform();
+        console.log(`🚀 Определённая платформа для отправки: ${platform}`);
+
+        sendMessage(null, platform);
+    };
+
+    const sendMessage = async (selectedFile, platform) => {
         if (!managerMessage.trim() && !selectedFile) {
             console.error('Ошибка: Отправка пустого сообщения невозможна.');
             return;
         }
 
-        // Функция для получения платформы последнего сообщения
-        const analyzeLastMessagePlatform = () => {
-            const clientMessages = messages.filter((msg) => msg.client_id === selectClientId);
-            const lastMessage = clientMessages.length > 0
-                ? clientMessages.reduce((latest, current) =>
-                    new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
-                )
-                : null;
-
-            return lastMessage?.platform || 'web';
-        };
-
-        const platform = analyzeLastMessagePlatform();
-        console.log(`Определённая платформа: ${platform}`);
-
         try {
             const messageData = {
                 sender_id: Number(userId),
-                client_id: selectClientId,
-                platform: platform,
+                client_id: selectedClient,
+                platform: platform, // Динамическая платформа
                 message: managerMessage.trim(),
                 media_type: null,
                 media_url: "",
             };
 
-            // Если файл выбран, загружаем его и добавляем данные в messageData
+            // 🔹 Если файл выбран, загружаем его
             if (selectedFile) {
+                console.log('Загрузка файла...');
                 const uploadResponse = await uploadFile(selectedFile);
+
+                if (!uploadResponse || !uploadResponse.url) {
+                    console.error('Ошибка загрузки файла');
+                    return;
+                }
+
                 messageData.media_url = uploadResponse.url; // URL загруженного файла
                 messageData.media_type = getMediaType(selectedFile.type); // Определяем тип медиафайла
             }
 
             console.log('Отправляемые данные:', JSON.stringify(messageData, null, 2));
 
-            const response = await fetch('https://pandatur-api.com/messages/send', {
+            // 🔹 Определяем API в зависимости от платформы
+            let apiUrl = 'https://pandatur-api.com/messages/send'; // API по умолчанию
+
+            if (platform === "telegram") {
+                apiUrl = 'https://pandatur-api.com/messages/send/telegram';
+            } else if (platform === "viber") {
+                apiUrl = 'https://pandatur-api.com/messages/send/viber';
+            }
+
+            console.log(`📡 Отправка сообщения через API: ${apiUrl}`);
+
+            // 🔹 Отправка сообщения
+            const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -685,21 +786,19 @@ const ChatComponent = ({ }) => {
                 body: JSON.stringify(messageData),
             });
 
-            const responseData = await response.json();
-
             if (!response.ok) {
+                const responseData = await response.json();
                 console.error('Ошибка с сервера:', responseData.message);
                 return;
             }
 
-            console.log('Сообщение успешно отправлено:', messageData);
+            console.log(`✅ Сообщение успешно отправлено через API ${apiUrl}:`, messageData);
 
-            setMessages((prevMessages) => [
-                ...prevMessages,
-                { ...messageData, seenAt: false },
-            ]);
+            // 🔹 Добавляем сообщение в локальный state
+            setMessages((prevMessages) => [...prevMessages, { ...messageData, seenAt: false }]);
 
-            if (!selectedFile) setManagerMessage(''); // Очищаем поле сообщения
+            // 🔹 Очищаем поле ввода, если файл не отправляется
+            if (!selectedFile) setManagerMessage('');
         } catch (error) {
             console.error('Ошибка отправки сообщения:', error);
         }
@@ -726,28 +825,33 @@ const ChatComponent = ({ }) => {
     };
 
     const handleTicketSelect = (ticket) => {
-        setSelectClientId(ticket.clientId);
+        setSelectTicketId(ticket.id);
         setSelectedTechnicianId(ticket.technician_id || null); // Если technician_id нет, передаем null
     };
 
     const handlePersonalDataSubmit = async (event) => {
         event.preventDefault();
 
+        if (!selectedClient) {
+            alert("Выберите клиента!");
+            return;
+        }
+
         const payload = {
-            name: extraInfo[selectClientId]?.name || "",
-            surname: extraInfo[selectClientId]?.surname || "",
-            date_of_birth: extraInfo[selectClientId]?.date_of_birth || "",
-            id_card_series: extraInfo[selectClientId]?.id_card_series || "",
-            id_card_number: extraInfo[selectClientId]?.id_card_number || "",
-            id_card_release: extraInfo[selectClientId]?.id_card_release || "",
-            idnp: extraInfo[selectClientId]?.idnp || "",
-            address: extraInfo[selectClientId]?.address || "",
-            phone: extraInfo[selectClientId]?.phone || "",
+            name: extraInfo[selectedClient]?.name || "",
+            surname: extraInfo[selectedClient]?.surname || "",
+            date_of_birth: extraInfo[selectedClient]?.date_of_birth || "",
+            id_card_series: extraInfo[selectedClient]?.id_card_series || "",
+            id_card_number: extraInfo[selectedClient]?.id_card_number || "",
+            id_card_release: extraInfo[selectedClient]?.id_card_release || "",
+            idnp: extraInfo[selectedClient]?.idnp || "",
+            address: extraInfo[selectedClient]?.address || "",
+            phone: extraInfo[selectedClient]?.phone || "",
         };
 
         try {
             const token = Cookies.get('jwt');
-            const response = await fetch(`https://pandatur-api.com/users-extended/${selectClientId}`, {
+            const response = await fetch(`https://pandatur-api.com/users-extended/${selectedClient}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
@@ -792,14 +896,14 @@ const ChatComponent = ({ }) => {
     const handleFilterInput = (e) => {
         const filterValue = e.target.value.toLowerCase();
         document.querySelectorAll(".chat-item").forEach((item) => {
-            const clientId = item.querySelector(".tickets-descriptions div:nth-child(2)").textContent.toLowerCase();
+            const ticketId = item.querySelector(".tickets-descriptions div:nth-child(2)").textContent.toLowerCase();
             const ticketContact = item.querySelector(".tickets-descriptions div:nth-child(1)").textContent.toLowerCase();
             const tagsContainer = item.querySelector(".tags-ticket");
             const tags = Array.from(tagsContainer?.querySelectorAll("span") || []).map(tag => tag.textContent.toLowerCase());
 
             // Проверяем фильтр по ID, контакту и тегам
             if (
-                clientId.includes(filterValue) ||
+                ticketId.includes(filterValue) ||
                 ticketContact.includes(filterValue) ||
                 tags.some(tag => tag.includes(filterValue))
             ) {
@@ -852,17 +956,17 @@ const ChatComponent = ({ }) => {
                     {Array.isArray(filteredTickets) && filteredTickets.length > 0 ? (
                         filteredTickets
                             .sort((a, b) => {
-                                const clientMessagesA = messages.filter(msg => msg.client_id === a.client_id);
-                                const clientMessagesB = messages.filter(msg => msg.client_id === b.client_id);
+                                const ticketMessagesA = messages.filter(msg => msg.ticket_id === a.id);
+                                const ticketMessagesB = messages.filter(msg => msg.ticket_id === b.id);
 
-                                const lastMessageA = clientMessagesA.length
-                                    ? clientMessagesA.reduce((latest, current) =>
+                                const lastMessageA = ticketMessagesA.length
+                                    ? ticketMessagesA.reduce((latest, current) =>
                                         new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
                                     )
                                     : { time_sent: null };
 
-                                const lastMessageB = clientMessagesB.length
-                                    ? clientMessagesB.reduce((latest, current) =>
+                                const lastMessageB = ticketMessagesB.length
+                                    ? ticketMessagesB.reduce((latest, current) =>
                                         new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
                                     )
                                     : { time_sent: null };
@@ -870,15 +974,15 @@ const ChatComponent = ({ }) => {
                                 return new Date(lastMessageB.time_sent) - new Date(lastMessageA.time_sent);
                             })
                             .map(ticket => {
-                                const clientMessages = messages.filter(msg => msg.client_id === ticket.client_id);
+                                const ticketMessages = messages.filter(msg => msg.ticket_id === ticket.id);
 
-                                const unreadCounts = clientMessages.filter(
+                                const unreadCounts = ticketMessages.filter(
                                     msg =>
-                                        msg.seen_by != null && msg.seen_by == '{}' && msg.sender_id == msg.client_id
+                                        msg.seen_by != null && msg.seen_by == '{}' && msg.sender_id !== userId
                                 ).length;
 
-                                const lastMessage = clientMessages.length
-                                    ? clientMessages.reduce((latest, current) =>
+                                const lastMessage = ticketMessages.length
+                                    ? ticketMessages.reduce((latest, current) =>
                                         new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
                                     )
                                     : { message: "", time_sent: null };
@@ -894,10 +998,9 @@ const ChatComponent = ({ }) => {
 
                                 return (
                                     <div
-                                        key={ticket.client_id}
-                                        className={`chat-item ${ticket.client_id === selectClientId ? "active" : ""}`}
-                                        // ref={ticket.client_id === selectClientId ? activeChatRef : null}
-                                        onClick={() => handleTicketClick(ticket.client_id)}
+                                        key={ticket.id}
+                                        className={`chat-item ${ticket.id === selectTicketId ? "active" : ""}`}
+                                        onClick={() => handleTicketClick(ticket.id)}
                                     >
                                         <div className="foto-description">
                                             <img className="foto-user" src="https://storage.googleapis.com/pandatur_bucket/utils/icon-5359554_640.webp" alt="example" />
@@ -962,145 +1065,189 @@ const ChatComponent = ({ }) => {
             </div>
             <div className="chat-area">
                 <div className="chat-messages" ref={messageContainerRef}>
-                    {messages
-                        .filter((msg) => {
-                            const clientId = tickets.find((ticket) => ticket.client_id === selectClientId)?.client_id;
-                            return msg.client_id === clientId;
-                        })
-                        .sort((a, b) => new Date(a.time_sent) - new Date(b.time_sent))
-                        .map((msg) => {
-                            const uniqueKey = `${msg.id || msg.client_id}-${msg.time_sent}`;
+                    {selectTicketId ? (
+                        (() => {
+                            const selectedTicket = tickets.find(ticket => ticket.id === selectTicketId);
+                            const clientIds = selectedTicket
+                                ? selectedTicket.client_id.toString().replace(/[{}]/g, "").split(',').map(id => Number(id))
+                                : [];
 
-                            // Определяем отображение контента на основе mtype
-                            const renderContent = () => {
-                                if (!msg.message) {
-                                    return <div className="text-message">Сообщение отсутствует</div>;
+                            // Фильтруем и сортируем по времени
+                            const sortedMessages = messages
+                                .filter(msg => msg.ticket_id === selectTicketId)
+                                .sort((a, b) => new Date(a.time_sent) - new Date(b.time_sent));
+
+                            // Группировка по датам
+                            const groupedMessages = sortedMessages.reduce((acc, msg) => {
+                                const messageDate = new Date(msg.time_sent).toLocaleDateString("ru-RU", {
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                });
+
+                                if (!acc[messageDate]) acc[messageDate] = [];
+                                acc[messageDate].push(msg);
+                                return acc;
+                            }, {});
+
+                            return Object.entries(groupedMessages).map(([date, msgs]) => {
+                                let groupedByClient = [];
+                                let lastClientId = null;
+                                let currentGroup = [];
+
+                                msgs.forEach((msg) => {
+                                    if (msg.client_id !== lastClientId) {
+                                        if (currentGroup.length) {
+                                            groupedByClient.push({ clientId: lastClientId, messages: currentGroup });
+                                        }
+                                        currentGroup = [];
+                                        lastClientId = msg.client_id;
+                                    }
+                                    currentGroup.push(msg);
+                                });
+
+                                if (currentGroup.length) {
+                                    groupedByClient.push({ clientId: lastClientId, messages: currentGroup });
                                 }
-                                switch (msg.mtype) {
-                                    case "image":
-                                        return (
-                                            <img
-                                                src={msg.message}
-                                                alt="Отправленное изображение"
-                                                className="image-preview-in-chat"
-                                                onError={(e) => {
-                                                    e.target.src = "https://via.placeholder.com/300?text=Ошибка+загрузки";
-                                                }}
-                                                onClick={() => {
-                                                    window.open(msg.message, "_blank");
-                                                }}
-                                            />
-                                        );
-                                    case "video":
-                                        return (
-                                            <video controls className="video-preview">
-                                                <source src={msg.message} type="video/mp4" />
-                                                Ваш браузер не поддерживает воспроизведение видео.
-                                            </video>
-                                        );
-                                    case "audio":
-                                        return (
-                                            <audio controls className="audio-preview">
-                                                <source src={msg.message} type="audio/ogg" />
-                                                Ваш браузер не поддерживает воспроизведение аудио.
-                                            </audio>
-                                        );
-                                    case "file":
-                                        return (
-                                            <a
-                                                href={msg.message}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="file-link"
-                                            >
-                                                Открыть файл
-                                            </a>
-                                        );
-                                    default:
-                                        return <div className="text-message">{msg.message}</div>;
-                                }
-                            };
 
-                            const lastReaction = getLastReaction(msg);
+                                return (
+                                    <div key={date} className='message-group-container-chat'>
+                                        <div className="message-date-separator">📆 {date}</div>
+                                        {groupedByClient.map(({ clientId, messages }, index) => (
+                                            <div key={`${clientId}-${date}-${index}`} className="client-message-group">
+                                                <div className="client-header">👤 Сообщения клиента #{clientId}</div>
+                                                {messages.map((msg) => {
+                                                    const uniqueKey = `${msg.id || msg.ticket_id}-${msg.time_sent}`;
 
-                            return (
-                                <div
-                                    key={uniqueKey}
-                                    className={`message ${msg.sender_id === userId || msg.sender_id === 1 ? "sent" : "received"}`}
-                                >
-                                    <div className="message-content">
-                                        <div className="message-row">
-                                            <div className="text">
-                                                {renderContent()}
-                                                <div className="message-time">
-                                                    <div
-                                                        className="reaction-toggle-button"
-                                                        onClick={() =>
-                                                            setSelectedMessageId(selectedMessageId === msg.id ? null : msg.id)
+                                                    const renderContent = () => {
+                                                        if (!msg.message) {
+                                                            return <div className="text-message">Сообщение отсутствует</div>;
                                                         }
-                                                    >
-                                                        {lastReaction || "☺"}
-                                                    </div>
-                                                    {new Date(msg.time_sent).toLocaleTimeString("ro-RO", {
-                                                        hour: "2-digit",
-                                                        minute: "2-digit",
-                                                    })}
-                                                </div>
-                                                {selectedMessageId === msg.id && (
-                                                    <div className="reaction-container" ref={reactionContainerRef}>
-                                                        <div className="reaction-buttons">
-                                                            {["☺", "👍", "❤️", "😂", "😮", "😢", "😡"].map((reaction) => (
-                                                                <div
-                                                                    key={reaction}
-                                                                    onClick={() => handleReactionClick(reaction, msg.id)}
-                                                                    className={
-                                                                        selectedReaction[msg.id] === reaction ? "active" : ""
-                                                                    }
-                                                                >
-                                                                    {reaction}
+                                                        switch (msg.mtype) {
+                                                            case "image":
+                                                                return (
+                                                                    <img
+                                                                        src={msg.message}
+                                                                        alt="Изображение"
+                                                                        className="image-preview-in-chat"
+                                                                        onError={(e) => {
+                                                                            e.target.src = "https://via.placeholder.com/300?text=Ошибка+загрузки";
+                                                                        }}
+                                                                        onClick={() => {
+                                                                            window.open(msg.message, "_blank");
+                                                                        }}
+                                                                    />
+                                                                );
+                                                            case "video":
+                                                                return (
+                                                                    <video controls className="video-preview">
+                                                                        <source src={msg.message} type="video/mp4" />
+                                                                        Ваш браузер не поддерживает воспроизведение видео.
+                                                                    </video>
+                                                                );
+                                                            case "audio":
+                                                                return (
+                                                                    <audio controls className="audio-preview">
+                                                                        <source src={msg.message} type="audio/ogg" />
+                                                                        Ваш браузер не поддерживает воспроизведение аудио.
+                                                                    </audio>
+                                                                );
+                                                            case "file":
+                                                                return (
+                                                                    <a
+                                                                        href={msg.message}
+                                                                        target="_blank"
+                                                                        rel="noopener noreferrer"
+                                                                        className="file-link"
+                                                                    >
+                                                                        Открыть файл
+                                                                    </a>
+                                                                );
+                                                            default:
+                                                                return <div className="text-message">{msg.message}</div>;
+                                                        }
+                                                    };
+
+                                                    const lastReaction = getLastReaction(msg);
+
+                                                    return (
+                                                        <div
+                                                            key={uniqueKey}
+                                                            className={`message ${msg.sender_id === userId || msg.sender_id === 1 ? "sent" : "received"}`}
+                                                        >
+                                                            <div className="message-content">
+                                                                <div className="message-row">
+                                                                    <div className="text">
+                                                                        {renderContent()}
+                                                                        <div className="message-time">
+                                                                            <div
+                                                                                className="reaction-toggle-button"
+                                                                                onClick={() =>
+                                                                                    setSelectedMessageId(selectedMessageId === msg.id ? null : msg.id)
+                                                                                }
+                                                                            >
+                                                                                {lastReaction || "☺"}
+                                                                            </div>
+                                                                            {new Date(msg.time_sent).toLocaleTimeString("ru-RU", {
+                                                                                hour: "2-digit",
+                                                                                minute: "2-digit",
+                                                                            })}
+                                                                        </div>
+                                                                        {selectedMessageId === msg.id && (
+                                                                            <div className="reaction-container" ref={reactionContainerRef}>
+                                                                                <div className="reaction-buttons">
+                                                                                    {["☺", "👍", "❤️", "😂", "😮", "😢", "😡"].map((reaction) => (
+                                                                                        <div
+                                                                                            key={reaction}
+                                                                                            onClick={() => handleReactionClick(reaction, msg.id)}
+                                                                                            className={selectedReaction[msg.id] === reaction ? "active" : ""}
+                                                                                        >
+                                                                                            {reaction}
+                                                                                        </div>
+                                                                                    ))}
+                                                                                </div>
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
                                                                 </div>
-                                                            ))}
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                )}
+                                                    );
+                                                })}
                                             </div>
-                                            {/* {(msg.sender_id === userId || msg.sender_id === 1) && (
-                                                <div
-                                                    className="menu-container"
-                                                    ref={(el) => (menuRefs.current[msg.id] = el)}
-                                                >
-                                                    <button
-                                                        className="menu-button"
-                                                        onClick={() => handleMenuToggle(msg.id)}
-                                                    >
-                                                        ⋮
-                                                    </button>
-                                                    {menuMessageId === msg.id && (
-                                                        <div className="menu-dropdown">
-                                                            <button onClick={() => handleEdit(msg)}>✏️</button>
-                                                            <button onClick={() => handleDelete(msg.id)}>🗑️</button>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            )} */}
-                                        </div>
+                                        ))}
                                     </div>
-                                </div>
-                            );
-                        })}
+                                );
+                            });
+                        })()
+                    ) : (
+                        <div className="empty-chat">
+                            <p>Выберите тикет для просмотра сообщений</p>
+                        </div>
+                    )}
                 </div>
                 <div className="manager-send-message-container">
-                    <textarea className="text-area-message" placeholder={translations['Introduceți mesaj'][language]}></textarea>
+                    <textarea
+                        className="text-area-message"
+                        value={managerMessage}
+                        onChange={(e) => setManagerMessage(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        placeholder={translations['Introduceți mesaj'][language]}
+                        disabled={!selectTicketId}
+                    />
                     <div className="message-options">
                         <div className="button-row">
-                            <button 
+                            <button
                                 className="action-button send-button"
-                                onClick={editMessageId ? handleSave : handleClick}
-                                disabled={!selectClientId}>
-                                    <FaPaperPlane/>
+                                onClick={handleClick}
+                                disabled={!selectTicketId}>
+                                <FaPaperPlane />
                             </button>
-                            <button className="action-button emoji-button">
-                                <FaSmile/>
+                            <button
+                                className="action-button emoji-button"
+                                onClick={handleEmojiClickButton}
+                                disabled={!selectTicketId}>
+                                <FaSmile />
                             </button>
                             {showEmojiPicker &&
                                 ReactDOM.createPortal(
@@ -1123,15 +1270,18 @@ const ChatComponent = ({ }) => {
                                 type="file"
                                 accept="image/*,audio/mp3,video/mp4,application/pdf,audio/ogg"
                                 onChange={handleFileSelect}
+                                ref={fileInputRef}
                                 style={{ display: "none" }}
-                                id="file-input"
                             />
-
-                            <button htmlFor="file-input" className="action-button file-button"
-                            ><FaFile/></button>
+                            <button
+                                className="action-button file-button"
+                                disabled={!selectTicketId}
+                                onClick={handleFileButtonClick}
+                            >
+                                <FaFile />
+                            </button>
                         </div>
-
-                        <div class="select-row">
+                        <div className="select-row">
                             <Select
                                 options={templateOptions}
                                 id="message-template"
@@ -1142,6 +1292,27 @@ const ChatComponent = ({ }) => {
                                 customClassName="custom-select-1"
                             />
                         </div>
+
+                        {tickets && tickets.find(ticket => ticket.id === selectTicketId)?.client_id && (
+                            <div className="client-select-container">
+                                <select
+                                    className="client-select"
+                                    value={selectedClient} // Автоматически выбранный клиент
+                                    onChange={(e) => setSelectedClient(e.target.value)}
+                                >
+                                    <option value="" disabled>Выберите клиента</option>
+                                    {tickets.find(ticket => ticket.id === selectTicketId).client_id
+                                        .replace(/[{}]/g, "")
+                                        .split(",")
+                                        .map(id => (
+                                            <option key={id.trim()} value={id.trim()}>
+                                                Клиент {id.trim()}
+                                            </option>
+                                        ))}
+                                </select>
+                            </div>
+                        )}
+
                     </div>
                 </div>
 
@@ -1162,10 +1333,10 @@ const ChatComponent = ({ }) => {
                     </button>
                 </div>
                 <div className="tab-content">
-                    {activeTab === 'extraForm' && (
+                    {activeTab === 'extraForm' && selectTicketId && ( // ✅ Добавлена проверка selectTicketId
                         <div className="extra-info-content">
                             <div className='extra-info-title'>{translations['Informații suplimentare'][language]}</div>
-                            {selectClientId && (
+                            {selectTicketId && (
                                 <>
                                     <div className="selects-container">
                                         <Workflow
@@ -1183,9 +1354,9 @@ const ChatComponent = ({ }) => {
                                         <Input
                                             label="Vânzare"
                                             type="number"
-                                            value={extraInfo[selectClientId]?.sale || ""}
+                                            value={extraInfo[selectTicketId]?.sale || ""}
                                             onChange={(e) =>
-                                                handleSelectChange(selectClientId, 'sale', e.target.value)
+                                                handleSelectChange(selectTicketId, 'sale', e.target.value)
                                             }
                                             className="input-field"
                                             placeholder="Indicați suma în euro"
@@ -1196,9 +1367,9 @@ const ChatComponent = ({ }) => {
                                             label="Sursă lead"
                                             id="lead-source-select"
                                             className="input-field"
-                                            value={extraInfo[selectClientId]?.lead_source || ""}
+                                            value={extraInfo[selectTicketId]?.lead_source || ""}
                                             onChange={(value) =>
-                                                handleSelectChange(selectClientId, 'lead_source', value)
+                                                handleSelectChange(selectTicketId, 'lead_source', value)
                                             }
                                         />
                                         <Select
@@ -1206,9 +1377,9 @@ const ChatComponent = ({ }) => {
                                             label="Promo"
                                             id="promo-select"
                                             className="input-field"
-                                            value={extraInfo[selectClientId]?.promo || ""}
+                                            value={extraInfo[selectTicketId]?.promo || ""}
                                             onChange={(value) =>
-                                                handleSelectChange(selectClientId, 'promo', value)
+                                                handleSelectChange(selectTicketId, 'promo', value)
                                             }
                                         />
                                         <Select
@@ -1216,9 +1387,9 @@ const ChatComponent = ({ }) => {
                                             label="Marketing"
                                             id="marketing-select"
                                             className="input-field"
-                                            value={extraInfo[selectClientId]?.marketing || ""}
+                                            value={extraInfo[selectTicketId]?.marketing || ""}
                                             onChange={(value) =>
-                                                handleSelectChange(selectClientId, 'marketing', value)
+                                                handleSelectChange(selectTicketId, 'marketing', value)
                                             }
                                         />
                                         <Select
@@ -1226,9 +1397,9 @@ const ChatComponent = ({ }) => {
                                             label="Serviciu"
                                             id="service-select"
                                             className="input-field"
-                                            value={extraInfo[selectClientId]?.service || ""}
+                                            value={extraInfo[selectTicketId]?.service || ""}
                                             onChange={(value) =>
-                                                handleSelectChange(selectClientId, 'service', value)
+                                                handleSelectChange(selectTicketId, 'service', value)
                                             }
                                         />
                                         <Select
@@ -1236,9 +1407,9 @@ const ChatComponent = ({ }) => {
                                             label="Țară"
                                             id="country-select"
                                             className="input-field"
-                                            value={extraInfo[selectClientId]?.country || ""}
+                                            value={extraInfo[selectTicketId]?.country || ""}
                                             onChange={(value) =>
-                                                handleSelectChange(selectClientId, 'country', value)
+                                                handleSelectChange(selectTicketId, 'country', value)
                                             }
                                         />
                                         <Select
@@ -1246,9 +1417,9 @@ const ChatComponent = ({ }) => {
                                             label="Transport"
                                             id="transport-select"
                                             className="input-field"
-                                            value={extraInfo[selectClientId]?.transport || ""}
+                                            value={extraInfo[selectTicketId]?.transport || ""}
                                             onChange={(value) =>
-                                                handleSelectChange(selectClientId, 'transport', value)
+                                                handleSelectChange(selectTicketId, 'transport', value)
                                             }
                                         />
                                         <Select
@@ -1256,26 +1427,26 @@ const ChatComponent = ({ }) => {
                                             label="Excursie"
                                             id="excursie-select"
                                             className="input-field"
-                                            value={extraInfo[selectClientId]?.excursion || ""}
+                                            value={extraInfo[selectTicketId]?.excursion || ""}
                                             onChange={(value) =>
-                                                handleSelectChange(selectClientId, 'excursion', value)
+                                                handleSelectChange(selectTicketId, 'excursion', value)
                                             }
                                         />
                                         <Input
                                             label="Data și ora plecării"
-                                            type="date"
-                                            value={extraInfo[selectClientId]?.leave_date || ""}
+                                            type="datetime-local"
+                                            value={extraInfo[selectTicketId]?.leave_date || ""}
                                             onChange={(date) =>
-                                                handleSelectChange(selectClientId, 'leave_date', date)
+                                                handleSelectChange(selectTicketId, 'leave_date', date)
                                             }
                                             className="input-field"
                                         />
-                                                                                <Input
+                                        <Input
                                             label="Data și ora întoarcerii"
-                                            type="date"
-                                            value={extraInfo[selectClientId]?.arrive_date || ""}
+                                            type="datetime-local"
+                                            value={extraInfo[selectTicketId]?.arrive_date || ""}
                                             onChange={(date) =>
-                                                handleSelectChange(selectClientId, 'arrive_date', date)
+                                                handleSelectChange(selectTicketId, 'arrive_date', date)
                                             }
                                             className="input-field"
                                         />
@@ -1284,17 +1455,17 @@ const ChatComponent = ({ }) => {
                                             label="Achiziție"
                                             id="purchase-select"
                                             className="input-field"
-                                            value={extraInfo[selectClientId]?.purchase || ""}
+                                            value={extraInfo[selectTicketId]?.purchase || ""}
                                             onChange={(value) =>
-                                                handleSelectChange(selectClientId, 'purchase', value)
+                                                handleSelectChange(selectTicketId, 'purchase', value)
                                             }
                                         />
                                         <Input
                                             label="Nr de contract"
                                             type="text"
-                                            value={extraInfo[selectClientId]?.contract_id || ""}
+                                            value={extraInfo[selectTicketId]?.contract_id || ""}
                                             onChange={(e) =>
-                                                handleSelectChange(selectClientId, 'contract_id', e.target.value)
+                                                handleSelectChange(selectTicketId, 'contract_id', e.target.value)
                                             }
                                             className="input-field"
                                             placeholder="Nr de contract"
@@ -1303,18 +1474,18 @@ const ChatComponent = ({ }) => {
                                         <Input
                                             label="Data contractului"
                                             type="date"
-                                            value={extraInfo[selectClientId]?.contract_date || ""}
+                                            value={extraInfo[selectTicketId]?.contract_date || ""}
                                             onChange={(date) =>
-                                                handleSelectChange(selectClientId, 'contract_date', date)
+                                                handleSelectChange(selectTicketId, 'contract_date', date)
                                             }
                                             className="input-field"
                                         />
                                         <Input
                                             label="Operator turistic"
                                             type="text"
-                                            value={extraInfo[selectClientId]?.tour_operator || ""}
+                                            value={extraInfo[selectTicketId]?.tour_operator || ""}
                                             onChange={(e) =>
-                                                handleSelectChange(selectClientId, 'tour_operator', e.target.value)
+                                                handleSelectChange(selectTicketId, 'tour_operator', e.target.value)
                                             }
                                             className="input-field"
                                             placeholder="Operator turistic"
@@ -1323,9 +1494,9 @@ const ChatComponent = ({ }) => {
                                         <Input
                                             label="Nr cererii de la operator"
                                             type="text"
-                                            value={extraInfo[selectClientId]?.request_id || ""}
+                                            value={extraInfo[selectTicketId]?.request_id || ""}
                                             onChange={(e) =>
-                                                handleSelectChange(selectClientId, 'request_id', e.target.value)
+                                                handleSelectChange(selectTicketId, 'request_id', e.target.value)
                                             }
                                             className="input-field"
                                             placeholder="Nr cererii de la operator"
@@ -1334,9 +1505,9 @@ const ChatComponent = ({ }) => {
                                         <Input
                                             label="Preț netto (euro)"
                                             type="number"
-                                            value={extraInfo[selectClientId]?.price_netto || ""}
+                                            value={extraInfo[selectTicketId]?.price_netto || ""}
                                             onChange={(e) =>
-                                                handleSelectChange(selectClientId, 'price_netto', e.target.value)
+                                                handleSelectChange(selectTicketId, 'price_netto', e.target.value)
                                             }
                                             className="input-field"
                                             placeholder="Preț netto (euro)"
@@ -1345,9 +1516,9 @@ const ChatComponent = ({ }) => {
                                         <Input
                                             label="Comision companie"
                                             type="number"
-                                            value={extraInfo[selectClientId]?.commission || ""}
+                                            value={extraInfo[selectTicketId]?.commission || ""}
                                             onChange={(e) =>
-                                                handleSelectChange(selectClientId, 'commission', e.target.value)
+                                                handleSelectChange(selectTicketId, 'commission', e.target.value)
                                             }
                                             className="input-field"
                                             placeholder="Comision companie"
@@ -1357,9 +1528,9 @@ const ChatComponent = ({ }) => {
                                             options={paymentStatusOptions}
                                             label="Plată primită"
                                             id="payment-select"
-                                            value={extraInfo[selectClientId]?.payment_method || ""}
+                                            value={extraInfo[selectTicketId]?.payment_method || ""}
                                             onChange={(value) =>
-                                                handleSelectChange(selectClientId, 'payment_method', value)
+                                                handleSelectChange(selectTicketId, 'payment_method', value)
                                             }
                                         />
                                     </div>
@@ -1372,16 +1543,16 @@ const ChatComponent = ({ }) => {
                             )}
                         </div>
                     )}
-                    {activeTab === 'personalData' && (
+                    {activeTab === 'personalData' && selectedClient && (
                         <div className="personal-data-content">
                             <div className='extra-info-title'>{translations['Date personale'][language]}</div>
                             <form onSubmit={handlePersonalDataSubmit} className='personal-data-container'>
                                 <Input
                                     label="Nume"
                                     type="text"
-                                    value={extraInfo[selectClientId]?.name || ""}
+                                    value={extraInfo[selectedClient]?.name || ""}
                                     onChange={(e) =>
-                                        handleSelectChange(selectClientId, 'name', e.target.value)
+                                        handleSelectChange(selectedClient, 'name', e.target.value)
                                     }
                                     className="input-field"
                                     placeholder="Nume"
@@ -1389,9 +1560,9 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="Prenume"
                                     type="text"
-                                    value={extraInfo[selectClientId]?.surname || ""}
+                                    value={extraInfo[selectedClient]?.surname || ""}
                                     onChange={(e) =>
-                                        handleSelectChange(selectClientId, 'surname', e.target.value)
+                                        handleSelectChange(selectedClient, 'surname', e.target.value)
                                     }
                                     className="input-field"
                                     placeholder="Prenume"
@@ -1399,18 +1570,18 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="Data nașterii"
                                     type="date"
-                                    value={extraInfo[selectClientId]?.date_of_birth || ""}
+                                    value={extraInfo[selectedClient]?.date_of_birth || ""}
                                     onChange={(e) =>
-                                        handleSelectChange(selectClientId, 'date_of_birth', e.target.value)
+                                        handleSelectChange(selectedClient, 'date_of_birth', e.target.value)
                                     }
                                     className="input-field"
                                 />
                                 <Input
                                     label="Seria buletinului"
                                     type="text"
-                                    value={extraInfo[selectClientId]?.id_card_series || ""}
+                                    value={extraInfo[selectedClient]?.id_card_series || ""}
                                     onChange={(e) =>
-                                        handleSelectChange(selectClientId, 'id_card_series', e.target.value)
+                                        handleSelectChange(selectedClient, 'id_card_series', e.target.value)
                                     }
                                     className="input-field"
                                     placeholder="Seria buletinului"
@@ -1418,9 +1589,9 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="Numărul buletinului"
                                     type="text"
-                                    value={extraInfo[selectClientId]?.id_card_number || ""}
+                                    value={extraInfo[selectedClient]?.id_card_number || ""}
                                     onChange={(e) =>
-                                        handleSelectChange(selectClientId, 'id_card_number', e.target.value)
+                                        handleSelectChange(selectedClient, 'id_card_number', e.target.value)
                                     }
                                     className="input-field"
                                     placeholder="Numărul buletinului"
@@ -1428,18 +1599,18 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="Data eliberării buletinului"
                                     type="date"
-                                    value={extraInfo[selectClientId]?.id_card_release || ""}
+                                    value={extraInfo[selectedClient]?.id_card_release || ""}
                                     onChange={(e) =>
-                                        handleSelectChange(selectClientId, 'id_card_release', e.target.value)
+                                        handleSelectChange(selectedClient, 'id_card_release', e.target.value)
                                     }
                                     className="input-field"
                                 />
                                 <Input
                                     label="IDNP"
                                     type="text"
-                                    value={extraInfo[selectClientId]?.idnp || ""}
+                                    value={extraInfo[selectedClient]?.idnp || ""}
                                     onChange={(e) =>
-                                        handleSelectChange(selectClientId, 'idnp', e.target.value)
+                                        handleSelectChange(selectedClient, 'idnp', e.target.value)
                                     }
                                     className="input-field"
                                     placeholder="IDNP"
@@ -1447,9 +1618,9 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="Adresă"
                                     type="text"
-                                    value={extraInfo[selectClientId]?.address || ""}
+                                    value={extraInfo[selectedClient]?.address || ""}
                                     onChange={(e) =>
-                                        handleSelectChange(selectClientId, 'address', e.target.value)
+                                        handleSelectChange(selectedClient, 'address', e.target.value)
                                     }
                                     className="input-field"
                                     placeholder="Adresă"
@@ -1457,9 +1628,9 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="Telefon"
                                     type="tel"
-                                    value={extraInfo[selectClientId]?.phone || ""}
+                                    value={extraInfo[selectedClient]?.phone || ""}
                                     onChange={(e) =>
-                                        handleSelectChange(selectClientId, 'phone', e.target.value)
+                                        handleSelectChange(selectedClient, 'phone', e.target.value)
                                     }
                                     className="input-field"
                                     placeholder="Telefon"

@@ -20,9 +20,7 @@ const Select = ({ options, label, id, value, onChange, customClassName }) => {
                 onChange={handleChange}
                 required
             >
-                <option value={value}>
-                    {options.length === 0 ? translations['Încărcăm...'][language] : translations[label][language] ?? label}
-                </option>
+                <option value="">Select</option>
                 {options.map((option, index) => (
                     <option key={index} value={option}>
                         {option}

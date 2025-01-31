@@ -37,8 +37,8 @@ const TaskModal = ({ isOpen, onClose }) => {
 
             if (response.ok) {
                 const data = await response.json();
-                setTicketIds(data.map((ticket) => ticket.client_id)); // Сохраняем client_id
-                console.log("Client IDs:", data.map((ticket) => ticket.client_id));
+                setTicketIds(data.map((ticket) => ticket.id)); // Сохраняем ticket_id
+                console.log("Ticket IDs:", data.map((ticket) => ticket.id));
             } else {
                 console.error("Error fetching tickets:", response.statusText);
             }
@@ -109,7 +109,7 @@ const TaskModal = ({ isOpen, onClose }) => {
                     Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({
-                    client_id: userId,
+                    technician_id: userId,
                 }),
             });
             if (response.ok) {

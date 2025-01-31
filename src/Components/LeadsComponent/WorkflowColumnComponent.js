@@ -31,7 +31,7 @@ const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket, onContext
         .filter((ticket) => ticket.workflow === workflow)
         .filter((ticket) =>
             ticket.contact?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            ticket.client_id?.toString().includes(searchTerm) ||
+            ticket.id?.toString().includes(searchTerm) ||
             parseTags(ticket.tags).some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase())) ||
             searchTerm.trim() === ''
         ).sort((a, b) => {
@@ -50,12 +50,12 @@ const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket, onContext
 
     const handleDrop = (e) => {
         e.preventDefault();
-        const clientId = e.dataTransfer.getData('clientId');
-        console.log('Dropped clientId:', clientId);
+        const ticketId = e.dataTransfer.getData('ticketId');
+        console.log('Dropped ticketId:', ticketId);
 
-        if (clientId) {
-            // Вызываем onUpdateWorkflow, чтобы передать clientId и новое значение workflow
-            onUpdateWorkflow(clientId, workflow);
+        if (ticketId) {
+            // Вызываем onUpdateWorkflow, чтобы передать ticketId и новое значение workflow
+            onUpdateWorkflow(ticketId, workflow);
         }
     };
 
@@ -87,7 +87,7 @@ const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket, onContext
             <div className="scrollable-list">
                 {filteredTickets.map((ticket) => (
                     <TicketCard
-                        key={ticket.client_id}
+                        key={ticket.id}
                         ticket={ticket}
                         onContextMenu={onContextMenu}
                         onEditTicket={onEditTicket}

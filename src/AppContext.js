@@ -69,7 +69,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       }
 
       if (!ticketIds || ticketIds.length === 0) {
-        console.warn('Нет client_id для подключения к комнатам.');
+        console.warn('Нет id для подключения к комнатам.');
         return;
       }
 
@@ -89,7 +89,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       socketInstance.onopen = async () => {
         console.log('WebSocket подключен');
         const tickets = await fetchTickets();
-        const ticketIds = tickets.map((ticket) => ticket.client_id);
+        const ticketIds = tickets.map((ticket) => ticket.id);
         connectToChatRooms(ticketIds);
       };
 
@@ -126,7 +126,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     console.log("Непрочитанные сообщения:", unread);
     console.log("Количество непрочитанных:", unread.length);
 
-    setUnreadCount(unread.length);
+    setUnreadCount(unread.length); // Обновляем глобальный счетчик
   };
 
 
@@ -183,7 +183,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       console.log("Загруженные тикеты:", data);
 
       setTickets(data); // Сохраняем тикеты в состоянии
-      setTicketIds(data.map((ticket) => ticket.client_id)); // Сохраняем client_id
+      setTicketIds(data.map((ticket) => ticket.id)); // Сохраняем ticket.id
 
       return data; // Возвращаем массив тикетов
     } catch (error) {
@@ -194,7 +194,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     }
   };
 
-  const fetchSingleTicket = async (clientId) => {
+  const fetchSingleTicket = async (ticketId) => {
     try {
       setIsLoading(true);
       const token = Cookies.get('jwt');
@@ -204,7 +204,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         return null;
       }
 
-      const response = await fetch(`https://pandatur-api.com/tickets/${clientId}`, {
+      const response = await fetch(`https://pandatur-api.com/tickets/${ticketId}`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -223,11 +223,11 @@ export const AppProvider = ({ children, isLoggedIn }) => {
 
       // Обновляем или добавляем тикет в состояние
       setTickets((prevTickets) => {
-        const existingTicket = prevTickets.find((t) => t.client_id === clientId);
+        const existingTicket = prevTickets.find((t) => t.id === ticketId);
         if (existingTicket) {
           // Обновляем существующий тикет
           return prevTickets.map((t) =>
-            t.client_id === clientId ? ticket : t
+            t.id === ticketId ? ticket : t
           );
         } else {
           // Добавляем новый тикет
@@ -271,13 +271,6 @@ export const AppProvider = ({ children, isLoggedIn }) => {
 
       const updatedTicket = await response.json();
 
-      // // Локальное обновление тикетов
-      // setTickets((prevTickets) =>
-      //   prevTickets.map((ticket) =>
-      //     ticket.client_id === updatedTicket.client_id ? updatedTicket : ticket
-      //   )
-      // );
-
       // Синхронизация тикетов через WebSocket
       return updatedTicket;
     } catch (error) {
@@ -313,6 +306,49 @@ export const AppProvider = ({ children, isLoggedIn }) => {
 
       setMessages(data); // Обновляем состояние всех сообщений
       updateUnreadMessages(data); // Считаем непрочитанные сообщения
+    } catch (error) {
+      enqueueSnackbar('Не удалось получить сообщения!', { variant: 'error' });
+      console.error('Ошибка при получении сообщений:', error.message);
+    }
+  };
+
+  // Функция для получения сообщений для конкретного client_id
+  const getClientMessagesSingle = async (client_id) => {
+    try {
+      const token = Cookies.get('jwt');
+      if (!token) {
+        console.warn('Нет токена. Пропускаем загрузку сообщений.');
+        return;
+      }
+      console.log("client_id din zapros", client_id);
+
+      const response = await fetch(`https://pandatur-api.com/messages/client/${client_id}`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          Origin: 'https://plutonium8t8.github.io',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log(`Сообщения для клиента ${client_id}, загруженные из API:`, data);
+
+      if (Array.isArray(data) && data.length > 0) {
+        setMessages((prevMessages) => {
+          const otherMessages = prevMessages.filter((msg) => msg.client_id !== client_id);
+          const updatedMessages = [...otherMessages, ...data];
+
+          // Обновляем счетчик непрочитанных сообщений после обновления состояния
+          setTimeout(() => updateUnreadMessages(updatedMessages), 0);
+
+          return updatedMessages;
+        });
+      }
     } catch (error) {
       enqueueSnackbar('Не удалось получить сообщения!', { variant: 'error' });
       console.error('Ошибка при получении сообщений:', error.message);
@@ -377,9 +413,11 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         break;
       }
       case 'seen': {
-        const { client_id, seen_at } = message.data;
+        const { ticket_id, seen_at, client_id } = message.data;
 
-        console.log('Received "seen" event:', { client_id, seen_at });
+        getClientMessagesSingle(client_id);
+
+        console.log('Received "seen" event:', { ticket_id, seen_at, client_id });
 
         setMessages((prevMessages) => {
           const updatedMessages = prevMessages.map((msg) => {
@@ -406,21 +444,22 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         console.log("Пришел тикет:", message.data);
 
         // Извлекаем client_id из сообщения
+        const ticketId = message.data.ticket_id;
         const clientId = message.data.client_id;
 
-        if (!clientId) {
-          console.warn("Не удалось извлечь client_id из сообщения типа 'ticket'.");
+        if (!ticketId) {
+          console.warn("Не удалось извлечь ticket_id из сообщения типа 'ticket'.");
           break;
         }
 
-        // Запрашиваем тикет по client_id
-        fetchSingleTicket(clientId);
+        // Запрашиваем тикет по ticket_id
+        fetchSingleTicket(ticketId);
 
         const socketInstance = socketRef.current; // Используем socketRef.current
         if (socketInstance && socketInstance.readyState === WebSocket.OPEN) {
           const socketMessage = JSON.stringify({
             type: 'connect',
-            data: { client_id: [clientId] }, // Подключаемся только к комнате с этим client_id
+            data: { client_id: [ticketId] }, // Подключаемся только к комнате с этим client_id
           });
 
           socketInstance.send(socketMessage);
