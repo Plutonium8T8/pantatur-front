@@ -39,11 +39,12 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
         };
     }, [isOpen, onClose]);
 
-    // Фетчим список техников
+    // Фетчим список техников с локальным кэшированием
     useEffect(() => {
         const fetchTechnicians = async () => {
             try {
                 const token = Cookies.get('jwt');
+
                 const response = await fetch("https://pandatur-api.com/users-technician", {
                     method: "GET",
                     headers: {
@@ -59,13 +60,16 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
 
                 const data = await response.json();
 
-                // Преобразуем в массив `{ id, fullName }`
                 const formattedTechnicians = data.map(item => ({
                     id: item.id.id,
-                    fullName: `${item.id.name} ${item.id.surname}`.trim(), // Формируем "Имя Фамилия"
+                    fullName: `${item.id.name} ${item.id.surname}`.trim(),
                 }));
 
                 setTechnicians(formattedTechnicians);
+
+                // Сохраняем в localStorage
+                localStorage.setItem("technicians", JSON.stringify(formattedTechnicians));
+                localStorage.setItem("technicians_timestamp", Date.now());
             } catch (error) {
                 console.error("Ошибка при загрузке техников:", error);
                 setTechnicians([]);
@@ -73,6 +77,17 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
         };
 
         if (isOpen) {
+            const cachedTechnicians = localStorage.getItem("technicians");
+            const cachedTimestamp = localStorage.getItem("technicians_timestamp");
+
+            if (cachedTechnicians && cachedTimestamp) {
+                const timeElapsed = Date.now() - parseInt(cachedTimestamp, 10);
+                if (timeElapsed < 24 * 60 * 60 * 1000) {
+                    setTechnicians(JSON.parse(cachedTechnicians));
+                    return;
+                }
+            }
+
             fetchTechnicians();
         }
     }, [isOpen]);
@@ -90,7 +105,6 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
         onClose();
     };
 
-    // Функция сброса фильтров
     const handleResetFilters = () => {
         setFilters({
             creation_date: '',
@@ -102,7 +116,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
             tags: '',
             platform: '',
         });
-        onApplyFilter({}); // Передаем пустые фильтры для сброса
+        onApplyFilter({});
     };
 
     if (!isOpen) return null;
