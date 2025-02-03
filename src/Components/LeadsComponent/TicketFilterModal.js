@@ -31,7 +31,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
             <div className="modal-content-filter">
                 <h2>Filter ticket</h2>
 
-                <label>Create date:</label>
+                <label>Create date</label>
                 <input
                     type="date"
                     name="creation_date"
@@ -39,7 +39,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                     onChange={handleInputChange}
                 />
 
-                <label>Last interaction date:</label>
+                <label>Last interaction date</label>
                 <input
                     type="date"
                     name="last_interaction_date"
@@ -47,7 +47,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                     onChange={handleInputChange}
                 />
 
-                <label>Workflow:</label>
+                <label>Workflow</label>
                 <input
                     type="text"
                     name="workflow"
@@ -56,7 +56,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                     placeholder="Workflow"
                 />
 
-                <label>Priority:</label>
+                <label>Priority</label>
                 <input
                     type="text"
                     name="priority"
@@ -65,7 +65,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                     placeholder="Priority"
                 />
 
-                <label>Technician ID:</label>
+                <label>Technician ID</label>
                 <input
                     type="text"
                     name="technician_id"
@@ -74,7 +74,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                     placeholder="Technician ID"
                 />
 
-                <label>Tags:</label>
+                <label>Tags</label>
                 <input
                     type="text"
                     name="tags"
