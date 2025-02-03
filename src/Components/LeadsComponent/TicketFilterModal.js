@@ -27,8 +27,8 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="modal-overlay">
-            <div className="modal-content">
+        <div className="modal-overlay-filter">
+            <div className="modal-content-filter">
                 <h2>Filter ticket</h2>
 
                 <label>Create date:</label>
@@ -84,7 +84,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                 />
 
                 <div className="modal-buttons">
-                    <button onClick={handleApplyFilter} className="apply-btn">Save</button>
+                    <button onClick={handleApplyFilter} className="apply-btn">Aply</button>
                     <button onClick={onClose} className="cancel-btn">Close</button>
                 </div>
             </div>

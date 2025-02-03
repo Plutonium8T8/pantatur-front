@@ -47,8 +47,7 @@ const Leads = () => {
         (!filters.technician_id || String(ticket.technician_id) === filters.technician_id) &&
         (!filters.workflow || ticket.workflow.toLowerCase() === filters.workflow.toLowerCase()) &&
         (!filters.priority || ticket.priority.toLowerCase() === filters.priority.toLowerCase()) &&
-        (!filters.tags || ticketTags.includes(filters.tags.toLowerCase())) // ✅ Фильтр по тегам
-      );
+        (!filters.tags || ticketTags.includes(filters.tags.toLowerCase())));
     });
   }, [tickets, filters]);
 
@@ -126,7 +125,7 @@ const Leads = () => {
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search tickets..."
+            placeholder="Speed search tickets..."
             className="search-input"
           />
           <button onClick={() => setIsFilterOpen(true)} className="button-filter">

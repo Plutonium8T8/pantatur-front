@@ -630,3 +630,8 @@ button {
   gap: 10px;
   padding-bottom: 20px;
 }
+.button-filter {
+  padding: 4px 8px;
+  background-color: #14a15f;
+  font-size: 18px;
+}

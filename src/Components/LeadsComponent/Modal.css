@@ -1,4 +1,4 @@
-.modal-overlay {
+.modal-overlay-filter {
     position: fixed;
     top: 0;
     left: 0;
@@ -11,26 +11,29 @@
     z-index: 2000;
 }
 
-.modal-content {
+.modal-content-filter {
+    display: flex;
+    flex-direction: column;
     background: white;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     width: 300px;
     text-align: center;
+    min-width: 500px;
 }
 
-.modal-content h2 {
+.modal-content-filter h2 {
     margin-bottom: 15px;
 }
 
-.modal-content label {
+.modal-content-filter label {
     display: block;
     margin: 10px 0 5px;
     font-weight: bold;
 }
 
-.modal-content input {
+.modal-content-filter input {
     width: 100%;
     padding: 8px;
     margin-bottom: 15px;
@@ -44,7 +47,7 @@
 }
 
 .apply-btn {
-    background: #007bff;
+    background: #38a169ee;
     color: white;
     padding: 8px 12px;
     border: none;
@@ -62,7 +65,7 @@
 }
 
 .apply-btn:hover {
-    background: #0056b3;
+    background: #0f824c;
 }
 
 .cancel-btn:hover {
