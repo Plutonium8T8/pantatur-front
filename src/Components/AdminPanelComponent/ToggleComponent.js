@@ -3,10 +3,12 @@ import Cookies from "js-cookie";
 import "./ModalWithToggles.css";
 import { FaHandshake } from "react-icons/fa";
 import UserGroupComponent from "./UserGroupComponent";
+import { translations } from "../utils/translations";
 
 const ToggleComponent = ({ employee }) => {
     const [roles, setRoles] = useState([]);
     const [error, setError] = useState(null);
+    const language = localStorage.getItem("language") || "RO";
 
     useEffect(() => {
         fetchRoles();
@@ -104,7 +106,7 @@ const ToggleComponent = ({ employee }) => {
         <div>
             <div className="modal-header">
                 <h2>
-                    <FaHandshake /> Permisiuni {employee.name}
+                    <FaHandshake /> {translations["Permisiuni"][language]} {employee.name}
                 </h2>
             </div>
 

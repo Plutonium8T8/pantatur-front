@@ -154,7 +154,7 @@ const UserGroupComponent = ({ onChange, userId, roles }) => {
     return (
         <div className="userGroup-input-container">
             <div className="userGroups-display">
-                {userGroups.length === 0 && <div>{"Se incarca..."}</div>}
+                {userGroups.length === 0 && <div>{translations["Se încarcă..."][language]}</div>}
                 {userGroups.map((userGroup) => (
 
                     <div key={userGroup.id} className="userGroup-item">
@@ -174,7 +174,7 @@ const UserGroupComponent = ({ onChange, userId, roles }) => {
                     onChange={handleInputChange}
                     onFocus={handleFocus}
                     onBlur={handleBlur}
-                    placeholder={"Introduce userGroup"}
+                    placeholder={translations["Introduce un grup"][language]}
                     className="userGroup-input"
                 />
             </div>
@@ -185,7 +185,7 @@ const UserGroupComponent = ({ onChange, userId, roles }) => {
                     }}
                     className="submit-button"
                 >
-                    {"Salvează userGroup"}
+                    {translations["Salvează un grup"][language]}
                 </button>
             </div>
         </div>

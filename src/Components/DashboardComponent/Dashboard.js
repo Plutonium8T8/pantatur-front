@@ -4,6 +4,7 @@ import GridLayout from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import Cookies from "js-cookie";
+import { translations } from '../utils/translations';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -40,28 +41,28 @@ const platformColors = {
 };
 
 const weekdaysColors = {
-  Sunday: { background: "rgba(255, 99, 132, 0.5)", border: "rgba(255, 99, 132, 1)" }, // Red
-  Monday: { background: "rgba(54, 162, 235, 0.5)", border: "rgba(54, 162, 235, 1)" }, // Blue
-  Tuesday: { background: "rgba(255, 206, 86, 0.5)", border: "rgba(255, 206, 86, 1)" }, // Yellow
-  Wednesday: { background: "rgba(75, 192, 192, 0.5)", border: "rgba(75, 192, 192, 1)" }, // Teal
-  Thursday: { background: "rgba(153, 102, 255, 0.5)", border: "rgba(153, 102, 255, 1)" }, // Purple
-  Friday: { background: "rgba(255, 159, 64, 0.5)", border: "rgba(255, 159, 64, 1)" }, // Orange
-  Saturday: { background: "rgba(199, 199, 199, 0.5)", border: "rgba(199, 199, 199, 1)" }, // Grey
+  "Sunday": { background: "rgba(255, 99, 132, 0.5)", border: "rgba(255, 99, 132, 1)" }, // Red
+  "Monday": { background: "rgba(54, 162, 235, 0.5)", border: "rgba(54, 162, 235, 1)" }, // Blue
+  "Tuesday": { background: "rgba(255, 206, 86, 0.5)", border: "rgba(255, 206, 86, 1)" }, // Yellow
+  "Wednesday": { background: "rgba(75, 192, 192, 0.5)", border: "rgba(75, 192, 192, 1)" }, // Teal
+  "Thursday": { background: "rgba(153, 102, 255, 0.5)", border: "rgba(153, 102, 255, 1)" }, // Purple
+  "Friday": { background: "rgba(255, 159, 64, 0.5)", border: "rgba(255, 159, 64, 1)" }, // Orange
+  "Saturday": { background: "rgba(199, 199, 199, 0.5)", border: "rgba(199, 199, 199, 1)" }, // Grey
 };
 
 const monthsColors = {
-  January: { background: "rgba(255, 99, 132, 0.5)", border: "rgba(255, 99, 132, 1)" }, // Red
-  February: { background: "rgba(54, 162, 235, 0.5)", border: "rgba(54, 162, 235, 1)" }, // Blue
-  March: { background: "rgba(255, 206, 86, 0.5)", border: "rgba(255, 206, 86, 1)" }, // Yellow
-  April: { background: "rgba(75, 192, 192, 0.5)", border: "rgba(75, 192, 192, 1)" }, // Teal
-  May: { background: "rgba(153, 102, 255, 0.5)", border: "rgba(153, 102, 255, 1)" }, // Purple
-  June: { background: "rgba(255, 159, 64, 0.5)", border: "rgba(255, 159, 64, 1)" }, // Orange
-  July: { background: "rgba(255, 99, 132, 0.5)", border: "rgba(255, 99, 132, 1)" }, // Red
-  August: { background: "rgba(54, 162, 235, 0.5)", border: "rgba(54, 162, 235, 1)" }, // Blue
-  September: { background: "rgba(255, 206, 86, 0.5)", border: "rgba(255, 206, 86, 1)" }, // Yellow
-  October: { background: "rgba(38, 201, 201, 0.5)", border: "rgba(75, 192, 192, 1)" }, // Teal
-  November: { background: "rgba(153, 102, 255, 0.5)", border: "rgba(153, 102, 255, 1)" }, // Purple
-  December: { background: "rgba(255, 159, 64, 0.5)", border: "rgba(255, 159, 64, 1)" }, // Orange
+  "January": { background: "rgba(255, 99, 132, 0.5)", border: "rgba(255, 99, 132, 1)" }, // Red
+  "February": { background: "rgba(54, 162, 235, 0.5)", border: "rgba(54, 162, 235, 1)" }, // Blue
+  "March": { background: "rgba(255, 206, 86, 0.5)", border: "rgba(255, 206, 86, 1)" }, // Yellow
+  "April": { background: "rgba(75, 192, 192, 0.5)", border: "rgba(75, 192, 192, 1)" }, // Teal
+  "May": { background: "rgba(153, 102, 255, 0.5)", border: "rgba(153, 102, 255, 1)" }, // Purple
+  "June": { background: "rgba(255, 159, 64, 0.5)", border: "rgba(255, 159, 64, 1)" }, // Orange
+  "July": { background: "rgba(255, 99, 132, 0.5)", border: "rgba(255, 99, 132, 1)" }, // Red
+  "August": { background: "rgba(54, 162, 235, 0.5)", border: "rgba(54, 162, 235, 1)" }, // Blue
+  "September": { background: "rgba(255, 206, 86, 0.5)", border: "rgba(255, 206, 86, 1)" }, // Yellow
+  "October": { background: "rgba(38, 201, 201, 0.5)", border: "rgba(75, 192, 192, 1)" }, // Teal
+  "November": { background: "rgba(153, 102, 255, 0.5)", border: "rgba(153, 102, 255, 1)" }, // Purple
+  "December": { background: "rgba(255, 159, 64, 0.5)", border: "rgba(255, 159, 64, 1)" }, // Orange
 };
 
 
@@ -81,6 +82,7 @@ const Dashboard = () => {
   const [statistics, setStatistics] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [containerWidth, setContainerWidth] = useState(0);
+  const language = localStorage.getItem('language') || 'RO';
 
   const fetchStatistics = useCallback(async () => {
     setIsLoading(true);
@@ -133,12 +135,12 @@ const Dashboard = () => {
   const rowHeight = containerWidth / cols + 50;
 
   const datasetLabels = [
-    "Leaduri per platforma",
+    "Leaduri per platformă",
     "Leaduri per zi",
-    "Comision per luna",
-    "Leaduri per luna",
-    "Leaduri per etapa de lucru",
-    "Ore mediu prelucrare etapa"
+    "Comision per lună",
+    "Leaduri per lună",
+    "Leaduri per etapă de lucru",
+    "Ore mediu prelucrare etapă"
   ];
 
   const datasetTypes = [
@@ -193,7 +195,8 @@ const Dashboard = () => {
     w: datasetWidths[index],
     h: datasetHeights[index],
     type: datasetTypes[index],
-    label: datasetLabels[index] || `Chart ${index + 1}`
+    // label: translations[datasetLabels[index]][language] || `Chart ${index + 1}`
+    label: translations[datasetLabels[index]][language] || `Chart ${index + 1}`
   }));
 
   // Chart type mapping
@@ -205,7 +208,7 @@ const Dashboard = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>{translations['Se încarcă...'][language]}</div>;
   }
 
   return (
@@ -260,7 +263,10 @@ const Dashboard = () => {
             };
           } else {
             chartData = {
-              labels: statArray.map((stat) => stat.week_period || stat.workflow || stat.month_period || stat.month),
+              labels: statArray.map((stat) => {
+                const periodKey = stat.week_period || stat.workflow || stat.month_period || stat.month;
+                return translations[periodKey]?.[language] || periodKey || "Indisponibil";
+              }),              
               datasets: [
                 {
                   label: chartLabel,

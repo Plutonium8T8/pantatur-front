@@ -530,6 +530,94 @@ export const translations = {
         "RO": "Alege client",
         "RU": "Выберите клиента"
     },
+    "Introduce un grup": {
+        "RO": "Introduce un grup",
+        "RU": "Введите группу"
+    },
+    "Salvează un grup": {
+        "RO": "Salvează un grup",
+        "RU": "Сохранить группу"
+    },
+    "Se încarcă...": {
+        "RO": "Se încarcă...",
+        "RU": "Загрузка..."
+    },
+    "Leaduri per platformă": {
+        "RO": "Leaduri per platformă",
+        "RU": "Лиды по платформе"
+    },
+    "Leaduri per zi": {
+        "RO": "Leaduri per zi",
+        "RU": "Лиды в день"
+    },
+    "Comision per lună": {
+        "RO": "Comision per lună",
+        "RU": "Комиссия за месяц"
+    },
+    "Leaduri per lună": {
+        "RO": "Leaduri per lună",
+        "RU": "Лиды в месяц"
+    },
+    "Leaduri per etapă de lucru": {
+        "RO": "Leaduri per etapă de lucru",
+        "RU": "Лиды по этапу работы"
+    },
+    "Ore mediu prelucrare etapă": {
+        "RO": "Ore mediu prelucrare etapă",
+        "RU": "Среднее время обработки этапа"
+    },
+    "January": {
+        "RO": "Ianuarie",
+        "RU": "Январь"
+    },
+    "February": {
+        "RO": "Februarie",
+        "RU": "Февраль"
+    },
+    "March": {
+        "RO": "Martie",
+        "RU": "Март"
+    },
+    "April": {
+        "RO": "Aprilie",
+        "RU": "Апрель"
+    },
+    "May": {
+        "RO": "Mai",
+        "RU": "Май"
+    },
+    "June": {
+        "RO": "Iunie",
+        "RU": "Июнь"
+    },
+    "July": {
+        "RO": "Iulie",
+        "RU": "Июль"
+    },
+    "August": {
+        "RO": "August",
+        "RU": "Август"
+    },
+    "September": {
+        "RO": "Septembrie",
+        "RU": "Сентябрь"
+    },
+    "October": {
+        "RO": "Octombrie",
+        "RU": "Октябрь"
+    },
+    "November": {
+        "RO": "Noiembrie",
+        "RU": "Ноябрь"
+    },
+    "December": {
+        "RO": "Decembrie",
+        "RU": "Декабрь"
+    },
+    "Permisiuni": {
+        "RO": "Permisiuni",
+        "RU": "Разрешения"
+    }
 };
 
 // import { translations } from '../utils/translations';
