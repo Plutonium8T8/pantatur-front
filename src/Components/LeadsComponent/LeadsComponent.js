@@ -12,7 +12,7 @@ import '../../App.css';
 import '../SnackBarComponent/SnackBarComponent.css';
 
 const Leads = () => {
-  const { tickets, isLoading, setTickets } = useAppContext();
+  const { tickets, isLoading, setTickets, messages } = useAppContext();
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentTicket, setCurrentTicket] = useState(null);
@@ -26,6 +26,7 @@ const Leads = () => {
     workflow: '',
     priority: '',
     tags: '',
+    platform: '',
   });
 
   const contextMenuRef = useRef(null);
@@ -41,15 +42,22 @@ const Leads = () => {
         ? ticket.tags.replace(/[{}]/g, "").split(",").map(tag => tag.trim().toLowerCase())
         : [];
 
+      // Фильтруем сообщения по ticket_id
+      const hasMatchingPlatform = messages.some(
+        (message) => message.ticket_id === ticket.id && message.platform === filters.platform
+      );
+
       return (
         (!filters.creation_date || creationDate === filters.creation_date) &&
         (!filters.last_interaction_date || lastInteractionDate === filters.last_interaction_date) &&
         (!filters.technician_id || String(ticket.technician_id) === filters.technician_id) &&
         (!filters.workflow || ticket.workflow.toLowerCase() === filters.workflow.toLowerCase()) &&
         (!filters.priority || ticket.priority.toLowerCase() === filters.priority.toLowerCase()) &&
-        (!filters.tags || ticketTags.includes(filters.tags.toLowerCase())));
+        (!filters.tags || ticketTags.includes(filters.tags.toLowerCase())) &&
+        (!filters.platform || hasMatchingPlatform) // ✅ Фильтр по платформе
+      );
     });
-  }, [tickets, filters]);
+  }, [tickets, messages, filters]);
 
   const updateWorkflow = async (ticketId, newWorkflow) => {
     try {

@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { priorityOptions } from '../../FormOptions/PriorityOption';
 import { workflowOptions } from '../../FormOptions/WorkFlowOption';
-import { useAppContext } from '../../AppContext'; // Подключение AppContext
 import './Modal.css';
 
 const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
-    const { messages } = useAppContext();
+    const platformOptions = ["telegram", "viber", "whatsapp", "facebook", "instagram", "sipuni"];
     const [filters, setFilters] = useState({
         creation_date: '',
         last_interaction_date: '',
@@ -13,6 +12,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
         workflow: '',
         priority: '',
         tags: '',
+        platform: '',
     });
 
     const handleInputChange = (e) => {
@@ -25,7 +25,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
 
     const handleApplyFilter = () => {
         onApplyFilter(filters);
-        onClose(); // Закрываем модалку после применения фильтра
+        onClose();
     };
 
     if (!isOpen) return null;
@@ -71,7 +71,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                     ))}
                 </select>
 
-                <label>Technician ID</label>
+                <label>Responsabil lead</label>
                 <input
                     type="text"
                     name="technician_id"
@@ -88,6 +88,16 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                     onChange={handleInputChange}
                     placeholder="Enter tags (comma separated)"
                 />
+
+                <label>Platform</label>
+                <select name="platform" value={filters.platform} onChange={handleInputChange}>
+                    <option value="">All Platforms</option>
+                    {platformOptions.map((platform) => (
+                        <option key={platform} value={platform}>
+                            {platform}
+                        </option>
+                    ))}
+                </select>
 
                 <div className="modal-buttons">
                     <button onClick={handleApplyFilter} className="apply-btn">Apply</button>
