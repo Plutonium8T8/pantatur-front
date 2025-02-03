@@ -166,21 +166,25 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       console.warn('WebSocket не подключен или закрыт.');
     }
 
-    // **Локально обновляем `messages` (UI обновляется мгновенно)**
+    // **Локально обновляем `messages`**
     setMessages((prevMessages) => {
-      const updatedMessages = prevMessages.map((msg) => {
+      return prevMessages.map((msg) => {
         let seenBy = msg.seen_by;
 
-        // Проверяем `seen_by`, прежде чем делать `JSON.parse()`
-        if (typeof seenBy === "string" && seenBy.trim() !== "") {
-          try {
-            seenBy = JSON.parse(seenBy);
-          } catch (error) {
-            console.error("❌ Ошибка при разборе `seen_by`:", msg.seen_by, error);
-            seenBy = {}; // Устанавливаем пустой объект в случае ошибки
+        // 🔹 **Безопасное преобразование `seen_by`**
+        if (typeof seenBy === "string") {
+          if (/^{\d+}$/.test(seenBy)) {
+            // Если формат `{7}`, исправляем его
+            seenBy = { [seenBy.replace(/\D/g, '')]: true };
+          } else if (seenBy.startsWith("{") && seenBy.endsWith("}")) {
+            try {
+              seenBy = JSON.parse(seenBy);
+            } catch (error) {
+              seenBy = {}; // Если ошибка, заменяем на пустой объект
+            }
+          } else {
+            seenBy = {}; // Если совсем неверный формат
           }
-        } else {
-          seenBy = {}; // Если `seen_by` пуст, делаем его `{}` (объект)
         }
 
         if (msg.ticket_id === ticketId && Object.keys(seenBy).length === 0) {
@@ -192,8 +196,6 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         }
         return msg;
       });
-
-      return updatedMessages; // Теперь `useEffect` сам обновит `unreadCount`
     });
   };
 
@@ -357,10 +359,11 @@ export const AppProvider = ({ children, isLoggedIn }) => {
 
   // Функция для получения сообщений для конкретного client_id
   const getClientMessagesSingle = async (ticket_id) => {
+    console.log("ticket_id din get client",ticket_id);
     try {
       const token = Cookies.get('jwt');
       if (!token) return;
-      const response = await fetch(`https://pandatur-api.com/messages/client/${ticket_id}`, {
+      const response = await fetch(`https://pandatur-api.com/messages/ticket/${ticket_id}`, {
         method: 'GET',
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
       });
@@ -469,7 +472,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         }, 100);
 
         // **Загружаем обновленные сообщения с сервера**
-        getClientMessagesSingle(ticket_id);
+        // getClientMessagesSingle(ticket_id);
 
         break;
       }
