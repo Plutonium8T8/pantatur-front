@@ -130,6 +130,7 @@ const Leads = () => {
           />
           <button onClick={() => setIsFilterOpen(true)} className="button-filter">
             Filter
+            {Object.values(filters).some(value => value) && <span className="filter-indicator"></span>}
           </button>
         </div>
       </div>
