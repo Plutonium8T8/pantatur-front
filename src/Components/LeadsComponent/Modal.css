@@ -34,7 +34,7 @@
 }
 
 .modal-content-filter input {
-    width: 100%;
+    /* width: 100%; */
     padding: 8px;
     margin-bottom: 15px;
     border: 1px solid #ccc;
@@ -53,6 +53,8 @@
     border: none;
     cursor: pointer;
     border-radius: 4px;
+    min-width: 200px;
+    min-height: 20px;
 }
 
 .cancel-btn {
@@ -62,6 +64,8 @@
     border: none;
     cursor: pointer;
     border-radius: 4px;
+    min-width: 200px;
+    min-height: 20px;
 }
 
 .apply-btn:hover {
