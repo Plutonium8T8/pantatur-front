@@ -1243,7 +1243,7 @@ const ChatComponent = ({ }) => {
                         })()
                     ) : (
                         <div className="empty-chat">
-                            <p>Выберите тикет для просмотра сообщений</p>
+                            <p>Alege ticket</p>
                         </div>
                     )}
                 </div>

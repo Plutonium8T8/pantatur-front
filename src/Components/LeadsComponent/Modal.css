@@ -75,3 +75,18 @@
 .cancel-btn:hover {
     background: #999;
 }
+
+.options-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.header-filter {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.select-filter {
+    height: 40px;
+}
