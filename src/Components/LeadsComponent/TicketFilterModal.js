@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { priorityOptions } from '../../FormOptions/PriorityOption';
+import { workflowOptions } from '../../FormOptions/WorkFlowOption';
 import './Modal.css';
 
 const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
@@ -48,22 +50,24 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                 />
 
                 <label>Workflow</label>
-                <input
-                    type="text"
-                    name="workflow"
-                    value={filters.workflow}
-                    onChange={handleInputChange}
-                    placeholder="Workflow"
-                />
+                <select name="workflow" value={filters.workflow} onChange={handleInputChange}>
+                    <option value="">All Workflows</option>
+                    {workflowOptions.map((option) => (
+                        <option key={option} value={option}>
+                            {option}
+                        </option>
+                    ))}
+                </select>
 
                 <label>Priority</label>
-                <input
-                    type="text"
-                    name="priority"
-                    value={filters.priority}
-                    onChange={handleInputChange}
-                    placeholder="Priority"
-                />
+                <select name="priority" value={filters.priority} onChange={handleInputChange}>
+                    <option value="">All Priorities</option>
+                    {priorityOptions.map((option) => (
+                        <option key={option} value={option}>
+                            {option}
+                        </option>
+                    ))}
+                </select>
 
                 <label>Technician ID</label>
                 <input
@@ -84,7 +88,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                 />
 
                 <div className="modal-buttons">
-                    <button onClick={handleApplyFilter} className="apply-btn">Aply</button>
+                    <button onClick={handleApplyFilter} className="apply-btn">Apply</button>
                     <button onClick={onClose} className="cancel-btn">Close</button>
                 </div>
             </div>
