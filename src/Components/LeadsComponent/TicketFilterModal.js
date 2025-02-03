@@ -21,6 +21,8 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
         platform: '',
     });
 
+    const isActive = (field) => filters[field] !== '';
+
     // Закрытие по ESC
     useEffect(() => {
         const handleKeyDown = (event) => {
@@ -113,13 +115,30 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                     <div className='header-filter'>Filter ticket</div>
 
                     <label>Create date</label>
-                    <input type="date" name="creation_date" value={filters.creation_date} onChange={handleInputChange} />
+                    <input
+                        type="date"
+                        name="creation_date"
+                        value={filters.creation_date}
+                        onChange={handleInputChange}
+                        className={isActive("creation_date") ? "active-filter" : ""}
+                    />
 
                     <label>Last interaction date</label>
-                    <input type="date" name="last_interaction_date" value={filters.last_interaction_date} onChange={handleInputChange} />
+                    <input
+                        type="date"
+                        name="last_interaction_date"
+                        value={filters.last_interaction_date}
+                        onChange={handleInputChange}
+                        className={isActive("last_interaction_date") ? "active-filter" : ""}
+                    />
 
                     <label>Workflow</label>
-                    <select className='select-filter' name="workflow" value={filters.workflow} onChange={handleInputChange}>
+                    <select
+                        className={`select-filter ${isActive("workflow") ? "active-filter" : ""}`}
+                        name="workflow"
+                        value={filters.workflow}
+                        onChange={handleInputChange}
+                    >
                         <option value="">All Workflows</option>
                         {workflowOptions.map(option => (
                             <option key={option} value={option}>{option}</option>
@@ -127,7 +146,12 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                     </select>
 
                     <label>Priority</label>
-                    <select className='select-filter' name="priority" value={filters.priority} onChange={handleInputChange}>
+                    <select
+                        className={`select-filter ${isActive("priority") ? "active-filter" : ""}`}
+                        name="priority"
+                        value={filters.priority}
+                        onChange={handleInputChange}
+                    >
                         <option value="">All Priorities</option>
                         {priorityOptions.map(option => (
                             <option key={option} value={option}>{option}</option>
@@ -135,7 +159,12 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                     </select>
 
                     <label>Responsabil Lead</label>
-                    <select className='select-filter' name="technician_id" value={filters.technician_id} onChange={handleInputChange}>
+                    <select
+                        className={`select-filter ${isActive("technician_id") ? "active-filter" : ""}`}
+                        name="technician_id"
+                        value={filters.technician_id}
+                        onChange={handleInputChange}
+                    >
                         <option value="">All Technicians</option>
                         {technicians.map(tech => (
                             <option key={tech.id} value={tech.id}>{`${tech.id}: ${tech.fullName}`}</option>
@@ -143,7 +172,12 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                     </select>
 
                     <label>Sender ID</label>
-                    <select className='select-filter' name="sender_id" value={filters.sender_id} onChange={handleInputChange}>
+                    <select
+                        className={`select-filter ${isActive("sender_id") ? "active-filter" : ""}`}
+                        name="sender_id"
+                        value={filters.sender_id}
+                        onChange={handleInputChange}
+                    >
                         <option value="">All Senders</option>
                         {technicians.map(tech => (
                             <option key={tech.id} value={tech.id}>{`${tech.id}: ${tech.fullName}`}</option>
@@ -151,10 +185,22 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                     </select>
 
                     <label>Tags</label>
-                    <input type="text" name="tags" value={filters.tags} onChange={handleInputChange} placeholder="Enter tags" />
+                    <input
+                        type="text"
+                        name="tags"
+                        value={filters.tags}
+                        onChange={handleInputChange}
+                        placeholder="Enter tags"
+                        className={isActive("tags") ? "active-filter" : ""}
+                    />
 
                     <label>Platform</label>
-                    <select className='select-filter' name="platform" value={filters.platform} onChange={handleInputChange}>
+                    <select
+                        className={`select-filter ${isActive("platform") ? "active-filter" : ""}`}
+                        name="platform"
+                        value={filters.platform}
+                        onChange={handleInputChange}
+                    >
                         <option value="">All Platforms</option>
                         {platformOptions.map(platform => (
                             <option key={platform} value={platform}>{platform}</option>

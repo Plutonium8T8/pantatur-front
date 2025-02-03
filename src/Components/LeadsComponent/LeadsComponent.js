@@ -139,7 +139,7 @@ const Leads = () => {
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search tickets..."
+            placeholder="Search tickets... Ticket ID or Client ID or Tag"
             className="search-input"
           />
           <button onClick={() => setIsFilterOpen(true)} className="button-filter">

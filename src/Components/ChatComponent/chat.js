@@ -1009,7 +1009,7 @@ const ChatComponent = ({ }) => {
                 <div className="filter-container-chat">
                     <input
                         type="text"
-                        placeholder="Id or name or tag"
+                        placeholder="Ticket ID or Client ID or Tag"
                         onInput={handleFilterInput}
                         className="ticket-filter-input"
                     />
