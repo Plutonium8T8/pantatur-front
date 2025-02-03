@@ -1,33 +1,46 @@
 import React, { useState, useMemo, useRef } from 'react';
-import { useAppContext } from '../../AppContext'; // Подключение AppContext
+import { useAppContext } from '../../AppContext';
 import { priorityOptions } from '../../FormOptions/PriorityOption';
 import { workflowOptions } from '../../FormOptions/WorkFlowOption';
 import SpinnerOverlay from './SpinnerOverlayComponent';
 import WorkflowColumn from './WorkflowColumnComponent';
 import ContextMenu from './ContextMenuComponent';
 import TicketModal from './TicketModal/TicketModalComponent';
+import TicketFilterModal from './TicketFilterModal'; // Добавляем фильтр
 import Cookies from 'js-cookie';
 import '../../App.css';
 import '../SnackBarComponent/SnackBarComponent.css';
 
 const Leads = () => {
-  const { tickets, isLoading, setTickets } = useAppContext(); // Данные из AppContext
+  const { tickets, isLoading, setTickets } = useAppContext();
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentTicket, setCurrentTicket] = useState(null);
   const [contextMenu, setContextMenu] = useState(null);
+  const [isFilterOpen, setIsFilterOpen] = useState(false); // Состояние для фильтра
+
+  const [filters, setFilters] = useState({
+    creation_date: '',
+    technician_id: '',
+  });
+
   const contextMenuRef = useRef(null);
 
-  // Фильтрация тикетов по поисковому запросу
+  // Фильтрация тикетов по параметрам
   const filteredTickets = useMemo(() => {
     return tickets.filter((ticket) => {
-      const search = (searchTerm || "").toLowerCase();
+      // Фильтр по дате создания
+      const creationDate = ticket.creation_date ? ticket.creation_date.split(" ")[0] : "";
+      const lastInteractionDate = ticket.last_interaction_date ? ticket.last_interaction_date.split(" ")[0] : "";
+
       return (
-        (ticket.contact?.toLowerCase() || "").includes(search) ||  // 🔍 Фильтр по contact
-        String(ticket.id).includes(search)  // 🔍 Фильтр по ticket_id
+        (!filters.creation_date || creationDate === filters.creation_date) &&
+        (!filters.last_interaction_date || lastInteractionDate === filters.last_interaction_date) &&
+        (!filters.technician_id || String(ticket.technician_id) === filters.technician_id) &&
+        (!filters.workflow || ticket.workflow.toLowerCase() === filters.workflow.toLowerCase())
       );
     });
-  }, [tickets, searchTerm]);
+  }, [tickets, filters]);
 
   const updateWorkflow = async (ticketId, newWorkflow) => {
     try {
@@ -50,7 +63,6 @@ const Leads = () => {
 
       const updatedTicket = await response.json();
 
-      // Локально обновляем тикеты
       setTickets((prevTickets) =>
         prevTickets.map((ticket) =>
           ticket.id === updatedTicket.ticket_id ? updatedTicket : ticket
@@ -82,7 +94,7 @@ const Leads = () => {
   };
 
   const handleContextMenu = (event, ticket) => {
-    if (!ticket) return; // Игнорируем пустую область
+    if (!ticket) return;
     event.preventDefault();
     setContextMenu({
       mouseX: event.clientX - 2,
@@ -107,6 +119,9 @@ const Leads = () => {
             placeholder="Search tickets..."
             className="search-input"
           />
+          <button onClick={() => setIsFilterOpen(true)} className="button-filter">
+            Filter
+          </button>
         </div>
       </div>
       <div className="container-tickets">
@@ -142,18 +157,24 @@ const Leads = () => {
           ticket={currentTicket}
           onClose={closeModal}
           onSave={(updatedTicket) => {
-            // Локальное обновление тикетов через setTickets
             setTickets((prevTickets) => {
               const isEditing = Boolean(updatedTicket.ticket_id);
               return isEditing
                 ? prevTickets.map((ticket) =>
                   ticket.id === updatedTicket.ticket_id ? updatedTicket : ticket
                 )
-                : [...prevTickets, updatedTicket]; // Добавляем новый тикет
+                : [...prevTickets, updatedTicket];
             });
           }}
         />
       )}
+
+      {/* Модальное окно фильтра */}
+      <TicketFilterModal
+        isOpen={isFilterOpen}
+        onClose={() => setIsFilterOpen(false)}
+        onApplyFilter={setFilters}
+      />
     </div>
   );
 };
