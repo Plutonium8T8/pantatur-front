@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import "./ModalWithToggles.css";
 import { FaHandshake } from "react-icons/fa";
+import ToggleComponent from "./ToggleComponent";
+import UserGroupComponent from "./UserGroupComponent";
 
 const ModalWithToggles = ({ employee, closeModal }) => {
     const [roles, setRoles] = useState([]);
@@ -105,48 +107,7 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                 className="modal-container"
                 onClick={(e) => e.stopPropagation()}
             >
-                <div className="modal-header">
-                    <h2>
-                        <FaHandshake /> Permisiuni {employee.name}
-                    </h2>
-                </div>
-                {error && <div className="error-message">{error}</div>}
-                <div className="modal-body">
-                    <div className="permissions-table">
-                        <div className="permissions-header">
-                            <div className="permissions-header-item"></div>
-                            {["READ", "WRITE", "ADMIN"].map((action) => (
-                                <div className="permissions-header-item" key={action}>
-                                    {action}
-                                </div>
-                            ))}
-                        </div>
-                        <div className="permissions-rows">
-                            {["CHAT", "LEAD", "DASHBOARD"].map((category) => (
-                                <div className="permissions-row" key={category}>
-                                    <div className="permissions-category">{category}</div>
-                                    {["READ", "WRITE", "ADMIN"].map((action) => {
-                                        const role = `${category}_${action}`;
-                                        return (
-                                            <div className="permissions-toggle" key={role}>
-                                                <label className="toggle-switch">
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={isRoleActive(role)}
-                                                        onChange={() =>
-                                                            handleToggleChange(role, isRoleActive(role))
-                                                        }
-                                                    />
-                                                    <span className="slider"></span>
-                                                </label>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
+               <ToggleComponent employee={employee}/>
             </div>
         </div>
     );

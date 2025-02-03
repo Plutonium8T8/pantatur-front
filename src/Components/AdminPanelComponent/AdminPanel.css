@@ -64,6 +64,21 @@ h1 {
     font-weight: bold;
 }
 
+.userGroup-input-container {
+    margin-left: 16px;
+    margin-right: 16px;
+    width: calc(100% - 32px);
+}
+
+.userGroup-button {
+    padding: 0;
+}
+
+.userGroups-display {
+    display: flex;
+    gap: 5%
+}
+
 .schedule-table td {
     background-color: #fff;
 }

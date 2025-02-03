@@ -5,6 +5,7 @@ import ModalWithToggles from "./ModalWithToggles"; // Импортируем к�
 import './AdminPanel.css';
 import { FaMinus, FaPlus, FaTrash } from "react-icons/fa";
 import { translations } from "../utils/translations";
+import ToggleComponent from "./ToggleComponent";
 
 const ScheduleComponent = () => {
   const [schedule, setSchedule] = useState([]);
@@ -503,6 +504,7 @@ const ScheduleComponent = () => {
                 </div>
               </div>
             </form>
+            <ToggleComponent employee={selectedEmployee}/>
           </div>
         </div>
       )}

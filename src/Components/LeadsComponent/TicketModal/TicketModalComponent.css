@@ -1,4 +1,4 @@
-.tag-input-container {
+.tag-input-container, .userGroup-input-container {
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -50,7 +50,7 @@
   width: 100%;
 }
 
-.tag-input {
+.tag-input, .userGroup-input {
   width: 100%;
 }
 
@@ -58,11 +58,11 @@
   width: 100%;
 }
 
-.tag-input-container .input-group {
+.tag-input-container .input-group, .userGroup-input-container .input-group {
   width: 100%;
 }
 
-.tag-input-container .input-group .tag-input{
+.tag-input-container .input-group .tag-input, .userGroup-input-container .input-group .userGroup-input {
   width: auto;
 }
 
@@ -72,7 +72,7 @@
   text-align: left;
 }
 
-.tag-item {
+.tag-item, .userGroup-item {
   background-color: #0f824c;
   color: white;
   padding: 12px 18px;
@@ -86,11 +86,15 @@
   width: 22%;
 }
 
-.tag-text {
+.userGroup-item {
+  width: auto;
+}
+
+.tag-text, .userGroup-text {
   overflow: hidden;
 }
 
-.remove-tag-button {
+.remove-tag-button, .remove-userGroup-button {
   background: none;
   border: none;
   color: white;
@@ -101,6 +105,7 @@
 }
 
 .tag-input,
+.userGroup-input,
 .technician-select,
 .task-select,
 .ticket-filter-input,
@@ -116,6 +121,7 @@
 }
 
 .tag-input:focus,
+.userGroup-input:focus,
 .textarea-input:focus {
   border-color: #0f824c;
   box-shadow: 0 0 4px rgba(15, 130, 76, 0.5);
