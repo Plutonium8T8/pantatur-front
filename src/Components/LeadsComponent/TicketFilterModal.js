@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { priorityOptions } from '../../FormOptions/PriorityOption';
 import { workflowOptions } from '../../FormOptions/WorkFlowOption';
-import { useAppContext } from '../../AppContext';
 import Cookies from 'js-cookie';
 import './Modal.css';
 
