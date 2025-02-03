@@ -1026,7 +1026,7 @@ const ChatComponent = ({ }) => {
 
                     {/* Кнопка фильтра с индикатором */}
                     <button onClick={() => setIsFilterOpen(true)} className="button-filter">
-                        Filter {Object.values(appliedFilters).some(value => value) && <span className="filter-indicator">●</span>}
+                        Filter {Object.values(appliedFilters).some(value => value) && <span className="filter-indicator"></span>}
                     </button>
                 </div>
 

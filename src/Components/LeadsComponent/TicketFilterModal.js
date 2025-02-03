@@ -89,6 +89,21 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
         onClose();
     };
 
+    // Функция сброса фильтров
+    const handleResetFilters = () => {
+        setFilters({
+            creation_date: '',
+            last_interaction_date: '',
+            technician_id: '',
+            sender_id: '',
+            workflow: '',
+            priority: '',
+            tags: '',
+            platform: '',
+        });
+        onApplyFilter({}); // Передаем пустые фильтры для сброса
+    };
+
     if (!isOpen) return null;
 
     return (
@@ -148,6 +163,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
 
                     <div className="modal-buttons">
                         <button onClick={handleApplyFilter} className="apply-btn">Apply</button>
+                        <button onClick={handleResetFilters} className="reset-btn">Reset Filters</button>
                         <button onClick={onClose} className="cancel-btn">Close</button>
                     </div>
                 </div>
