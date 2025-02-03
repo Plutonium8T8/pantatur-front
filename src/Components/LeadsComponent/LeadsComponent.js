@@ -23,6 +23,7 @@ const Leads = () => {
     creation_date: '',
     last_interaction_date: '',
     technician_id: '',
+    sender_id: '',
     workflow: '',
     priority: '',
     tags: '',
@@ -47,14 +48,19 @@ const Leads = () => {
         (message) => message.ticket_id === ticket.id && message.platform === filters.platform
       );
 
+      const hasMatchingSender = messages.some(
+        (message) => message.ticket_id === ticket.id && message.sender_id == filters.sender_id
+      );
+
       return (
         (!filters.creation_date || creationDate === filters.creation_date) &&
         (!filters.last_interaction_date || lastInteractionDate === filters.last_interaction_date) &&
         (!filters.technician_id || String(ticket.technician_id) === filters.technician_id) &&
+        (!filters.sender_id || hasMatchingSender) && // ✅ Фильтр по Sender ID
         (!filters.workflow || ticket.workflow.toLowerCase() === filters.workflow.toLowerCase()) &&
         (!filters.priority || ticket.priority.toLowerCase() === filters.priority.toLowerCase()) &&
         (!filters.tags || ticketTags.includes(filters.tags.toLowerCase())) &&
-        (!filters.platform || hasMatchingPlatform) // ✅ Фильтр по платформе
+        (!filters.platform || hasMatchingPlatform)
       );
     });
   }, [tickets, messages, filters]);

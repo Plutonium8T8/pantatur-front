@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { priorityOptions } from '../../FormOptions/PriorityOption';
 import { workflowOptions } from '../../FormOptions/WorkFlowOption';
+import { useAppContext } from '../../AppContext';
 import Cookies from 'js-cookie';
 import './Modal.css';
 
+const platformOptions = ["telegram", "viber", "whatsapp", "facebook", "instagram", "sipuni"];
+
 const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
+    const { messages } = useAppContext();
     const [technicians, setTechnicians] = useState([]);
-    const platformOptions = ["telegram", "viber", "whatsapp", "facebook", "instagram", "sipuni"];
+
     const [filters, setFilters] = useState({
         creation_date: '',
         last_interaction_date: '',
         technician_id: '',
+        sender_id: '',
         workflow: '',
         priority: '',
         tags: '',
@@ -76,42 +81,28 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                 <h2>Filter ticket</h2>
 
                 <label>Create date</label>
-                <input
-                    type="date"
-                    name="creation_date"
-                    value={filters.creation_date}
-                    onChange={handleInputChange}
-                />
+                <input type="date" name="creation_date" value={filters.creation_date} onChange={handleInputChange} />
 
                 <label>Last interaction date</label>
-                <input
-                    type="date"
-                    name="last_interaction_date"
-                    value={filters.last_interaction_date}
-                    onChange={handleInputChange}
-                />
+                <input type="date" name="last_interaction_date" value={filters.last_interaction_date} onChange={handleInputChange} />
 
                 <label>Workflow</label>
                 <select name="workflow" value={filters.workflow} onChange={handleInputChange}>
                     <option value="">All Workflows</option>
-                    {workflowOptions.map((option) => (
-                        <option key={option} value={option}>
-                            {option}
-                        </option>
+                    {workflowOptions.map(option => (
+                        <option key={option} value={option}>{option}</option>
                     ))}
                 </select>
 
                 <label>Priority</label>
                 <select name="priority" value={filters.priority} onChange={handleInputChange}>
                     <option value="">All Priorities</option>
-                    {priorityOptions.map((option) => (
-                        <option key={option} value={option}>
-                            {option}
-                        </option>
+                    {priorityOptions.map(option => (
+                        <option key={option} value={option}>{option}</option>
                     ))}
                 </select>
 
-                <label>Responsabil lead</label>
+                <label>Responsabil Lead</label>
                 <select name="technician_id" value={filters.technician_id} onChange={handleInputChange}>
                     <option value="">All Technicians</option>
                     {technicians.map(tech => (
@@ -119,22 +110,22 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                     ))}
                 </select>
 
+                <label>Sender ID</label>
+                <select name="sender_id" value={filters.sender_id} onChange={handleInputChange}>
+                    <option value="">All Senders</option>
+                    {technicians.map(tech => (
+                        <option key={tech.id} value={tech.id}>{`${tech.id}: ${tech.fullName}`}</option>
+                    ))}
+                </select>
+
                 <label>Tags</label>
-                <input
-                    type="text"
-                    name="tags"
-                    value={filters.tags}
-                    onChange={handleInputChange}
-                    placeholder="Enter tags (comma separated)"
-                />
+                <input type="text" name="tags" value={filters.tags} onChange={handleInputChange} placeholder="Enter tags (comma separated)" />
 
                 <label>Platform</label>
                 <select name="platform" value={filters.platform} onChange={handleInputChange}>
                     <option value="">All Platforms</option>
-                    {platformOptions.map((platform) => (
-                        <option key={platform} value={platform}>
-                            {platform}
-                        </option>
+                    {platformOptions.map(platform => (
+                        <option key={platform} value={platform}>{platform}</option>
                     ))}
                 </select>
 
