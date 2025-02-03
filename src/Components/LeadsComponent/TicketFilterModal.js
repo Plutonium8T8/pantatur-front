@@ -4,6 +4,7 @@ import { workflowOptions } from '../../FormOptions/WorkFlowOption';
 import './Modal.css';
 
 const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
+    
     const platformOptions = ["telegram", "viber", "whatsapp", "facebook", "instagram", "sipuni"];
     const [filters, setFilters] = useState({
         creation_date: '',
