@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { priorityOptions } from '../../FormOptions/PriorityOption';
 import { workflowOptions } from '../../FormOptions/WorkFlowOption';
+import { useAppContext } from '../../AppContext'; // Подключение AppContext
 import './Modal.css';
 
 const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
+    const { messages } = useAppContext();
     const [filters, setFilters] = useState({
         creation_date: '',
         last_interaction_date: '',
