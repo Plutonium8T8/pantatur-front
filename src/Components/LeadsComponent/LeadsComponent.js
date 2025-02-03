@@ -21,7 +21,11 @@ const Leads = () => {
 
   const [filters, setFilters] = useState({
     creation_date: '',
+    last_interaction_date: '',
     technician_id: '',
+    workflow: '',
+    priority: '',
+    tags: '',
   });
 
   const contextMenuRef = useRef(null);
@@ -29,15 +33,21 @@ const Leads = () => {
   // Фильтрация тикетов по параметрам
   const filteredTickets = useMemo(() => {
     return tickets.filter((ticket) => {
-      // Фильтр по дате создания
       const creationDate = ticket.creation_date ? ticket.creation_date.split(" ")[0] : "";
       const lastInteractionDate = ticket.last_interaction_date ? ticket.last_interaction_date.split(" ")[0] : "";
+
+      // Разбиваем теги из строки в массив
+      const ticketTags = ticket.tags
+        ? ticket.tags.replace(/[{}]/g, "").split(",").map(tag => tag.trim().toLowerCase())
+        : [];
 
       return (
         (!filters.creation_date || creationDate === filters.creation_date) &&
         (!filters.last_interaction_date || lastInteractionDate === filters.last_interaction_date) &&
         (!filters.technician_id || String(ticket.technician_id) === filters.technician_id) &&
-        (!filters.workflow || ticket.workflow.toLowerCase() === filters.workflow.toLowerCase())
+        (!filters.workflow || ticket.workflow.toLowerCase() === filters.workflow.toLowerCase()) &&
+        (!filters.priority || ticket.priority.toLowerCase() === filters.priority.toLowerCase()) &&
+        (!filters.tags || ticketTags.includes(filters.tags.toLowerCase())) // ✅ Фильтр по тегам
       );
     });
   }, [tickets, filters]);

@@ -4,9 +4,11 @@ import './Modal.css';
 const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
     const [filters, setFilters] = useState({
         creation_date: '',
-        technician_id: '',
         last_interaction_date: '',
+        technician_id: '',
         workflow: '',
+        priority: '',
+        tags: '',
     });
 
     const handleInputChange = (e) => {
@@ -33,15 +35,15 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                 <input
                     type="date"
                     name="creation_date"
-                    value={filters.creation_date}  // ✅ Исправлено
+                    value={filters.creation_date}
                     onChange={handleInputChange}
                 />
 
                 <label>Last interaction date:</label>
                 <input
                     type="date"
-                    name="last_interaction_date"  // ✅ Исправлено
-                    value={filters.last_interaction_date}  // ✅ Исправлено
+                    name="last_interaction_date"
+                    value={filters.last_interaction_date}
                     onChange={handleInputChange}
                 />
 
@@ -54,6 +56,15 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                     placeholder="Workflow"
                 />
 
+                <label>Priority:</label>
+                <input
+                    type="text"
+                    name="priority"
+                    value={filters.priority}
+                    onChange={handleInputChange}
+                    placeholder="Priority"
+                />
+
                 <label>Technician ID:</label>
                 <input
                     type="text"
@@ -61,6 +72,15 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                     value={filters.technician_id}
                     onChange={handleInputChange}
                     placeholder="Technician ID"
+                />
+
+                <label>Tags:</label>
+                <input
+                    type="text"
+                    name="tags"
+                    value={filters.tags}
+                    onChange={handleInputChange}
+                    placeholder="Enter tags (comma separated)"
                 />
 
                 <div className="modal-buttons">
