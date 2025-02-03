@@ -8,7 +8,6 @@ import './Modal.css';
 const platformOptions = ["telegram", "viber", "whatsapp", "facebook", "instagram", "sipuni"];
 
 const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
-    const { messages } = useAppContext();
     const [technicians, setTechnicians] = useState([]);
 
     const [filters, setFilters] = useState({
