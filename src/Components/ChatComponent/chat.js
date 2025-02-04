@@ -1005,7 +1005,19 @@ const ChatComponent = ({ }) => {
     return (
         <div className="chat-container">
             <div className="users-container">
-                <div className='extra-info-title'>Chat</div>
+                <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                    <div className='extra-info-title'>Chat</div>
+                    <label style={{ marginLeft: "auto" }}>
+                        Leadurile mele
+                        <input
+                            type="checkbox"
+                            id="myTicketsCheckbox"
+                            onChange={handleCheckboxChange}
+                            checked={showMyTickets}
+                        />
+                    </label>
+                </div>
+
                 <div className="filter-container-chat">
                     <input
                         type="text"
@@ -1013,18 +1025,6 @@ const ChatComponent = ({ }) => {
                         onInput={handleFilterInput}
                         className="ticket-filter-input"
                     />
-
-                    <label>
-                        <input
-                            type="checkbox"
-                            id="myTicketsCheckbox"
-                            onChange={handleCheckboxChange}
-                            checked={showMyTickets}
-                        />
-                        My tickets
-                    </label>
-
-                    {/* Кнопка фильтра с индикатором */}
                     <button onClick={() => setIsFilterOpen(true)} className="button-filter">
                         Filter {Object.values(appliedFilters).some(value => value) && <span className="filter-indicator"></span>}
                     </button>
@@ -1371,7 +1371,7 @@ const ChatComponent = ({ }) => {
                             <Select
                                 options={templateOptions}
                                 id="message-template"
-                                label="Șablon"
+                                label=""
                                 value={selectedMessage ?? undefined}
                                 onChange={handleSelectTChange}
                                 placeholder="Introduceți mesaj"
@@ -1382,7 +1382,7 @@ const ChatComponent = ({ }) => {
                         {tickets && tickets.find(ticket => ticket.id === selectTicketId)?.client_id && (
                             <div className="client-select-container">
                                 <select
-                                    className="client-select"
+                                    className="task-select"
                                     value={selectedClient}
                                     onChange={(e) => setSelectedClient(e.target.value)}
                                 >

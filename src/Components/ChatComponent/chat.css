@@ -105,8 +105,13 @@
     border-radius: 5px;
     resize: none;
     outline: none;
-    min-height: 120px;
+    min-height: 138px;
     width: 100%;
+}
+
+.manager-send-message-container .input-group
+{
+    gap: 0;
 }
 
 /* Right Column (Options) */
@@ -353,9 +358,16 @@
 .last-message-container {
     display: flex;
     flex-direction: row;
+    position: relative;
+    align-items: center;
     justify-content: space-between;
     width: 100%;
     color: black;
+}
+
+.chat-time, .unread-count {
+    margin-left: 10px;
+    white-space: nowrap;
 }
 
 .unread-count {
@@ -372,11 +384,9 @@
 
 .last-message-ticket {
     white-space: nowrap;
-    /* Не позволяет тексту переноситься на новую строку */
     overflow: hidden;
-    /* Обрезает текст, если он выходит за пределы */
     text-overflow: ellipsis;
-    /* Добавляет многоточие, если текст не помещается */
+    flex-grow: 1; 
 }
 
 .message-content {
@@ -600,11 +610,16 @@
 }
 
 .client-message-group {
-    display: flex;
+    /* display: flex; */
     flex-direction: column;
     background-color: #7fc8a6;
     padding: 10px;
     border: 1px solid #ddd;
+}
+
+.extra-info-content .selects-container
+{
+    gap: 0;
 }
 
 .client-header {
