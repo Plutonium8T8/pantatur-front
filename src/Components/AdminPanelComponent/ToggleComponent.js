@@ -121,7 +121,7 @@ const ToggleComponent = ({ employee }) => {
                         ))}
                     </div>
                     <div className="permissions-rows">
-                        {["CHAT", "LEAD", "DASHBOARD"].map((category) => (
+                        {["CHAT", "LEAD", "DASHBOARD", "ACCOUNT", "NOTIFICATION", "TASK"].map((category) => (
                             <div className="permissions-row" key={category}>
                                 <div className="permissions-category">{category}</div>
                                 {["READ", "WRITE", "ADMIN"].map((action) => {
