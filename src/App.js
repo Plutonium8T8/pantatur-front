@@ -86,11 +86,17 @@ function App() {
     }
   }, []);
 
-  // useEffect(() => {
-  //   if (isLoggedIn) {
-  //     fetchRoles();
-  //   }
-  // }, [isLoggedIn, userId]);
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetchRoles();
+    }
+  }, [isLoggedIn, userId]);
+
+  useEffect(() => {
+    if (userRoles !== null) {
+      console.log("user roles din app", userRoles);
+    }
+  }, [userRoles]);
 
   const handleLogin = () => {
     setIsLoggedIn(true);
@@ -101,6 +107,12 @@ function App() {
   if (isLoading) {
     return <div className="spinner"></div>;
   }
+
+  const NoAccess = () => (
+    <div style={{ textAlign: 'center', marginTop: '50px', fontSize: '18px', color: 'red' }}>
+      <h2>No acces roles</h2>
+    </div>
+  );
 
   return (
     <Router basename="/">
@@ -125,7 +137,15 @@ function App() {
                     <Route path="/" element={<Navigate to="/leads" />} />
                     <Route path="/leads" element={<Leads />} />
                     <Route path="/chat/:ticketId?" element={<ChatComponent />} />
-                    <Route path="/admin-panel" element={<AdminPanel />} />
+
+                    {/* Проверяем наличие роли ADMIN */}
+                    <Route
+                      path="/admin-panel"
+                      element={
+                        userRoles && userRoles.includes("ROLE_ADMIN") ? <AdminPanel /> : <NoAccess />
+                      }
+                    />
+
                     <Route path="*" element={<Navigate to="/index.html" />} />;
                   </Routes>
                 </div>
