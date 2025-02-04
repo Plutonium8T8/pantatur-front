@@ -78,7 +78,7 @@ const ToggleComponent = ({ employee }) => {
                 },
                 body: JSON.stringify({
                     id: employee.id,
-                    role,
+                    role: "ROLE_" + role,
                 }),
             });
 
