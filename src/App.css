@@ -484,6 +484,7 @@ button {
 
 .foto-description {
   display: flex;
+  gap: 5px;
   flex-direction: row;
 }
 
