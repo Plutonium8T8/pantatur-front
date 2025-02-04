@@ -1041,6 +1041,44 @@ const ChatComponent = ({ }) => {
         }
     };
 
+    const handleMergeClients = async () => {
+        const oldUserId = selectedClient; // old_user_id фиксирован
+        const newUserId = extraInfo[selectedClient]?.new_user_id;
+
+        if (!newUserId) {
+            alert("Introduceți ID-ul nou al utilizatorului!");
+            return;
+        }
+
+        try {
+            const token = Cookies.get('jwt');
+
+            const response = await fetch("https://pandatur-api.com/api/users-client/merge", {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                    Origin: 'https://plutonium8t8.github.io',
+                },
+                body: JSON.stringify({
+                    old_user_id: oldUserId,
+                    new_user_id: newUserId
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error("Eroare la combinarea utilizatorilor");
+            }
+
+            const result = await response.json();
+            alert("Utilizatorii au fost combinați cu succes!");
+            console.log(result);
+        } catch (error) {
+            console.error("Eroare:", error);
+            alert("Eroare la combinarea utilizatorilor!");
+        }
+    };
+
     return (
         <div className="chat-container">
             <div className="users-container">
@@ -1675,6 +1713,7 @@ const ChatComponent = ({ }) => {
                                             }
                                             className="input-field"
                                             placeholder="Introduceți ID vechi"
+                                            disabled // Поле отключено, так как old_user_id фиксирован
                                         />
                                         <input
                                             type="number"
@@ -1789,6 +1828,27 @@ const ChatComponent = ({ }) => {
                                     {translations['Salvați datele personale'][language]}
                                 </button>
                             </form>
+                            <div className="merge-client">
+                                <input
+                                    type="number"
+                                    value={selectedClient} // old_user_id фиксирован
+                                    className="input-field"
+                                    placeholder="Introduceți ID vechi"
+                                    disabled // Поле отключено, так как old_user_id фиксирован
+                                />
+                                <input
+                                    type="number"
+                                    value={extraInfo[selectedClient]?.new_user_id || ""}
+                                    onChange={(e) =>
+                                        handleSelectChangeExtra(selectedClient, 'new_user_id', e.target.value)
+                                    }
+                                    className="input-field"
+                                    placeholder="Introduceți ID nou"
+                                />
+                                <button onClick={handleMergeClients} className="submit-button">
+                                    Combine
+                                </button>
+                            </div>
                         </div>
                     )}
                 </div>
