@@ -1170,7 +1170,7 @@ const ChatComponent = ({ }) => {
                                                                 key={index}
                                                                 style={{
                                                                     display: "inline-block",
-                                                                    backgroundColor: "#007bff",
+                                                                    backgroundColor: "#0f824c",
                                                                     color: "#fff",
                                                                     padding: "5px 10px",
                                                                     borderRadius: "20px",
