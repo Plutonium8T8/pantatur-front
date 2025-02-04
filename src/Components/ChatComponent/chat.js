@@ -309,6 +309,7 @@ const ChatComponent = ({ }) => {
             console.warn('Тикет не найден!');
             setSelectedTechnicianId(null);
         }
+        navigate(`/chat/${ticketId}`);
         // Помечаем все сообщения как прочитанные (отправляем `seen`)
         markMessagesAsRead(ticketId);
     };
