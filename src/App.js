@@ -3,7 +3,7 @@ import './App.css';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Leads from './Components/LeadsComponent/LeadsComponent';
 import LoginForm from './Components/LoginComponent/LoginForm';
-import { UserProvider } from './UserContext';
+import { UserProvider, useUser } from './UserContext';
 import CustomSidebar from './Components/SideBar/SideBar';
 import ChatComponent from './Components/ChatComponent/chat';
 import Cookies from 'js-cookie';
@@ -22,7 +22,35 @@ function App() {
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
   const [isTaskComponentOpen, setIsTaskComponentOpen] = useState(false);
   const [isAccountComponentOpen, setIsAccountComponentOpen] = useState(false);
+  const { userId } = useUser();
   const { enqueueSnackbar } = useSnackbar();
+  const [userRoles, setUserRoles] = useState(null);
+
+  const fetchRoles = async () => {
+    if (!userId) return;
+
+    try {
+      const token = Cookies.get("jwt");
+      const response = await fetch(`https://pandatur-api.com/users/${userId}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Origin: 'https://plutonium8t8.github.io',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Роли пользователя:", data.roles);
+        setUserRoles(data.roles);
+      } else {
+        console.error(`Ошибка: ${response.status} - ${response.statusText}`);
+      }
+    } catch (error) {
+      console.error("Ошибка загрузки ролей:", error.message);
+    }
+  };
 
   useEffect(() => {
     const token = Cookies.get('jwt');
@@ -41,7 +69,11 @@ function App() {
           return response.json();
         })
         .then((data) => {
-          setIsLoggedIn(!!data.user_id);
+          if (data.user_id) {
+            setIsLoggedIn(true);
+          } else {
+            setIsLoggedIn(false);
+          }
         })
         .catch(() => {
           Cookies.remove('jwt');
@@ -54,17 +86,17 @@ function App() {
     }
   }, []);
 
+  // useEffect(() => {
+  //   if (isLoggedIn) {
+  //     fetchRoles();
+  //   }
+  // }, [isLoggedIn, userId]);
+
   const handleLogin = () => {
     setIsLoggedIn(true);
     setIsLoading(false);
+    fetchRoles();
   };
-
-  const NotFound = () => (
-    <div style={{ textAlign: 'center', marginTop: '20px' }}>
-      <h1>404</h1>
-      <p>Страница не найдена</p>
-    </div>
-  );
 
   if (isLoading) {
     return <div className="spinner"></div>;
@@ -92,10 +124,7 @@ function App() {
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/" element={<Navigate to="/leads" />} />
                     <Route path="/leads" element={<Leads />} />
-                    <Route
-                      path="/chat/:ticketId?"
-                      element={<ChatComponent />}
-                    />
+                    <Route path="/chat/:ticketId?" element={<ChatComponent />} />
                     <Route path="/admin-panel" element={<AdminPanel />} />
                     <Route path="*" element={<Navigate to="/index.html" />} />;
                   </Routes>
