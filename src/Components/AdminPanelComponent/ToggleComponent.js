@@ -103,7 +103,7 @@ const ToggleComponent = ({ employee }) => {
     const isRoleActive = (role) => roles.includes(role);
 
     return (
-        <div>
+        <div style={{ marginTop: "42px" }}>
             <div className="modal-header">
                 <h2>
                     <FaHandshake /> {translations["Permisiuni"][language]} {employee.name}

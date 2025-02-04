@@ -468,13 +468,13 @@ const ChatComponent = ({ }) => {
             const reactionsArray = message.reactions
                 .replace(/^{|}$/g, '') // Удаляем внешние фигурные скобки
                 .split('","') // Разделяем строки реакций
-                .map((reaction) => reaction.replace(/(^"|"$)/g, '').trim()); // Убираем кавычки
+                .map((reaction) => reaction.replace(/(^"|"$|\")/g, '').trim()); // Убираем кавычки
 
             // Парсим JSON-объекты и извлекаем поле `reaction`
             const parsedReactions = reactionsArray.map((reaction) => {
                 try {
                     // Удаляем экранированные кавычки и парсим строку
-                    const normalizedReaction = reaction.replace(/\\\"/g, '"');
+                    const normalizedReaction = reaction.replace('\"', '');
                     const parsed = JSON.parse(normalizedReaction); // Пытаемся распарсить как JSON
                     return parsed.reaction; // Возвращаем только поле `reaction`
                 } catch {
@@ -1256,6 +1256,8 @@ const ChatComponent = ({ }) => {
                                                     };
 
                                                     const lastReaction = getLastReaction(msg);
+
+                                                    console.log(lastReaction);
 
                                                     return (
                                                         <div
