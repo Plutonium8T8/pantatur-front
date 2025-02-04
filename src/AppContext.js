@@ -22,7 +22,6 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   const { userId } = useUser(); // Получаем userId из UserContext
   const ticketsRef = useRef(tickets);
   const [unreadMessages, setUnreadMessages] = useState(new Map()); // Оптимизированное хранение непрочитанных сообщений
-  const { navigate } = useNavigation(); // Достаем navigate
 
   useEffect(() => {
     let pingInterval;
@@ -194,11 +193,6 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         },
         credentials: 'include',
       });
-
-      if (response.status === 401 || response.status === 403 || response.status === 405 ) {
-        navigate("/error"); // Перенаправляем на страницу ошибки
-        return [];
-      }
 
       if (!response.ok) {
         throw new Error(`Ошибка при получении тикетов. Код статуса: ${response.status}`);

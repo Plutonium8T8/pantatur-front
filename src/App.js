@@ -16,7 +16,6 @@ import Dashboard from './Components/DashboardComponent/Dashboard';
 import UserPage from './Components/UserPage/UserPage';
 import { useSnackbar } from 'notistack';
 import { NavigationProvider } from './NavigationContext';
-import ErrorPage from './ErrorPage';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -166,7 +165,6 @@ function App() {
                       <Route path="/leads" element={<Leads />} />
                       <Route path="/chat/:ticketId?" element={<ChatComponent />} />
                       <Route path="/admin-panel" element={userRoles && userRoles.includes("ROLE_ADMIN") ? <AdminPanel /> : <NoAccess />} />
-                      <Route path="/error" element={<ErrorPage />} />
                       <Route path="*" element={<Navigate to="/index.html" />} />
                     </Routes>
                   </div>

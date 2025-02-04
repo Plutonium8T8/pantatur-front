@@ -1003,6 +1003,44 @@ const ChatComponent = ({ }) => {
         return [];
     };
 
+
+    const handleMergeTickets = async () => {
+        const ticketOld = ticketId;
+        const ticketNew = extraInfo[selectTicketId]?.ticket_id_new;
+
+        if (!ticketOld || !ticketNew) {
+            alert("Introduceți ambele ID-uri!");
+            return;
+        }
+
+        try {
+            const token = Cookies.get('jwt');
+            const response = await fetch("https://pandatur-api.com/api/merge/tickets", {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                    Origin: 'https://plutonium8t8.github.io',
+                },
+                body: JSON.stringify({
+                    ticket_old: ticketOld,
+                    ticket_new: ticketNew
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error("Eroare la combinarea biletelor");
+            }
+
+            const result = await response.json();
+            alert("Biletele au fost combinate cu succes!");
+            console.log(result);
+        } catch (error) {
+            console.error("Eroare:", error);
+            alert("Eroare la combinarea biletelor!");
+        }
+    };
+
     return (
         <div className="chat-container">
             <div className="users-container">
@@ -1626,6 +1664,29 @@ const ChatComponent = ({ }) => {
                                     <div className="input-group">
                                         <button onClick={sendExtraInfo} className="submit-button">
                                             {isLoading ? translations['Încărcăm...'][language] : translations['Actualizare'][language]}
+                                        </button>
+                                    </div>
+                                    <div className="merge-tickets">
+                                        <input
+                                            type="number"
+                                            value={ticketId} // ticket_old всегда равен ticketId
+                                            onChange={(e) =>
+                                                handleSelectChangeExtra(selectTicketId, 'ticket_id_old', e.target.value)
+                                            }
+                                            className="input-field"
+                                            placeholder="Introduceți ID vechi"
+                                        />
+                                        <input
+                                            type="number"
+                                            value={extraInfo[selectTicketId]?.ticket_id_new || ""}
+                                            onChange={(e) =>
+                                                handleSelectChangeExtra(selectTicketId, 'ticket_id_new', e.target.value)
+                                            }
+                                            className="input-field"
+                                            placeholder="Introduceți ID nou"
+                                        />
+                                        <button onClick={handleMergeTickets} className="submit-button">
+                                            Combine
                                         </button>
                                     </div>
                                 </>

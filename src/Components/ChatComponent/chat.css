@@ -109,8 +109,7 @@
     width: 100%;
 }
 
-.manager-send-message-container .input-group
-{
+.manager-send-message-container .input-group {
     gap: 0;
 }
 
@@ -365,7 +364,8 @@
     color: black;
 }
 
-.chat-time, .unread-count {
+.chat-time,
+.unread-count {
     margin-left: 10px;
     white-space: nowrap;
 }
@@ -386,7 +386,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    flex-grow: 1; 
+    flex-grow: 1;
 }
 
 .message-content {
@@ -617,8 +617,7 @@
     border: 1px solid #ddd;
 }
 
-.extra-info-content .selects-container
-{
+.extra-info-content .selects-container {
     gap: 0;
 }
 
@@ -637,4 +636,14 @@
     letter-spacing: 1px;
     /* width: fit-content; */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.merge-tickets {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 8px 8px;
+    border: 1px solid #ddd;
+    margin-top: 10px;
+    background-color: #0c6d40;
 }
