@@ -75,8 +75,8 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
       const isEditing = Boolean(editedTicket?.id); // Проверяем, редактируем ли тикет
       const method = isEditing ? 'PATCH' : 'POST'; // Выбираем метод
       const url = isEditing
-        ? `https://pandatur-api.com/tickets/${editedTicket.id}`
-        : `https://pandatur-api.com/tickets`;
+        ? `https://pandatur-api.com/api/tickets/${editedTicket.id}`
+        : `https://pandatur-api.com/api/tickets`;
 
       const response = await fetch(url, {
         method,
@@ -120,7 +120,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
   const deleteTicketById = async () => {
     try {
       const token = Cookies.get('jwt');
-      const response = await fetch(`https://pandatur-api.com/tickets/${editedTicket?.id}`, {
+      const response = await fetch(`https://pandatur-api.com/api/tickets/${editedTicket?.id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,

@@ -21,7 +21,7 @@ const UserGroupComponent = ({ onChange, userId, roles }) => {
         const fetchUserGroups = async () => {
             try {
                 const token = Cookies.get("jwt");
-                const response = await fetch("https://pandatur-api.com/user-groups", {
+                const response = await fetch("https://pandatur-api.com/api/user-groups", {
                     method: "GET",
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -51,7 +51,7 @@ const UserGroupComponent = ({ onChange, userId, roles }) => {
     const addUserGroup = async (name) => {
         try {
             const token = Cookies.get("jwt");
-            const response = await fetch("https://pandatur-api.com/user-groups", {
+            const response = await fetch("https://pandatur-api.com/api/user-groups", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -81,7 +81,7 @@ const UserGroupComponent = ({ onChange, userId, roles }) => {
     const applyUserGroupRoles = async (groupId, userId) => {
         try {
             const token = Cookies.get("jwt");
-            const response = await fetch(`https://pandatur-api.com/user-groups/${groupId}/assign/${userId}`, {
+            const response = await fetch(`https://pandatur-api.com/api/user-groups/${groupId}/assign/${userId}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
@@ -107,7 +107,7 @@ const UserGroupComponent = ({ onChange, userId, roles }) => {
     const removeUserGroup = async (groupId) => {
         try {
             const token = Cookies.get("jwt");
-            const response = await fetch(`https://pandatur-api.com/user-groups/${groupId}`, {
+            const response = await fetch(`https://pandatur-api.com/api/user-groups/${groupId}`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",

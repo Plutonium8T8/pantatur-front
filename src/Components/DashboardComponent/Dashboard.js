@@ -89,7 +89,7 @@ const Dashboard = () => {
     try {
       const token = Cookies.get("jwt");
       const response = await fetch(
-        "https://pandatur-api.com/dashboard/statistics",
+        "https://pandatur-api.com/api/dashboard/statistics",
         {
           method: "GET",
           headers: {

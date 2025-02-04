@@ -54,7 +54,7 @@ const ScheduleComponent = () => {
 
       // Отправляем DELETE-запрос на сервер
       const token = Cookies.get("jwt");
-      const response = await fetch(`https://pandatur-api.com/technicians/${technicianId}/schedule/${dayOfWeek}`, {
+      const response = await fetch(`https://pandatur-api.com/api/technicians/${technicianId}/schedule/${dayOfWeek}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -100,7 +100,16 @@ const ScheduleComponent = () => {
   };
 
   useEffect(() => {
-    fetch("https://pandatur-api.com/users-technician")
+    const token = Cookies.get("jwt");
+    
+    fetch("https://pandatur-api.com/api/users-technician", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Origin: 'https://plutonium8t8.github.io',
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         const formattedSchedule = data.map((technician) => ({
@@ -149,7 +158,7 @@ const ScheduleComponent = () => {
       const token = Cookies.get("jwt");
 
       // Fetch users-technician
-      const usersResponse = await fetch("https://pandatur-api.com/users-technician", {
+      const usersResponse = await fetch("https://pandatur-api.com/api/users-technician", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -160,7 +169,7 @@ const ScheduleComponent = () => {
       const usersData = await usersResponse.json();
 
       // Fetch technicians' schedule
-      const scheduleResponse = await fetch("https://pandatur-api.com/technicians/schedules", {
+      const scheduleResponse = await fetch("https://pandatur-api.com/api/technicians/schedules", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -251,7 +260,7 @@ const ScheduleComponent = () => {
 
       // Отправляем POST-запрос на сервер
       const token = Cookies.get("jwt");
-      const response = await fetch(`https://pandatur-api.com/technicians/${technicianId}/schedule/${dayOfWeek}`, {
+      const response = await fetch(`https://pandatur-api.com/api/technicians/${technicianId}/schedule/${dayOfWeek}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -297,7 +306,7 @@ const ScheduleComponent = () => {
       console.log("Отправляемый интервал:", newInterval);
       // Отправляем POST-запрос на сервер
       const token = Cookies.get("jwt");
-      const response = await fetch(`https://pandatur-api.com/technicians/${technicianId}/schedule/${dayOfWeek}`, {
+      const response = await fetch(`https://pandatur-api.com/api/technicians/${technicianId}/schedule/${dayOfWeek}`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

@@ -24,7 +24,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
     const fetchNotifications = async () => {
         try {
             const token = Cookies.get("jwt");
-            const response = await fetch(`https://pandatur-api.com/notification/${userId}`, {
+            const response = await fetch(`https://pandatur-api.com/api/notification/${userId}`, {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -48,7 +48,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
         e.preventDefault();
         try {
             const token = Cookies.get("jwt");
-            const response = await fetch("https://pandatur-api.com/notification", {
+            const response = await fetch("https://pandatur-api.com/api/notification", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -77,7 +77,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
     const handleClearAllNotifications = async () => {
         try {
             const token = Cookies.get("jwt");
-            const response = await fetch("https://pandatur-api.com/notification/client", {
+            const response = await fetch("https://pandatur-api.com/api/notification/client", {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
@@ -101,7 +101,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
     const handleMarkAsSeen = async (id) => {
         try {
             const token = Cookies.get("jwt");
-            const response = await fetch("https://pandatur-api.com/notification", {
+            const response = await fetch("https://pandatur-api.com/api/notification", {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",

@@ -31,7 +31,7 @@ function App() {
 
     try {
       const token = Cookies.get("jwt");
-      const response = await fetch(`https://pandatur-api.com/users/${userId}`, {
+      const response = await fetch(`https://pandatur-api.com/api/users/${userId}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,

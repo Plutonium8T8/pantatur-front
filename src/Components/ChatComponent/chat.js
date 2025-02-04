@@ -137,7 +137,7 @@ const ChatComponent = ({ }) => {
     const fetchTicketExtraInfo = async (selectTicketId) => {
         try {
             const token = Cookies.get('jwt');
-            const response = await fetch(`https://pandatur-api.com/ticket-info/${selectTicketId}`, {
+            const response = await fetch(`https://pandatur-api.com/api/ticket-info/${selectTicketId}`, {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -191,7 +191,7 @@ const ChatComponent = ({ }) => {
         setIsLoading(true); // Устанавливаем состояние загрузки в true
 
         try {
-            const response = await fetch(`https://pandatur-api.com/ticket-info/${selectTicketId}`, {
+            const response = await fetch(`https://pandatur-api.com/api/ticket-info/${selectTicketId}`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -608,7 +608,7 @@ const ChatComponent = ({ }) => {
 
         try {
             const token = Cookies.get('jwt');
-            const response = await fetch(`https://pandatur-api.com/tickets/${selectTicketId}`, {
+            const response = await fetch(`https://pandatur-api.com/api/tickets/${selectTicketId}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -644,7 +644,7 @@ const ChatComponent = ({ }) => {
         console.log('FormData:', formData);
 
         try {
-            const response = await fetch('https://pandatur-api.com/messages/upload', {
+            const response = await fetch('https://pandatur-api.com/api/messages/upload', {
                 method: 'POST',
                 body: formData,
                 headers: {
@@ -879,7 +879,7 @@ const ChatComponent = ({ }) => {
                 return;
             }
 
-            const response = await fetch(`https://pandatur-api.com/users-extended/${selectedClient}`, {
+            const response = await fetch(`https://pandatur-api.com/api/users-extended/${selectedClient}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
@@ -914,7 +914,7 @@ const ChatComponent = ({ }) => {
         try {
             const token = Cookies.get('jwt');
 
-            const response = await fetch(`https://pandatur-api.com/users-extended/${selectedClient}`, {
+            const response = await fetch(`https://pandatur-api.com/api/users-extended/${selectedClient}`, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,

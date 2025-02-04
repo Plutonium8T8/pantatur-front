@@ -30,7 +30,7 @@ const TaskModal = ({ isOpen, onClose }) => {
     const fetchTicketsID = async () => {
         try {
             const token = Cookies.get("jwt");
-            const response = await fetch("https://pandatur-api.com/tickets", {
+            const response = await fetch("https://pandatur-api.com/api/tickets", {
                 method: "GET",
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -50,7 +50,7 @@ const TaskModal = ({ isOpen, onClose }) => {
     const fetchTasks = async () => {
         try {
             const token = Cookies.get("jwt");
-            const response = await fetch(`https://pandatur-api.com/task/user/${userId}`, {
+            const response = await fetch(`https://pandatur-api.com/api/task/user/${userId}`, {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -75,7 +75,7 @@ const TaskModal = ({ isOpen, onClose }) => {
         e.preventDefault();
         try {
             const token = Cookies.get("jwt");
-            const response = await fetch("https://pandatur-api.com/task", {
+            const response = await fetch("https://pandatur-api.com/api/task", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -102,7 +102,7 @@ const TaskModal = ({ isOpen, onClose }) => {
     const handleClearAllTasks = async () => {
         try {
             const token = Cookies.get("jwt");
-            const response = await fetch(`https://pandatur-api.com/task/clear`, {
+            const response = await fetch(`https://pandatur-api.com/api/task/clear`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
@@ -125,7 +125,7 @@ const TaskModal = ({ isOpen, onClose }) => {
     const handleMarkAsSeenTask = async (id) => {
         try {
             const token = Cookies.get("jwt");
-            const response = await fetch("https://pandatur-api.com/task", {
+            const response = await fetch("https://pandatur-api.com/api/task", {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
