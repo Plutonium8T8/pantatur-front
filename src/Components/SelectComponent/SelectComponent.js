@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './select.css';
 import { translations } from '../utils/translations';
 
-const Select = ({ options, label, id, value, onChange, customClassName }) => {
+const Select = ({ options, label, id, value, onChange, customClassName, placeholder }) => {
     const handleChange = (event) => {
         const selectedValue = event.target.value;
         onChange(selectedValue); // Передаем выбранное значение в родительский компонент
@@ -12,7 +12,7 @@ const Select = ({ options, label, id, value, onChange, customClassName }) => {
 
     return (
         <div className="input-group">
-            <label htmlFor={id}>{translations[label][language] ?? label}</label>
+            <label htmlFor={id}>{translations[label]?.[language] ?? label}</label>
             <select
                 id={id}
                 className="task-select"
@@ -20,7 +20,7 @@ const Select = ({ options, label, id, value, onChange, customClassName }) => {
                 onChange={handleChange}
                 required
             >
-                <option value="">Select</option>
+                <option value="">{translations[placeholder]?.[language] ?? label}</option>
                 {options.map((option, index) => (
                     <option key={index} value={option}>
                         {option}

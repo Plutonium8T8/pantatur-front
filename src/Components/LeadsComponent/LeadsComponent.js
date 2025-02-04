@@ -68,7 +68,7 @@ const Leads = () => {
   const updateWorkflow = async (ticketId, newWorkflow) => {
     try {
       const token = Cookies.get('jwt');
-      const response = await fetch(`https://pandatur-api.com/tickets/${ticketId}`, {
+      const response = await fetch(`https://pandatur-api.com/api/tickets/${ticketId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

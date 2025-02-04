@@ -48,7 +48,7 @@ const UserPage = ({ isOpen, onClose }) => {
 
       // Fetch user basic information
       const userResponse = await fetch(
-        `https://pandatur-api.com/users/${userId}`,
+        `https://pandatur-api.com/api/users/${userId}`,
         {
           method: "GET",
           headers: {
@@ -76,7 +76,7 @@ const UserPage = ({ isOpen, onClose }) => {
 
       // Fetch extended user information
       const extendedResponse = await fetch(
-        `https://pandatur-api.com/users-extended/${userId}`,
+        `https://pandatur-api.com/api/users-extended/${userId}`,
         {
           method: "GET",
           headers: {
@@ -109,7 +109,7 @@ const UserPage = ({ isOpen, onClose }) => {
 
       // Fetch technician user information
       const technicianResponse = await fetch(
-        `https://pandatur-api.com/users-technician/${userId}`,
+        `https://pandatur-api.com/api/users-technician/${userId}`,
         {
           method: "GET",
           headers: {
@@ -161,7 +161,7 @@ const UserPage = ({ isOpen, onClose }) => {
     try {
       const token = Cookies.get("jwt");
       let response = await fetch(
-        `https://pandatur-api.com/users/${userId}`,
+        `https://pandatur-api.com/api/users/${userId}`,
         {
           method: "PATCH",
           headers: {
@@ -183,7 +183,7 @@ const UserPage = ({ isOpen, onClose }) => {
       console.log("User data saved successfully");
 
       response = await fetch(
-        `https://pandatur-api.com/users-extended/${userId}`,
+        `https://pandatur-api.com/api/users-extended/${userId}`,
         {
           method: "PATCH",
           headers: {
@@ -212,7 +212,7 @@ const UserPage = ({ isOpen, onClose }) => {
       console.log("User extended data saved successfully");
 
       response = await fetch(
-        `https://pandatur-api.com/users-technician/${userId}`,
+        `https://pandatur-api.com/api/users-technician/${userId}`,
         {
           method: "PATCH",
           headers: {

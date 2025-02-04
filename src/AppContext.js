@@ -126,29 +126,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     );
     console.log("🔄 Обновляем `unreadCount`: ", unread.length);
     setUnreadCount(unread.length);
-  }, [messages]); // Теперь `unreadCount` обновляется автоматически при изменении `messages`
-
-
-
-  // const markMessagesAsRead = (ticketId) => {
-  //   if (!ticketId) return;
-
-  //   // **Отправляем `seen` в WebSocket**
-  //   const socketInstance = socketRef.current;
-  //   if (socketInstance && socketInstance.readyState === WebSocket.OPEN) {
-  //     const readMessageData = {
-  //       type: 'seen',
-  //       data: {
-  //         ticket_id: ticketId,
-  //         sender_id: Number(userId),
-  //       },
-  //     };
-  //     socketInstance.send(JSON.stringify(readMessageData));
-  //     console.log(`✅ Seen отправлен для ticket_id=${ticketId}`);
-  //   } else {
-  //     console.warn('WebSocket не подключен или закрыт.');
-  //   }
-  // };
+  }, [messages]);
 
   const markMessagesAsRead = (ticketId) => {
     if (!ticketId) return;
@@ -168,24 +146,21 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       console.warn('WebSocket не подключен или закрыт.');
     }
 
-    // **Локально обновляем `messages`**
     setMessages((prevMessages) => {
       return prevMessages.map((msg) => {
         let seenBy = msg.seen_by;
 
-        // 🔹 **Безопасное преобразование `seen_by`**
         if (typeof seenBy === "string") {
           if (/^{\d+}$/.test(seenBy)) {
-            // Если формат `{7}`, исправляем его
             seenBy = { [seenBy.replace(/\D/g, '')]: true };
           } else if (seenBy.startsWith("{") && seenBy.endsWith("}")) {
             try {
               seenBy = JSON.parse(seenBy);
             } catch (error) {
-              seenBy = {}; // Если ошибка, заменяем на пустой объект
+              seenBy = {};
             }
           } else {
-            seenBy = {}; // Если совсем неверный формат
+            seenBy = {};
           }
         }
 
@@ -201,7 +176,6 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     });
   };
 
-  // Функция загрузки тикетов
   const fetchTickets = async () => {
     try {
       setIsLoading(true);
@@ -211,8 +185,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         console.warn('Нет токена. Пропускаем загрузку тикетов.');
         return [];
       }
-
-      const response = await fetch('https://pandatur-api.com/tickets', {
+      const response = await fetch('https://pandatur-api.com/api/tickets', {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -233,8 +206,8 @@ export const AppProvider = ({ children, isLoggedIn }) => {
 
       const data = await response.json();
 
-      setTickets(data); // Сохраняем тикеты в состоянии
-      setTicketIds(data.map((ticket) => ticket.id)); // Сохраняем ticket.id
+      setTickets(data);
+      setTicketIds(data.map((ticket) => ticket.id));
 
       return data;
     } catch (error) {
@@ -255,7 +228,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         return null;
       }
 
-      const response = await fetch(`https://pandatur-api.com/tickets/${ticketId}`, {
+      const response = await fetch(`https://pandatur-api.com/api/tickets/${ticketId}`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -272,21 +245,18 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       const ticket = await response.json();
       console.log('Загруженный тикет:', ticket);
 
-      // Обновляем или добавляем тикет в состояние
       setTickets((prevTickets) => {
         const existingTicket = prevTickets.find((t) => t.id === ticketId);
         if (existingTicket) {
-          // Обновляем существующий тикет
           return prevTickets.map((t) =>
             t.id === ticketId ? ticket : t
           );
         } else {
-          // Добавляем новый тикет
           return [...prevTickets, ticket];
         }
       });
 
-      return ticket; // Возвращаем полученный тикет
+      return ticket;
     } catch (error) {
       console.error('Ошибка при загрузке тикета:', error);
       return null;
@@ -302,7 +272,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         throw new Error('Token is missing. Authorization required.');
       }
 
-      const response = await fetch(`https://pandatur-api.com/tickets/${updateData.id}`, {
+      const response = await fetch(`https://pandatur-api.com/api/tickets/${updateData.id}`, {
         method: 'PATCH',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -339,7 +309,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         return;
       }
 
-      const response = await fetch('https://pandatur-api.com/messages', {
+      const response = await fetch('https://pandatur-api.com/api/messages', {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -368,7 +338,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     try {
       const token = Cookies.get('jwt');
       if (!token) return;
-      const response = await fetch(`https://pandatur-api.com/messages/ticket/${ticket_id}`, {
+      const response = await fetch(`https://pandatur-api.com/api/messages/ticket/${ticket_id}`, {
         method: 'GET',
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
       });

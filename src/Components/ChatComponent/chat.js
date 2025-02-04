@@ -137,7 +137,7 @@ const ChatComponent = ({ }) => {
     const fetchTicketExtraInfo = async (selectTicketId) => {
         try {
             const token = Cookies.get('jwt');
-            const response = await fetch(`https://pandatur-api.com/ticket-info/${selectTicketId}`, {
+            const response = await fetch(`https://pandatur-api.com/api/ticket-info/${selectTicketId}`, {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -191,7 +191,7 @@ const ChatComponent = ({ }) => {
         setIsLoading(true); // Устанавливаем состояние загрузки в true
 
         try {
-            const response = await fetch(`https://pandatur-api.com/ticket-info/${selectTicketId}`, {
+            const response = await fetch(`https://pandatur-api.com/api/ticket-info/${selectTicketId}`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -310,7 +310,6 @@ const ChatComponent = ({ }) => {
             setSelectedTechnicianId(null);
         }
         navigate(`/chat/${ticketId}`);
-
         // Помечаем все сообщения как прочитанные (отправляем `seen`)
         markMessagesAsRead(ticketId);
     };
@@ -469,13 +468,13 @@ const ChatComponent = ({ }) => {
             const reactionsArray = message.reactions
                 .replace(/^{|}$/g, '') // Удаляем внешние фигурные скобки
                 .split('","') // Разделяем строки реакций
-                .map((reaction) => reaction.replace(/(^"|"$)/g, '').trim()); // Убираем кавычки
+                .map((reaction) => reaction.replace(/(^"|"$|\")/g, '').trim()); // Убираем кавычки
 
             // Парсим JSON-объекты и извлекаем поле `reaction`
             const parsedReactions = reactionsArray.map((reaction) => {
                 try {
                     // Удаляем экранированные кавычки и парсим строку
-                    const normalizedReaction = reaction.replace(/\\\"/g, '"');
+                    const normalizedReaction = reaction.replace('\"', '');
                     const parsed = JSON.parse(normalizedReaction); // Пытаемся распарсить как JSON
                     return parsed.reaction; // Возвращаем только поле `reaction`
                 } catch {
@@ -609,7 +608,7 @@ const ChatComponent = ({ }) => {
 
         try {
             const token = Cookies.get('jwt');
-            const response = await fetch(`https://pandatur-api.com/tickets/${selectTicketId}`, {
+            const response = await fetch(`https://pandatur-api.com/api/tickets/${selectTicketId}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -645,7 +644,7 @@ const ChatComponent = ({ }) => {
         console.log('FormData:', formData);
 
         try {
-            const response = await fetch('https://pandatur-api.com/messages/upload', {
+            const response = await fetch('https://pandatur-api.com/api/messages/upload', {
                 method: 'POST',
                 body: formData,
                 headers: {
@@ -880,7 +879,7 @@ const ChatComponent = ({ }) => {
                 return;
             }
 
-            const response = await fetch(`https://pandatur-api.com/users-extended/${selectedClient}`, {
+            const response = await fetch(`https://pandatur-api.com/api/users-extended/${selectedClient}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
@@ -915,7 +914,7 @@ const ChatComponent = ({ }) => {
         try {
             const token = Cookies.get('jwt');
 
-            const response = await fetch(`https://pandatur-api.com/users-extended/${selectedClient}`, {
+            const response = await fetch(`https://pandatur-api.com/api/users-extended/${selectedClient}`, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
@@ -1007,7 +1006,19 @@ const ChatComponent = ({ }) => {
     return (
         <div className="chat-container">
             <div className="users-container">
-                <div className='extra-info-title'>Chat</div>
+                <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                    <div className='extra-info-title'>Chat</div>
+                    <label style={{ marginLeft: "auto" }}>
+                        Leadurile mele
+                        <input
+                            type="checkbox"
+                            id="myTicketsCheckbox"
+                            onChange={handleCheckboxChange}
+                            checked={showMyTickets}
+                        />
+                    </label>
+                </div>
+
                 <div className="filter-container-chat">
                     <input
                         type="text"
@@ -1015,18 +1026,6 @@ const ChatComponent = ({ }) => {
                         onInput={handleFilterInput}
                         className="ticket-filter-input"
                     />
-
-                    <label>
-                        <input
-                            type="checkbox"
-                            id="myTicketsCheckbox"
-                            onChange={handleCheckboxChange}
-                            checked={showMyTickets}
-                        />
-                        My tickets
-                    </label>
-
-                    {/* Кнопка фильтра с индикатором */}
                     <button onClick={() => setIsFilterOpen(true)} className="button-filter">
                         Filter {Object.values(appliedFilters).some(value => value) && <span className="filter-indicator"></span>}
                     </button>
@@ -1258,6 +1257,8 @@ const ChatComponent = ({ }) => {
 
                                                     const lastReaction = getLastReaction(msg);
 
+                                                    console.log(lastReaction);
+
                                                     return (
                                                         <div
                                                             key={uniqueKey}
@@ -1373,7 +1374,7 @@ const ChatComponent = ({ }) => {
                             <Select
                                 options={templateOptions}
                                 id="message-template"
-                                label="Șablon"
+                                label=""
                                 value={selectedMessage ?? undefined}
                                 onChange={handleSelectTChange}
                                 placeholder="Introduceți mesaj"
@@ -1384,7 +1385,7 @@ const ChatComponent = ({ }) => {
                         {tickets && tickets.find(ticket => ticket.id === selectTicketId)?.client_id && (
                             <div className="client-select-container">
                                 <select
-                                    className="client-select"
+                                    className="task-select"
                                     value={selectedClient}
                                     onChange={(e) => setSelectedClient(e.target.value)}
                                 >

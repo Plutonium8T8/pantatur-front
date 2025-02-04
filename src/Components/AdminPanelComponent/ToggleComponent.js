@@ -17,7 +17,7 @@ const ToggleComponent = ({ employee }) => {
     const fetchRoles = async () => {
         try {
             const token = Cookies.get("jwt");
-            const response = await fetch(`https://pandatur-api.com/users/${employee.id}`, {
+            const response = await fetch(`https://pandatur-api.com/api/users/${employee.id}`, {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -50,7 +50,7 @@ const ToggleComponent = ({ employee }) => {
                 },
                 body: JSON.stringify({
                     id: employee.id,
-                    role,
+                    role: "ROLE_" + role,
                 }),
             });
 
@@ -103,7 +103,7 @@ const ToggleComponent = ({ employee }) => {
     const isRoleActive = (role) => roles.includes(role);
 
     return (
-        <div>
+        <div style={{ marginTop: "42px" }}>
             <div className="modal-header">
                 <h2>
                     <FaHandshake /> {translations["Permisiuni"][language]} {employee.name}
