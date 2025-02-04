@@ -74,12 +74,12 @@ function App() {
 
   return (
     <Router basename="/pantatur-front">
-    <AppProvider isLoggedIn={isLoggedIn}>
-      <SnackbarProvider
-        autoHideDuration={3000}
-        maxSnack={5}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
-        <UserProvider>
+      <AppProvider isLoggedIn={isLoggedIn}>
+        <SnackbarProvider
+          autoHideDuration={3000}
+          maxSnack={5}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+          <UserProvider>
             {!isLoggedIn ? (
               <LoginForm onLoginSuccess={handleLogin} />
             ) : (
@@ -116,9 +116,9 @@ function App() {
                 />
               </div>
             )}
-        </UserProvider>
-      </SnackbarProvider>
-    </AppProvider>
+          </UserProvider>
+        </SnackbarProvider>
+      </AppProvider>
     </Router>
   );
 }
