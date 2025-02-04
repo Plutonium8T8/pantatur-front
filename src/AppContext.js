@@ -4,6 +4,7 @@ import { useSnackbar } from 'notistack';
 import { FaEnvelope, FaTrash } from 'react-icons/fa';
 import { useUser } from './UserContext';
 import { truncateText } from './stringUtils';
+import { useNavigation } from "./NavigationContext"; // Импорт
 
 const AppContext = createContext();
 
@@ -21,6 +22,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   const { userId } = useUser(); // Получаем userId из UserContext
   const ticketsRef = useRef(tickets);
   const [unreadMessages, setUnreadMessages] = useState(new Map()); // Оптимизированное хранение непрочитанных сообщений
+  const { navigate } = useNavigation(); // Достаем navigate
 
   useEffect(() => {
     let pingInterval;
@@ -209,7 +211,6 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         console.warn('Нет токена. Пропускаем загрузку тикетов.');
         return [];
       }
-      // await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const response = await fetch('https://pandatur-api.com/tickets', {
         method: 'GET',
@@ -221,17 +222,21 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         credentials: 'include',
       });
 
+      if (response.status === 401 || response.status === 403 || response.status === 405 ) {
+        navigate("/error"); // Перенаправляем на страницу ошибки
+        return [];
+      }
+
       if (!response.ok) {
         throw new Error(`Ошибка при получении тикетов. Код статуса: ${response.status}`);
       }
 
       const data = await response.json();
-      // console.log("Загруженные тикеты:", data);
 
       setTickets(data); // Сохраняем тикеты в состоянии
       setTicketIds(data.map((ticket) => ticket.id)); // Сохраняем ticket.id
 
-      return data; // Возвращаем массив тикетов
+      return data;
     } catch (error) {
       console.error('Ошибка при загрузке тикетов:', error);
       return [];
@@ -359,7 +364,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
 
   // Функция для получения сообщений для конкретного client_id
   const getClientMessagesSingle = async (ticket_id) => {
-    console.log("ticket_id din get client",ticket_id);
+    console.log("ticket_id din get client", ticket_id);
     try {
       const token = Cookies.get('jwt');
       if (!token) return;

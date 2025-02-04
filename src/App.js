@@ -15,6 +15,8 @@ import AdminPanel from './Components/AdminPanelComponent/AdminPanel';
 import Dashboard from './Components/DashboardComponent/Dashboard';
 import UserPage from './Components/UserPage/UserPage';
 import { useSnackbar } from 'notistack';
+import { NavigationProvider } from './NavigationContext';
+import ErrorPage from './ErrorPage';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -22,10 +24,57 @@ function App() {
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
   const [isTaskComponentOpen, setIsTaskComponentOpen] = useState(false);
   const [isAccountComponentOpen, setIsAccountComponentOpen] = useState(false);
-  const { userId } = useUser();
+  const { userId, setUserId } = useUser(); // Теперь используем setUserId
   const { enqueueSnackbar } = useSnackbar();
   const [userRoles, setUserRoles] = useState(null);
 
+  // Функция для получения сессии и user_id
+  const fetchSession = async () => {
+    const token = Cookies.get('jwt');
+    if (!token) {
+      console.log("❌ Нет токена, выход...");
+      setIsLoggedIn(false);
+      setUserRoles(null);
+      setUserId(null);
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch('https://pandatur-api.com/session', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+          Origin: 'https://plutonium8t8.github.io',
+        },
+        credentials: 'include',
+      });
+
+      if (!response.ok) throw new Error('Сессия истекла');
+
+      const data = await response.json();
+      if (data.user_id) {
+        console.log("✅ Сессия активна, user_id:", data.user_id);
+        setIsLoggedIn(true);
+        setUserId(data.user_id); // Обновляем userId в UserContext
+      } else {
+        console.log("❌ Нет user_id в ответе, выход...");
+        setIsLoggedIn(false);
+        setUserId(null);
+      }
+    } catch (error) {
+      console.log("❌ Ошибка при запросе сессии:", error.message);
+      Cookies.remove('jwt');
+      setIsLoggedIn(false);
+      setUserRoles(null);
+      setUserId(null);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Функция для загрузки ролей
   const fetchRoles = async () => {
     if (!userId) return;
 
@@ -42,66 +91,45 @@ function App() {
 
       if (response.ok) {
         const data = await response.json();
-        console.log("Роли пользователя:", data.roles);
+        console.log("✅ Роли пользователя загружены:", data.roles);
         setUserRoles(data.roles);
       } else {
-        console.error(`Ошибка: ${response.status} - ${response.statusText}`);
+        console.error(`❌ Ошибка загрузки ролей: ${response.status} - ${response.statusText}`);
       }
     } catch (error) {
-      console.error("Ошибка загрузки ролей:", error.message);
+      console.error("❌ Ошибка при загрузке ролей:", error.message);
     }
   };
 
+  // Загружаем сессию при загрузке страницы
   useEffect(() => {
-    const token = Cookies.get('jwt');
-    if (token) {
-      fetch('https://pandatur-api.com/session', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-          Origin: 'https://plutonium8t8.github.io',
-        },
-        credentials: 'include',
-      })
-        .then((response) => {
-          if (!response.ok) throw new Error('Сессия истекла');
-          return response.json();
-        })
-        .then((data) => {
-          if (data.user_id) {
-            setIsLoggedIn(true);
-          } else {
-            setIsLoggedIn(false);
-          }
-        })
-        .catch(() => {
-          Cookies.remove('jwt');
-          setIsLoggedIn(false);
-        })
-        .finally(() => setIsLoading(false));
-    } else {
-      setIsLoggedIn(false);
-      setIsLoading(false);
-    }
+    fetchSession();
   }, []);
 
+  // Загружаем роли после обновления userId
   useEffect(() => {
-    if (isLoggedIn) {
+    if (isLoggedIn && userId) {
       fetchRoles();
+    } else {
+      setUserRoles(null);
     }
   }, [isLoggedIn, userId]);
 
-  useEffect(() => {
-    if (userRoles !== null) {
-      console.log("user roles din app", userRoles);
-    }
-  }, [userRoles]);
+  // 🔥 Функция логина: сначала обновляем сессию, затем роли
+  const handleLogin = async () => {
+    console.log("🔄 Логин: обновляем сессию...");
+    await fetchSession();
+    console.log("🔄 Логин: загружаем роли...");
+    await fetchRoles();
+  };
 
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-    setIsLoading(false);
-    fetchRoles();
+  // 🔥 Функция выхода: очищаем все данные
+  const handleLogout = () => {
+    console.log("❌ Выход: очищаем токен, роли и сессию...");
+    Cookies.remove("jwt");
+    setIsLoggedIn(false);
+    setUserRoles(null);
+    setUserId(null);
   };
 
   if (isLoading) {
@@ -110,62 +138,47 @@ function App() {
 
   const NoAccess = () => (
     <div style={{ textAlign: 'center', marginTop: '50px', fontSize: '18px', color: 'red' }}>
-      <h2>No acces roles</h2>
+      <h2>No acces page!</h2>
     </div>
   );
 
   return (
     <Router basename="/">
-      <AppProvider isLoggedIn={isLoggedIn}>
-        <SnackbarProvider
-          autoHideDuration={3000}
-          maxSnack={5}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
-          <UserProvider>
-            {!isLoggedIn ? (
-              <LoginForm onLoginSuccess={handleLogin} />
-            ) : (
-              <div className="app-container">
-                <CustomSidebar
-                  onOpenNotifications={() => setIsNotificationModalOpen(true)}
-                  onOpenTasks={() => setIsTaskComponentOpen(true)}
-                  onOpenAccount={() => setIsAccountComponentOpen(true)}
-                />
-                <div className="page-content">
-                  <Routes>
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/" element={<Navigate to="/leads" />} />
-                    <Route path="/leads" element={<Leads />} />
-                    <Route path="/chat/:ticketId?" element={<ChatComponent />} />
-
-                    {/* Проверяем наличие роли ADMIN */}
-                    <Route
-                      path="/admin-panel"
-                      element={
-                        userRoles && userRoles.includes("ROLE_ADMIN") ? <AdminPanel /> : <NoAccess />
-                      }
-                    />
-
-                    <Route path="*" element={<Navigate to="/index.html" />} />;
-                  </Routes>
+      <NavigationProvider> {/* Переместили выше AppProvider */}
+        <AppProvider isLoggedIn={isLoggedIn}>
+          <SnackbarProvider autoHideDuration={3000} maxSnack={5} anchorOrigin={{ vertical: "bottom", horizontal: "right" }}>
+            <UserProvider>
+              {!isLoggedIn ? (
+                <LoginForm onLoginSuccess={handleLogin} />
+              ) : (
+                <div className="app-container">
+                  <CustomSidebar
+                    onOpenNotifications={() => setIsNotificationModalOpen(true)}
+                    onOpenTasks={() => setIsTaskComponentOpen(true)}
+                    onOpenAccount={() => setIsAccountComponentOpen(true)}
+                    onLogout={handleLogout}
+                    userRoles={userRoles}
+                  />
+                  <div className="page-content">
+                    <Routes>
+                      <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/" element={<Navigate to="/leads" />} />
+                      <Route path="/leads" element={<Leads />} />
+                      <Route path="/chat/:ticketId?" element={<ChatComponent />} />
+                      <Route path="/admin-panel" element={userRoles && userRoles.includes("ROLE_ADMIN") ? <AdminPanel /> : <NoAccess />} />
+                      <Route path="/error" element={<ErrorPage />} />
+                      <Route path="*" element={<Navigate to="/index.html" />} />
+                    </Routes>
+                  </div>
+                  <UserPage isOpen={isAccountComponentOpen} onClose={() => setIsAccountComponentOpen(false)} />
+                  <NotificationModal isOpen={isNotificationModalOpen} onClose={() => setIsNotificationModalOpen(false)} />
+                  <TaskComponent isOpen={isTaskComponentOpen} onClose={() => setIsTaskComponentOpen(false)} />
                 </div>
-                <UserPage
-                  isOpen={isAccountComponentOpen}
-                  onClose={() => setIsAccountComponentOpen(false)}
-                />
-                <NotificationModal
-                  isOpen={isNotificationModalOpen}
-                  onClose={() => setIsNotificationModalOpen(false)}
-                />
-                <TaskComponent
-                  isOpen={isTaskComponentOpen}
-                  onClose={() => setIsTaskComponentOpen(false)}
-                />
-              </div>
-            )}
-          </UserProvider>
-        </SnackbarProvider>
-      </AppProvider>
+              )}
+            </UserProvider>
+          </SnackbarProvider>
+        </AppProvider>
+      </NavigationProvider>
     </Router>
   );
 }
