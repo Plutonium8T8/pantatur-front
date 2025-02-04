@@ -24,6 +24,7 @@ import './chat.css';
 import EmojiPicker from 'emoji-picker-react';
 import ReactDOM from "react-dom";
 import { translations } from '../utils/translations';
+import TicketFilterModal from '../LeadsComponent/TicketFilterModal';
 
 const ChatComponent = ({ }) => {
     const { userId } = useUser();
@@ -53,6 +54,55 @@ const ChatComponent = ({ }) => {
     const activeChatRef = useRef(null);
     const [selectedClient, setSelectedClient] = useState(null);
     const fileInputRef = useRef(null);
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
+    const [appliedFilters, setAppliedFilters] = useState({});
+
+    // Функция фильтрации тикетов
+    const applyFilters = (filters) => {
+        setAppliedFilters(filters);
+
+        let filtered = tickets;
+
+        if (filters.creation_date) {
+            filtered = filtered.filter(ticket => ticket.creation_date.startsWith(filters.creation_date));
+        }
+        if (filters.last_interaction_date) {
+            filtered = filtered.filter(ticket => ticket.last_interaction_date.startsWith(filters.last_interaction_date));
+        }
+        if (filters.technician_id) {
+            filtered = filtered.filter(ticket => String(ticket.technician_id) === filters.technician_id);
+        }
+        if (filters.workflow) {
+            filtered = filtered.filter(ticket => ticket.workflow === filters.workflow);
+        }
+        if (filters.priority) {
+            filtered = filtered.filter(ticket => ticket.priority === filters.priority);
+        }
+        if (filters.tags) {
+            filtered = filtered.filter(ticket => {
+                const ticketTags = ticket.tags.replace(/[{}]/g, '').split(',').map(tag => tag.trim());
+                return ticketTags.includes(filters.tags);
+            });
+        }
+        if (filters.platform) {
+            const ticketIds = messages
+                .filter(msg => msg.platform === filters.platform)
+                .map(msg => msg.ticket_id);
+            filtered = filtered.filter(ticket => ticketIds.includes(ticket.id));
+        }
+        if (filters.sender_id) {
+            const ticketIds = messages
+                .filter(msg => String(msg.sender_id) === filters.sender_id)
+                .map(msg => msg.ticket_id);
+            filtered = filtered.filter(ticket => ticketIds.includes(ticket.id));
+        }
+
+        setFilteredTickets(filtered);
+    };
+
+    useEffect(() => {
+        setFilteredTickets(tickets);
+    }, [tickets]);
 
     const handleClientClick = (id) => {
         setSelectedClient(id);
@@ -959,10 +1009,11 @@ const ChatComponent = ({ }) => {
                 <div className="filter-container-chat">
                     <input
                         type="text"
-                        placeholder="Id or name or tag"
+                        placeholder="Ticket ID or Client ID or Tag"
                         onInput={handleFilterInput}
                         className="ticket-filter-input"
                     />
+
                     <label>
                         <input
                             type="checkbox"
@@ -972,7 +1023,13 @@ const ChatComponent = ({ }) => {
                         />
                         My tickets
                     </label>
+
+                    {/* Кнопка фильтра с индикатором */}
+                    <button onClick={() => setIsFilterOpen(true)} className="button-filter">
+                        Filter {Object.values(appliedFilters).some(value => value) && <span className="filter-indicator"></span>}
+                    </button>
                 </div>
+
                 <div className="chat-item-container">
                     {Array.isArray(filteredTickets) && filteredTickets.length > 0 ? (
                         filteredTickets
@@ -1078,11 +1135,19 @@ const ChatComponent = ({ }) => {
                         <div>No tickets available</div>
                     )}
                 </div>
+
                 {isLoading && (
                     <div className="spinner-overlay">
                         <div className="spinner"></div>
                     </div>
                 )}
+
+                {/* Модальное окно фильтра */}
+                <TicketFilterModal
+                    isOpen={isFilterOpen}
+                    onClose={() => setIsFilterOpen(false)}
+                    onApplyFilter={applyFilters}
+                />
             </div>
             <div className="chat-area">
                 <div className="chat-messages" ref={messageContainerRef}>
@@ -1243,7 +1308,7 @@ const ChatComponent = ({ }) => {
                         })()
                     ) : (
                         <div className="empty-chat">
-                            <p>Выберите тикет для просмотра сообщений</p>
+                            <p>Alege ticket</p>
                         </div>
                     )}
                 </div>
