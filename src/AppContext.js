@@ -328,7 +328,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
 
   // Функция для получения сообщений для конкретного client_id
   const getClientMessagesSingle = async (ticket_id) => {
-    console.log("ticket_id din get client", ticket_id);
+    console.log("Обновление сообщений для тикета:", ticket_id);
     try {
       const token = Cookies.get('jwt');
       if (!token) return;
@@ -338,11 +338,20 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       });
       if (!response.ok) throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
       const data = await response.json();
-      if (Array.isArray(data) && data.length > 0) {
+
+      if (Array.isArray(data)) {
         setMessages((prevMessages) => {
+          console.log("Старые сообщения в state:", prevMessages);
+          console.log("Пришедшие новые сообщения:", data);
+
+          // Оставляем все старые сообщения, кроме тех, что принадлежат текущему тикету
           const otherMessages = prevMessages.filter((msg) => msg.ticket_id !== ticket_id);
+
+          // Добавляем новые сообщения и сообщение из WebSocket
           return [...otherMessages, ...data];
         });
+
+        console.log("Обновленный state сообщений:", data);
       }
     } catch (error) {
       console.error('Ошибка при получении сообщений:', error.message);
@@ -355,17 +364,20 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       case 'message': {
         console.log("Новое сообщение из WebSocket:", message.data);
 
+        const ticketId = message.data.ticket_id;
+
+        // Делаем запрос на обновление сообщений, но не затираем старые сразу
+        getClientMessagesSingle(ticketId)
+          .then(() => {
+            console.log(`Сообщения для тикета ${ticketId} обновлены.`);
+          })
+          .catch((err) => {
+            console.error("Ошибка при обновлении сообщений с сервера:", err);
+          });
+
+        // Добавляем сообщение из WebSocket в state немедленно, чтобы оно появилось мгновенно
         setMessages((prevMessages) => {
-          const updatedMessages = [...prevMessages, message.data];
-
-          // Проверяем, если сообщение от оператора
-          if (message.data.sender_id === 1) {
-            // console.log("Сообщение от оператора через WebSocket:", message.data);
-          } else {
-            // Если сообщение от клиента, обновляем непрочитанные
-          }
-
-          return updatedMessages;
+          return [...prevMessages, message.data]; // Просто добавляем новое сообщение
         });
 
         // Проверяем, связан ли тикет с текущим пользователем
