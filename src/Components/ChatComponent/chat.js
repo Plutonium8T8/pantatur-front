@@ -58,6 +58,8 @@ const ChatComponent = ({ }) => {
     const fileInputRef = useRef(null);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [appliedFilters, setAppliedFilters] = useState({});
+    const ticketRef = useRef(null);
+
     const platformIcons = {
         "facebook": <FaFacebook />,
         "instagram": <FaInstagram />,
@@ -118,10 +120,6 @@ const ChatComponent = ({ }) => {
         console.log("Выбран клиент:", id);
         // Здесь можно добавить дополнительную логику, например, фильтрацию сообщений
     };
-
-    // useEffect(() => {
-    //     enqueueSnackbar("Тестовое уведомление работает!", { variant: "success" });
-    // }, []);
 
     useEffect(() => {
         if (ticketId) {
@@ -377,28 +375,6 @@ const ChatComponent = ({ }) => {
             alert('Сообщение не может быть пустым');
             return;
         }
-
-        // if (socket && socket.readyState === WebSocket.OPEN) {
-        //     const payload = {
-        //         type: 'edit',
-        //         data: {
-        //             message_id: editMessageId, // Используется правильный идентификатор сообщения
-        //             sender_id: userId,
-        //             new_text: managerMessage,
-        //             edited_at: new Date().toISOString(),
-        //         },
-        //     };
-
-        //     try {
-        //         socket.send(JSON.stringify(payload));
-        //         setEditMessageId(null); // Сбрасываем состояние редактирования
-        //         setManagerMessage(''); // Очищаем textarea
-        //     } catch (error) {
-        //         console.error('Ошибка при сохранении:', error);
-        //     }
-        // } else {
-        //     alert('WebSocket не подключен');
-        // }
     };
 
     const handleCancel = () => {
@@ -413,9 +389,6 @@ const ChatComponent = ({ }) => {
             ...prev,
             [messageId]: reaction, // Устанавливаем новую реакцию (заменяем старую)
         }));
-
-        // Отправляем реакцию на сервер
-        // sendReaction(messageId, userId, reaction);
     };
 
     // // Пример функции sendReaction с подтверждением от сервера
@@ -636,7 +609,6 @@ const ChatComponent = ({ }) => {
             const updatedTicket = await response.json();
             console.log('Тикет успешно обновлён:', updatedTicket);
 
-            // await fetchTickets();
             console.log('Список тикетов успешно обновлён.');
         } catch (error) {
             console.error('Ошибка при обновлении technician_id:', error.message);
@@ -1089,6 +1061,12 @@ const ChatComponent = ({ }) => {
         }
     };
 
+    useEffect(() => {
+        if (selectTicketId && ticketRef.current) {
+            ticketRef.current.scrollIntoView({ behavior: "auto", block: "center" });
+        }
+    }, [selectTicketId]);
+
     return (
         <div className="chat-container">
             <div className="users-container">
@@ -1166,6 +1144,7 @@ const ChatComponent = ({ }) => {
                                         key={ticket.id}
                                         className={`chat-item ${ticket.id === selectTicketId ? "active" : ""}`}
                                         onClick={() => handleTicketClick(ticket.id)}
+                                        ref={ticket.id === selectTicketId ? ticketRef : null} // Добавляем ref к выбранному тикету
                                     >
                                         <div className="foto-description">
                                             <img className="foto-user" src="https://storage.googleapis.com/pandatur_bucket/utils/icon-5359554_640.webp" alt="example" />
@@ -1207,7 +1186,6 @@ const ChatComponent = ({ }) => {
                                                                 ? getMessageTypeLabel(lastMessage.mtype)
                                                                 : "No messages"}
                                                     </div>
-
                                                     <div className='chat-time'>{formattedTime || "—"}</div>
                                                     {unreadCounts > 0 && (
                                                         <div className="unread-count">{unreadCounts}</div>
