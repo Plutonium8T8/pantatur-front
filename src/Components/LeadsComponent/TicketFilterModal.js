@@ -3,11 +3,13 @@ import { priorityOptions } from '../../FormOptions/PriorityOption';
 import { workflowOptions } from '../../FormOptions/WorkFlowOption';
 import Cookies from 'js-cookie';
 import './Modal.css';
+import { translations } from '../utils/translations';
 
 const platformOptions = ["telegram", "viber", "whatsapp", "facebook", "instagram", "sipuni"];
 
 const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
     const [technicians, setTechnicians] = useState([]);
+    const language = localStorage.getItem('language') || 'RO';
 
     const [filters, setFilters] = useState({
         creation_date: '',
@@ -125,9 +127,9 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
         <div className="modal-overlay-filter">
             <div className="modal-content-filter">
                 <div className='options-container'>
-                    <div className='header-filter'>Filter ticket</div>
+                    <div className='header-filter'>{translations["Filtru lead"][language]}</div>
 
-                    <label>Create date</label>
+                    <label>{translations["Data de creare"][language]}</label>
                     <input
                         type="date"
                         name="creation_date"
@@ -136,7 +138,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                         className={isActive("creation_date") ? "active-filter" : ""}
                     />
 
-                    <label>Last interaction date</label>
+                    <label>{translations["Ultima interacțiune"][language]}</label>
                     <input
                         type="date"
                         name="last_interaction_date"
@@ -145,85 +147,85 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                         className={isActive("last_interaction_date") ? "active-filter" : ""}
                     />
 
-                    <label>Workflow</label>
+                    <label>{translations["Etapa de lucru"][language]}</label>
                     <select
                         className={`select-filter ${isActive("workflow") ? "active-filter" : ""}`}
                         name="workflow"
                         value={filters.workflow}
                         onChange={handleInputChange}
                     >
-                        <option value="">All Workflows</option>
+                        <option value="">{translations["Toate etapele"][language]}</option>
                         {workflowOptions.map(option => (
                             <option key={option} value={option}>{option}</option>
                         ))}
                     </select>
 
-                    <label>Priority</label>
+                    <label>{translations["Prioritate"][language]}</label>
                     <select
                         className={`select-filter ${isActive("priority") ? "active-filter" : ""}`}
                         name="priority"
                         value={filters.priority}
                         onChange={handleInputChange}
                     >
-                        <option value="">All Priorities</option>
+                        <option value="">{translations["Toate prioritățile"][language]}</option>
                         {priorityOptions.map(option => (
                             <option key={option} value={option}>{option}</option>
                         ))}
                     </select>
 
-                    <label>Responsabil Lead</label>
+                    <label>{translations["După responsabil lead"][language]}</label>
                     <select
                         className={`select-filter ${isActive("technician_id") ? "active-filter" : ""}`}
                         name="technician_id"
                         value={filters.technician_id}
                         onChange={handleInputChange}
                     >
-                        <option value="">All Technicians</option>
+                        <option value="">{translations["Toți managerii"][language]}</option>
                         {technicians.map(tech => (
                             <option key={tech.id} value={tech.id}>{`${tech.id}: ${tech.fullName}`}</option>
                         ))}
                     </select>
 
-                    <label>Sender ID</label>
+                    <label>{translations["După ID participant"][language]}</label>
                     <select
                         className={`select-filter ${isActive("sender_id") ? "active-filter" : ""}`}
                         name="sender_id"
                         value={filters.sender_id}
                         onChange={handleInputChange}
                     >
-                        <option value="">All Senders</option>
+                        <option value="">{translations["După participant"][language]}</option>
                         {technicians.map(tech => (
                             <option key={tech.id} value={tech.id}>{`${tech.id}: ${tech.fullName}`}</option>
                         ))}
                     </select>
 
-                    <label>Tags</label>
+                    <label>{translations["Taguri"][language]}</label>
                     <input
                         type="text"
                         name="tags"
                         value={filters.tags}
                         onChange={handleInputChange}
-                        placeholder="Enter tags"
+                        placeholder={translations["Introdu tag"][language]}
                         className={isActive("tags") ? "active-filter" : ""}
                     />
 
-                    <label>Platform</label>
+                    <label>{translations["Platformă"][language]}</label>
                     <select
                         className={`select-filter ${isActive("platform") ? "active-filter" : ""}`}
                         name="platform"
                         value={filters.platform}
                         onChange={handleInputChange}
                     >
-                        <option value="">All Platforms</option>
+                        <option value="">{translations["Toate platformele"][language]}</option>
                         {platformOptions.map(platform => (
                             <option key={platform} value={platform}>{platform}</option>
                         ))}
                     </select>
 
                     <div className="modal-buttons">
-                        <button onClick={handleApplyFilter} className="apply-btn">Apply</button>
-                        <button onClick={handleResetFilters} className="reset-btn">Reset Filters</button>
-                        <button onClick={onClose} className="cancel-btn">Close</button>
+                        <button onClick={handleApplyFilter} className="apply-btn">{translations["Aplică"][language]}</button>
+                        <button onClick={handleResetFilters} className="reset-btn">{translations["Resetează filtre"][language]}</button>
+                        <button onClick={onClose} className="cancel-btn">{translations["Închide"][language]}</button>
                     </div>
                 </div>
             </div>

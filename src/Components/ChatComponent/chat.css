@@ -370,6 +370,17 @@
     white-space: nowrap;
 }
 
+.empty-chat {
+    display: flex;
+    align-items: center; /* Centers items vertically */
+    justify-content: center; /* Centers items horizontally */
+    height: 100%; /* Ensure the container takes up the full height */
+    width: 100%; /* Optional, ensures full width if needed */
+    font-size: 24px;
+    letter-spacing: 1px;
+}
+
+
 .unread-count {
     border-radius: 100%;
     /* border: 1px solid red; */

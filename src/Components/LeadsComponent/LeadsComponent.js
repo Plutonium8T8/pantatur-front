@@ -11,6 +11,7 @@ import Cookies from 'js-cookie';
 import '../../App.css';
 import '../SnackBarComponent/SnackBarComponent.css';
 import { FaFilter } from 'react-icons/fa';
+import { translations } from '../utils/translations';
 
 const Leads = () => {
   const { tickets, isLoading, setTickets, messages } = useAppContext();
@@ -19,6 +20,7 @@ const Leads = () => {
   const [currentTicket, setCurrentTicket] = useState(null);
   const [contextMenu, setContextMenu] = useState(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false); // Состояние для фильтра
+  const language = localStorage.getItem('language') || 'RO';
 
   const [filters, setFilters] = useState({
     creation_date: '',
@@ -134,13 +136,13 @@ const Leads = () => {
       <div className="dashboard-header">
         <div className="header">
           <button onClick={openCreateTicketModal} className="button-add-ticket">
-            Add Ticket
+            {translations["Adaugă lead"][language]}
           </button>
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search tickets... Ticket ID or Client ID or Tag"
+            placeholder={translations["Cauta dupa Lead, Client sau Tag"][language]}
             className="search-input"
           />
           <button onClick={() => setIsFilterOpen(true)} className="button-filter">

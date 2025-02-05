@@ -25,6 +25,8 @@ import EmojiPicker from 'emoji-picker-react';
 import ReactDOM from "react-dom";
 import { translations } from '../utils/translations';
 import TicketFilterModal from '../LeadsComponent/TicketFilterModal';
+import { FaFacebook, FaInstagram, FaWhatsapp, FaTelegram } from "react-icons/fa";
+import { SiViber } from "react-icons/si";
 
 const ChatComponent = ({ }) => {
     const { userId } = useUser();
@@ -56,6 +58,13 @@ const ChatComponent = ({ }) => {
     const fileInputRef = useRef(null);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [appliedFilters, setAppliedFilters] = useState({});
+    const platformIcons = {
+        "facebook": <FaFacebook />,
+        "instagram": <FaInstagram />,
+        "whatsapp": <FaWhatsapp />,
+        "viber": <SiViber />,
+        "telegram": <FaTelegram />
+    };
 
     // Функция фильтрации тикетов
     const applyFilters = (filters) => {
@@ -1083,9 +1092,9 @@ const ChatComponent = ({ }) => {
         <div className="chat-container">
             <div className="users-container">
                 <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                    <div className='extra-info-title'>Chat</div>
+                    <div className='extra-info-title'>{translations["Chat"][language]}</div>
                     <label style={{ marginLeft: "auto" }}>
-                        Leadurile mele
+                        {translations["Leadurile mele"][language]}
                         <input
                             type="checkbox"
                             id="myTicketsCheckbox"
@@ -1098,12 +1107,12 @@ const ChatComponent = ({ }) => {
                 <div className="filter-container-chat">
                     <input
                         type="text"
-                        placeholder="Ticket ID or Client ID or Tag"
+                        placeholder={translations["Cauta dupa Lead, Client sau Tag"][language]}
                         onInput={handleFilterInput}
                         className="ticket-filter-input"
                     />
                     <button onClick={() => setIsFilterOpen(true)} className="button-filter">
-                        Filter {Object.values(appliedFilters).some(value => value) && <span className="filter-indicator"></span>}
+                        {translations["Filtru"][language]} {Object.values(appliedFilters).some(value => value) && <span className="filter-indicator"></span>}
                     </button>
                 </div>
 
@@ -1182,7 +1191,7 @@ const ChatComponent = ({ }) => {
                                                             </span>
                                                         ))
                                                     ) : (
-                                                        tags?.length === 0 ? null : <div>no tags</div>
+                                                        tags?.length === 0 ? null : <div>{translations["nici un tag"][language]}</div>
                                                     )}
                                                 </div>
                                             </div>
@@ -1209,7 +1218,7 @@ const ChatComponent = ({ }) => {
                                 );
                             })
                     ) : (
-                        <div>No tickets available</div>
+                        <div>{translations["Nici un lead"][language]}</div>
                     )}
                 </div>
 
@@ -1219,7 +1228,6 @@ const ChatComponent = ({ }) => {
                     </div>
                 )}
 
-                {/* Модальное окно фильтра */}
                 <TicketFilterModal
                     isOpen={isFilterOpen}
                     onClose={() => setIsFilterOpen(false)}
@@ -1235,12 +1243,10 @@ const ChatComponent = ({ }) => {
                                 ? selectedTicket.client_id.toString().replace(/[{}]/g, "").split(',').map(id => Number(id))
                                 : [];
 
-                            // Фильтруем и сортируем по времени
                             const sortedMessages = messages
                                 .filter(msg => msg.ticket_id === selectTicketId)
                                 .sort((a, b) => new Date(a.time_sent) - new Date(b.time_sent));
 
-                            // Группировка по датам
                             const groupedMessages = sortedMessages.reduce((acc, msg) => {
                                 const messageDate = new Date(msg.time_sent).toLocaleDateString("ru-RU", {
                                     year: "numeric",
@@ -1278,13 +1284,13 @@ const ChatComponent = ({ }) => {
                                         <div className="message-date-separator">📆 {date}</div>
                                         {groupedByClient.map(({ clientId, messages }, index) => (
                                             <div key={`${clientId}-${date}-${index}`} className="client-message-group">
-                                                <div className="client-header">👤 Сообщения клиента #{clientId}</div>
+                                                <div className="client-header">👤 {translations["Mesajele clientului"][language]} #{clientId}</div>
                                                 {messages.map((msg) => {
                                                     const uniqueKey = `${msg.id || msg.ticket_id}-${msg.time_sent}`;
 
                                                     const renderContent = () => {
                                                         if (!msg.message) {
-                                                            return <div className="text-message">Сообщение отсутствует</div>;
+                                                            return <div className="text-message">{translations["Mesajul lipseste"][language]}</div>;
                                                         }
                                                         switch (msg.mtype) {
                                                             case "image":
@@ -1305,14 +1311,14 @@ const ChatComponent = ({ }) => {
                                                                 return (
                                                                     <video controls className="video-preview">
                                                                         <source src={msg.message} type="video/mp4" />
-                                                                        Ваш браузер не поддерживает воспроизведение видео.
+                                                                        {translations["Acest browser nu suporta video"][language]}
                                                                     </video>
                                                                 );
                                                             case "audio":
                                                                 return (
                                                                     <audio controls className="audio-preview">
                                                                         <source src={msg.message} type="audio/ogg" />
-                                                                        Ваш браузер не поддерживает воспроизведение аудио.
+                                                                        {translations["Acest browser nu suporta audio"][language]}
                                                                     </audio>
                                                                 );
                                                             case "file":
@@ -1323,7 +1329,7 @@ const ChatComponent = ({ }) => {
                                                                         rel="noopener noreferrer"
                                                                         className="file-link"
                                                                     >
-                                                                        Открыть файл
+                                                                        {translations["Deschide file"][language]}
                                                                     </a>
                                                                 );
                                                             default:
@@ -1342,6 +1348,10 @@ const ChatComponent = ({ }) => {
                                                         >
                                                             <div className="message-content">
                                                                 <div className="message-row">
+                                                                    <div style={{ fontSize: "30px", marginRight: "8px"}}>
+                                                                        {platformIcons[msg.platform] || null}
+                                                                    </div>
+
                                                                     <div className="text">
                                                                         {renderContent()}
                                                                         <div className="message-time">
@@ -1387,7 +1397,7 @@ const ChatComponent = ({ }) => {
                         })()
                     ) : (
                         <div className="empty-chat">
-                            <p>Alege ticket</p>
+                            <p>{translations["Alege lead"][language]}</p>
                         </div>
                     )}
                 </div>
@@ -1465,13 +1475,13 @@ const ChatComponent = ({ }) => {
                                     value={selectedClient}
                                     onChange={(e) => setSelectedClient(e.target.value)}
                                 >
-                                    <option value="" disabled>Выберите клиента</option>
+                                    <option value="" disabled>{["Alege client"][language]}</option>
                                     {tickets.find(ticket => ticket.id === selectTicketId).client_id
                                         .replace(/[{}]/g, "")
                                         .split(",")
                                         .map(id => (
                                             <option key={id.trim()} value={id.trim()}>
-                                                Клиент {id.trim()}
+                                                {["Client"]} {id.trim()}
                                             </option>
                                         ))}
                                 </select>
@@ -1722,10 +1732,10 @@ const ChatComponent = ({ }) => {
                                                 handleSelectChangeExtra(selectTicketId, 'ticket_id_new', e.target.value)
                                             }
                                             className="input-field"
-                                            placeholder="Introduceți ID nou"
+                                            placeholder={translations["Introduceți ID lead"][language]}
                                         />
                                         <button onClick={handleMergeTickets} className="submit-button">
-                                            Combine
+                                            {translations["Combina"][language]}
                                         </button>
                                     </div>
                                 </>
@@ -1843,10 +1853,10 @@ const ChatComponent = ({ }) => {
                                         handleSelectChangeExtra(selectedClient, 'new_user_id', e.target.value)
                                     }
                                     className="input-field"
-                                    placeholder="Introduceți ID nou"
+                                    placeholder={translations["Introduceți ID client"][language]}
                                 />
                                 <button onClick={handleMergeClients} className="submit-button">
-                                    Combine
+                                    {translations["Combina"][language]}
                                 </button>
                             </div>
                         </div>

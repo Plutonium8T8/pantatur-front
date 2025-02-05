@@ -617,6 +617,138 @@ export const translations = {
     "Permisiuni": {
         "RO": "Permisiuni",
         "RU": "Разрешения"
+    },
+    "nici un tag": {
+        "RO": "niciun tag",
+        "RU": "никакой тег"
+    },
+    "Nici un lead": {
+        "RO": "Niciun lead",
+        "RU": "никакой лид"
+    },
+    "Mesajele clientului": {
+        "RO": "Mesajele clientului",
+        "RU": "Сообщения клиента"
+    },
+    "Alege lead": {
+        "RO": "Alege lead",
+        "RU": "Выбрать лид"
+    },
+    "Acest browser nu suporta audio": {
+        "RO": "Acest browser nu suportă audio",
+        "RU": "Этот браузер не поддерживает аудио"
+    },
+    "Acest browser nu suporta video": {
+        "RO": "Acest browser nu suportă video",
+        "RU": "Этот браузер не поддерживает видео"
+    },
+    "Deschide file": {
+        "RO": "Deschide fișier",
+        "RU": "Открыть файл"
+    },
+    "Alege client": {
+        "RO": "Alege client",
+        "RU": "Выбрать клиента"
+    },
+    "Client": {
+        "RO": "Client",
+        "RU": "Клиент"
+    },
+    "Combina": {
+        "RO": "Combină",
+        "RU": "Объединить"
+    },
+    "Introduceți ID lead": {
+        "RO": "Introduceți ID-ul lead-ului",
+        "RU": "Введите ID лида"
+    },
+    "Introduceți ID client": {
+        "RO": "Introduceți ID-ul clientului",
+        "RU": "Введите ID клиента"
+    },
+    "Leadurile mele": {
+        "RO": "Lead-urile mele",
+        "RU": "Мои лиды"
+    },
+    "Filtru": {
+        "RO": "Filtru",
+        "RU": "Фильтр"
+    },
+    "Cauta dupa Lead, Client sau Tag": {
+        "RO": "Caută după lead, client sau tag",
+        "RU": "Искать по лиду, клиенту или тегу"
+    },
+    "Filtru lead": {
+        "RO": "Filtru lead",
+        "RU": "Фильтр лидов"
+    },
+    "Data de creare": {
+        "RO": "Data de creare",
+        "RU": "Дата создания"
+    },
+    "Ultima interacțiune": {
+        "RO": "Ultima interacțiune",
+        "RU": "Последнее взаимодействие"
+    },
+    "Etapa de lucru": {
+        "RO": "Etapa de lucru",
+        "RU": "Этап работы"
+    },
+    "Toate etapele": {
+        "RO": "Toate etapele",
+        "RU": "Все этапы"
+    },
+    "Prioritate": {
+        "RO": "Prioritate",
+        "RU": "Приоритет"
+    },
+    "Toate prioritățile": {
+        "RO": "Toate prioritățile",
+        "RU": "Все приоритеты"
+    },
+    "După responsabil lead": {
+        "RO": "După responsabil lead",
+        "RU": "По ответственному за лид"
+    },
+    "Toți managerii": {
+        "RO": "Toți managerii",
+        "RU": "Все менеджеры"
+    },
+    "După ID participant": {
+        "RO": "După ID participant",
+        "RU": "По ID участника"
+    },
+    "După participant": {
+        "RO": "După participant",
+        "RU": "По участнику"
+    },
+    "Taguri": {
+        "RO": "Taguri",
+        "RU": "Теги"
+    },
+    "Introdu tag": {
+        "RO": "Introdu tag",
+        "RU": "Введите тег"
+    },
+    "Platformă": {
+        "RO": "Platformă",
+        "RU": "Платформа"
+    },
+    "Toate platformele": {
+        "RO": "Toate platformele",
+        "RU": "Все платформы"
+    },
+    "Aplică": {
+        "RO": "Aplică",
+        "RU": "Применить"
+    },
+    "Resetează filtre": {
+        "RO": "Resetează filtre",
+        "RU": "Сбросить фильтры"
+    },
+    "Închide": {
+        "RO": "Închide",
+        "RU": "Закрыть"
     }
 };
 
