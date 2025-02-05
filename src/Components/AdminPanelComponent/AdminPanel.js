@@ -6,6 +6,7 @@ import './AdminPanel.css';
 import { FaMinus, FaPlus, FaTrash } from "react-icons/fa";
 import { translations } from "../utils/translations";
 import ToggleComponent from "./ToggleComponent";
+import SpinnerOverlay from "../LeadsComponent/SpinnerOverlayComponent";
 
 const ScheduleComponent = () => {
   const [schedule, setSchedule] = useState([]);
@@ -18,7 +19,7 @@ const ScheduleComponent = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // Состояние модалки
   const [selectedUser, setSelectedUser] = useState(null); // Хранит выбранного пользователя
   const [error, setError] = useState(null);
-
+  const [isLoading, setIsLoading] = useState(false);
   const language = localStorage.getItem('language') || 'RO';
 
   // Закрытие модалки
@@ -142,6 +143,8 @@ const ScheduleComponent = () => {
 
   const fetchData = async () => {
     try {
+      setIsLoading(true); // Начало загрузки
+
       const token = Cookies.get("jwt");
 
       // Fetch users-technician
@@ -166,17 +169,15 @@ const ScheduleComponent = () => {
       });
       const scheduleData = await scheduleResponse.json();
 
-      // Combine data
+      // Объединяем данные
       const combinedSchedule = usersData.map((user) => {
-        const userId = user.id.id; // Извлекаем вложенное id
-        const userSchedule = scheduleData.find(
-          (schedule) => schedule.technician_id === userId
-        );
+        const userId = user.id.id;
+        const userSchedule = scheduleData.find((schedule) => schedule.technician_id === userId);
 
         const weeklySchedule = userSchedule?.weekly_schedule || {};
 
         const shifts = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
-          .map((day) => Array.isArray(weeklySchedule[day]) ? weeklySchedule[day] : []); // Гарантируем массив
+          .map((day) => Array.isArray(weeklySchedule[day]) ? weeklySchedule[day] : []);
 
         return {
           id: userId,
@@ -191,6 +192,8 @@ const ScheduleComponent = () => {
       setSchedule(combinedSchedule);
     } catch (error) {
       console.error("Ошибка загрузки данных:", error);
+    } finally {
+      setIsLoading(false); // Окончание загрузки
     }
   };
 
@@ -309,6 +312,7 @@ const ScheduleComponent = () => {
 
   return (
     <div className="schedule-container">
+      {isLoading && <SpinnerOverlay />} {/* Показываем спиннер во время загрузки */}
       <div className="header-component">{translations['Grafic de lucru'][language]}</div>
       <div className="week-navigation">
         <button onClick={goToPreviousWeek}>{translations['săptămâna'][language]} {translations['trecută'][language]}</button>
@@ -487,6 +491,7 @@ const ScheduleComponent = () => {
         </div>
       )}
     </div>
+
   );
 };
 
