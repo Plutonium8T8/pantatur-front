@@ -598,10 +598,11 @@ const ChatComponent = ({ }) => {
 
     const getMessageTypeLabel = (type) => {
         const typeLabels = {
-            text: "Text Message",
-            image: "Image Message",
-            video: "Video Message",
-            file: "File Message",
+            text: translations["Mesaj text"][language],
+            image: translations["Mesaj imagine"][language],
+            video: translations["Mesaj video"][language],
+            file: translations["Mesaj file"][language],
+            audio: translations["Mesaj audio"][language],
         };
 
         return typeLabels[type] || "Unknown Message";

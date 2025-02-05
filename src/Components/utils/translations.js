@@ -746,6 +746,26 @@ export const translations = {
         "RO": "Resetează filtre",
         "RU": "Сбросить фильтры"
     },
+    "Mesaj audio": {
+        "RO": "Mesaj audio",
+        "RU": "Сбросить фильтры"
+    },
+    "Mesaj file": {
+        "RO": "Mesaj file",
+        "RU": "Сбросить фильтры"
+    },
+    "Mesaj video": {
+        "RO": "Mesaj video",
+        "RU": "Сбросить фильтры"
+    },
+    "Mesaj imagine": {
+        "RO": "Mesaj imagine",
+        "RU": "Сбросить фильтры"
+    },
+    "Mesaj text": {
+        "RO": "Mesaj text",
+        "RU": "Сбросить фильтры"
+    },
     "Închide": {
         "RO": "Închide",
         "RU": "Закрыть"
