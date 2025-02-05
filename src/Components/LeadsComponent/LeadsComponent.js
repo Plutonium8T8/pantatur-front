@@ -10,6 +10,7 @@ import TicketFilterModal from './TicketFilterModal'; // Добавляем фи�
 import Cookies from 'js-cookie';
 import '../../App.css';
 import '../SnackBarComponent/SnackBarComponent.css';
+import { FaFilter } from 'react-icons/fa';
 
 const Leads = () => {
   const { tickets, isLoading, setTickets, messages } = useAppContext();
@@ -143,7 +144,7 @@ const Leads = () => {
             className="search-input"
           />
           <button onClick={() => setIsFilterOpen(true)} className="button-filter">
-            Filter
+            <FaFilter/>
             {Object.values(filters).some(value => value) && <span className="filter-indicator"></span>}
           </button>
         </div>
