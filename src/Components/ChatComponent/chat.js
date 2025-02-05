@@ -797,6 +797,8 @@ const ChatComponent = ({ }) => {
 
             console.log(`📡 Отправка сообщения через API: ${apiUrl}`);
 
+            setManagerMessage('');
+
             // 🔹 Отправка сообщения
             const response = await fetch(apiUrl, {
                 method: 'POST',
