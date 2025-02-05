@@ -294,7 +294,7 @@ const ChatComponent = ({ }) => {
 
     useEffect(() => {
         scrollToBottom();
-    }, [messages, selectTicketId]);
+    }, [ selectTicketId]);
 
     const handleKeyDown = (event) => {
         if (event.key === 'Enter' && !event.shiftKey) {
