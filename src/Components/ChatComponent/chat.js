@@ -1333,8 +1333,6 @@ const ChatComponent = ({ }) => {
 
                                                     const lastReaction = getLastReaction(msg);
 
-                                                    console.log(lastReaction);
-
                                                     return (
                                                         <div
                                                             key={uniqueKey}
