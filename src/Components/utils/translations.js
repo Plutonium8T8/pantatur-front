@@ -770,10 +770,10 @@ export const translations = {
         "RO": "Închide",
         "RU": "Закрыть"
     },
-    "Sesia a expirat, te rog sa accesezi din nou pagina!": {
-        "RO": "Sesia a expirat, te rog sa accesezi din nou pagina!",
-        "RU": "Сессия истекла, пожалуйста, зайдите на страницу заново!"
-    }
+    'Sesia a expirat': {
+        'RO': 'Sesia a expirat, te rog sa accesezi din nou pagina!',
+        'RU': 'Сессия истекла, пожалуйста, зайдите на страницу заново!'
+    },
 };
 
 // import { translations } from '../utils/translations';

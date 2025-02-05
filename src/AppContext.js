@@ -142,7 +142,8 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       socketInstance.send(JSON.stringify(readMessageData));
       console.log(`✅ Seen отправлен для ticket_id=${ticketId}`);
     } else {
-      console.warn('WebSocket не подключен или закрыт.');
+      alert('WebSocket off. Please reload the page!');
+      // window.location.reload();
     }
 
     setMessages((prevMessages) => {
