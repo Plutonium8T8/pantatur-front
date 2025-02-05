@@ -774,6 +774,10 @@ export const translations = {
         'RO': 'Sesia a expirat, te rog sa accesezi din nou pagina!',
         'RU': 'Сессия истекла, пожалуйста, зайдите на страницу заново!'
     },
+    'WebSocket off': {
+        'RO': 'WebSocket este oprit. Te rog să reîncarci pagina!',
+        'RU': 'WebSocket отключен. Пожалуйста, перезагрузите страницу!'
+    },
 };
 
 // import { translations } from '../utils/translations';

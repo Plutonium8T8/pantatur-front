@@ -4,7 +4,7 @@ import { useSnackbar } from 'notistack';
 import { FaEnvelope, FaTrash } from 'react-icons/fa';
 import { useUser } from './UserContext';
 import { truncateText } from './stringUtils';
-import { useNavigation } from "./NavigationContext"; // Импорт
+import { translations } from './Components/utils/translations';
 
 const AppContext = createContext();
 
@@ -22,6 +22,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   const { userId } = useUser(); // Получаем userId из UserContext
   const ticketsRef = useRef(tickets);
   const [unreadMessages, setUnreadMessages] = useState(new Map()); // Оптимизированное хранение непрочитанных сообщений
+  const language = localStorage.getItem('language') || 'RO';
 
   useEffect(() => {
     let pingInterval;
@@ -99,7 +100,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         handleWebSocketMessage(message);
       };
 
-      socketInstance.onclose = () => console.warn('WebSocket закрыт');
+      socketInstance.onclose = () => alert(translations["WebSocket off"][language] || "WebSocket este oprit. Te rog să reîncarci pagina!");
       socketInstance.onerror = (error) => console.error('WebSocket ошибка:', error);
     }
 
@@ -143,7 +144,6 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       console.log(`✅ Seen отправлен для ticket_id=${ticketId}`);
     } else {
       alert('WebSocket off. Please reload the page!');
-      // window.location.reload();
     }
 
     setMessages((prevMessages) => {
