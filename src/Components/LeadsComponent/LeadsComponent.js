@@ -83,8 +83,13 @@ const Leads = () => {
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(`Failed to update workflow: ${response.status}. ${error.message}`);
+        const errorData = await response.json();
+
+        if (errorData.message === "Session does not contain the user_id") {
+          alert("Sesia a expirat, te rog sa accesezi din nou pagina!");
+        }
+
+        throw new Error(`Failed to update workflow: ${response.status}. ${errorData.message}`);
       }
 
       const updatedTicket = await response.json();
@@ -146,7 +151,7 @@ const Leads = () => {
             className="search-input"
           />
           <button onClick={() => setIsFilterOpen(true)} className="button-filter">
-            <FaFilter/>
+            <FaFilter />
             {Object.values(filters).some(value => value) && <span className="filter-indicator"></span>}
           </button>
         </div>

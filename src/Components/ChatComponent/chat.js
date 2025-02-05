@@ -1347,7 +1347,7 @@ const ChatComponent = ({ }) => {
                                                         >
                                                             <div className="message-content">
                                                                 <div className="message-row">
-                                                                    <div style={{ fontSize: "30px", marginRight: "8px"}}>
+                                                                    <div style={{ fontSize: "30px", marginRight: "8px" }}>
                                                                         {platformIcons[msg.platform] || null}
                                                                     </div>
 

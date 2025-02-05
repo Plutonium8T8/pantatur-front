@@ -769,6 +769,10 @@ export const translations = {
     "Închide": {
         "RO": "Închide",
         "RU": "Закрыть"
+    },
+    "Sesia a expirat, te rog sa accesezi din nou pagina!": {
+        "RO": "Sesia a expirat, te rog sa accesezi din nou pagina!",
+        "RU": "Сессия истекла, пожалуйста, зайдите на страницу заново!"
     }
 };
 
