@@ -31,16 +31,8 @@ const ScheduleComponent = () => {
     setSelectedEmployee(employeeIndex);
     setSelectedDay(dayIndex);
 
-    const currentShifts = schedule[employeeIndex].shifts[dayIndex];
-    if (currentShifts && currentShifts !== "-") {
-      const parsedIntervals = currentShifts.split(", ").map((interval) => {
-        const [start, end] = interval.split(" - ");
-        return { start, end };
-      });
-      setIntervals(parsedIntervals);
-    } else {
-      setIntervals([]);
-    }
+    const currentShifts = schedule[employeeIndex].shifts[dayIndex] || [];
+    setIntervals([...currentShifts]); // Теперь intervals - это массив объектов
   };
 
   const removeInterval = async (index) => {
@@ -85,10 +77,7 @@ const ScheduleComponent = () => {
 
   const saveShift = () => {
     const updatedSchedule = [...schedule];
-    const formattedIntervals = intervals
-      .map((interval) => `${interval.start} - ${interval.end}`)
-      .join(", ");
-    updatedSchedule[selectedEmployee].shifts[selectedDay] = formattedIntervals || "-";
+    updatedSchedule[selectedEmployee].shifts[selectedDay] = [...intervals];
     setSchedule(updatedSchedule);
     setSelectedEmployee(null);
     setSelectedDay(null);
@@ -101,7 +90,7 @@ const ScheduleComponent = () => {
 
   useEffect(() => {
     const token = Cookies.get("jwt");
-    
+
     fetch("https://pandatur-api.com/api/users-technician", {
       method: "GET",
       headers: {
@@ -115,28 +104,26 @@ const ScheduleComponent = () => {
         const formattedSchedule = data.map((technician) => ({
           id: technician.id.id.id,
           name: `${technician.id.name} ${technician.id.surname}`,
-          shifts: ["", "", "", "", "", "", ""], // пустые смены по умолчанию
+          shifts: Array(7).fill([]).map((_, index) => {
+            const day = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"][index];
+            return technician.weekly_schedule?.[day]?.map(interval => ({
+              start: interval.start,
+              end: interval.end
+            })) || [];
+          }),
         }));
         setSchedule(formattedSchedule);
       })
       .catch((error) => console.error("Ошибка загрузки данных:", error));
   }, []);
 
-  const calculateWorkedHours = (shift) => {
-    if (!shift) return 0;
-    const [start, end, shortStart, shortEnd] = shift.split(" - ");
-    const startTime = parseTime(start);
-    const endTime = parseTime(end);
-    const shortStartTime = shortStart ? parseTime(shortStart) : null;
-    const shortEndTime = shortEnd ? parseTime(shortEnd) : null;
-
-    let totalHours = endTime - startTime;
-
-    if (shortStartTime && shortEndTime) {
-      totalHours -= shortEndTime - shortStartTime;
-    }
-
-    return totalHours > 0 ? totalHours : 0;
+  const calculateWorkedHours = (shifts) => {
+    if (!Array.isArray(shifts) || shifts.length === 0) return 0;
+    return shifts.reduce((total, shift) => {
+      const startTime = parseTime(shift.start);
+      const endTime = parseTime(shift.end);
+      return total + (endTime - startTime);
+    }, 0);
   };
 
   const parseTime = (time) => {
@@ -188,31 +175,15 @@ const ScheduleComponent = () => {
 
         const weeklySchedule = userSchedule?.weekly_schedule || {};
 
-        const shifts = Array(7).fill("-"); // Пустой массив для дней недели
-
-        if (Array.isArray(weeklySchedule)) {
-          // Если weekly_schedule - это массив интервалов
-          weeklySchedule.forEach((daySchedule) => {
-            const dayIndex = mapDayToIndex(daySchedule.day);
-            shifts[dayIndex] = formatDaySchedule(daySchedule.intervals);
-          });
-        } else {
-          // Если weekly_schedule - это объект с ключами дней недели
-          shifts[0] = formatDaySchedule(weeklySchedule.monday); // Monday
-          shifts[1] = formatDaySchedule(weeklySchedule.tuesday); // Tuesday
-          shifts[2] = formatDaySchedule(weeklySchedule.wednesday); // Wednesday
-          shifts[3] = formatDaySchedule(weeklySchedule.thursday); // Thursday
-          shifts[4] = formatDaySchedule(weeklySchedule.friday); // Friday
-          shifts[5] = formatDaySchedule(weeklySchedule.saturday); // Saturday
-          shifts[6] = formatDaySchedule(weeklySchedule.sunday); // Sunday
-        }
+        const shifts = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+          .map((day) => Array.isArray(weeklySchedule[day]) ? weeklySchedule[day] : []); // Гарантируем массив
 
         return {
-          id: userId, // Извлекаем ID из вложенного объекта
-          name: `${user.id.name} ${user.id.surname}`, // Используем имя и фамилию
-          email: user.id.user.email, // Email из вложенного user
-          username: user.id.user.username, // Имя пользователя
-          roles: user.id.user.roles, // Имя пользователя
+          id: userId,
+          name: `${user.id.name} ${user.id.surname}`,
+          email: user.id.user.email,
+          username: user.id.user.username,
+          roles: user.id.user.roles,
           shifts,
         };
       });
@@ -228,6 +199,7 @@ const ScheduleComponent = () => {
   }, []);
 
   const mapDayToIndex = (day) => {
+    if (!day) return -1;
     const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
     return days.indexOf(day.toLowerCase());
   };
@@ -369,19 +341,16 @@ const ScheduleComponent = () => {
                   {employee.name} ({employee.id})
                 </td>
                 {employee.shifts.map((shift, dayIndex) => (
-                  <td
-                    // key={translations[dayIndex][language]}
-                    key={dayIndex}
-                    className="shift-cell"
-                    onClick={(e) => {
-                      e.stopPropagation(); // Предотвращаем открытие модалки при клике на shift
-                      handleShiftChange(employeeIndex, dayIndex);
-                    }}
-                  >
-                    {shift || "-"}
+                  <td key={dayIndex} className="shift-cell" onClick={(e) => {
+                    e.stopPropagation();
+                    handleShiftChange(employeeIndex, dayIndex);
+                  }}>
+                    {Array.isArray(shift) && shift.length > 0 ? shift.map((interval, i) => (
+                      <div key={i}>{interval.start} - {interval.end}</div>
+                    )) : "-"}
                   </td>
                 ))}
-                <td>{employee.shifts.reduce((total, shift) => total + calculateWorkedHours(shift), 0).toFixed(2)} h.</td>
+                <td>{employee.shifts.reduce((total, shifts) => total + calculateWorkedHours(shifts), 0).toFixed(2)} h.</td>
               </tr>
             ))}
           </tbody>
@@ -513,7 +482,7 @@ const ScheduleComponent = () => {
                 </div>
               </div>
             </form>
-            <ToggleComponent employee={selectedEmployee}/>
+            <ToggleComponent employee={selectedEmployee} />
           </div>
         </div>
       )}
