@@ -96,6 +96,8 @@ const UserGroupComponent = ({ onChange, userId, roles }) => {
             }
 
             console.log(`Roles applied to user ${userId} from group ${groupId}`);
+
+            onChange(); // 🔥 Добавляем обновление ролей
         } catch (error) {
             console.error("Error applying user group roles:", error);
         }
