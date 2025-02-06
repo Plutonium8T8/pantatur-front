@@ -128,11 +128,11 @@ const ChatComponent = ({ }) => {
     }, [ticketId, setSelectTicketId]);
 
     // Прокручиваем к активному чату, если selectTicketId изменился и тикеты загружены
-    useEffect(() => {
-        if (!isLoading && activeChatRef.current) {
-            activeChatRef.current.scrollIntoView({ behavior: "auto" });
-        }
-    }, [selectTicketId, isLoading, filteredTickets]);
+    // useEffect(() => {
+    //     if (!isLoading && activeChatRef.current) {
+    //         activeChatRef.current.scrollIntoView({ behavior: "auto" });
+    //     }
+    // }, [selectTicketId, isLoading, filteredTickets]);
 
     useEffect(() => {
         if (selectTicketId) {
@@ -1061,11 +1061,41 @@ const ChatComponent = ({ }) => {
         }
     };
 
-    useEffect(() => {
-        if (selectTicketId && ticketRef.current) {
-            ticketRef.current.scrollIntoView({ behavior: "auto", block: "center" });
-        }
-    }, [selectTicketId]);
+    // useEffect(() => {
+    //     if (selectTicketId && ticketRef.current) {
+    //         ticketRef.current.scrollIntoView({ behavior: "auto", block: "center" });
+    //     }
+    // }, [selectTicketId]);
+
+    const sortedTickets = useMemo(() => {
+        if (!Array.isArray(filteredTickets) || filteredTickets.length === 0) return [];
+
+        // Разделяем выбранный тикет и остальные тикеты
+        const selectedTicket = filteredTickets.find(ticket => ticket.id === selectTicketId);
+        const otherTickets = filteredTickets.filter(ticket => ticket.id !== selectTicketId);
+
+        // Функция для получения последнего сообщения тикета
+        const getLastMessageTime = (ticketId) => {
+            const ticketMessages = messages.filter(msg => msg.ticket_id === ticketId);
+            if (!ticketMessages.length) return null;
+
+            return ticketMessages.reduce((latest, current) =>
+                new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
+            ).time_sent;
+        };
+
+        // Сортируем остальные тикеты по последнему сообщению (по убыванию)
+        otherTickets.sort((a, b) => {
+            const lastMessageA = getLastMessageTime(a.id);
+            const lastMessageB = getLastMessageTime(b.id);
+
+            return new Date(lastMessageB) - new Date(lastMessageA);
+        });
+
+        // Если выбранный тикет существует, помещаем его в начало
+        return selectedTicket ? [selectedTicket, ...otherTickets] : otherTickets;
+    }, [filteredTickets, selectTicketId, messages]);
+
 
     return (
         <div className="chat-container">
@@ -1097,109 +1127,84 @@ const ChatComponent = ({ }) => {
                     </div>
                 </div>
                 <div className="chat-item-container">
-                    {Array.isArray(filteredTickets) && filteredTickets.length > 0 ? (
-                        filteredTickets
-                            .sort((a, b) => {
-                                const ticketMessagesA = messages.filter(msg => msg.ticket_id === a.id);
-                                const ticketMessagesB = messages.filter(msg => msg.ticket_id === b.id);
+                    {sortedTickets.map(ticket => {
+                        const ticketMessages = messages.filter(msg => msg.ticket_id === ticket.id);
+                        const unreadCounts = ticketMessages.filter(
+                            msg => msg.seen_by != null && msg.seen_by == '{}' && msg.sender_id !== 1 && msg.sender_id !== userId
+                        ).length;
 
-                                const lastMessageA = ticketMessagesA.length
-                                    ? ticketMessagesA.reduce((latest, current) =>
-                                        new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
-                                    )
-                                    : { time_sent: null };
+                        const lastMessage = ticketMessages.length
+                            ? ticketMessages.reduce((latest, current) =>
+                                new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
+                            )
+                            : { message: "", time_sent: null };
 
-                                const lastMessageB = ticketMessagesB.length
-                                    ? ticketMessagesB.reduce((latest, current) =>
-                                        new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
-                                    )
-                                    : { time_sent: null };
-
-                                return new Date(lastMessageB.time_sent) - new Date(lastMessageA.time_sent);
+                        const formattedTime = lastMessage.time_sent
+                            ? new Date(lastMessage.time_sent).toLocaleTimeString("ru-RU", {
+                                hour: "2-digit",
+                                minute: "2-digit",
                             })
-                            .map(ticket => {
-                                const ticketMessages = messages.filter(msg => msg.ticket_id === ticket.id);
+                            : null;
 
-                                const unreadCounts = ticketMessages.filter(
-                                    msg =>
-                                        msg.seen_by != null && msg.seen_by == '{}' && msg.sender_id !== 1 && msg.sender_id !== userId
-                                ).length;
+                        const tags = parseTags(ticket.tags);
 
-                                const lastMessage = ticketMessages.length
-                                    ? ticketMessages.reduce((latest, current) =>
-                                        new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
-                                    )
-                                    : { message: "", time_sent: null };
-
-                                const formattedTime = lastMessage.time_sent
-                                    ? new Date(lastMessage.time_sent).toLocaleTimeString("ru-RU", {
-                                        hour: "2-digit",
-                                        minute: "2-digit",
-                                    })
-                                    : null;
-
-                                const tags = parseTags(ticket.tags);
-
-                                return (
-                                    <div
-                                        key={ticket.id}
-                                        className={`chat-item ${ticket.id === selectTicketId ? "active" : ""}`}
-                                        onClick={() => handleTicketClick(ticket.id)}
-                                        ref={ticket.id === selectTicketId ? ticketRef : null} // Добавляем ref к выбранному тикету
-                                    >
-                                        <div className="foto-description">
-                                            <img className="foto-user" src="https://storage.googleapis.com/pandatur_bucket/utils/icon-5359554_640.webp" alt="example" />
-                                            <div className="tickets-descriptions">
-                                                <div>{ticket.contact || "no contact"}</div>
-                                                <div>{ticket.id ? `Lead: #${ticket.id}` : "no id"}</div>
-                                                <div>{ticket.workflow || "no workflow"}</div>
-                                                <div className="tags-ticket">
-                                                    {Array.isArray(tags) && tags.length > 0 ? (
-                                                        tags.map((tag, index) => (
-                                                            <span
-                                                                key={index}
-                                                                style={{
-                                                                    display: "inline-block",
-                                                                    backgroundColor: "#0f824c",
-                                                                    color: "#fff",
-                                                                    padding: "5px 10px",
-                                                                    borderRadius: "20px",
-                                                                    marginRight: "5px",
-                                                                    fontSize: "12px",
-                                                                }}
-                                                            >
-                                                                {tag}
-                                                            </span>
-                                                        ))
-                                                    ) : (
-                                                        tags?.length === 0 ? null : <div>{translations["nici un tag"][language]}</div>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="container-time-tasks-chat">
-                                            <div className="info-message">
-                                                <div className="last-message-container">
-                                                    <div className="last-message-ticket">
-                                                        {lastMessage?.mtype === 'text'
-                                                            ? lastMessage.message
-                                                            : lastMessage?.mtype
-                                                                ? getMessageTypeLabel(lastMessage.mtype)
-                                                                : "No messages"}
-                                                    </div>
-                                                    <div className='chat-time'>{formattedTime || "—"}</div>
-                                                    {unreadCounts > 0 && (
-                                                        <div className="unread-count">{unreadCounts}</div>
-                                                    )}
-                                                </div>
-                                            </div>
+                        return (
+                            <div
+                                key={ticket.id}
+                                className={`chat-item ${ticket.id === selectTicketId ? "active" : ""}`}
+                                onClick={() => handleTicketClick(ticket.id)}
+                                ref={ticket.id === selectTicketId ? ticketRef : null}
+                            >
+                                <div className="foto-description">
+                                    <img className="foto-user" src="https://storage.googleapis.com/pandatur_bucket/utils/icon-5359554_640.webp" alt="example" />
+                                    <div className="tickets-descriptions">
+                                        <div>{ticket.contact || "no contact"}</div>
+                                        <div>{ticket.id ? `Lead: #${ticket.id}` : "no id"}</div>
+                                        <div>{ticket.workflow || "no workflow"}</div>
+                                        <div className="tags-ticket">
+                                            {Array.isArray(tags) && tags.length > 0 ? (
+                                                tags.map((tag, index) => (
+                                                    <span
+                                                        key={index}
+                                                        style={{
+                                                            display: "inline-block",
+                                                            backgroundColor: "#0f824c",
+                                                            color: "#fff",
+                                                            padding: "5px 10px",
+                                                            borderRadius: "20px",
+                                                            marginRight: "5px",
+                                                            fontSize: "12px",
+                                                        }}
+                                                    >
+                                                        {tag}
+                                                    </span>
+                                                ))
+                                            ) : (
+                                                tags?.length === 0 ? null : <div>{translations["nici un tag"][language]}</div>
+                                            )}
                                         </div>
                                     </div>
-                                );
-                            })
-                    ) : (
-                        <div>{translations["Nici un lead"][language]}</div>
-                    )}
+                                </div>
+                                <div className="container-time-tasks-chat">
+                                    <div className="info-message">
+                                        <div className="last-message-container">
+                                            <div className="last-message-ticket">
+                                                {lastMessage?.mtype === 'text'
+                                                    ? lastMessage.message
+                                                    : lastMessage?.mtype
+                                                        ? getMessageTypeLabel(lastMessage.mtype)
+                                                        : "No messages"}
+                                            </div>
+                                            <div className='chat-time'>{formattedTime || "—"}</div>
+                                            {unreadCounts > 0 && (
+                                                <div className="unread-count">{unreadCounts}</div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })}
                 </div>
 
                 {isLoading && (
