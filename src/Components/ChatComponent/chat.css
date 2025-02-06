@@ -4,6 +4,7 @@
     height: 100%;
     width: 100%;
     overflow: hidden;
+    position: relative;
 }
 
 /* Левая колонка с пользователями или списком чатов */
@@ -691,4 +692,63 @@
     z-index: 1000;
     padding: 10px 0px 10px 0px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.users-container {
+    flex: 0 0 300px;
+    /* Фиксированная ширина списка чатов */
+    transition: width 0.3s ease-in-out, min-width 0.3s ease-in-out;
+    min-width: 300px;
+}
+
+.users-container.hidden {
+    width: 0;
+    min-width: 0;
+    overflow: hidden;
+}
+
+/* При скрытии списка чатов чат занимает всё доступное пространство */
+.chat-area {
+    flex-grow: 1;
+    /* Позволяет чату расширяться */
+    display: flex;
+    flex-direction: column;
+    transition: width 0.3s ease-in-out;
+}
+
+/* Кнопка скрытия/показа списка чатов */
+.toggle-chat-list {
+    position: absolute;
+    left: 310px;
+    /* Начальная позиция кнопки */
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #0f824c;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 100;
+    font-size: 16px;
+    transition: left 0.3s ease-in-out, background-color 0.2s;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Когда список чатов скрыт, кнопка сдвигается влево */
+.users-container.hidden+.toggle-chat-list {
+    left: 10px;
+}
+
+/* Когда список чатов скрыт, чат занимает всё пространство */
+.users-container.hidden~.chat-area {
+    flex-grow: 2;
+}
+
+.toggle-chat-list:hover {
+    background-color: #0c6a3c;
+}
+
+.hidden {
+    display: none;
 }
