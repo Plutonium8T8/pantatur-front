@@ -1070,31 +1070,32 @@ const ChatComponent = ({ }) => {
     return (
         <div className="chat-container">
             <div className="users-container">
-                <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                    <div className='extra-info-title'>{translations["Chat"][language]}</div>
-                    <label style={{ marginLeft: "auto" }}>
-                        {translations["Leadurile mele"][language]}
+                <div className='header-list-chat'>
+                    <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                        <div className='extra-info-title'>{translations["Chat"][language]}</div>
+                        <label style={{ marginLeft: "auto" }}>
+                            {translations["Leadurile mele"][language]}
+                            <input
+                                type="checkbox"
+                                id="myTicketsCheckbox"
+                                onChange={handleCheckboxChange}
+                                checked={showMyTickets}
+                            />
+                        </label>
+                    </div>
+
+                    <div className="filter-container-chat">
                         <input
-                            type="checkbox"
-                            id="myTicketsCheckbox"
-                            onChange={handleCheckboxChange}
-                            checked={showMyTickets}
+                            type="text"
+                            placeholder={translations["Cauta dupa Lead, Client sau Tag"][language]}
+                            onInput={handleFilterInput}
+                            className="ticket-filter-input"
                         />
-                    </label>
+                        <button onClick={() => setIsFilterOpen(true)} className="button-filter">
+                            {translations["Filtru"][language]} {Object.values(appliedFilters).some(value => value) && <span className="filter-indicator"></span>}
+                        </button>
+                    </div>
                 </div>
-
-                <div className="filter-container-chat">
-                    <input
-                        type="text"
-                        placeholder={translations["Cauta dupa Lead, Client sau Tag"][language]}
-                        onInput={handleFilterInput}
-                        className="ticket-filter-input"
-                    />
-                    <button onClick={() => setIsFilterOpen(true)} className="button-filter">
-                        {translations["Filtru"][language]} {Object.values(appliedFilters).some(value => value) && <span className="filter-indicator"></span>}
-                    </button>
-                </div>
-
                 <div className="chat-item-container">
                     {Array.isArray(filteredTickets) && filteredTickets.length > 0 ? (
                         filteredTickets

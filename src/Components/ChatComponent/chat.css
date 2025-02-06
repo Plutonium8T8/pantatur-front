@@ -11,7 +11,7 @@
     display: flex;
     flex-direction: column;
     background-color: white;
-    padding: 15px;
+    padding: 0px 15px 15px 15px;
     border-right: 1px solid #ddd;
     overflow-y: auto;
     width: 25%;
@@ -372,10 +372,14 @@
 
 .empty-chat {
     display: flex;
-    align-items: center; /* Centers items vertically */
-    justify-content: center; /* Centers items horizontally */
-    height: 100%; /* Ensure the container takes up the full height */
-    width: 100%; /* Optional, ensures full width if needed */
+    align-items: center;
+    /* Centers items vertically */
+    justify-content: center;
+    /* Centers items horizontally */
+    height: 100%;
+    /* Ensure the container takes up the full height */
+    width: 100%;
+    /* Optional, ensures full width if needed */
     font-size: 24px;
     letter-spacing: 1px;
 }
@@ -678,4 +682,16 @@
     border-radius: 5px;
     outline: none;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.header-list-chat {
+    position: sticky;
+    top: 0;
+    background: white;
+    /* Или другой цвет фона */
+    z-index: 1000;
+    /* Убедитесь, что он выше остальных элементов */
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* Добавит небольшую тень для разделения */
 }
