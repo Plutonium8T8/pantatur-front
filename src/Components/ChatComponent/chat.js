@@ -59,7 +59,6 @@ const ChatComponent = ({ }) => {
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [appliedFilters, setAppliedFilters] = useState({});
     const ticketRef = useRef(null);
-    const [isChatListVisible, setIsChatListVisible] = useState(true);
 
     const platformIcons = {
         "facebook": <FaFacebook />,
@@ -1100,141 +1099,126 @@ const ChatComponent = ({ }) => {
 
     return (
         <div className="chat-container">
-            {/* Контейнер списка чатов */}
-            <div className={`users-container ${isChatListVisible ? "" : "hidden"}`}>
-                {isChatListVisible && (
-                    <>
-                        <div className='header-list-chat'>
-                            <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                                <div className='extra-info-title'>{translations["Chat"][language]}</div>
-                                <label style={{ marginLeft: "auto" }}>
-                                    {translations["Leadurile mele"][language]}
-                                    <input
-                                        type="checkbox"
-                                        id="myTicketsCheckbox"
-                                        onChange={handleCheckboxChange}
-                                        checked={showMyTickets}
-                                    />
-                                </label>
-                            </div>
+            <div className="users-container">
+                <div className='header-list-chat'>
+                    <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                        <div className='extra-info-title'>{translations["Chat"][language]}</div>
+                        <label style={{ marginLeft: "auto" }}>
+                            {translations["Leadurile mele"][language]}
+                            <input
+                                type="checkbox"
+                                id="myTicketsCheckbox"
+                                onChange={handleCheckboxChange}
+                                checked={showMyTickets}
+                            />
+                        </label>
+                    </div>
 
-                            <div className="filter-container-chat">
-                                <input
-                                    type="text"
-                                    placeholder={translations["Cauta dupa Lead, Client sau Tag"][language]}
-                                    onInput={handleFilterInput}
-                                    className="ticket-filter-input"
-                                />
-                                <button onClick={() => setIsFilterOpen(true)} className="button-filter">
-                                    {translations["Filtru"][language]} {Object.values(appliedFilters).some(value => value) && <span className="filter-indicator"></span>}
-                                </button>
-                            </div>
-                        </div>
+                    <div className="filter-container-chat">
+                        <input
+                            type="text"
+                            placeholder={translations["Cauta dupa Lead, Client sau Tag"][language]}
+                            onInput={handleFilterInput}
+                            className="ticket-filter-input"
+                        />
+                        <button onClick={() => setIsFilterOpen(true)} className="button-filter">
+                            {translations["Filtru"][language]} {Object.values(appliedFilters).some(value => value) && <span className="filter-indicator"></span>}
+                        </button>
+                    </div>
+                </div>
+                <div className="chat-item-container">
+                    {sortedTickets.map(ticket => {
+                        const ticketMessages = messages.filter(msg => msg.ticket_id === ticket.id);
+                        const unreadCounts = ticketMessages.filter(
+                            msg => msg.seen_by != null && msg.seen_by == '{}' && msg.sender_id !== 1 && msg.sender_id !== userId
+                        ).length;
 
-                        <div className="chat-item-container">
-                            {sortedTickets.map(ticket => {
-                                const ticketMessages = messages.filter(msg => msg.ticket_id === ticket.id);
-                                const unreadCounts = ticketMessages.filter(
-                                    msg => msg.seen_by != null && msg.seen_by == '{}' && msg.sender_id !== 1 && msg.sender_id !== userId
-                                ).length;
+                        const lastMessage = ticketMessages.length
+                            ? ticketMessages.reduce((latest, current) =>
+                                new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
+                            )
+                            : { message: "", time_sent: null };
 
-                                const lastMessage = ticketMessages.length
-                                    ? ticketMessages.reduce((latest, current) =>
-                                        new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
-                                    )
-                                    : { message: "", time_sent: null };
+                        const formattedTime = lastMessage.time_sent
+                            ? new Date(lastMessage.time_sent).toLocaleTimeString("ru-RU", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                            })
+                            : null;
 
-                                const formattedTime = lastMessage.time_sent
-                                    ? new Date(lastMessage.time_sent).toLocaleTimeString("ru-RU", {
-                                        hour: "2-digit",
-                                        minute: "2-digit",
-                                    })
-                                    : null;
+                        const tags = parseTags(ticket.tags);
 
-                                const tags = parseTags(ticket.tags);
-
-                                return (
-                                    <div
-                                        key={ticket.id}
-                                        className={`chat-item ${ticket.id === selectTicketId ? "active" : ""}`}
-                                        onClick={() => handleTicketClick(ticket.id)}
-                                        ref={ticket.id === selectTicketId ? ticketRef : null}
-                                    >
-                                        <div className="foto-description">
-                                            <img className="foto-user" src="https://storage.googleapis.com/pandatur_bucket/utils/icon-5359554_640.webp" alt="example" />
-                                            <div className="tickets-descriptions">
-                                                <div>{ticket.contact || "no contact"}</div>
-                                                <div>{ticket.id ? `Lead: #${ticket.id}` : "no id"}</div>
-                                                <div>{ticket.workflow || "no workflow"}</div>
-                                                <div className="tags-ticket">
-                                                    {Array.isArray(tags) && tags.length > 0 ? (
-                                                        tags.map((tag, index) => (
-                                                            <span
-                                                                key={index}
-                                                                style={{
-                                                                    display: "inline-block",
-                                                                    backgroundColor: "#0f824c",
-                                                                    color: "#fff",
-                                                                    padding: "5px 10px",
-                                                                    borderRadius: "20px",
-                                                                    marginRight: "5px",
-                                                                    fontSize: "12px",
-                                                                }}
-                                                            >
-                                                                {tag}
-                                                            </span>
-                                                        ))
-                                                    ) : (
-                                                        tags?.length === 0 ? null : <div>{translations["nici un tag"][language]}</div>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="container-time-tasks-chat">
-                                            <div className="info-message">
-                                                <div className="last-message-container">
-                                                    <div className="last-message-ticket">
-                                                        {lastMessage?.mtype === 'text'
-                                                            ? lastMessage.message
-                                                            : lastMessage?.mtype
-                                                                ? getMessageTypeLabel(lastMessage.mtype)
-                                                                : "No messages"}
-                                                    </div>
-                                                    <div className='chat-time'>{formattedTime || "—"}</div>
-                                                    {unreadCounts > 0 && (
-                                                        <div className="unread-count">{unreadCounts}</div>
-                                                    )}
-                                                </div>
-                                            </div>
+                        return (
+                            <div
+                                key={ticket.id}
+                                className={`chat-item ${ticket.id === selectTicketId ? "active" : ""}`}
+                                onClick={() => handleTicketClick(ticket.id)}
+                                ref={ticket.id === selectTicketId ? ticketRef : null}
+                            >
+                                <div className="foto-description">
+                                    <img className="foto-user" src="https://storage.googleapis.com/pandatur_bucket/utils/icon-5359554_640.webp" alt="example" />
+                                    <div className="tickets-descriptions">
+                                        <div>{ticket.contact || "no contact"}</div>
+                                        <div>{ticket.id ? `Lead: #${ticket.id}` : "no id"}</div>
+                                        <div>{ticket.workflow || "no workflow"}</div>
+                                        <div className="tags-ticket">
+                                            {Array.isArray(tags) && tags.length > 0 ? (
+                                                tags.map((tag, index) => (
+                                                    <span
+                                                        key={index}
+                                                        style={{
+                                                            display: "inline-block",
+                                                            backgroundColor: "#0f824c",
+                                                            color: "#fff",
+                                                            padding: "5px 10px",
+                                                            borderRadius: "20px",
+                                                            marginRight: "5px",
+                                                            fontSize: "12px",
+                                                        }}
+                                                    >
+                                                        {tag}
+                                                    </span>
+                                                ))
+                                            ) : (
+                                                tags?.length === 0 ? null : <div>{translations["nici un tag"][language]}</div>
+                                            )}
                                         </div>
                                     </div>
-                                );
-                            })}
-                        </div>
-
-                        {isLoading && (
-                            <div className="spinner-overlay">
-                                <div className="spinner"></div>
+                                </div>
+                                <div className="container-time-tasks-chat">
+                                    <div className="info-message">
+                                        <div className="last-message-container">
+                                            <div className="last-message-ticket">
+                                                {lastMessage?.mtype === 'text'
+                                                    ? lastMessage.message
+                                                    : lastMessage?.mtype
+                                                        ? getMessageTypeLabel(lastMessage.mtype)
+                                                        : "No messages"}
+                                            </div>
+                                            <div className='chat-time'>{formattedTime || "—"}</div>
+                                            {unreadCounts > 0 && (
+                                                <div className="unread-count">{unreadCounts}</div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        )}
+                        );
+                    })}
+                </div>
 
-                        <TicketFilterModal
-                            isOpen={isFilterOpen}
-                            onClose={() => setIsFilterOpen(false)}
-                            onApplyFilter={applyFilters}
-                        />
-                    </>
+                {isLoading && (
+                    <div className="spinner-overlay">
+                        <div className="spinner"></div>
+                    </div>
                 )}
+
+                <TicketFilterModal
+                    isOpen={isFilterOpen}
+                    onClose={() => setIsFilterOpen(false)}
+                    onApplyFilter={applyFilters}
+                />
             </div>
-
-            {/* Кнопка скрытия/показа списка чатов */}
-            <button
-                className="toggle-chat-list"
-                onClick={() => setIsChatListVisible(prev => !prev)}
-            >
-                {isChatListVisible ? "<" : ">"}
-            </button>
-
             <div className="chat-area">
                 <div className="chat-messages" ref={messageContainerRef}>
                     {selectTicketId ? (
