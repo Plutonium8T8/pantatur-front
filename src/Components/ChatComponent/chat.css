@@ -688,10 +688,7 @@
     position: sticky;
     top: 0;
     background: white;
-    /* Или другой цвет фона */
     z-index: 1000;
-    /* Убедитесь, что он выше остальных элементов */
-    padding: 10px;
+    padding: 10px 0px 10px 0px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    /* Добавит небольшую тень для разделения */
 }
