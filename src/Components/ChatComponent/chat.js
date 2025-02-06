@@ -27,6 +27,7 @@ import { translations } from '../utils/translations';
 import TicketFilterModal from '../LeadsComponent/TicketFilterModal';
 import { FaFacebook, FaInstagram, FaWhatsapp, FaTelegram } from "react-icons/fa";
 import { SiViber } from "react-icons/si";
+import { useLocation } from 'react-router-dom';
 
 const ChatComponent = ({ }) => {
     const { userId } = useUser();
@@ -60,6 +61,7 @@ const ChatComponent = ({ }) => {
     const [appliedFilters, setAppliedFilters] = useState({});
     const ticketRef = useRef(null);
     const [isChatListVisible, setIsChatListVisible] = useState(true);
+    const location = useLocation();
 
     const platformIcons = {
         "facebook": <FaFacebook />,
@@ -1097,6 +1099,11 @@ const ChatComponent = ({ }) => {
         return selectedTicket ? [selectedTicket, ...otherTickets] : otherTickets;
     }, [filteredTickets, selectTicketId, messages]);
 
+    useEffect(() => {
+        if (location.state?.hideChatList) {
+            setIsChatListVisible(false);
+        }
+    }, [location.state]);
 
     return (
         <div className="chat-container">
