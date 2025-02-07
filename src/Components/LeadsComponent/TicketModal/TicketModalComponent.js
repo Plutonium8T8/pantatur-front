@@ -37,10 +37,10 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
     tags: [],
     priority: '',
     workflow: '',
-    nume: '',
-    prenume: '',
-    mail: '',
-    telefon: '',
+    name: '',
+    surname: '',
+    email: '',
+    phone: '',
     ...ticket,
     tags: parseTags(ticket?.tags),
   }));
@@ -60,7 +60,15 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
       ticket_id: editedTicket.id || userId,
       technician_id: userId,
       contact: editedTicket.contact || '',
+      nume: editedTicket.name,
+      prenume: editedTicket.surname,
+      mail: editedTicket.email,
+      telefon: editedTicket.phone,
     };
+
+    const cleanedData = Object.fromEntries(
+      Object.entries(ticketData).map(([key, value]) => [key, value ?? null])
+    );
 
     try {
       const token = Cookies.get('jwt');
@@ -78,7 +86,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
           Authorization: `Bearer ${token}`,
         },
         credentials: 'include',
-        body: JSON.stringify(ticketData),
+        body: JSON.stringify(cleanedData),
       });
 
       if (!response.ok) {
@@ -138,8 +146,8 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
             <label>{translations['name'][language]}:</label>
             <input
               type="text"
-              name="nume"
-              value={editedTicket.nume || ''}
+              name="name"
+              value={editedTicket.name || ''}
               onChange={handleInputChange}
               placeholder={translations['name'][language]}
             />
@@ -148,8 +156,8 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
             <label>{translations['surname'][language]}:</label>
             <input
               type="text"
-              name="prenume"
-              value={editedTicket.prenume || ''}
+              name="surname"
+              value={editedTicket.surname || ''}
               onChange={handleInputChange}
               placeholder={translations['surname'][language]}
             />
@@ -159,7 +167,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
             <input
               type="email"
               name="mail"
-              value={editedTicket.mail || ''}
+              value={editedTicket.email || ''}
               onChange={handleInputChange}
               placeholder={translations['email'][language]}
             />
@@ -168,8 +176,8 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
             <label>{translations['phone'][language]}:</label>
             <input
               type="tel"
-              name="telefon"
-              value={editedTicket.telefon || ''}
+              name="phone"
+              value={editedTicket.phone || ''}
               onChange={handleInputChange}
               placeholder={translations['phone'][language]}
             />
