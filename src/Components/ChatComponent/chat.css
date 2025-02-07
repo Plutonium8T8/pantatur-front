@@ -764,3 +764,8 @@
     background-color: #0c6a3c;
     margin: 10px 0;
 }
+
+.client-name {
+    color: #0f824c77;
+    font-weight: bold;
+}
