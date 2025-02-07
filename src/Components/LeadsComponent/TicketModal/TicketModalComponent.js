@@ -142,6 +142,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
             <Priority ticket={editedTicket} onChange={handleInputChange} />
             <Workflow ticket={editedTicket} onChange={handleInputChange} />
           </div>
+          <div className="divider-line"></div>
           <div className="input-group">
             <label>{translations['name'][language]}:</label>
             <input
@@ -192,6 +193,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
               placeholder={translations['Contact'][language]}
             />
           </div>
+          <div className="divider-line"></div>
           <TagInput initialTags={editedTicket.tags || []} onChange={handleTagsChange} />
           <div className="input-group">
             <label>{translations['Descriere'][language]}:</label>
