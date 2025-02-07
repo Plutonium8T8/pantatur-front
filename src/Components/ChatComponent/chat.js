@@ -1361,9 +1361,12 @@ const ChatComponent = ({ }) => {
                                                                     <div className="text">
                                                                         {renderContent()}
                                                                         <div className="message-time">
-                                                                            <span className="client-name">
-                                                                                {personalInfo[msg.client_id]?.name || ""} {personalInfo[msg.client_id]?.surname || ""}
-                                                                            </span>
+                                                                            {/* Отображаем имя только если сообщение от клиента */}
+                                                                            {msg.sender_id !== 1 && msg.sender_id !== userId && (
+                                                                                <span className="client-name">
+                                                                                    {personalInfo[msg.client_id]?.name || ""} {personalInfo[msg.client_id]?.surname || ""}
+                                                                                </span>
+                                                                            )}
                                                                             <div
                                                                                 className="reaction-toggle-button"
                                                                                 onClick={() =>
@@ -1504,20 +1507,6 @@ const ChatComponent = ({ }) => {
 
             </div>
             <div className="extra-info">
-                <div className="tabs">
-                    <button
-                        className={`tab-button ${activeTab === 'extraForm' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('extraForm')}
-                    >
-                        {translations['Informații suplimentare'][language]}
-                    </button>
-                    <button
-                        className={`tab-button ${activeTab === 'personalData' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('personalData')}
-                    >
-                        {translations['Date personale'][language]}
-                    </button>
-                </div>
                 <div className="tab-content">
                     {activeTab === 'extraForm' && selectTicketId && ( // ✅ Добавлена проверка selectTicketId
                         <div className="extra-info-content">
@@ -1751,125 +1740,127 @@ const ChatComponent = ({ }) => {
                                     </div>
                                 </>
                             )}
-                        </div>
-                    )}
-                    {activeTab === 'personalData' && selectedClient && (
-                        <div className="personal-data-content">
-                            <div className='extra-info-title'>{translations['Date personale'][language]}</div>
-                            <form onSubmit={handlePersonalDataSubmit} className='personal-data-container'>
-                                <Input
-                                    label="Nume"
-                                    type="text"
-                                    value={personalInfo[selectedClient]?.name ?? ""}
-                                    onChange={(e) =>
-                                        handleSelectChange(selectedClient, 'name', e.target.value)
-                                    }
-                                    className="input-field"
-                                    placeholder="Nume"
-                                />
-                                <Input
-                                    label="Prenume"
-                                    type="text"
-                                    value={personalInfo[selectedClient]?.surname ?? ""}
-                                    onChange={(e) =>
-                                        handleSelectChange(selectedClient, 'surname', e.target.value)
-                                    }
-                                    className="input-field"
-                                    placeholder="Prenume"
-                                />
-                                <Input
-                                    label="Data nașterii"
-                                    type="date"
-                                    value={personalInfo[selectedClient]?.date_of_birth ?? ""}
-                                    onChange={(e) =>
-                                        handleSelectChange(selectedClient, 'date_of_birth', e.target.value)
-                                    }
-                                    className="input-field"
-                                />
-                                <Input
-                                    label="Seria buletinului"
-                                    type="text"
-                                    value={personalInfo[selectedClient]?.id_card_series ?? ""}
-                                    onChange={(e) =>
-                                        handleSelectChange(selectedClient, 'id_card_series', e.target.value)
-                                    }
-                                    className="input-field"
-                                    placeholder="Seria buletinului"
-                                />
-                                <Input
-                                    label="Numărul buletinului"
-                                    type="text"
-                                    value={personalInfo[selectedClient]?.id_card_number ?? ""}
-                                    onChange={(e) =>
-                                        handleSelectChange(selectedClient, 'id_card_number', e.target.value)
-                                    }
-                                    className="input-field"
-                                    placeholder="Numărul buletinului"
-                                />
-                                <Input
-                                    label="Data eliberării buletinului"
-                                    type="date"
-                                    value={personalInfo[selectedClient]?.id_card_release ?? ""}
-                                    onChange={(e) =>
-                                        handleSelectChange(selectedClient, 'id_card_release', e.target.value)
-                                    }
-                                    className="input-field"
-                                />
-                                <Input
-                                    label="IDNP"
-                                    type="text"
-                                    value={personalInfo[selectedClient]?.idnp ?? ""}
-                                    onChange={(e) =>
-                                        handleSelectChange(selectedClient, 'idnp', e.target.value)
-                                    }
-                                    className="input-field"
-                                    placeholder="IDNP"
-                                />
-                                <Input
-                                    label="Adresă"
-                                    type="text"
-                                    value={personalInfo[selectedClient]?.address ?? ""}
-                                    onChange={(e) =>
-                                        handleSelectChange(selectedClient, 'address', e.target.value)
-                                    }
-                                    className="input-field"
-                                    placeholder="Adresă"
-                                />
-                                <Input
-                                    label="Telefon"
-                                    type="tel"
-                                    value={personalInfo[selectedClient]?.phone ?? ""}
-                                    onChange={(e) =>
-                                        handleSelectChange(selectedClient, 'phone', e.target.value)
-                                    }
-                                    className="input-field"
-                                    placeholder="Telefon"
-                                />
-                                <button type="submit" className="submit-button">
-                                    {translations['Salvați datele personale'][language]}
-                                </button>
-                            </form>
-                            <div className="merge-client">
-                                <input
-                                    type="number"
-                                    value={selectedClient} // old_user_id фиксирован
-                                    className="input-field"
-                                    placeholder="Introduceți ID vechi"
-                                    disabled // Поле отключено, так как old_user_id фиксирован
-                                />
-                                <input
-                                    type="number"
-                                    value={extraInfo[selectedClient]?.new_user_id || ""}
-                                    onChange={(e) =>
-                                        handleSelectChangeExtra(selectedClient, 'new_user_id', e.target.value)
-                                    }
-                                    className="input-field"
-                                    placeholder={translations["Introduceți ID client"][language]}
-                                />
-                                <button onClick={handleMergeClients} className="submit-button">
-                                    {translations["Combina"][language]}
-                                </button>
-                            </div>
+                            <div className="divider-line"></div>
+                            {selectedClient && (
+                                <div className="personal-data-content">
+                                    <div className='extra-info-title'>{translations['Date personale'][language]}</div>
+                                    <form onSubmit={handlePersonalDataSubmit} className='personal-data-container'>
+                                        <Input
+                                            label="Nume"
+                                            type="text"
+                                            value={personalInfo[selectedClient]?.name ?? ""}
+                                            onChange={(e) =>
+                                                handleSelectChange(selectedClient, 'name', e.target.value)
+                                            }
+                                            className="input-field"
+                                            placeholder="Nume"
+                                        />
+                                        <Input
+                                            label="Prenume"
+                                            type="text"
+                                            value={personalInfo[selectedClient]?.surname ?? ""}
+                                            onChange={(e) =>
+                                                handleSelectChange(selectedClient, 'surname', e.target.value)
+                                            }
+                                            className="input-field"
+                                            placeholder="Prenume"
+                                        />
+                                        <Input
+                                            label="Data nașterii"
+                                            type="date"
+                                            value={personalInfo[selectedClient]?.date_of_birth ?? ""}
+                                            onChange={(e) =>
+                                                handleSelectChange(selectedClient, 'date_of_birth', e.target.value)
+                                            }
+                                            className="input-field"
+                                        />
+                                        <Input
+                                            label="Seria buletinului"
+                                            type="text"
+                                            value={personalInfo[selectedClient]?.id_card_series ?? ""}
+                                            onChange={(e) =>
+                                                handleSelectChange(selectedClient, 'id_card_series', e.target.value)
+                                            }
+                                            className="input-field"
+                                            placeholder="Seria buletinului"
+                                        />
+                                        <Input
+                                            label="Numărul buletinului"
+                                            type="text"
+                                            value={personalInfo[selectedClient]?.id_card_number ?? ""}
+                                            onChange={(e) =>
+                                                handleSelectChange(selectedClient, 'id_card_number', e.target.value)
+                                            }
+                                            className="input-field"
+                                            placeholder="Numărul buletinului"
+                                        />
+                                        <Input
+                                            label="Data eliberării buletinului"
+                                            type="date"
+                                            value={personalInfo[selectedClient]?.id_card_release ?? ""}
+                                            onChange={(e) =>
+                                                handleSelectChange(selectedClient, 'id_card_release', e.target.value)
+                                            }
+                                            className="input-field"
+                                        />
+                                        <Input
+                                            label="IDNP"
+                                            type="text"
+                                            value={personalInfo[selectedClient]?.idnp ?? ""}
+                                            onChange={(e) =>
+                                                handleSelectChange(selectedClient, 'idnp', e.target.value)
+                                            }
+                                            className="input-field"
+                                            placeholder="IDNP"
+                                        />
+                                        <Input
+                                            label="Adresă"
+                                            type="text"
+                                            value={personalInfo[selectedClient]?.address ?? ""}
+                                            onChange={(e) =>
+                                                handleSelectChange(selectedClient, 'address', e.target.value)
+                                            }
+                                            className="input-field"
+                                            placeholder="Adresă"
+                                        />
+                                        <Input
+                                            label="Telefon"
+                                            type="tel"
+                                            value={personalInfo[selectedClient]?.phone ?? ""}
+                                            onChange={(e) =>
+                                                handleSelectChange(selectedClient, 'phone', e.target.value)
+                                            }
+                                            className="input-field"
+                                            placeholder="Telefon"
+                                        />
+                                        <button type="submit" className="submit-button">
+                                            {translations['Salvați datele personale'][language]}
+                                        </button>
+                                    </form>
+                                    <div className="merge-client">
+                                        <input
+                                            type="number"
+                                            value={selectedClient} // old_user_id фиксирован
+                                            className="input-field"
+                                            placeholder="Introduceți ID vechi"
+                                            disabled // Поле отключено, так как old_user_id фиксирован
+                                        />
+                                        <input
+                                            type="number"
+                                            value={extraInfo[selectedClient]?.new_user_id || ""}
+                                            onChange={(e) =>
+                                                handleSelectChangeExtra(selectedClient, 'new_user_id', e.target.value)
+                                            }
+                                            className="input-field"
+                                            placeholder={translations["Introduceți ID client"][language]}
+                                        />
+                                        <button onClick={handleMergeClients} className="submit-button">
+                                            {translations["Combina"][language]}
+                                        </button>
+                                    </div>
+
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>

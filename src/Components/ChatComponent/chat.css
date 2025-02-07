@@ -661,7 +661,7 @@
     padding: 8px 8px;
     border: 1px solid #ddd;
     margin-top: 10px;
-    background-color: #0c6d40;
+    /* background-color: #0c6d40; */
 }
 
 .merge-client {
@@ -671,7 +671,7 @@
     padding: 8px 8px;
     border: 1px solid #ddd;
     margin-top: 10px;
-    background-color: #0c6d40;
+    /* background-color: #0c6d40; */
 }
 
 .input-field {
@@ -756,4 +756,11 @@
 .time-messages {
     color: #333;
     font-weight: bold;
+}
+
+.divider-line {
+    height: 5px;
+    width: 100%;
+    background-color: #0c6a3c;
+    margin: 10px 0;
 }
