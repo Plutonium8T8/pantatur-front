@@ -30,14 +30,6 @@ function App() {
   // Функция для получения сессии и user_id
   const fetchSession = async () => {
     const token = Cookies.get('jwt');
-    if (!token) {
-      console.log("❌ Нет токена, выход...");
-      setIsLoggedIn(false);
-      setUserRoles(null);
-      setUserId(null);
-      setIsLoading(false);
-      return;
-    }
 
     try {
       const response = await fetch('https://pandatur-api.com/session', {
