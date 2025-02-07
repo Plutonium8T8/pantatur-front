@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { FaFile, FaPaperPlane, FaSmile } from 'react-icons/fa';
+import { FaArrowLeft, FaArrowRight, FaFile, FaPaperPlane, FaSmile } from 'react-icons/fa';
 import Select from '../SelectComponent/SelectComponent';
 import { useUser } from '../../UserContext';
 import Cookies from 'js-cookie';
@@ -1247,7 +1247,7 @@ const ChatComponent = ({ }) => {
                 className="toggle-chat-list"
                 onClick={() => setIsChatListVisible(prev => !prev)}
             >
-                {isChatListVisible ? "<" : ">"}
+                {isChatListVisible ? <FaArrowLeft/> : <FaArrowRight/>}
             </button>
 
             <div className="chat-area">
