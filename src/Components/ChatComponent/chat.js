@@ -1494,15 +1494,31 @@ const ChatComponent = ({ }) => {
                                     value={selectedClient}
                                     onChange={(e) => setSelectedClient(e.target.value)}
                                 >
-                                    <option value="" disabled>{["Alege client"][language]}</option>
+                                    <option value="" disabled>{translations["Alege client"][language]}</option>
                                     {tickets.find(ticket => ticket.id === selectTicketId).client_id
                                         .replace(/[{}]/g, "")
                                         .split(",")
-                                        .map(id => (
-                                            <option key={id.trim()} value={id.trim()}>
-                                                {["Client"]} {id.trim()}
-                                            </option>
-                                        ))}
+                                        .map(clientId => {
+                                            clientId = clientId.trim();
+
+                                            // Получаем имя и фамилию клиента
+                                            const clientName = personalInfo[clientId]?.name || "Nume necunoscut";
+                                            const clientSurname = personalInfo[clientId]?.surname || "";
+
+                                            // Определяем платформу последнего сообщения клиента
+                                            const lastMessage = messages
+                                                .filter(msg => msg.client_id == clientId)
+                                                .sort((a, b) => new Date(b.time_sent) - new Date(a.time_sent))[0];
+
+                                            const platformIcon = lastMessage ? platformIcons[lastMessage.platform] : null;
+
+                                            return (
+                                                <option key={clientId} value={clientId}>
+                                                    {platformIcon && <span style={{ marginRight: "5px" }}>{platformIcon}</span>}
+                                                    {`ID: ${clientId} - ${clientName} ${clientSurname}`}
+                                                </option>
+                                            );
+                                        })}
                                 </select>
                             </div>
                         )}
