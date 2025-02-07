@@ -57,7 +57,6 @@ const ChatComponent = ({ }) => {
     const [selectedClient, setSelectedClient] = useState(null);
     const fileInputRef = useRef(null);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
-    const [appliedFilters, setAppliedFilters] = useState({});
     const ticketRef = useRef(null);
     const [isChatListVisible, setIsChatListVisible] = useState(true);
     const location = useLocation();
@@ -69,49 +68,6 @@ const ChatComponent = ({ }) => {
         "whatsapp": <FaWhatsapp />,
         "viber": <SiViber />,
         "telegram": <FaTelegram />
-    };
-
-    // Функция фильтрации тикетов
-    const applyFilters = (filters) => {
-        setAppliedFilters(filters);
-
-        let filtered = tickets;
-
-        if (filters.creation_date) {
-            filtered = filtered.filter(ticket => ticket.creation_date.startsWith(filters.creation_date));
-        }
-        if (filters.last_interaction_date) {
-            filtered = filtered.filter(ticket => ticket.last_interaction_date.startsWith(filters.last_interaction_date));
-        }
-        if (filters.technician_id) {
-            filtered = filtered.filter(ticket => String(ticket.technician_id) === filters.technician_id);
-        }
-        if (filters.workflow) {
-            filtered = filtered.filter(ticket => ticket.workflow === filters.workflow);
-        }
-        if (filters.priority) {
-            filtered = filtered.filter(ticket => ticket.priority === filters.priority);
-        }
-        if (filters.tags) {
-            filtered = filtered.filter(ticket => {
-                const ticketTags = ticket.tags.replace(/[{}]/g, '').split(',').map(tag => tag.trim());
-                return ticketTags.includes(filters.tags);
-            });
-        }
-        if (filters.platform) {
-            const ticketIds = messages
-                .filter(msg => msg.platform === filters.platform)
-                .map(msg => msg.ticket_id);
-            filtered = filtered.filter(ticket => ticketIds.includes(ticket.id));
-        }
-        if (filters.sender_id) {
-            const ticketIds = messages
-                .filter(msg => String(msg.sender_id) === filters.sender_id)
-                .map(msg => msg.ticket_id);
-            filtered = filtered.filter(ticket => ticketIds.includes(ticket.id));
-        }
-
-        setFilteredTickets(filtered);
     };
 
     useEffect(() => {
@@ -1048,12 +1004,6 @@ const ChatComponent = ({ }) => {
         }
     };
 
-    // useEffect(() => {
-    //     if (selectTicketId && ticketRef.current) {
-    //         ticketRef.current.scrollIntoView({ behavior: "auto", block: "center" });
-    //     }
-    // }, [selectTicketId]);
-
     const sortedTickets = useMemo(() => {
         let filtered = tickets;
 
@@ -1106,11 +1056,6 @@ const ChatComponent = ({ }) => {
         }
     }, [location.state]);
 
-    // useEffect(() => {
-    //     // Пересчитываем фильтрованные тикеты, когда приходят новые сообщения
-    //     applyFilters(appliedFilters);
-    // }, [messages]); // Запускаем при обновлении сообщений
-
     return (
         <div className="chat-container">
             {/* Контейнер списка чатов */}
@@ -1138,9 +1083,6 @@ const ChatComponent = ({ }) => {
                                     onInput={handleFilterInput}
                                     className="ticket-filter-input"
                                 />
-                                {/* <button onClick={() => setIsFilterOpen(true)} className="button-filter">
-                                    {translations["Filtru"][language]} {Object.values(appliedFilters).some(value => value) && <span className="filter-indicator"></span>}
-                                </button> */}
                             </div>
                         </div>
 
@@ -1230,12 +1172,6 @@ const ChatComponent = ({ }) => {
                                 <div className="spinner"></div>
                             </div>
                         )}
-
-                        {/* <TicketFilterModal
-                            isOpen={isFilterOpen}
-                            onClose={() => setIsFilterOpen(false)}
-                            onApplyFilter={applyFilters}
-                        /> */}
                     </>
                 )}
             </div>
