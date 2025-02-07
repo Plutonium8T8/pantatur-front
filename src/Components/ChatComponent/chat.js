@@ -1106,10 +1106,10 @@ const ChatComponent = ({ }) => {
         }
     }, [location.state]);
 
-    // useEffect(() => {
-    //     // Пересчитываем фильтрованные тикеты, когда приходят новые сообщения
-    //     applyFilters(appliedFilters);
-    // }, [messages]); // Запускаем при обновлении сообщений
+    useEffect(() => {
+        // Пересчитываем фильтрованные тикеты, когда приходят новые сообщения
+        applyFilters(appliedFilters);
+    }, [messages]); // Запускаем при обновлении сообщений
 
     return (
         <div className="chat-container">
@@ -1138,9 +1138,9 @@ const ChatComponent = ({ }) => {
                                     onInput={handleFilterInput}
                                     className="ticket-filter-input"
                                 />
-                                {/* <button onClick={() => setIsFilterOpen(true)} className="button-filter">
+                                <button onClick={() => setIsFilterOpen(true)} className="button-filter">
                                     {translations["Filtru"][language]} {Object.values(appliedFilters).some(value => value) && <span className="filter-indicator"></span>}
-                                </button> */}
+                                </button>
                             </div>
                         </div>
 
@@ -1231,11 +1231,11 @@ const ChatComponent = ({ }) => {
                             </div>
                         )}
 
-                        {/* <TicketFilterModal
+                        <TicketFilterModal
                             isOpen={isFilterOpen}
                             onClose={() => setIsFilterOpen(false)}
                             onApplyFilter={applyFilters}
-                        /> */}
+                        />
                     </>
                 )}
             </div>
