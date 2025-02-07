@@ -31,35 +31,27 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
     return []; // Если формат неизвестен, возвращаем пустой массив
   };
 
-  const [editedTicket, setEditedTicket] = useState(() => {
-    const defaultTicket = {
-      contact: '',
-      description: '',
-      tags: [],
-      priority: '',
-      workflow: '',
-    };
-
-    return {
-      ...defaultTicket,
-      ...ticket,
-      tags: parseTags(ticket?.tags), // Преобразуем теги в массив
-    };
-  });
+  const [editedTicket, setEditedTicket] = useState(() => ({
+    contact: '',
+    description: '',
+    tags: [],
+    priority: '',
+    workflow: '',
+    nume: '',
+    prenume: '',
+    mail: '',
+    telefon: '',
+    ...ticket,
+    tags: parseTags(ticket?.tags),
+  }));
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setEditedTicket((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setEditedTicket(prev => ({ ...prev, [name]: value }));
   };
 
   const handleTagsChange = (updatedTags) => {
-    setEditedTicket((prev) => ({
-      ...prev,
-      tags: updatedTags,
-    }));
+    setEditedTicket(prev => ({ ...prev, tags: updatedTags }));
   };
 
   const handleSave = async () => {
@@ -72,8 +64,8 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
 
     try {
       const token = Cookies.get('jwt');
-      const isEditing = Boolean(editedTicket?.id); // Проверяем, редактируем ли тикет
-      const method = isEditing ? 'PATCH' : 'POST'; // Выбираем метод
+      const isEditing = Boolean(editedTicket?.id);
+      const method = isEditing ? 'PATCH' : 'POST';
       const url = isEditing
         ? `https://pandatur-api.com/api/tickets/${editedTicket.id}`
         : `https://pandatur-api.com/api/tickets`;
@@ -96,20 +88,10 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
 
       const updatedTicket = await response.json();
 
-      // Локально обновляем тикеты
-      setTickets((prevTickets) => {
-        if (isEditing) {
-          // Обновляем тикет в списке
-          return prevTickets.map((ticket) =>
-            ticket.id === updatedTicket.id ? updatedTicket : ticket
-          );
-        } else {
-          // Добавляем новый тикет в список
-          return [...prevTickets, updatedTicket];
-        }
-      });
-
-      console.log('Тикеты локально обновлены:', updatedTicket);
+      setTickets(prevTickets => isEditing
+        ? prevTickets.map(ticket => (ticket.id === updatedTicket.id ? updatedTicket : ticket))
+        : [...prevTickets, updatedTicket]
+      );
 
       onClose();
     } catch (e) {
@@ -130,14 +112,10 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
         credentials: 'include',
       });
 
-      if (!response.ok) {
-        throw new Error('Error deleting ticket');
-      }
+      if (!response.ok) throw new Error('Error deleting ticket');
 
-      // Локальное обновление списка тикетов
-      setTickets((prevTickets) => prevTickets.filter((t) => t.id !== editedTicket.id));
-
-      onClose(); // Закрыть модальное окно
+      setTickets(prevTickets => prevTickets.filter(t => t.id !== editedTicket.id));
+      onClose();
     } catch (error) {
       console.error('Error:', error);
     }
@@ -145,17 +123,57 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div
-        className="modal-container"
-        ref={modalRef}
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className="modal-container" ref={modalRef} onClick={(e) => e.stopPropagation()}>
         <header className="modal-header">
           <h2>
             <FaUser /> {translations['Lead nou'][language]}
           </h2>
         </header>
         <div className="ticket-modal-form">
+          <div className="container-select-priority-workflow">
+            <Priority ticket={editedTicket} onChange={handleInputChange} />
+            <Workflow ticket={editedTicket} onChange={handleInputChange} />
+          </div>
+          <div className="input-group">
+            <label>{translations['name'][language]}:</label>
+            <input
+              type="text"
+              name="nume"
+              value={editedTicket.nume || ''}
+              onChange={handleInputChange}
+              placeholder={translations['name'][language]}
+            />
+          </div>
+          <div className="input-group">
+            <label>{translations['surname'][language]}:</label>
+            <input
+              type="text"
+              name="prenume"
+              value={editedTicket.prenume || ''}
+              onChange={handleInputChange}
+              placeholder={translations['surname'][language]}
+            />
+          </div>
+          <div className="input-group">
+            <label>{translations['email'][language]}:</label>
+            <input
+              type="email"
+              name="mail"
+              value={editedTicket.mail || ''}
+              onChange={handleInputChange}
+              placeholder={translations['email'][language]}
+            />
+          </div>
+          <div className="input-group">
+            <label>{translations['phone'][language]}:</label>
+            <input
+              type="tel"
+              name="telefon"
+              value={editedTicket.telefon || ''}
+              onChange={handleInputChange}
+              placeholder={translations['phone'][language]}
+            />
+          </div>
           <div className="input-group">
             <label>{translations['Contact'][language]}:</label>
             <input
@@ -166,10 +184,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
               placeholder={translations['Contact'][language]}
             />
           </div>
-          <TagInput
-            initialTags={editedTicket.tags || []} // Передаем массив тегов
-            onChange={handleTagsChange}
-          />
+          <TagInput initialTags={editedTicket.tags || []} onChange={handleTagsChange} />
           <div className="input-group">
             <label>{translations['Descriere'][language]}:</label>
             <textarea
@@ -179,23 +194,13 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
               placeholder={translations['Adaugă descriere lead'][language]}
             />
           </div>
-          <div className="container-select-priority-workflow">
-            <Priority ticket={editedTicket} onChange={handleInputChange} />
-            <Workflow ticket={editedTicket} onChange={handleInputChange} />
-          </div>
           <div className="button-container">
             {ticket?.id && (
-              <button
-                className="clear-button"
-                onClick={() => deleteTicketById()}
-              >
+              <button className="clear-button" onClick={deleteTicketById}>
                 <FaTrash /> {translations['Șterge'][language]}
               </button>
             )}
-            <button
-              className="submit-button"
-              onClick={handleSave}
-            >
+            <button className="submit-button" onClick={handleSave}>
               {ticket?.id ? translations['Salvează'][language] : translations['Creează'][language]}
             </button>
           </div>
