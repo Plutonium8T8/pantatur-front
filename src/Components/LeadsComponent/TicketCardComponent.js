@@ -15,8 +15,9 @@ const TicketCard = ({ ticket, onContextMenu, onEditTicket }) => {
 
     const handleTicketClick = (ticket) => {
         setCurrentTicket(ticket);
-        navigate(`/chat/${ticket.id}`)
+        navigate(`/chat/${ticket.id}`, { state: { hideChatList: true } });
     };
+    
 
     return (
         <div

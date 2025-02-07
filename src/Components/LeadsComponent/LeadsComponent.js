@@ -87,6 +87,7 @@ const Leads = () => {
 
         if (errorData.message === "Session does not contain the user_id") {
           alert(translations["Sesia a expirat"][language] || "Sesia a expirat, te rog sa accesezi din nou pagina!");
+          window.location.reload();
         }
 
         throw new Error(`Failed to update workflow: ${response.status}. ${errorData.message}`);

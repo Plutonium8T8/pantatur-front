@@ -27,6 +27,7 @@ import { translations } from '../utils/translations';
 import TicketFilterModal from '../LeadsComponent/TicketFilterModal';
 import { FaFacebook, FaInstagram, FaWhatsapp, FaTelegram } from "react-icons/fa";
 import { SiViber } from "react-icons/si";
+import { useLocation } from 'react-router-dom';
 
 const ChatComponent = ({ }) => {
     const { userId } = useUser();
@@ -58,6 +59,10 @@ const ChatComponent = ({ }) => {
     const fileInputRef = useRef(null);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [appliedFilters, setAppliedFilters] = useState({});
+    const ticketRef = useRef(null);
+    const [isChatListVisible, setIsChatListVisible] = useState(true);
+    const location = useLocation();
+
     const platformIcons = {
         "facebook": <FaFacebook />,
         "instagram": <FaInstagram />,
@@ -119,10 +124,6 @@ const ChatComponent = ({ }) => {
         // Здесь можно добавить дополнительную логику, например, фильтрацию сообщений
     };
 
-    // useEffect(() => {
-    //     enqueueSnackbar("Тестовое уведомление работает!", { variant: "success" });
-    // }, []);
-
     useEffect(() => {
         if (ticketId) {
             setSelectTicketId(Number(ticketId));
@@ -130,11 +131,11 @@ const ChatComponent = ({ }) => {
     }, [ticketId, setSelectTicketId]);
 
     // Прокручиваем к активному чату, если selectTicketId изменился и тикеты загружены
-    useEffect(() => {
-        if (!isLoading && activeChatRef.current) {
-            activeChatRef.current.scrollIntoView({ behavior: "auto" });
-        }
-    }, [selectTicketId, isLoading, filteredTickets]);
+    // useEffect(() => {
+    //     if (!isLoading && activeChatRef.current) {
+    //         activeChatRef.current.scrollIntoView({ behavior: "auto" });
+    //     }
+    // }, [selectTicketId, isLoading, filteredTickets]);
 
     useEffect(() => {
         if (selectTicketId) {
@@ -377,28 +378,6 @@ const ChatComponent = ({ }) => {
             alert('Сообщение не может быть пустым');
             return;
         }
-
-        // if (socket && socket.readyState === WebSocket.OPEN) {
-        //     const payload = {
-        //         type: 'edit',
-        //         data: {
-        //             message_id: editMessageId, // Используется правильный идентификатор сообщения
-        //             sender_id: userId,
-        //             new_text: managerMessage,
-        //             edited_at: new Date().toISOString(),
-        //         },
-        //     };
-
-        //     try {
-        //         socket.send(JSON.stringify(payload));
-        //         setEditMessageId(null); // Сбрасываем состояние редактирования
-        //         setManagerMessage(''); // Очищаем textarea
-        //     } catch (error) {
-        //         console.error('Ошибка при сохранении:', error);
-        //     }
-        // } else {
-        //     alert('WebSocket не подключен');
-        // }
     };
 
     const handleCancel = () => {
@@ -413,9 +392,6 @@ const ChatComponent = ({ }) => {
             ...prev,
             [messageId]: reaction, // Устанавливаем новую реакцию (заменяем старую)
         }));
-
-        // Отправляем реакцию на сервер
-        // sendReaction(messageId, userId, reaction);
     };
 
     // // Пример функции sendReaction с подтверждением от сервера
@@ -636,7 +612,6 @@ const ChatComponent = ({ }) => {
             const updatedTicket = await response.json();
             console.log('Тикет успешно обновлён:', updatedTicket);
 
-            // await fetchTickets();
             console.log('Список тикетов успешно обновлён.');
         } catch (error) {
             console.error('Ошибка при обновлении technician_id:', error.message);
@@ -1091,61 +1066,90 @@ const ChatComponent = ({ }) => {
         }
     };
 
+    // useEffect(() => {
+    //     if (selectTicketId && ticketRef.current) {
+    //         ticketRef.current.scrollIntoView({ behavior: "auto", block: "center" });
+    //     }
+    // }, [selectTicketId]);
+
+    const sortedTickets = useMemo(() => {
+        if (!Array.isArray(filteredTickets) || filteredTickets.length === 0) return [];
+
+        // Разделяем выбранный тикет и остальные тикеты
+        const selectedTicket = filteredTickets.find(ticket => ticket.id === selectTicketId);
+        const otherTickets = filteredTickets.filter(ticket => ticket.id !== selectTicketId);
+
+        // Функция для получения последнего сообщения тикета
+        const getLastMessageTime = (ticketId) => {
+            const ticketMessages = messages.filter(msg => msg.ticket_id === ticketId);
+            if (!ticketMessages.length) return null;
+
+            return ticketMessages.reduce((latest, current) =>
+                new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
+            ).time_sent;
+        };
+
+        // Сортируем остальные тикеты по последнему сообщению (по убыванию)
+        otherTickets.sort((a, b) => {
+            const lastMessageA = getLastMessageTime(a.id);
+            const lastMessageB = getLastMessageTime(b.id);
+
+            return new Date(lastMessageB) - new Date(lastMessageA);
+        });
+
+        // Если выбранный тикет существует, помещаем его в начало
+        return selectedTicket ? [selectedTicket, ...otherTickets] : otherTickets;
+    }, [filteredTickets, selectTicketId, messages]);
+
+    useEffect(() => {
+        if (location.state?.hideChatList) {
+            setIsChatListVisible(false);
+        }
+    }, [location.state]);
+
+    useEffect(() => {
+        // Пересчитываем фильтрованные тикеты, когда приходят новые сообщения
+        applyFilters(appliedFilters);
+    }, [messages]); // Запускаем при обновлении сообщений
+
     return (
         <div className="chat-container">
-            <div className="users-container">
-                <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                    <div className='extra-info-title'>{translations["Chat"][language]}</div>
-                    <label style={{ marginLeft: "auto" }}>
-                        {translations["Leadurile mele"][language]}
-                        <input
-                            type="checkbox"
-                            id="myTicketsCheckbox"
-                            onChange={handleCheckboxChange}
-                            checked={showMyTickets}
-                        />
-                    </label>
-                </div>
+            {/* Контейнер списка чатов */}
+            <div className={`users-container ${isChatListVisible ? "" : "hidden"}`}>
+                {isChatListVisible && (
+                    <>
+                        <div className='header-list-chat'>
+                            <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                                <div className='extra-info-title'>{translations["Chat"][language]}</div>
+                                <label style={{ marginLeft: "auto" }}>
+                                    {translations["Leadurile mele"][language]}
+                                    <input
+                                        type="checkbox"
+                                        id="myTicketsCheckbox"
+                                        onChange={handleCheckboxChange}
+                                        checked={showMyTickets}
+                                    />
+                                </label>
+                            </div>
 
-                <div className="filter-container-chat">
-                    <input
-                        type="text"
-                        placeholder={translations["Cauta dupa Lead, Client sau Tag"][language]}
-                        onInput={handleFilterInput}
-                        className="ticket-filter-input"
-                    />
-                    <button onClick={() => setIsFilterOpen(true)} className="button-filter">
-                        {translations["Filtru"][language]} {Object.values(appliedFilters).some(value => value) && <span className="filter-indicator"></span>}
-                    </button>
-                </div>
+                            <div className="filter-container-chat">
+                                <input
+                                    type="text"
+                                    placeholder={translations["Cauta dupa Lead, Client sau Tag"][language]}
+                                    onInput={handleFilterInput}
+                                    className="ticket-filter-input"
+                                />
+                                <button onClick={() => setIsFilterOpen(true)} className="button-filter">
+                                    {translations["Filtru"][language]} {Object.values(appliedFilters).some(value => value) && <span className="filter-indicator"></span>}
+                                </button>
+                            </div>
+                        </div>
 
-                <div className="chat-item-container">
-                    {Array.isArray(filteredTickets) && filteredTickets.length > 0 ? (
-                        filteredTickets
-                            .sort((a, b) => {
-                                const ticketMessagesA = messages.filter(msg => msg.ticket_id === a.id);
-                                const ticketMessagesB = messages.filter(msg => msg.ticket_id === b.id);
-
-                                const lastMessageA = ticketMessagesA.length
-                                    ? ticketMessagesA.reduce((latest, current) =>
-                                        new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
-                                    )
-                                    : { time_sent: null };
-
-                                const lastMessageB = ticketMessagesB.length
-                                    ? ticketMessagesB.reduce((latest, current) =>
-                                        new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
-                                    )
-                                    : { time_sent: null };
-
-                                return new Date(lastMessageB.time_sent) - new Date(lastMessageA.time_sent);
-                            })
-                            .map(ticket => {
+                        <div className="chat-item-container">
+                            {sortedTickets.map(ticket => {
                                 const ticketMessages = messages.filter(msg => msg.ticket_id === ticket.id);
-
                                 const unreadCounts = ticketMessages.filter(
-                                    msg =>
-                                        msg.seen_by != null && msg.seen_by == '{}' && msg.sender_id !== 1 && msg.sender_id !== userId
+                                    msg => msg.seen_by != null && msg.seen_by == '{}' && msg.sender_id !== 1 && msg.sender_id !== userId
                                 ).length;
 
                                 const lastMessage = ticketMessages.length
@@ -1168,6 +1172,7 @@ const ChatComponent = ({ }) => {
                                         key={ticket.id}
                                         className={`chat-item ${ticket.id === selectTicketId ? "active" : ""}`}
                                         onClick={() => handleTicketClick(ticket.id)}
+                                        ref={ticket.id === selectTicketId ? ticketRef : null}
                                     >
                                         <div className="foto-description">
                                             <img className="foto-user" src="https://storage.googleapis.com/pandatur_bucket/utils/icon-5359554_640.webp" alt="example" />
@@ -1209,7 +1214,6 @@ const ChatComponent = ({ }) => {
                                                                 ? getMessageTypeLabel(lastMessage.mtype)
                                                                 : "No messages"}
                                                     </div>
-
                                                     <div className='chat-time'>{formattedTime || "—"}</div>
                                                     {unreadCounts > 0 && (
                                                         <div className="unread-count">{unreadCounts}</div>
@@ -1219,24 +1223,32 @@ const ChatComponent = ({ }) => {
                                         </div>
                                     </div>
                                 );
-                            })
-                    ) : (
-                        <div>{translations["Nici un lead"][language]}</div>
-                    )}
-                </div>
+                            })}
+                        </div>
 
-                {isLoading && (
-                    <div className="spinner-overlay">
-                        <div className="spinner"></div>
-                    </div>
+                        {isLoading && (
+                            <div className="spinner-overlay">
+                                <div className="spinner"></div>
+                            </div>
+                        )}
+
+                        <TicketFilterModal
+                            isOpen={isFilterOpen}
+                            onClose={() => setIsFilterOpen(false)}
+                            onApplyFilter={applyFilters}
+                        />
+                    </>
                 )}
-
-                <TicketFilterModal
-                    isOpen={isFilterOpen}
-                    onClose={() => setIsFilterOpen(false)}
-                    onApplyFilter={applyFilters}
-                />
             </div>
+
+            {/* Кнопка скрытия/показа списка чатов */}
+            <button
+                className="toggle-chat-list"
+                onClick={() => setIsChatListVisible(prev => !prev)}
+            >
+                {isChatListVisible ? "<" : ">"}
+            </button>
+
             <div className="chat-area">
                 <div className="chat-messages" ref={messageContainerRef}>
                     {selectTicketId ? (
@@ -1356,6 +1368,12 @@ const ChatComponent = ({ }) => {
                                                                     <div className="text">
                                                                         {renderContent()}
                                                                         <div className="message-time">
+                                                                            {/* Отображаем имя только если сообщение от клиента */}
+                                                                            {msg.sender_id !== 1 && msg.sender_id !== userId && (
+                                                                                <span className="client-name">
+                                                                                    {personalInfo[msg.client_id]?.name || ""} {personalInfo[msg.client_id]?.surname || ""}
+                                                                                </span>
+                                                                            )}
                                                                             <div
                                                                                 className="reaction-toggle-button"
                                                                                 onClick={() =>
@@ -1364,10 +1382,12 @@ const ChatComponent = ({ }) => {
                                                                             >
                                                                                 {lastReaction || "☺"}
                                                                             </div>
-                                                                            {new Date(msg.time_sent).toLocaleTimeString("ru-RU", {
-                                                                                hour: "2-digit",
-                                                                                minute: "2-digit",
-                                                                            })}
+                                                                            <div className='time-messages'>
+                                                                                {new Date(msg.time_sent).toLocaleTimeString("ru-RU", {
+                                                                                    hour: "2-digit",
+                                                                                    minute: "2-digit",
+                                                                                })}
+                                                                            </div>
                                                                         </div>
                                                                         {selectedMessageId === msg.id && (
                                                                             <div className="reaction-container" ref={reactionContainerRef}>
@@ -1494,20 +1514,6 @@ const ChatComponent = ({ }) => {
 
             </div>
             <div className="extra-info">
-                <div className="tabs">
-                    <button
-                        className={`tab-button ${activeTab === 'extraForm' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('extraForm')}
-                    >
-                        {translations['Informații suplimentare'][language]}
-                    </button>
-                    <button
-                        className={`tab-button ${activeTab === 'personalData' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('personalData')}
-                    >
-                        {translations['Date personale'][language]}
-                    </button>
-                </div>
                 <div className="tab-content">
                     {activeTab === 'extraForm' && selectTicketId && ( // ✅ Добавлена проверка selectTicketId
                         <div className="extra-info-content">
@@ -1741,125 +1747,127 @@ const ChatComponent = ({ }) => {
                                     </div>
                                 </>
                             )}
-                        </div>
-                    )}
-                    {activeTab === 'personalData' && selectedClient && (
-                        <div className="personal-data-content">
-                            <div className='extra-info-title'>{translations['Date personale'][language]}</div>
-                            <form onSubmit={handlePersonalDataSubmit} className='personal-data-container'>
-                                <Input
-                                    label="Nume"
-                                    type="text"
-                                    value={personalInfo[selectedClient]?.name ?? ""}
-                                    onChange={(e) =>
-                                        handleSelectChange(selectedClient, 'name', e.target.value)
-                                    }
-                                    className="input-field"
-                                    placeholder="Nume"
-                                />
-                                <Input
-                                    label="Prenume"
-                                    type="text"
-                                    value={personalInfo[selectedClient]?.surname ?? ""}
-                                    onChange={(e) =>
-                                        handleSelectChange(selectedClient, 'surname', e.target.value)
-                                    }
-                                    className="input-field"
-                                    placeholder="Prenume"
-                                />
-                                <Input
-                                    label="Data nașterii"
-                                    type="date"
-                                    value={personalInfo[selectedClient]?.date_of_birth ?? ""}
-                                    onChange={(e) =>
-                                        handleSelectChange(selectedClient, 'date_of_birth', e.target.value)
-                                    }
-                                    className="input-field"
-                                />
-                                <Input
-                                    label="Seria buletinului"
-                                    type="text"
-                                    value={personalInfo[selectedClient]?.id_card_series ?? ""}
-                                    onChange={(e) =>
-                                        handleSelectChange(selectedClient, 'id_card_series', e.target.value)
-                                    }
-                                    className="input-field"
-                                    placeholder="Seria buletinului"
-                                />
-                                <Input
-                                    label="Numărul buletinului"
-                                    type="text"
-                                    value={personalInfo[selectedClient]?.id_card_number ?? ""}
-                                    onChange={(e) =>
-                                        handleSelectChange(selectedClient, 'id_card_number', e.target.value)
-                                    }
-                                    className="input-field"
-                                    placeholder="Numărul buletinului"
-                                />
-                                <Input
-                                    label="Data eliberării buletinului"
-                                    type="date"
-                                    value={personalInfo[selectedClient]?.id_card_release ?? ""}
-                                    onChange={(e) =>
-                                        handleSelectChange(selectedClient, 'id_card_release', e.target.value)
-                                    }
-                                    className="input-field"
-                                />
-                                <Input
-                                    label="IDNP"
-                                    type="text"
-                                    value={personalInfo[selectedClient]?.idnp ?? ""}
-                                    onChange={(e) =>
-                                        handleSelectChange(selectedClient, 'idnp', e.target.value)
-                                    }
-                                    className="input-field"
-                                    placeholder="IDNP"
-                                />
-                                <Input
-                                    label="Adresă"
-                                    type="text"
-                                    value={personalInfo[selectedClient]?.address ?? ""}
-                                    onChange={(e) =>
-                                        handleSelectChange(selectedClient, 'address', e.target.value)
-                                    }
-                                    className="input-field"
-                                    placeholder="Adresă"
-                                />
-                                <Input
-                                    label="Telefon"
-                                    type="tel"
-                                    value={personalInfo[selectedClient]?.phone ?? ""}
-                                    onChange={(e) =>
-                                        handleSelectChange(selectedClient, 'phone', e.target.value)
-                                    }
-                                    className="input-field"
-                                    placeholder="Telefon"
-                                />
-                                <button type="submit" className="submit-button">
-                                    {translations['Salvați datele personale'][language]}
-                                </button>
-                            </form>
-                            <div className="merge-client">
-                                <input
-                                    type="number"
-                                    value={selectedClient} // old_user_id фиксирован
-                                    className="input-field"
-                                    placeholder="Introduceți ID vechi"
-                                    disabled // Поле отключено, так как old_user_id фиксирован
-                                />
-                                <input
-                                    type="number"
-                                    value={extraInfo[selectedClient]?.new_user_id || ""}
-                                    onChange={(e) =>
-                                        handleSelectChangeExtra(selectedClient, 'new_user_id', e.target.value)
-                                    }
-                                    className="input-field"
-                                    placeholder={translations["Introduceți ID client"][language]}
-                                />
-                                <button onClick={handleMergeClients} className="submit-button">
-                                    {translations["Combina"][language]}
-                                </button>
-                            </div>
+                            <div className="divider-line"></div>
+                            {selectedClient && (
+                                <div className="personal-data-content">
+                                    <div className='extra-info-title'>{translations['Date personale'][language]}</div>
+                                    <form onSubmit={handlePersonalDataSubmit} className='personal-data-container'>
+                                        <Input
+                                            label="Nume"
+                                            type="text"
+                                            value={personalInfo[selectedClient]?.name ?? ""}
+                                            onChange={(e) =>
+                                                handleSelectChange(selectedClient, 'name', e.target.value)
+                                            }
+                                            className="input-field"
+                                            placeholder="Nume"
+                                        />
+                                        <Input
+                                            label="Prenume"
+                                            type="text"
+                                            value={personalInfo[selectedClient]?.surname ?? ""}
+                                            onChange={(e) =>
+                                                handleSelectChange(selectedClient, 'surname', e.target.value)
+                                            }
+                                            className="input-field"
+                                            placeholder="Prenume"
+                                        />
+                                        <Input
+                                            label="Data nașterii"
+                                            type="date"
+                                            value={personalInfo[selectedClient]?.date_of_birth ?? ""}
+                                            onChange={(e) =>
+                                                handleSelectChange(selectedClient, 'date_of_birth', e.target.value)
+                                            }
+                                            className="input-field"
+                                        />
+                                        <Input
+                                            label="Seria buletinului"
+                                            type="text"
+                                            value={personalInfo[selectedClient]?.id_card_series ?? ""}
+                                            onChange={(e) =>
+                                                handleSelectChange(selectedClient, 'id_card_series', e.target.value)
+                                            }
+                                            className="input-field"
+                                            placeholder="Seria buletinului"
+                                        />
+                                        <Input
+                                            label="Numărul buletinului"
+                                            type="text"
+                                            value={personalInfo[selectedClient]?.id_card_number ?? ""}
+                                            onChange={(e) =>
+                                                handleSelectChange(selectedClient, 'id_card_number', e.target.value)
+                                            }
+                                            className="input-field"
+                                            placeholder="Numărul buletinului"
+                                        />
+                                        <Input
+                                            label="Data eliberării buletinului"
+                                            type="date"
+                                            value={personalInfo[selectedClient]?.id_card_release ?? ""}
+                                            onChange={(e) =>
+                                                handleSelectChange(selectedClient, 'id_card_release', e.target.value)
+                                            }
+                                            className="input-field"
+                                        />
+                                        <Input
+                                            label="IDNP"
+                                            type="text"
+                                            value={personalInfo[selectedClient]?.idnp ?? ""}
+                                            onChange={(e) =>
+                                                handleSelectChange(selectedClient, 'idnp', e.target.value)
+                                            }
+                                            className="input-field"
+                                            placeholder="IDNP"
+                                        />
+                                        <Input
+                                            label="Adresă"
+                                            type="text"
+                                            value={personalInfo[selectedClient]?.address ?? ""}
+                                            onChange={(e) =>
+                                                handleSelectChange(selectedClient, 'address', e.target.value)
+                                            }
+                                            className="input-field"
+                                            placeholder="Adresă"
+                                        />
+                                        <Input
+                                            label="Telefon"
+                                            type="tel"
+                                            value={personalInfo[selectedClient]?.phone ?? ""}
+                                            onChange={(e) =>
+                                                handleSelectChange(selectedClient, 'phone', e.target.value)
+                                            }
+                                            className="input-field"
+                                            placeholder="Telefon"
+                                        />
+                                        <button type="submit" className="submit-button">
+                                            {translations['Salvați datele personale'][language]}
+                                        </button>
+                                    </form>
+                                    <div className="merge-client">
+                                        <input
+                                            type="number"
+                                            value={selectedClient} // old_user_id фиксирован
+                                            className="input-field"
+                                            placeholder="Introduceți ID vechi"
+                                            disabled // Поле отключено, так как old_user_id фиксирован
+                                        />
+                                        <input
+                                            type="number"
+                                            value={extraInfo[selectedClient]?.new_user_id || ""}
+                                            onChange={(e) =>
+                                                handleSelectChangeExtra(selectedClient, 'new_user_id', e.target.value)
+                                            }
+                                            className="input-field"
+                                            placeholder={translations["Introduceți ID client"][language]}
+                                        />
+                                        <button onClick={handleMergeClients} className="submit-button">
+                                            {translations["Combina"][language]}
+                                        </button>
+                                    </div>
+
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
