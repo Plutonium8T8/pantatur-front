@@ -1361,6 +1361,9 @@ const ChatComponent = ({ }) => {
                                                                     <div className="text">
                                                                         {renderContent()}
                                                                         <div className="message-time">
+                                                                            <span className="client-name">
+                                                                                {personalInfo[msg.client_id]?.name || ""} {personalInfo[msg.client_id]?.surname || ""}
+                                                                            </span>
                                                                             <div
                                                                                 className="reaction-toggle-button"
                                                                                 onClick={() =>
@@ -1369,10 +1372,12 @@ const ChatComponent = ({ }) => {
                                                                             >
                                                                                 {lastReaction || "☺"}
                                                                             </div>
-                                                                            {new Date(msg.time_sent).toLocaleTimeString("ru-RU", {
-                                                                                hour: "2-digit",
-                                                                                minute: "2-digit",
-                                                                            })}
+                                                                            <div className='time-messages'>
+                                                                                {new Date(msg.time_sent).toLocaleTimeString("ru-RU", {
+                                                                                    hour: "2-digit",
+                                                                                    minute: "2-digit",
+                                                                                })}
+                                                                            </div>
                                                                         </div>
                                                                         {selectedMessageId === msg.id && (
                                                                             <div className="reaction-container" ref={reactionContainerRef}>

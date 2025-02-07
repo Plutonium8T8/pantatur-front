@@ -752,3 +752,8 @@
 .hidden {
     display: none;
 }
+
+.time-messages {
+    color: #333;
+    font-weight: bold;
+}
