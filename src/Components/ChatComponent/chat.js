@@ -54,7 +54,6 @@ const ChatComponent = ({ }) => {
     const [filteredTickets, setFilteredTickets] = useState(tickets);
     const [activeTab, setActiveTab] = useState('extraForm'); // По умолчанию вкладка Extra Form
     const [showMyTickets, setShowMyTickets] = useState(false);
-    const activeChatRef = useRef(null);
     const [selectedClient, setSelectedClient] = useState(null);
     const fileInputRef = useRef(null);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -62,6 +61,7 @@ const ChatComponent = ({ }) => {
     const ticketRef = useRef(null);
     const [isChatListVisible, setIsChatListVisible] = useState(true);
     const location = useLocation();
+    const [searchQuery, setSearchQuery] = useState("");
 
     const platformIcons = {
         "facebook": <FaFacebook />,
@@ -815,6 +815,7 @@ const ChatComponent = ({ }) => {
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
     useEffect(() => {
         setFilteredTickets(tickets); // Устанавливаем все тикеты по умолчанию
     }, [tickets]);
@@ -953,24 +954,7 @@ const ChatComponent = ({ }) => {
     };
 
     const handleFilterInput = (e) => {
-        const filterValue = e.target.value.toLowerCase();
-        document.querySelectorAll(".chat-item").forEach((item) => {
-            const ticketId = item.querySelector(".tickets-descriptions div:nth-child(2)").textContent.toLowerCase();
-            const ticketContact = item.querySelector(".tickets-descriptions div:nth-child(1)").textContent.toLowerCase();
-            const tagsContainer = item.querySelector(".tags-ticket");
-            const tags = Array.from(tagsContainer?.querySelectorAll("span") || []).map(tag => tag.textContent.toLowerCase());
-
-            // Проверяем фильтр по ID, контакту и тегам
-            if (
-                ticketId.includes(filterValue) ||
-                ticketContact.includes(filterValue) ||
-                tags.some(tag => tag.includes(filterValue))
-            ) {
-                item.style.display = "block"; // Показываем элемент, если он соответствует фильтру
-            } else {
-                item.style.display = "none"; // Скрываем элемент, если он не соответствует фильтру
-            }
-        });
+        setSearchQuery(e.target.value.toLowerCase());
     };
 
     const parseTags = (tags) => {
@@ -1073,13 +1057,26 @@ const ChatComponent = ({ }) => {
     // }, [selectTicketId]);
 
     const sortedTickets = useMemo(() => {
-        if (!Array.isArray(filteredTickets) || filteredTickets.length === 0) return [];
+        let filtered = tickets;
 
-        // Разделяем выбранный тикет и остальные тикеты
-        const selectedTicket = filteredTickets.find(ticket => ticket.id === selectTicketId);
-        const otherTickets = filteredTickets.filter(ticket => ticket.id !== selectTicketId);
+        // Если есть поисковый запрос, фильтруем тикеты
+        if (searchQuery.trim()) {
+            filtered = tickets.filter(ticket => {
+                const ticketId = ticket.id.toString().toLowerCase();
+                const ticketContact = ticket.contact ? ticket.contact.toLowerCase() : "";
+                const tags = Array.isArray(ticket.tags)
+                    ? ticket.tags.map(tag => tag.toLowerCase())
+                    : ticket.tags.replace(/[{}]/g, "").split(",").map(tag => tag.trim().toLowerCase());
 
-        // Функция для получения последнего сообщения тикета
+                return (
+                    ticketId.includes(searchQuery) ||
+                    ticketContact.includes(searchQuery) ||
+                    tags.some(tag => tag.includes(searchQuery))
+                );
+            });
+        }
+
+        // Функция для получения времени последнего сообщения тикета
         const getLastMessageTime = (ticketId) => {
             const ticketMessages = messages.filter(msg => msg.ticket_id === ticketId);
             if (!ticketMessages.length) return null;
@@ -1089,6 +1086,10 @@ const ChatComponent = ({ }) => {
             ).time_sent;
         };
 
+        // Разделяем выбранный тикет и остальные
+        const selectedTicket = filtered.find(ticket => ticket.id === selectTicketId);
+        let otherTickets = filtered.filter(ticket => ticket.id !== selectTicketId);
+
         // Сортируем остальные тикеты по последнему сообщению (по убыванию)
         otherTickets.sort((a, b) => {
             const lastMessageA = getLastMessageTime(a.id);
@@ -1097,9 +1098,9 @@ const ChatComponent = ({ }) => {
             return new Date(lastMessageB) - new Date(lastMessageA);
         });
 
-        // Если выбранный тикет существует, помещаем его в начало
+        // Если выбранный тикет есть в списке, помещаем его в начало
         return selectedTicket ? [selectedTicket, ...otherTickets] : otherTickets;
-    }, [filteredTickets, selectTicketId, messages]);
+    }, [tickets, messages, searchQuery, selectTicketId]);
 
     useEffect(() => {
         if (location.state?.hideChatList) {
@@ -1107,10 +1108,10 @@ const ChatComponent = ({ }) => {
         }
     }, [location.state]);
 
-    useEffect(() => {
-        // Пересчитываем фильтрованные тикеты, когда приходят новые сообщения
-        applyFilters(appliedFilters);
-    }, [messages]); // Запускаем при обновлении сообщений
+    // useEffect(() => {
+    //     // Пересчитываем фильтрованные тикеты, когда приходят новые сообщения
+    //     applyFilters(appliedFilters);
+    // }, [messages]); // Запускаем при обновлении сообщений
 
     return (
         <div className="chat-container">
@@ -1139,9 +1140,9 @@ const ChatComponent = ({ }) => {
                                     onInput={handleFilterInput}
                                     className="ticket-filter-input"
                                 />
-                                <button onClick={() => setIsFilterOpen(true)} className="button-filter">
+                                {/* <button onClick={() => setIsFilterOpen(true)} className="button-filter">
                                     {translations["Filtru"][language]} {Object.values(appliedFilters).some(value => value) && <span className="filter-indicator"></span>}
-                                </button>
+                                </button> */}
                             </div>
                         </div>
 
@@ -1232,11 +1233,11 @@ const ChatComponent = ({ }) => {
                             </div>
                         )}
 
-                        <TicketFilterModal
+                        {/* <TicketFilterModal
                             isOpen={isFilterOpen}
                             onClose={() => setIsFilterOpen(false)}
                             onApplyFilter={applyFilters}
-                        />
+                        /> */}
                     </>
                 )}
             </div>
