@@ -783,7 +783,7 @@ export const translations = {
         'RU': 'Последнея платформа'
     },
     'Creat de': {
-        'RO': 'Creat de utilizatorul:',
+        'RO': 'Creat de utilizatorul',
         'RU': 'Создан пользователем'
     },
     'Pentru': {
