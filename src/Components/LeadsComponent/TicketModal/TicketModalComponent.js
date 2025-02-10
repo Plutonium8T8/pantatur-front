@@ -151,6 +151,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
               value={editedTicket.name || ''}
               onChange={handleInputChange}
               placeholder={translations['name'][language]}
+              required
             />
           </div>
           <div className="input-group">
@@ -161,13 +162,14 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
               value={editedTicket.surname || ''}
               onChange={handleInputChange}
               placeholder={translations['surname'][language]}
+              required
             />
           </div>
           <div className="input-group">
             <label>{translations['email'][language]}:</label>
             <input
               type="email"
-              name="mail"
+              name="email"
               value={editedTicket.email || ''}
               onChange={handleInputChange}
               placeholder={translations['email'][language]}
@@ -181,6 +183,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
               value={editedTicket.phone || ''}
               onChange={handleInputChange}
               placeholder={translations['phone'][language]}
+              required
             />
           </div>
           <div className="input-group">
@@ -202,6 +205,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
               value={editedTicket.description || ''}
               onChange={handleInputChange}
               placeholder={translations['Adaugă descriere lead'][language]}
+              required
             />
           </div>
           <div className="button-container">
