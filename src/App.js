@@ -157,6 +157,7 @@ function App() {
                       <Route path="/leads" element={<Leads />} />
                       <Route path="/chat/:ticketId?" element={<ChatComponent />} />
                       <Route path="/admin-panel" element={userRoles && userRoles.includes("ROLE_ADMIN") ? <AdminPanel /> : <NoAccess />} />
+                      <Route path="/login" element={<LoginForm onLoginSuccess={handleLogin} />}/>
                       <Route path="*" element={<Navigate to="/index.html" />} />
                     </Routes>
                   </div>
