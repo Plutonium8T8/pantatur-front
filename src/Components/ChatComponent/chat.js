@@ -29,6 +29,16 @@ import { FaFacebook, FaInstagram, FaWhatsapp, FaTelegram } from "react-icons/fa"
 import { SiViber } from "react-icons/si";
 import { useLocation } from 'react-router-dom';
 import TaskModal from '../SlideInComponent/TaskComponent';
+import {
+    FaUser,
+    FaChartBar,
+    FaTasks,
+    FaComments,
+    FaBell,
+    FaClipboardList,
+    FaSignOutAlt,
+    FaUserSecret
+} from 'react-icons/fa';
 
 const ChatComponent = ({ }) => {
     const { userId } = useUser();
@@ -1491,13 +1501,13 @@ const ChatComponent = ({ }) => {
                             >
                                 <FaFile />
                             </button>
-                            {/* Кнопка для открытия TaskModal */}
+                            {/* Кнопка для открытия TaskModal с выбранным тикетом */}
                             <button
                                 className="action-button task-button"
                                 onClick={() => setIsTaskModalOpen(true)}
                                 disabled={!selectTicketId}
                             >
-                                Create task
+                                <FaTasks />
                             </button>
                         </div>
                         <div className="select-row">
@@ -1547,8 +1557,12 @@ const ChatComponent = ({ }) => {
                         )}
                     </div>
 
-                    {/* Компонент TaskModal */}
-                    <TaskModal isOpen={isTaskModalOpen} onClose={() => setIsTaskModalOpen(false)} />
+                    {/* TaskModal с передачей ID тикета */}
+                    <TaskModal
+                        isOpen={isTaskModalOpen}
+                        onClose={() => setIsTaskModalOpen(false)}
+                        selectedTicketId={selectTicketId}
+                    />
                 </div>
 
             </div>
