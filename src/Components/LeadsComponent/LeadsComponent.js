@@ -82,7 +82,7 @@ const Leads = () => {
         body: JSON.stringify({ workflow: newWorkflow }),
       });
 
-      if (response.status === 401 || 403) {
+      if (response.status === 401) {
         // 🔥 Обрабатываем 401 (Unauthorized)
         alert(translations["Sesia a expirat"][language] || "Sesia a expirat, te rog sa accesezi din nou pagina!");
         window.location.reload();
@@ -92,7 +92,8 @@ const Leads = () => {
       if (!response.ok) {
         // 🔥 Если другая ошибка, получаем текст ошибки и выбрасываем её
         const errorData = await response.json();
-        throw new Error(`Failed to update workflow: ${response.status}. ${errorData.message}`);
+        throw new Error(`Failed to update workflow: ${response.status}. ${errorData.message}`, window.location.reload()
+        );
       }
 
       const updatedTicket = await response.json();
