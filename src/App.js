@@ -27,9 +27,16 @@ function App() {
   const { enqueueSnackbar } = useSnackbar();
   const [userRoles, setUserRoles] = useState(null);
 
-  // Функция для получения сессии и user_id
   const fetchSession = async () => {
     const token = Cookies.get('jwt');
+
+    if (!token) {
+      console.log("❌ JWT отсутствует, пропускаем загрузку сессии.");
+      setIsLoggedIn(false);
+      setUserId(null);
+      setIsLoading(false);
+      return;
+    }
 
     try {
       const response = await fetch('https://pandatur-api.com/session', {
@@ -48,9 +55,10 @@ function App() {
       if (data.user_id) {
         console.log("✅ Сессия активна, user_id:", data.user_id);
         setIsLoggedIn(true);
-        setUserId(data.user_id); // Обновляем userId в UserContext
+        setUserId(data.user_id);
       } else {
         console.log("❌ Нет user_id в ответе, выход...");
+        Cookies.remove('jwt');
         setIsLoggedIn(false);
         setUserId(null);
       }
