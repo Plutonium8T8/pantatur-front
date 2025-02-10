@@ -28,6 +28,17 @@ import TicketFilterModal from '../LeadsComponent/TicketFilterModal';
 import { FaFacebook, FaInstagram, FaWhatsapp, FaTelegram } from "react-icons/fa";
 import { SiViber } from "react-icons/si";
 import { useLocation } from 'react-router-dom';
+import TaskModal from '../SlideInComponent/TaskComponent';
+import {
+    FaUser,
+    FaChartBar,
+    FaTasks,
+    FaComments,
+    FaBell,
+    FaClipboardList,
+    FaSignOutAlt,
+    FaUserSecret
+} from 'react-icons/fa';
 
 const ChatComponent = ({ }) => {
     const { userId } = useUser();
@@ -62,6 +73,7 @@ const ChatComponent = ({ }) => {
     const [isChatListVisible, setIsChatListVisible] = useState(true);
     const location = useLocation();
     const [searchQuery, setSearchQuery] = useState("");
+    const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
 
     const platformIcons = {
         "facebook": <FaFacebook />,
@@ -1443,7 +1455,6 @@ const ChatComponent = ({ }) => {
                         className="text-area-message"
                         value={managerMessage}
                         onChange={(e) => setManagerMessage(e.target.value)}
-                        onKeyDown={handleKeyDown}
                         placeholder={translations['Introduceți mesaj'][language]}
                         disabled={!selectTicketId}
                     />
@@ -1492,6 +1503,14 @@ const ChatComponent = ({ }) => {
                             >
                                 <FaFile />
                             </button>
+                            {/* Кнопка для открытия TaskModal с выбранным тикетом */}
+                            <button
+                                className="action-button task-button"
+                                onClick={() => setIsTaskModalOpen(true)}
+                                disabled={!selectTicketId}
+                            >
+                                <FaTasks />
+                            </button>
                         </div>
                         <div className="select-row">
                             <Select
@@ -1527,38 +1546,25 @@ const ChatComponent = ({ }) => {
                                                 .sort((a, b) => new Date(b.time_sent) - new Date(a.time_sent))[0];
 
                                             const platform = lastMessage ? lastMessage.platform : "unknown";
-                                            const platformIcon = platformIcons[platform] || ""; // Иконка по умолчанию
                                             const platformName = lastMessage ? platform.charAt(0).toUpperCase() + platform.slice(1) : translations["Неизвестная платформа"][language];
 
                                             return (
                                                 <option key={clientId} value={clientId}>
-                                                    {platformIcon} {fullName}
+                                                    {`${fullName} (${platformName})`}
                                                 </option>
                                             );
                                         })}
                                 </select>
-
-                                {/* Показываем иконку платформы + название под select */}
-                                {selectedClient && (() => {
-                                    const lastMessage = messages
-                                        .filter(msg => msg.client_id === Number(selectedClient))
-                                        .sort((a, b) => new Date(b.time_sent) - new Date(a.time_sent))[0];
-
-                                    const platform = lastMessage ? lastMessage.platform : "unknown";
-                                    const platformIcon = platformIcons[platform] || ""; // Иконка по умолчанию
-                                    const platformName = lastMessage ? platform.charAt(0).toUpperCase() + platform.slice(1) : translations["Неизвестная платформа"][language];
-
-                                    return (
-                                        <div className="client-platform" style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "5px" }}>
-                                            <span style={{ fontSize: "24px" }}>{platformIcon}</span>
-                                            <span style={{ fontSize: "16px", fontWeight: "500", color: "#555" }}>{platformName}</span>
-                                        </div>
-                                    );
-                                })()}
                             </div>
                         )}
-
                     </div>
+
+                    {/* TaskModal с передачей ID тикета */}
+                    <TaskModal
+                        isOpen={isTaskModalOpen}
+                        onClose={() => setIsTaskModalOpen(false)}
+                        selectedTicketId={selectTicketId}
+                    />
                 </div>
 
             </div>

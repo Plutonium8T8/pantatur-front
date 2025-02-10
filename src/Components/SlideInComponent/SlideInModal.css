@@ -77,7 +77,8 @@
   /* Increased spacing between labels and inputs */
 }
 
-.input-group label, .container-options-component label {
+.input-group label,
+.container-options-component label {
   font-size: 18px;
   color: #cbd5e0;
   text-align: left;
@@ -267,3 +268,29 @@
   border-color: #0f824c;
   box-shadow: 0 0 4px rgba(37, 99, 235, 0.5);
 }
+
+.dropdown-list {
+  position: absolute;
+  width: 100%;
+  max-height: 210px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  z-index: 1000;
+  list-style: none;
+  padding: 0;
+  margin-top: 80px;
+  color: black;
+}
+
+.dropdown-list li {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.dropdown-list li:hover {
+  background: #f0f0f0;
+}
+
+.task-select-component {}

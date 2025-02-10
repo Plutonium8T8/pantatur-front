@@ -780,7 +780,19 @@ export const translations = {
     },
     'Ultima platformă': {
         'RO': 'Ultima platformă',
-        'RU': 'Последнея платформа!'
+        'RU': 'Последнея платформа'
+    },
+    'Creat de': {
+        'RO': 'Creat de utilizatorul:',
+        'RU': 'Создан пользователем'
+    },
+    'Pentru': {
+        'RO': 'Pentru utilizatorul',
+        'RU': 'Для пользователя'
+    },
+    'Alege utilizator': {
+        'RO': 'Alege utilizator',
+        'RU': 'Выбери пользователя'
     },
 };
 

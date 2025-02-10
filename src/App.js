@@ -23,7 +23,7 @@ function App() {
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
   const [isTaskComponentOpen, setIsTaskComponentOpen] = useState(false);
   const [isAccountComponentOpen, setIsAccountComponentOpen] = useState(false);
-  const { userId, setUserId } = useUser(); // Теперь используем setUserId
+  const { userId, setUserId, name, setName, surname, setSurname } = useUser();
   const { enqueueSnackbar } = useSnackbar();
   const [userRoles, setUserRoles] = useState(null);
 
@@ -34,6 +34,8 @@ function App() {
       console.log("❌ JWT отсутствует, пропускаем загрузку сессии.");
       setIsLoggedIn(false);
       setUserId(null);
+      setName(null);
+      setSurname(null);
       setIsLoading(false);
       return;
     }
@@ -56,18 +58,23 @@ function App() {
         console.log("✅ Сессия активна, user_id:", data.user_id);
         setIsLoggedIn(true);
         setUserId(data.user_id);
+        setName(data.username || ""); // Устанавливаем имя, если есть
+        setSurname(data.surname || ""); // Устанавливаем фамилию, если есть
       } else {
         console.log("❌ Нет user_id в ответе, выход...");
         Cookies.remove('jwt');
         setIsLoggedIn(false);
         setUserId(null);
+        setName(null);
+        setSurname(null);
       }
     } catch (error) {
       console.log("❌ Ошибка при запросе сессии:", error.message);
       Cookies.remove('jwt');
       setIsLoggedIn(false);
-      setUserRoles(null);
       setUserId(null);
+      setName(null);
+      setSurname(null);
     } finally {
       setIsLoading(false);
     }
