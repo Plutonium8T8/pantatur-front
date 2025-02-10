@@ -1496,7 +1496,7 @@ const ChatComponent = ({ }) => {
                                     value={selectedClient}
                                     onChange={(e) => setSelectedClient(e.target.value)}
                                 >
-                                    <option value="" disabled>{["Alege client"][language]}</option>
+                                    <option value="" disabled>{translations["Alege client"][language]}</option>
                                     {tickets.find(ticket => ticket.id === selectTicketId).client_id
                                         .replace(/[{}]/g, "")
                                         .split(",")
@@ -1510,8 +1510,9 @@ const ChatComponent = ({ }) => {
                                                 .filter(msg => msg.client_id === Number(clientId))
                                                 .sort((a, b) => new Date(b.time_sent) - new Date(a.time_sent))[0];
 
-                                            const platform = lastMessage ? lastMessage.platform : "Неизвестная платформа";
-                                            const platformIcon = lastMessage ? platformIcons[lastMessage.platform] || "❓" : "❓";
+                                            const platform = lastMessage ? lastMessage.platform : "unknown";
+                                            const platformIcon = platformIcons[platform] || ""; // Иконка по умолчанию
+                                            const platformName = lastMessage ? platform.charAt(0).toUpperCase() + platform.slice(1) : translations["Неизвестная платформа"][language];
 
                                             return (
                                                 <option key={clientId} value={clientId}>
@@ -1521,15 +1522,22 @@ const ChatComponent = ({ }) => {
                                         })}
                                 </select>
 
-                                {/* Показываем платформу под селектом */}
+                                {/* Показываем иконку платформы + название под select */}
                                 {selectedClient && (() => {
                                     const lastMessage = messages
                                         .filter(msg => msg.client_id === Number(selectedClient))
                                         .sort((a, b) => new Date(b.time_sent) - new Date(a.time_sent))[0];
 
-                                    const platform = lastMessage ? lastMessage.platform : "Неизвестная платформа";
+                                    const platform = lastMessage ? lastMessage.platform : "unknown";
+                                    const platformIcon = platformIcons[platform] || ""; // Иконка по умолчанию
+                                    const platformName = lastMessage ? platform.charAt(0).toUpperCase() + platform.slice(1) : translations["Неизвестная платформа"][language];
 
-                                    return <div className="client-platform">{["Ultima platformă"][language]} {platform}</div>;
+                                    return (
+                                        <div className="client-platform" style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "5px" }}>
+                                            <span style={{ fontSize: "24px" }}>{platformIcon}</span>
+                                            <span style={{ fontSize: "16px", fontWeight: "500", color: "#555" }}>{platformName}</span>
+                                        </div>
+                                    );
                                 })()}
                             </div>
                         )}
