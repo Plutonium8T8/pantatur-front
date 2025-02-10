@@ -82,14 +82,16 @@ const Leads = () => {
         body: JSON.stringify({ workflow: newWorkflow }),
       });
 
+      if (response.status === 401 || 403) {
+        // 🔥 Обрабатываем 401 (Unauthorized)
+        alert(translations["Sesia a expirat"][language] || "Sesia a expirat, te rog sa accesezi din nou pagina!");
+        window.location.reload();
+        return;
+      }
+
       if (!response.ok) {
+        // 🔥 Если другая ошибка, получаем текст ошибки и выбрасываем её
         const errorData = await response.json();
-
-        if (errorData.message === "Session does not contain the user_id") {
-          alert(translations["Sesia a expirat"][language] || "Sesia a expirat, te rog sa accesezi din nou pagina!");
-          window.location.reload();
-        }
-
         throw new Error(`Failed to update workflow: ${response.status}. ${errorData.message}`);
       }
 
@@ -101,9 +103,9 @@ const Leads = () => {
         )
       );
 
-      console.log('Workflow updated locally for ticketId:', ticketId);
+      console.log('✅ Workflow updated locally for ticketId:', ticketId);
     } catch (error) {
-      console.error('Error updating workflow:', error);
+      console.error('❌ Error updating workflow:', error);
     }
   };
 
