@@ -28,6 +28,7 @@ import TicketFilterModal from '../LeadsComponent/TicketFilterModal';
 import { FaFacebook, FaInstagram, FaWhatsapp, FaTelegram } from "react-icons/fa";
 import { SiViber } from "react-icons/si";
 import { useLocation } from 'react-router-dom';
+import TaskModal from '../SlideInComponent/TaskComponent';
 
 const ChatComponent = ({ }) => {
     const { userId } = useUser();
@@ -62,6 +63,7 @@ const ChatComponent = ({ }) => {
     const [isChatListVisible, setIsChatListVisible] = useState(true);
     const location = useLocation();
     const [searchQuery, setSearchQuery] = useState("");
+    const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
 
     const platformIcons = {
         "facebook": <FaFacebook />,
@@ -1441,7 +1443,6 @@ const ChatComponent = ({ }) => {
                         className="text-area-message"
                         value={managerMessage}
                         onChange={(e) => setManagerMessage(e.target.value)}
-                        onKeyDown={handleKeyDown}
                         placeholder={translations['Introduceți mesaj'][language]}
                         disabled={!selectTicketId}
                     />
@@ -1490,6 +1491,14 @@ const ChatComponent = ({ }) => {
                             >
                                 <FaFile />
                             </button>
+                            {/* Кнопка для открытия TaskModal */}
+                            <button
+                                className="action-button task-button"
+                                onClick={() => setIsTaskModalOpen(true)}
+                                disabled={!selectTicketId}
+                            >
+                                Create task
+                            </button>
                         </div>
                         <div className="select-row">
                             <Select
@@ -1536,8 +1545,10 @@ const ChatComponent = ({ }) => {
                                 </select>
                             </div>
                         )}
-
                     </div>
+
+                    {/* Компонент TaskModal */}
+                    <TaskModal isOpen={isTaskModalOpen} onClose={() => setIsTaskModalOpen(false)} />
                 </div>
 
             </div>
