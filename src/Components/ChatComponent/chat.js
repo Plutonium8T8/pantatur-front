@@ -1112,6 +1112,20 @@ const ChatComponent = ({ }) => {
         applyFilters(appliedFilters);
     }, [messages]); // Запускаем при обновлении сообщений
 
+    useEffect(() => {
+        if (!selectTicketId || !messages.length) return;
+
+        // Получаем сообщения текущего открытого тикета
+        const unreadMessages = messages.filter(
+            msg => msg.ticket_id === selectTicketId && msg.seen_by === '{}' && msg.sender_id !== userId
+        );
+
+        if (unreadMessages.length > 0) {
+            console.log(`🔵 ${unreadMessages.length} непрочитанных сообщений в тикете #${selectTicketId}, помечаем как прочитанные`);
+            markMessagesAsRead(selectTicketId);
+        }
+    }, [messages, selectTicketId, markMessagesAsRead, userId]);
+
     return (
         <div className="chat-container">
             {/* Контейнер списка чатов */}
