@@ -71,52 +71,9 @@ const ChatComponent = ({ }) => {
         "telegram": <FaTelegram />
     };
 
-    // Функция фильтрации тикетов
     const applyFilters = (filters) => {
         setAppliedFilters(filters);
-
-        let filtered = tickets;
-
-        if (filters.creation_date) {
-            filtered = filtered.filter(ticket => ticket.creation_date.startsWith(filters.creation_date));
-        }
-        if (filters.last_interaction_date) {
-            filtered = filtered.filter(ticket => ticket.last_interaction_date.startsWith(filters.last_interaction_date));
-        }
-        if (filters.technician_id) {
-            filtered = filtered.filter(ticket => String(ticket.technician_id) === filters.technician_id);
-        }
-        if (filters.workflow) {
-            filtered = filtered.filter(ticket => ticket.workflow === filters.workflow);
-        }
-        if (filters.priority) {
-            filtered = filtered.filter(ticket => ticket.priority === filters.priority);
-        }
-        if (filters.tags) {
-            filtered = filtered.filter(ticket => {
-                const ticketTags = ticket.tags.replace(/[{}]/g, '').split(',').map(tag => tag.trim());
-                return ticketTags.includes(filters.tags);
-            });
-        }
-        if (filters.platform) {
-            const ticketIds = messages
-                .filter(msg => msg.platform === filters.platform)
-                .map(msg => msg.ticket_id);
-            filtered = filtered.filter(ticket => ticketIds.includes(ticket.id));
-        }
-        if (filters.sender_id) {
-            const ticketIds = messages
-                .filter(msg => String(msg.sender_id) === filters.sender_id)
-                .map(msg => msg.ticket_id);
-            filtered = filtered.filter(ticket => ticketIds.includes(ticket.id));
-        }
-
-        setFilteredTickets(filtered);
     };
-
-    useEffect(() => {
-        setFilteredTickets(tickets);
-    }, [tickets]);
 
     const handleClientClick = (id) => {
         setSelectedClient(id);
@@ -1059,9 +1016,52 @@ const ChatComponent = ({ }) => {
     const sortedTickets = useMemo(() => {
         let filtered = tickets;
 
-        // Если есть поисковый запрос, фильтруем тикеты
+        // 1️⃣ Применяем фильтрацию из applyFilters
+        if (Object.values(appliedFilters).some(value => value)) {
+            if (appliedFilters.creation_date) {
+                filtered = filtered.filter(ticket => ticket.creation_date.startsWith(appliedFilters.creation_date));
+            }
+            if (appliedFilters.last_interaction_date) {
+                filtered = filtered.filter(ticket => ticket.last_interaction_date.startsWith(appliedFilters.last_interaction_date));
+            }
+            if (appliedFilters.technician_id) {
+                filtered = filtered.filter(ticket => String(ticket.technician_id) === appliedFilters.technician_id);
+            }
+            if (appliedFilters.workflow) {
+                filtered = filtered.filter(ticket => ticket.workflow === appliedFilters.workflow);
+            }
+            if (appliedFilters.priority) {
+                filtered = filtered.filter(ticket => ticket.priority === appliedFilters.priority);
+            }
+            if (appliedFilters.tags) {
+                filtered = filtered.filter(ticket => {
+                    if (!ticket.tags) return false;
+                    const ticketTags = ticket.tags.replace(/[{}]/g, "").split(",").map(tag => tag.trim());
+                    return ticketTags.includes(appliedFilters.tags);
+                });
+            }
+            if (appliedFilters.platform) {
+                const ticketIds = messages
+                    .filter(msg => msg.platform === appliedFilters.platform)
+                    .map(msg => msg.ticket_id);
+                filtered = filtered.filter(ticket => ticketIds.includes(ticket.id));
+            }
+            if (appliedFilters.sender_id) {
+                const ticketIds = messages
+                    .filter(msg => String(msg.sender_id) === appliedFilters.sender_id)
+                    .map(msg => msg.ticket_id);
+                filtered = filtered.filter(ticket => ticketIds.includes(ticket.id));
+            }
+        }
+
+        // 2️⃣ Фильтр "Мои тикеты"
+        if (showMyTickets) {
+            filtered = filtered.filter(ticket => ticket.technician_id === userId);
+        }
+
+        // 3️⃣ Фильтр по поисковому запросу
         if (searchQuery.trim()) {
-            filtered = tickets.filter(ticket => {
+            filtered = filtered.filter(ticket => {
                 const ticketId = ticket.id.toString().toLowerCase();
                 const ticketContact = ticket.contact ? ticket.contact.toLowerCase() : "";
                 const tags = Array.isArray(ticket.tags)
@@ -1076,7 +1076,7 @@ const ChatComponent = ({ }) => {
             });
         }
 
-        // Функция для получения времени последнего сообщения тикета
+        // 4️⃣ Функция для получения времени последнего сообщения тикета
         const getLastMessageTime = (ticketId) => {
             const ticketMessages = messages.filter(msg => msg.ticket_id === ticketId);
             if (!ticketMessages.length) return null;
@@ -1086,11 +1086,11 @@ const ChatComponent = ({ }) => {
             ).time_sent;
         };
 
-        // Разделяем выбранный тикет и остальные
+        // 5️⃣ Разделяем выбранный тикет и остальные
         const selectedTicket = filtered.find(ticket => ticket.id === selectTicketId);
         let otherTickets = filtered.filter(ticket => ticket.id !== selectTicketId);
 
-        // Сортируем остальные тикеты по последнему сообщению (по убыванию)
+        // 6️⃣ Сортировка по последнему сообщению (по убыванию)
         otherTickets.sort((a, b) => {
             const lastMessageA = getLastMessageTime(a.id);
             const lastMessageB = getLastMessageTime(b.id);
@@ -1098,9 +1098,10 @@ const ChatComponent = ({ }) => {
             return new Date(lastMessageB) - new Date(lastMessageA);
         });
 
-        // Если выбранный тикет есть в списке, помещаем его в начало
+        // 7️⃣ Если выбранный тикет есть в списке, помещаем его в начало
         return selectedTicket ? [selectedTicket, ...otherTickets] : otherTickets;
-    }, [tickets, messages, searchQuery, selectTicketId]);
+    }, [tickets, messages, appliedFilters, showMyTickets, searchQuery, selectTicketId, userId]);
+
 
     useEffect(() => {
         if (location.state?.hideChatList) {
@@ -1108,10 +1109,24 @@ const ChatComponent = ({ }) => {
         }
     }, [location.state]);
 
-    // useEffect(() => {
-    //     // Пересчитываем фильтрованные тикеты, когда приходят новые сообщения
-    //     applyFilters(appliedFilters);
-    // }, [messages]); // Запускаем при обновлении сообщений
+    useEffect(() => {
+        // Пересчитываем фильтрованные тикеты, когда приходят новые сообщения
+        applyFilters(appliedFilters);
+    }, [messages]); // Запускаем при обновлении сообщений
+
+    useEffect(() => {
+        if (!selectTicketId || !messages.length) return;
+
+        // Получаем сообщения текущего открытого тикета
+        const unreadMessages = messages.filter(
+            msg => msg.ticket_id === selectTicketId && msg.seen_by === '{}' && msg.sender_id !== userId
+        );
+
+        if (unreadMessages.length > 0) {
+            console.log(`🔵 ${unreadMessages.length} непрочитанных сообщений в тикете #${selectTicketId}, помечаем как прочитанные`);
+            markMessagesAsRead(selectTicketId);
+        }
+    }, [messages, selectTicketId, markMessagesAsRead, userId]);
 
     return (
         <div className="chat-container">
@@ -1140,9 +1155,9 @@ const ChatComponent = ({ }) => {
                                     onInput={handleFilterInput}
                                     className="ticket-filter-input"
                                 />
-                                {/* <button onClick={() => setIsFilterOpen(true)} className="button-filter">
+                                <button onClick={() => setIsFilterOpen(true)} className="button-filter">
                                     {translations["Filtru"][language]} {Object.values(appliedFilters).some(value => value) && <span className="filter-indicator"></span>}
-                                </button> */}
+                                </button>
                             </div>
                         </div>
 
@@ -1233,11 +1248,11 @@ const ChatComponent = ({ }) => {
                             </div>
                         )}
 
-                        {/* <TicketFilterModal
+                        <TicketFilterModal
                             isOpen={isFilterOpen}
                             onClose={() => setIsFilterOpen(false)}
                             onApplyFilter={applyFilters}
-                        /> */}
+                        />
                     </>
                 )}
             </div>
@@ -1497,16 +1512,49 @@ const ChatComponent = ({ }) => {
                                     value={selectedClient}
                                     onChange={(e) => setSelectedClient(e.target.value)}
                                 >
-                                    <option value="" disabled>{["Alege client"][language]}</option>
+                                    <option value="" disabled>{translations["Alege client"][language]}</option>
                                     {tickets.find(ticket => ticket.id === selectTicketId).client_id
                                         .replace(/[{}]/g, "")
                                         .split(",")
-                                        .map(id => (
-                                            <option key={id.trim()} value={id.trim()}>
-                                                {["Client"]} {id.trim()}
-                                            </option>
-                                        ))}
+                                        .map(id => {
+                                            const clientId = id.trim();
+                                            const clientInfo = personalInfo[clientId] || {};
+                                            const fullName = clientInfo.name ? `${clientInfo.name} ${clientInfo.surname || ""}`.trim() : `ID: ${clientId}`;
+
+                                            // Найти последнее сообщение этого клиента
+                                            const lastMessage = messages
+                                                .filter(msg => msg.client_id === Number(clientId))
+                                                .sort((a, b) => new Date(b.time_sent) - new Date(a.time_sent))[0];
+
+                                            const platform = lastMessage ? lastMessage.platform : "unknown";
+                                            const platformIcon = platformIcons[platform] || ""; // Иконка по умолчанию
+                                            const platformName = lastMessage ? platform.charAt(0).toUpperCase() + platform.slice(1) : translations["Неизвестная платформа"][language];
+
+                                            return (
+                                                <option key={clientId} value={clientId}>
+                                                    {platformIcon} {fullName}
+                                                </option>
+                                            );
+                                        })}
                                 </select>
+
+                                {/* Показываем иконку платформы + название под select */}
+                                {selectedClient && (() => {
+                                    const lastMessage = messages
+                                        .filter(msg => msg.client_id === Number(selectedClient))
+                                        .sort((a, b) => new Date(b.time_sent) - new Date(a.time_sent))[0];
+
+                                    const platform = lastMessage ? lastMessage.platform : "unknown";
+                                    const platformIcon = platformIcons[platform] || ""; // Иконка по умолчанию
+                                    const platformName = lastMessage ? platform.charAt(0).toUpperCase() + platform.slice(1) : translations["Неизвестная платформа"][language];
+
+                                    return (
+                                        <div className="client-platform" style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "5px" }}>
+                                            <span style={{ fontSize: "24px" }}>{platformIcon}</span>
+                                            <span style={{ fontSize: "16px", fontWeight: "500", color: "#555" }}>{platformName}</span>
+                                        </div>
+                                    );
+                                })()}
                             </div>
                         )}
 

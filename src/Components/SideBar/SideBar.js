@@ -36,6 +36,7 @@ const CustomSidebar = ({ onOpenNotifications, onOpenTasks, onOpenAccount }) => {
 
     const handleLogOut = () => {
         Cookies.remove('jwt');
+        Cookies.remove('PHPSESSID');
         window.location.reload();
     };
 
@@ -98,9 +99,9 @@ const CustomSidebar = ({ onOpenNotifications, onOpenTasks, onOpenAccount }) => {
                     <div
                         className={`menu-item `}
                     >
-                        <LanguageToggle/>
+                        <LanguageToggle />
                     </div>
-                    
+
                 </div>
             </div>
             <div className="container-log-out">

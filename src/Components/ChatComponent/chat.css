@@ -764,3 +764,9 @@
     color: #0f824c77;
     font-weight: bold;
 }
+
+.client-platform svg {
+    width: 24px;
+    height: 24px;
+    margin-top: 10px;
+}
