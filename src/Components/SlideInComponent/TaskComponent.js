@@ -254,7 +254,7 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
                         <label htmlFor="ticket-select">{translations['Lead'][language]} ID</label>
                         <input
                             id="ticket-select"
-                            className="task-select"
+                            className="task-select-component"
                             type="text"
                             value={searchTerm}
                             onChange={handleInputChange}
@@ -316,7 +316,7 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
                         <label htmlFor="for-user">{translations['Pentru'][language]}</label>
                         <input
                             id="for-user"
-                            className="task-select"
+                            className="task-select-component"
                             type="text"
                             value={searchUser}
                             onChange={handleUserInputChange}
