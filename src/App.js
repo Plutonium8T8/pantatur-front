@@ -27,7 +27,6 @@ function App() {
   const { enqueueSnackbar } = useSnackbar();
   const [userRoles, setUserRoles] = useState(null);
 
-  // Функция для получения сессии и user_id
   const fetchSession = async () => {
     const token = Cookies.get('jwt');
 
@@ -135,7 +134,7 @@ function App() {
 
   return (
     <Router basename="/">
-      <NavigationProvider> {/* Переместили выше AppProvider */}
+      <NavigationProvider>
         <AppProvider isLoggedIn={isLoggedIn}>
           <SnackbarProvider autoHideDuration={3000} maxSnack={5} anchorOrigin={{ vertical: "bottom", horizontal: "right" }}>
             <UserProvider>
