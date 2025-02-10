@@ -362,43 +362,51 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
                     {tasks.length === 0 ? (
                         <li className="no-notifications">{translations['Nici un task'][language]}</li>
                     ) : (
-                        tasks.map((task) => (
-                            <li key={task.id} className="notification-item">
-                                <div className="notification-content">
-                                    <div>
-                                        <p className="description">
-                                            <strong>ID:</strong> {task.id}
-                                        </p>
-                                        <p className="description">
-                                            <strong>TASK FOR TICKET:</strong> {task.ticket_id}
-                                        </p>
-                                        <p className="description">
-                                            <strong>{translations['Creat de'][language]}:</strong> {task.created_by}
-                                        </p>
-                                        <p className="description">
-                                            <strong>{translations['Pentru'][language]}:</strong> {task.for}
-                                        </p>
-                                        <p className="description">
-                                            <strong>{translations['Descriere'][language]}:</strong> {task.description}
-                                        </p>
-                                        <p className="time">{new Date(task.scheduled_time).toLocaleString()}</p>
+                        tasks.map((task) => {
+                            // Найти пользователя по его ID в списке userList
+                            const assignedUser = userList.find(user => user.id === task.created_for);
+
+                            return (
+                                <li key={task.id} className="notification-item">
+                                    <div className="notification-content">
+                                        <div>
+                                            <p className="description">
+                                                <strong>ID:</strong> {task.id}
+                                            </p>
+                                            <p className="description">
+                                                <strong>TASK FOR TICKET:</strong> {task.ticket_id}
+                                            </p>
+                                            <p className="description">
+                                                <strong>{translations['Creat de'][language]}:</strong> {task.created_by}
+                                            </p>
+                                            <p className="description">
+                                                <strong>{translations['Pentru'][language]}:</strong>
+                                                {assignedUser
+                                                    ? `${assignedUser.name} ${assignedUser.surname}`
+                                                    : `ID: ${task.created_for}`}
+                                            </p>
+                                            <p className="description">
+                                                <strong>{translations['Descriere'][language]}:</strong> {task.description}
+                                            </p>
+                                            <p className="time">{new Date(task.scheduled_time).toLocaleString()}</p>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="action-group">
-                                    <p className={`status ${task.status ? "seen" : "unseen"}`}>
-                                        {task.status ? translations['Văzut'][language] : translations['Nevăzut'][language]}
-                                    </p>
-                                    {!task.status && (
-                                        <button
-                                            className="mark-as-seen"
-                                            onClick={() => handleMarkAsSeenTask(task.id)}
-                                        >
-                                            {translations['Marchează'][language]}
-                                        </button>
-                                    )}
-                                </div>
-                            </li>
-                        ))
+                                    <div className="action-group">
+                                        <p className={`status ${task.status ? "seen" : "unseen"}`}>
+                                            {task.status ? translations['Văzut'][language] : translations['Nevăzut'][language]}
+                                        </p>
+                                        {!task.status && (
+                                            <button
+                                                className="mark-as-seen"
+                                                onClick={() => handleMarkAsSeenTask(task.id)}
+                                            >
+                                                {translations['Marchează'][language]}
+                                            </button>
+                                        )}
+                                    </div>
+                                </li>
+                            );
+                        })
                     )}
                 </ul>
             </div>
