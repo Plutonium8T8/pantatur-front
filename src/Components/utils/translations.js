@@ -778,6 +778,10 @@ export const translations = {
         'RO': 'WebSocket este oprit. Te rog să reîncarci pagina!',
         'RU': 'WebSocket отключен. Пожалуйста, перезагрузите страницу!'
     },
+    'Ultima platformă': {
+        'RO': 'Ultima platformă',
+        'RU': 'Последнея платформа!'
+    },
 };
 
 // import { translations } from '../utils/translations';

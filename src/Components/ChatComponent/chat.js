@@ -1500,12 +1500,37 @@ const ChatComponent = ({ }) => {
                                     {tickets.find(ticket => ticket.id === selectTicketId).client_id
                                         .replace(/[{}]/g, "")
                                         .split(",")
-                                        .map(id => (
-                                            <option key={id.trim()} value={id.trim()}>
-                                                {["Client"]} {id.trim()}
-                                            </option>
-                                        ))}
+                                        .map(id => {
+                                            const clientId = id.trim();
+                                            const clientInfo = personalInfo[clientId] || {};
+                                            const fullName = clientInfo.name ? `${clientInfo.name} ${clientInfo.surname || ""}`.trim() : `ID: ${clientId}`;
+
+                                            // Найти последнее сообщение этого клиента
+                                            const lastMessage = messages
+                                                .filter(msg => msg.client_id === Number(clientId))
+                                                .sort((a, b) => new Date(b.time_sent) - new Date(a.time_sent))[0];
+
+                                            const platform = lastMessage ? lastMessage.platform : "Неизвестная платформа";
+                                            const platformIcon = lastMessage ? platformIcons[lastMessage.platform] || "❓" : "❓";
+
+                                            return (
+                                                <option key={clientId} value={clientId}>
+                                                    {platformIcon} {fullName}
+                                                </option>
+                                            );
+                                        })}
                                 </select>
+
+                                {/* Показываем платформу под селектом */}
+                                {selectedClient && (() => {
+                                    const lastMessage = messages
+                                        .filter(msg => msg.client_id === Number(selectedClient))
+                                        .sort((a, b) => new Date(b.time_sent) - new Date(a.time_sent))[0];
+
+                                    const platform = lastMessage ? lastMessage.platform : "Неизвестная платформа";
+
+                                    return <div className="client-platform">{["Ultima platformă"][language]} {platform}</div>;
+                                })()}
                             </div>
                         )}
 
