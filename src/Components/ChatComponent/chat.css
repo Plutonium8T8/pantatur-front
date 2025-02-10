@@ -688,7 +688,7 @@
 }
 
 .users-container {
-    flex: 0 0 300px;
+    flex: 0 0 25%;
     /* Фиксированная ширина списка чатов */
     transition: width 0.3s ease-in-out, min-width 0.3s ease-in-out;
     min-width: 25%;
@@ -712,7 +712,7 @@
 /* Кнопка скрытия/показа списка чатов */
 .toggle-chat-list {
     position: absolute;
-    left: 310px;
+    left: calc(25% + 15px);
     /* Начальная позиция кнопки */
     top: 50%;
     transform: translateY(-50%);
