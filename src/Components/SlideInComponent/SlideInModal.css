@@ -280,7 +280,7 @@
   z-index: 1000;
   list-style: none;
   padding: 0;
-  margin-top: 70px;
+  margin-top: 80px;
   color: black;
 }
 
@@ -292,5 +292,5 @@
 .dropdown-list li:hover {
   background: #f0f0f0;
 }
-.task-select-component {
-}
+
+.task-select-component {}
