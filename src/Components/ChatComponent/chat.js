@@ -298,15 +298,18 @@ const ChatComponent = ({ }) => {
         "Contract încheiat"
     ];
 
-    const requiredWorkflowIndex = workflowOptions.indexOf("Luat în lucru"); // С какого workflow селекты обязательны
+    const requiredWorkflowIndex = workflowOptions.indexOf("Luat în lucru"); // Первые селекты
+    const requiredExtraWorkflowIndex = workflowOptions.indexOf("Ofertă trimisă"); // Вторые селекты
 
+    const [showExtraValidationError, setShowExtraValidationError] = useState(false);
 
     // Определяем выбранный тикет
     const updatedTicket = tickets.find(ticket => ticket.id === selectTicketId) || null;
 
-    // Проверяем, нужно ли заполнять селекты
+    // Проверяем, какие селекты обязательны
     const currentWorkflowIndex = updatedTicket ? workflowOptions.indexOf(updatedTicket.workflow) : -1;
     const isRequired = currentWorkflowIndex >= requiredWorkflowIndex;
+    const isRequiredExtra = currentWorkflowIndex >= requiredExtraWorkflowIndex;
 
     const handleWorkflowChange = async (event) => {
         const newWorkflow = event.target.value;
@@ -319,20 +322,36 @@ const ChatComponent = ({ }) => {
         const currentIndex = workflowOptions.indexOf(updatedTicket.workflow);
         const newIndex = workflowOptions.indexOf(newWorkflow);
 
+        // Проверяем, заполнены ли основные селекты
         const isValidExtraInfo =
             extraInfo[selectTicketId]?.sursa_lead &&
             extraInfo[selectTicketId]?.promo &&
             extraInfo[selectTicketId]?.marketing;
 
-        // Если данные не заполнены и пытаемся двигаться вперед
+        // Проверяем, заполнены ли новые селекты
+        const isValidExtraFields =
+            extraInfo[selectTicketId]?.tipul_serviciului &&
+            extraInfo[selectTicketId]?.tara &&
+            extraInfo[selectTicketId]?.tip_de_transport &&
+            extraInfo[selectTicketId]?.denumirea_excursiei_turului;
+
+        // Если основные селекты не заполнены и двигаемся вперед
         if (newIndex > currentIndex && newIndex >= requiredWorkflowIndex && !isValidExtraInfo) {
-            setShowValidationError(true); // Показываем ошибку
+            setShowValidationError(true);
             enqueueSnackbar('Заполните Sursă lead, Promo и Marketing перед изменением workflow!', { variant: 'error' });
             return;
         }
 
-        // Сбрасываем ошибку, если успешно изменили workflow
+        // Если новые селекты не заполнены и двигаемся вперед
+        if (newIndex > currentIndex && newIndex >= requiredExtraWorkflowIndex && !isValidExtraFields) {
+            setShowExtraValidationError(true);
+            enqueueSnackbar('Заполните Serviciu, Țară, Transport și Excursie перед изменением workflow!', { variant: 'error' });
+            return;
+        }
+
+        // Если все в порядке – сбрасываем ошибки
         setShowValidationError(false);
+        setShowExtraValidationError(false);
 
         try {
             await updateTicket({
@@ -1785,41 +1804,48 @@ const ChatComponent = ({ }) => {
                                     options={serviceTypeOptions}
                                     label="Serviciu"
                                     id="service-select"
-                                    className="input-field"
                                     value={extraInfo[selectTicketId]?.tipul_serviciului || ""}
-                                    onChange={(value) =>
-                                        handleSelectChangeExtra(selectTicketId, 'tipul_serviciului', value)
-                                    }
+                                    onChange={(value) => {
+                                        handleSelectChangeExtra(selectTicketId, 'tipul_serviciului', value);
+                                        if (value) setShowExtraValidationError(false);
+                                    }}
+                                    hasError={showExtraValidationError && !extraInfo[selectTicketId]?.tipul_serviciului}
                                 />
+
                                 <Select
                                     options={countryOptions}
                                     label="Țară"
                                     id="country-select"
-                                    className="input-field"
                                     value={extraInfo[selectTicketId]?.tara || ""}
-                                    onChange={(value) =>
-                                        handleSelectChangeExtra(selectTicketId, 'tara', value)
-                                    }
+                                    onChange={(value) => {
+                                        handleSelectChangeExtra(selectTicketId, 'tara', value);
+                                        if (value) setShowExtraValidationError(false);
+                                    }}
+                                    hasError={showExtraValidationError && !extraInfo[selectTicketId]?.tara}
                                 />
+
                                 <Select
                                     options={transportOptions}
                                     label="Transport"
                                     id="transport-select"
-                                    className="input-field"
                                     value={extraInfo[selectTicketId]?.tip_de_transport || ""}
-                                    onChange={(value) =>
-                                        handleSelectChangeExtra(selectTicketId, 'tip_de_transport', value)
-                                    }
+                                    onChange={(value) => {
+                                        handleSelectChangeExtra(selectTicketId, 'tip_de_transport', value);
+                                        if (value) setShowExtraValidationError(false);
+                                    }}
+                                    hasError={showExtraValidationError && !extraInfo[selectTicketId]?.tip_de_transport}
                                 />
+
                                 <Select
                                     options={nameExcursionOptions}
                                     label="Excursie"
                                     id="excursie-select"
-                                    className="input-field"
                                     value={extraInfo[selectTicketId]?.denumirea_excursiei_turului || ""}
-                                    onChange={(value) =>
-                                        handleSelectChangeExtra(selectTicketId, 'denumirea_excursiei_turului', value)
-                                    }
+                                    onChange={(value) => {
+                                        handleSelectChangeExtra(selectTicketId, 'denumirea_excursiei_turului', value);
+                                        if (value) setShowExtraValidationError(false);
+                                    }}
+                                    hasError={showExtraValidationError && !extraInfo[selectTicketId]?.denumirea_excursiei_turului}
                                 />
                                 <Select
                                     options={purchaseProcessingOptions}
