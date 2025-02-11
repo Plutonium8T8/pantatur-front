@@ -65,7 +65,6 @@ const ChatComponent = ({ }) => {
     const [searchQuery, setSearchQuery] = useState("");
     const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
     const [activeTab, setActiveTab] = useState(); // По умолчанию вкладка Extra Form
-    const requiredFields = ["sursa_lead", "promo", "marketing"];
 
     const platformIcons = {
         "facebook": <FaFacebook />,
@@ -74,17 +73,7 @@ const ChatComponent = ({ }) => {
         "viber": <SiViber />,
         "telegram": <FaTelegram />
     };
-    const validateRequiredFields = () => {
-        if (!updatedTicket || updatedTicket.workflow !== "Luat in lucru") return true;
 
-        const missingFields = requiredFields.filter(field => !extraInfo[selectTicketId]?.[field]);
-
-        if (missingFields.length > 0) {
-            enqueueSnackbar("Completați toate câmpurile obligatorii!", { variant: "error" });
-            return false;
-        }
-        return true;
-    };
     const applyFilters = (filters) => {
         setAppliedFilters(filters);
     };
@@ -1681,7 +1670,6 @@ const ChatComponent = ({ }) => {
                                     id="lead-source-select"
                                     value={extraInfo[selectTicketId]?.sursa_lead || ""}
                                     onChange={(value) => handleSelectChangeExtra(selectTicketId, 'sursa_lead', value)}
-                                    required={updatedTicket?.workflow === "De prelucrat"} // Обязательное, если workflow = "Luat in lucru"
                                 />
                                 <Select
                                     options={promoOptions}
@@ -1692,7 +1680,6 @@ const ChatComponent = ({ }) => {
                                     onChange={(value) =>
                                         handleSelectChangeExtra(selectTicketId, 'promo', value)
                                     }
-                                    required={updatedTicket?.workflow === "De prelucrat"} // Обязательное, если workflow = "Luat in lucru"
                                 />
                                 <Select
                                     options={marketingOptions}
@@ -1703,7 +1690,6 @@ const ChatComponent = ({ }) => {
                                     onChange={(value) =>
                                         handleSelectChangeExtra(selectTicketId, 'marketing', value)
                                     }
-                                    required={updatedTicket?.workflow === "De prelucrat"} // Обязательное, если workflow = "Luat in lucru"
                                 />
                                 <Select
                                     options={serviceTypeOptions}
