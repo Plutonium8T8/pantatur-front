@@ -299,14 +299,18 @@ const ChatComponent = ({ }) => {
     ];
 
     // Индексы для каждого этапа
-    const requiredWorkflowIndex = workflowOptions.indexOf("Luat în lucru"); // Первые селекты
-    const requiredExtraWorkflowIndex = workflowOptions.indexOf("Ofertă trimisă"); // Вторые селекты
-    const requiredPurchaseWorkflowIndex = workflowOptions.indexOf("Aprobat cu client"); // `Achiziție`
-    const requiredContractWorkflowIndex = workflowOptions.indexOf("Contract semnat"); // `Contract`
+    const requiredWorkflowIndex = workflowOptions.indexOf("Luat în lucru");
+    const requiredExtraWorkflowIndex = workflowOptions.indexOf("Ofertă trimisă");
+    const requiredPurchaseWorkflowIndex = workflowOptions.indexOf("Aprobat cu client");
+    const requiredContractWorkflowIndex = workflowOptions.indexOf("Contract semnat");
+    const requiredPaymentWorkflowIndex = workflowOptions.indexOf("Plată primită");
+    const requiredFinalWorkflowIndex = workflowOptions.indexOf("Contract încheiat"); // Новый индекс
 
     const [showExtraValidationError, setShowExtraValidationError] = useState(false);
     const [showPurchaseValidationError, setShowPurchaseValidationError] = useState(false);
-    const [showContractValidationError, setShowContractValidationError] = useState(false); // Новый state
+    const [showContractValidationError, setShowContractValidationError] = useState(false);
+    const [showPaymentValidationError, setShowPaymentValidationError] = useState(false);
+    const [showFinalValidationError, setShowFinalValidationError] = useState(false); // Новый state
 
     const updatedTicket = tickets.find(ticket => ticket.id === selectTicketId) || null;
 
@@ -315,6 +319,8 @@ const ChatComponent = ({ }) => {
     const isRequiredExtra = currentWorkflowIndex >= requiredExtraWorkflowIndex;
     const isRequiredPurchase = currentWorkflowIndex >= requiredPurchaseWorkflowIndex;
     const isRequiredContract = currentWorkflowIndex >= requiredContractWorkflowIndex;
+    const isRequiredPayment = currentWorkflowIndex >= requiredPaymentWorkflowIndex;
+    const isRequiredFinal = currentWorkflowIndex >= requiredFinalWorkflowIndex;
 
     const handleWorkflowChange = async (event) => {
         const newWorkflow = event.target.value;
@@ -327,7 +333,7 @@ const ChatComponent = ({ }) => {
         const currentIndex = workflowOptions.indexOf(updatedTicket.workflow);
         const newIndex = workflowOptions.indexOf(newWorkflow);
 
-        // Проверяем заполненность селектов на каждом этапе
+        // Проверяем заполненность полей
         const isValidExtraInfo =
             extraInfo[selectTicketId]?.sursa_lead &&
             extraInfo[selectTicketId]?.promo &&
@@ -346,6 +352,17 @@ const ChatComponent = ({ }) => {
             extraInfo[selectTicketId]?.contract_date &&
             extraInfo[selectTicketId]?.contract_trimis &&
             extraInfo[selectTicketId]?.contract_semnat;
+
+        const isValidPaymentField = extraInfo[selectTicketId]?.achitare_efectuata;
+
+        const isValidFinalFields =
+            extraInfo[selectTicketId]?.tour_operator &&
+            extraInfo[selectTicketId]?.request_id &&
+            extraInfo[selectTicketId]?.rezervare_confirmata &&
+            extraInfo[selectTicketId]?.contract_arhivat &&
+            extraInfo[selectTicketId]?.payment_method &&
+            extraInfo[selectTicketId]?.pret_netto &&
+            extraInfo[selectTicketId]?.comission_companie;
 
         // Валидация для `Luat în lucru`
         if (newIndex > currentIndex && newIndex >= requiredWorkflowIndex && !isValidExtraInfo) {
@@ -375,11 +392,27 @@ const ChatComponent = ({ }) => {
             return;
         }
 
+        // Валидация для `Plată primită`
+        if (newIndex > currentIndex && newIndex >= requiredPaymentWorkflowIndex && !isValidPaymentField) {
+            setShowPaymentValidationError(true);
+            enqueueSnackbar('Заполните Achitare efectuata перед изменением workflow!', { variant: 'error' });
+            return;
+        }
+
+        // Валидация для `Contract încheiat`
+        if (newIndex > currentIndex && newIndex >= requiredFinalWorkflowIndex && !isValidFinalFields) {
+            setShowFinalValidationError(true);
+            enqueueSnackbar('Заполните toate câmpurile pentru Contract încheiat!', { variant: 'error' });
+            return;
+        }
+
         // Сбрасываем ошибки, если все в порядке
         setShowValidationError(false);
         setShowExtraValidationError(false);
         setShowPurchaseValidationError(false);
         setShowContractValidationError(false);
+        setShowPaymentValidationError(false);
+        setShowFinalValidationError(false);
 
         try {
             await updateTicket({
@@ -2099,10 +2132,11 @@ const ChatComponent = ({ }) => {
                                 label="Operator turistic"
                                 type="text"
                                 value={extraInfo[selectTicketId]?.tour_operator || ""}
-                                onChange={(e) =>
-                                    handleSelectChangeExtra(selectTicketId, 'tour_operator', e.target.value)
-                                }
-                                className="input-field"
+                                onChange={(e) => {
+                                    handleSelectChangeExtra(selectTicketId, 'tour_operator', e.target.value);
+                                    if (e.target.value) setShowFinalValidationError(false);
+                                }}
+                                className={`input-field ${showFinalValidationError && !extraInfo[selectTicketId]?.tour_operator ? "invalid-field" : ""}`}
                                 placeholder="Operator turistic"
                                 id="tour-operator-input"
                             />
@@ -2110,10 +2144,11 @@ const ChatComponent = ({ }) => {
                                 label="Nr cererii de la operator"
                                 type="text"
                                 value={extraInfo[selectTicketId]?.request_id || ""}
-                                onChange={(e) =>
-                                    handleSelectChangeExtra(selectTicketId, 'request_id', e.target.value)
-                                }
-                                className="input-field"
+                                onChange={(e) => {
+                                    handleSelectChangeExtra(selectTicketId, 'request_id', e.target.value);
+                                    if (e.target.value) setShowFinalValidationError(false);
+                                }}
+                                className={`input-field ${showFinalValidationError && !extraInfo[selectTicketId]?.request_id ? "invalid-field" : ""}`}
                                 placeholder="Nr cererii de la operator"
                                 id="tour-operator-input"
                             />
@@ -2137,23 +2172,25 @@ const ChatComponent = ({ }) => {
                                     <input
                                         type="checkbox"
                                         checked={extraInfo[selectTicketId]?.rezervare_confirmata || false}
-                                        onChange={(e) =>
-                                            handleSelectChangeExtra(selectTicketId, 'rezervare_confirmata', e.target.checked)
-                                        }
+                                        onChange={(e) => {
+                                            handleSelectChangeExtra(selectTicketId, 'rezervare_confirmata', e.target.checked);
+                                            setShowFinalValidationError(false);
+                                        }}
                                     />
                                     <span className="slider round"></span>
                                 </label>
                             </div>
-                            {/* Toggle Switch для "Contract arhivat" */}
+
                             <div className="toggle-container">
                                 <label className="toggle-label">Contract arhivat</label>
                                 <label className="switch">
                                     <input
                                         type="checkbox"
                                         checked={extraInfo[selectTicketId]?.contract_arhivat || false}
-                                        onChange={(e) =>
-                                            handleSelectChangeExtra(selectTicketId, 'contract_arhivat', e.target.checked)
-                                        }
+                                        onChange={(e) => {
+                                            handleSelectChangeExtra(selectTicketId, 'contract_arhivat', e.target.checked);
+                                            setShowFinalValidationError(false);
+                                        }}
                                     />
                                     <span className="slider round"></span>
                                 </label>
@@ -2163,9 +2200,11 @@ const ChatComponent = ({ }) => {
                                 label="Plată primită"
                                 id="payment-select"
                                 value={extraInfo[selectTicketId]?.payment_method || ""}
-                                onChange={(value) =>
-                                    handleSelectChangeExtra(selectTicketId, 'payment_method', value)
-                                }
+                                onChange={(value) => {
+                                    handleSelectChangeExtra(selectTicketId, 'payment_method', value);
+                                    if (value) setShowFinalValidationError(false);
+                                }}
+                                className={`input-field ${showFinalValidationError && !extraInfo[selectTicketId]?.payment_method ? "invalid-field" : ""}`}
                             />
                             <Input
                                 label="Avans euro"
@@ -2200,10 +2239,11 @@ const ChatComponent = ({ }) => {
                                 label="Pret NETTO"
                                 type="number"
                                 value={extraInfo[selectTicketId]?.pret_netto || ""}
-                                onChange={(e) =>
-                                    handleSelectChangeExtra(selectTicketId, 'pret_netto', e.target.value)
-                                }
-                                className="input-field"
+                                onChange={(e) => {
+                                    handleSelectChangeExtra(selectTicketId, 'pret_netto', e.target.value);
+                                    if (e.target.value) setShowFinalValidationError(false);
+                                }}
+                                className={`input-field ${showFinalValidationError && !extraInfo[selectTicketId]?.pret_netto ? "invalid-field" : ""}`}
                                 placeholder="Preț netto (euro)"
                                 id="price-neto-input"
                             />
@@ -2234,10 +2274,11 @@ const ChatComponent = ({ }) => {
                                 label="Comision companie"
                                 type="number"
                                 value={extraInfo[selectTicketId]?.comission_companie || ""}
-                                onChange={(e) =>
-                                    handleSelectChangeExtra(selectTicketId, 'comission_companie', e.target.value)
-                                }
-                                className="input-field"
+                                onChange={(e) => {
+                                    handleSelectChangeExtra(selectTicketId, 'comission_companie', e.target.value);
+                                    if (e.target.value) setShowFinalValidationError(false);
+                                }}
+                                className={`input-field ${showFinalValidationError && !extraInfo[selectTicketId]?.comission_companie ? "invalid-field" : ""}`}
                                 placeholder="Comision companie"
                                 id="commission-input"
                                 disabled={true}
