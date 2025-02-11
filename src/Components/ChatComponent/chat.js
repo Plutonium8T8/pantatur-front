@@ -30,6 +30,7 @@ import { SiViber } from "react-icons/si";
 import { useLocation } from 'react-router-dom';
 import TaskModal from '../SlideInComponent/TaskComponent';
 import { FaTasks } from 'react-icons/fa';
+import { workflowOptions } from '../../FormOptions/WorkFlowOption';
 
 const ChatComponent = ({ }) => {
     const { userId } = useUser();
@@ -1200,8 +1201,6 @@ const ChatComponent = ({ }) => {
         }
     }, [messages, selectTicketId, markMessagesAsRead, userId]);
 
-    console.log("Active Tab:", activeTab, "Selected Ticket ID:", selectTicketId);
-
     return (
         <div className="chat-container">
             {/* Контейнер списка чатов */}
@@ -1631,51 +1630,62 @@ const ChatComponent = ({ }) => {
 
             </div>
             <div className="extra-info">
-                <div className="tabs-container">
-                    <button
-                        className={`tab-button ${activeTab === 'extraForm' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('extraForm')}
-                    >
-                        Informații suplimentare
-                    </button>
-                    <button
-                        className={`tab-button ${activeTab === 'Contract' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('Contract')}
-                    >
-                        Contract
-                    </button>
-                    <button
-                        className={`tab-button ${activeTab === 'Invoice' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('Invoice')}
-                    >
-                        Invoice
-                    </button>
-                    <button
-                        className={`tab-button ${activeTab === 'Media' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('Media')}
-                    >
-                        Media
-                    </button>
-                    <button
-                        className={`tab-button ${activeTab === 'Control calitate' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('Control calitate')}
-                    >
-                        Control calitate
-                    </button>
+                <div className="sticky-container">
+                    <div className="tabs-container">
+                        <button
+                            className={`tab-button ${activeTab === 'extraForm' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('extraForm')}
+                        >
+                            Informații suplimentare
+                        </button>
+                        <button
+                            className={`tab-button ${activeTab === 'Contract' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('Contract')}
+                        >
+                            Contract
+                        </button>
+                        <button
+                            className={`tab-button ${activeTab === 'Invoice' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('Invoice')}
+                        >
+                            Invoice
+                        </button>
+                        <button
+                            className={`tab-button ${activeTab === 'Media' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('Media')}
+                        >
+                            Media
+                        </button>
+                        <button
+                            className={`tab-button ${activeTab === 'Control calitate' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('Control calitate')}
+                        >
+                            Control calitate
+                        </button>
+                    </div>
+
+                    <div className="tab-content">
+                        {activeTab && selectTicketId && isLoading ? (
+                            <p>Loading...</p>
+                        ) : (
+                            <>
+                                <Workflow
+                                    ticket={updatedTicket}
+                                    onChange={handleWorkflowChange}
+                                />
+                                <div className="input-group">
+                                    <button onClick={sendExtraInfo} className="submit-button">
+                                        {isLoading ? translations['Încărcăm...'][language] : translations['Actualizare'][language]}
+                                    </button>
+                                </div>
+                            </>
+                        )}
+                    </div>
                 </div>
                 <div className="tab-content">
                     {activeTab === 'extraForm' && selectTicketId && (
                         <div className="extra-info-content">
-                            <div className='extra-info-title'>{translations['Informații suplimentare'][language]}</div>
                             <div className="selects-container">
-                                {isLoading ? (
-                                    <p>Loading...</p>
-                                ) : (
-                                    <Workflow
-                                        ticket={updatedTicket}
-                                        onChange={handleWorkflowChange}
-                                    />
-                                )}
                                 {isLoading ? (
                                     <p>Loading...</p>
                                 ) : (
@@ -1822,11 +1832,6 @@ const ChatComponent = ({ }) => {
                                     }
                                     className="input-field"
                                 />
-                            </div>
-                            <div className="input-group">
-                                <button onClick={sendExtraInfo} className="submit-button">
-                                    {isLoading ? translations['Încărcăm...'][language] : translations['Actualizare'][language]}
-                                </button>
                             </div>
                             <div className="merge-tickets">
                                 <input
@@ -2350,6 +2355,9 @@ const ChatComponent = ({ }) => {
                                 id="vacanta"
                             />
                         </div>
+                    )}
+                    {activeTab === 'Media' && selectTicketId && (
+                        <div />
                     )}
                 </div>
             </div>
