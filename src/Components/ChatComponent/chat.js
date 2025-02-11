@@ -66,6 +66,7 @@ const ChatComponent = ({ }) => {
     const [searchQuery, setSearchQuery] = useState("");
     const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
     const [activeTab, setActiveTab] = useState(); // По умолчанию вкладка Extra Form
+    const [showValidationError, setShowValidationError] = useState(false); // Фиксируем ошибку
 
     const platformIcons = {
         "facebook": <FaFacebook />,
@@ -297,39 +298,41 @@ const ChatComponent = ({ }) => {
         "Contract încheiat"
     ];
 
-    const requiredWorkflowIndex = workflowOptions.indexOf("Luat în lucru"); // Индекс, с которого селекты обязательны
+    const requiredWorkflowIndex = workflowOptions.indexOf("Luat în lucru"); // С какого workflow селекты обязательны
 
-    // Определяем выбранный тикет заранее
+
+    // Определяем выбранный тикет
     const updatedTicket = tickets.find(ticket => ticket.id === selectTicketId) || null;
 
-    // Проверяем, является ли текущее `workflow` тем, при котором селекты обязательны
+    // Проверяем, нужно ли заполнять селекты
     const currentWorkflowIndex = updatedTicket ? workflowOptions.indexOf(updatedTicket.workflow) : -1;
     const isRequired = currentWorkflowIndex >= requiredWorkflowIndex;
 
     const handleWorkflowChange = async (event) => {
         const newWorkflow = event.target.value;
 
-        // Проверяем, есть ли у нас уже выбранный тикет
         if (!updatedTicket) {
             enqueueSnackbar('Ошибка: Тикет не найден.', { variant: 'error' });
             return;
         }
 
-        // Определяем индексы текущего и нового `workflow`
         const currentIndex = workflowOptions.indexOf(updatedTicket.workflow);
         const newIndex = workflowOptions.indexOf(newWorkflow);
 
-        // Проверяем, заполнены ли селекты
         const isValidExtraInfo =
             extraInfo[selectTicketId]?.sursa_lead &&
             extraInfo[selectTicketId]?.promo &&
             extraInfo[selectTicketId]?.marketing;
 
-        // Блокируем движение вперед, если новый `workflow` требует заполненные селекты
+        // Если данные не заполнены и пытаемся двигаться вперед
         if (newIndex > currentIndex && newIndex >= requiredWorkflowIndex && !isValidExtraInfo) {
+            setShowValidationError(true); // Показываем ошибку
             enqueueSnackbar('Заполните Sursă lead, Promo и Marketing перед изменением workflow!', { variant: 'error' });
             return;
         }
+
+        // Сбрасываем ошибку, если успешно изменили workflow
+        setShowValidationError(false);
 
         try {
             await updateTicket({
@@ -1748,30 +1751,35 @@ const ChatComponent = ({ }) => {
                                     label="Sursă lead"
                                     id="lead-source-select"
                                     value={extraInfo[selectTicketId]?.sursa_lead || ""}
-                                    onChange={(value) => handleSelectChangeExtra(selectTicketId, 'sursa_lead', value)}
-                                    className={isRequired && !extraInfo[selectTicketId]?.sursa_lead ? "invalid-field" : ""}
+                                    onChange={(value) => {
+                                        handleSelectChangeExtra(selectTicketId, 'sursa_lead', value);
+                                        if (value) setShowValidationError(false);
+                                    }}
+                                    hasError={showValidationError && !extraInfo[selectTicketId]?.sursa_lead} // Подсвечивается красным, если ошибка
                                 />
 
                                 <Select
                                     options={promoOptions}
                                     label="Promo"
                                     id="promo-select"
-                                    className={`input-field ${isRequired && !extraInfo[selectTicketId]?.promo ? "invalid-field" : ""}`}
                                     value={extraInfo[selectTicketId]?.promo || ""}
-                                    onChange={(value) =>
-                                        handleSelectChangeExtra(selectTicketId, 'promo', value)
-                                    }
+                                    onChange={(value) => {
+                                        handleSelectChangeExtra(selectTicketId, 'promo', value);
+                                        if (value) setShowValidationError(false);
+                                    }}
+                                    hasError={showValidationError && !extraInfo[selectTicketId]?.promo}
                                 />
 
                                 <Select
                                     options={marketingOptions}
                                     label="Marketing"
                                     id="marketing-select"
-                                    className={`input-field ${isRequired && !extraInfo[selectTicketId]?.marketing ? "invalid-field" : ""}`}
                                     value={extraInfo[selectTicketId]?.marketing || ""}
-                                    onChange={(value) =>
-                                        handleSelectChangeExtra(selectTicketId, 'marketing', value)
-                                    }
+                                    onChange={(value) => {
+                                        handleSelectChangeExtra(selectTicketId, 'marketing', value);
+                                        if (value) setShowValidationError(false);
+                                    }}
+                                    hasError={showValidationError && !extraInfo[selectTicketId]?.marketing}
                                 />
                                 <Select
                                     options={serviceTypeOptions}

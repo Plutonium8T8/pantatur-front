@@ -2,7 +2,18 @@ import React from 'react';
 import './select.css';
 import { translations } from '../utils/translations';
 
-const Select = ({ options, label, id, value, onChange, customClassName, placeholder, required, disabled }) => {
+const Select = ({
+    options,
+    label,
+    id,
+    value,
+    onChange,
+    customClassName,
+    placeholder,
+    required,
+    disabled,
+    hasError // Новый пропс для отображения ошибки
+}) => {
     const handleChange = (event) => {
         const selectedValue = event.target.value;
         onChange(selectedValue);
@@ -11,15 +22,15 @@ const Select = ({ options, label, id, value, onChange, customClassName, placehol
     const language = localStorage.getItem('language') || 'RO';
 
     return (
-        <div className="input-group">
+        <div className={`input-group ${hasError ? "invalid-field" : ""}`}>
             <label htmlFor={id}>{translations[label]?.[language] ?? label}</label>
             <select
                 id={id}
-                className="task-select"
+                className={`task-select ${hasError ? "invalid-field" : ""}`}
                 value={value}
                 onChange={handleChange}
                 required={required}
-                disabled={disabled} // Просто передается как пропс
+                disabled={disabled}
             >
                 <option value="">{translations[placeholder]?.[language] ?? label}</option>
                 {options.map((option, index) => (

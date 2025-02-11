@@ -2,12 +2,22 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-    align-items:flex-start;
+    align-items: flex-start;
 }
+
 .select-field {
     width: 50%;
     color: black;
     font-size: 15px;
     padding: 4px;
     border-radius: 10px;
+}
+
+.invalid-field {
+    border: 2px solid red !important;
+    background-color: #ffe6e6;
+}
+
+.invalid-field select {
+    border-color: red !important;
 }
