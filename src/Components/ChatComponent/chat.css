@@ -757,6 +757,19 @@ input:checked+.slider:before {
     transform: translateX(18px);
 }
 
+.media-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center content horizontally */
+    margin-bottom: 15px; /* Add spacing between messages */
+}
+
+.sent-time {
+    font-size: 18px;
+    margin-bottom: 5px;
+    text-align: center; /* Ensure text is centered */
+}
+
 /* Кнопка скрытия/показа списка чатов */
 .toggle-chat-list {
     position: absolute;

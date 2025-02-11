@@ -32,7 +32,7 @@ import { useLocation } from 'react-router-dom';
 import TaskModal from '../SlideInComponent/TaskComponent';
 import { FaTasks } from 'react-icons/fa';
 import { workflowOptions } from '../../FormOptions/WorkFlowOption';
-import { evaluareOdihnaOptions} from '../../FormOptions/EvaluareVacantaOptions';
+import { evaluareOdihnaOptions } from '../../FormOptions/EvaluareVacantaOptions';
 import { valutaOptions } from '../../FormOptions/ValutaOptions';
 import { ibanOptions } from '../../FormOptions/IbanOptions';
 
@@ -1716,58 +1716,61 @@ const ChatComponent = ({ }) => {
 
             </div>
             <div className="extra-info">
-                <div className="sticky-container">
-                    <div className="tabs-container">
-                        <button
-                            className={`tab-button ${activeTab === 'extraForm' ? 'active' : ''}`}
-                            onClick={() => setActiveTab('extraForm')}
-                        >
-                            Informații suplimentare
-                        </button>
-                        <button
-                            className={`tab-button ${activeTab === 'Contract' ? 'active' : ''}`}
-                            onClick={() => setActiveTab('Contract')}
-                        >
-                            Contract
-                        </button>
-                        <button
-                            className={`tab-button ${activeTab === 'Invoice' ? 'active' : ''}`}
-                            onClick={() => setActiveTab('Invoice')}
-                        >
-                            Invoice
-                        </button>
-                        <button
-                            className={`tab-button ${activeTab === 'Media' ? 'active' : ''}`}
-                            onClick={() => setActiveTab('Media')}
-                        >
-                            Media
-                        </button>
-                        <button
-                            className={`tab-button ${activeTab === 'Control calitate' ? 'active' : ''}`}
-                            onClick={() => setActiveTab('Control calitate')}
-                        >
-                            Control calitate
-                        </button>
-                    </div>
+                {selectTicketId && (
+                    <div className="sticky-container">
+                        <div className="tabs-container">
+                            <button
+                                className={`tab-button ${activeTab === 'extraForm' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('extraForm')}
+                            >
+                                {translations["Informații suplimentare"]?.[language]}
+                            </button>
+                            <button
+                                className={`tab-button ${activeTab === 'Contract' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('Contract')}
+                            >
+                                {translations["Contract"]?.[language]}
+                            </button>
+                            <button
+                                className={`tab-button ${activeTab === 'Invoice' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('Invoice')}
+                            >
+                                {translations["Invoice"]?.[language]}
+                            </button>
+                            <button
+                                className={`tab-button ${activeTab === 'Media' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('Media')}
+                            >
+                                {translations["Media"]?.[language]}
+                            </button>
+                            <button
+                                className={`tab-button ${activeTab === 'Control calitate' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('Control calitate')}
+                            >
+                                {translations["Control calitate"]?.[language]}
+                            </button>
+                        </div>
 
-                    <div className="tab-content">
-                        {activeTab && selectTicketId && isLoading ? (
-                            <p>Loading...</p>
-                        ) : (
-                            <>
-                                <Workflow
-                                    ticket={updatedTicket}
-                                    onChange={handleWorkflowChange}
-                                />
-                                <div className="input-group">
-                                    <button onClick={sendExtraInfo} className="submit-button">
-                                        {isLoading ? translations['Încărcăm...'][language] : translations['Actualizare'][language]}
-                                    </button>
-                                </div>
-                            </>
-                        )}
+
+                        <div className="tab-content">
+                            {activeTab && selectTicketId && isLoading ? (
+                                <p>Loading...</p>
+                            ) : (
+                                <>
+                                    <Workflow
+                                        ticket={updatedTicket}
+                                        onChange={handleWorkflowChange}
+                                    />
+                                    <div className="input-group">
+                                        <button onClick={sendExtraInfo} className="submit-button">
+                                            {isLoading ? translations['Încărcăm...'][language] : translations['Actualizare'][language]}
+                                        </button>
+                                    </div>
+                                </>
+                            )}
+                        </div>
                     </div>
-                </div>
+                )}
                 <div className="tab-content">
                     {activeTab === 'extraForm' && selectTicketId && (
                         <div className="extra-info-content">
@@ -2104,7 +2107,7 @@ const ChatComponent = ({ }) => {
                             />
 
                             <div className="toggle-container">
-                                <label className="toggle-label">Contract trimis</label>
+                                <label className="toggle-label">{translations['Contract trimis']?.[language]}</label>
                                 <label className="switch">
                                     <input
                                         type="checkbox"
@@ -2119,7 +2122,7 @@ const ChatComponent = ({ }) => {
                             </div>
 
                             <div className="toggle-container">
-                                <label className="toggle-label">Contract semnat</label>
+                                <label className="toggle-label">{translations['Contract semnat']?.[language]}</label>
                                 <label className="switch">
                                     <input
                                         type="checkbox"
@@ -2157,7 +2160,7 @@ const ChatComponent = ({ }) => {
                                 id="tour-operator-input"
                             />
                             <div className="toggle-container">
-                                <label className="toggle-label">Achitare efectuata</label>
+                                <label className="toggle-label">{translations['Achitare efectuată']?.[language]}</label>
                                 <label className="switch">
                                     <input
                                         type="checkbox"
@@ -2171,7 +2174,7 @@ const ChatComponent = ({ }) => {
                             </div>
                             {/* Toggle Switch для "Rezervare confirmata" */}
                             <div className="toggle-container">
-                                <label className="toggle-label">Rezervare confirmata</label>
+                                <label className="toggle-label">{translations['Rezervare confirmată']?.[language]}</label>
                                 <label className="switch">
                                     <input
                                         type="checkbox"
@@ -2186,7 +2189,7 @@ const ChatComponent = ({ }) => {
                             </div>
 
                             <div className="toggle-container">
-                                <label className="toggle-label">Contract arhivat</label>
+                                <label className="toggle-label">{translations['Contract arhivat']?.[language]}</label>
                                 <label className="switch">
                                     <input
                                         type="checkbox"
@@ -2212,13 +2215,12 @@ const ChatComponent = ({ }) => {
                             />
                             <Input
                                 label="Avans euro"
-                                type="number"
                                 value={extraInfo[selectTicketId]?.avans_euro || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'avans_euro', e.target.value)
                                 }
                                 className="input-field"
-                                placeholder="Preț netto (euro)"
+                                placeholder="Avans euro"
                                 id="price-neto-input"
                             />
                             <Input
@@ -2231,7 +2233,7 @@ const ChatComponent = ({ }) => {
                                 className="input-field"
                             />
                             <Input
-                                label="Data de plata integrala"
+                                label="Data de plată integrală"
                                 type="date"
                                 value={extraInfo[selectTicketId]?.data_de_plata_integrala || ""}
                                 onChange={(e) =>
@@ -2240,8 +2242,7 @@ const ChatComponent = ({ }) => {
                                 className="input-field"
                             />
                             <Input
-                                label="Pret NETTO"
-                                type="number"
+                                label="Preț NETTO"
                                 value={extraInfo[selectTicketId]?.pret_netto || ""}
                                 onChange={(e) => {
                                     handleSelectChangeExtra(selectTicketId, 'pret_netto', e.target.value);
@@ -2253,30 +2254,27 @@ const ChatComponent = ({ }) => {
                             />
                             <Input
                                 label="Achitat client"
-                                type="number"
                                 value={extraInfo[selectTicketId]?.achitat_client || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'achitat_client', e.target.value)
                                 }
                                 className="input-field"
-                                placeholder="Preț netto (euro)"
+                                placeholder="Achitat client"
                                 id="price-neto-input"
                             />
                             <Input
-                                label="Restant client"
-                                type="number"
+                                label="Restanță client"
                                 value={extraInfo[selectTicketId]?.restant_client || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'restant_client', e.target.value)
                                 }
                                 className="input-field"
-                                placeholder="Preț netto (euro)"
+                                placeholder="Restanță client"
                                 id="price-neto-input"
                                 disabled={true}
                             />
                             <Input
                                 label="Comision companie"
-                                type="number"
                                 value={extraInfo[selectTicketId]?.comission_companie || ""}
                                 onChange={(e) => {
                                     handleSelectChangeExtra(selectTicketId, 'comission_companie', e.target.value);
@@ -2289,7 +2287,6 @@ const ChatComponent = ({ }) => {
                             />
                             <Input
                                 label="Statut achitare"
-                                type="number"
                                 value={extraInfo[selectTicketId]?.comission_companie || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'comission_companie', e.target.value)
@@ -2299,7 +2296,7 @@ const ChatComponent = ({ }) => {
                                 id="commission-input"
                                 disabled={true}
                             />
-                            <div className="toggle-container">
+                            {/* <div className="toggle-container">
                                 <label className="toggle-label">control pentru admin toogle</label>
                                 <label className="switch">
                                     <input
@@ -2311,7 +2308,7 @@ const ChatComponent = ({ }) => {
                                     />
                                     <span className="slider round"></span>
                                 </label>
-                            </div>
+                            </div> */}
                         </div>
                     )}
                     {activeTab === 'Invoice' && selectTicketId && (
@@ -2397,7 +2394,53 @@ const ChatComponent = ({ }) => {
                         </div>
                     )}
                     {activeTab === 'Media' && selectTicketId && (
-                        <div className="extra-info-content">test</div>
+                        <div className="extra-info-content">
+                        {messages
+                            .filter((msg) => ['audio', 'video', 'image', 'file'].includes(msg.mtype) && msg.ticket_id === selectTicketId)
+                            .map((msg, index) => (
+                                <div key={index} className="media-container">
+                                    {/* Display Sent Time */}
+                                    <div className="sent-time">
+                                        {new Date(msg.time_sent).toLocaleString()}
+                                    </div>
+                    
+                                    {/* Display Media */}
+                                    {msg.mtype === "image" ? (
+                                        <img
+                                            src={msg.message}
+                                            alt="Изображение"
+                                            className="image-preview-in-chat"
+                                            onError={(e) => {
+                                                e.target.src = "https://via.placeholder.com/300?text=Ошибка+загрузки";
+                                            }}
+                                            onClick={() => {
+                                                window.open(msg.message, "_blank");
+                                            }}
+                                        />
+                                    ) : msg.mtype === "video" ? (
+                                        <video controls className="video-preview">
+                                            <source src={msg.message} type="video/mp4" />
+                                            {translations["Acest browser nu suporta video"][language]}
+                                        </video>
+                                    ) : msg.mtype === "audio" ? (
+                                        <audio controls className="audio-preview">
+                                            <source src={msg.message} type="audio/ogg" />
+                                            {translations["Acest browser nu suporta audio"][language]}
+                                        </audio>
+                                    ) : msg.mtype === "file" ? (
+                                        <a
+                                            href={msg.message}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="file-link"
+                                        >
+                                            {translations["Deschide file"][language]}
+                                        </a>
+                                    ) : null}
+                                </div>
+                            ))}
+                    </div>
+                    
                     )}
                     {activeTab === 'Control calitate' && selectTicketId && (
                         <div className="extra-info-content">

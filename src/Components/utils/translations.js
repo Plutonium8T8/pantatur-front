@@ -897,6 +897,83 @@ export const translations = {
         'RO': "Eur",
         'RU': "Евр"
     },
+    'Status sunet telefonic': {
+        'RO': "Status sunet telefonic",
+        'RU': "Статус телефонного звонка"
+    },
+    'Data cererii de retur': {
+        'RO': "Data cererii de retur",
+        'RU': "Дата запроса на возврат"
+    },
+    'Data venit în oficiu': {
+        'RO': "Data venit în oficiu",
+        'RU': "Дата прихода в офис"
+    },
+    'Contract trimis': {
+        'RO': "Contract trimis",
+        'RU': "Отправленный контракт"
+    },
+    'Contract semnat': {
+        'RO': "Contract semnat",
+        'RU': "Подписанный контракт"
+    },
+    'Achitare efectuată': {
+        'RO': "Achitare efectuată",
+        'RU': "Оплата произведена"
+    },
+    'Rezervare confirmată': {
+        'RO': "Rezervare confirmată",
+        'RU': "Бронирование подтверждено"
+    },
+    'Contract arhivat': {
+        'RO': "Contract arhivat",
+        'RU': "Архивированный контракт"
+    },
+    'Avans euro': {
+        'RO': "Avans euro",
+        'RU': "Аванс в евро"
+    },
+    'Data avansului': {
+        'RO': "Data avansului",
+        'RU': "Дата аванса"
+    },
+    'Data de plată integrală': {
+        'RO': "Data de plată integrală",
+        'RU': "Дата полной оплаты"
+    },
+    'Preț NETTO': {
+        'RO': "Preț NETTO",
+        'RU': "Чистая цена (NETTO)"
+    },
+    'Achitat client': {
+        'RO': "Achitat client",
+        'RU': "Оплачено клиентом"
+    },
+    'Restanță client': {
+        'RO': "Restanță client",
+        'RU': "Задолженность клиента"
+    },
+    'Statut achitare': {
+        'RO': "Statut achitare",
+        'RU': "Статус оплаты"
+    },
+    'Contract': {
+        'RO': "Contract",
+        'RU': "Контракт"
+    },
+    'Invoice': {
+        'RO': "Factura",
+        'RU': "Счет"
+    },
+    'Media': {
+        'RO': "Media",
+        'RU': "Медиа"
+    },
+    'Control calitate': {
+        'RO': "Control calitate",
+        'RU': "Контроль качества"
+    },
+
 };
 
 // import { translations } from '../utils/translations';
