@@ -194,58 +194,58 @@ const ChatComponent = ({ }) => {
         }
     };
 
-    // изминения значения workflow из экстра формы
-    const handleWorkflowChange = async (event) => {
-        const newWorkflow = event.target.value;
+    // // изминения значения workflow из экстра формы
+    // const handleWorkflowChange = async (event) => {
+    //     const newWorkflow = event.target.value;
 
-        if (!selectTicketId) {
-            console.warn('Тикет не выбран.');
-            enqueueSnackbar('Ошибка: Тикет не выбран.', { variant: 'error' });
-            return;
-        }
+    //     if (!selectTicketId) {
+    //         console.warn('Тикет не выбран.');
+    //         enqueueSnackbar('Ошибка: Тикет не выбран.', { variant: 'error' });
+    //         return;
+    //     }
 
-        // Находим тикет
-        const updatedTicket = Array.isArray(tickets)
-            ? tickets.find(ticket => ticket.id === selectTicketId)
-            : null;
+    //     // Находим тикет
+    //     const updatedTicket = Array.isArray(tickets)
+    //         ? tickets.find(ticket => ticket.id === selectTicketId)
+    //         : null;
 
-        if (!updatedTicket) {
-            console.error('Ticket not found or tickets is not an array:', tickets);
-            enqueueSnackbar('Ошибка: Тикет не найден.', { variant: 'error' });
-            return;
-        }
+    //     if (!updatedTicket) {
+    //         console.error('Ticket not found or tickets is not an array:', tickets);
+    //         enqueueSnackbar('Ошибка: Тикет не найден.', { variant: 'error' });
+    //         return;
+    //     }
 
-        try {
-            // Используем функцию updateTicket из AppContext
-            await updateTicket({
-                id: updatedTicket.id,
-                workflow: newWorkflow,
-            });
+    //     try {
+    //         // Используем функцию updateTicket из AppContext
+    //         await updateTicket({
+    //             id: updatedTicket.id,
+    //             workflow: newWorkflow,
+    //         });
 
-            enqueueSnackbar('Статус тикета обновлен!', { variant: 'success' });
+    //         enqueueSnackbar('Статус тикета обновлен!', { variant: 'success' });
 
-            // Локально обновляем состояние тикетов
-            setTickets((prevTickets) =>
-                Array.isArray(prevTickets)
-                    ? prevTickets.map(ticket =>
-                        ticket.id === updatedTicket.id
-                            ? { ...ticket, workflow: newWorkflow }
-                            : ticket
-                    )
-                    : prevTickets
-            );
+    //         // Локально обновляем состояние тикетов
+    //         setTickets((prevTickets) =>
+    //             Array.isArray(prevTickets)
+    //                 ? prevTickets.map(ticket =>
+    //                     ticket.id === updatedTicket.id
+    //                         ? { ...ticket, workflow: newWorkflow }
+    //                         : ticket
+    //                 )
+    //                 : prevTickets
+    //         );
 
-            console.log("Workflow обновлен:", newWorkflow);
-        } catch (error) {
-            enqueueSnackbar('Ошибка: Статус тикета не обновлен.', { variant: 'error' });
-            console.error('Ошибка при обновлении workflow:', error.message);
-        }
-    };
+    //         console.log("Workflow обновлен:", newWorkflow);
+    //     } catch (error) {
+    //         enqueueSnackbar('Ошибка: Статус тикета не обновлен.', { variant: 'error' });
+    //         console.error('Ошибка при обновлении workflow:', error.message);
+    //     }
+    // };
 
-    // Определяем выбранный тикет
-    const updatedTicket = Array.isArray(tickets) && selectTicketId
-        ? tickets.find(ticket => ticket.id === selectTicketId)
-        : null;
+    // // Определяем выбранный тикет
+    // const updatedTicket = Array.isArray(tickets) && selectTicketId
+    //     ? tickets.find(ticket => ticket.id === selectTicketId)
+    //     : null;
 
     const scrollToBottom = () => {
         if (messageContainerRef.current) {
@@ -282,6 +282,75 @@ const ChatComponent = ({ }) => {
         navigate(`/chat/${ticketId}`);
         // Помечаем все сообщения как прочитанные (отправляем `seen`)
         markMessagesAsRead(ticketId);
+    };
+
+    const workflowOptions = [
+        "Interesat",
+        "Apel de intrare",
+        "De prelucrat",
+        "Luat în lucru",
+        "Ofertă trimisă",
+        "Aprobat cu client",
+        "Contract semnat",
+        "Plată primită",
+        "Contract încheiat"
+    ];
+
+    const requiredWorkflowIndex = workflowOptions.indexOf("Luat în lucru"); // Индекс, с которого селекты обязательны
+
+    // Определяем выбранный тикет заранее
+    const updatedTicket = tickets.find(ticket => ticket.id === selectTicketId) || null;
+
+    // Проверяем, является ли текущее `workflow` тем, при котором селекты обязательны
+    const currentWorkflowIndex = updatedTicket ? workflowOptions.indexOf(updatedTicket.workflow) : -1;
+    const isRequired = currentWorkflowIndex >= requiredWorkflowIndex;
+
+    const handleWorkflowChange = async (event) => {
+        const newWorkflow = event.target.value;
+
+        // Проверяем, есть ли у нас уже выбранный тикет
+        if (!updatedTicket) {
+            enqueueSnackbar('Ошибка: Тикет не найден.', { variant: 'error' });
+            return;
+        }
+
+        // Определяем индексы текущего и нового `workflow`
+        const currentIndex = workflowOptions.indexOf(updatedTicket.workflow);
+        const newIndex = workflowOptions.indexOf(newWorkflow);
+
+        // Проверяем, заполнены ли селекты
+        const isValidExtraInfo =
+            extraInfo[selectTicketId]?.sursa_lead &&
+            extraInfo[selectTicketId]?.promo &&
+            extraInfo[selectTicketId]?.marketing;
+
+        // Блокируем движение вперед, если новый `workflow` требует заполненные селекты
+        if (newIndex > currentIndex && newIndex >= requiredWorkflowIndex && !isValidExtraInfo) {
+            enqueueSnackbar('Заполните Sursă lead, Promo и Marketing перед изменением workflow!', { variant: 'error' });
+            return;
+        }
+
+        try {
+            await updateTicket({
+                id: updatedTicket.id,
+                workflow: newWorkflow,
+            });
+
+            enqueueSnackbar('Статус тикета обновлен!', { variant: 'success' });
+
+            setTickets((prevTickets) =>
+                prevTickets.map(ticket =>
+                    ticket.id === updatedTicket.id
+                        ? { ...ticket, workflow: newWorkflow }
+                        : ticket
+                )
+            );
+
+            console.log("Workflow обновлен:", newWorkflow);
+        } catch (error) {
+            enqueueSnackbar('Ошибка: Статус тикета не обновлен.', { variant: 'error' });
+            console.error('Ошибка при обновлении workflow:', error.message);
+        }
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1670,22 +1739,25 @@ const ChatComponent = ({ }) => {
                                     id="lead-source-select"
                                     value={extraInfo[selectTicketId]?.sursa_lead || ""}
                                     onChange={(value) => handleSelectChangeExtra(selectTicketId, 'sursa_lead', value)}
+                                    className={isRequired && !extraInfo[selectTicketId]?.sursa_lead ? "invalid-field" : ""}
                                 />
+
                                 <Select
                                     options={promoOptions}
                                     label="Promo"
                                     id="promo-select"
-                                    className="input-field"
+                                    className={`input-field ${isRequired && !extraInfo[selectTicketId]?.promo ? "invalid-field" : ""}`}
                                     value={extraInfo[selectTicketId]?.promo || ""}
                                     onChange={(value) =>
                                         handleSelectChangeExtra(selectTicketId, 'promo', value)
                                     }
                                 />
+
                                 <Select
                                     options={marketingOptions}
                                     label="Marketing"
                                     id="marketing-select"
-                                    className="input-field"
+                                    className={`input-field ${isRequired && !extraInfo[selectTicketId]?.marketing ? "invalid-field" : ""}`}
                                     value={extraInfo[selectTicketId]?.marketing || ""}
                                     onChange={(value) =>
                                         handleSelectChangeExtra(selectTicketId, 'marketing', value)

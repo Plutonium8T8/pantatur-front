@@ -847,3 +847,7 @@ input:checked+.slider:before {
     margin-top: 10px;
     justify-content: space-between;
 }
+
+.invalid-field {
+    border: 2px solid red !important;
+}
