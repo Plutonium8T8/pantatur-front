@@ -29,16 +29,7 @@ import { FaFacebook, FaInstagram, FaWhatsapp, FaTelegram } from "react-icons/fa"
 import { SiViber } from "react-icons/si";
 import { useLocation } from 'react-router-dom';
 import TaskModal from '../SlideInComponent/TaskComponent';
-import {
-    FaUser,
-    FaChartBar,
-    FaTasks,
-    FaComments,
-    FaBell,
-    FaClipboardList,
-    FaSignOutAlt,
-    FaUserSecret
-} from 'react-icons/fa';
+import { FaTasks } from 'react-icons/fa';
 
 const ChatComponent = ({ }) => {
     const { userId } = useUser();
@@ -63,7 +54,6 @@ const ChatComponent = ({ }) => {
     const reactionContainerRef = useRef(null);
     const menuRefs = useRef({}); // Создаем объект для хранения ref всех меню
     const [filteredTickets, setFilteredTickets] = useState(tickets);
-    const [activeTab, setActiveTab] = useState('extraForm'); // По умолчанию вкладка Extra Form
     const [showMyTickets, setShowMyTickets] = useState(false);
     const [selectedClient, setSelectedClient] = useState(null);
     const fileInputRef = useRef(null);
@@ -74,6 +64,7 @@ const ChatComponent = ({ }) => {
     const location = useLocation();
     const [searchQuery, setSearchQuery] = useState("");
     const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+    const [activeTab, setActiveTab] = useState(); // По умолчанию вкладка Extra Form
 
     const platformIcons = {
         "facebook": <FaFacebook />,
@@ -1140,6 +1131,16 @@ const ChatComponent = ({ }) => {
         }
     }, [messages, selectTicketId, markMessagesAsRead, userId]);
 
+    const tabs = [
+        { key: 'extraForm', label: translations['Informații suplimentare'][language] },
+        { key: 'Contract', label: 'Contract' },
+        { key: 'Invoice', label: 'Invoice' },
+        { key: 'Media', label: 'Media' },
+        { key: 'Control calitate', label: 'Control calitate' }
+    ];
+
+    console.log("Active Tab:", activeTab, "Selected Ticket ID:", selectTicketId);
+
     return (
         <div className="chat-container">
             {/* Контейнер списка чатов */}
@@ -1274,7 +1275,7 @@ const ChatComponent = ({ }) => {
                 className="toggle-chat-list"
                 onClick={() => setIsChatListVisible(prev => !prev)}
             >
-                {isChatListVisible ? <FaArrowLeft/> : <FaArrowRight/>}
+                {isChatListVisible ? <FaArrowLeft /> : <FaArrowRight />}
             </button>
 
             <div className="chat-area">
@@ -1569,239 +1570,207 @@ const ChatComponent = ({ }) => {
 
             </div>
             <div className="extra-info">
+                <div className="tabs-container">
+                    {tabs.map(tab => (
+                        <button
+                            key={tab.key}
+                            className={`tab-button ${activeTab === tab.key ? 'active' : ''}`}
+                            onClick={() => setActiveTab(tab.key)}
+                        >
+                            {tab.label}
+                        </button>
+                    ))}
+                </div>
                 <div className="tab-content">
                     {activeTab === 'extraForm' && selectTicketId && ( // ✅ Добавлена проверка selectTicketId
                         <div className="extra-info-content">
                             <div className='extra-info-title'>{translations['Informații suplimentare'][language]}</div>
-                            {selectTicketId && (
-                                <>
-                                    <div className="selects-container">
-                                        <Workflow
-                                            ticket={updatedTicket}
-                                            onChange={handleWorkflowChange}
-                                        />
-                                        {isLoading ? (
-                                            <p>Loading...</p>
-                                        ) : (
-                                            <TechnicianSelect
-                                                selectedTechnicianId={selectedTechnicianId}
-                                                onTechnicianChange={handleTechnicianChange}
-                                            />
-                                        )}
-                                        <Input
-                                            label="Vânzare"
-                                            type="number"
-                                            value={extraInfo[selectTicketId]?.sale || ""}
-                                            onChange={(e) =>
-                                                handleSelectChangeExtra(selectTicketId, 'sale', e.target.value)
-                                            }
-                                            className="input-field"
-                                            placeholder="Indicați suma în euro"
-                                            id="sale-input"
-                                        />
-                                        <Select
-                                            options={sourceOfLeadOptions}
-                                            label="Sursă lead"
-                                            id="lead-source-select"
-                                            className="input-field"
-                                            value={extraInfo[selectTicketId]?.lead_source || ""}
-                                            onChange={(value) =>
-                                                handleSelectChangeExtra(selectTicketId, 'lead_source', value)
-                                            }
-                                        />
-                                        <Select
-                                            options={promoOptions}
-                                            label="Promo"
-                                            id="promo-select"
-                                            className="input-field"
-                                            value={extraInfo[selectTicketId]?.promo || ""}
-                                            onChange={(value) =>
-                                                handleSelectChangeExtra(selectTicketId, 'promo', value)
-                                            }
-                                        />
-                                        <Select
-                                            options={marketingOptions}
-                                            label="Marketing"
-                                            id="marketing-select"
-                                            className="input-field"
-                                            value={extraInfo[selectTicketId]?.marketing || ""}
-                                            onChange={(value) =>
-                                                handleSelectChangeExtra(selectTicketId, 'marketing', value)
-                                            }
-                                        />
-                                        <Select
-                                            options={serviceTypeOptions}
-                                            label="Serviciu"
-                                            id="service-select"
-                                            className="input-field"
-                                            value={extraInfo[selectTicketId]?.service || ""}
-                                            onChange={(value) =>
-                                                handleSelectChangeExtra(selectTicketId, 'service', value)
-                                            }
-                                        />
-                                        <Select
-                                            options={countryOptions}
-                                            label="Țară"
-                                            id="country-select"
-                                            className="input-field"
-                                            value={extraInfo[selectTicketId]?.country || ""}
-                                            onChange={(value) =>
-                                                handleSelectChangeExtra(selectTicketId, 'country', value)
-                                            }
-                                        />
-                                        <Select
-                                            options={transportOptions}
-                                            label="Transport"
-                                            id="transport-select"
-                                            className="input-field"
-                                            value={extraInfo[selectTicketId]?.transport || ""}
-                                            onChange={(value) =>
-                                                handleSelectChangeExtra(selectTicketId, 'transport', value)
-                                            }
-                                        />
-                                        <Select
-                                            options={nameExcursionOptions}
-                                            label="Excursie"
-                                            id="excursie-select"
-                                            className="input-field"
-                                            value={extraInfo[selectTicketId]?.excursion || ""}
-                                            onChange={(value) =>
-                                                handleSelectChangeExtra(selectTicketId, 'excursion', value)
-                                            }
-                                        />
-                                        <Input
-                                            label="Data și ora plecării"
-                                            type="datetime-local"
-                                            value={extraInfo[selectTicketId]?.leave_date || ""}
-                                            onChange={(date) =>
-                                                handleSelectChangeExtra(selectTicketId, 'leave_date', date)
-                                            }
-                                            className="input-field"
-                                        />
-                                        <Input
-                                            label="Data și ora întoarcerii"
-                                            type="datetime-local"
-                                            value={extraInfo[selectTicketId]?.arrive_date || ""}
-                                            onChange={(date) =>
-                                                handleSelectChangeExtra(selectTicketId, 'arrive_date', date)
-                                            }
-                                            className="input-field"
-                                        />
-                                        <Select
-                                            options={purchaseProcessingOptions}
-                                            label="Achiziție"
-                                            id="purchase-select"
-                                            className="input-field"
-                                            value={extraInfo[selectTicketId]?.purchase || ""}
-                                            onChange={(value) =>
-                                                handleSelectChangeExtra(selectTicketId, 'purchase', value)
-                                            }
-                                        />
-                                        <Input
-                                            label="Nr de contract"
-                                            type="text"
-                                            value={extraInfo[selectTicketId]?.contract_id || ""}
-                                            onChange={(e) =>
-                                                handleSelectChangeExtra(selectTicketId, 'contract_id', e.target.value)
-                                            }
-                                            className="input-field"
-                                            placeholder="Nr de contract"
-                                            id="contract-number-input"
-                                        />
-                                        <Input
-                                            label="Data contractului"
-                                            type="date"
-                                            value={extraInfo[selectTicketId]?.contract_date || ""}
-                                            onChange={(date) =>
-                                                handleSelectChangeExtra(selectTicketId, 'contract_date', date)
-                                            }
-                                            className="input-field"
-                                        />
-                                        <Input
-                                            label="Operator turistic"
-                                            type="text"
-                                            value={extraInfo[selectTicketId]?.tour_operator || ""}
-                                            onChange={(e) =>
-                                                handleSelectChangeExtra(selectTicketId, 'tour_operator', e.target.value)
-                                            }
-                                            className="input-field"
-                                            placeholder="Operator turistic"
-                                            id="tour-operator-input"
-                                        />
-                                        <Input
-                                            label="Nr cererii de la operator"
-                                            type="text"
-                                            value={extraInfo[selectTicketId]?.request_id || ""}
-                                            onChange={(e) =>
-                                                handleSelectChangeExtra(selectTicketId, 'request_id', e.target.value)
-                                            }
-                                            className="input-field"
-                                            placeholder="Nr cererii de la operator"
-                                            id="tour-operator-input"
-                                        />
-                                        <Input
-                                            label="Preț netto (euro)"
-                                            type="number"
-                                            value={extraInfo[selectTicketId]?.price_netto || ""}
-                                            onChange={(e) =>
-                                                handleSelectChangeExtra(selectTicketId, 'price_netto', e.target.value)
-                                            }
-                                            className="input-field"
-                                            placeholder="Preț netto (euro)"
-                                            id="price-neto-input"
-                                        />
-                                        <Input
-                                            label="Comision companie"
-                                            type="number"
-                                            value={extraInfo[selectTicketId]?.commission || ""}
-                                            onChange={(e) =>
-                                                handleSelectChangeExtra(selectTicketId, 'commission', e.target.value)
-                                            }
-                                            className="input-field"
-                                            placeholder="Comision companie"
-                                            id="commission-input"
-                                        />
-                                        <Select
-                                            options={paymentStatusOptions}
-                                            label="Plată primită"
-                                            id="payment-select"
-                                            value={extraInfo[selectTicketId]?.payment_method || ""}
-                                            onChange={(value) =>
-                                                handleSelectChangeExtra(selectTicketId, 'payment_method', value)
-                                            }
-                                        />
-                                    </div>
-                                    <div className="input-group">
-                                        <button onClick={sendExtraInfo} className="submit-button">
-                                            {isLoading ? translations['Încărcăm...'][language] : translations['Actualizare'][language]}
-                                        </button>
-                                    </div>
-                                    <div className="merge-tickets">
-                                        <input
-                                            type="number"
-                                            value={ticketId} // ticket_old всегда равен ticketId
-                                            onChange={(e) =>
-                                                handleSelectChangeExtra(selectTicketId, 'ticket_id_old', e.target.value)
-                                            }
-                                            className="input-field"
-                                            placeholder="Introduceți ID vechi"
-                                            disabled // Поле отключено, так как old_user_id фиксирован
-                                        />
-                                        <input
-                                            type="number"
-                                            value={extraInfo[selectTicketId]?.ticket_id_new || ""}
-                                            onChange={(e) =>
-                                                handleSelectChangeExtra(selectTicketId, 'ticket_id_new', e.target.value)
-                                            }
-                                            className="input-field"
-                                            placeholder={translations["Introduceți ID lead"][language]}
-                                        />
-                                        <button onClick={handleMergeTickets} className="submit-button">
-                                            {translations["Combina"][language]}
-                                        </button>
-                                    </div>
-                                </>
-                            )}
+                            <div className="selects-container">
+                                {isLoading ? (
+                                    <p>Loading...</p>
+                                ) : (
+                                    <Workflow
+                                        ticket={updatedTicket}
+                                        onChange={handleWorkflowChange}
+                                    />
+                                )}
+                                {isLoading ? (
+                                    <p>Loading...</p>
+                                ) : (
+                                    <TechnicianSelect
+                                        selectedTechnicianId={selectedTechnicianId}
+                                        onTechnicianChange={handleTechnicianChange}
+                                    />
+                                )}
+                                <Input
+                                    label="Vânzare"
+                                    type="number"
+                                    value={extraInfo[selectTicketId]?.buget || ""}
+                                    onChange={(e) =>
+                                        handleSelectChangeExtra(selectTicketId, 'buget', e.target.value)
+                                    }
+                                    className="input-field"
+                                    placeholder="Indicați suma în euro"
+                                    id="buget-input"
+                                />
+                                <Input
+                                    label="Data venit in oficiu"
+                                    type="datetime-local"
+                                    value={extraInfo[selectTicketId]?.data_venit_in_oficiu || ""}
+                                    onChange={(date) =>
+                                        handleSelectChangeExtra(selectTicketId, 'data_venit_in_oficiu', date)
+                                    }
+                                    className="input-field"
+                                />
+                                <Select
+                                    options={sourceOfLeadOptions}
+                                    label="Status sunet telefonic"
+                                    id="status_sunet_telefonic"
+                                    className="input-field"
+                                    value={extraInfo[selectTicketId]?.status_sunet_telefonic || ""}
+                                    onChange={(value) =>
+                                        handleSelectChangeExtra(selectTicketId, 'status_sunet_telefonic', value)
+                                    }
+                                    disabled
+                                />
+                                <Input
+                                    label="Data și ora plecării"
+                                    type="datetime-local"
+                                    value={extraInfo[selectTicketId]?.data_plecarii || ""}
+                                    onChange={(date) =>
+                                        handleSelectChangeExtra(selectTicketId, 'data_plecarii', date)
+                                    }
+                                    className="input-field"
+                                />
+                                <Input
+                                    label="Data și ora întoarcerii"
+                                    type="datetime-local"
+                                    value={extraInfo[selectTicketId]?.data_intoarcerii || ""}
+                                    onChange={(date) =>
+                                        handleSelectChangeExtra(selectTicketId, 'data_intoarcerii', date)
+                                    }
+                                    className="input-field"
+                                />
+                                <Select
+                                    options={sourceOfLeadOptions}
+                                    label="Sursă lead"
+                                    id="lead-source-select"
+                                    className="input-field"
+                                    value={extraInfo[selectTicketId]?.sursa_lead || ""}
+                                    onChange={(value) =>
+                                        handleSelectChangeExtra(selectTicketId, 'sursa_lead', value)
+                                    }
+                                />
+                                <Select
+                                    options={promoOptions}
+                                    label="Promo"
+                                    id="promo-select"
+                                    className="input-field"
+                                    value={extraInfo[selectTicketId]?.promo || ""}
+                                    onChange={(value) =>
+                                        handleSelectChangeExtra(selectTicketId, 'promo', value)
+                                    }
+                                />
+                                <Select
+                                    options={marketingOptions}
+                                    label="Marketing"
+                                    id="marketing-select"
+                                    className="input-field"
+                                    value={extraInfo[selectTicketId]?.marketing || ""}
+                                    onChange={(value) =>
+                                        handleSelectChangeExtra(selectTicketId, 'marketing', value)
+                                    }
+                                />
+                                <Select
+                                    options={serviceTypeOptions}
+                                    label="Serviciu"
+                                    id="service-select"
+                                    className="input-field"
+                                    value={extraInfo[selectTicketId]?.tipul_serviciului || ""}
+                                    onChange={(value) =>
+                                        handleSelectChangeExtra(selectTicketId, 'tipul_serviciului', value)
+                                    }
+                                />
+                                <Select
+                                    options={countryOptions}
+                                    label="Țară"
+                                    id="country-select"
+                                    className="input-field"
+                                    value={extraInfo[selectTicketId]?.tara || ""}
+                                    onChange={(value) =>
+                                        handleSelectChangeExtra(selectTicketId, 'tara', value)
+                                    }
+                                />
+                                <Select
+                                    options={transportOptions}
+                                    label="Transport"
+                                    id="transport-select"
+                                    className="input-field"
+                                    value={extraInfo[selectTicketId]?.tip_de_transport || ""}
+                                    onChange={(value) =>
+                                        handleSelectChangeExtra(selectTicketId, 'tip_de_transport', value)
+                                    }
+                                />
+                                <Select
+                                    options={nameExcursionOptions}
+                                    label="Excursie"
+                                    id="excursie-select"
+                                    className="input-field"
+                                    value={extraInfo[selectTicketId]?.denumirea_excursiei_turului || ""}
+                                    onChange={(value) =>
+                                        handleSelectChangeExtra(selectTicketId, 'denumirea_excursiei_turului', value)
+                                    }
+                                />
+                                <Select
+                                    options={purchaseProcessingOptions}
+                                    label="Achiziție"
+                                    id="purchase-select"
+                                    className="input-field"
+                                    value={extraInfo[selectTicketId]?.procesarea_achizitionarii || ""}
+                                    onChange={(value) =>
+                                        handleSelectChangeExtra(selectTicketId, 'procesarea_achizitionarii', value)
+                                    }
+                                />
+                                <Input
+                                    label="Data cererii de retur"
+                                    type="datetime-local"
+                                    value={extraInfo[selectTicketId]?.data_cererii_de_retur || ""}
+                                    onChange={(date) =>
+                                        handleSelectChangeExtra(selectTicketId, 'data_cererii_de_retur', date)
+                                    }
+                                    className="input-field"
+                                />
+                            </div>
+                            <div className="input-group">
+                                <button onClick={sendExtraInfo} className="submit-button">
+                                    {isLoading ? translations['Încărcăm...'][language] : translations['Actualizare'][language]}
+                                </button>
+                            </div>
+                            <div className="merge-tickets">
+                                <input
+                                    type="number"
+                                    value={ticketId} // ticket_old всегда равен ticketId
+                                    onChange={(e) =>
+                                        handleSelectChangeExtra(selectTicketId, 'ticket_id_old', e.target.value)
+                                    }
+                                    className="input-field"
+                                    placeholder="Introduceți ID vechi"
+                                    disabled // Поле отключено, так как old_user_id фиксирован
+                                />
+                                <input
+                                    type="number"
+                                    value={extraInfo[selectTicketId]?.ticket_id_new || ""}
+                                    onChange={(e) =>
+                                        handleSelectChangeExtra(selectTicketId, 'ticket_id_new', e.target.value)
+                                    }
+                                    className="input-field"
+                                    placeholder={translations["Introduceți ID lead"][language]}
+                                />
+                                <button onClick={handleMergeTickets} className="submit-button">
+                                    {translations["Combina"][language]}
+                                </button>
+                            </div>
+
                             <div className="divider-line"></div>
                             {selectedClient && (
                                 <div className="personal-data-content">
@@ -1921,6 +1890,316 @@ const ChatComponent = ({ }) => {
                                         </button>
                                     </div>
 
+                                </div>
+                            )}
+
+                            {activeTab === 'Contract' && selectTicketId && (
+                                <div className="tab-content-placeholder">
+                                    {selectTicketId && (
+                                        <>
+                                            <Input
+                                                label="Nr de contract"
+                                                type="text"
+                                                value={true || ""}
+                                                onChange={(e) =>
+                                                    handleSelectChangeExtra(selectTicketId, 'contract_id', e.target.value)
+                                                }
+                                                className="input-field"
+                                                placeholder="Nr de contract"
+                                                id="contract-number-input"
+                                            />
+                                            <Input
+                                                label="Data contractului"
+                                                type="date"
+                                                value={extraInfo[selectTicketId]?.contract_date || ""}
+                                                onChange={(date) =>
+                                                    handleSelectChangeExtra(selectTicketId, 'contract_date', date)
+                                                }
+                                                className="input-field"
+                                            />
+                                            <div>contract trimis</div>
+                                            <div>contract semnat</div>
+                                            <Input
+                                                label="Operator turistic"
+                                                type="text"
+                                                value={extraInfo[selectTicketId]?.tour_operator || ""}
+                                                onChange={(e) =>
+                                                    handleSelectChangeExtra(selectTicketId, 'tour_operator', e.target.value)
+                                                }
+                                                className="input-field"
+                                                placeholder="Operator turistic"
+                                                id="tour-operator-input"
+                                            />
+                                            <Input
+                                                label="Nr cererii de la operator"
+                                                type="text"
+                                                value={extraInfo[selectTicketId]?.request_id || ""}
+                                                onChange={(e) =>
+                                                    handleSelectChangeExtra(selectTicketId, 'request_id', e.target.value)
+                                                }
+                                                className="input-field"
+                                                placeholder="Nr cererii de la operator"
+                                                id="tour-operator-input"
+                                            />
+                                            <div>achitare efectuata</div>
+                                            <div>rezervare confirmata </div>
+                                            <div>contract arhivat </div>
+                                            <Select
+                                                options={paymentStatusOptions}
+                                                label="Plată primită"
+                                                id="payment-select"
+                                                value={extraInfo[selectTicketId]?.payment_method || ""}
+                                                onChange={(value) =>
+                                                    handleSelectChangeExtra(selectTicketId, 'payment_method', value)
+                                                }
+                                            />
+                                            <Input
+                                                label="Avans euro"
+                                                type="number"
+                                                value={extraInfo[selectTicketId]?.avans_euro || ""}
+                                                onChange={(e) =>
+                                                    handleSelectChangeExtra(selectTicketId, 'avans_euro', e.target.value)
+                                                }
+                                                className="input-field"
+                                                placeholder="Preț netto (euro)"
+                                                id="price-neto-input"
+                                            />
+                                            <Input
+                                                label="Data avansului"
+                                                type="date"
+                                                value={extraInfo[selectTicketId]?.data_avansului || ""}
+                                                onChange={(date) =>
+                                                    handleSelectChangeExtra(selectTicketId, 'data_avansului', date)
+                                                }
+                                                className="input-field"
+                                            />
+                                            <Input
+                                                label="Data de plata integrala"
+                                                type="date"
+                                                value={extraInfo[selectTicketId]?.data_de_plata_integrala || ""}
+                                                onChange={(date) =>
+                                                    handleSelectChangeExtra(selectTicketId, 'data_de_plata_integrala', date)
+                                                }
+                                                className="input-field"
+                                            />
+                                            <Input
+                                                label="Pret NETTO"
+                                                type="number"
+                                                value={extraInfo[selectTicketId]?.pret_netto || ""}
+                                                onChange={(e) =>
+                                                    handleSelectChangeExtra(selectTicketId, 'pret_netto', e.target.value)
+                                                }
+                                                className="input-field"
+                                                placeholder="Preț netto (euro)"
+                                                id="price-neto-input"
+                                            />
+                                            <Input
+                                                label="Achitat client"
+                                                type="number"
+                                                value={extraInfo[selectTicketId]?.achitat_client || ""}
+                                                onChange={(e) =>
+                                                    handleSelectChangeExtra(selectTicketId, 'achitat_client', e.target.value)
+                                                }
+                                                className="input-field"
+                                                placeholder="Preț netto (euro)"
+                                                id="price-neto-input"
+                                            />
+                                            <Input
+                                                label="Restant client"
+                                                type="number"
+                                                value={extraInfo[selectTicketId]?.restant_client || ""}
+                                                onChange={(e) =>
+                                                    handleSelectChangeExtra(selectTicketId, 'restant_client', e.target.value)
+                                                }
+                                                className="input-field"
+                                                placeholder="Preț netto (euro)"
+                                                id="price-neto-input"
+                                                disabled
+                                            />
+                                            <Input
+                                                label="Comision companie"
+                                                type="number"
+                                                value={extraInfo[selectTicketId]?.comission_companie || ""}
+                                                onChange={(e) =>
+                                                    handleSelectChangeExtra(selectTicketId, 'comission_companie', e.target.value)
+                                                }
+                                                className="input-field"
+                                                placeholder="Comision companie"
+                                                id="commission-input"
+                                            />
+                                            <Input
+                                                label="Statut achitare"
+                                                type="number"
+                                                value={extraInfo[selectTicketId]?.comission_companie || ""}
+                                                onChange={(e) =>
+                                                    handleSelectChangeExtra(selectTicketId, 'comission_companie', e.target.value)
+                                                }
+                                                className="input-field"
+                                                placeholder="Comision companie"
+                                                id="commission-input"
+                                                disabled
+                                            />
+                                            <div>control pentru admin toogle</div>
+                                        </>
+                                    )}
+                                </div>
+                            )}
+                            {activeTab === 'Invoice' && (
+                                <div className="tab-content-placeholder">
+                                    <Input
+                                        label="F/service"
+                                        type="number"
+                                        value={extraInfo[selectTicketId]?.f_service || ""}
+                                        onChange={(e) =>
+                                            handleSelectChangeExtra(selectTicketId, 'f_service', e.target.value)
+                                        }
+                                        className="input-field"
+                                        placeholder="f_service"
+                                        id="f_service"
+                                    />
+                                    <Input
+                                        label="F/factura"
+                                        type="number"
+                                        value={extraInfo[selectTicketId]?.f_factura || ""}
+                                        onChange={(e) =>
+                                            handleSelectChangeExtra(selectTicketId, 'f_factura', e.target.value)
+                                        }
+                                        className="input-field"
+                                        placeholder="f_factura"
+                                        id="f_factura"
+                                    />
+                                    <Input
+                                        label="F/numarul"
+                                        type="number"
+                                        value={extraInfo[selectTicketId]?.f_numarul || ""}
+                                        onChange={(e) =>
+                                            handleSelectChangeExtra(selectTicketId, 'f_numarul', e.target.value)
+                                        }
+                                        className="input-field"
+                                        placeholder="f_numarul"
+                                        id="f_numarul"
+                                    />
+                                    <Input
+                                        label="F/pret"
+                                        type="number"
+                                        value={extraInfo[selectTicketId]?.f_pret || ""}
+                                        onChange={(e) =>
+                                            handleSelectChangeExtra(selectTicketId, 'f_pret', e.target.value)
+                                        }
+                                        className="input-field"
+                                        placeholder="f_pret"
+                                        id="f_pret"
+                                    />
+                                    <Input
+                                        label="F/suma"
+                                        type="number"
+                                        value={extraInfo[selectTicketId]?.f_suma || ""}
+                                        onChange={(e) =>
+                                            handleSelectChangeExtra(selectTicketId, 'f_suma', e.target.value)
+                                        }
+                                        className="input-field"
+                                        placeholder="f_suma"
+                                        id="f_suma"
+                                    />
+                                    <Input
+                                        label="Valuta contului"
+                                        type="number"
+                                        value={extraInfo[selectTicketId]?.numarul_cererii_de_la_operator || ""}
+                                        onChange={(e) =>
+                                            handleSelectChangeExtra(selectTicketId, 'numarul_cererii_de_la_operator', e.target.value)
+                                        }
+                                        className="input-field"
+                                        placeholder="numarul_cererii_de_la_operator"
+                                        id="numarul_cererii_de_la_operator"
+                                    />
+                                    <Select
+                                        options={""}
+                                        label="Valuta contului"
+                                        id="payment-select"
+                                        value={extraInfo[selectTicketId]?.valuta_contului || ""}
+                                        onChange={(value) =>
+                                            handleSelectChangeExtra(selectTicketId, 'valuta_contului', value)
+                                        }
+                                    />
+                                    <Select
+                                        options={""}
+                                        label="Iban"
+                                        id="payment-select"
+                                        value={extraInfo[selectTicketId]?.iban || ""}
+                                        onChange={(value) =>
+                                            handleSelectChangeExtra(selectTicketId, 'iban', value)
+                                        }
+                                    />
+                                    <Select
+                                        options={""}
+                                        label="Adauga document"
+                                        id="payment-select"
+                                        value={extraInfo[selectTicketId]?.adauga_document || ""}
+                                        onChange={(value) =>
+                                            handleSelectChangeExtra(selectTicketId, 'adauga_document', value)
+                                        }
+                                    />
+                                    /<div>document list</div>
+                                </div>
+                            )}
+                            {activeTab === 'Media' && (
+                                <div className="tab-content-placeholder">
+                                    Attach media
+                                </div>
+                            )}
+                            {activeTab === 'Control calitate' && (
+                                <div className="tab-content-placeholder">
+                                    <Select
+                                        options={""}
+                                        label="Motivul refuzului"
+                                        id="payment-select"
+                                        value={extraInfo[selectTicketId]?.motivul_refuzului || ""}
+                                        onChange={(value) =>
+                                            handleSelectChangeExtra(selectTicketId, 'motivul_refuzului', value)
+                                        }
+                                    />
+                                    <Select
+                                        options={""}
+                                        label="Evaluare de odihna"
+                                        id="payment-select"
+                                        value={extraInfo[selectTicketId]?.evaluare_de_odihna || ""}
+                                        onChange={(value) =>
+                                            handleSelectChangeExtra(selectTicketId, 'evaluare_de_odihna', value)
+                                        }
+                                    />
+                                    <Input
+                                        label="Urmatoarea vacanta"
+                                        type="number"
+                                        value={extraInfo[selectTicketId]?.urmatoarea_vacanta || ""}
+                                        onChange={(e) =>
+                                            handleSelectChangeExtra(selectTicketId, 'urmatoarea_vacanta', e.target.value)
+                                        }
+                                        className="input-field"
+                                        placeholder="urmatoarea_vacanta"
+                                        id="urmatoarea_vacanta"
+                                    />
+                                    <Input
+                                        label="Manager"
+                                        type="number"
+                                        value={extraInfo[selectTicketId]?.manager || ""}
+                                        onChange={(e) =>
+                                            handleSelectChangeExtra(selectTicketId, 'manager', e.target.value)
+                                        }
+                                        className="input-field"
+                                        placeholder="manager"
+                                        id="manager"
+                                    />
+                                    <Input
+                                        label="Vacanta"
+                                        type="number"
+                                        value={extraInfo[selectTicketId]?.vacanta || ""}
+                                        onChange={(e) =>
+                                            handleSelectChangeExtra(selectTicketId, 'vacanta', e.target.value)
+                                        }
+                                        className="input-field"
+                                        placeholder="vacanta"
+                                        id="vacanta"
+                                    />
                                 </div>
                             )}
                         </div>

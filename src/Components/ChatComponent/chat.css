@@ -14,7 +14,7 @@
     padding: 0px 15px 15px 15px;
     border-right: 1px solid #ddd;
     overflow-y: auto;
-    width: 25%;
+    width: 20%;
     height: 100%;
 }
 
@@ -221,7 +221,7 @@
     flex-direction: column;
     overflow-y: auto;
     border-left: 1px solid #ccc;
-    width: 25%;
+    width: 35%;
     background-color: #0f824c5a;
 }
 
@@ -372,10 +372,14 @@
 
 .empty-chat {
     display: flex;
-    align-items: center; /* Centers items vertically */
-    justify-content: center; /* Centers items horizontally */
-    height: 100%; /* Ensure the container takes up the full height */
-    width: 100%; /* Optional, ensures full width if needed */
+    align-items: center;
+    /* Centers items vertically */
+    justify-content: center;
+    /* Centers items horizontally */
+    height: 100%;
+    /* Ensure the container takes up the full height */
+    width: 100%;
+    /* Optional, ensures full width if needed */
     font-size: 24px;
     letter-spacing: 1px;
 }
@@ -541,7 +545,7 @@
 }
 
 .extra-info .tab-button {
-    padding: 15px 20px;
+    padding: 1px 3px;
     border: 1px solid #ccc;
     background-color: #f9f9f9;
     cursor: pointer;
@@ -688,10 +692,10 @@
 }
 
 .users-container {
-    flex: 0 0 25%;
+    flex: 0 0 20%;
     /* Фиксированная ширина списка чатов */
     transition: width 0.3s ease-in-out, min-width 0.3s ease-in-out;
-    min-width: 25%;
+    min-width: 20%;
 }
 
 .users-container.hidden {
@@ -712,7 +716,7 @@
 /* Кнопка скрытия/показа списка чатов */
 .toggle-chat-list {
     position: absolute;
-    left: calc(25% + 15px);
+    left: calc(20% + 15px);
     /* Начальная позиция кнопки */
     top: 50%;
     transform: translateY(-50%);
@@ -769,4 +773,29 @@
     width: 24px;
     height: 24px;
     margin-top: 10px;
+}
+
+.tabs-container {
+    display: flex;
+    gap: 10px;
+    margin: 15px;
+}
+
+.tab-button {
+    padding: 8px 16px;
+    border: none;
+    background: #f1f1f1;
+    cursor: pointer;
+    transition: 0.3s;
+    border-radius: 5px;
+}
+
+.tab-button.active {
+    background: #0f824c;
+    color: white;
+    font-weight: bold;
+}
+
+.tab-content-placeholder {
+    display: block !important;
 }
