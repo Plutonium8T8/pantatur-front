@@ -5,6 +5,7 @@ import Select from '../SelectComponent/SelectComponent';
 import { useUser } from '../../UserContext';
 import Cookies from 'js-cookie';
 import { transportOptions } from '../../FormOptions/TransportOptions';
+import { motivulRefuzuluiOptions } from '../../FormOptions/MotivulRefuzuluiOptions';
 import { countryOptions } from '../../FormOptions/CountryOptions';
 import { marketingOptions } from '../../FormOptions/MarketingOptions';
 import { nameExcursionOptions } from '../../FormOptions/NameExcursionOptions';
@@ -2405,7 +2406,7 @@ const ChatComponent = ({ }) => {
                                     handleSelectChangeExtra(selectTicketId, 'adauga_document', value)
                                 }
                             />
-                            /<div>document list</div>
+                            {/* /<div>document list</div> */}
                         </div>
                     )}
                     {activeTab === 'Media' && selectTicketId && (
@@ -2414,7 +2415,7 @@ const ChatComponent = ({ }) => {
                     {activeTab === 'Control calitate' && selectTicketId && (
                         <div className="extra-info-content">
                             <Select
-                                options={paymentStatusOptions}
+                                options={motivulRefuzuluiOptions}
                                 label="Motivul refuzului"
                                 id="payment-select"
                                 value={extraInfo[selectTicketId]?.motivul_refuzului || ""}
@@ -2465,9 +2466,6 @@ const ChatComponent = ({ }) => {
                                 id="vacanta"
                             />
                         </div>
-                    )}
-                    {activeTab === 'Media' && selectTicketId && (
-                        <div />
                     )}
                 </div>
             </div>

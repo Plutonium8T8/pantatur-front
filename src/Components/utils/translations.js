@@ -794,6 +794,53 @@ export const translations = {
         'RO': 'Alege utilizator',
         'RU': 'Выбери пользователя'
     },
+'Motivul refuzului': { 
+    'RO': "Motivul refuzului", 
+    'RU': "Причина отказа" 
+},
+
+    'Clientul nu răspunde': 
+    { 
+        'RO': "Clientul nu răspunde", 
+        'RU': "Клиент не отвечает" 
+    },
+    'Prea scump': { 'RO': "Prea scump", 'RU': "Слишком дорого" },
+    'Informații de referință': { 'RO': "Informații de referință", 'RU': "Справочная информация" },
+    'Ne-a luat prea mult timp să răspundem la apeluri/mesaje': { 'RO': "Ne-a luat prea mult timp să răspundem la apeluri/mesaje", 'RU': "Мы слишком долго отвечали на звонки/сообщения" },
+    'Nevoia a dispărut': { 'RO': "Nevoia a dispărut", 'RU': "Потребность исчезла" },
+    'I-a ales pe alții': { 'RO': "I-a ales pe alții", 'RU': "Выбрали других" },
+    'Nu sunt mulțumiți de condiții': { 'RO': "Nu sunt mulțumiți de condiții", 'RU': "Не удовлетворены условиями" },
+    'Clientul nu răspunde (după 3 încercări de a suna)': { 'RO': "Clientul nu răspunde (după 3 încercări de a suna)", 'RU': "Клиент не отвечает (после 3 попыток дозвона)" },
+    'Mai scump decât concurenții': { 'RO': "Mai scump decât concurenții", 'RU': "Дороже, чем у конкурентов" },
+    'Nu am găsit un tur potrivit': { 'RO': "Nu am găsit un tur potrivit", 'RU': "Не нашли подходящий тур" },
+    'Planuri schimbate / Nu a mers / Nu a zburat nicăieri': { 'RO': "Planuri schimbate / Nu a mers / Nu a zburat nicăieri", 'RU': "Планы изменились / Не поехал / Не улетел никуда" },
+    'A citit o mulțime de recenzii negative': { 'RO': "A citit o mulțime de recenzii negative", 'RU': "Прочитал много негативных отзывов" },
+    'Turistul s-a îmbolnăvit': { 'RO': "Turistul s-a îmbolnăvit", 'RU': "Турист заболел" },
+    'Test pozitiv pentru Covid-19': { 'RO': "Test pozitiv pentru Covid-19", 'RU': "Положительный тест на Covid-19" },
+    'Client non-țintă': { 'RO': "Client non-țintă", 'RU': "Не целевой клиент" },
+    'Managerul nu cunoaște bine produsul / nu a oferit ceea ce este necesar': { 'RO': "Managerul nu cunoaște bine produsul / nu a oferit ceea ce este necesar", 'RU': "Менеджер плохо знает продукт / не предоставил необходимое" },
+    'Rezervări online': { 'RO': "Rezervări online", 'RU': "Онлайн-бронирование" },
+    'Restituire': { 'RO': "Restituire", 'RU': "Возврат" },
+    'Bani în depozit': { 'RO': "Bani în depozit", 'RU': "Деньги на депозите" },
+    'Concurs': { 'RO': "Concurs", 'RU': "Конкурс" },
+    'Concurs fotbal': { 'RO': "Concurs fotbal", 'RU': "Футбольный конкурс" },
+    'Rezultatul fuziunii tranzacțiilor': { 'RO': "Rezultatul fuziunii tranzacțiilor", 'RU': "Результат слияния транзакций" },
+    'Apel de intrare nesortat': { 'RO': "Apel de intrare nesortat", 'RU': "Несортированный входящий звонок" },
+    'Apel rece': { 'RO': "Apel rece", 'RU': "Холодный звонок" },
+    'Dublu': { 'RO': "Dublu", 'RU': "Дублирующий" },
+    'Comentarii Facebook & Instagram': { 'RO': "Comentarii Facebook & Instagram", 'RU': "Комментарии в Facebook и Instagram" },
+    'Blocare Messenger': { 'RO': "Blocare Messenger", 'RU': "Блокировка в Messenger" },
+    'RO Manager': { 'RO': "RO Manager", 'RU': "Румынский менеджер" },
+    'Departamentul de calitate': { 'RO': "Departamentul de calitate", 'RU': "Отдел качества" },
+    'Franciză': { 'RO': "Franciză", 'RU': "Франшиза" },
+    'Parteneriat': { 'RO': "Parteneriat", 'RU': "Партнерство" },
+    'Clienți corporate': { 'RO': "Clienți corporate", 'RU': "Корпоративные клиенты" },
+    'Trafic organic': { 'RO': "Trafic organic", 'RU': "Органический трафик" },
+    'Reclamații': { 'RO': "Reclamații", 'RU': "Жалобы" },
+    'Marketing': { 'RO': "Marketing", 'RU': "Маркетинг" },
+    'Resurse umane': { 'RO': "Resurse umane", 'RU': "Кадровые ресурсы" },
+    'Alt motiv': { 'RO': "Alt motiv", 'RU': "Другая причина" },
+    'Altele': { 'RO': "Altele", 'RU': "Другие" }
 };
 
 // import { translations } from '../utils/translations';

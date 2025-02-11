@@ -32,10 +32,10 @@ const Select = ({
                 required={required}
                 disabled={disabled}
             >
-                <option value="">{translations[placeholder]?.[language] ?? label}</option>
+                <option value="">{translations[placeholder]?.[language] ?? translations[label]?.[language]}</option>
                 {options.map((option, index) => (
                     <option key={index} value={option}>
-                        {option}
+                        {translations[option]?.[language]}
                     </option>
                 ))}
             </select>
