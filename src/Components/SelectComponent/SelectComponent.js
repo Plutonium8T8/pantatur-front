@@ -35,7 +35,7 @@ const Select = ({
                 <option value="">{translations[placeholder]?.[language] ?? translations[label]?.[language]}</option>
                 {options.map((option, index) => (
                     <option key={index} value={option}>
-                        {translations[option]?.[language]}
+                        {translations[option]?.[language] ?? option}
                     </option>
                 ))}
             </select>

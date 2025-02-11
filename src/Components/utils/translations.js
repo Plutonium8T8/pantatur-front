@@ -794,15 +794,14 @@ export const translations = {
         'RO': 'Alege utilizator',
         'RU': 'Выбери пользователя'
     },
-'Motivul refuzului': { 
-    'RO': "Motivul refuzului", 
-    'RU': "Причина отказа" 
-},
-
-    'Clientul nu răspunde': 
-    { 
-        'RO': "Clientul nu răspunde", 
-        'RU': "Клиент не отвечает" 
+    'Motivul refuzului': {
+        'RO': "Motivul refuzului",
+        'RU': "Причина отказа"
+    },
+    'Clientul nu răspunde':
+    {
+        'RO': "Clientul nu răspunde",
+        'RU': "Клиент не отвечает"
     },
     'Prea scump': { 'RO': "Prea scump", 'RU': "Слишком дорого" },
     'Informații de referință': { 'RO': "Informații de referință", 'RU': "Справочная информация" },
@@ -840,7 +839,64 @@ export const translations = {
     'Marketing': { 'RO': "Marketing", 'RU': "Маркетинг" },
     'Resurse umane': { 'RO': "Resurse umane", 'RU': "Кадровые ресурсы" },
     'Alt motiv': { 'RO': "Alt motiv", 'RU': "Другая причина" },
-    'Altele': { 'RO': "Altele", 'RU': "Другие" }
+    'Altele': { 'RO': "Altele", 'RU': "Другие" },
+    'Evaluare odihnă':
+    {
+        'RO': "Evaluare odihnă",
+        'RU': "Оценка отдыха"
+    },
+    'Următoarea vacanță': {
+        'RO': "Următoarea vacanță",
+        'RU': "Следующий отпуск"
+    },
+    'Manager': {
+        'RO': "Manager",
+        'RU': "Менеджер"
+    },
+    'Vacanța': {
+        'RO': "Vacanța",
+        'RU': "Отпуск"
+    },
+    'Adaugă document': {
+        'RO': "Adaugă document",
+        'RU': "Добавить документ"
+    },
+    'F/service': {
+        'RO': "F/Serviciu",
+        'RU': "Ф/Услуга"
+    },
+    'F/factura': {
+        'RO': "F/Factură",
+        'RU': "Ф/Счет-фактура"
+    },
+    'F/numarul': {
+        'RO': "F/Numărul facturii",
+        'RU': "Ф/Номер счета"
+    },
+    'F/preț': {
+        'RO': "F/Preț",
+        'RU': "Ф/Цена"
+    },
+    'F/sumă': {
+        'RO': "F/Sumă",
+        'RU': "Ф/Сумма"
+    },
+    'Valuta contului': {
+        'RO': "Valuta contului",
+        'RU': "Валюта счета"
+    },
+    'IBAN': {
+        'RO': "IBAN",
+        'RU': "IBAN"
+    },
+    'Mdl': {
+        'RO': "Mdl",
+        'RU': "Мдл"
+    },
+    'Eur': {
+        'RO': "Eur",
+        'RU': "Евр"
+    },
 };
 
 // import { translations } from '../utils/translations';

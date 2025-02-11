@@ -32,6 +32,9 @@ import { useLocation } from 'react-router-dom';
 import TaskModal from '../SlideInComponent/TaskComponent';
 import { FaTasks } from 'react-icons/fa';
 import { workflowOptions } from '../../FormOptions/WorkFlowOption';
+import { evaluareOdihnaOptions} from '../../FormOptions/EvaluareVacantaOptions';
+import { valutaOptions } from '../../FormOptions/ValutaOptions';
+import { ibanOptions } from '../../FormOptions/IbanOptions';
 
 const ChatComponent = ({ }) => {
     const { userId } = useUser();
@@ -2315,72 +2318,56 @@ const ChatComponent = ({ }) => {
                         <div className="extra-info-content">
                             <Input
                                 label="F/service"
-                                type="number"
                                 value={extraInfo[selectTicketId]?.f_service || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'f_service', e.target.value)
                                 }
                                 className="input-field"
-                                placeholder="f_service"
+                                placeholder="F/service"
                                 id="f_service"
                             />
                             <Input
                                 label="F/factura"
-                                type="number"
                                 value={extraInfo[selectTicketId]?.f_factura || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'f_factura', e.target.value)
                                 }
                                 className="input-field"
-                                placeholder="f_factura"
+                                placeholder="F/factura"
                                 id="f_factura"
                             />
                             <Input
                                 label="F/numarul"
-                                type="number"
                                 value={extraInfo[selectTicketId]?.f_numarul || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'f_numarul', e.target.value)
                                 }
                                 className="input-field"
-                                placeholder="f_numarul"
+                                placeholder="F/numarul"
                                 id="f_numarul"
                             />
                             <Input
-                                label="F/pret"
-                                type="number"
+                                label="F/preț"
                                 value={extraInfo[selectTicketId]?.f_pret || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'f_pret', e.target.value)
                                 }
                                 className="input-field"
-                                placeholder="f_pret"
+                                placeholder="F/preț"
                                 id="f_pret"
                             />
                             <Input
-                                label="F/suma"
-                                type="number"
+                                label="F/sumă"
                                 value={extraInfo[selectTicketId]?.f_suma || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'f_suma', e.target.value)
                                 }
                                 className="input-field"
-                                placeholder="f_suma"
+                                placeholder="F/sumă"
                                 id="f_suma"
                             />
-                            <Input
-                                label="Valuta contului"
-                                type="number"
-                                value={extraInfo[selectTicketId]?.numarul_cererii_de_la_operator || ""}
-                                onChange={(e) =>
-                                    handleSelectChangeExtra(selectTicketId, 'numarul_cererii_de_la_operator', e.target.value)
-                                }
-                                className="input-field"
-                                placeholder="numarul_cererii_de_la_operator"
-                                id="numarul_cererii_de_la_operator"
-                            />
                             <Select
-                                options={paymentStatusOptions}
+                                options={valutaOptions}
                                 label="Valuta contului"
                                 id="payment-select"
                                 value={extraInfo[selectTicketId]?.valuta_contului || ""}
@@ -2389,23 +2376,23 @@ const ChatComponent = ({ }) => {
                                 }
                             />
                             <Select
-                                options={paymentStatusOptions}
-                                label="Iban"
+                                options={ibanOptions}
+                                label="IBAN"
                                 id="payment-select"
                                 value={extraInfo[selectTicketId]?.iban || ""}
                                 onChange={(value) =>
                                     handleSelectChangeExtra(selectTicketId, 'iban', value)
                                 }
                             />
-                            <Select
+                            {/* <Select
                                 options={paymentStatusOptions}
-                                label="Adauga document"
+                                label="Adaugă document"
                                 id="payment-select"
                                 value={extraInfo[selectTicketId]?.adauga_document || ""}
                                 onChange={(value) =>
                                     handleSelectChangeExtra(selectTicketId, 'adauga_document', value)
                                 }
-                            />
+                            /> */}
                             {/* /<div>document list</div> */}
                         </div>
                     )}
@@ -2417,52 +2404,49 @@ const ChatComponent = ({ }) => {
                             <Select
                                 options={motivulRefuzuluiOptions}
                                 label="Motivul refuzului"
-                                id="payment-select"
+                                id="motivul_refuzului"
                                 value={extraInfo[selectTicketId]?.motivul_refuzului || ""}
                                 onChange={(value) =>
                                     handleSelectChangeExtra(selectTicketId, 'motivul_refuzului', value)
                                 }
                             />
                             <Select
-                                options={paymentStatusOptions}
-                                label="Evaluare de odihna"
-                                id="payment-select"
+                                options={evaluareOdihnaOptions}
+                                label="Evaluare odihnă"
+                                id="evaluare_de_odihna"
                                 value={extraInfo[selectTicketId]?.evaluare_de_odihna || ""}
                                 onChange={(value) =>
                                     handleSelectChangeExtra(selectTicketId, 'evaluare_de_odihna', value)
                                 }
                             />
                             <Input
-                                label="Urmatoarea vacanta"
-                                type="number"
+                                label="Următoarea vacanță"
                                 value={extraInfo[selectTicketId]?.urmatoarea_vacanta || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'urmatoarea_vacanta', e.target.value)
                                 }
                                 className="input-field"
-                                placeholder="urmatoarea_vacanta"
+                                placeholder="Următoarea vacanță"
                                 id="urmatoarea_vacanta"
                             />
                             <Input
                                 label="Manager"
-                                type="number"
                                 value={extraInfo[selectTicketId]?.manager || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'manager', e.target.value)
                                 }
                                 className="input-field"
-                                placeholder="manager"
+                                placeholder="Manager"
                                 id="manager"
                             />
                             <Input
-                                label="Vacanta"
-                                type="number"
+                                label="Vacanța"
                                 value={extraInfo[selectTicketId]?.vacanta || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'vacanta', e.target.value)
                                 }
                                 className="input-field"
-                                placeholder="vacanta"
+                                placeholder="Vacanța"
                                 id="vacanta"
                             />
                         </div>
