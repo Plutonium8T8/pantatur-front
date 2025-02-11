@@ -300,16 +300,17 @@ const ChatComponent = ({ }) => {
 
     const requiredWorkflowIndex = workflowOptions.indexOf("Luat în lucru"); // Первые селекты
     const requiredExtraWorkflowIndex = workflowOptions.indexOf("Ofertă trimisă"); // Вторые селекты
+    const requiredPurchaseWorkflowIndex = workflowOptions.indexOf("Aprobat cu client"); // Новый селект
 
     const [showExtraValidationError, setShowExtraValidationError] = useState(false);
+    const [showPurchaseValidationError, setShowPurchaseValidationError] = useState(false); // Новый state
 
-    // Определяем выбранный тикет
     const updatedTicket = tickets.find(ticket => ticket.id === selectTicketId) || null;
 
-    // Проверяем, какие селекты обязательны
     const currentWorkflowIndex = updatedTicket ? workflowOptions.indexOf(updatedTicket.workflow) : -1;
     const isRequired = currentWorkflowIndex >= requiredWorkflowIndex;
     const isRequiredExtra = currentWorkflowIndex >= requiredExtraWorkflowIndex;
+    const isRequiredPurchase = currentWorkflowIndex >= requiredPurchaseWorkflowIndex;
 
     const handleWorkflowChange = async (event) => {
         const newWorkflow = event.target.value;
@@ -322,36 +323,46 @@ const ChatComponent = ({ }) => {
         const currentIndex = workflowOptions.indexOf(updatedTicket.workflow);
         const newIndex = workflowOptions.indexOf(newWorkflow);
 
-        // Проверяем, заполнены ли основные селекты
+        // Проверяем, заполнены ли первые селекты
         const isValidExtraInfo =
             extraInfo[selectTicketId]?.sursa_lead &&
             extraInfo[selectTicketId]?.promo &&
             extraInfo[selectTicketId]?.marketing;
 
-        // Проверяем, заполнены ли новые селекты
+        // Проверяем, заполнены ли вторые селекты
         const isValidExtraFields =
             extraInfo[selectTicketId]?.tipul_serviciului &&
             extraInfo[selectTicketId]?.tara &&
             extraInfo[selectTicketId]?.tip_de_transport &&
             extraInfo[selectTicketId]?.denumirea_excursiei_turului;
 
-        // Если основные селекты не заполнены и двигаемся вперед
+        // Проверяем, заполнено ли поле `Achiziție`
+        const isValidPurchaseField =
+            extraInfo[selectTicketId]?.procesarea_achizitionarii;
+
+        // Блокируем изменение workflow, если селекты не заполнены
         if (newIndex > currentIndex && newIndex >= requiredWorkflowIndex && !isValidExtraInfo) {
             setShowValidationError(true);
             enqueueSnackbar('Заполните Sursă lead, Promo и Marketing перед изменением workflow!', { variant: 'error' });
             return;
         }
 
-        // Если новые селекты не заполнены и двигаемся вперед
         if (newIndex > currentIndex && newIndex >= requiredExtraWorkflowIndex && !isValidExtraFields) {
             setShowExtraValidationError(true);
             enqueueSnackbar('Заполните Serviciu, Țară, Transport și Excursie перед изменением workflow!', { variant: 'error' });
             return;
         }
 
-        // Если все в порядке – сбрасываем ошибки
+        if (newIndex > currentIndex && newIndex >= requiredPurchaseWorkflowIndex && !isValidPurchaseField) {
+            setShowPurchaseValidationError(true);
+            enqueueSnackbar('Заполните Achiziție перед изменением workflow!', { variant: 'error' });
+            return;
+        }
+
+        // Сбрасываем ошибки, если все прошло успешно
         setShowValidationError(false);
         setShowExtraValidationError(false);
+        setShowPurchaseValidationError(false);
 
         try {
             await updateTicket({
@@ -375,7 +386,6 @@ const ChatComponent = ({ }) => {
             console.error('Ошибка при обновлении workflow:', error.message);
         }
     };
-
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Закрытие меню при клике вне его области
@@ -1851,11 +1861,12 @@ const ChatComponent = ({ }) => {
                                     options={purchaseProcessingOptions}
                                     label="Achiziție"
                                     id="purchase-select"
-                                    className="input-field"
                                     value={extraInfo[selectTicketId]?.procesarea_achizitionarii || ""}
-                                    onChange={(value) =>
-                                        handleSelectChangeExtra(selectTicketId, 'procesarea_achizitionarii', value)
-                                    }
+                                    onChange={(value) => {
+                                        handleSelectChangeExtra(selectTicketId, 'procesarea_achizitionarii', value);
+                                        if (value) setShowPurchaseValidationError(false);
+                                    }}
+                                    hasError={showPurchaseValidationError && !extraInfo[selectTicketId]?.procesarea_achizitionarii}
                                 />
                                 <Input
                                     label="Data cererii de retur"
