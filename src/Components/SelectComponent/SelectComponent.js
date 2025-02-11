@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './select.css';
 import { translations } from '../utils/translations';
 
-const Select = ({ options, label, id, value, onChange, customClassName, placeholder }) => {
+const Select = ({ options, label, id, value, onChange, customClassName, placeholder, required, disabled }) => {
     const handleChange = (event) => {
         const selectedValue = event.target.value;
-        onChange(selectedValue); // Передаем выбранное значение в родительский компонент
+        onChange(selectedValue);
     };
 
     const language = localStorage.getItem('language') || 'RO';
@@ -18,7 +18,8 @@ const Select = ({ options, label, id, value, onChange, customClassName, placehol
                 className="task-select"
                 value={value}
                 onChange={handleChange}
-                required
+                required={required}
+                disabled={disabled} // Просто передается как пропс
             >
                 <option value="">{translations[placeholder]?.[language] ?? label}</option>
                 {options.map((option, index) => (

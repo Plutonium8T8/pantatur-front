@@ -733,7 +733,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ccc;
+    background-color: white;
     transition: 0.4s;
     border-radius: 22px;
 }
@@ -745,13 +745,13 @@
     width: 16px;
     left: 4px;
     bottom: 3px;
-    background-color: white;
+    background-color: rgb(108, 148, 95);
     transition: 0.4s;
     border-radius: 50%;
 }
 
 input:checked+.slider {
-    background-color: #4CAF50;
+    background-color: #82d285;
 }
 
 input:checked+.slider:before {
@@ -841,6 +841,9 @@ input:checked+.slider:before {
     font-weight: bold;
 }
 
-.tab-content-placeholder {
-    display: block !important;
+.toggle-container {
+    display: flex;
+    padding: 4px 0px 4px 0px;
+    margin-top: 10px;
+    justify-content: space-between;
 }

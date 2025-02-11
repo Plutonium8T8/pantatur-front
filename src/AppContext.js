@@ -525,6 +525,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   useEffect(() => {
     if (isLoggedIn) {
       getClientMessages();
+      fetchTickets();
     }
   }, [isLoggedIn]);
 

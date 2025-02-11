@@ -65,6 +65,7 @@ const ChatComponent = ({ }) => {
     const [searchQuery, setSearchQuery] = useState("");
     const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
     const [activeTab, setActiveTab] = useState(); // По умолчанию вкладка Extra Form
+    const requiredFields = ["sursa_lead", "promo", "marketing"];
 
     const platformIcons = {
         "facebook": <FaFacebook />,
@@ -73,7 +74,17 @@ const ChatComponent = ({ }) => {
         "viber": <SiViber />,
         "telegram": <FaTelegram />
     };
+    const validateRequiredFields = () => {
+        if (!updatedTicket || updatedTicket.workflow !== "Luat in lucru") return true;
 
+        const missingFields = requiredFields.filter(field => !extraInfo[selectTicketId]?.[field]);
+
+        if (missingFields.length > 0) {
+            enqueueSnackbar("Completați toate câmpurile obligatorii!", { variant: "error" });
+            return false;
+        }
+        return true;
+    };
     const applyFilters = (filters) => {
         setAppliedFilters(filters);
     };
@@ -1539,7 +1550,7 @@ const ChatComponent = ({ }) => {
                                                 .sort((a, b) => new Date(b.time_sent) - new Date(a.time_sent))[0];
 
                                             const platform = lastMessage ? lastMessage.platform : "unknown";
-                                            const platformName = lastMessage ? platform.charAt(0).toUpperCase() + platform.slice(1) : translations["Неизвестная платформа"][language];
+                                            const platformName = lastMessage ? platform.charAt(0).toUpperCase() + platform.slice(1) : ["Неизвестная платформа"][language];
 
                                             return (
                                                 <option key={clientId} value={clientId}>
@@ -1644,7 +1655,7 @@ const ChatComponent = ({ }) => {
                                     onChange={(value) =>
                                         handleSelectChangeExtra(selectTicketId, 'status_sunet_telefonic', value)
                                     }
-                                    disabled
+                                    disabled={true}
                                 />
                                 <Input
                                     label="Data și ora plecării"
@@ -1668,11 +1679,9 @@ const ChatComponent = ({ }) => {
                                     options={sourceOfLeadOptions}
                                     label="Sursă lead"
                                     id="lead-source-select"
-                                    className="input-field"
                                     value={extraInfo[selectTicketId]?.sursa_lead || ""}
-                                    onChange={(value) =>
-                                        handleSelectChangeExtra(selectTicketId, 'sursa_lead', value)
-                                    }
+                                    onChange={(value) => handleSelectChangeExtra(selectTicketId, 'sursa_lead', value)}
+                                    required={updatedTicket?.workflow === "De prelucrat"} // Обязательное, если workflow = "Luat in lucru"
                                 />
                                 <Select
                                     options={promoOptions}
@@ -1683,6 +1692,7 @@ const ChatComponent = ({ }) => {
                                     onChange={(value) =>
                                         handleSelectChangeExtra(selectTicketId, 'promo', value)
                                     }
+                                    required={updatedTicket?.workflow === "De prelucrat"} // Обязательное, если workflow = "Luat in lucru"
                                 />
                                 <Select
                                     options={marketingOptions}
@@ -1693,6 +1703,7 @@ const ChatComponent = ({ }) => {
                                     onChange={(value) =>
                                         handleSelectChangeExtra(selectTicketId, 'marketing', value)
                                     }
+                                    required={updatedTicket?.workflow === "De prelucrat"} // Обязательное, если workflow = "Luat in lucru"
                                 />
                                 <Select
                                     options={serviceTypeOptions}
@@ -2085,7 +2096,7 @@ const ChatComponent = ({ }) => {
                                 className="input-field"
                                 placeholder="Preț netto (euro)"
                                 id="price-neto-input"
-                                disabled
+                                disabled={true}
                             />
                             <Input
                                 label="Comision companie"
@@ -2097,6 +2108,7 @@ const ChatComponent = ({ }) => {
                                 className="input-field"
                                 placeholder="Comision companie"
                                 id="commission-input"
+                                disabled={true}
                             />
                             <Input
                                 label="Statut achitare"
@@ -2106,11 +2118,23 @@ const ChatComponent = ({ }) => {
                                     handleSelectChangeExtra(selectTicketId, 'comission_companie', e.target.value)
                                 }
                                 className="input-field"
-                                placeholder="Comision companie"
+                                placeholder="Statut achitare"
                                 id="commission-input"
-                                disabled
+                                disabled={true}
                             />
-                            <div>control pentru admin toogle</div>
+                            <div className="toggle-container">
+                                <label className="toggle-label">control pentru admin toogle</label>
+                                <label className="switch">
+                                    <input
+                                        type="checkbox"
+                                        checked={extraInfo[selectTicketId]?.control_pentru_admin_toogle || false}
+                                        onChange={(e) =>
+                                            handleSelectChangeExtra(selectTicketId, 'control pentru admin toogle', e.target.checked)
+                                        }
+                                    />
+                                    <span className="slider round"></span>
+                                </label>
+                            </div>
                         </div>
                     )}
                     {activeTab === 'Invoice' && selectTicketId && (
@@ -2211,6 +2235,9 @@ const ChatComponent = ({ }) => {
                             /<div>document list</div>
                         </div>
                     )}
+                    {activeTab === 'Media' && selectTicketId && (
+                        <div className="extra-info-content">test</div>
+                    )}
                     {activeTab === 'Control calitate' && selectTicketId && (
                         <div className="extra-info-content">
                             <Select
@@ -2265,9 +2292,6 @@ const ChatComponent = ({ }) => {
                                 id="vacanta"
                             />
                         </div>
-                    )}
-                    {activeTab === 'Meida' && selectTicketId && (
-                        <div />
                     )}
                 </div>
             </div>

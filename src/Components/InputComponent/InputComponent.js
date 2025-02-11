@@ -36,13 +36,14 @@ import './InputComponent.css';
 import { translations } from '../utils/translations';
 
 const Input = ({
-    label,         // Текст метки
-    type = 'text', // Тип поля ввода (по умолчанию 'text')
-    value,         // Текущее значение
-    onChange,      // Функция-обработчик изменения
-    className = '',// Дополнительные классы для стилизации
-    placeholder = '', // Подсказка внутри поля
-    id,            // Уникальный идентификатор
+    label,
+    type = 'text',
+    value,
+    onChange,
+    className = '',
+    placeholder = '',
+    id,
+    disabled = false
 }) => {
     const language = localStorage.getItem('language') || 'RO';
 
@@ -58,6 +59,7 @@ const Input = ({
                 onChange={onChange}
                 className={className}
                 placeholder={translations?.[placeholder]?.[language] ?? placeholder}
+                disabled={disabled}
             />
         </div>
     );
