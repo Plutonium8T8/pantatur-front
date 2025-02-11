@@ -1791,8 +1791,8 @@ const ChatComponent = ({ }) => {
                                     label="Data venit in oficiu"
                                     type="datetime-local"
                                     value={extraInfo[selectTicketId]?.data_venit_in_oficiu || ""}
-                                    onChange={(date) =>
-                                        handleSelectChangeExtra(selectTicketId, 'data_venit_in_oficiu', date)
+                                    onChange={(e) =>
+                                        handleSelectChangeExtra(selectTicketId, 'data_venit_in_oficiu', e.target.value)
                                     }
                                     className="input-field"
                                 />
@@ -1811,8 +1811,8 @@ const ChatComponent = ({ }) => {
                                     label="Data și ora plecării"
                                     type="datetime-local"
                                     value={extraInfo[selectTicketId]?.data_plecarii || ""}
-                                    onChange={(date) =>
-                                        handleSelectChangeExtra(selectTicketId, 'data_plecarii', date)
+                                    onChange={(e) =>
+                                        handleSelectChangeExtra(selectTicketId, 'data_plecarii', e.target.value)
                                     }
                                     className="input-field"
                                 />
@@ -1820,8 +1820,8 @@ const ChatComponent = ({ }) => {
                                     label="Data și ora întoarcerii"
                                     type="datetime-local"
                                     value={extraInfo[selectTicketId]?.data_intoarcerii || ""}
-                                    onChange={(date) =>
-                                        handleSelectChangeExtra(selectTicketId, 'data_intoarcerii', date)
+                                    onChange={(e) =>
+                                        handleSelectChangeExtra(selectTicketId, 'data_intoarcerii', e.target.value)
                                     }
                                     className="input-field"
                                 />
@@ -1922,8 +1922,8 @@ const ChatComponent = ({ }) => {
                                     label="Data cererii de retur"
                                     type="datetime-local"
                                     value={extraInfo[selectTicketId]?.data_cererii_de_retur || ""}
-                                    onChange={(date) =>
-                                        handleSelectChangeExtra(selectTicketId, 'data_cererii_de_retur', date)
+                                    onChange={(e) =>
+                                        handleSelectChangeExtra(selectTicketId, 'data_cererii_de_retur', e.target.value)
                                     }
                                     className="input-field"
                                 />
@@ -2092,9 +2092,9 @@ const ChatComponent = ({ }) => {
                                 label="Data contractului"
                                 type="date"
                                 value={extraInfo[selectTicketId]?.contract_date || ""}
-                                onChange={(date) => {
-                                    handleSelectChangeExtra(selectTicketId, 'contract_date', date);
-                                    if (date) setShowContractValidationError(false);
+                                onChange={(e) => {
+                                    handleSelectChangeExtra(selectTicketId, 'contract_date', e.target.value);
+                                    if (e.target.value) setShowContractValidationError(false);
                                 }}
                                 className={`input-field ${showContractValidationError && !extraInfo[selectTicketId]?.contract_date ? "invalid-field" : ""}`}
                             />
@@ -2221,8 +2221,8 @@ const ChatComponent = ({ }) => {
                                 label="Data avansului"
                                 type="date"
                                 value={extraInfo[selectTicketId]?.data_avansului || ""}
-                                onChange={(date) =>
-                                    handleSelectChangeExtra(selectTicketId, 'data_avansului', date)
+                                onChange={(e) =>
+                                    handleSelectChangeExtra(selectTicketId, 'data_avansului', e.target.value)
                                 }
                                 className="input-field"
                             />
@@ -2230,8 +2230,8 @@ const ChatComponent = ({ }) => {
                                 label="Data de plata integrala"
                                 type="date"
                                 value={extraInfo[selectTicketId]?.data_de_plata_integrala || ""}
-                                onChange={(date) =>
-                                    handleSelectChangeExtra(selectTicketId, 'data_de_plata_integrala', date)
+                                onChange={(e) =>
+                                    handleSelectChangeExtra(selectTicketId, 'data_de_plata_integrala', e.target.value)
                                 }
                                 className="input-field"
                             />
