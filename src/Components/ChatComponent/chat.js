@@ -298,12 +298,15 @@ const ChatComponent = ({ }) => {
         "Contract încheiat"
     ];
 
+    // Индексы для каждого этапа
     const requiredWorkflowIndex = workflowOptions.indexOf("Luat în lucru"); // Первые селекты
     const requiredExtraWorkflowIndex = workflowOptions.indexOf("Ofertă trimisă"); // Вторые селекты
-    const requiredPurchaseWorkflowIndex = workflowOptions.indexOf("Aprobat cu client"); // Новый селект
+    const requiredPurchaseWorkflowIndex = workflowOptions.indexOf("Aprobat cu client"); // `Achiziție`
+    const requiredContractWorkflowIndex = workflowOptions.indexOf("Contract semnat"); // `Contract`
 
     const [showExtraValidationError, setShowExtraValidationError] = useState(false);
-    const [showPurchaseValidationError, setShowPurchaseValidationError] = useState(false); // Новый state
+    const [showPurchaseValidationError, setShowPurchaseValidationError] = useState(false);
+    const [showContractValidationError, setShowContractValidationError] = useState(false); // Новый state
 
     const updatedTicket = tickets.find(ticket => ticket.id === selectTicketId) || null;
 
@@ -311,6 +314,7 @@ const ChatComponent = ({ }) => {
     const isRequired = currentWorkflowIndex >= requiredWorkflowIndex;
     const isRequiredExtra = currentWorkflowIndex >= requiredExtraWorkflowIndex;
     const isRequiredPurchase = currentWorkflowIndex >= requiredPurchaseWorkflowIndex;
+    const isRequiredContract = currentWorkflowIndex >= requiredContractWorkflowIndex;
 
     const handleWorkflowChange = async (event) => {
         const newWorkflow = event.target.value;
@@ -323,46 +327,59 @@ const ChatComponent = ({ }) => {
         const currentIndex = workflowOptions.indexOf(updatedTicket.workflow);
         const newIndex = workflowOptions.indexOf(newWorkflow);
 
-        // Проверяем, заполнены ли первые селекты
+        // Проверяем заполненность селектов на каждом этапе
         const isValidExtraInfo =
             extraInfo[selectTicketId]?.sursa_lead &&
             extraInfo[selectTicketId]?.promo &&
             extraInfo[selectTicketId]?.marketing;
 
-        // Проверяем, заполнены ли вторые селекты
         const isValidExtraFields =
             extraInfo[selectTicketId]?.tipul_serviciului &&
             extraInfo[selectTicketId]?.tara &&
             extraInfo[selectTicketId]?.tip_de_transport &&
             extraInfo[selectTicketId]?.denumirea_excursiei_turului;
 
-        // Проверяем, заполнено ли поле `Achiziție`
-        const isValidPurchaseField =
-            extraInfo[selectTicketId]?.procesarea_achizitionarii;
+        const isValidPurchaseField = extraInfo[selectTicketId]?.procesarea_achizitionarii;
 
-        // Блокируем изменение workflow, если селекты не заполнены
+        const isValidContractFields =
+            extraInfo[selectTicketId]?.numar_de_contract &&
+            extraInfo[selectTicketId]?.contract_date &&
+            extraInfo[selectTicketId]?.contract_trimis &&
+            extraInfo[selectTicketId]?.contract_semnat;
+
+        // Валидация для `Luat în lucru`
         if (newIndex > currentIndex && newIndex >= requiredWorkflowIndex && !isValidExtraInfo) {
             setShowValidationError(true);
-            enqueueSnackbar('Заполните Sursă lead, Promo и Marketing перед изменением workflow!', { variant: 'error' });
+            enqueueSnackbar('Заполните Sursă lead, Promo și Marketing перед изменением workflow!', { variant: 'error' });
             return;
         }
 
+        // Валидация для `Ofertă trimisă`
         if (newIndex > currentIndex && newIndex >= requiredExtraWorkflowIndex && !isValidExtraFields) {
             setShowExtraValidationError(true);
             enqueueSnackbar('Заполните Serviciu, Țară, Transport și Excursie перед изменением workflow!', { variant: 'error' });
             return;
         }
 
+        // Валидация для `Aprobat cu client`
         if (newIndex > currentIndex && newIndex >= requiredPurchaseWorkflowIndex && !isValidPurchaseField) {
             setShowPurchaseValidationError(true);
             enqueueSnackbar('Заполните Achiziție перед изменением workflow!', { variant: 'error' });
             return;
         }
 
-        // Сбрасываем ошибки, если все прошло успешно
+        // Валидация для `Contract semnat`
+        if (newIndex > currentIndex && newIndex >= requiredContractWorkflowIndex && !isValidContractFields) {
+            setShowContractValidationError(true);
+            enqueueSnackbar('Заполните Nr de contract, Data contractului, Contract trimis și Contract semnat перед изменением workflow!', { variant: 'error' });
+            return;
+        }
+
+        // Сбрасываем ошибки, если все в порядке
         setShowValidationError(false);
         setShowExtraValidationError(false);
         setShowPurchaseValidationError(false);
+        setShowContractValidationError(false);
 
         try {
             await updateTicket({
@@ -2028,45 +2045,52 @@ const ChatComponent = ({ }) => {
                             <Input
                                 label="Nr de contract"
                                 type="text"
-                                value={true || ""}
-                                onChange={(e) =>
-                                    handleSelectChangeExtra(selectTicketId, 'numar_de_contract', e.target.value)
-                                }
-                                className="input-field"
+                                value={extraInfo[selectTicketId]?.numar_de_contract || ""}
+                                onChange={(e) => {
+                                    handleSelectChangeExtra(selectTicketId, 'numar_de_contract', e.target.value);
+                                    if (e.target.value) setShowContractValidationError(false);
+                                }}
+                                className={`input-field ${showContractValidationError && !extraInfo[selectTicketId]?.numar_de_contract ? "invalid-field" : ""}`}
                                 placeholder="Nr de contract"
                                 id="contract-number-input"
                             />
+
                             <Input
                                 label="Data contractului"
                                 type="date"
                                 value={extraInfo[selectTicketId]?.contract_date || ""}
-                                onChange={(date) =>
-                                    handleSelectChangeExtra(selectTicketId, ' data_contractului', date)
-                                }
-                                className="input-field"
+                                onChange={(date) => {
+                                    handleSelectChangeExtra(selectTicketId, 'contract_date', date);
+                                    if (date) setShowContractValidationError(false);
+                                }}
+                                className={`input-field ${showContractValidationError && !extraInfo[selectTicketId]?.contract_date ? "invalid-field" : ""}`}
                             />
+
                             <div className="toggle-container">
                                 <label className="toggle-label">Contract trimis</label>
                                 <label className="switch">
                                     <input
                                         type="checkbox"
                                         checked={extraInfo[selectTicketId]?.contract_trimis || false}
-                                        onChange={(e) =>
-                                            handleSelectChangeExtra(selectTicketId, 'contract_trimis', e.target.checked)
-                                        }
+                                        onChange={(e) => {
+                                            handleSelectChangeExtra(selectTicketId, 'contract_trimis', e.target.checked);
+                                            if (e.target.checked) setShowContractValidationError(false);
+                                        }}
                                     />
                                     <span className="slider round"></span>
                                 </label>
                             </div>
+
                             <div className="toggle-container">
                                 <label className="toggle-label">Contract semnat</label>
                                 <label className="switch">
                                     <input
                                         type="checkbox"
                                         checked={extraInfo[selectTicketId]?.contract_semnat || false}
-                                        onChange={(e) =>
-                                            handleSelectChangeExtra(selectTicketId, 'contract_semnat', e.target.checked)
-                                        }
+                                        onChange={(e) => {
+                                            handleSelectChangeExtra(selectTicketId, 'contract_semnat', e.target.checked);
+                                            if (e.target.checked) setShowContractValidationError(false);
+                                        }}
                                     />
                                     <span className="slider round"></span>
                                 </label>
