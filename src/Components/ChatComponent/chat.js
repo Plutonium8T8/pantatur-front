@@ -2019,7 +2019,7 @@ const ChatComponent = ({ }) => {
                                 type="text"
                                 value={true || ""}
                                 onChange={(e) =>
-                                    handleSelectChangeExtra(selectTicketId, 'contract_id', e.target.value)
+                                    handleSelectChangeExtra(selectTicketId, 'numar_de_contract', e.target.value)
                                 }
                                 className="input-field"
                                 placeholder="Nr de contract"
@@ -2030,7 +2030,7 @@ const ChatComponent = ({ }) => {
                                 type="date"
                                 value={extraInfo[selectTicketId]?.contract_date || ""}
                                 onChange={(date) =>
-                                    handleSelectChangeExtra(selectTicketId, 'contract_date', date)
+                                    handleSelectChangeExtra(selectTicketId, ' data_contractului', date)
                                 }
                                 className="input-field"
                             />
