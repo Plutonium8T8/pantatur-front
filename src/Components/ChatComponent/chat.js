@@ -1926,8 +1926,32 @@ const ChatComponent = ({ }) => {
                                 }
                                 className="input-field"
                             />
-                            <div>contract trimis</div>
-                            <div>contract semnat</div>
+                            <div className="toggle-container">
+                                <label className="toggle-label">Contract trimis</label>
+                                <label className="switch">
+                                    <input
+                                        type="checkbox"
+                                        checked={extraInfo[selectTicketId]?.contract_trimis || false}
+                                        onChange={(e) =>
+                                            handleSelectChangeExtra(selectTicketId, 'contract_trimis', e.target.checked)
+                                        }
+                                    />
+                                    <span className="slider round"></span>
+                                </label>
+                            </div>
+                            <div className="toggle-container">
+                                <label className="toggle-label">Contract semnat</label>
+                                <label className="switch">
+                                    <input
+                                        type="checkbox"
+                                        checked={extraInfo[selectTicketId]?.contract_semnat || false}
+                                        onChange={(e) =>
+                                            handleSelectChangeExtra(selectTicketId, 'contract_semnat', e.target.checked)
+                                        }
+                                    />
+                                    <span className="slider round"></span>
+                                </label>
+                            </div>
                             <Input
                                 label="Operator turistic"
                                 type="text"
@@ -1950,9 +1974,47 @@ const ChatComponent = ({ }) => {
                                 placeholder="Nr cererii de la operator"
                                 id="tour-operator-input"
                             />
-                            <div>achitare efectuata</div>
-                            <div>rezervare confirmata </div>
-                            <div>contract arhivat </div>
+                            <div className="toggle-container">
+                                <label className="toggle-label">Achitare efectuata</label>
+                                <label className="switch">
+                                    <input
+                                        type="checkbox"
+                                        checked={extraInfo[selectTicketId]?.achitare_efectuata || false}
+                                        onChange={(e) =>
+                                            handleSelectChangeExtra(selectTicketId, 'achitare_efectuata', e.target.checked)
+                                        }
+                                    />
+                                    <span className="slider round"></span>
+                                </label>
+                            </div>
+                            {/* Toggle Switch для "Rezervare confirmata" */}
+                            <div className="toggle-container">
+                                <label className="toggle-label">Rezervare confirmata</label>
+                                <label className="switch">
+                                    <input
+                                        type="checkbox"
+                                        checked={extraInfo[selectTicketId]?.rezervare_confirmata || false}
+                                        onChange={(e) =>
+                                            handleSelectChangeExtra(selectTicketId, 'rezervare_confirmata', e.target.checked)
+                                        }
+                                    />
+                                    <span className="slider round"></span>
+                                </label>
+                            </div>
+                            {/* Toggle Switch для "Contract arhivat" */}
+                            <div className="toggle-container">
+                                <label className="toggle-label">Contract arhivat</label>
+                                <label className="switch">
+                                    <input
+                                        type="checkbox"
+                                        checked={extraInfo[selectTicketId]?.contract_arhivat || false}
+                                        onChange={(e) =>
+                                            handleSelectChangeExtra(selectTicketId, 'contract_arhivat', e.target.checked)
+                                        }
+                                    />
+                                    <span className="slider round"></span>
+                                </label>
+                            </div>
                             <Select
                                 options={paymentStatusOptions}
                                 label="Plată primită"
@@ -2205,7 +2267,7 @@ const ChatComponent = ({ }) => {
                         </div>
                     )}
                     {activeTab === 'Meida' && selectTicketId && (
-                        <div/>
+                        <div />
                     )}
                 </div>
             </div>
