@@ -70,7 +70,6 @@ const ChatComponent = ({ }) => {
     const [searchQuery, setSearchQuery] = useState("");
     const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
     const [activeTab, setActiveTab] = useState("extraForm"); // По умолчанию вкладка Extra Form
-    const [showValidationError, setShowValidationError] = useState(false); // Фиксируем ошибку
 
     const platformIcons = {
         "facebook": <FaFacebook />,
@@ -317,6 +316,7 @@ const ChatComponent = ({ }) => {
     const [showPaymentValidationError, setShowPaymentValidationError] = useState(false);
     const [showFinalValidationError, setShowFinalValidationError] = useState(false); // Новый state
     const [showRefuzValidationError, setShowRefuzValidationError] = useState(false);
+    const [showValidationError, setShowValidationError] = useState(false); // Фиксируем ошибку
 
     const updatedTicket = tickets.find(ticket => ticket.id === selectTicketId) || null;
 
@@ -362,6 +362,9 @@ const ChatComponent = ({ }) => {
         const isValidPaymentField = extraInfo[selectTicketId]?.achitare_efectuata;
 
         const isValidFinalFields =
+            extraInfo[selectTicketId]?.buget &&
+            extraInfo[selectTicketId]?.data_plecarii &&
+            extraInfo[selectTicketId]?.data_intoarcerii &&
             extraInfo[selectTicketId]?.tour_operator &&
             extraInfo[selectTicketId]?.numarul_cererii_de_la_operator &&
             extraInfo[selectTicketId]?.rezervare_confirmata &&
@@ -1799,10 +1802,11 @@ const ChatComponent = ({ }) => {
                                     label="Vânzare"
                                     type="number"
                                     value={extraInfo[selectTicketId]?.buget || ""}
-                                    onChange={(e) =>
-                                        handleSelectChangeExtra(selectTicketId, 'buget', e.target.value)
-                                    }
-                                    className="input-field"
+                                    onChange={(e) => {
+                                        handleSelectChangeExtra(selectTicketId, 'buget', e.target.value);
+                                        if (e.target.value) setShowFinalValidationError(false);
+                                    }}
+                                    className={`input-field ${showFinalValidationError && !extraInfo[selectTicketId]?.buget ? "invalid-field" : ""}`}
                                     placeholder="Indicați suma în euro"
                                     id="buget-input"
                                 />
@@ -1830,19 +1834,22 @@ const ChatComponent = ({ }) => {
                                     label="Data și ora plecării"
                                     type="datetime-local"
                                     value={extraInfo[selectTicketId]?.data_plecarii || ""}
-                                    onChange={(e) =>
-                                        handleSelectChangeExtra(selectTicketId, 'data_plecarii', e.target.value)
-                                    }
-                                    className="input-field"
+                                    onChange={(e) => {
+                                        handleSelectChangeExtra(selectTicketId, 'data_plecarii', e.target.value);
+                                        if (e.target.value) setShowFinalValidationError(false);
+                                    }}
+                                    className={`input-field ${showFinalValidationError && !extraInfo[selectTicketId]?.data_plecarii ? "invalid-field" : ""}`}
                                 />
+
                                 <Input
                                     label="Data și ora întoarcerii"
                                     type="datetime-local"
                                     value={extraInfo[selectTicketId]?.data_intoarcerii || ""}
-                                    onChange={(e) =>
-                                        handleSelectChangeExtra(selectTicketId, 'data_intoarcerii', e.target.value)
-                                    }
-                                    className="input-field"
+                                    onChange={(e) => {
+                                        handleSelectChangeExtra(selectTicketId, 'data_intoarcerii', e.target.value);
+                                        if (e.target.value) setShowFinalValidationError(false);
+                                    }}
+                                    className={`input-field ${showFinalValidationError && !extraInfo[selectTicketId]?.data_intoarcerii ? "invalid-field" : ""}`}
                                 />
                                 <Select
                                     options={sourceOfLeadOptions}
@@ -2120,7 +2127,7 @@ const ChatComponent = ({ }) => {
 
                             <div className="toggle-container">
                                 <label className="toggle-label">{translations['Contract trimis']?.[language]}</label>
-                                <label className="switch">
+                                <label className={`switch ${showContractValidationError && !extraInfo[selectTicketId]?.contract_trimis ? "invalid-toggle" : ""}`}>
                                     <input
                                         type="checkbox"
                                         checked={extraInfo[selectTicketId]?.contract_trimis || false}
@@ -2135,7 +2142,7 @@ const ChatComponent = ({ }) => {
 
                             <div className="toggle-container">
                                 <label className="toggle-label">{translations['Contract semnat']?.[language]}</label>
-                                <label className="switch">
+                                <label className={`switch ${showContractValidationError && !extraInfo[selectTicketId]?.contract_semnat ? "invalid-toggle" : ""}`}>
                                     <input
                                         type="checkbox"
                                         checked={extraInfo[selectTicketId]?.contract_semnat || false}
@@ -2173,13 +2180,14 @@ const ChatComponent = ({ }) => {
                             />
                             <div className="toggle-container">
                                 <label className="toggle-label">{translations['Achitare efectuată']?.[language]}</label>
-                                <label className="switch">
+                                <label className={`switch ${showPaymentValidationError && !extraInfo[selectTicketId]?.achitare_efectuata ? "invalid-toggle" : ""}`}>
                                     <input
                                         type="checkbox"
                                         checked={extraInfo[selectTicketId]?.achitare_efectuata || false}
-                                        onChange={(e) =>
-                                            handleSelectChangeExtra(selectTicketId, 'achitare_efectuata', e.target.checked)
-                                        }
+                                        onChange={(e) => {
+                                            handleSelectChangeExtra(selectTicketId, 'achitare_efectuata', e.target.checked);
+                                            if (e.target.checked) setShowPaymentValidationError(false);
+                                        }}
                                     />
                                     <span className="slider round"></span>
                                 </label>
@@ -2187,13 +2195,13 @@ const ChatComponent = ({ }) => {
                             {/* Toggle Switch для "Rezervare confirmata" */}
                             <div className="toggle-container">
                                 <label className="toggle-label">{translations['Rezervare confirmată']?.[language]}</label>
-                                <label className="switch">
+                                <label className={`switch ${showFinalValidationError && !extraInfo[selectTicketId]?.rezervare_confirmata ? "invalid-toggle" : ""}`}>
                                     <input
                                         type="checkbox"
                                         checked={extraInfo[selectTicketId]?.rezervare_confirmata || false}
                                         onChange={(e) => {
                                             handleSelectChangeExtra(selectTicketId, 'rezervare_confirmata', e.target.checked);
-                                            setShowFinalValidationError(false);
+                                            if (e.target.checked) setShowFinalValidationError(false);
                                         }}
                                     />
                                     <span className="slider round"></span>
@@ -2202,13 +2210,13 @@ const ChatComponent = ({ }) => {
 
                             <div className="toggle-container">
                                 <label className="toggle-label">{translations['Contract arhivat']?.[language]}</label>
-                                <label className="switch">
+                                <label className={`switch ${showFinalValidationError && !extraInfo[selectTicketId]?.contract_arhivat ? "invalid-toggle" : ""}`}>
                                     <input
                                         type="checkbox"
                                         checked={extraInfo[selectTicketId]?.contract_arhivat || false}
                                         onChange={(e) => {
                                             handleSelectChangeExtra(selectTicketId, 'contract_arhivat', e.target.checked);
-                                            setShowFinalValidationError(false);
+                                            if (e.target.checked) setShowFinalValidationError(false);
                                         }}
                                     />
                                     <span className="slider round"></span>
@@ -2223,7 +2231,7 @@ const ChatComponent = ({ }) => {
                                     handleSelectChangeExtra(selectTicketId, 'statutul_platii', value);
                                     if (value) setShowFinalValidationError(false);
                                 }}
-                                className={`input-field ${showFinalValidationError && !extraInfo[selectTicketId]?.statutul_platii ? "invalid-field" : ""}`}
+                                hasError={showFinalValidationError && !extraInfo[selectTicketId]?.statutul_platii}
                             />
                             <Input
                                 label="Avans euro"
@@ -2465,7 +2473,7 @@ const ChatComponent = ({ }) => {
                                     handleSelectChangeExtra(selectTicketId, 'motivul_refuzului', value);
                                     if (value) setShowRefuzValidationError(false);
                                 }}
-                                className={`input-field ${showRefuzValidationError && !extraInfo[selectTicketId]?.motivul_refuzului ? "invalid-field" : ""}`}
+                                hasError={showRefuzValidationError && !extraInfo[selectTicketId]?.motivul_refuzului} // Подсвечивается красным, если ошибка
                             />
                             <Select
                                 options={evaluareOdihnaOptions}

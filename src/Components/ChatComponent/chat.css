@@ -760,14 +760,17 @@ input:checked+.slider:before {
 .media-container {
     display: flex;
     flex-direction: column;
-    align-items: center; /* Center content horizontally */
-    margin-bottom: 15px; /* Add spacing between messages */
+    align-items: center;
+    /* Center content horizontally */
+    margin-bottom: 15px;
+    /* Add spacing between messages */
 }
 
 .sent-time {
     font-size: 18px;
     margin-bottom: 5px;
-    text-align: center; /* Ensure text is centered */
+    text-align: center;
+    /* Ensure text is centered */
 }
 
 /* Кнопка скрытия/показа списка чатов */
@@ -828,7 +831,7 @@ input:checked+.slider:before {
 
 .client-platform svg {
     width: 24px;
-    height: 24px;   
+    height: 24px;
     margin-top: 10px;
 }
 
@@ -879,4 +882,22 @@ input:checked+.slider:before {
     /* Ensures it's above other elements */
     width: 100%;
     box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.invalid-toggle {
+    border: 2px solid red;
+    border-radius: 20px;
+    padding: 2px;
+}
+
+.invalid-toggle .slider {
+    background-color: #ffe6e6 !important;
+}
+
+.invalid-toggle input:checked+.slider {
+    background-color: red !important;
+}
+
+.invalid-toggle .slider:before {
+    background-color: darkred !important;
 }
