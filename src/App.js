@@ -152,7 +152,7 @@ function App() {
     <Router basename="/">
       <NavigationProvider>
         <AppProvider isLoggedIn={isLoggedIn}>
-          <SnackbarProvider autoHideDuration={3000} maxSnack={5} anchorOrigin={{ vertical: "bottom", horizontal: "right" }}>
+          <SnackbarProvider autoHideDuration={5000} maxSnack={5} anchorOrigin={{ vertical: "bottom", horizontal: "right" }}>
             <UserProvider>
               {!isLoggedIn ? (
                 <LoginForm onLoginSuccess={handleLogin} />

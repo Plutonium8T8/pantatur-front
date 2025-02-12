@@ -370,7 +370,8 @@ const ChatComponent = ({ }) => {
                 showRefuzValidationError: false // Отключаем ошибку для "Închis și nerealizat"
             });
 
-            enqueueSnackbar(`Заполните все обязательные поля для "${workflow}" и предыдущих этапов перед изменением!`, { variant: 'error' });
+            // enqueueSnackbar(`Заполните все обязательные поля для "${workflow}" и предыдущих этапов перед изменением!`, { variant: 'error' });
+            enqueueSnackbar(`Completați toate câmpurile obligatorii pentru "${workflow}" și etapele anterioare înainte de a face modificări!`, { variant: 'error' });
             return false;
         }
 
