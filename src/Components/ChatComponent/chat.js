@@ -69,7 +69,7 @@ const ChatComponent = ({ }) => {
     const location = useLocation();
     const [searchQuery, setSearchQuery] = useState("");
     const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
-    const [activeTab, setActiveTab] = useState(); // По умолчанию вкладка Extra Form
+    const [activeTab, setActiveTab] = useState("extraForm"); // По умолчанию вкладка Extra Form
     const [showValidationError, setShowValidationError] = useState(false); // Фиксируем ошибку
 
     const platformIcons = {
