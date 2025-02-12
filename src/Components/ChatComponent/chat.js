@@ -309,17 +309,20 @@ const ChatComponent = ({ }) => {
     }, {});
 
     // Состояния ошибок для каждого этапа
-    const [showValidationError, setShowValidationError] = useState(false);
-    const [showExtraValidationError, setShowExtraValidationError] = useState(false);
-    const [showPurchaseValidationError, setShowPurchaseValidationError] = useState(false);
-    const [showContractValidationError, setShowContractValidationError] = useState(false);
-    const [showPaymentValidationError, setShowPaymentValidationError] = useState(false);
-    const [showFinalValidationError, setShowFinalValidationError] = useState(false);
-    const [showRefuzValidationError, setShowRefuzValidationError] = useState(false);
+    const [validationErrors, setValidationErrors] = useState({
+        showValidationError: false,
+        showExtraValidationError: false,
+        showPurchaseValidationError: false,
+        showContractValidationError: false,
+        showPaymentValidationError: false,
+        showFinalValidationError: false,
+        showRefuzValidationError: false
+    });
 
     const updatedTicket = tickets.find(ticket => ticket.id === selectTicketId) || null;
     const currentWorkflowIndex = updatedTicket ? workflowIndices[updatedTicket.workflow] : -1;
 
+    // Обязательные поля для каждого этапа (без "Închis și nerealizat")
     const requiredFields = {
         "Luat în lucru": ["sursa_lead", "promo", "marketing"],
         "Ofertă trimisă": ["tipul_serviciului", "tara", "tip_de_transport", "denumirea_excursiei_turului"],
@@ -330,48 +333,51 @@ const ChatComponent = ({ }) => {
             "buget", "data_plecarii", "data_intoarcerii", "tour_operator",
             "numarul_cererii_de_la_operator", "rezervare_confirmata",
             "contract_arhivat", "statutul_platii", "pret_netto", "comission_companie"
-        ],
-        "Închis și nerealizat": ["motivul_refuzului"]
+        ]
     };
 
-    // Функция валидации перед изменением workflow
+    // **Функция валидации перед изменением workflow**
     const validateFields = (workflow) => {
-        const missingFields = requiredFields[workflow]?.filter(field => !extraInfo[selectTicketId]?.[field]) || [];
+        if (workflow === "Închis și nerealizat") {
+            // Отдельная проверка только для "Motivul refuzului"
+            if (!extraInfo[selectTicketId]?.motivul_refuzului) {
+                setValidationErrors({ ...validationErrors, showRefuzValidationError: true });
+                enqueueSnackbar(`Заполните "Motivul refuzului" перед изменением!`, { variant: 'error' });
+                return false;
+            }
+            return true;
+        }
+
+        let missingFields = [];
+
+        // Проверяем текущий и все предыдущие этапы
+        const workflowIndex = workflowIndices[workflow];
+
+        for (const [step, fields] of Object.entries(requiredFields)) {
+            if (workflowIndices[step] <= workflowIndex) {
+                missingFields.push(...fields.filter(field => !extraInfo[selectTicketId]?.[field]));
+            }
+        }
 
         if (missingFields.length) {
-            switch (workflow) {
-                case "Luat în lucru":
-                    setShowValidationError(true);
-                    break;
-                case "Ofertă trimisă":
-                    setShowExtraValidationError(true);
-                    break;
-                case "Aprobat cu client":
-                    setShowPurchaseValidationError(true);
-                    break;
-                case "Contract semnat":
-                    setShowContractValidationError(true);
-                    break;
-                case "Plată primită":
-                    setShowPaymentValidationError(true);
-                    break;
-                case "Contract încheiat":
-                    setShowFinalValidationError(true);
-                    break;
-                case "Închis și nerealizat":
-                    setShowRefuzValidationError(true);
-                    break;
-                default:
-                    break;
-            }
+            setValidationErrors({
+                showValidationError: workflowIndex >= workflowIndices["Luat în lucru"],
+                showExtraValidationError: workflowIndex >= workflowIndices["Ofertă trimisă"],
+                showPurchaseValidationError: workflowIndex >= workflowIndices["Aprobat cu client"],
+                showContractValidationError: workflowIndex >= workflowIndices["Contract semnat"],
+                showPaymentValidationError: workflowIndex >= workflowIndices["Plată primită"],
+                showFinalValidationError: workflowIndex >= workflowIndices["Contract încheiat"],
+                showRefuzValidationError: false // Отключаем ошибку для "Închis și nerealizat"
+            });
 
-            enqueueSnackbar(`Заполните все обязательные поля для "${workflow}" перед изменением!`, { variant: 'error' });
+            enqueueSnackbar(`Заполните все обязательные поля для "${workflow}" и предыдущих этапов перед изменением!`, { variant: 'error' });
             return false;
         }
+
         return true;
     };
 
-    // Функция изменения workflow с проверкой
+    // **Функция изменения workflow с проверкой**
     const handleWorkflowChange = async (event) => {
         const newWorkflow = event.target.value;
 
@@ -386,13 +392,15 @@ const ChatComponent = ({ }) => {
         if (newIndex > currentIndex && !validateFields(newWorkflow)) return;
 
         // Сбрасываем ошибки
-        setShowValidationError(false);
-        setShowExtraValidationError(false);
-        setShowPurchaseValidationError(false);
-        setShowContractValidationError(false);
-        setShowPaymentValidationError(false);
-        setShowFinalValidationError(false);
-        setShowRefuzValidationError(false);
+        setValidationErrors({
+            showValidationError: false,
+            showExtraValidationError: false,
+            showPurchaseValidationError: false,
+            showContractValidationError: false,
+            showPaymentValidationError: false,
+            showFinalValidationError: false,
+            showRefuzValidationError: false
+        });
 
         try {
             await updateTicket({ id: updatedTicket.id, workflow: newWorkflow });
@@ -1762,9 +1770,11 @@ const ChatComponent = ({ }) => {
                                     value={extraInfo[selectTicketId]?.buget || ""}
                                     onChange={(e) => {
                                         handleSelectChangeExtra(selectTicketId, 'buget', e.target.value);
-                                        if (e.target.value) setShowFinalValidationError(false);
+                                        if (e.target.value) {
+                                            setValidationErrors(prev => ({ ...prev, showFinalValidationError: false }));
+                                        }
                                     }}
-                                    className={`input-field ${showFinalValidationError && !extraInfo[selectTicketId]?.buget ? "invalid-field" : ""}`}
+                                    className={`input-field ${validationErrors.showFinalValidationError && !extraInfo[selectTicketId]?.buget ? "invalid-field" : ""}`}
                                     placeholder="Indicați suma în euro"
                                     id="buget-input"
                                 />
@@ -1794,9 +1804,11 @@ const ChatComponent = ({ }) => {
                                     value={extraInfo[selectTicketId]?.data_plecarii || ""}
                                     onChange={(e) => {
                                         handleSelectChangeExtra(selectTicketId, 'data_plecarii', e.target.value);
-                                        if (e.target.value) setShowFinalValidationError(false);
+                                        if (e.target.value) {
+                                            setValidationErrors(prev => ({ ...prev, showFinalValidationError: false }));
+                                        }
                                     }}
-                                    className={`input-field ${showFinalValidationError && !extraInfo[selectTicketId]?.data_plecarii ? "invalid-field" : ""}`}
+                                    className={`input-field ${validationErrors.showFinalValidationError && !extraInfo[selectTicketId]?.data_plecarii ? "invalid-field" : ""}`}
                                 />
 
                                 <Input
@@ -1805,10 +1817,13 @@ const ChatComponent = ({ }) => {
                                     value={extraInfo[selectTicketId]?.data_intoarcerii || ""}
                                     onChange={(e) => {
                                         handleSelectChangeExtra(selectTicketId, 'data_intoarcerii', e.target.value);
-                                        if (e.target.value) setShowFinalValidationError(false);
+                                        if (e.target.value) {
+                                            setValidationErrors(prev => ({ ...prev, showFinalValidationError: false }));
+                                        }
                                     }}
-                                    className={`input-field ${showFinalValidationError && !extraInfo[selectTicketId]?.data_intoarcerii ? "invalid-field" : ""}`}
+                                    className={`input-field ${validationErrors.showFinalValidationError && !extraInfo[selectTicketId]?.data_intoarcerii ? "invalid-field" : ""}`}
                                 />
+
                                 <Select
                                     options={sourceOfLeadOptions}
                                     label="Sursă lead"
@@ -1816,9 +1831,11 @@ const ChatComponent = ({ }) => {
                                     value={extraInfo[selectTicketId]?.sursa_lead || ""}
                                     onChange={(value) => {
                                         handleSelectChangeExtra(selectTicketId, 'sursa_lead', value);
-                                        if (value) setShowValidationError(false);
+                                        if (value) {
+                                            setValidationErrors(prev => ({ ...prev, showValidationError: false }));
+                                        }
                                     }}
-                                    hasError={showValidationError && !extraInfo[selectTicketId]?.sursa_lead} // Подсвечивается красным, если ошибка
+                                    hasError={validationErrors.showValidationError && !extraInfo[selectTicketId]?.sursa_lead}
                                 />
 
                                 <Select
@@ -1828,9 +1845,11 @@ const ChatComponent = ({ }) => {
                                     value={extraInfo[selectTicketId]?.promo || ""}
                                     onChange={(value) => {
                                         handleSelectChangeExtra(selectTicketId, 'promo', value);
-                                        if (value) setShowValidationError(false);
+                                        if (value) {
+                                            setValidationErrors(prev => ({ ...prev, showValidationError: false }));
+                                        }
                                     }}
-                                    hasError={showValidationError && !extraInfo[selectTicketId]?.promo}
+                                    hasError={validationErrors.showValidationError && !extraInfo[selectTicketId]?.promo}
                                 />
 
                                 <Select
@@ -1840,10 +1859,13 @@ const ChatComponent = ({ }) => {
                                     value={extraInfo[selectTicketId]?.marketing || ""}
                                     onChange={(value) => {
                                         handleSelectChangeExtra(selectTicketId, 'marketing', value);
-                                        if (value) setShowValidationError(false);
+                                        if (value) {
+                                            setValidationErrors(prev => ({ ...prev, showValidationError: false }));
+                                        }
                                     }}
-                                    hasError={showValidationError && !extraInfo[selectTicketId]?.marketing}
+                                    hasError={validationErrors.showValidationError && !extraInfo[selectTicketId]?.marketing}
                                 />
+
                                 <Select
                                     options={serviceTypeOptions}
                                     label="Serviciu"
@@ -1851,9 +1873,11 @@ const ChatComponent = ({ }) => {
                                     value={extraInfo[selectTicketId]?.tipul_serviciului || ""}
                                     onChange={(value) => {
                                         handleSelectChangeExtra(selectTicketId, 'tipul_serviciului', value);
-                                        if (value) setShowExtraValidationError(false);
+                                        if (value) {
+                                            setValidationErrors(prev => ({ ...prev, showExtraValidationError: false }));
+                                        }
                                     }}
-                                    hasError={showExtraValidationError && !extraInfo[selectTicketId]?.tipul_serviciului}
+                                    hasError={validationErrors.showExtraValidationError && !extraInfo[selectTicketId]?.tipul_serviciului}
                                 />
 
                                 <Select
@@ -1863,9 +1887,11 @@ const ChatComponent = ({ }) => {
                                     value={extraInfo[selectTicketId]?.tara || ""}
                                     onChange={(value) => {
                                         handleSelectChangeExtra(selectTicketId, 'tara', value);
-                                        if (value) setShowExtraValidationError(false);
+                                        if (value) {
+                                            setValidationErrors(prev => ({ ...prev, showExtraValidationError: false }));
+                                        }
                                     }}
-                                    hasError={showExtraValidationError && !extraInfo[selectTicketId]?.tara}
+                                    hasError={validationErrors.showExtraValidationError && !extraInfo[selectTicketId]?.tara}
                                 />
 
                                 <Select
@@ -1875,9 +1901,11 @@ const ChatComponent = ({ }) => {
                                     value={extraInfo[selectTicketId]?.tip_de_transport || ""}
                                     onChange={(value) => {
                                         handleSelectChangeExtra(selectTicketId, 'tip_de_transport', value);
-                                        if (value) setShowExtraValidationError(false);
+                                        if (value) {
+                                            setValidationErrors(prev => ({ ...prev, showExtraValidationError: false }));
+                                        }
                                     }}
-                                    hasError={showExtraValidationError && !extraInfo[selectTicketId]?.tip_de_transport}
+                                    hasError={validationErrors.showExtraValidationError && !extraInfo[selectTicketId]?.tip_de_transport}
                                 />
 
                                 <Select
@@ -1887,10 +1915,13 @@ const ChatComponent = ({ }) => {
                                     value={extraInfo[selectTicketId]?.denumirea_excursiei_turului || ""}
                                     onChange={(value) => {
                                         handleSelectChangeExtra(selectTicketId, 'denumirea_excursiei_turului', value);
-                                        if (value) setShowExtraValidationError(false);
+                                        if (value) {
+                                            setValidationErrors(prev => ({ ...prev, showExtraValidationError: false }));
+                                        }
                                     }}
-                                    hasError={showExtraValidationError && !extraInfo[selectTicketId]?.denumirea_excursiei_turului}
+                                    hasError={validationErrors.showExtraValidationError && !extraInfo[selectTicketId]?.denumirea_excursiei_turului}
                                 />
+
                                 <Select
                                     options={purchaseProcessingOptions}
                                     label="Achiziție"
@@ -1898,9 +1929,11 @@ const ChatComponent = ({ }) => {
                                     value={extraInfo[selectTicketId]?.procesarea_achizitionarii || ""}
                                     onChange={(value) => {
                                         handleSelectChangeExtra(selectTicketId, 'procesarea_achizitionarii', value);
-                                        if (value) setShowPurchaseValidationError(false);
+                                        if (value) {
+                                            setValidationErrors(prev => ({ ...prev, showPurchaseValidationError: false }));
+                                        }
                                     }}
-                                    hasError={showPurchaseValidationError && !extraInfo[selectTicketId]?.procesarea_achizitionarii}
+                                    hasError={validationErrors.showPurchaseValidationError && !extraInfo[selectTicketId]?.procesarea_achizitionarii}
                                 />
                                 <Input
                                     label="Data cererii de retur"
@@ -2065,9 +2098,11 @@ const ChatComponent = ({ }) => {
                                 value={extraInfo[selectTicketId]?.numar_de_contract || ""}
                                 onChange={(e) => {
                                     handleSelectChangeExtra(selectTicketId, 'numar_de_contract', e.target.value);
-                                    if (e.target.value) setShowContractValidationError(false);
+                                    if (e.target.value) {
+                                        setValidationErrors(prev => ({ ...prev, showContractValidationError: false }));
+                                    }
                                 }}
-                                className={`input-field ${showContractValidationError && !extraInfo[selectTicketId]?.numar_de_contract ? "invalid-field" : ""}`}
+                                className={`input-field ${validationErrors.showContractValidationError && !extraInfo[selectTicketId]?.numar_de_contract ? "invalid-field" : ""}`}
                                 placeholder="Nr de contract"
                                 id="contract-number-input"
                             />
@@ -2078,20 +2113,24 @@ const ChatComponent = ({ }) => {
                                 value={extraInfo[selectTicketId]?.data_contractului || ""}
                                 onChange={(e) => {
                                     handleSelectChangeExtra(selectTicketId, 'data_contractului', e.target.value);
-                                    if (e.target.value) setShowContractValidationError(false);
+                                    if (e.target.value) {
+                                        setValidationErrors(prev => ({ ...prev, showContractValidationError: false }));
+                                    }
                                 }}
-                                className={`input-field ${showContractValidationError && !extraInfo[selectTicketId]?.data_contractului ? "invalid-field" : ""}`}
+                                className={`input-field ${validationErrors.showContractValidationError && !extraInfo[selectTicketId]?.data_contractului ? "invalid-field" : ""}`}
                             />
 
                             <div className="toggle-container">
                                 <label className="toggle-label">{translations['Contract trimis']?.[language]}</label>
-                                <label className={`switch ${showContractValidationError && !extraInfo[selectTicketId]?.contract_trimis ? "invalid-toggle" : ""}`}>
+                                <label className={`switch ${validationErrors.showContractValidationError && !extraInfo[selectTicketId]?.contract_trimis ? "invalid-toggle" : ""}`}>
                                     <input
                                         type="checkbox"
                                         checked={extraInfo[selectTicketId]?.contract_trimis || false}
                                         onChange={(e) => {
                                             handleSelectChangeExtra(selectTicketId, 'contract_trimis', e.target.checked);
-                                            if (e.target.checked) setShowContractValidationError(false);
+                                            if (e.target.checked) {
+                                                setValidationErrors(prev => ({ ...prev, showContractValidationError: false }));
+                                            }
                                         }}
                                     />
                                     <span className="slider round"></span>
@@ -2100,66 +2139,79 @@ const ChatComponent = ({ }) => {
 
                             <div className="toggle-container">
                                 <label className="toggle-label">{translations['Contract semnat']?.[language]}</label>
-                                <label className={`switch ${showContractValidationError && !extraInfo[selectTicketId]?.contract_semnat ? "invalid-toggle" : ""}`}>
+                                <label className={`switch ${validationErrors.showContractValidationError && !extraInfo[selectTicketId]?.contract_semnat ? "invalid-toggle" : ""}`}>
                                     <input
                                         type="checkbox"
                                         checked={extraInfo[selectTicketId]?.contract_semnat || false}
                                         onChange={(e) => {
                                             handleSelectChangeExtra(selectTicketId, 'contract_semnat', e.target.checked);
-                                            if (e.target.checked) setShowContractValidationError(false);
+                                            if (e.target.checked) {
+                                                setValidationErrors(prev => ({ ...prev, showContractValidationError: false }));
+                                            }
                                         }}
                                     />
                                     <span className="slider round"></span>
                                 </label>
                             </div>
+
                             <Input
                                 label="Operator turistic"
                                 type="text"
                                 value={extraInfo[selectTicketId]?.tour_operator || ""}
                                 onChange={(e) => {
                                     handleSelectChangeExtra(selectTicketId, 'tour_operator', e.target.value);
-                                    if (e.target.value) setShowFinalValidationError(false);
+                                    if (e.target.value) {
+                                        setValidationErrors(prev => ({ ...prev, showFinalValidationError: false }));
+                                    }
                                 }}
-                                className={`input-field ${showFinalValidationError && !extraInfo[selectTicketId]?.tour_operator ? "invalid-field" : ""}`}
+                                className={`input-field ${validationErrors.showFinalValidationError && !extraInfo[selectTicketId]?.tour_operator ? "invalid-field" : ""}`}
                                 placeholder="Operator turistic"
                                 id="tour-operator-input"
                             />
+
                             <Input
                                 label="Nr cererii de la operator"
                                 type="text"
                                 value={extraInfo[selectTicketId]?.numarul_cererii_de_la_operator || ""}
                                 onChange={(e) => {
                                     handleSelectChangeExtra(selectTicketId, 'numarul_cererii_de_la_operator', e.target.value);
-                                    if (e.target.value) setShowFinalValidationError(false);
+                                    if (e.target.value) {
+                                        setValidationErrors(prev => ({ ...prev, showFinalValidationError: false }));
+                                    }
                                 }}
-                                className={`input-field ${showFinalValidationError && !extraInfo[selectTicketId]?.numarul_cererii_de_la_operator ? "invalid-field" : ""}`}
+                                className={`input-field ${validationErrors.showFinalValidationError && !extraInfo[selectTicketId]?.numarul_cererii_de_la_operator ? "invalid-field" : ""}`}
                                 placeholder="Nr cererii de la operator"
                                 id="tour-operator-input"
                             />
+
                             <div className="toggle-container">
                                 <label className="toggle-label">{translations['Achitare efectuată']?.[language]}</label>
-                                <label className={`switch ${showPaymentValidationError && !extraInfo[selectTicketId]?.achitare_efectuata ? "invalid-toggle" : ""}`}>
+                                <label className={`switch ${validationErrors.showPaymentValidationError && !extraInfo[selectTicketId]?.achitare_efectuata ? "invalid-toggle" : ""}`}>
                                     <input
                                         type="checkbox"
                                         checked={extraInfo[selectTicketId]?.achitare_efectuata || false}
                                         onChange={(e) => {
                                             handleSelectChangeExtra(selectTicketId, 'achitare_efectuata', e.target.checked);
-                                            if (e.target.checked) setShowPaymentValidationError(false);
+                                            if (e.target.checked) {
+                                                setValidationErrors(prev => ({ ...prev, showPaymentValidationError: false }));
+                                            }
                                         }}
                                     />
                                     <span className="slider round"></span>
                                 </label>
                             </div>
-                            {/* Toggle Switch для "Rezervare confirmata" */}
+
                             <div className="toggle-container">
                                 <label className="toggle-label">{translations['Rezervare confirmată']?.[language]}</label>
-                                <label className={`switch ${showFinalValidationError && !extraInfo[selectTicketId]?.rezervare_confirmata ? "invalid-toggle" : ""}`}>
+                                <label className={`switch ${validationErrors.showFinalValidationError && !extraInfo[selectTicketId]?.rezervare_confirmata ? "invalid-toggle" : ""}`}>
                                     <input
                                         type="checkbox"
                                         checked={extraInfo[selectTicketId]?.rezervare_confirmata || false}
                                         onChange={(e) => {
                                             handleSelectChangeExtra(selectTicketId, 'rezervare_confirmata', e.target.checked);
-                                            if (e.target.checked) setShowFinalValidationError(false);
+                                            if (e.target.checked) {
+                                                setValidationErrors(prev => ({ ...prev, showFinalValidationError: false }));
+                                            }
                                         }}
                                     />
                                     <span className="slider round"></span>
@@ -2168,18 +2220,21 @@ const ChatComponent = ({ }) => {
 
                             <div className="toggle-container">
                                 <label className="toggle-label">{translations['Contract arhivat']?.[language]}</label>
-                                <label className={`switch ${showFinalValidationError && !extraInfo[selectTicketId]?.contract_arhivat ? "invalid-toggle" : ""}`}>
+                                <label className={`switch ${validationErrors.showFinalValidationError && !extraInfo[selectTicketId]?.contract_arhivat ? "invalid-toggle" : ""}`}>
                                     <input
                                         type="checkbox"
                                         checked={extraInfo[selectTicketId]?.contract_arhivat || false}
                                         onChange={(e) => {
                                             handleSelectChangeExtra(selectTicketId, 'contract_arhivat', e.target.checked);
-                                            if (e.target.checked) setShowFinalValidationError(false);
+                                            if (e.target.checked) {
+                                                setValidationErrors(prev => ({ ...prev, showFinalValidationError: false }));
+                                            }
                                         }}
                                     />
                                     <span className="slider round"></span>
                                 </label>
                             </div>
+
                             <Select
                                 options={paymentStatusOptions}
                                 label="Plată primită"
@@ -2187,9 +2242,11 @@ const ChatComponent = ({ }) => {
                                 value={extraInfo[selectTicketId]?.statutul_platii || ""}
                                 onChange={(value) => {
                                     handleSelectChangeExtra(selectTicketId, 'statutul_platii', value);
-                                    if (value) setShowFinalValidationError(false);
+                                    if (value) {
+                                        setValidationErrors(prev => ({ ...prev, showFinalValidationError: false }));
+                                    }
                                 }}
-                                hasError={showFinalValidationError && !extraInfo[selectTicketId]?.statutul_platii}
+                                hasError={validationErrors.showFinalValidationError && !extraInfo[selectTicketId]?.statutul_platii}
                             />
                             <Input
                                 label="Avans euro"
@@ -2224,9 +2281,11 @@ const ChatComponent = ({ }) => {
                                 value={extraInfo[selectTicketId]?.pret_netto || ""}
                                 onChange={(e) => {
                                     handleSelectChangeExtra(selectTicketId, 'pret_netto', e.target.value);
-                                    if (e.target.value) setShowFinalValidationError(false);
+                                    if (e.target.value) {
+                                        setValidationErrors(prev => ({ ...prev, showFinalValidationError: false }));
+                                    }
                                 }}
-                                className={`input-field ${showFinalValidationError && !extraInfo[selectTicketId]?.pret_netto ? "invalid-field" : ""}`}
+                                className={`input-field ${validationErrors.showFinalValidationError && !extraInfo[selectTicketId]?.pret_netto ? "invalid-field" : ""}`}
                                 placeholder="Preț netto (euro)"
                                 id="price-neto-input"
                             />
@@ -2256,12 +2315,13 @@ const ChatComponent = ({ }) => {
                                 value={extraInfo[selectTicketId]?.comission_companie || ""}
                                 onChange={(e) => {
                                     handleSelectChangeExtra(selectTicketId, 'comission_companie', e.target.value);
-                                    if (e.target.value) setShowFinalValidationError(false);
+                                    if (e.target.value) {
+                                        setValidationErrors(prev => ({ ...prev, showFinalValidationError: false }));
+                                    }
                                 }}
-                                className={`input-field ${showFinalValidationError && !extraInfo[selectTicketId]?.comission_companie ? "invalid-field" : ""}`}
+                                className={`input-field ${validationErrors.showFinalValidationError && !extraInfo[selectTicketId]?.comission_companie ? "invalid-field" : ""}`}
                                 placeholder="Comision companie"
                                 id="commission-input"
-                            // disabled={true}
                             />
                             <Input
                                 label="Statut achitare"
@@ -2429,9 +2489,11 @@ const ChatComponent = ({ }) => {
                                 value={extraInfo[selectTicketId]?.motivul_refuzului || ""}
                                 onChange={(value) => {
                                     handleSelectChangeExtra(selectTicketId, 'motivul_refuzului', value);
-                                    if (value) setShowRefuzValidationError(false);
+                                    if (value) {
+                                        setValidationErrors(prev => ({ ...prev, showRefuzValidationError: false }));
+                                    }
                                 }}
-                                hasError={showRefuzValidationError && !extraInfo[selectTicketId]?.motivul_refuzului} // Подсвечивается красным, если ошибка
+                                hasError={validationErrors.showRefuzValidationError && !extraInfo[selectTicketId]?.motivul_refuzului}
                             />
                             <Select
                                 options={evaluareOdihnaOptions}
