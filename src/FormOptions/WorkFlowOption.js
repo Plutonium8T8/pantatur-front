@@ -7,5 +7,6 @@ export const workflowOptions = [
     "Aprobat cu client",
     "Contract semnat",
     "Plată primită",
+    'Închis și nerealizat',
     "Contract încheiat"
 ]

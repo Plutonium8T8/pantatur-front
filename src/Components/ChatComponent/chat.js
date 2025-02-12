@@ -299,8 +299,9 @@ const ChatComponent = ({ }) => {
         "Aprobat cu client",
         "Contract semnat",
         "Plată primită",
+        'Închis și nerealizat',
         "Contract încheiat"
-    ];
+    ]
 
     // Индексы для каждого этапа
     const requiredWorkflowIndex = workflowOptions.indexOf("Luat în lucru");
@@ -315,6 +316,7 @@ const ChatComponent = ({ }) => {
     const [showContractValidationError, setShowContractValidationError] = useState(false);
     const [showPaymentValidationError, setShowPaymentValidationError] = useState(false);
     const [showFinalValidationError, setShowFinalValidationError] = useState(false); // Новый state
+    const [showRefuzValidationError, setShowRefuzValidationError] = useState(false);
 
     const updatedTicket = tickets.find(ticket => ticket.id === selectTicketId) || null;
 
@@ -361,52 +363,61 @@ const ChatComponent = ({ }) => {
 
         const isValidFinalFields =
             extraInfo[selectTicketId]?.tour_operator &&
-            extraInfo[selectTicketId]?.request_id &&
+            extraInfo[selectTicketId]?.numarul_cererii_de_la_operator &&
             extraInfo[selectTicketId]?.rezervare_confirmata &&
             extraInfo[selectTicketId]?.contract_arhivat &&
-            extraInfo[selectTicketId]?.payment_method &&
+            extraInfo[selectTicketId]?.statutul_platii &&
             extraInfo[selectTicketId]?.pret_netto &&
             extraInfo[selectTicketId]?.comission_companie;
 
-        // Валидация для `Luat în lucru`
+        const isValidRefuzField = extraInfo[selectTicketId]?.motivul_refuzului; // Проверка для "Închis și nerealizat"
+
+        // Валидация для "Luat în lucru"
         if (newIndex > currentIndex && newIndex >= requiredWorkflowIndex && !isValidExtraInfo) {
             setShowValidationError(true);
             enqueueSnackbar('Заполните Sursă lead, Promo și Marketing перед изменением workflow!', { variant: 'error' });
             return;
         }
 
-        // Валидация для `Ofertă trimisă`
+        // Валидация для "Ofertă trimisă"
         if (newIndex > currentIndex && newIndex >= requiredExtraWorkflowIndex && !isValidExtraFields) {
             setShowExtraValidationError(true);
             enqueueSnackbar('Заполните Serviciu, Țară, Transport și Excursie перед изменением workflow!', { variant: 'error' });
             return;
         }
 
-        // Валидация для `Aprobat cu client`
+        // Валидация для "Aprobat cu client"
         if (newIndex > currentIndex && newIndex >= requiredPurchaseWorkflowIndex && !isValidPurchaseField) {
             setShowPurchaseValidationError(true);
             enqueueSnackbar('Заполните Achiziție перед изменением workflow!', { variant: 'error' });
             return;
         }
 
-        // Валидация для `Contract semnat`
+        // Валидация для "Contract semnat"
         if (newIndex > currentIndex && newIndex >= requiredContractWorkflowIndex && !isValidContractFields) {
             setShowContractValidationError(true);
             enqueueSnackbar('Заполните Nr de contract, Data contractului, Contract trimis și Contract semnat перед изменением workflow!', { variant: 'error' });
             return;
         }
 
-        // Валидация для `Plată primită`
+        // Валидация для "Plată primită"
         if (newIndex > currentIndex && newIndex >= requiredPaymentWorkflowIndex && !isValidPaymentField) {
             setShowPaymentValidationError(true);
             enqueueSnackbar('Заполните Achitare efectuata перед изменением workflow!', { variant: 'error' });
             return;
         }
 
-        // Валидация для `Contract încheiat`
+        // Валидация для "Contract încheiat"
         if (newIndex > currentIndex && newIndex >= requiredFinalWorkflowIndex && !isValidFinalFields) {
             setShowFinalValidationError(true);
-            enqueueSnackbar('Заполните toate câmpurile pentru Contract încheiat!', { variant: 'error' });
+            enqueueSnackbar('Заполните toate câmpurile для Contract încheiat!', { variant: 'error' });
+            return;
+        }
+
+        // Валидация для "Închis și nerealizat"
+        if (newWorkflow === "Închis și nerealizat" && !isValidRefuzField) {
+            setShowRefuzValidationError(true);
+            enqueueSnackbar('Заполните "Motivul refuzului" перед изменением workflow!', { variant: 'error' });
             return;
         }
 
@@ -417,6 +428,7 @@ const ChatComponent = ({ }) => {
         setShowContractValidationError(false);
         setShowPaymentValidationError(false);
         setShowFinalValidationError(false);
+        setShowRefuzValidationError(false);
 
         try {
             await updateTicket({
@@ -2283,7 +2295,7 @@ const ChatComponent = ({ }) => {
                                 className={`input-field ${showFinalValidationError && !extraInfo[selectTicketId]?.comission_companie ? "invalid-field" : ""}`}
                                 placeholder="Comision companie"
                                 id="commission-input"
-                                disabled={true}
+                            // disabled={true}
                             />
                             <Input
                                 label="Statut achitare"
@@ -2449,9 +2461,11 @@ const ChatComponent = ({ }) => {
                                 label="Motivul refuzului"
                                 id="motivul_refuzului"
                                 value={extraInfo[selectTicketId]?.motivul_refuzului || ""}
-                                onChange={(value) =>
-                                    handleSelectChangeExtra(selectTicketId, 'motivul_refuzului', value)
-                                }
+                                onChange={(value) => {
+                                    handleSelectChangeExtra(selectTicketId, 'motivul_refuzului', value);
+                                    if (value) setShowRefuzValidationError(false);
+                                }}
+                                className={`input-field ${showRefuzValidationError && !extraInfo[selectTicketId]?.motivul_refuzului ? "invalid-field" : ""}`}
                             />
                             <Select
                                 options={evaluareOdihnaOptions}

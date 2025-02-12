@@ -5,8 +5,17 @@ const ContextMenu = forwardRef(({ contextMenu, onEditTicket, onClose }, ref) => 
   const language = localStorage.getItem('language') || 'RO';
 
   const handleEditClick = () => {
-    onEditTicket(contextMenu.ticket); // Вызываем редактирование тикета
-    onClose(); // Закрываем меню
+    onEditTicket(contextMenu.ticket);
+    onClose();
+  };
+
+  const handleOpenInNewTab = () => {
+    if (contextMenu.ticket?.id) {
+      const url = `/chat/${contextMenu.ticket.id}`;
+      const state = encodeURIComponent(JSON.stringify({ hideChatList: true }));
+      window.open(`${url}?state=${state}`, '_blank');
+    }
+    onClose();
   };
 
   return (
@@ -24,6 +33,7 @@ const ContextMenu = forwardRef(({ contextMenu, onEditTicket, onClose }, ref) => 
       }}
     >
       <button onClick={handleEditClick}>{translations['Editează'][language]}</button>
+      <button onClick={handleOpenInNewTab}>{translations['Deschide în noua filă'][language]}</button>
       <button onClick={onClose}>{translations['Închide'][language]}</button>
     </div>
   );

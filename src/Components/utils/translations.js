@@ -35,6 +35,10 @@ export const translations = {
         'RO': 'Plată primită',
         'RU': 'Платеж получен'
     },
+    'Închis și nerealizat': {
+        'RO': 'Închis și nerealizat',
+        'RU': 'Закрыто и не реализовано'
+    },
     'Contract încheiat': {
         'RO': 'Contract încheiat',
         'RU': 'Договор завершён'
@@ -972,6 +976,10 @@ export const translations = {
     'Control calitate': {
         'RO': "Control calitate",
         'RU': "Контроль качества"
+    },
+    'Deschide în noua filă': {
+        'RO': "Deschide în noua filă",
+        'RU': "Открыть в новой вкладке"
     },
 
 };
