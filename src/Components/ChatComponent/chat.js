@@ -298,36 +298,80 @@ const ChatComponent = ({ }) => {
         "Aprobat cu client",
         "Contract semnat",
         "Plată primită",
-        'Închis și nerealizat',
+        "Închis și nerealizat",
         "Contract încheiat"
-    ]
+    ];
 
-    // Индексы для каждого этапа
-    const requiredWorkflowIndex = workflowOptions.indexOf("Luat în lucru");
-    const requiredExtraWorkflowIndex = workflowOptions.indexOf("Ofertă trimisă");
-    const requiredPurchaseWorkflowIndex = workflowOptions.indexOf("Aprobat cu client");
-    const requiredContractWorkflowIndex = workflowOptions.indexOf("Contract semnat");
-    const requiredPaymentWorkflowIndex = workflowOptions.indexOf("Plată primită");
-    const requiredFinalWorkflowIndex = workflowOptions.indexOf("Contract încheiat"); // Новый индекс
+    // Индексы этапов
+    const workflowIndices = workflowOptions.reduce((acc, workflow, index) => {
+        acc[workflow] = index;
+        return acc;
+    }, {});
 
+    // Состояния ошибок для каждого этапа
+    const [showValidationError, setShowValidationError] = useState(false);
     const [showExtraValidationError, setShowExtraValidationError] = useState(false);
     const [showPurchaseValidationError, setShowPurchaseValidationError] = useState(false);
     const [showContractValidationError, setShowContractValidationError] = useState(false);
     const [showPaymentValidationError, setShowPaymentValidationError] = useState(false);
-    const [showFinalValidationError, setShowFinalValidationError] = useState(false); // Новый state
+    const [showFinalValidationError, setShowFinalValidationError] = useState(false);
     const [showRefuzValidationError, setShowRefuzValidationError] = useState(false);
-    const [showValidationError, setShowValidationError] = useState(false); // Фиксируем ошибку
 
     const updatedTicket = tickets.find(ticket => ticket.id === selectTicketId) || null;
+    const currentWorkflowIndex = updatedTicket ? workflowIndices[updatedTicket.workflow] : -1;
 
-    const currentWorkflowIndex = updatedTicket ? workflowOptions.indexOf(updatedTicket.workflow) : -1;
-    const isRequired = currentWorkflowIndex >= requiredWorkflowIndex;
-    const isRequiredExtra = currentWorkflowIndex >= requiredExtraWorkflowIndex;
-    const isRequiredPurchase = currentWorkflowIndex >= requiredPurchaseWorkflowIndex;
-    const isRequiredContract = currentWorkflowIndex >= requiredContractWorkflowIndex;
-    const isRequiredPayment = currentWorkflowIndex >= requiredPaymentWorkflowIndex;
-    const isRequiredFinal = currentWorkflowIndex >= requiredFinalWorkflowIndex;
+    const requiredFields = {
+        "Luat în lucru": ["sursa_lead", "promo", "marketing"],
+        "Ofertă trimisă": ["tipul_serviciului", "tara", "tip_de_transport", "denumirea_excursiei_turului"],
+        "Aprobat cu client": ["procesarea_achizitionarii"],
+        "Contract semnat": ["numar_de_contract", "data_contractului", "contract_trimis", "contract_semnat"],
+        "Plată primită": ["achitare_efectuata"],
+        "Contract încheiat": [
+            "buget", "data_plecarii", "data_intoarcerii", "tour_operator",
+            "numarul_cererii_de_la_operator", "rezervare_confirmata",
+            "contract_arhivat", "statutul_platii", "pret_netto", "comission_companie"
+        ],
+        "Închis și nerealizat": ["motivul_refuzului"]
+    };
 
+    // Функция валидации перед изменением workflow
+    const validateFields = (workflow) => {
+        const missingFields = requiredFields[workflow]?.filter(field => !extraInfo[selectTicketId]?.[field]) || [];
+
+        if (missingFields.length) {
+            switch (workflow) {
+                case "Luat în lucru":
+                    setShowValidationError(true);
+                    break;
+                case "Ofertă trimisă":
+                    setShowExtraValidationError(true);
+                    break;
+                case "Aprobat cu client":
+                    setShowPurchaseValidationError(true);
+                    break;
+                case "Contract semnat":
+                    setShowContractValidationError(true);
+                    break;
+                case "Plată primită":
+                    setShowPaymentValidationError(true);
+                    break;
+                case "Contract încheiat":
+                    setShowFinalValidationError(true);
+                    break;
+                case "Închis și nerealizat":
+                    setShowRefuzValidationError(true);
+                    break;
+                default:
+                    break;
+            }
+
+            enqueueSnackbar(`Заполните все обязательные поля для "${workflow}" перед изменением!`, { variant: 'error' });
+            return false;
+        }
+        return true;
+    };
+
+    // Функция изменения workflow с проверкой
     const handleWorkflowChange = async (event) => {
         const newWorkflow = event.target.value;
 
@@ -336,95 +380,12 @@ const ChatComponent = ({ }) => {
             return;
         }
 
-        const currentIndex = workflowOptions.indexOf(updatedTicket.workflow);
-        const newIndex = workflowOptions.indexOf(newWorkflow);
+        const currentIndex = workflowIndices[updatedTicket.workflow];
+        const newIndex = workflowIndices[newWorkflow];
 
-        // Проверяем заполненность полей
-        const isValidExtraInfo =
-            extraInfo[selectTicketId]?.sursa_lead &&
-            extraInfo[selectTicketId]?.promo &&
-            extraInfo[selectTicketId]?.marketing;
+        if (newIndex > currentIndex && !validateFields(newWorkflow)) return;
 
-        const isValidExtraFields =
-            extraInfo[selectTicketId]?.tipul_serviciului &&
-            extraInfo[selectTicketId]?.tara &&
-            extraInfo[selectTicketId]?.tip_de_transport &&
-            extraInfo[selectTicketId]?.denumirea_excursiei_turului;
-
-        const isValidPurchaseField = extraInfo[selectTicketId]?.procesarea_achizitionarii;
-
-        const isValidContractFields =
-            extraInfo[selectTicketId]?.numar_de_contract &&
-            extraInfo[selectTicketId]?.data_contractului &&
-            extraInfo[selectTicketId]?.contract_trimis &&
-            extraInfo[selectTicketId]?.contract_semnat;
-
-        const isValidPaymentField = extraInfo[selectTicketId]?.achitare_efectuata;
-
-        const isValidFinalFields =
-            extraInfo[selectTicketId]?.buget &&
-            extraInfo[selectTicketId]?.data_plecarii &&
-            extraInfo[selectTicketId]?.data_intoarcerii &&
-            extraInfo[selectTicketId]?.tour_operator &&
-            extraInfo[selectTicketId]?.numarul_cererii_de_la_operator &&
-            extraInfo[selectTicketId]?.rezervare_confirmata &&
-            extraInfo[selectTicketId]?.contract_arhivat &&
-            extraInfo[selectTicketId]?.statutul_platii &&
-            extraInfo[selectTicketId]?.pret_netto &&
-            extraInfo[selectTicketId]?.comission_companie;
-
-        const isValidRefuzField = extraInfo[selectTicketId]?.motivul_refuzului; // Проверка для "Închis și nerealizat"
-
-        // Валидация для "Luat în lucru"
-        if (newIndex > currentIndex && newIndex >= requiredWorkflowIndex && !isValidExtraInfo) {
-            setShowValidationError(true);
-            enqueueSnackbar('Заполните Sursă lead, Promo și Marketing перед изменением workflow!', { variant: 'error' });
-            return;
-        }
-
-        // Валидация для "Ofertă trimisă"
-        if (newIndex > currentIndex && newIndex >= requiredExtraWorkflowIndex && !isValidExtraFields) {
-            setShowExtraValidationError(true);
-            enqueueSnackbar('Заполните Serviciu, Țară, Transport și Excursie перед изменением workflow!', { variant: 'error' });
-            return;
-        }
-
-        // Валидация для "Aprobat cu client"
-        if (newIndex > currentIndex && newIndex >= requiredPurchaseWorkflowIndex && !isValidPurchaseField) {
-            setShowPurchaseValidationError(true);
-            enqueueSnackbar('Заполните Achiziție перед изменением workflow!', { variant: 'error' });
-            return;
-        }
-
-        // Валидация для "Contract semnat"
-        if (newIndex > currentIndex && newIndex >= requiredContractWorkflowIndex && !isValidContractFields) {
-            setShowContractValidationError(true);
-            enqueueSnackbar('Заполните Nr de contract, Data contractului, Contract trimis și Contract semnat перед изменением workflow!', { variant: 'error' });
-            return;
-        }
-
-        // Валидация для "Plată primită"
-        if (newIndex > currentIndex && newIndex >= requiredPaymentWorkflowIndex && !isValidPaymentField) {
-            setShowPaymentValidationError(true);
-            enqueueSnackbar('Заполните Achitare efectuata перед изменением workflow!', { variant: 'error' });
-            return;
-        }
-
-        // Валидация для "Contract încheiat"
-        if (newIndex > currentIndex && newIndex >= requiredFinalWorkflowIndex && !isValidFinalFields) {
-            setShowFinalValidationError(true);
-            enqueueSnackbar('Заполните toate câmpurile для Contract încheiat!', { variant: 'error' });
-            return;
-        }
-
-        // Валидация для "Închis și nerealizat"
-        if (newWorkflow === "Închis și nerealizat" && !isValidRefuzField) {
-            setShowRefuzValidationError(true);
-            enqueueSnackbar('Заполните "Motivul refuzului" перед изменением workflow!', { variant: 'error' });
-            return;
-        }
-
-        // Сбрасываем ошибки, если все в порядке
+        // Сбрасываем ошибки
         setShowValidationError(false);
         setShowExtraValidationError(false);
         setShowPurchaseValidationError(false);
@@ -434,18 +395,13 @@ const ChatComponent = ({ }) => {
         setShowRefuzValidationError(false);
 
         try {
-            await updateTicket({
-                id: updatedTicket.id,
-                workflow: newWorkflow,
-            });
+            await updateTicket({ id: updatedTicket.id, workflow: newWorkflow });
 
             enqueueSnackbar('Статус тикета обновлен!', { variant: 'success' });
 
-            setTickets((prevTickets) =>
+            setTickets(prevTickets =>
                 prevTickets.map(ticket =>
-                    ticket.id === updatedTicket.id
-                        ? { ...ticket, workflow: newWorkflow }
-                        : ticket
+                    ticket.id === updatedTicket.id ? { ...ticket, workflow: newWorkflow } : ticket
                 )
             );
 
@@ -1301,6 +1257,8 @@ const ChatComponent = ({ }) => {
             markMessagesAsRead(selectTicketId);
         }
     }, [messages, selectTicketId, markMessagesAsRead, userId]);
+
+    // console.log("Validation errors:", validationErrors);
 
     return (
         <div className="chat-container">
