@@ -353,7 +353,7 @@ const ChatComponent = ({ }) => {
 
         const isValidContractFields =
             extraInfo[selectTicketId]?.numar_de_contract &&
-            extraInfo[selectTicketId]?.contract_date &&
+            extraInfo[selectTicketId]?.data_contractului &&
             extraInfo[selectTicketId]?.contract_trimis &&
             extraInfo[selectTicketId]?.contract_semnat;
 
