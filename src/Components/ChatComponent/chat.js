@@ -1984,7 +1984,7 @@ const ChatComponent = ({ }) => {
                                         className="input-field"
                                         placeholder="Prenume"
                                     />
-                                    <Input
+                                    {/* <Input
                                         label="Data nașterii"
                                         type="date"
                                         value={personalInfo[selectedClient]?.date_of_birth ?? ""}
@@ -2031,7 +2031,7 @@ const ChatComponent = ({ }) => {
                                         }
                                         className="input-field"
                                         placeholder="IDNP"
-                                    />
+                                    /> */}
                                     <Input
                                         label="Adresă"
                                         type="text"
@@ -2395,52 +2395,52 @@ const ChatComponent = ({ }) => {
                     )}
                     {activeTab === 'Media' && selectTicketId && (
                         <div className="extra-info-content">
-                        {messages
-                            .filter((msg) => ['audio', 'video', 'image', 'file'].includes(msg.mtype) && msg.ticket_id === selectTicketId)
-                            .map((msg, index) => (
-                                <div key={index} className="media-container">
-                                    {/* Display Sent Time */}
-                                    <div className="sent-time">
-                                        {new Date(msg.time_sent).toLocaleString()}
+                            {messages
+                                .filter((msg) => ['audio', 'video', 'image', 'file'].includes(msg.mtype) && msg.ticket_id === selectTicketId)
+                                .map((msg, index) => (
+                                    <div key={index} className="media-container">
+                                        {/* Display Sent Time */}
+                                        <div className="sent-time">
+                                            {new Date(msg.time_sent).toLocaleString()}
+                                        </div>
+
+                                        {/* Display Media */}
+                                        {msg.mtype === "image" ? (
+                                            <img
+                                                src={msg.message}
+                                                alt="Изображение"
+                                                className="image-preview-in-chat"
+                                                onError={(e) => {
+                                                    e.target.src = "https://via.placeholder.com/300?text=Ошибка+загрузки";
+                                                }}
+                                                onClick={() => {
+                                                    window.open(msg.message, "_blank");
+                                                }}
+                                            />
+                                        ) : msg.mtype === "video" ? (
+                                            <video controls className="video-preview">
+                                                <source src={msg.message} type="video/mp4" />
+                                                {translations["Acest browser nu suporta video"][language]}
+                                            </video>
+                                        ) : msg.mtype === "audio" ? (
+                                            <audio controls className="audio-preview">
+                                                <source src={msg.message} type="audio/ogg" />
+                                                {translations["Acest browser nu suporta audio"][language]}
+                                            </audio>
+                                        ) : msg.mtype === "file" ? (
+                                            <a
+                                                href={msg.message}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="file-link"
+                                            >
+                                                {translations["Deschide file"][language]}
+                                            </a>
+                                        ) : null}
                                     </div>
-                    
-                                    {/* Display Media */}
-                                    {msg.mtype === "image" ? (
-                                        <img
-                                            src={msg.message}
-                                            alt="Изображение"
-                                            className="image-preview-in-chat"
-                                            onError={(e) => {
-                                                e.target.src = "https://via.placeholder.com/300?text=Ошибка+загрузки";
-                                            }}
-                                            onClick={() => {
-                                                window.open(msg.message, "_blank");
-                                            }}
-                                        />
-                                    ) : msg.mtype === "video" ? (
-                                        <video controls className="video-preview">
-                                            <source src={msg.message} type="video/mp4" />
-                                            {translations["Acest browser nu suporta video"][language]}
-                                        </video>
-                                    ) : msg.mtype === "audio" ? (
-                                        <audio controls className="audio-preview">
-                                            <source src={msg.message} type="audio/ogg" />
-                                            {translations["Acest browser nu suporta audio"][language]}
-                                        </audio>
-                                    ) : msg.mtype === "file" ? (
-                                        <a
-                                            href={msg.message}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="file-link"
-                                        >
-                                            {translations["Deschide file"][language]}
-                                        </a>
-                                    ) : null}
-                                </div>
-                            ))}
-                    </div>
-                    
+                                ))}
+                        </div>
+
                     )}
                     {activeTab === 'Control calitate' && selectTicketId && (
                         <div className="extra-info-content">
