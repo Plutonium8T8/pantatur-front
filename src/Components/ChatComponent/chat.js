@@ -674,6 +674,18 @@ const ChatComponent = ({ }) => {
         }
     };
 
+    const handleSelectTemplateChange = (event) => {
+        const selectedKey = event.target.value;
+        
+        if (selectedKey) {
+            setSelectedMessage(selectedKey);
+            setManagerMessage(templateOptions[selectedKey]); // Set actual message text
+        } else {
+            setSelectedMessage(null);
+            setManagerMessage("");
+        }
+    };    
+
     // Обработчик выбора файла
     const handleFileSelect = async (e) => {
         const selectedFile = e.target.files[0];
@@ -1673,15 +1685,24 @@ const ChatComponent = ({ }) => {
                             </button>
                         </div>
                         <div className="select-row">
-                            <Select
-                                options={templateOptions}
-                                id="message-template"
-                                label=""
-                                value={selectedMessage ?? undefined}
-                                onChange={handleSelectTChange}
-                                placeholder="Introduceți mesaj"
-                                customClassName="custom-select-1"
-                            />
+                            <div className="input-group">
+                                <label htmlFor="message-template"></label>
+                                <select
+                                    id="message-template"
+                                    className="task-select"
+                                    value={selectedMessage ?? ""}
+                                    onChange={handleSelectTemplateChange}
+                                >
+                                    <option value="">{translations["Introduceți mesaj"]?.[language] ?? translations[""]?.[language]}</option>
+
+                                    {Object.entries(templateOptions).map(([key, value]) => (
+                                        <option key={key} value={key}>
+                                            {translations[key]?.[language] ?? key}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
                         </div>
 
                         {tickets && tickets.find(ticket => ticket.id === selectTicketId)?.client_id && (
