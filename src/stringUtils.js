@@ -6,7 +6,7 @@
  */
 export const truncateText = (text, maxLength = 100) => {
     if (!text || typeof text !== 'string') {
-      console.warn('truncateText: Invalid input', text);
+      // console.warn('truncateText: Invalid input', text);
       return 'N/A';
     }
     return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
