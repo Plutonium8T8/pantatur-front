@@ -676,7 +676,7 @@ const ChatComponent = ({ }) => {
 
     const handleSelectTemplateChange = (event) => {
         const selectedKey = event.target.value;
-        
+
         if (selectedKey) {
             setSelectedMessage(selectedKey);
             setManagerMessage(templateOptions[selectedKey]); // Set actual message text
@@ -684,7 +684,7 @@ const ChatComponent = ({ }) => {
             setSelectedMessage(null);
             setManagerMessage("");
         }
-    };    
+    };
 
     // Обработчик выбора файла
     const handleFileSelect = async (e) => {
@@ -1311,6 +1311,16 @@ const ChatComponent = ({ }) => {
     }, [messages, selectTicketId, markMessagesAsRead, userId]);
 
     // console.log("Validation errors:", validationErrors);
+
+    useEffect(() => {
+        const pretNetto = extraInfo[selectTicketId]?.pret_netto;
+        const buget = extraInfo[selectTicketId]?.buget;
+
+        if (pretNetto !== "" && buget !== "" && pretNetto !== undefined && buget !== undefined) {
+            const newComision = parseFloat(buget) - parseFloat(pretNetto);
+            handleFieldChange("comission_companie", newComision.toFixed(2)); // Автообновление
+        }
+    }, [extraInfo[selectTicketId]?.pret_netto, extraInfo[selectTicketId]?.buget, selectTicketId]);
 
     return (
         <div className="chat-container">
@@ -2260,12 +2270,13 @@ const ChatComponent = ({ }) => {
                                 className={`input-field ${fieldErrors.comission_companie ? "invalid-field" : ""}`}
                                 placeholder="Comision companie"
                                 id="commission-input"
+                                disabled={true}
                             />
                             <Input
                                 label="Statut achitare"
-                                value={extraInfo[selectTicketId]?.comission_companie || ""}
+                                value={extraInfo[selectTicketId]?.restant_client || ""}
                                 onChange={(e) =>
-                                    handleSelectChangeExtra(selectTicketId, 'comission_companie', e.target.value)
+                                    handleSelectChangeExtra(selectTicketId, 'restant_client', e.target.value)
                                 }
                                 className="input-field"
                                 placeholder="Statut achitare"
