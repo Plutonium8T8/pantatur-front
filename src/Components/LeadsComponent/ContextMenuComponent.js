@@ -22,9 +22,9 @@ const ContextMenu = forwardRef(({ contextMenu, onEditTicket, onClose }, ref) => 
     <div
       ref={ref}
       style={{
-        position: 'absolute',
-        top: contextMenu.mouseY,
-        left: contextMenu.mouseX,
+        position: 'fixed', // используем fixed, чтобы меню не сдвигалось при скролле
+        top: Math.min(contextMenu.mouseY, window.innerHeight - 100), // ограничиваем выход за границы
+        left: Math.min(contextMenu.mouseX, window.innerWidth - 150),
         backgroundColor: 'white',
         boxShadow: '0 2px 5px rgba(0,0,0,0.15)',
         zIndex: 1000,
