@@ -378,10 +378,21 @@ const ChatComponent = ({ }) => {
         const currentIndex = workflowIndices[updatedTicket.workflow];
         const newIndex = workflowIndices[newWorkflow];
 
-        if (newIndex > currentIndex && !validateFields(newWorkflow)) return;
+        // Если выбран "Închis și nerealizat", но "motivul_refuzului" не заполнено, показываем ошибку и не меняем workflow
+        if (newWorkflow === "Închis și nerealizat") {
+            if (!extraInfo[selectTicketId]?.motivul_refuzului) {
+                setFieldErrors({ motivul_refuzului: true });
+                enqueueSnackbar(`Completați "Motivul refuzului" înainte de a face modificări!`, { variant: 'error' });
+                return;
+            }
+            // Если поле заполнено, сбрасываем все остальные ошибки
+            setFieldErrors({});
+        } else {
+            if (newIndex > currentIndex && !validateFields(newWorkflow)) return;
 
-        // Сбрасываем ошибки
-        setFieldErrors({});
+            // Сбрасываем все ошибки, если валидация прошла успешно
+            setFieldErrors({});
+        }
 
         try {
             await updateTicket({ id: updatedTicket.id, workflow: newWorkflow });
