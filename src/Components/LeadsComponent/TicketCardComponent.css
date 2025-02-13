@@ -1,3 +1,12 @@
+.ticket-link {
+    text-decoration: none;
+    /* Убираем подчеркивание */
+    color: inherit;
+    /* Оставляем цвет текста как у обычного блока */
+    display: block;
+    /* Делаем ссылку блочным элементом */
+}
+
 .ticket {
     display: flex;
     flex-direction: column;
@@ -43,13 +52,16 @@
     border-top: 3px solid #1f29371e;
 }
 
-.ticket-column, .ticket-column-2 {
+.ticket-column,
+.ticket-column-2 {
     display: flex;
     flex-direction: column;
     gap: 8px;
     /* flex-grow: 1; */
-    justify-content: space-between; /* Distributes items evenly throughout the height */
-    align-items: flex-start; /* Ensures items align to the left */
+    justify-content: space-between;
+    /* Distributes items evenly throughout the height */
+    align-items: flex-start;
+    /* Ensures items align to the left */
     height: 82px
 }
 
@@ -62,6 +74,7 @@
     width: 20%;
     /* Ensure text aligns under the photo */
 }
+
 .ticket-column-2 {
     width: 50%;
 }
@@ -112,10 +125,14 @@
 
 .ticket-tags {
     display: flex;
-    flex-wrap: wrap; /* Allows wrapping of elements */
-    gap: 8px; /* Space between elements */
-    justify-content: center; /* Horizontally center elements */
-    align-items: center; /* Vertically center elements */
+    flex-wrap: wrap;
+    /* Allows wrapping of elements */
+    gap: 8px;
+    /* Space between elements */
+    justify-content: center;
+    /* Horizontally center elements */
+    align-items: center;
+    /* Vertically center elements */
 }
 
 
