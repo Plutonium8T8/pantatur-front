@@ -1,8 +1,22 @@
-import React, { forwardRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { translations } from "../utils/translations";
 
-const ContextMenu = forwardRef(({ contextMenu, onEditTicket, onClose }, ref) => {
+const ContextMenu = ({ contextMenu, onEditTicket, onClose }) => {
   const language = localStorage.getItem('language') || 'RO';
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        onClose();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [onClose]);
 
   const handleEditClick = () => {
     onEditTicket(contextMenu.ticket);
@@ -20,10 +34,10 @@ const ContextMenu = forwardRef(({ contextMenu, onEditTicket, onClose }, ref) => 
 
   return (
     <div
-      ref={ref}
+      ref={menuRef}
       style={{
-        position: 'fixed', // используем fixed, чтобы меню не сдвигалось при скролле
-        top: Math.min(contextMenu.mouseY, window.innerHeight - 100), // ограничиваем выход за границы
+        position: 'fixed',
+        top: Math.min(contextMenu.mouseY, window.innerHeight - 100),
         left: Math.min(contextMenu.mouseX, window.innerWidth - 150),
         backgroundColor: 'white',
         boxShadow: '0 2px 5px rgba(0,0,0,0.15)',
@@ -37,6 +51,6 @@ const ContextMenu = forwardRef(({ contextMenu, onEditTicket, onClose }, ref) => 
       <button onClick={onClose}>{translations['Închide'][language]}</button>
     </div>
   );
-});
+};
 
 export default ContextMenu;
