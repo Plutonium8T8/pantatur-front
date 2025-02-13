@@ -439,6 +439,18 @@ const ChatComponent = ({ }) => {
         // Сбрасываем ошибки при выборе нового тикета
         setFieldErrors({});
     }, [selectTicketId]); // Запуск при изменении `selectTicketId`
+
+    const getTabErrorIndicator = (tab) => {
+        const tabFields = {
+            extraForm: ["buget", "data_plecarii", "data_intoarcerii", "sursa_lead", "promo", "marketing"],
+            Contract: ["numar_de_contract", "data_contractului", "contract_trimis", "contract_semnat", "tour_operator", "numarul_cererii_de_la_operator"],
+            Invoice: ["statutul_platii", "pret_netto", "comission_companie"],
+            Media: [],
+            "Control calitate": ["motivul_refuzului"]
+        };
+
+        return tabFields[tab]?.some(field => fieldErrors[field]) ? "🔴" : "";
+    };
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Закрытие меню при клике вне его области
@@ -1724,13 +1736,13 @@ const ChatComponent = ({ }) => {
                                 className={`tab-button ${activeTab === 'extraForm' ? 'active' : ''}`}
                                 onClick={() => setActiveTab('extraForm')}
                             >
-                                {translations["Informații suplimentare"]?.[language]}
+                                {translations["Informații suplimentare"]?.[language]} {getTabErrorIndicator('extraForm')}
                             </button>
                             <button
                                 className={`tab-button ${activeTab === 'Contract' ? 'active' : ''}`}
                                 onClick={() => setActiveTab('Contract')}
                             >
-                                {translations["Contract"]?.[language]}
+                                {translations["Contract"]?.[language]} {getTabErrorIndicator('Contract')}
                             </button>
                             <button
                                 className={`tab-button ${activeTab === 'Invoice' ? 'active' : ''}`}
@@ -1748,7 +1760,7 @@ const ChatComponent = ({ }) => {
                                 className={`tab-button ${activeTab === 'Control calitate' ? 'active' : ''}`}
                                 onClick={() => setActiveTab('Control calitate')}
                             >
-                                {translations["Control calitate"]?.[language]}
+                                {translations["Control calitate"]?.[language]} {getTabErrorIndicator('Control calitate')}
                             </button>
                         </div>
 
