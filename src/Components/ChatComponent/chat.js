@@ -1828,7 +1828,7 @@ const ChatComponent = ({ }) => {
                                     />
                                 )}
                                 <Input
-                                    label="Vânzare"
+                                    label="Vânzare €"
                                     type="number"
                                     value={extraInfo[selectTicketId]?.buget || ""}
                                     onChange={(e) => handleFieldChange("buget", e.target.value)}
@@ -2207,7 +2207,7 @@ const ChatComponent = ({ }) => {
                                 hasError={fieldErrors.statutul_platii}
                             />
                             <Input
-                                label="Avans euro"
+                                label="Avans euro €"
                                 value={extraInfo[selectTicketId]?.avans_euro || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'avans_euro', e.target.value)
@@ -2235,7 +2235,7 @@ const ChatComponent = ({ }) => {
                                 className="input-field"
                             />
                             <Input
-                                label="Preț NETTO"
+                                label="Preț NETTO €"
                                 value={extraInfo[selectTicketId]?.pret_netto || ""}
                                 onChange={(e) => handleFieldChange("pret_netto", e.target.value)}
                                 className={`input-field ${fieldErrors.pret_netto ? "invalid-field" : ""}`}
@@ -2264,7 +2264,7 @@ const ChatComponent = ({ }) => {
                                 disabled={true}
                             />
                             <Input
-                                label="Comision companie"
+                                label="Comision companie €"
                                 value={extraInfo[selectTicketId]?.comission_companie || ""}
                                 onChange={(e) => handleFieldChange("comission_companie", e.target.value)}
                                 className={`input-field ${fieldErrors.comission_companie ? "invalid-field" : ""}`}

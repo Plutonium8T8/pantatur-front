@@ -45,3 +45,23 @@
   border-color: #dc3545;
   box-shadow: 0 0 4px rgba(220, 53, 69, 0.5);
 }
+
+.input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.currency-symbol {
+  position: absolute;
+  left: 10px;
+  /* Расположение значка внутри поля */
+  color: #666;
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.currency-input {
+  padding-left: 25px;
+  /* Отступ, чтобы текст не перекрывал значок € */
+}
