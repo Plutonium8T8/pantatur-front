@@ -378,20 +378,35 @@ const ChatComponent = ({ }) => {
         const currentIndex = workflowIndices[updatedTicket.workflow];
         const newIndex = workflowIndices[newWorkflow];
 
-        // Если выбран "Închis și nerealizat", но "motivul_refuzului" не заполнено, показываем ошибку и не меняем workflow
-        if (newWorkflow === "Închis și nerealizat") {
-            if (!extraInfo[selectTicketId]?.motivul_refuzului) {
-                setFieldErrors({ motivul_refuzului: true });
-                enqueueSnackbar(`Completați "Motivul refuzului" înainte de a face modificări!`, { variant: 'error' });
-                return;
-            }
-            // Если поле заполнено, сбрасываем все остальные ошибки
-            setFieldErrors({});
-        } else {
-            if (newIndex > currentIndex && !validateFields(newWorkflow)) return;
+        // Сбрасываем ошибки, которые не относятся к текущему и предыдущим этапам
+        const workflowIndex = workflowIndices[newWorkflow];
+        let newFieldErrors = {};
 
-            // Сбрасываем все ошибки, если валидация прошла успешно
-            setFieldErrors({});
+        for (const [step, fields] of Object.entries(requiredFields)) {
+            if (workflowIndices[step] <= workflowIndex) {
+                // Проверяем, какие поля отсутствуют и обновляем состояние ошибок
+                fields.forEach(field => {
+                    if (!extraInfo[selectTicketId]?.[field]) {
+                        newFieldErrors[field] = true;
+                    }
+                });
+            }
+        }
+
+        // Если выбран "Închis și nerealizat", оставляем только ошибку "motivul_refuzului"
+        if (newWorkflow === "Închis și nerealizat") {
+            newFieldErrors = {};
+            if (!extraInfo[selectTicketId]?.motivul_refuzului) {
+                newFieldErrors.motivul_refuzului = true;
+            }
+        }
+
+        setFieldErrors(newFieldErrors);
+
+        // Если есть ошибки, не обновляем workflow
+        if (Object.keys(newFieldErrors).length > 0) {
+            enqueueSnackbar(`Completați toate câmpurile obligatorii pentru "${newWorkflow}" și etapele anterioare înainte de a face modificări!`, { variant: 'error' });
+            return;
         }
 
         try {
