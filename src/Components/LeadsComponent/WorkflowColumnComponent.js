@@ -29,12 +29,18 @@ const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket, onContext
 
     const filteredTickets = tickets
         .filter((ticket) => ticket.workflow === workflow)
-        .filter((ticket) =>
-            ticket.contact?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            ticket.id?.toString().includes(searchTerm) ||
-            parseTags(ticket.tags).some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase())) ||
-            searchTerm.trim() === ''
-        ).sort((a, b) => {
+        .filter((ticket) => {
+            const ticketPhone = ticket.phone ? ticket.phone.replace(/[{}]/g, "").trim() : ""; // Удаляем `{}` и пробелы
+
+            return (
+                ticket.contact?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                ticket.id?.toString().includes(searchTerm) ||
+                parseTags(ticket.tags).some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                ticketPhone.includes(searchTerm) || // ✅ Добавлен фильтр по телефону
+                searchTerm.trim() === ''
+            );
+        })
+        .sort((a, b) => {
             const priorityDiff = (priorityOrder[b.priority] || 5) - (priorityOrder[a.priority] || 5);
             if (priorityDiff !== 0) return priorityDiff;
 
