@@ -4,7 +4,6 @@ import { priorityOptions } from '../../FormOptions/PriorityOption';
 import { workflowOptions } from '../../FormOptions/WorkFlowOption';
 import SpinnerOverlay from './SpinnerOverlayComponent';
 import WorkflowColumn from './WorkflowColumnComponent';
-import ContextMenu from './ContextMenuComponent';
 import TicketModal from './TicketModal/TicketModalComponent';
 import TicketFilterModal from './TicketFilterModal'; // Добавляем фильтр
 import Cookies from 'js-cookie';
@@ -18,7 +17,6 @@ const Leads = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentTicket, setCurrentTicket] = useState(null);
-  const [contextMenu, setContextMenu] = useState(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false); // Состояние для фильтра
   const language = localStorage.getItem('language') || 'RO';
 
@@ -33,7 +31,6 @@ const Leads = () => {
     platform: '',
   });
 
-  const contextMenuRef = useRef(null);
 
   // Фильтрация тикетов по параметрам
   const filteredTickets = useMemo(() => {
@@ -128,18 +125,6 @@ const Leads = () => {
     setIsModalOpen(false);
   };
 
-  const handleContextMenu = (event, ticket) => {
-    if (!ticket) return;
-    event.preventDefault();
-    setContextMenu({
-      mouseX: event.clientX - 2,
-      mouseY: event.clientY - 4,
-      ticket,
-    });
-  };
-
-  const handleCloseContextMenu = () => setContextMenu(null);
-
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
@@ -171,23 +156,11 @@ const Leads = () => {
               setCurrentTicket(ticket);
               setIsModalOpen(true);
             }}
-            onContextMenu={handleContextMenu}
             onUpdateWorkflow={updateWorkflow}
           />
         ))}
       </div>
       {isLoading && <SpinnerOverlay />}
-      {contextMenu && (
-        <ContextMenu
-          contextMenu={contextMenu}
-          onClose={handleCloseContextMenu}
-          onEditTicket={(ticket) => {
-            setCurrentTicket(ticket);
-            setIsModalOpen(true);
-          }}
-          ref={contextMenuRef}
-        />
-      )}
       {isModalOpen && currentTicket && (
         <TicketModal
           ticket={currentTicket}

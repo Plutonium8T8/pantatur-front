@@ -3,7 +3,7 @@ import TicketCard from './TicketCardComponent';
 import { workflowStyles, workflowBrightStyles } from '../utils/workflowStyles';
 import { translations } from "../utils/translations";
 
-const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket, onContextMenu, onUpdateWorkflow }) => {
+const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket, onUpdateWorkflow }) => {
     const language = localStorage.getItem('language') || 'RO';
 
     const parseTags = (tags) => {
@@ -95,7 +95,6 @@ const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket, onContext
                     <TicketCard
                         key={ticket.id}
                         ticket={ticket}
-                        onContextMenu={onContextMenu}
                         onEditTicket={onEditTicket}
                     />
                 ))}
