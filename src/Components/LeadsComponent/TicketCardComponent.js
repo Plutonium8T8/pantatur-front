@@ -9,6 +9,11 @@ const TicketCard = ({ ticket, onContextMenu, onEditTicket }) => {
     const tags = parseTags(ticket.tags);
     const navigate = useNavigate();
 
+    // Удаляем `{}` из номера телефона
+    const formattedPhone = ticket.phone && ticket.phone.trim() !== "" && ticket.phone.replace(/[{}]/g, "").trim().toLowerCase() !== "null"
+        ? ticket.phone.replace(/[{}]/g, "").trim()
+        : "Unknown number";
+
     const handleDragStart = (e, ticketId) => {
         e.dataTransfer.setData('ticketId', ticketId);
     };
@@ -17,7 +22,6 @@ const TicketCard = ({ ticket, onContextMenu, onEditTicket }) => {
         setCurrentTicket(ticket);
         navigate(`/chat/${ticket.id}`, { state: { hideChatList: true } });
     };
-    
 
     return (
         <div
@@ -28,9 +32,7 @@ const TicketCard = ({ ticket, onContextMenu, onEditTicket }) => {
             onDragStart={(e) => handleDragStart(e, ticket.id)}
         >
             <div className="tickets-descriptions">
-                <div className="ticket-ribbon" style={{ backgroundColor: getPriorityColor(ticket.priority) }}>
-
-                </div>
+                <div className="ticket-ribbon" style={{ backgroundColor: getPriorityColor(ticket.priority) }}></div>
                 <div className="ticket-body">
                     <div className="ticket-column">
                         <div className="ticket-photo">
@@ -44,6 +46,9 @@ const TicketCard = ({ ticket, onContextMenu, onEditTicket }) => {
                     <div className="ticket-column-2">
                         <div className="ticket-contact">
                             {ticket.contact || 'Unknown Contact'}
+                        </div>
+                        <div className="ticket-contact">
+                            Phone: {formattedPhone}
                         </div>
                         <div className="ticket-tags">
                             {tags.map((tag, index) => (
@@ -66,7 +71,6 @@ const TicketCard = ({ ticket, onContextMenu, onEditTicket }) => {
                         >
                             {ticket.last_interaction_date}
                         </div>
-
                         <div className="ticket-id">
                             #{ticket.id}
                         </div>
