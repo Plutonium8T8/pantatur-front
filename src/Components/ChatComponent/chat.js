@@ -199,59 +199,6 @@ const ChatComponent = ({ }) => {
         }
     };
 
-    // // изминения значения workflow из экстра формы
-    // const handleWorkflowChange = async (event) => {
-    //     const newWorkflow = event.target.value;
-
-    //     if (!selectTicketId) {
-    //         console.warn('Тикет не выбран.');
-    //         enqueueSnackbar('Ошибка: Тикет не выбран.', { variant: 'error' });
-    //         return;
-    //     }
-
-    //     // Находим тикет
-    //     const updatedTicket = Array.isArray(tickets)
-    //         ? tickets.find(ticket => ticket.id === selectTicketId)
-    //         : null;
-
-    //     if (!updatedTicket) {
-    //         console.error('Ticket not found or tickets is not an array:', tickets);
-    //         enqueueSnackbar('Ошибка: Тикет не найден.', { variant: 'error' });
-    //         return;
-    //     }
-
-    //     try {
-    //         // Используем функцию updateTicket из AppContext
-    //         await updateTicket({
-    //             id: updatedTicket.id,
-    //             workflow: newWorkflow,
-    //         });
-
-    //         enqueueSnackbar('Статус тикета обновлен!', { variant: 'success' });
-
-    //         // Локально обновляем состояние тикетов
-    //         setTickets((prevTickets) =>
-    //             Array.isArray(prevTickets)
-    //                 ? prevTickets.map(ticket =>
-    //                     ticket.id === updatedTicket.id
-    //                         ? { ...ticket, workflow: newWorkflow }
-    //                         : ticket
-    //                 )
-    //                 : prevTickets
-    //         );
-
-    //         console.log("Workflow обновлен:", newWorkflow);
-    //     } catch (error) {
-    //         enqueueSnackbar('Ошибка: Статус тикета не обновлен.', { variant: 'error' });
-    //         console.error('Ошибка при обновлении workflow:', error.message);
-    //     }
-    // };
-
-    // // Определяем выбранный тикет
-    // const updatedTicket = Array.isArray(tickets) && selectTicketId
-    //     ? tickets.find(ticket => ticket.id === selectTicketId)
-    //     : null;
-
     const scrollToBottom = () => {
         if (messageContainerRef.current) {
             messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
@@ -476,23 +423,6 @@ const ChatComponent = ({ }) => {
     const handleMenuToggle = (msgId) => {
         setMenuMessageId(menuMessageId === msgId ? null : msgId);
     };
-
-    // const handleDelete = (msgId) => {
-    //     setMenuMessageId(null);
-    //     if (socket && socket.readyState === WebSocket.OPEN) {
-    //         socket.send(
-    //             JSON.stringify({
-    //                 type: 'delete',
-    //                 data: {
-    //                     message_id: msgId,
-    //                     client_id: userId,
-    //                 },
-    //             })
-    //         );
-    //     } else {
-    //         alert('Соединение с WebSocket отсутствует');
-    //     }
-    // };
 
     const handleEdit = (msg) => {
         setMenuMessageId(null);
@@ -1285,11 +1215,34 @@ const ChatComponent = ({ }) => {
     }, [tickets, messages, appliedFilters, showMyTickets, searchQuery, selectTicketId, userId]);
 
 
+    // useEffect(() => {
+    //     if (location.state?.hideChatList) {
+    //         setIsChatListVisible(false);
+    //     }
+    // }, [location.state]);
+
     useEffect(() => {
+        // 1. Проверяем, есть ли `state` в `location`
         if (location.state?.hideChatList) {
             setIsChatListVisible(false);
+            return;
         }
-    }, [location.state]);
+
+        // 2. Если нет `location.state`, пробуем взять `state` из URL
+        const params = new URLSearchParams(location.search);
+        const stateParam = params.get('state');
+
+        if (stateParam) {
+            try {
+                const parsedState = JSON.parse(decodeURIComponent(stateParam));
+                if (parsedState.hideChatList) {
+                    setIsChatListVisible(false);
+                }
+            } catch (error) {
+                console.error("Ошибка парсинга state:", error);
+            }
+        }
+    }, [location]);
 
     useEffect(() => {
         // Пересчитываем фильтрованные тикеты, когда приходят новые сообщения

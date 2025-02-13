@@ -25,9 +25,9 @@ const ContextMenu = ({ contextMenu, onEditTicket, onClose }) => {
 
   const handleOpenInNewTab = () => {
     if (contextMenu.ticket?.id) {
-      const url = `/chat/${contextMenu.ticket.id}`;
       const state = encodeURIComponent(JSON.stringify({ hideChatList: true }));
-      window.open(`${url}?state=${state}`, '_blank');
+      const url = `/chat/${contextMenu.ticket.id}?state=${state}`;
+      window.open(url, '_blank');
     }
     onClose();
   };
