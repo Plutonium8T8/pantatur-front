@@ -31,11 +31,7 @@ const TicketCard = ({ ticket, onEditTicket }) => {
                 state={{ hideChatList: true }}
                 className="ticket-link"
             >
-                <div
-                    className="ticket"
-                    draggable
-                    onDragStart={(e) => e.dataTransfer.setData('ticketId', ticket.id)}
-                >
+                <div className="ticket">
                     <div className="tickets-descriptions">
                         <div className="ticket-ribbon" style={{ backgroundColor: getPriorityColor(ticket.priority) }}></div>
                         <div className="ticket-body">

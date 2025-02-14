@@ -3,7 +3,7 @@ import TicketCard from './TicketCardComponent';
 import { workflowStyles, workflowBrightStyles } from '../utils/workflowStyles';
 import { translations } from "../utils/translations";
 
-const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket, onUpdateWorkflow }) => {
+const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket }) => {
     const language = localStorage.getItem('language') || 'RO';
 
     const parseTags = (tags) => {
@@ -30,13 +30,13 @@ const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket, onUpdateW
     const filteredTickets = tickets
         .filter((ticket) => ticket.workflow === workflow)
         .filter((ticket) => {
-            const ticketPhone = ticket.phone ? ticket.phone.replace(/[{}]/g, "").trim() : ""; // Удаляем `{}` и пробелы
+            const ticketPhone = ticket.phone ? ticket.phone.replace(/[{}]/g, "").trim() : "";
 
             return (
                 ticket.contact?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 ticket.id?.toString().includes(searchTerm) ||
                 parseTags(ticket.tags).some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase())) ||
-                ticketPhone.includes(searchTerm) || // ✅ Добавлен фильтр по телефону
+                ticketPhone.includes(searchTerm) ||
                 searchTerm.trim() === ''
             );
         })
@@ -54,22 +54,9 @@ const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket, onUpdateW
             return dateB - dateA;
         });
 
-    const handleDrop = (e) => {
-        e.preventDefault();
-        const ticketId = e.dataTransfer.getData('ticketId');
-        console.log('Dropped ticketId:', ticketId);
-
-        if (ticketId) {
-            // Вызываем onUpdateWorkflow, чтобы передать ticketId и новое значение workflow
-            onUpdateWorkflow(ticketId, workflow);
-        }
-    };
-
     return (
         <div
             className="colone-ticket"
-            onDrop={handleDrop}
-            onDragOver={(e) => e.preventDefault()}
             style={{
                 backgroundColor: workflowStyles[workflow]?.backgroundColor || '',
             }}
