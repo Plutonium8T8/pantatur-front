@@ -59,12 +59,14 @@
     z-index: 100;
 }
 
-.search-input {
-    width: 100%;
+.search-input-multi {
+    width: calc(100% - 20px);
     padding: 8px;
     border: none;
     border-bottom: 1px solid #ccc;
     outline: none;
+    border-radius: 8px;
+    font-size: 16px;
 }
 
 .options-list {

@@ -68,7 +68,7 @@ const CustomMultiSelect = ({ options, placeholder = "Select..." }) => {
                 <div className="dropdown">
                     <input
                         type="text"
-                        className="search-input"
+                        className="search-input-multi"
                         placeholder="Search"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
