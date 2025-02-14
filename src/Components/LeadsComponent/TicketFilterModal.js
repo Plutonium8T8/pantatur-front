@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { priorityOptions } from "../../FormOptions/PriorityOption";
 import { workflowOptions } from "../../FormOptions/WorkFlowOption";
 import Cookies from "js-cookie";
@@ -10,8 +10,9 @@ const platformOptions = ["telegram", "viber", "whatsapp", "facebook", "instagram
 const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
     const [technicians, setTechnicians] = useState([]);
     const language = localStorage.getItem("language") || "RO";
+    const modalRef = useRef(null);
 
-    const [filters, setFilters] = useState({
+    const defaultFilters = {
         creation_date: "",
         last_interaction_date: "",
         technician_id: "",
@@ -20,7 +21,9 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
         priority: "",
         tags: "",
         platform: "",
-    });
+    };
+
+    const [filters, setFilters] = useState(defaultFilters);
 
     const tabs = [
         "Active leads",
@@ -68,6 +71,22 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
         if (isOpen) fetchTechnicians();
     }, [isOpen]);
 
+    // Закрытие модального окна при клике вне его области
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (modalRef.current && !modalRef.current.contains(event.target)) {
+                onClose();
+            }
+        };
+
+        if (isOpen) {
+            document.addEventListener("mousedown", handleClickOutside);
+        }
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [isOpen, onClose]);
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFilters((prev) => ({
@@ -81,11 +100,16 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
         onClose();
     };
 
+    const handleResetFilters = () => {
+        setFilters(defaultFilters);
+        onApplyFilter(defaultFilters);
+    };
+
     if (!isOpen) return null;
 
     return (
         <div className="modal-overlay">
-            <div className="modal-content">
+            <div className="modal-content" ref={modalRef}>
                 <div className="filter-container">
                     {/* Левая колонка - Вкладки */}
                     <div className="tabs">
@@ -153,6 +177,9 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                         <div className="modal-buttons">
                             <button onClick={handleApplyFilter} className="apply-btn">
                                 {translations["Aplică"][language]}
+                            </button>
+                            <button onClick={handleResetFilters} className="reset-btn">
+                                {translations["Resetează filtre"][language]}
                             </button>
                             <button onClick={onClose} className="cancel-btn">
                                 {translations["Închide"][language]}
