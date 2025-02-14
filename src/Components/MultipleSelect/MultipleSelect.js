@@ -45,7 +45,7 @@ const CustomMultiSelect = ({ options, placeholder = "Select..." }) => {
     return (
         <div className="custom-multi-select" ref={dropdownRef}>
             {/* Поле выбора */}
-            <div className="select-field" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
+            <div className="select-field-custom" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
                 {selectedOptions.length > 0 ? (
                     <div className="selected-options">
                         {selectedOptions.length === options.length ? (

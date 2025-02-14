@@ -1946,7 +1946,7 @@ const ChatComponent = ({ }) => {
                                         className="input-field"
                                         placeholder="Nume"
                                     />
-                                    {/* <CustomMultiSelect options={countryOptions} /> */}
+                                    <CustomMultiSelect options={countryOptions} />
                                     <Input
                                         label="Prenume"
                                         type="text"

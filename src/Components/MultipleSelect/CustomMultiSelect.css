@@ -1,11 +1,11 @@
 .custom-multi-select {
     position: relative;
-    width: 250px;
+    width: 100%;
     font-family: Arial, sans-serif;
 }
 
-.select-field {
-    width: 100%;
+.select-field-custom {
+    /* width: 100%; */
     padding: 12px;
     border: 1px solid #374151;
     border-radius: 5px;
