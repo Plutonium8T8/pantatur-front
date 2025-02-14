@@ -5,7 +5,7 @@ import { workflowOptions } from '../../FormOptions/WorkFlowOption';
 import SpinnerOverlay from './SpinnerOverlayComponent';
 import WorkflowColumn from './WorkflowColumnComponent';
 import TicketModal from './TicketModal/TicketModalComponent';
-import TicketFilterModal from './TicketFilterModal'; // Добавляем фильтр
+import TicketFilterModal from './TicketFilterModal';
 import Cookies from 'js-cookie';
 import '../../App.css';
 import '../SnackBarComponent/SnackBarComponent.css';
@@ -17,7 +17,8 @@ const Leads = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentTicket, setCurrentTicket] = useState(null);
-  const [isFilterOpen, setIsFilterOpen] = useState(false); // Состояние для фильтра
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [selectedWorkflow, setSelectedWorkflow] = useState(""); // Новый стейт для фильтрации workflow
   const language = localStorage.getItem('language') || 'RO';
 
   const [filters, setFilters] = useState({
@@ -31,19 +32,16 @@ const Leads = () => {
     platform: '',
   });
 
-
   // Фильтрация тикетов по параметрам
   const filteredTickets = useMemo(() => {
     return tickets.filter((ticket) => {
       const creationDate = ticket.creation_date ? ticket.creation_date.split(" ")[0] : "";
       const lastInteractionDate = ticket.last_interaction_date ? ticket.last_interaction_date.split(" ")[0] : "";
 
-      // Разбиваем теги из строки в массив
       const ticketTags = ticket.tags
         ? ticket.tags.replace(/[{}]/g, "").split(",").map(tag => tag.trim().toLowerCase())
         : [];
 
-      // Фильтруем сообщения по ticket_id
       const hasMatchingPlatform = messages.some(
         (message) => message.ticket_id === ticket.id && message.platform === filters.platform
       );
@@ -56,7 +54,7 @@ const Leads = () => {
         (!filters.creation_date || creationDate === filters.creation_date) &&
         (!filters.last_interaction_date || lastInteractionDate === filters.last_interaction_date) &&
         (!filters.technician_id || String(ticket.technician_id) === filters.technician_id) &&
-        (!filters.sender_id || hasMatchingSender) && // ✅ Фильтр по Sender ID
+        (!filters.sender_id || hasMatchingSender) &&
         (!filters.workflow || ticket.workflow.toLowerCase() === filters.workflow.toLowerCase()) &&
         (!filters.priority || ticket.priority.toLowerCase() === filters.priority.toLowerCase()) &&
         (!filters.tags || ticketTags.includes(filters.tags.toLowerCase())) &&
@@ -80,17 +78,14 @@ const Leads = () => {
       });
 
       if (response.status === 401) {
-        // 🔥 Обрабатываем 401 (Unauthorized)
         alert(translations["Sesia a expirat"][language] || "Sesia a expirat, te rog sa accesezi din nou pagina!");
         window.location.reload();
         return;
       }
 
       if (!response.ok) {
-        // 🔥 Если другая ошибка, получаем текст ошибки и выбрасываем её
         const errorData = await response.json();
-        throw new Error(`Failed to update workflow: ${response.status}. ${errorData.message}`, window.location.reload()
-        );
+        throw new Error(`Failed to update workflow: ${response.status}. ${errorData.message}`, window.location.reload());
       }
 
       const updatedTicket = await response.json();
@@ -146,19 +141,21 @@ const Leads = () => {
         </div>
       </div>
       <div className="container-tickets">
-        {workflowOptions.map((workflow) => (
-          <WorkflowColumn
-            key={workflow}
-            workflow={workflow}
-            tickets={filteredTickets}
-            searchTerm={searchTerm}
-            onEditTicket={(ticket) => {
-              setCurrentTicket(ticket);
-              setIsModalOpen(true);
-            }}
-            onUpdateWorkflow={updateWorkflow}
-          />
-        ))}
+        {workflowOptions
+          .filter(workflow => !selectedWorkflow || workflow === selectedWorkflow) // Фильтр отображаемых workflow
+          .map((workflow) => (
+            <WorkflowColumn
+              key={workflow}
+              workflow={workflow}
+              tickets={filteredTickets}
+              searchTerm={searchTerm}
+              onEditTicket={(ticket) => {
+                setCurrentTicket(ticket);
+                setIsModalOpen(true);
+              }}
+              onUpdateWorkflow={updateWorkflow}
+            />
+          ))}
       </div>
       {isLoading && <SpinnerOverlay />}
       {isModalOpen && currentTicket && (
@@ -182,7 +179,10 @@ const Leads = () => {
       <TicketFilterModal
         isOpen={isFilterOpen}
         onClose={() => setIsFilterOpen(false)}
-        onApplyFilter={setFilters}
+        onApplyFilter={(updatedFilters) => {
+          setFilters(updatedFilters);
+          setSelectedWorkflow(updatedFilters.workflow); // Обновляем выбранный workflow
+        }}
       />
     </div>
   );

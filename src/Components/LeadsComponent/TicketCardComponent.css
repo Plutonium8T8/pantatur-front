@@ -39,7 +39,7 @@
     /* Start at the top */
     left: 0;
     /* Align to the left side */
-    z-index: 1;
+    /* z-index: 1; */
     /* Ensure it appears above other content */
 }
 

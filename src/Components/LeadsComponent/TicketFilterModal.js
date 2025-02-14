@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { priorityOptions } from "../../FormOptions/PriorityOption";
 import { workflowOptions } from "../../FormOptions/WorkFlowOption";
+import CustomMultiSelect from "../MultipleSelect/MultipleSelect"; // Используем твой Multi-Select
 import Cookies from "js-cookie";
 import "./Modal.css";
 
@@ -11,9 +12,8 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
     const modalRef = useRef(null);
 
     const filterGroups = {
-        "General": ["creation_date", "last_interaction_date", "workflow", "priority"],
-        "Technicians": ["technician_id", "sender_id"],
-        "Tags & Platforms": ["tags", "platform"],
+        "General": ["workflow"], // Только Workflow
+        "Ticket": ["creation_date", "last_interaction_date", "priority", "technician_id", "sender_id", "tags", "platform"], // Остальные поля
     };
 
     const filterDefaults = {
@@ -21,7 +21,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
         last_interaction_date: "",
         technician_id: "",
         sender_id: "",
-        workflow: "",
+        workflow: [],
         priority: "",
         tags: "",
         platform: "",
@@ -85,6 +85,13 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
         setActiveTab(tab);
     };
 
+    const handleWorkflowChange = (selectedWorkflows) => {
+        setFilters((prev) => ({
+            ...prev,
+            workflow: selectedWorkflows,
+        }));
+    };
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFilters((prev) => ({
@@ -106,8 +113,8 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="modal-overlay">
-            <div className="modal-content" ref={modalRef}>
+        <div className="modal-overlay-filter">
+            <div className="modal-content-filter" ref={modalRef}>
                 <div className="filter-container">
                     {/* Левая колонка - Группы фильтров */}
                     <div className="tabs">
@@ -126,6 +133,17 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                     <div className="filters">
                         <h3>Фильтр</h3>
 
+                        {filterGroups[activeTab].includes("workflow") && (
+                            <>
+                                <label>Этап работы</label>
+                                <CustomMultiSelect
+                                    options={workflowOptions}
+                                    placeholder="Выберите этапы"
+                                    onChange={handleWorkflowChange}
+                                />
+                            </>
+                        )}
+
                         {filterGroups[activeTab].includes("creation_date") && (
                             <>
                                 <label>Дата создания</label>
@@ -137,20 +155,6 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                             <>
                                 <label>Последняя активность</label>
                                 <input type="date" name="last_interaction_date" value={filters.last_interaction_date || ""} onChange={handleInputChange} />
-                            </>
-                        )}
-
-                        {filterGroups[activeTab].includes("workflow") && (
-                            <>
-                                <label>Этап работы</label>
-                                <select name="workflow" value={filters.workflow || ""} onChange={handleInputChange}>
-                                    <option value="">Все этапы</option>
-                                    {workflowOptions.map((option) => (
-                                        <option key={option} value={option}>
-                                            {option}
-                                        </option>
-                                    ))}
-                                </select>
                             </>
                         )}
 
