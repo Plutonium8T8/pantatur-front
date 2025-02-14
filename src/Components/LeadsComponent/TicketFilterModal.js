@@ -3,16 +3,20 @@ import { priorityOptions } from "../../FormOptions/PriorityOption";
 import { workflowOptions } from "../../FormOptions/WorkFlowOption";
 import Cookies from "js-cookie";
 import "./Modal.css";
-import { translations } from "../utils/translations";
 
 const platformOptions = ["telegram", "viber", "whatsapp", "facebook", "instagram", "sipuni"];
 
 const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
     const [technicians, setTechnicians] = useState([]);
-    const language = localStorage.getItem("language") || "RO";
     const modalRef = useRef(null);
 
-    const defaultFilters = {
+    const filterGroups = {
+        "General": ["creation_date", "last_interaction_date", "workflow", "priority"],
+        "Technicians": ["technician_id", "sender_id"],
+        "Tags & Platforms": ["tags", "platform"],
+    };
+
+    const filterDefaults = {
         creation_date: "",
         last_interaction_date: "",
         technician_id: "",
@@ -23,18 +27,9 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
         platform: "",
     };
 
-    const [filters, setFilters] = useState(defaultFilters);
-
-    const tabs = [
-        "Active leads",
-        "My leads",
-        "Won leads",
-        "Lost leads",
-        "Leads without Tasks",
-        "Leads with Overdue Tasks",
-    ];
-
+    const tabs = Object.keys(filterGroups);
     const [activeTab, setActiveTab] = useState(tabs[0]);
+    const [filters, setFilters] = useState(filterDefaults);
 
     useEffect(() => {
         const fetchTechnicians = async () => {
@@ -71,7 +66,6 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
         if (isOpen) fetchTechnicians();
     }, [isOpen]);
 
-    // Закрытие модального окна при клике вне его области
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (modalRef.current && !modalRef.current.contains(event.target)) {
@@ -87,6 +81,10 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
         };
     }, [isOpen, onClose]);
 
+    const handleTabClick = (tab) => {
+        setActiveTab(tab);
+    };
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFilters((prev) => ({
@@ -101,8 +99,8 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
     };
 
     const handleResetFilters = () => {
-        setFilters(defaultFilters);
-        onApplyFilter(defaultFilters);
+        setFilters(filterDefaults);
+        onApplyFilter(filterDefaults);
     };
 
     if (!isOpen) return null;
@@ -111,78 +109,116 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
         <div className="modal-overlay">
             <div className="modal-content" ref={modalRef}>
                 <div className="filter-container">
-                    {/* Левая колонка - Вкладки */}
+                    {/* Левая колонка - Группы фильтров */}
                     <div className="tabs">
                         {tabs.map((tab) => (
                             <div
                                 key={tab}
                                 className={`tab ${activeTab === tab ? "active" : ""}`}
-                                onClick={() => setActiveTab(tab)}
+                                onClick={() => handleTabClick(tab)}
                             >
                                 {tab}
                             </div>
                         ))}
                     </div>
 
-                    {/* Правая колонка - Фильтры */}
+                    {/* Правая колонка - Поля фильтров */}
                     <div className="filters">
-                        <h3>{translations["Filtru lead"][language]}</h3>
+                        <h3>Фильтр</h3>
 
-                        <label>{translations["Data de creare"][language]}</label>
-                        <input type="date" name="creation_date" value={filters.creation_date} onChange={handleInputChange} />
+                        {filterGroups[activeTab].includes("creation_date") && (
+                            <>
+                                <label>Дата создания</label>
+                                <input type="date" name="creation_date" value={filters.creation_date || ""} onChange={handleInputChange} />
+                            </>
+                        )}
 
-                        <label>{translations["Ultima interacțiune"][language]}</label>
-                        <input type="date" name="last_interaction_date" value={filters.last_interaction_date} onChange={handleInputChange} />
+                        {filterGroups[activeTab].includes("last_interaction_date") && (
+                            <>
+                                <label>Последняя активность</label>
+                                <input type="date" name="last_interaction_date" value={filters.last_interaction_date || ""} onChange={handleInputChange} />
+                            </>
+                        )}
 
-                        <label>{translations["Etapa de lucru"][language]}</label>
-                        <select name="workflow" value={filters.workflow} onChange={handleInputChange}>
-                            <option value="">{translations["Toate etapele"][language]}</option>
-                            {workflowOptions.map((option) => (
-                                <option key={option} value={option}>
-                                    {option}
-                                </option>
-                            ))}
-                        </select>
+                        {filterGroups[activeTab].includes("workflow") && (
+                            <>
+                                <label>Этап работы</label>
+                                <select name="workflow" value={filters.workflow || ""} onChange={handleInputChange}>
+                                    <option value="">Все этапы</option>
+                                    {workflowOptions.map((option) => (
+                                        <option key={option} value={option}>
+                                            {option}
+                                        </option>
+                                    ))}
+                                </select>
+                            </>
+                        )}
 
-                        <label>{translations["Prioritate"][language]}</label>
-                        <select name="priority" value={filters.priority} onChange={handleInputChange}>
-                            <option value="">{translations["Toate prioritățile"][language]}</option>
-                            {priorityOptions.map((option) => (
-                                <option key={option} value={option}>
-                                    {option}
-                                </option>
-                            ))}
-                        </select>
+                        {filterGroups[activeTab].includes("priority") && (
+                            <>
+                                <label>Приоритет</label>
+                                <select name="priority" value={filters.priority || ""} onChange={handleInputChange}>
+                                    <option value="">Все приоритеты</option>
+                                    {priorityOptions.map((option) => (
+                                        <option key={option} value={option}>
+                                            {option}
+                                        </option>
+                                    ))}
+                                </select>
+                            </>
+                        )}
 
-                        <label>{translations["După responsabil lead"][language]}</label>
-                        <select name="technician_id" value={filters.technician_id} onChange={handleInputChange}>
-                            <option value="">{translations["Toți managerii"][language]}</option>
-                            {technicians.map((tech) => (
-                                <option key={tech.id} value={tech.id}>
-                                    {`${tech.id}: ${tech.fullName}`}
-                                </option>
-                            ))}
-                        </select>
+                        {filterGroups[activeTab].includes("technician_id") && (
+                            <>
+                                <label>Ответственный</label>
+                                <select name="technician_id" value={filters.technician_id || ""} onChange={handleInputChange}>
+                                    <option value="">Все менеджеры</option>
+                                    {technicians.map((tech) => (
+                                        <option key={tech.id} value={tech.id}>
+                                            {`${tech.id}: ${tech.fullName}`}
+                                        </option>
+                                    ))}
+                                </select>
+                            </>
+                        )}
 
-                        <label>{translations["Platformă"][language]}</label>
-                        <select name="platform" value={filters.platform} onChange={handleInputChange}>
-                            <option value="">{translations["Toate platformele"][language]}</option>
-                            {platformOptions.map((platform) => (
-                                <option key={platform} value={platform}>
-                                    {platform}
-                                </option>
-                            ))}
-                        </select>
+                        {filterGroups[activeTab].includes("sender_id") && (
+                            <>
+                                <label>ID отправителя</label>
+                                <input type="text" name="sender_id" value={filters.sender_id || ""} onChange={handleInputChange} />
+                            </>
+                        )}
+
+                        {filterGroups[activeTab].includes("tags") && (
+                            <>
+                                <label>Теги</label>
+                                <input type="text" name="tags" value={filters.tags || ""} onChange={handleInputChange} />
+                            </>
+                        )}
+
+                        {filterGroups[activeTab].includes("platform") && (
+                            <>
+                                <label>Платформа</label>
+                                <select name="platform" value={filters.platform || ""} onChange={handleInputChange}>
+                                    <option value="">Все платформы</option>
+                                    {platformOptions.map((platform) => (
+                                        <option key={platform} value={platform}>
+                                            {platform}
+                                        </option>
+                                    ))}
+                                </select>
+                            </>
+                        )}
 
                         <div className="modal-buttons">
                             <button onClick={handleApplyFilter} className="apply-btn">
-                                {translations["Aplică"][language]}
+                                Применить
                             </button>
                             <button onClick={handleResetFilters} className="reset-btn">
-                                {translations["Resetează filtre"][language]}
+                                Сбросить
                             </button>
                             <button onClick={onClose} className="cancel-btn">
-                                {translations["Închide"][language]}
+                                Закрыть
                             </button>
                         </div>
                     </div>
