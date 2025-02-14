@@ -43,6 +43,10 @@ export const translations = {
         'RO': 'Contract încheiat',
         'RU': 'Договор завершён'
     },
+    'Realizat cu succes': {
+        'RO': 'Realizat cu succes',
+        'RU': 'Успешно реализовано'
+    },
     'Caută leaduri': {
         'RO': 'Caută leaduri',
         'RU': 'Искать лиды'

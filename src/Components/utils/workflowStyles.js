@@ -7,8 +7,9 @@ export const workflowStyles = {
   'Aprobat cu client': { backgroundColor: '#ffe5e5' }, // Pale Peach
   'Contract semnat': { backgroundColor: '#ffd5d6' }, // Pale Pink-Red (same as 'De prelucrat')
   'Plată primită': { backgroundColor: '#fffacc' }, // Pale Yellow-Gold
-  'Închis și nerealizat': { backgroundColor: '#ff9999' }, // Pale Red
   'Contract încheiat': { backgroundColor: '#cdeedd' }, // Pale Mint
+  'Realizat cu succes': { backgroundColor: '#d4fcd4' }, // Pale Green
+  'Închis și nerealizat': { backgroundColor: '#ff9999' }, // Pale Red
 };
 
 export const workflowBrightStyles = {
@@ -20,6 +21,7 @@ export const workflowBrightStyles = {
   'Aprobat cu client': { backgroundColor: '#ffc1c1' }, // Brighter Peach
   'Contract semnat': { backgroundColor: '#ffb3b4' }, // Brighter Pink-Red (same as 'De prelucrat')
   'Plată primită': { backgroundColor: '#ffea80' }, // Brighter Yellow-Gold
-  'Închis și nerealizat': { backgroundColor: '#ff4d4d' }, // Bright Red
   'Contract încheiat': { backgroundColor: '#a8e6c1' }, // Brighter Mint
+  'Realizat cu succes': { backgroundColor: '#8bf58b' }, // Brighter Green
+  'Închis și nerealizat': { backgroundColor: '#ff4d4d' }, // Bright Red
 };

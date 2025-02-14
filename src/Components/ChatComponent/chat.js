@@ -246,8 +246,9 @@ const ChatComponent = ({ }) => {
         "Aprobat cu client",
         "Contract semnat",
         "Plată primită",
-        "Închis și nerealizat",
-        "Contract încheiat"
+        "Contract încheiat",
+        "Realizat cu succes", // Новый этап
+        "Închis și nerealizat"
     ];
 
     // Индексы этапов
@@ -256,14 +257,14 @@ const ChatComponent = ({ }) => {
         return acc;
     }, {});
 
-    // Состояния ошибок для каждого поля
+    // Состояния ошибок
     const [fieldErrors, setFieldErrors] = useState({});
 
     // Получение текущего тикета
     const updatedTicket = tickets.find(ticket => ticket.id === selectTicketId) || null;
     const currentWorkflowIndex = updatedTicket ? workflowIndices[updatedTicket.workflow] : -1;
 
-    // Обязательные поля для каждого этапа (без "Închis și nerealizat")
+    // Обязательные поля для каждого этапа
     const requiredFields = {
         "Luat în lucru": ["sursa_lead", "promo", "marketing"],
         "Ofertă trimisă": ["tipul_serviciului", "tara", "tip_de_transport", "denumirea_excursiei_turului"],
@@ -274,13 +275,13 @@ const ChatComponent = ({ }) => {
             "buget", "data_plecarii", "data_intoarcerii", "tour_operator",
             "numarul_cererii_de_la_operator", "rezervare_confirmata",
             "contract_arhivat", "statutul_platii", "pret_netto", "comission_companie"
-        ]
+        ],
+        "Realizat cu succes": ["control_admin"] // Новое обязательное поле
     };
 
     // Функция валидации перед изменением workflow
     const validateFields = (workflow) => {
         if (workflow === "Închis și nerealizat") {
-            // Проверка только поля "Motivul refuzului"
             if (!extraInfo[selectTicketId]?.motivul_refuzului) {
                 setFieldErrors(prev => ({ ...prev, motivul_refuzului: true }));
                 enqueueSnackbar(`Completați "Motivul refuzului" înainte de a face modificări!`, { variant: 'error' });
@@ -290,8 +291,6 @@ const ChatComponent = ({ }) => {
         }
 
         let missingFields = [];
-
-        // Проверяем текущий и все предыдущие этапы
         const workflowIndex = workflowIndices[workflow];
 
         for (const [step, fields] of Object.entries(requiredFields)) {
@@ -301,7 +300,6 @@ const ChatComponent = ({ }) => {
         }
 
         if (missingFields.length) {
-            // Обновляем состояния ошибок только для отсутствующих полей
             setFieldErrors(prev => ({
                 ...prev,
                 ...Object.fromEntries(missingFields.map(field => [field, true]))
@@ -323,16 +321,11 @@ const ChatComponent = ({ }) => {
             return;
         }
 
-        const currentIndex = workflowIndices[updatedTicket.workflow];
-        const newIndex = workflowIndices[newWorkflow];
-
-        // Сбрасываем ошибки, которые не относятся к текущему и предыдущим этапам
         const workflowIndex = workflowIndices[newWorkflow];
         let newFieldErrors = {};
 
         for (const [step, fields] of Object.entries(requiredFields)) {
             if (workflowIndices[step] <= workflowIndex) {
-                // Проверяем, какие поля отсутствуют и обновляем состояние ошибок
                 fields.forEach(field => {
                     if (!extraInfo[selectTicketId]?.[field]) {
                         newFieldErrors[field] = true;
@@ -351,7 +344,6 @@ const ChatComponent = ({ }) => {
 
         setFieldErrors(newFieldErrors);
 
-        // Если есть ошибки, не обновляем workflow
         if (Object.keys(newFieldErrors).length > 0) {
             enqueueSnackbar(`Completați toate câmpurile obligatorii pentru "${newWorkflow}" și etapele anterioare înainte de a face modificări!`, { variant: 'error' });
             return;
@@ -383,11 +375,12 @@ const ChatComponent = ({ }) => {
         }
     };
 
+    // Сброс ошибок при смене тикета
     useEffect(() => {
-        // Сбрасываем ошибки при выборе нового тикета
         setFieldErrors({});
-    }, [selectTicketId]); // Запуск при изменении `selectTicketId`
+    }, [selectTicketId]);
 
+    // Подсветка ошибок в табах
     const getTabErrorIndicator = (tab) => {
         const tabFields = {
             extraForm: ["buget", "data_plecarii", "data_intoarcerii", "sursa_lead", "promo", "marketing"],
@@ -399,6 +392,16 @@ const ChatComponent = ({ }) => {
 
         return tabFields[tab]?.some(field => fieldErrors[field]) ? "🔴" : "";
     };
+
+    useEffect(() => {
+        const pretNetto = extraInfo[selectTicketId]?.pret_netto;
+        const buget = extraInfo[selectTicketId]?.buget;
+
+        if (pretNetto !== "" && buget !== "" && pretNetto !== undefined && buget !== undefined) {
+            const newComision = parseFloat(buget) - parseFloat(pretNetto);
+            handleFieldChange("comission_companie", newComision.toFixed(2)); // Автообновление
+        }
+    }, [extraInfo[selectTicketId]?.pret_netto, extraInfo[selectTicketId]?.buget, selectTicketId]);
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Закрытие меню при клике вне его области
@@ -1263,18 +1266,6 @@ const ChatComponent = ({ }) => {
             markMessagesAsRead(selectTicketId);
         }
     }, [messages, selectTicketId, markMessagesAsRead, userId]);
-
-    // console.log("Validation errors:", validationErrors);
-
-    useEffect(() => {
-        const pretNetto = extraInfo[selectTicketId]?.pret_netto;
-        const buget = extraInfo[selectTicketId]?.buget;
-
-        if (pretNetto !== "" && buget !== "" && pretNetto !== undefined && buget !== undefined) {
-            const newComision = parseFloat(buget) - parseFloat(pretNetto);
-            handleFieldChange("comission_companie", newComision.toFixed(2)); // Автообновление
-        }
-    }, [extraInfo[selectTicketId]?.pret_netto, extraInfo[selectTicketId]?.buget, selectTicketId]);
 
     return (
         <div className="chat-container">
@@ -2238,19 +2229,19 @@ const ChatComponent = ({ }) => {
                                 id="commission-input"
                                 disabled={true}
                             />
-                            {/* <div className="toggle-container">
-                                <label className="toggle-label">control pentru admin toogle</label>
-                                <label className="switch">
+                            <div className="toggle-container">
+                                <label className="toggle-label">Control Admin</label>
+                                <label className={`switch ${fieldErrors.control_admin ? "invalid-toggle" : ""}`}>
                                     <input
                                         type="checkbox"
-                                        checked={extraInfo[selectTicketId]?.control_pentru_admin_toogle || false}
+                                        checked={extraInfo[selectTicketId]?.control_admin || false}
                                         onChange={(e) =>
-                                            handleSelectChangeExtra(selectTicketId, 'control pentru admin toogle', e.target.checked)
+                                            handleSelectChangeExtra(selectTicketId, 'control_admin', e.target.checked)
                                         }
                                     />
                                     <span className="slider round"></span>
                                 </label>
-                            </div> */}
+                            </div>
                         </div>
                     )}
                     {activeTab === 'Invoice' && selectTicketId && (
