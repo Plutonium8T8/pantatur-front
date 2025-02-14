@@ -35,6 +35,7 @@ import { workflowOptions } from '../../FormOptions/WorkFlowOption';
 import { evaluareOdihnaOptions } from '../../FormOptions/EvaluareVacantaOptions';
 import { valutaOptions } from '../../FormOptions/ValutaOptions';
 import { ibanOptions } from '../../FormOptions/IbanOptions';
+import CustomMultiSelect from '../MultipleSelect/MultipleSelect';
 
 const ChatComponent = ({ }) => {
     const { userId } = useUser();
@@ -1945,6 +1946,7 @@ const ChatComponent = ({ }) => {
                                         className="input-field"
                                         placeholder="Nume"
                                     />
+                                    {/* <CustomMultiSelect options={countryOptions} /> */}
                                     <Input
                                         label="Prenume"
                                         type="text"
