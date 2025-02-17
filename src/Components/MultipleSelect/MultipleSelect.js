@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./CustomMultiSelect.css";
 
-const CustomMultiSelect = ({ options, placeholder = "Select..." }) => {
-    const [selectedOptions, setSelectedOptions] = useState([]);
+const CustomMultiSelect = ({ options, selectedValues = [], onChange, placeholder = "Select..." }) => {
+    const [selectedOptions, setSelectedOptions] = useState(selectedValues);
     const [searchTerm, setSearchTerm] = useState("");
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
@@ -19,22 +19,32 @@ const CustomMultiSelect = ({ options, placeholder = "Select..." }) => {
         };
     }, []);
 
+    // При изменении `selectedValues` (например, при сбросе фильтра), обновляем `selectedOptions`
+    useEffect(() => {
+        setSelectedOptions(selectedValues);
+        console.log("🔄 Обновлены selectedOptions в MultiSelect:", selectedValues);
+    }, [selectedValues]);
+
     // Выбор или удаление опции
     const toggleOption = (option) => {
+        let newSelectedOptions;
         if (selectedOptions.includes(option)) {
-            setSelectedOptions(selectedOptions.filter((item) => item !== option));
+            newSelectedOptions = selectedOptions.filter((item) => item !== option);
         } else {
-            setSelectedOptions([...selectedOptions, option]);
+            newSelectedOptions = [...selectedOptions, option];
         }
+
+        setSelectedOptions(newSelectedOptions);
+        console.log("🔹 Выбраны workflow в MultiSelect:", newSelectedOptions);
+        onChange(newSelectedOptions); // 🔥 Передаем выбранные workflow обратно
     };
 
     // Выбрать все / Отменить выбор всех
     const toggleSelectAll = () => {
-        if (selectedOptions.length === options.length) {
-            setSelectedOptions([]);
-        } else {
-            setSelectedOptions(options);
-        }
+        const newSelectedOptions = selectedOptions.length === options.length ? [] : options;
+        setSelectedOptions(newSelectedOptions);
+        console.log("🔹 Выбраны все workflow:", newSelectedOptions);
+        onChange(newSelectedOptions); // 🔥 Передаем в родительский компонент
     };
 
     // Фильтрация списка по поиску

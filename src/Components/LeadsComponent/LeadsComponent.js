@@ -18,7 +18,7 @@ const Leads = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentTicket, setCurrentTicket] = useState(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [selectedWorkflow, setSelectedWorkflow] = useState(""); // Новый стейт для фильтрации workflow
+  const [selectedWorkflow, setSelectedWorkflow] = useState(workflowOptions.filter(wf => wf !== "realizat cu succes" && wf !== "inchis nerealizat")); // По умолчанию без закрытых статусов
   const language = localStorage.getItem('language') || 'RO';
 
   const [filters, setFilters] = useState({
@@ -26,7 +26,7 @@ const Leads = () => {
     last_interaction_date: '',
     technician_id: '',
     sender_id: '',
-    workflow: '',
+    workflow: [],
     priority: '',
     tags: '',
     platform: '',
@@ -55,7 +55,7 @@ const Leads = () => {
         (!filters.last_interaction_date || lastInteractionDate === filters.last_interaction_date) &&
         (!filters.technician_id || String(ticket.technician_id) === filters.technician_id) &&
         (!filters.sender_id || hasMatchingSender) &&
-        (!filters.workflow || ticket.workflow.toLowerCase() === filters.workflow.toLowerCase()) &&
+        (filters.workflow.length === 0 || filters.workflow.includes(ticket.workflow)) && // ✅ Исправленный фильтр по workflow
         (!filters.priority || ticket.priority.toLowerCase() === filters.priority.toLowerCase()) &&
         (!filters.tags || ticketTags.includes(filters.tags.toLowerCase())) &&
         (!filters.platform || hasMatchingPlatform)
@@ -142,7 +142,7 @@ const Leads = () => {
       </div>
       <div className="container-tickets">
         {workflowOptions
-          .filter(workflow => !selectedWorkflow || workflow === selectedWorkflow) // Фильтр отображаемых workflow
+          .filter(workflow => selectedWorkflow.includes(workflow)) // ✅ Отображаем только выбранные workflow
           .map((workflow) => (
             <WorkflowColumn
               key={workflow}
@@ -180,8 +180,9 @@ const Leads = () => {
         isOpen={isFilterOpen}
         onClose={() => setIsFilterOpen(false)}
         onApplyFilter={(updatedFilters) => {
+          console.log("🚀 Применяем фильтр с параметрами:", updatedFilters);
           setFilters(updatedFilters);
-          setSelectedWorkflow(updatedFilters.workflow); // Обновляем выбранный workflow
+          setSelectedWorkflow(updatedFilters.workflow); // ✅ Обновляем `selectedWorkflow`
         }}
       />
     </div>

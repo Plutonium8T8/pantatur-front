@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { priorityOptions } from "../../FormOptions/PriorityOption";
 import { workflowOptions } from "../../FormOptions/WorkFlowOption";
-import CustomMultiSelect from "../MultipleSelect/MultipleSelect"; // Используем твой Multi-Select
+import CustomMultiSelect from "../MultipleSelect/MultipleSelect";
 import Cookies from "js-cookie";
 import "./Modal.css";
 
@@ -12,8 +12,8 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
     const modalRef = useRef(null);
 
     const filterGroups = {
-        "General": ["workflow"], // Только Workflow
-        "Ticket": ["creation_date", "last_interaction_date", "priority", "technician_id", "sender_id", "tags", "platform"], // Остальные поля
+        "General": ["workflow"],
+        "Ticket": ["creation_date", "last_interaction_date", "priority", "technician_id", "sender_id", "tags", "platform"],
     };
 
     const filterDefaults = {
@@ -21,7 +21,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
         last_interaction_date: "",
         technician_id: "",
         sender_id: "",
-        workflow: [],
+        workflow: workflowOptions.filter(wf => wf !== "realizat cu succes" && wf !== "inchis nerealizat"), // ✅ Исключаем ненужные статусы
         priority: "",
         tags: "",
         platform: "",
@@ -30,6 +30,14 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
     const tabs = Object.keys(filterGroups);
     const [activeTab, setActiveTab] = useState(tabs[0]);
     const [filters, setFilters] = useState(filterDefaults);
+
+    useEffect(() => {
+        console.log("✅ Модальное окно открыто, текущие фильтры:", filters);
+    }, [isOpen]);
+
+    useEffect(() => {
+        console.log("🔹 Фильтр workflow изменился:", filters.workflow);
+    }, [filters.workflow]);
 
     useEffect(() => {
         const fetchTechnicians = async () => {
@@ -50,7 +58,6 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                 }
 
                 const data = await response.json();
-
                 const formattedTechnicians = data.map((item) => ({
                     id: item.id.id,
                     fullName: `${item.id.name} ${item.id.surname}`.trim(),
@@ -86,6 +93,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
     };
 
     const handleWorkflowChange = (selectedWorkflows) => {
+        console.log("🔹 Выбраны workflow в MultiSelect:", selectedWorkflows);
         setFilters((prev) => ({
             ...prev,
             workflow: selectedWorkflows,
@@ -101,11 +109,13 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
     };
 
     const handleApplyFilter = () => {
+        console.log("🚀 Применяем фильтр с параметрами:", filters);
         onApplyFilter(filters);
         onClose();
     };
 
     const handleResetFilters = () => {
+        console.log("♻️ Сброс фильтра до:", filterDefaults);
         setFilters(filterDefaults);
         onApplyFilter(filterDefaults);
     };
@@ -116,30 +126,25 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
         <div className="modal-overlay-filter">
             <div className="modal-content-filter" ref={modalRef}>
                 <div className="filter-container">
-                    {/* Левая колонка - Группы фильтров */}
                     <div className="tabs">
                         {tabs.map((tab) => (
-                            <div
-                                key={tab}
-                                className={`tab ${activeTab === tab ? "active" : ""}`}
-                                onClick={() => handleTabClick(tab)}
-                            >
+                            <div key={tab} className={`tab ${activeTab === tab ? "active" : ""}`} onClick={() => handleTabClick(tab)}>
                                 {tab}
                             </div>
                         ))}
                     </div>
 
-                    {/* Правая колонка - Поля фильтров */}
                     <div className="filters">
                         <h3>Фильтр</h3>
 
                         {filterGroups[activeTab].includes("workflow") && (
                             <>
-                                <label>Этап работы</label>
+                                <label>Workflow</label>
                                 <CustomMultiSelect
                                     options={workflowOptions}
-                                    placeholder="Выберите этапы"
+                                    placeholder="Workflow"
                                     onChange={handleWorkflowChange}
+                                    selectedValues={filters.workflow} // ✅ Передаем в MultiSelect
                                 />
                             </>
                         )}
@@ -215,15 +220,9 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                         )}
 
                         <div className="modal-buttons">
-                            <button onClick={handleApplyFilter} className="apply-btn">
-                                Применить
-                            </button>
-                            <button onClick={handleResetFilters} className="reset-btn">
-                                Сбросить
-                            </button>
-                            <button onClick={onClose} className="cancel-btn">
-                                Закрыть
-                            </button>
+                            <button onClick={handleApplyFilter} className="apply-btn">Применить</button>
+                            <button onClick={handleResetFilters} className="reset-btn">Сбросить</button>
+                            <button onClick={onClose} className="cancel-btn">Закрыть</button>
                         </div>
                     </div>
                 </div>
