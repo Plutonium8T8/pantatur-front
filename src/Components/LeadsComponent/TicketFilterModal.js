@@ -13,7 +13,8 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
 
     const filterGroups = {
         "General": ["workflow"],
-        "Ticket": ["creation_date", "last_interaction_date", "priority", "technician_id", "sender_id", "tags", "platform"],
+        "Ticket": ["creation_date", "last_interaction_date", "priority", "technician_id", "tags",],
+        "Messages": ["platform", "sender_id"]
     };
 
     const filterDefaults = {
