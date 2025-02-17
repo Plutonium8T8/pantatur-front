@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./CustomMultiSelect.css";
 
-const CustomMultiSelect = ({ options, placeholder = "Выберите...", onChange, selectedValues }) => {
+const CustomMultiSelect = ({ options = [], placeholder = "Выберите...", onChange, selectedValues = [] }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
@@ -49,7 +49,6 @@ const CustomMultiSelect = ({ options, placeholder = "Выберите...", onCha
 
     return (
         <div className="custom-multi-select" ref={dropdownRef}>
-            {/* Поле выбора */}
             <div className="select-field-custom" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
                 {selectedValues.length > 0 ? (
                     <div className="selected-options">
@@ -68,7 +67,6 @@ const CustomMultiSelect = ({ options, placeholder = "Выберите...", onCha
                 )}
             </div>
 
-            {/* Выпадающий список */}
             {isDropdownOpen && (
                 <div className="dropdown">
                     <input
@@ -79,13 +77,11 @@ const CustomMultiSelect = ({ options, placeholder = "Выберите...", onCha
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                     <div className="options-list">
-                        {/* Выбрать все */}
                         <div className="option select-all" onClick={toggleSelectAll}>
                             <input type="checkbox" checked={selectedValues.length === options.length} readOnly />
                             <span>Выбрать все</span>
                         </div>
 
-                        {/* Опции */}
                         {filteredOptions.length > 0 ? (
                             filteredOptions.map((option) => (
                                 <div key={option} className="option" onClick={() => toggleOption(option)}>
