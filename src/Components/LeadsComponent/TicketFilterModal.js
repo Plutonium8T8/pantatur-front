@@ -19,12 +19,12 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
     const filterDefaults = {
         creation_date: "",
         last_interaction_date: "",
-        technician_id: "",
+        technician_id: [],
         sender_id: "",
-        workflow: workflowOptions.filter(wf => wf !== "Realizat cu succes" && wf !== "Închis și nerealizat"), // ✅ Исключаем ненужные статусы
-        priority: "",
+        workflow: workflowOptions.filter(wf => wf !== "Realizat cu succes" && wf !== "Închis și nerealizat"),
+        priority: [],
         tags: "",
-        platform: "",
+        platform: [],
     };
 
     const tabs = Object.keys(filterGroups);
@@ -58,10 +58,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                 }
 
                 const data = await response.json();
-                const formattedTechnicians = data.map((item) => ({
-                    id: item.id.id,
-                    fullName: `${item.id.name} ${item.id.surname}`.trim(),
-                }));
+                const formattedTechnicians = data.map((item) => `${item.id.id}: ${item.id.name} ${item.id.surname}`.trim());
 
                 setTechnicians(formattedTechnicians);
             } catch (error) {
@@ -92,11 +89,11 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
         setActiveTab(tab);
     };
 
-    const handleWorkflowChange = (selectedWorkflows) => {
-        console.log("🔹 Выбраны workflow в MultiSelect:", selectedWorkflows);
+    const handleMultiSelectChange = (name, selectedValues) => {
+        console.log(`🔹 Выбраны ${name}:`, selectedValues);
         setFilters((prev) => ({
             ...prev,
-            workflow: selectedWorkflows,
+            [name]: selectedValues,
         }));
     };
 
@@ -142,9 +139,9 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                                 <label>Workflow</label>
                                 <CustomMultiSelect
                                     options={workflowOptions}
-                                    placeholder="Workflow"
-                                    onChange={handleWorkflowChange}
-                                    selectedValues={filters.workflow} // ✅ Передаем в MultiSelect
+                                    placeholder="Выберите этапы"
+                                    onChange={(values) => handleMultiSelectChange("workflow", values)}
+                                    selectedValues={filters.workflow}
                                 />
                             </>
                         )}
@@ -166,28 +163,24 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                         {filterGroups[activeTab].includes("priority") && (
                             <>
                                 <label>Приоритет</label>
-                                <select name="priority" value={filters.priority || ""} onChange={handleInputChange}>
-                                    <option value="">Все приоритеты</option>
-                                    {priorityOptions.map((option) => (
-                                        <option key={option} value={option}>
-                                            {option}
-                                        </option>
-                                    ))}
-                                </select>
+                                <CustomMultiSelect
+                                    options={priorityOptions}
+                                    placeholder="Выберите приоритет"
+                                    onChange={(values) => handleMultiSelectChange("priority", values)}
+                                    selectedValues={filters.priority}
+                                />
                             </>
                         )}
 
                         {filterGroups[activeTab].includes("technician_id") && (
                             <>
                                 <label>Ответственный</label>
-                                <select name="technician_id" value={filters.technician_id || ""} onChange={handleInputChange}>
-                                    <option value="">Все менеджеры</option>
-                                    {technicians.map((tech) => (
-                                        <option key={tech.id} value={tech.id}>
-                                            {`${tech.id}: ${tech.fullName}`}
-                                        </option>
-                                    ))}
-                                </select>
+                                <CustomMultiSelect
+                                    options={technicians}
+                                    placeholder="Выберите ответственного"
+                                    onChange={(values) => handleMultiSelectChange("technician_id", values)}
+                                    selectedValues={filters.technician_id}
+                                />
                             </>
                         )}
 
@@ -208,14 +201,12 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                         {filterGroups[activeTab].includes("platform") && (
                             <>
                                 <label>Платформа</label>
-                                <select name="platform" value={filters.platform || ""} onChange={handleInputChange}>
-                                    <option value="">Все платформы</option>
-                                    {platformOptions.map((platform) => (
-                                        <option key={platform} value={platform}>
-                                            {platform}
-                                        </option>
-                                    ))}
-                                </select>
+                                <CustomMultiSelect
+                                    options={platformOptions}
+                                    placeholder="Выберите платформу"
+                                    onChange={(values) => handleMultiSelectChange("platform", values)}
+                                    selectedValues={filters.platform}
+                                />
                             </>
                         )}
 

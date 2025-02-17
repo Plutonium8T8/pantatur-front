@@ -26,15 +26,15 @@ const Leads = () => {
   const [filters, setFilters] = useState({
     creation_date: '',
     last_interaction_date: '',
-    technician_id: '',
+    technician_id: [],
     sender_id: '',
-    workflow: [],
-    priority: '',
+    workflow: selectedWorkflow,
+    priority: [],
     tags: '',
-    platform: '',
+    platform: [],
   });
 
-  // Фильтрация тикетов по параметрам
+  // **Фильтрация тикетов**
   const filteredTickets = useMemo(() => {
     return tickets.filter((ticket) => {
       const creationDate = ticket.creation_date ? ticket.creation_date.split(" ")[0] : "";
@@ -44,23 +44,26 @@ const Leads = () => {
         ? ticket.tags.replace(/[{}]/g, "").split(",").map(tag => tag.trim().toLowerCase())
         : [];
 
-      const hasMatchingPlatform = messages.some(
-        (message) => message.ticket_id === ticket.id && message.platform === filters.platform
-      );
+      const hasMatchingPlatform = filters.platform.length === 0 || filters.platform.includes(ticket.platform);
 
-      const hasMatchingSender = messages.some(
+      const hasMatchingSender = !filters.sender_id || messages.some(
         (message) => message.ticket_id === ticket.id && message.sender_id == filters.sender_id
       );
+
+      // ✅ Проверка technician_id
+      const hasMatchingTechnician =
+        filters.technician_id.length === 0 ||
+        (ticket.technician_id !== null && filters.technician_id.includes(ticket.technician_id));
 
       return (
         (!filters.creation_date || creationDate === filters.creation_date) &&
         (!filters.last_interaction_date || lastInteractionDate === filters.last_interaction_date) &&
-        (!filters.technician_id || String(ticket.technician_id) === filters.technician_id) &&
-        (!filters.sender_id || hasMatchingSender) &&
-        (filters.workflow.length === 0 || filters.workflow.includes(ticket.workflow)) && // ✅ Исправленный фильтр по workflow
-        (!filters.priority || ticket.priority.toLowerCase() === filters.priority.toLowerCase()) &&
+        hasMatchingTechnician &&
+        hasMatchingSender &&
+        (filters.workflow.length === 0 || filters.workflow.includes(ticket.workflow)) &&
+        (filters.priority.length === 0 || filters.priority.includes(ticket.priority)) &&
         (!filters.tags || ticketTags.includes(filters.tags.toLowerCase())) &&
-        (!filters.platform || hasMatchingPlatform)
+        hasMatchingPlatform
       );
     });
   }, [tickets, messages, filters]);
@@ -138,13 +141,13 @@ const Leads = () => {
           />
           <button onClick={() => setIsFilterOpen(true)} className="button-filter">
             <FaFilter />
-            {Object.values(filters).some(value => value) && <span className="filter-indicator"></span>}
+            {Object.values(filters).some(value => Array.isArray(value) ? value.length > 0 : value) && <span className="filter-indicator"></span>}
           </button>
         </div>
       </div>
       <div className="container-tickets">
         {workflowOptions
-          .filter(workflow => selectedWorkflow.includes(workflow)) // ✅ Отображаем только выбранные workflow
+          .filter(workflow => selectedWorkflow.includes(workflow))
           .map((workflow) => (
             <WorkflowColumn
               key={workflow}
@@ -183,8 +186,13 @@ const Leads = () => {
         onClose={() => setIsFilterOpen(false)}
         onApplyFilter={(updatedFilters) => {
           console.log("🚀 Применяем фильтр с параметрами:", updatedFilters);
-          setFilters(updatedFilters);
-          setSelectedWorkflow(updatedFilters.workflow); // ✅ Обновляем `selectedWorkflow`
+          setFilters({
+            ...updatedFilters,
+            technician_id: updatedFilters.technician_id.map(t => parseInt(t.split(":")[0])), // ✅ Преобразуем technician_id в числа
+            priority: updatedFilters.priority, // ✅ Приоритет - массив
+            platform: updatedFilters.platform, // ✅ Платформа - массив
+          });
+          setSelectedWorkflow(updatedFilters.workflow);
         }}
       />
     </div>
