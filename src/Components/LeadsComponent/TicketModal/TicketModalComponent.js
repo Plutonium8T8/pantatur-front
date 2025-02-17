@@ -60,8 +60,8 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
       ticket_id: editedTicket.id || userId,
       technician_id: userId,
       contact: editedTicket.contact || '',
-      nume: editedTicket.name,
-      prenume: editedTicket.surname,
+      name: editedTicket.name,
+      surname: editedTicket.surname,
       mail: editedTicket.email,
       telefon: editedTicket.phone,
     };

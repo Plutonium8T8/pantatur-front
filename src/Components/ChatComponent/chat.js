@@ -1948,54 +1948,6 @@ const ChatComponent = ({ }) => {
                                         className="input-field"
                                         placeholder="Prenume"
                                     />
-                                    {/* <Input
-                                        label="Data nașterii"
-                                        type="date"
-                                        value={personalInfo[selectedClient]?.date_of_birth ?? ""}
-                                        onChange={(e) =>
-                                            handleSelectChange(selectedClient, 'date_of_birth', e.target.value)
-                                        }
-                                        className="input-field"
-                                    />
-                                    <Input
-                                        label="Seria buletinului"
-                                        type="text"
-                                        value={personalInfo[selectedClient]?.id_card_series ?? ""}
-                                        onChange={(e) =>
-                                            handleSelectChange(selectedClient, 'id_card_series', e.target.value)
-                                        }
-                                        className="input-field"
-                                        placeholder="Seria buletinului"
-                                    />
-                                    <Input
-                                        label="Numărul buletinului"
-                                        type="text"
-                                        value={personalInfo[selectedClient]?.id_card_number ?? ""}
-                                        onChange={(e) =>
-                                            handleSelectChange(selectedClient, 'id_card_number', e.target.value)
-                                        }
-                                        className="input-field"
-                                        placeholder="Numărul buletinului"
-                                    />
-                                    <Input
-                                        label="Data eliberării buletinului"
-                                        type="date"
-                                        value={personalInfo[selectedClient]?.id_card_release ?? ""}
-                                        onChange={(e) =>
-                                            handleSelectChange(selectedClient, 'id_card_release', e.target.value)
-                                        }
-                                        className="input-field"
-                                    />
-                                    <Input
-                                        label="IDNP"
-                                        type="text"
-                                        value={personalInfo[selectedClient]?.idnp ?? ""}
-                                        onChange={(e) =>
-                                            handleSelectChange(selectedClient, 'idnp', e.target.value)
-                                        }
-                                        className="input-field"
-                                        placeholder="IDNP"
-                                    /> */}
                                     <Input
                                         label="Adresă"
                                         type="text"

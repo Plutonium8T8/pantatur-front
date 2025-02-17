@@ -100,9 +100,12 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
+
         setFilters((prev) => ({
             ...prev,
-            [name]: value,
+            [name]: name === "tags"
+                ? value.split(",").map(tag => tag.trim().toLowerCase())  // ✅ Разбиваем строку тегов в массив
+                : value,
         }));
     };
 
@@ -195,7 +198,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                         {filterGroups[activeTab].includes("tags") && (
                             <>
                                 <label>Теги</label>
-                                <input type="text" name="tags" value={filters.tags || ""} onChange={handleInputChange} />
+                                <input type="text" name="tags" value={filters.tags || ""} onChange={handleInputChange} placeholder="Introduce lista de tag-uri prin virgula" />
                             </>
                         )}
 

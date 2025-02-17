@@ -44,15 +44,20 @@ const Leads = () => {
         ? ticket.tags.replace(/[{}]/g, "").split(",").map(tag => tag.trim().toLowerCase())
         : [];
 
-      const hasMatchingPlatform = filters.platform.length === 0 || filters.platform.includes(ticket.platform);
+      const hasMatchingPlatform =
+        filters.platform.length === 0 || (ticket.platform && filters.platform.includes(ticket.platform));
 
-      const hasMatchingSender = !filters.sender_id || messages.some(
-        (message) => message.ticket_id === ticket.id && message.sender_id == filters.sender_id
-      );
+      const hasMatchingSender =
+        !filters.sender_id || messages.some(
+          (message) => message.ticket_id === ticket.id && message.sender_id == filters.sender_id
+        );
 
       const hasMatchingTechnician =
         filters.technician_id.length === 0 ||
-        (ticket.technician_id !== null && filters.technician_id.includes(ticket.technician_id));
+        (ticket.technician_id !== null && filters.technician_id.includes(String(ticket.technician_id))); // ✅ Привели к строке
+
+      const hasMatchingTags =
+        filters.tags.length === 0 || filters.tags.every(tag => ticketTags.includes(tag)); // ✅ Проверяем все введенные теги
 
       return (
         (!filters.creation_date || creationDate === filters.creation_date) &&
@@ -61,7 +66,7 @@ const Leads = () => {
         hasMatchingSender &&
         (filters.workflow.length === 0 || filters.workflow.includes(ticket.workflow)) &&
         (filters.priority.length === 0 || filters.priority.includes(ticket.priority)) &&
-        (!filters.tags || ticketTags.includes(filters.tags.toLowerCase())) &&
+        hasMatchingTags && // ✅ Обновленный фильтр по тегам
         hasMatchingPlatform
       );
     });
