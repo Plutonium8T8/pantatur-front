@@ -37,8 +37,11 @@ const Leads = () => {
   // **Фильтрация тикетов**
   const filteredTickets = useMemo(() => {
     return tickets.filter((ticket) => {
+      // Приведение `creation_date` к формату `YYYY-MM-DD`
       const creationDate = ticket.creation_date ? ticket.creation_date.split(" ")[0] : "";
       const lastInteractionDate = ticket.last_interaction_date ? ticket.last_interaction_date.split(" ")[0] : "";
+
+      console.log(`📅 Ticket Date: ${creationDate}, Filter Date: ${filters.creation_date}`);
 
       const ticketTags = ticket.tags
         ? ticket.tags.replace(/[{}]/g, "").split(",").map(tag => tag.trim().toLowerCase())
@@ -56,7 +59,7 @@ const Leads = () => {
         (ticket.technician_id !== null && filters.technician_id.includes(ticket.technician_id));
 
       return (
-        (!filters.creation_date || creationDate === filters.creation_date) &&
+        (!filters.creation_date || creationDate === filters.creation_date) && // ✅ Исправленное сравнение
         (!filters.last_interaction_date || lastInteractionDate === filters.last_interaction_date) &&
         hasMatchingTechnician &&
         hasMatchingSender &&

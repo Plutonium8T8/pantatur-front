@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./CustomMultiSelect.css";
 
-const CustomMultiSelect = ({ options, selectedValues = [], onChange, placeholder = "Select..." }) => {
-    const [selectedOptions, setSelectedOptions] = useState(selectedValues);
+const CustomMultiSelect = ({ options, placeholder = "Выберите...", onChange, selectedValues }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
@@ -21,24 +20,26 @@ const CustomMultiSelect = ({ options, selectedValues = [], onChange, placeholder
 
     // Выбор или удаление опции
     const toggleOption = (option) => {
-        let newSelectedOptions;
-        if (selectedOptions.includes(option)) {
-            newSelectedOptions = selectedOptions.filter((item) => item !== option);
-        } else {
-            newSelectedOptions = [...selectedOptions, option];
-        }
+        const newSelected = selectedValues.includes(option)
+            ? selectedValues.filter((item) => item !== option)
+            : [...selectedValues, option];
 
-        setSelectedOptions(newSelectedOptions);
-        console.log("🔹 Выбраны workflow в MultiSelect:", newSelectedOptions);
-        onChange(newSelectedOptions); // 🔥 Передаем выбранные workflow обратно
+        onChange(newSelected);
+    };
+
+    // Удаление конкретного элемента через крестик
+    const removeOption = (option) => {
+        const newSelected = selectedValues.filter((item) => item !== option);
+        onChange(newSelected);
     };
 
     // Выбрать все / Отменить выбор всех
     const toggleSelectAll = () => {
-        const newSelectedOptions = selectedOptions.length === options.length ? [] : options;
-        setSelectedOptions(newSelectedOptions);
-        console.log("🔹 Выбраны все workflow:", newSelectedOptions);
-        onChange(newSelectedOptions); // 🔥 Передаем в родительский компонент
+        if (selectedValues.length === options.length) {
+            onChange([]);
+        } else {
+            onChange(options);
+        }
     };
 
     // Фильтрация списка по поиску
@@ -50,17 +51,17 @@ const CustomMultiSelect = ({ options, selectedValues = [], onChange, placeholder
         <div className="custom-multi-select" ref={dropdownRef}>
             {/* Поле выбора */}
             <div className="select-field-custom" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
-                {selectedOptions.length > 0 ? (
+                {selectedValues.length > 0 ? (
                     <div className="selected-options">
-                        {selectedOptions.length === options.length ? (
-                            <span className="selected-tag">All Selected</span>
-                        ) : (
-                            selectedOptions.map((option) => (
-                                <span key={option} className="selected-tag">
-                                    {option}
-                                </span>
-                            ))
-                        )}
+                        {selectedValues.map((option) => (
+                            <span key={option} className="selected-tag">
+                                {option}
+                                <span className="remove-option" onClick={(e) => {
+                                    e.stopPropagation();
+                                    removeOption(option);
+                                }}>✖</span>
+                            </span>
+                        ))}
                     </div>
                 ) : (
                     <span className="placeholder">{placeholder}</span>
@@ -73,27 +74,27 @@ const CustomMultiSelect = ({ options, selectedValues = [], onChange, placeholder
                     <input
                         type="text"
                         className="search-input-multi"
-                        placeholder="Search"
+                        placeholder="Поиск"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                     <div className="options-list">
                         {/* Выбрать все */}
                         <div className="option select-all" onClick={toggleSelectAll}>
-                            <input type="checkbox" checked={selectedOptions.length === options.length} readOnly />
-                            <span>Select All</span>
+                            <input type="checkbox" checked={selectedValues.length === options.length} readOnly />
+                            <span>Выбрать все</span>
                         </div>
 
                         {/* Опции */}
                         {filteredOptions.length > 0 ? (
                             filteredOptions.map((option) => (
                                 <div key={option} className="option" onClick={() => toggleOption(option)}>
-                                    <input type="checkbox" checked={selectedOptions.includes(option)} readOnly />
+                                    <input type="checkbox" checked={selectedValues.includes(option)} readOnly />
                                     <span>{option}</span>
                                 </div>
                             ))
                         ) : (
-                            <div className="no-match">No matches</div>
+                            <div className="no-match">Нет совпадений</div>
                         )}
                     </div>
                 </div>
