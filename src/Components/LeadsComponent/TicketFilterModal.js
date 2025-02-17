@@ -334,11 +334,11 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                                 />
                                 <label>Vânzare €</label>
 
-                                <Input
+                                <input
                                     type="number"
+                                    name="buget"
                                     value={filters.buget || ""}
                                     onChange={handleInputChange}
-                                    className={'input-field'}
                                     placeholder="Indicați suma în euro"
                                 />
 
