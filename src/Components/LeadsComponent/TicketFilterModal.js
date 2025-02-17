@@ -54,28 +54,39 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
 
 
     const filterDefaults = {
-        creation_date: "",
-        last_interaction_date: "",
-        technician_id: [],
-        sender_id: "",
         workflow: workflowOptions.filter(wf => wf !== "Realizat cu succes" && wf !== "Închis și nerealizat"),
-        priority: [],
         tags: "",
-        platform: [],
-        sursa_lead: [],
-        status_sunet_telefonic: [],
-        promo: [],
-        marketing: [],
-        tipul_serviciului: [],
-        tara: [],
-        tip_de_transport: [],
-        denumirea_excursiei_turului: [],
-        procesarea_achizitionarii: [],
-        data_venit_in_oficiu: "",
-        data_plecarii: "",
-        data_intoarcerii: "",
-        data_cererii_de_retur: "",
-        buget: "",
+    };
+
+    const handleApplyFilter = async () => {
+        // Убираем workflow и tags перед отправкой
+        const { workflow, tags, ...formattedFilters } = filters;
+
+        console.log("🚀 Отправляем данные на API (без workflow и tags):", formattedFilters);
+
+        try {
+            const token = Cookies.get("jwt");
+            const response = await fetch("https://pandatur-api.com/api/apply-filters", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(formattedFilters), // ✅ Отправляем данные без workflow и tags
+            });
+
+            if (!response.ok) {
+                throw new Error(`Ошибка при отправке данных: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log("✅ Фильтры успешно применены:", result);
+
+            onApplyFilter(formattedFilters); // ✅ Передаем без workflow и tags
+            onClose();
+        } catch (error) {
+            console.error("❌ Ошибка при применении фильтра:", error);
+        }
     };
 
     const tabs = Object.keys(filterGroups);
@@ -139,8 +150,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
     };
 
     const handleMultiSelectChange = (name, selectedValues) => {
-        console.log(`🔹 Выбраны ${name}:`, selectedValues);
-        setFilters(prev => ({
+        setFilters((prev) => ({
             ...prev,
             [name]: selectedValues,
         }));
@@ -148,17 +158,10 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-
-        setFilters(prev => ({
+        setFilters((prev) => ({
             ...prev,
-            [name]: name === "tags" ? value.split(",").map(tag => tag.trim().toLowerCase()) : value,
+            [name]: value,
         }));
-    };
-
-    const handleApplyFilter = () => {
-        console.log("🚀 Применяем фильтр с параметрами:", filters);
-        onApplyFilter(filters);
-        onClose();
     };
 
     const handleResetFilters = () => {
@@ -253,14 +256,14 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
 
                         {filterGroups[activeTab].includes("tags") && (
                             <>
-                                <label>Теги</label>
+                                {/* <label>Теги</label>
                                 <input
                                     type="text"
                                     name="tags"
                                     value={Array.isArray(filters.tags) ? filters.tags.join(", ") : ""}
                                     onChange={handleInputChange}
                                     placeholder="Введите теги через запятую"
-                                />
+                                /> */}
                                 <label>Surs Lead</label>
                                 <CustomMultiSelect
                                     options={sourceOfLeadOptions}
