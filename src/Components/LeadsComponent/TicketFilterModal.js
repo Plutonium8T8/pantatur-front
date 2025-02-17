@@ -21,7 +21,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
         last_interaction_date: "",
         technician_id: "",
         sender_id: "",
-        workflow: workflowOptions.filter(wf => wf !== "realizat cu succes" && wf !== "inchis nerealizat"), // ✅ Исключаем ненужные статусы
+        workflow: workflowOptions.filter(wf => wf !== "Realizat cu succes" && wf !== "Închis și nerealizat"), // ✅ Исключаем ненужные статусы
         priority: "",
         tags: "",
         platform: "",

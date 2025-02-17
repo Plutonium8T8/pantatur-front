@@ -19,12 +19,6 @@ const CustomMultiSelect = ({ options, selectedValues = [], onChange, placeholder
         };
     }, []);
 
-    // При изменении `selectedValues` (например, при сбросе фильтра), обновляем `selectedOptions`
-    useEffect(() => {
-        setSelectedOptions(selectedValues);
-        console.log("🔄 Обновлены selectedOptions в MultiSelect:", selectedValues);
-    }, [selectedValues]);
-
     // Выбор или удаление опции
     const toggleOption = (option) => {
         let newSelectedOptions;

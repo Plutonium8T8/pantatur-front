@@ -18,7 +18,9 @@ const Leads = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentTicket, setCurrentTicket] = useState(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [selectedWorkflow, setSelectedWorkflow] = useState(workflowOptions.filter(wf => wf !== "realizat cu succes" && wf !== "inchis nerealizat")); // По умолчанию без закрытых статусов
+  const [selectedWorkflow, setSelectedWorkflow] = useState(
+    workflowOptions.filter(wf => wf !== "Realizat cu succes" && wf !== "Închis și nerealizat")
+  );
   const language = localStorage.getItem('language') || 'RO';
 
   const [filters, setFilters] = useState({
