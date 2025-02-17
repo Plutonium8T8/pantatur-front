@@ -256,14 +256,14 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
 
                         {filterGroups[activeTab].includes("tags") && (
                             <>
-                                {/* <label>Теги</label>
+                                <label>Теги</label>
                                 <input
                                     type="text"
                                     name="tags"
                                     value={Array.isArray(filters.tags) ? filters.tags.join(", ") : ""}
                                     onChange={handleInputChange}
                                     placeholder="Введите теги через запятую"
-                                /> */}
+                                />
                                 <label>Surs Lead</label>
                                 <CustomMultiSelect
                                     options={sourceOfLeadOptions}
