@@ -1,6 +1,21 @@
 import React, { useState, useEffect, useRef } from "react";
 import { priorityOptions } from "../../FormOptions/PriorityOption";
 import { workflowOptions } from "../../FormOptions/WorkFlowOption";
+import { transportOptions } from '../../FormOptions/TransportOptions';
+import { motivulRefuzuluiOptions } from '../../FormOptions/MotivulRefuzuluiOptions';
+import { countryOptions } from '../../FormOptions/CountryOptions';
+import { marketingOptions } from '../../FormOptions/MarketingOptions';
+import { nameExcursionOptions } from '../../FormOptions/NameExcursionOptions';
+import { paymentStatusOptions } from '../../FormOptions/PaymentStatusOptions';
+import { purchaseProcessingOptions } from '../../FormOptions/PurchaseProcessingOptions';
+import { serviceTypeOptions } from '../../FormOptions/ServiceTypeOptions';
+import { sourceOfLeadOptions } from '../../FormOptions/SourceOfLeadOptions';
+import { promoOptions } from '../../FormOptions/PromoOptions';
+import { templateOptions } from '../../FormOptions/MessageTemplate';
+import { evaluareOdihnaOptions } from '../../FormOptions/EvaluareVacantaOptions';
+import { valutaOptions } from '../../FormOptions/ValutaOptions';
+import { ibanOptions } from '../../FormOptions/IbanOptions';
+import Input from "../InputComponent/InputComponent";
 import CustomMultiSelect from "../MultipleSelect/MultipleSelect";
 import Cookies from "js-cookie";
 import "./Modal.css";
@@ -13,9 +28,30 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
 
     const filterGroups = {
         "General": ["workflow"],
-        "Ticket": ["creation_date", "last_interaction_date", "priority", "technician_id", "tags",],
+        "Ticket": [
+            "creation_date",
+            "last_interaction_date",
+            "priority",
+            "technician_id",
+            "tags",
+            "tipul_serviciului",
+            "tara",
+            "tip_de_transport",
+            "denumirea_excursiei_turului",
+            "procesarea_achizitionarii",
+            "data_venit_in_oficiu",
+            "data_plecarii",
+            "data_intoarcerii",
+            "data_cererii_de_retur",
+            "buget",
+            "sursa_lead",
+            "status_sunet_telefonic",
+            "promo",
+            "marketing"
+        ],
         "Messages": ["platform", "sender_id"]
     };
+
 
     const filterDefaults = {
         creation_date: "",
@@ -26,6 +62,20 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
         priority: [],
         tags: "",
         platform: [],
+        sursa_lead: [],
+        status_sunet_telefonic: [],
+        promo: [],
+        marketing: [],
+        tipul_serviciului: [],
+        tara: [],
+        tip_de_transport: [],
+        denumirea_excursiei_turului: [],
+        procesarea_achizitionarii: [],
+        data_venit_in_oficiu: "",
+        data_plecarii: "",
+        data_intoarcerii: "",
+        data_cererii_de_retur: "",
+        buget: "",
     };
 
     const tabs = Object.keys(filterGroups);
@@ -44,7 +94,6 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
         const fetchTechnicians = async () => {
             try {
                 const token = Cookies.get("jwt");
-
                 const response = await fetch("https://pandatur-api.com/api/users-technician", {
                     method: "GET",
                     headers: {
@@ -59,8 +108,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                 }
 
                 const data = await response.json();
-                const formattedTechnicians = data.map((item) => `${item.id.id}: ${item.id.name} ${item.id.surname}`.trim());
-
+                const formattedTechnicians = data.map(item => `${item.id.id}: ${item.id.name} ${item.id.surname}`.trim());
                 setTechnicians(formattedTechnicians);
             } catch (error) {
                 console.error("Ошибка при загрузке техников:", error);
@@ -92,7 +140,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
 
     const handleMultiSelectChange = (name, selectedValues) => {
         console.log(`🔹 Выбраны ${name}:`, selectedValues);
-        setFilters((prev) => ({
+        setFilters(prev => ({
             ...prev,
             [name]: selectedValues,
         }));
@@ -101,11 +149,9 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
 
-        setFilters((prev) => ({
+        setFilters(prev => ({
             ...prev,
-            [name]: name === "tags"
-                ? value.split(",").map(tag => tag.trim().toLowerCase())  // ✅ Разбиваем строку тегов в массив
-                : value,
+            [name]: name === "tags" ? value.split(",").map(tag => tag.trim().toLowerCase()) : value,
         }));
     };
 
@@ -128,7 +174,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
             <div className="modal-content-filter" ref={modalRef}>
                 <div className="filter-container">
                     <div className="tabs">
-                        {tabs.map((tab) => (
+                        {tabs.map(tab => (
                             <div key={tab} className={`tab ${activeTab === tab ? "active" : ""}`} onClick={() => handleTabClick(tab)}>
                                 {tab}
                             </div>
@@ -144,7 +190,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                                 <CustomMultiSelect
                                     options={workflowOptions}
                                     placeholder="Выберите этапы"
-                                    onChange={(values) => handleMultiSelectChange("workflow", values)}
+                                    onChange={values => handleMultiSelectChange("workflow", values)}
                                     selectedValues={filters.workflow}
                                 />
                             </>
@@ -160,7 +206,12 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                         {filterGroups[activeTab].includes("last_interaction_date") && (
                             <>
                                 <label>Последняя активность</label>
-                                <input type="date" name="last_interaction_date" value={filters.last_interaction_date || ""} onChange={handleInputChange} />
+                                <input
+                                    type="date"
+                                    name="last_interaction_date"
+                                    value={filters.last_interaction_date || ""}
+                                    onChange={handleInputChange}
+                                />
                             </>
                         )}
 
@@ -170,7 +221,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                                 <CustomMultiSelect
                                     options={priorityOptions}
                                     placeholder="Выберите приоритет"
-                                    onChange={(values) => handleMultiSelectChange("priority", values)}
+                                    onChange={values => handleMultiSelectChange("priority", values)}
                                     selectedValues={filters.priority}
                                 />
                             </>
@@ -182,7 +233,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                                 <CustomMultiSelect
                                     options={technicians}
                                     placeholder="Выберите ответственного"
-                                    onChange={(values) => handleMultiSelectChange("technician_id", values)}
+                                    onChange={values => handleMultiSelectChange("technician_id", values)}
                                     selectedValues={filters.technician_id}
                                 />
                             </>
@@ -191,14 +242,129 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                         {filterGroups[activeTab].includes("sender_id") && (
                             <>
                                 <label>ID отправителя</label>
-                                <input type="text" name="sender_id" value={filters.sender_id || ""} onChange={handleInputChange} />
+                                <input
+                                    type="text"
+                                    name="sender_id"
+                                    value={filters.sender_id || ""}
+                                    onChange={handleInputChange}
+                                />
                             </>
                         )}
 
                         {filterGroups[activeTab].includes("tags") && (
                             <>
                                 <label>Теги</label>
-                                <input type="text" name="tags" value={filters.tags || ""} onChange={handleInputChange} placeholder="Introduce lista de tag-uri prin virgula" />
+                                <input
+                                    type="text"
+                                    name="tags"
+                                    value={Array.isArray(filters.tags) ? filters.tags.join(", ") : ""}
+                                    onChange={handleInputChange}
+                                    placeholder="Введите теги через запятую"
+                                />
+                                <label>Surs Lead</label>
+                                <CustomMultiSelect
+                                    options={sourceOfLeadOptions}
+                                    placeholder="Выберите источник"
+                                    onChange={values => handleMultiSelectChange("sursa_lead", values)}
+                                    selectedValues={filters.sursa_lead}
+                                />
+
+                                <label>Promo</label>
+                                <CustomMultiSelect
+                                    options={promoOptions}
+                                    placeholder="Выберите Promo"
+                                    onChange={values => handleMultiSelectChange("promo", values)}
+                                    selectedValues={filters.promo}
+                                />
+
+                                <label>Marketing</label>
+                                <CustomMultiSelect
+                                    options={marketingOptions}
+                                    placeholder="Выберите маркетинг"
+                                    onChange={values => handleMultiSelectChange("marketing", values)}
+                                    selectedValues={filters.marketing}
+                                />
+
+                                <label>Страна</label>
+                                <CustomMultiSelect
+                                    options={countryOptions}
+                                    placeholder="Выберите страну"
+                                    onChange={values => handleMultiSelectChange("tara", values)}
+                                    selectedValues={filters.tara}
+                                />
+
+                                <label>Транспорт</label>
+                                <CustomMultiSelect
+                                    options={transportOptions}
+                                    placeholder="Выберите транспорт"
+                                    onChange={values => handleMultiSelectChange("tip_de_transport", values)}
+                                    selectedValues={filters.tip_de_transport}
+                                />
+
+                                <label>Экскурсия</label>
+                                <CustomMultiSelect
+                                    options={nameExcursionOptions}
+                                    placeholder="Выберите экскурсию"
+                                    onChange={values => handleMultiSelectChange("denumirea_excursiei_turului", values)}
+                                    selectedValues={filters.denumirea_excursiei_turului}
+                                />
+
+                                <label>Дата визита в офис</label>
+                                <input
+                                    type="datetime-local"
+                                    name="data_venit_in_oficiu"
+                                    value={filters.data_venit_in_oficiu || ""}
+                                    onChange={handleInputChange}
+                                />
+
+                                <label>Дата отъезда</label>
+                                <input
+                                    type="datetime-local"
+                                    name="data_plecarii"
+                                    value={filters.data_plecarii || ""}
+                                    onChange={handleInputChange}
+                                />
+
+                                <label>Дата возврата</label>
+                                <input
+                                    type="datetime-local"
+                                    name="data_intoarcerii"
+                                    value={filters.data_intoarcerii || ""}
+                                    onChange={handleInputChange}
+                                />
+                                <label>Vânzare €</label>
+
+                                <Input
+                                    type="number"
+                                    value={filters.buget || ""}
+                                    onChange={handleInputChange}
+                                    className={'input-field'}
+                                    placeholder="Indicați suma în euro"
+                                />
+
+                                <label>tipul_serviciului</label>
+                                <CustomMultiSelect
+                                    options={serviceTypeOptions}
+                                    placeholder="Alege serviciu"
+                                    onChange={(values) => handleMultiSelectChange("tipul_serviciului", values)}
+                                    selectedValues={filters.tipul_serviciului}
+                                />
+
+                                <label>procesarea_achizitionarii</label>
+                                <CustomMultiSelect
+                                    options={purchaseProcessingOptions}
+                                    placeholder="Alege achiziție"
+                                    onChange={(values) => handleMultiSelectChange("procesarea_achizitionarii", values)}
+                                    selectedValues={filters.procesarea_achizitionarii}
+                                />
+
+                                <label>Data cererii de retur</label>
+                                <input
+                                    type="datetime-local"
+                                    name="data_cererii_de_retur"
+                                    value={filters.data_cererii_de_retur || ""}
+                                    onChange={handleInputChange}
+                                />
                             </>
                         )}
 
@@ -208,7 +374,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                                 <CustomMultiSelect
                                     options={platformOptions}
                                     placeholder="Выберите платформу"
-                                    onChange={(values) => handleMultiSelectChange("platform", values)}
+                                    onChange={values => handleMultiSelectChange("platform", values)}
                                     selectedValues={filters.platform}
                                 />
                             </>
