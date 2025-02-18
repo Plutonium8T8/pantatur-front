@@ -276,7 +276,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
 
                         {filterGroups[activeTab].includes("technician_id") && (
                             <>
-                                <label>Responsabi Ticket</label>
+                                <label>Responsabil Ticket</label>
                                 <CustomMultiSelect
                                     options={technicians}
                                     placeholder="Выберите ответственного"
@@ -367,6 +367,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                                     value={filters.data_intoarcerii || ""}
                                     onChange={handleInputChange}
                                 />
+
                                 <label>Vânzare €</label>
                                 <input
                                     type="number"
