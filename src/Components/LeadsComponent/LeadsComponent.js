@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useAppContext } from '../../AppContext';
 import { priorityOptions } from '../../FormOptions/PriorityOption';
 import { workflowOptions } from '../../FormOptions/WorkFlowOption';
@@ -14,6 +14,7 @@ import { translations } from '../utils/translations';
 
 const Leads = () => {
   const { tickets, isLoading, setTickets, messages } = useAppContext();
+  const [filteredTicketIds, setFilteredTicketIds] = useState(null); // 🚀 Новый стейт для ID отфильтрованных тикетов
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentTicket, setCurrentTicket] = useState(null);
@@ -36,43 +37,26 @@ const Leads = () => {
 
   // **Фильтрация тикетов**
   const filteredTickets = useMemo(() => {
-    return tickets.filter((ticket) => {
-      const creationDate = ticket.creation_date ? ticket.creation_date.split(" ")[0] : "";
-      const lastInteractionDate = ticket.last_interaction_date ? ticket.last_interaction_date.split(" ")[0] : "";
+    let result = tickets;
 
-      const ticketTags = ticket.tags
-        ? ticket.tags.replace(/[{}]/g, "").split(",").map(tag => tag.trim().toLowerCase())
-        : [];
+    // ✅ Если `filteredTicketIds` есть, но в `tickets` нет таких ID, просто игнорируем фильтр
+    if (filteredTicketIds && filteredTicketIds.length > 0) {
+      const filtered = result.filter(ticket => filteredTicketIds.includes(ticket.id));
+      if (filtered.length > 0) {
+        result = filtered; // Только если фильтр вернул тикеты
+      }
+    }
 
-      const hasMatchingPlatform =
-        filters.platform.length === 0 || (ticket.platform && filters.platform.includes(ticket.platform));
+    // ✅ Гарантируем, что `workflow` не скроет тикеты, если нет соответствий
+    if (selectedWorkflow.length > 0) {
+      const workflowFiltered = result.filter(ticket => selectedWorkflow.includes(ticket.workflow));
+      if (workflowFiltered.length > 0) {
+        result = workflowFiltered;
+      }
+    }
 
-      const hasMatchingSender =
-        !filters.sender_id || messages.some(
-          (message) => message.ticket_id === ticket.id && message.sender_id == filters.sender_id
-        );
-
-      const hasMatchingTechnician =
-        filters.technician_id.length === 0 ||
-        (ticket.technician_id !== null && filters.technician_id.includes(String(ticket.technician_id)));
-
-      const filterTagsArray = Array.isArray(filters.tags) ? filters.tags : filters.tags.split(",").map(tag => tag.trim().toLowerCase());
-
-      const hasMatchingTags = filters.tags.length === 0 || ticketTags.some(tag => filters.tags.includes(tag));
-
-
-      return (
-        (!filters.creation_date || creationDate === filters.creation_date) &&
-        (!filters.last_interaction_date || lastInteractionDate === filters.last_interaction_date) &&
-        hasMatchingTechnician &&
-        hasMatchingSender &&
-        (filters.workflow.length === 0 || filters.workflow.includes(ticket.workflow)) &&
-        (filters.priority.length === 0 || filters.priority.includes(ticket.priority)) &&
-        hasMatchingTags && // ✅ Обновленный фильтр по тегам
-        hasMatchingPlatform
-      );
-    });
-  }, [tickets, messages, filters]);
+    return result;
+  }, [tickets, filteredTicketIds, selectedWorkflow]);
 
   const updateWorkflow = async (ticketId, newWorkflow) => {
     try {
@@ -130,6 +114,11 @@ const Leads = () => {
     setCurrentTicket(null);
     setIsModalOpen(false);
   };
+
+  useEffect(() => {
+    console.log("🎯 Текущий список тикетов:", tickets);
+    console.log("🎯 Отфильтрованные ID тикетов:", filteredTicketIds);
+  }, [tickets, filteredTicketIds]);
 
   return (
     <div className="dashboard-container">
@@ -190,16 +179,23 @@ const Leads = () => {
       <TicketFilterModal
         isOpen={isFilterOpen}
         onClose={() => setIsFilterOpen(false)}
-        onApplyFilter={(updatedFilters) => {
+        onApplyFilter={(updatedFilters, ticketIds) => {
           console.log("🚀 Применяем фильтр с параметрами:", updatedFilters);
+          console.log("🎯 Пришли ID тикетов:", ticketIds);
+
           setFilters({
             ...updatedFilters,
-            technician_id: updatedFilters.technician_id ? updatedFilters.technician_id.map(t => parseInt(t.split(":")[0])) : [],
+            technician_id: updatedFilters.technician_id
+              ? updatedFilters.technician_id.map(t => parseInt(t.split(":")[0]))
+              : [],
             priority: updatedFilters.priority || [],
             platform: updatedFilters.platform || [],
           });
 
           setSelectedWorkflow(Array.isArray(updatedFilters.workflow) ? updatedFilters.workflow : []);
+
+          // ✅ Убеждаемся, что `ticketIds` — массив, даже если пустой
+          setFilteredTicketIds(Array.isArray(ticketIds) ? ticketIds : []);
         }}
       />
     </div>

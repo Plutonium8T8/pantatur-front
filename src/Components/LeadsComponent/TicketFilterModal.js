@@ -81,17 +81,22 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                 body: JSON.stringify(formattedFilters),
             });
 
-            if (!response.ok) {
-                throw new Error(`Ошибка при отправке данных: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`Ошибка: ${response.status}`);
 
-            const result = await response.json();
-            console.log("✅ Фильтры успешно применены:", result);
+            let ticketData = await response.json(); // Сервер возвращает массив массивов
 
-            onApplyFilter(formattedFilters);
+            console.log("✅ Отфильтрованные тикеты (до обработки):", ticketData);
+
+            // 🔄 Разворачиваем массив массивов в плоский массив ID
+            const ticketIds = ticketData.flat().map(ticket => ticket.id);
+
+            console.log("✅ Отфильтрованные ID тикетов (после обработки):", ticketIds);
+
+            // ✅ Передаем ticketIds в `onApplyFilter`
+            onApplyFilter(filters, ticketIds.length > 0 ? ticketIds : []);
             onClose();
         } catch (error) {
-            console.error("❌ Ошибка при применении фильтра:", error);
+            console.error("❌ Ошибка при фильтрации:", error);
         }
     };
 
@@ -162,13 +167,10 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
         }));
     };
 
+    // Локальный фильтр теперь тоже передает `[]`, а не `null`
     const handleApplyLocalFilter = () => {
         console.log("🔹 Локальное применение фильтра:", filters.workflow);
-        const localFilter = {
-            ...filters,
-            workflow: Array.isArray(filters.workflow) ? filters.workflow : [],
-        };
-        onApplyFilter(localFilter);
+        onApplyFilter(filters, []);
     };
 
     const handleInputChange = (e) => {
