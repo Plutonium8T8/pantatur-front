@@ -54,7 +54,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
 
     const filterDefaults = {
         workflow: workflowOptions.filter(wf => wf !== "Realizat cu succes" && wf !== "Închis și nerealizat"),
-        tags: [], // ✅ Теперь по умолчанию массив
+        tags: [],
     };
 
     const handleApplyFilter = async () => {
@@ -182,7 +182,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
 
         setFilters((prev) => ({
             ...prev,
-            [name]: name === "tags" ? value.split(",").map(tag => tag.trim()) : value, // ✅ Разбиваем строку на массив
+            [name]: name === "tags" ? value.split(",").map(tag => tag.trim()) : value,
         }));
     };
 
