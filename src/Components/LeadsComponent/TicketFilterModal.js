@@ -183,7 +183,6 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
     const handleResetFilters = () => {
         console.log("♻️ Сброс фильтра до:", filterDefaults);
 
-        // Гарантируем, что поля-массивы являются пустыми массивами, а не undefined
         const resetFilters = {
             ...filterDefaults,
             workflow: filterDefaults.workflow || [],
