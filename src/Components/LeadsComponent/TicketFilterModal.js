@@ -14,7 +14,6 @@ import { promoOptions } from '../../FormOptions/PromoOptions';
 import { evaluareOdihnaOptions } from '../../FormOptions/EvaluareVacantaOptions';
 import { valutaOptions } from '../../FormOptions/ValutaOptions';
 import { ibanOptions } from '../../FormOptions/IbanOptions';
-import Input from "../InputComponent/InputComponent";
 import CustomMultiSelect from "../MultipleSelect/MultipleSelect";
 import Cookies from "js-cookie";
 import "./Modal.css";
@@ -58,10 +57,8 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
     };
 
     const handleApplyFilter = async () => {
-        // Убираем workflow и tags перед отправкой
-        const { workflow, tags, ...formattedFilters } = filters;
 
-        // Проверяем, содержит ли объект хотя бы одно значение
+        const { workflow, tags, ...formattedFilters } = filters;
         const hasValidFilters = Object.values(formattedFilters).some(value =>
             Array.isArray(value) ? value.length > 0 : value
         );
@@ -167,13 +164,10 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
 
     const handleApplyLocalFilter = () => {
         console.log("🔹 Локальное применение фильтра:", filters.workflow);
-
-        // Проверяем, есть ли workflow, и если нет, то заменяем на пустой массив []
         const localFilter = {
             ...filters,
             workflow: Array.isArray(filters.workflow) ? filters.workflow : [],
         };
-
         onApplyFilter(localFilter);
     };
 
