@@ -54,10 +54,12 @@ const Leads = () => {
 
       const hasMatchingTechnician =
         filters.technician_id.length === 0 ||
-        (ticket.technician_id !== null && filters.technician_id.includes(String(ticket.technician_id))); // ✅ Привели к строке
+        (ticket.technician_id !== null && filters.technician_id.includes(String(ticket.technician_id)));
+
+      const filterTagsArray = Array.isArray(filters.tags) ? filters.tags : filters.tags.split(",").map(tag => tag.trim().toLowerCase());
 
       const hasMatchingTags =
-        filters.tags.length === 0 || filters.tags.every(tag => ticketTags.includes(tag)); // ✅ Проверяем все введенные теги
+        filterTagsArray.length === 0 || filterTagsArray.every(tag => ticketTags.includes(tag)); // ✅ Исправленный фильтр по тегам
 
       return (
         (!filters.creation_date || creationDate === filters.creation_date) &&
@@ -192,11 +194,12 @@ const Leads = () => {
           console.log("🚀 Применяем фильтр с параметрами:", updatedFilters);
           setFilters({
             ...updatedFilters,
-            technician_id: updatedFilters.technician_id.map(t => parseInt(t.split(":")[0])),
-            priority: updatedFilters.priority,
-            platform: updatedFilters.platform,
+            technician_id: updatedFilters.technician_id ? updatedFilters.technician_id.map(t => parseInt(t.split(":")[0])) : [],
+            priority: updatedFilters.priority || [],
+            platform: updatedFilters.platform || [],
           });
-          setSelectedWorkflow(updatedFilters.workflow);
+
+          setSelectedWorkflow(Array.isArray(updatedFilters.workflow) ? updatedFilters.workflow : []);
         }}
       />
     </div>
