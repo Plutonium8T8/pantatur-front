@@ -39,20 +39,20 @@ const Leads = () => {
   const filteredTickets = useMemo(() => {
     let result = tickets;
 
-    // ✅ Если `filteredTicketIds` есть, но в `tickets` нет таких ID, просто игнорируем фильтр
-    if (filteredTicketIds && filteredTicketIds.length > 0) {
-      const filtered = result.filter(ticket => filteredTicketIds.includes(ticket.id));
-      if (filtered.length > 0) {
-        result = filtered; // Только если фильтр вернул тикеты
-      }
+    // ✅ Если `filteredTicketIds === null`, просто фильтруем по `workflow`
+    if (filteredTicketIds === null) {
+      return result.filter(ticket => selectedWorkflow.length === 0 || selectedWorkflow.includes(ticket.workflow));
     }
 
-    // ✅ Гарантируем, что `workflow` не скроет тикеты, если нет соответствий
+    // ✅ Если `filteredTicketIds` пуст (`[]`), ничего не показываем
+    if (filteredTicketIds.length === 0) return [];
+
+    // ✅ Фильтруем по ID, если есть API-фильтрация
+    result = result.filter(ticket => filteredTicketIds.includes(ticket.id));
+
+    // ✅ Применяем `workflow`, если он есть
     if (selectedWorkflow.length > 0) {
-      const workflowFiltered = result.filter(ticket => selectedWorkflow.includes(ticket.workflow));
-      if (workflowFiltered.length > 0) {
-        result = workflowFiltered;
-      }
+      result = result.filter(ticket => selectedWorkflow.includes(ticket.workflow));
     }
 
     return result;
@@ -179,9 +179,9 @@ const Leads = () => {
       <TicketFilterModal
         isOpen={isFilterOpen}
         onClose={() => setIsFilterOpen(false)}
+        filteredTicketIds={filteredTicketIds} // 🔥 Передаем текущие `filteredTicketIds`
         onApplyFilter={(updatedFilters, ticketIds) => {
           console.log("🚀 Применяем фильтр с параметрами:", updatedFilters);
-          console.log("🎯 Пришли ID тикетов:", ticketIds);
 
           setFilters({
             ...updatedFilters,
@@ -194,8 +194,7 @@ const Leads = () => {
 
           setSelectedWorkflow(Array.isArray(updatedFilters.workflow) ? updatedFilters.workflow : []);
 
-          // ✅ Убеждаемся, что `ticketIds` — массив, даже если пустой
-          setFilteredTicketIds(Array.isArray(ticketIds) ? ticketIds : []);
+          setFilteredTicketIds(ticketIds !== null ? ticketIds : null);
         }}
       />
     </div>

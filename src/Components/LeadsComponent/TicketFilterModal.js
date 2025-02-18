@@ -20,7 +20,7 @@ import "./Modal.css";
 
 const platformOptions = ["telegram", "viber", "whatsapp", "facebook", "instagram", "sipuni"];
 
-const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
+const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }) => {
     const [technicians, setTechnicians] = useState([]);
     const modalRef = useRef(null);
 
@@ -167,10 +167,9 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
         }));
     };
 
-    // Локальный фильтр теперь тоже передает `[]`, а не `null`
     const handleApplyLocalFilter = () => {
         console.log("🔹 Локальное применение фильтра:", filters.workflow);
-        onApplyFilter(filters, []);
+        onApplyFilter(filters, filteredTicketIds);
     };
 
     const handleInputChange = (e) => {
@@ -183,27 +182,17 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
     };
 
     const handleResetFilters = () => {
-        console.log("♻️ Сброс фильтра до:", filterDefaults);
+        console.log("♻️ Сброс фильтров до значений по умолчанию");
 
         const resetFilters = {
             ...filterDefaults,
             workflow: filterDefaults.workflow || [],
-            priority: filterDefaults.priority || [],
-            technician_id: filterDefaults.technician_id || [],
-            tags: filterDefaults.tags || [],
-            sursa_lead: filterDefaults.sursa_lead || [],
-            promo: filterDefaults.promo || [],
-            marketing: filterDefaults.marketing || [],
-            tara: filterDefaults.tara || [],
-            tip_de_transport: filterDefaults.tip_de_transport || [],
-            denumirea_excursiei_turului: filterDefaults.denumirea_excursiei_turului || [],
-            procesarea_achizitionarii: filterDefaults.procesarea_achizitionarii || [],
-            tipul_serviciului: filterDefaults.tipul_serviciului || [],
-            platform: filterDefaults.platform || [],
         };
 
         setFilters(resetFilters);
-        onApplyFilter(resetFilters);
+
+        // ❗ Теперь `filteredTicketIds = null`, чтобы показать ВСЕ тикеты
+        onApplyFilter(resetFilters, null);
     };
 
     if (!isOpen) return null;
