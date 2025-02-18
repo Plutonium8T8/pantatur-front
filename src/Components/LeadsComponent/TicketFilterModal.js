@@ -57,10 +57,8 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
     };
 
     const handleApplyFilter = async () => {
-        // Убираем workflow, tags и platform перед отправкой
         const { workflow, tags, platform, ...formattedFilters } = filters;
 
-        // Проверяем, содержит ли объект хотя бы одно значение
         const hasValidFilters = Object.values(formattedFilters).some(value =>
             Array.isArray(value) ? value.length > 0 : value
         );
