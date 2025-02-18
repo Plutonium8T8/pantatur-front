@@ -57,7 +57,13 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
     };
 
     const handleApplyFilter = async () => {
-        const { workflow, tags, platform, ...formattedFilters } = filters;
+        // ✅ Оставляем `tags` в `formattedFilters`, чтобы они отправлялись в API
+        const { workflow, platform, ...formattedFilters } = filters;
+
+        // ✅ Преобразуем `tags` в строку (если массив) перед отправкой
+        if (filters.tags && Array.isArray(filters.tags)) {
+            formattedFilters.tags = filters.tags.join(","); // Преобразуем массив в строку с запятыми
+        }
 
         const hasValidFilters = Object.values(formattedFilters).some(value =>
             Array.isArray(value) ? value.length > 0 : value
@@ -68,7 +74,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
             return;
         }
 
-        console.log("🚀 Отправляем данные на API (без workflow, tags и platform):", formattedFilters);
+        console.log("🚀 Отправляем данные на API:", formattedFilters);
 
         try {
             const token = Cookies.get("jwt");
@@ -78,7 +84,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify(formattedFilters),
+                body: JSON.stringify(formattedFilters), // ✅ Теперь отправляем `tags`
             });
 
             if (!response.ok) throw new Error(`Ошибка: ${response.status}`);
@@ -177,7 +183,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
 
         setFilters((prev) => ({
             ...prev,
-            [name]: name === "tags" ? value.split(",").map(tag => tag.trim()) : value,
+            [name]: name === "tags" ? value.split(",").map(tag => tag.trim()) : value, // ✅ Преобразуем строку в массив
         }));
     };
 

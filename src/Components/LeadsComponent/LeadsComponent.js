@@ -39,18 +39,16 @@ const Leads = () => {
   const filteredTickets = useMemo(() => {
     let result = tickets;
 
-    // ✅ Если `filteredTicketIds === null`, просто фильтруем по `workflow`
-    if (filteredTicketIds === null) {
-      return result.filter(ticket => selectedWorkflow.length === 0 || selectedWorkflow.includes(ticket.workflow));
-    }
+    // ✅ Если `filteredTicketIds === null`, значит, фильтр не применён – показываем все тикеты
+    if (filteredTicketIds === null) return result;
 
     // ✅ Если `filteredTicketIds` пуст (`[]`), ничего не показываем
     if (filteredTicketIds.length === 0) return [];
 
-    // ✅ Фильтруем по ID, если есть API-фильтрация
+    // ✅ Фильтруем по ID
     result = result.filter(ticket => filteredTicketIds.includes(ticket.id));
 
-    // ✅ Применяем `workflow`, если он есть
+    // ✅ Применяем фильтр по `workflow`
     if (selectedWorkflow.length > 0) {
       result = result.filter(ticket => selectedWorkflow.includes(ticket.workflow));
     }
