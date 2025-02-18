@@ -11,7 +11,6 @@ import { purchaseProcessingOptions } from '../../FormOptions/PurchaseProcessingO
 import { serviceTypeOptions } from '../../FormOptions/ServiceTypeOptions';
 import { sourceOfLeadOptions } from '../../FormOptions/SourceOfLeadOptions';
 import { promoOptions } from '../../FormOptions/PromoOptions';
-import { templateOptions } from '../../FormOptions/MessageTemplate';
 import { evaluareOdihnaOptions } from '../../FormOptions/EvaluareVacantaOptions';
 import { valutaOptions } from '../../FormOptions/ValutaOptions';
 import { ibanOptions } from '../../FormOptions/IbanOptions';
