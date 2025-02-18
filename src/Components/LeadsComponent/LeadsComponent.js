@@ -58,8 +58,8 @@ const Leads = () => {
 
       const filterTagsArray = Array.isArray(filters.tags) ? filters.tags : filters.tags.split(",").map(tag => tag.trim().toLowerCase());
 
-      const hasMatchingTags =
-        filterTagsArray.length === 0 || filterTagsArray.every(tag => ticketTags.includes(tag)); // ✅ Исправленный фильтр по тегам
+      const hasMatchingTags = filters.tags.length === 0 || ticketTags.some(tag => filters.tags.includes(tag));
+
 
       return (
         (!filters.creation_date || creationDate === filters.creation_date) &&
