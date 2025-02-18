@@ -419,10 +419,10 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                         )}
 
                         <div className="modal-buttons">
-                            <button onClick={handleApplyLocalFilter} className="apply-btn">Применить локально</button>
-                            <button onClick={handleApplyFilter} className="apply-btn">Применить</button>
-                            <button onClick={handleResetFilters} className="reset-btn">Сбросить</button>
-                            <button onClick={onClose} className="cancel-btn">Закрыть</button>
+                            <button onClick={handleApplyLocalFilter} className="apply-btn">Aply local</button>
+                            <button onClick={handleApplyFilter} className="apply-btn">Aply Api</button>
+                            <button onClick={handleResetFilters} className="reset-btn">Reset</button>
+                            <button onClick={onClose} className="cancel-btn">Close</button>
                         </div>
                     </div>
                 </div>
