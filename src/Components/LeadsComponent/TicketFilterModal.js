@@ -234,14 +234,14 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
 
                         {filterGroups[activeTab].includes("creation_date") && (
                             <>
-                                <label>Data creare ticket</label>
+                                <label>Data creare Lead</label>
                                 <input type="date" name="creation_date" value={filters.creation_date || ""} onChange={handleInputChange} />
                             </>
                         )}
 
                         {filterGroups[activeTab].includes("last_interaction_date") && (
                             <>
-                                <label>Data ultima actualizare ticket</label>
+                                <label>Data ultima actualizare Lead</label>
                                 <input
                                     type="date"
                                     name="last_interaction_date"
@@ -253,7 +253,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
 
                         {filterGroups[activeTab].includes("priority") && (
                             <>
-                                <label>Prioritate ticket</label>
+                                <label>Prioritate Lead</label>
                                 <CustomMultiSelect
                                     options={priorityOptions}
                                     placeholder="Выберите приоритет"
@@ -265,7 +265,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
 
                         {filterGroups[activeTab].includes("technician_id") && (
                             <>
-                                <label>Responsabil Ticket</label>
+                                <label>Responsabil Lead</label>
                                 <CustomMultiSelect
                                     options={technicians}
                                     placeholder="Выберите ответственного"
@@ -285,7 +285,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                     onChange={handleInputChange}
                                     placeholder="Введите теги через запятую"
                                 />
-                                <label>Sursa Ticket</label>
+                                <label>Sursa Lead</label>
                                 <CustomMultiSelect
                                     options={sourceOfLeadOptions}
                                     placeholder="Выберите источник"
@@ -408,9 +408,9 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                         )}
 
                         <div className="modal-buttons">
-                            <button onClick={handleApplyLocalFilter} className="apply-btn">Aply local</button>
-                            <button onClick={handleApplyFilter} className="apply-btn">Aply Api</button>
-                            <button onClick={handleResetFilters} className="reset-btn">Reset</button>
+                            <button onClick={handleApplyLocalFilter} className="apply-btn">Aplica pentru sistem</button>
+                            <button onClick={handleApplyFilter} className="apply-btn">Aplica pentru lead</button>
+                            <button onClick={handleResetFilters} className="reset-btn">Reset filter</button>
                             <button onClick={onClose} className="cancel-btn">Close</button>
                         </div>
                     </div>
