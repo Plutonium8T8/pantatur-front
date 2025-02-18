@@ -117,3 +117,10 @@
     cursor: pointer;
     border-radius: 4px;
 }
+
+.workflow-multi-select {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 300px;
+}

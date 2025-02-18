@@ -189,13 +189,15 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
 
                         {filterGroups[activeTab].includes("workflow") && (
                             <>
-                                <label>Workflow</label>
-                                <CustomMultiSelect
-                                    options={workflowOptions}
-                                    placeholder="Выберите этапы"
-                                    onChange={values => handleMultiSelectChange("workflow", values)}
-                                    selectedValues={filters.workflow}
-                                />
+                                <div className="workflow-multi-select">
+                                    <label>Workflow</label>
+                                    <CustomMultiSelect
+                                        options={workflowOptions}
+                                        placeholder="Выберите этапы"
+                                        onChange={values => handleMultiSelectChange("workflow", values)}
+                                        selectedValues={filters.workflow}
+                                    />
+                                </div>
                             </>
                         )}
 
