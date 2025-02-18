@@ -72,7 +72,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
 
         try {
             const token = Cookies.get("jwt");
-            const response = await fetch("https://pandatur-api.com/api/apply-filters", {
+            const response = await fetch("https://pandatur-api.com/api/apply-filter", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
