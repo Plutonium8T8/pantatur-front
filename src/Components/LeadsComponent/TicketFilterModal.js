@@ -78,7 +78,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter }) => {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify(formattedFilters), // ✅ platform теперь не отправляется
+                body: JSON.stringify(formattedFilters),
             });
 
             if (!response.ok) {
