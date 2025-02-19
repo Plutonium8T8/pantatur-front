@@ -700,8 +700,8 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                     <CustomMultiSelect
                                         options={evaluareOdihnaOptions}
                                         placeholder="Evaluare odihnă"
-                                        onChange={(values) => handleMultiSelectChange("evaluareOdihnaOptions", values)}
-                                        selectedValues={filters.evaluareOdihnaOptions}
+                                        onChange={(values) => handleMultiSelectChange("evaluare_de_odihna", values)}
+                                        selectedValues={filters.evaluare_de_odihna}
                                     />
                                     <label>Următoarea vacanță</label>
                                     <input
