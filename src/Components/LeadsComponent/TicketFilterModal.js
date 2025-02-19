@@ -261,7 +261,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
 
                         {filterGroups[activeTab].includes("tags") && (
                             <>
-                                <h2>Filtru pentru tickete</h2>
+                                <h2>Filtru pentru Lead</h2>
                                 <div className="container-extra-group">
 
                                     <label>Data creare Lead</label>
