@@ -239,7 +239,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                         {filterGroups[activeTab].includes("tags") && (
                             <>
                                 <h2>Filtru pentru tickete</h2>
-                                <div className="container-extra-form">
+                                <div className="container-extra-group">
 
                                     <label>Data creare Lead</label>
                                     <input
@@ -384,7 +384,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                     />
                                 </div>
 
-                                <div className="container-extra-contract">
+                                <div className="container-extra-group">
 
                                     <h3>Contract</h3>
 
@@ -568,7 +568,70 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                     </div>
 
                                 </div>
+                                <div className="container-extra-group">
 
+                                    <label>F/serviciu</label>
+                                    <input
+                                        type="text"
+                                        name="f_serviciu"
+                                        value={filters.f_serviciu || ""}
+                                        onChange={handleInputChange}
+                                        placeholder="f_serviciu"
+                                    />
+
+                                    <label>F/factura</label>
+                                    <input
+                                        type="text"
+                                        name="f_factura"
+                                        value={filters.f_factura || ""}
+                                        onChange={handleInputChange}
+                                        placeholder="f_factura"
+                                    />
+
+                                    <label>F/numarul</label>
+                                    <input
+                                        type="number"
+                                        name="f_numarul"
+                                        value={filters.f_numarul || ""}
+                                        onChange={handleInputChange}
+                                        placeholder="f_numarul"
+                                    />
+
+                                    <label>F/pret</label>
+                                    <input
+                                        type="number"
+                                        name="f_pret"
+                                        value={filters.f_pret || ""}
+                                        onChange={handleInputChange}
+                                        placeholder="f_pret"
+                                    />
+
+                                    <label>F/suma</label>
+                                    <input
+                                        type="number"
+                                        name="f_suma"
+                                        value={filters.f_suma || ""}
+                                        onChange={handleInputChange}
+                                        placeholder="f_suma"
+                                    />
+
+                                    <label>Valuta contului</label>
+                                    <CustomMultiSelect
+                                        options={valutaOptions}
+                                        placeholder="Selectează valuta_contului"
+                                        onChange={(values) => handleMultiSelectChange("valuta_contului", values)}
+                                        selectedValues={filters.valuta_contului}
+                                    />
+
+                                    <label>Iban</label>
+                                    <CustomMultiSelect
+                                        options={ibanOptions}
+                                        placeholder="Selectează iban"
+                                        onChange={(values) => handleMultiSelectChange("iban", values)}
+                                        selectedValues={filters.iban}
+                                    />
+
+                                </div>
                                 <div className="modal-buttons">
                                     <button onClick={handleApplyFilter} className="apply-btn">Aplica filtru</button>
                                     <button onClick={handleResetFilters} className="reset-btn">Reset filtru</button>
