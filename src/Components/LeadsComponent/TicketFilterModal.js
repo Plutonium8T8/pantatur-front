@@ -216,10 +216,11 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                     </div>
 
                     <div className="filters">
-                        <h3>Фильтр</h3>
+                        {/* <h3>Filtru</h3> */}
 
                         {filterGroups[activeTab].includes("workflow") && (
                             <>
+                                <h2>Filtru de sistem</h2>
                                 <div className="workflow-multi-select">
                                     <label>Workflow</label>
                                     <CustomMultiSelect
@@ -229,11 +230,16 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         selectedValues={filters.workflow}
                                     />
                                 </div>
+                                <div className="modal-buttons">
+                                    <button onClick={handleApplyLocalFilter} className="apply-btn">Aplica filtru</button>
+                                    <button onClick={handleResetFilters} className="reset-btn">Reset filter</button>
+                                </div>
                             </>
                         )}
 
                         {filterGroups[activeTab].includes("creation_date") && (
                             <>
+                                <h2>Filtru pentru tickete</h2>
                                 <label>Data creare Lead</label>
                                 <input type="date" name="creation_date" value={filters.creation_date || ""} onChange={handleInputChange} />
                             </>
@@ -389,13 +395,18 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                     value={filters.data_cererii_de_retur || ""}
                                     onChange={handleInputChange}
                                 />
+                                <div className="modal-buttons">
+                                    <button onClick={handleApplyFilter} className="apply-btn">Aplica filtru</button>
+                                    <button onClick={handleResetFilters} className="reset-btn">Reset filtru</button>
+                                    <button onClick={onClose} className="cancel-btn">Close</button>
+                                </div>
                             </>
                         )}
 
                         {filterGroups[activeTab].includes("platform") && (
                             <>
+                                <h2>Filtru pentru mesaj (coming soon)</h2>
                                 <div className="workflow-multi-select">
-
                                     <label>Platforma mesaj</label>
                                     <CustomMultiSelect
                                         options={platformOptions}
@@ -406,13 +417,6 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                 </div>
                             </>
                         )}
-
-                        <div className="modal-buttons">
-                            <button onClick={handleApplyLocalFilter} className="apply-btn">Aplica pentru sistem</button>
-                            <button onClick={handleApplyFilter} className="apply-btn">Aplica pentru lead</button>
-                            <button onClick={handleResetFilters} className="reset-btn">Reset filter</button>
-                            <button onClick={onClose} className="cancel-btn">Close</button>
-                        </div>
                     </div>
                 </div>
             </div>
