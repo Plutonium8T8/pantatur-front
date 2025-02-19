@@ -151,3 +151,7 @@
     border-radius: 8px;
     padding: 5px;
 }
+
+.slider {
+    border: 1px solid gray;
+}

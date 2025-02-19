@@ -57,12 +57,16 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
     };
 
     const handleApplyFilter = async () => {
-        // ✅ Оставляем `tags` в `formattedFilters`, чтобы они отправлялись в API
-        const { workflow, platform, ...formattedFilters } = filters;
+        const { workflow, platform, tags, ...formattedFilters } = filters;
 
         // ✅ Преобразуем `tags` в строку (если массив) перед отправкой
-        if (filters.tags && Array.isArray(filters.tags)) {
-            formattedFilters.tags = filters.tags.join(","); // Преобразуем массив в строку с запятыми
+        if (Array.isArray(tags) && tags.length > 0) {
+            formattedFilters.tags = tags.join(","); // Преобразуем массив в строку с запятыми
+        }
+
+        // ❗ Если `tags` пустой, удаляем его
+        if (!formattedFilters.tags) {
+            delete formattedFilters.tags;
         }
 
         const hasValidFilters = Object.values(formattedFilters).some(value =>
@@ -74,7 +78,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
             return;
         }
 
-        console.log("🚀 Отправляем данные на API:", formattedFilters);
+        console.log("🚀 Отправляем данные в API:", formattedFilters);
 
         try {
             const token = Cookies.get("jwt");
@@ -84,21 +88,15 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify(formattedFilters), // ✅ Теперь отправляем `tags`
+                body: JSON.stringify(formattedFilters),
             });
 
             if (!response.ok) throw new Error(`Ошибка: ${response.status}`);
 
-            let ticketData = await response.json(); // Сервер возвращает массив массивов
-
-            console.log("✅ Отфильтрованные тикеты (до обработки):", ticketData);
-
-            // 🔄 Разворачиваем массив массивов в плоский массив ID
+            let ticketData = await response.json();
             const ticketIds = ticketData.flat().map(ticket => ticket.id);
 
-            console.log("✅ Отфильтрованные ID тикетов (после обработки):", ticketIds);
-
-            // ✅ Передаем ticketIds в `onApplyFilter`
+            console.log("✅ Отфильтрованные ID тикетов:", ticketIds);
             onApplyFilter(filters, ticketIds.length > 0 ? ticketIds : []);
             onClose();
         } catch (error) {
@@ -407,7 +405,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         onChange={handleInputChange}
                                     />
 
-                                    {/* <div className="toggle-container">
+                                    <div className="toggle-container">
                                         <label className="toggle-label">Contract trimis</label>
                                         <label className="switch">
                                             <input
@@ -419,7 +417,155 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                             />
                                             <span className="slider round"></span>
                                         </label>
-                                    </div> */}
+                                    </div>
+
+                                    <div className="toggle-container">
+                                        <label className="toggle-label">Contract semnat</label>
+                                        <label className="switch">
+                                            <input
+                                                type="checkbox"
+                                                checked={Boolean(filters.contract_semnat)} // ✅ Преобразуем значение в Boolean, чтобы избежать ошибок
+                                                onChange={(e) =>
+                                                    setFilters((prev) => ({ ...prev, contract_semnat: e.target.checked })) // ✅ Обновляем `filters`
+                                                }
+                                            />
+                                            <span className="slider round"></span>
+                                        </label>
+                                    </div>
+
+                                    <label>Operator turistic</label>
+                                    <input
+                                        type="text"
+                                        name="tour_operator"
+                                        value={filters.tour_operator || ""}
+                                        onChange={handleInputChange}
+                                        placeholder="Operator turistic"
+                                    />
+
+                                    <label>Nr cererii de la operator</label>
+                                    <input
+                                        type="text"
+                                        name="numarul_cererii_de_la_operator"
+                                        value={filters.numarul_cererii_de_la_operator || ""}
+                                        onChange={handleInputChange}
+                                        placeholder="Nr cererii de la operator"
+                                    />
+
+                                    <div className="toggle-container">
+                                        <label className="toggle-label">Achitare efectuată</label>
+                                        <label className="switch">
+                                            <input
+                                                type="checkbox"
+                                                checked={Boolean(filters.achitare_efectuata)} // ✅ Преобразуем значение в Boolean, чтобы избежать ошибок
+                                                onChange={(e) =>
+                                                    setFilters((prev) => ({ ...prev, achitare_efectuata: e.target.checked })) // ✅ Обновляем `filters`
+                                                }
+                                            />
+                                            <span className="slider round"></span>
+                                        </label>
+                                    </div>
+
+                                    <div className="toggle-container">
+                                        <label className="toggle-label">Rezervare confirmată</label>
+                                        <label className="switch">
+                                            <input
+                                                type="checkbox"
+                                                checked={Boolean(filters.rezervare_confirmata)} // ✅ Преобразуем значение в Boolean, чтобы избежать ошибок
+                                                onChange={(e) =>
+                                                    setFilters((prev) => ({ ...prev, rezervare_confirmata: e.target.checked })) // ✅ Обновляем `filters`
+                                                }
+                                            />
+                                            <span className="slider round"></span>
+                                        </label>
+                                    </div>
+
+                                    <div className="toggle-container">
+                                        <label className="toggle-label">Contract arhivat</label>
+                                        <label className="switch">
+                                            <input
+                                                type="checkbox"
+                                                checked={Boolean(filters.contract_arhivat)} // ✅ Преобразуем значение в Boolean, чтобы избежать ошибок
+                                                onChange={(e) =>
+                                                    setFilters((prev) => ({ ...prev, contract_arhivat: e.target.checked })) // ✅ Обновляем `filters`
+                                                }
+                                            />
+                                            <span className="slider round"></span>
+                                        </label>
+                                    </div>
+
+                                    <label>Plată primită</label>
+                                    <CustomMultiSelect
+                                        options={paymentStatusOptions}
+                                        placeholder="Selectează statutul plății"
+                                        onChange={(values) => handleMultiSelectChange("statutul_platii", values)}
+                                        selectedValues={filters.statutul_platii}
+                                    />
+
+                                    <label>Avans euro €</label>
+                                    <input
+                                        type="number"
+                                        name="avans_euro"
+                                        value={filters.avans_euro || ""}
+                                        onChange={handleInputChange}
+                                        placeholder="avans_euro"
+                                    />
+
+                                    <label>Data avansului</label>
+                                    <input
+                                        type="datetime-local"
+                                        name="data_avansului"
+                                        value={filters.data_avansului || ""}
+                                        onChange={handleInputChange}
+                                    />
+
+                                    <label>Data de plată integrală</label>
+                                    <input
+                                        type="datetime-local"
+                                        name="data_de_plata_integrala"
+                                        value={filters.data_de_plata_integrala || ""}
+                                        onChange={handleInputChange}
+                                    />
+
+                                    <label>Preț NETTO €</label>
+                                    <input
+                                        type="number"
+                                        name="pret_netto"
+                                        value={filters.pret_netto || ""}
+                                        onChange={handleInputChange}
+                                        placeholder="pret_netto"
+                                    />
+
+                                    <label>Achitat client</label>
+                                    <input
+                                        type="number"
+                                        name="achitat_client"
+                                        value={filters.achitat_client || ""}
+                                        onChange={handleInputChange}
+                                        placeholder="achitat_client"
+                                    />
+
+                                    <label>Comision companie €</label>
+                                    <input
+                                        type="number"
+                                        name="comission_companie"
+                                        value={filters.comission_companie || ""}
+                                        onChange={handleInputChange}
+                                        placeholder="comission_companie"
+                                    />
+
+                                    <div className="toggle-container">
+                                        <label className="toggle-label">Control Admin</label>
+                                        <label className="switch">
+                                            <input
+                                                type="checkbox"
+                                                checked={Boolean(filters.control_admin)} // ✅ Преобразуем значение в Boolean, чтобы избежать ошибок
+                                                onChange={(e) =>
+                                                    setFilters((prev) => ({ ...prev, control_admin: e.target.checked })) // ✅ Обновляем `filters`
+                                                }
+                                            />
+                                            <span className="slider round"></span>
+                                        </label>
+                                    </div>
 
                                 </div>
 
@@ -434,7 +580,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
 
                         {filterGroups[activeTab].includes("platform") && (
                             <>
-                                <h2>Filtru pentru mesaj (coming soon)</h2>
+                                <h2>Filtru pentru mesaje (coming soon)</h2>
                                 <div className="workflow-multi-select">
                                     <label>Platforma mesaj</label>
                                     <CustomMultiSelect

@@ -2147,7 +2147,7 @@ const ChatComponent = ({ }) => {
                                 }
                                 className="input-field"
                                 placeholder="Achitat client"
-                                id="price-neto-input"
+                                id="achitat-client"
                             />
                             <Input
                                 label="Restanță client"
