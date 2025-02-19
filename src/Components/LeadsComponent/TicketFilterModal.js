@@ -224,7 +224,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                     <label>Workflow</label>
                                     <CustomMultiSelect
                                         options={workflowOptions}
-                                        placeholder="Выберите этапы"
+                                        placeholder="Alege workflow pentru afisare in sistem"
                                         onChange={values => handleMultiSelectChange("workflow", values)}
                                         selectedValues={filters.workflow}
                                     />
@@ -256,7 +256,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                 <label>Prioritate Lead</label>
                                 <CustomMultiSelect
                                     options={priorityOptions}
-                                    placeholder="Выберите приоритет"
+                                    placeholder="Alege prioritatea"
                                     onChange={values => handleMultiSelectChange("priority", values)}
                                     selectedValues={filters.priority}
                                 />
@@ -268,7 +268,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                 <label>Responsabil Lead</label>
                                 <CustomMultiSelect
                                     options={technicians}
-                                    placeholder="Выберите ответственного"
+                                    placeholder="Alege responsabil lead"
                                     onChange={values => handleMultiSelectChange("technician_id", values)}
                                     selectedValues={filters.technician_id}
                                 />
@@ -283,12 +283,12 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                     name="tags"
                                     value={filters.tags.join(", ")} // ✅ Преобразуем массив обратно в строку
                                     onChange={handleInputChange}
-                                    placeholder="Введите теги через запятую"
+                                    placeholder="Introdu tag-uri separate prin virgule"
                                 />
                                 <label>Sursa Lead</label>
                                 <CustomMultiSelect
                                     options={sourceOfLeadOptions}
-                                    placeholder="Выберите источник"
+                                    placeholder="Alege sursa lead"
                                     onChange={values => handleMultiSelectChange("sursa_lead", values)}
                                     selectedValues={filters.sursa_lead}
                                 />
@@ -296,7 +296,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                 <label>Promo</label>
                                 <CustomMultiSelect
                                     options={promoOptions}
-                                    placeholder="Выберите Promo"
+                                    placeholder="Alege promo"
                                     onChange={values => handleMultiSelectChange("promo", values)}
                                     selectedValues={filters.promo}
                                 />
@@ -304,7 +304,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                 <label>Marketing</label>
                                 <CustomMultiSelect
                                     options={marketingOptions}
-                                    placeholder="Выберите маркетинг"
+                                    placeholder="Alege marketing"
                                     onChange={values => handleMultiSelectChange("marketing", values)}
                                     selectedValues={filters.marketing}
                                 />
@@ -312,7 +312,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                 <label>Tara</label>
                                 <CustomMultiSelect
                                     options={countryOptions}
-                                    placeholder="Выберите страну"
+                                    placeholder="Alege tara"
                                     onChange={values => handleMultiSelectChange("tara", values)}
                                     selectedValues={filters.tara}
                                 />
@@ -320,7 +320,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                 <label>Transport</label>
                                 <CustomMultiSelect
                                     options={transportOptions}
-                                    placeholder="Выберите транспорт"
+                                    placeholder="Alege transport"
                                     onChange={values => handleMultiSelectChange("tip_de_transport", values)}
                                     selectedValues={filters.tip_de_transport}
                                 />
@@ -328,7 +328,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                 <label>Nume excursie</label>
                                 <CustomMultiSelect
                                     options={nameExcursionOptions}
-                                    placeholder="Выберите экскурсию"
+                                    placeholder="Alege excursie"
                                     onChange={values => handleMultiSelectChange("denumirea_excursiei_turului", values)}
                                     selectedValues={filters.denumirea_excursiei_turului}
                                 />
@@ -399,7 +399,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                     <label>Platforma mesaj</label>
                                     <CustomMultiSelect
                                         options={platformOptions}
-                                        placeholder="Выберите платформу"
+                                        placeholder="Alege platforma mesaj"
                                         onChange={values => handleMultiSelectChange("platform", values)}
                                         selectedValues={filters.platform}
                                     />
