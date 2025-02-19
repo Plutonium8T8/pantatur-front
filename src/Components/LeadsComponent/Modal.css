@@ -123,3 +123,13 @@
     flex-direction: column;
     gap: 10px;
 }
+
+.tab {
+    border: 1px solid #ddd;
+    margin: 5px 0px;
+}
+
+.tab.active {
+    background-color: palegreen;
+    color: black;
+}
