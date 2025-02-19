@@ -238,7 +238,6 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                     </div>
 
                     <div className="filters">
-                        {/* <h3>Filtru</h3> */}
 
                         {filterGroups[activeTab].includes("workflow") && (
                             <>
