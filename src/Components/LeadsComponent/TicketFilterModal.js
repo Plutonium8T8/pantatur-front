@@ -238,169 +238,197 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                             </>
                         )}
 
-                        {filterGroups[activeTab].includes("creation_date") && (
-                            <>
-                                <h2>Filtru pentru tickete</h2>
-                                <label>Data creare Lead</label>
-                                <input type="date" name="creation_date" value={filters.creation_date || ""} onChange={handleInputChange} />
-                            </>
-                        )}
-
-                        {filterGroups[activeTab].includes("last_interaction_date") && (
-                            <>
-                                <label>Data ultima actualizare Lead</label>
-                                <input
-                                    type="date"
-                                    name="last_interaction_date"
-                                    value={filters.last_interaction_date || ""}
-                                    onChange={handleInputChange}
-                                />
-                            </>
-                        )}
-
-                        {filterGroups[activeTab].includes("priority") && (
-                            <>
-                                <label>Prioritate Lead</label>
-                                <CustomMultiSelect
-                                    options={priorityOptions}
-                                    placeholder="Alege prioritatea"
-                                    onChange={values => handleMultiSelectChange("priority", values)}
-                                    selectedValues={filters.priority}
-                                />
-                            </>
-                        )}
-
-                        {filterGroups[activeTab].includes("technician_id") && (
-                            <>
-                                <label>Responsabil Lead</label>
-                                <CustomMultiSelect
-                                    options={technicians}
-                                    placeholder="Alege responsabil lead"
-                                    onChange={values => handleMultiSelectChange("technician_id", values)}
-                                    selectedValues={filters.technician_id}
-                                />
-                            </>
-                        )}
-
                         {filterGroups[activeTab].includes("tags") && (
                             <>
-                                <label>Tag-uri</label>
-                                <input
-                                    type="text"
-                                    name="tags"
-                                    value={filters.tags.join(", ")} // ✅ Преобразуем массив обратно в строку
-                                    onChange={handleInputChange}
-                                    placeholder="Introdu tag-uri separate prin virgule"
-                                />
-                                <label>Sursa Lead</label>
-                                <CustomMultiSelect
-                                    options={sourceOfLeadOptions}
-                                    placeholder="Alege sursa lead"
-                                    onChange={values => handleMultiSelectChange("sursa_lead", values)}
-                                    selectedValues={filters.sursa_lead}
-                                />
+                                <h2>Filtru pentru tickete</h2>
+                                <div className="container-extra-form">
 
-                                <label>Promo</label>
-                                <CustomMultiSelect
-                                    options={promoOptions}
-                                    placeholder="Alege promo"
-                                    onChange={values => handleMultiSelectChange("promo", values)}
-                                    selectedValues={filters.promo}
-                                />
+                                    <label>Data creare Lead</label>
+                                    <input
+                                        type="date"
+                                        name="creation_date"
+                                        value={filters.creation_date || ""}
+                                        onChange={handleInputChange}
+                                    />
+                                    <label>Data ultima actualizare Lead</label>
+                                    <input
+                                        type="date"
+                                        name="last_interaction_date"
+                                        value={filters.last_interaction_date || ""}
+                                        onChange={handleInputChange}
+                                    />
+                                    <label>Prioritate Lead</label>
+                                    <CustomMultiSelect
+                                        options={priorityOptions}
+                                        placeholder="Alege prioritatea"
+                                        onChange={values => handleMultiSelectChange("priority", values)}
+                                        selectedValues={filters.priority}
+                                    />
+                                    <label>Responsabil Lead</label>
+                                    <CustomMultiSelect
+                                        options={technicians}
+                                        placeholder="Alege responsabil lead"
+                                        onChange={values => handleMultiSelectChange("technician_id", values)}
+                                        selectedValues={filters.technician_id}
+                                    />
 
-                                <label>Marketing</label>
-                                <CustomMultiSelect
-                                    options={marketingOptions}
-                                    placeholder="Alege marketing"
-                                    onChange={values => handleMultiSelectChange("marketing", values)}
-                                    selectedValues={filters.marketing}
-                                />
+                                    <label>Tag-uri</label>
+                                    <input
+                                        type="text"
+                                        name="tags"
+                                        value={filters.tags.join(", ")} // ✅ Преобразуем массив обратно в строку
+                                        onChange={handleInputChange}
+                                        placeholder="Introdu tag-uri separate prin virgule"
+                                    />
+                                    <label>Sursa Lead</label>
+                                    <CustomMultiSelect
+                                        options={sourceOfLeadOptions}
+                                        placeholder="Alege sursa lead"
+                                        onChange={values => handleMultiSelectChange("sursa_lead", values)}
+                                        selectedValues={filters.sursa_lead}
+                                    />
 
-                                <label>Tara</label>
-                                <CustomMultiSelect
-                                    options={countryOptions}
-                                    placeholder="Alege tara"
-                                    onChange={values => handleMultiSelectChange("tara", values)}
-                                    selectedValues={filters.tara}
-                                />
+                                    <label>Promo</label>
+                                    <CustomMultiSelect
+                                        options={promoOptions}
+                                        placeholder="Alege promo"
+                                        onChange={values => handleMultiSelectChange("promo", values)}
+                                        selectedValues={filters.promo}
+                                    />
 
-                                <label>Transport</label>
-                                <CustomMultiSelect
-                                    options={transportOptions}
-                                    placeholder="Alege transport"
-                                    onChange={values => handleMultiSelectChange("tip_de_transport", values)}
-                                    selectedValues={filters.tip_de_transport}
-                                />
+                                    <label>Marketing</label>
+                                    <CustomMultiSelect
+                                        options={marketingOptions}
+                                        placeholder="Alege marketing"
+                                        onChange={values => handleMultiSelectChange("marketing", values)}
+                                        selectedValues={filters.marketing}
+                                    />
 
-                                <label>Nume excursie</label>
-                                <CustomMultiSelect
-                                    options={nameExcursionOptions}
-                                    placeholder="Alege excursie"
-                                    onChange={values => handleMultiSelectChange("denumirea_excursiei_turului", values)}
-                                    selectedValues={filters.denumirea_excursiei_turului}
-                                />
+                                    <label>Tara</label>
+                                    <CustomMultiSelect
+                                        options={countryOptions}
+                                        placeholder="Alege tara"
+                                        onChange={values => handleMultiSelectChange("tara", values)}
+                                        selectedValues={filters.tara}
+                                    />
 
-                                <label>Data vizita in oficiu</label>
-                                <input
-                                    type="datetime-local"
-                                    name="data_venit_in_oficiu"
-                                    value={filters.data_venit_in_oficiu || ""}
-                                    onChange={handleInputChange}
-                                />
+                                    <label>Transport</label>
+                                    <CustomMultiSelect
+                                        options={transportOptions}
+                                        placeholder="Alege transport"
+                                        onChange={values => handleMultiSelectChange("tip_de_transport", values)}
+                                        selectedValues={filters.tip_de_transport}
+                                    />
 
-                                <label>Data plecarii</label>
-                                <input
-                                    type="datetime-local"
-                                    name="data_plecarii"
-                                    value={filters.data_plecarii || ""}
-                                    onChange={handleInputChange}
-                                />
+                                    <label>Nume excursie</label>
+                                    <CustomMultiSelect
+                                        options={nameExcursionOptions}
+                                        placeholder="Alege excursie"
+                                        onChange={values => handleMultiSelectChange("denumirea_excursiei_turului", values)}
+                                        selectedValues={filters.denumirea_excursiei_turului}
+                                    />
 
-                                <label>Data intoarcerii</label>
-                                <input
-                                    type="datetime-local"
-                                    name="data_intoarcerii"
-                                    value={filters.data_intoarcerii || ""}
-                                    onChange={handleInputChange}
-                                />
+                                    <label>Data vizita in oficiu</label>
+                                    <input
+                                        type="datetime-local"
+                                        name="data_venit_in_oficiu"
+                                        value={filters.data_venit_in_oficiu || ""}
+                                        onChange={handleInputChange}
+                                    />
 
-                                <label>Vânzare €</label>
-                                <input
-                                    type="number"
-                                    name="buget"
-                                    value={filters.buget || ""}
-                                    onChange={handleInputChange}
-                                    placeholder="Indicați suma în euro"
-                                />
+                                    <label>Data plecarii</label>
+                                    <input
+                                        type="datetime-local"
+                                        name="data_plecarii"
+                                        value={filters.data_plecarii || ""}
+                                        onChange={handleInputChange}
+                                    />
 
-                                <label>Tipul serviciului</label>
-                                <CustomMultiSelect
-                                    options={serviceTypeOptions}
-                                    placeholder="Alege serviciu"
-                                    onChange={(values) => handleMultiSelectChange("tipul_serviciului", values)}
-                                    selectedValues={filters.tipul_serviciului}
-                                />
+                                    <label>Data intoarcerii</label>
+                                    <input
+                                        type="datetime-local"
+                                        name="data_intoarcerii"
+                                        value={filters.data_intoarcerii || ""}
+                                        onChange={handleInputChange}
+                                    />
 
-                                <label>Procesare achizitionarii</label>
-                                <CustomMultiSelect
-                                    options={purchaseProcessingOptions}
-                                    placeholder="Alege achiziție"
-                                    onChange={(values) => handleMultiSelectChange("procesarea_achizitionarii", values)}
-                                    selectedValues={filters.procesarea_achizitionarii}
-                                />
+                                    <label>Vânzare €</label>
+                                    <input
+                                        type="number"
+                                        name="buget"
+                                        value={filters.buget || ""}
+                                        onChange={handleInputChange}
+                                        placeholder="Indicați suma în euro"
+                                    />
 
-                                <label>Data cererii de retur</label>
-                                <input
-                                    type="datetime-local"
-                                    name="data_cererii_de_retur"
-                                    value={filters.data_cererii_de_retur || ""}
-                                    onChange={handleInputChange}
-                                />
+                                    <label>Tipul serviciului</label>
+                                    <CustomMultiSelect
+                                        options={serviceTypeOptions}
+                                        placeholder="Alege serviciu"
+                                        onChange={(values) => handleMultiSelectChange("tipul_serviciului", values)}
+                                        selectedValues={filters.tipul_serviciului}
+                                    />
+
+                                    <label>Procesare achizitionarii</label>
+                                    <CustomMultiSelect
+                                        options={purchaseProcessingOptions}
+                                        placeholder="Alege achiziție"
+                                        onChange={(values) => handleMultiSelectChange("procesarea_achizitionarii", values)}
+                                        selectedValues={filters.procesarea_achizitionarii}
+                                    />
+
+                                    <label>Data cererii de retur</label>
+                                    <input
+                                        type="datetime-local"
+                                        name="data_cererii_de_retur"
+                                        value={filters.data_cererii_de_retur || ""}
+                                        onChange={handleInputChange}
+                                    />
+                                </div>
+
+                                <div className="container-extra-contract">
+
+                                    <h3>Contract</h3>
+
+                                    <label>Nr de contract</label>
+                                    <input
+                                        type="text"
+                                        name="numar_de_contract"
+                                        value={filters.numar_de_contract || ""}
+                                        onChange={handleInputChange}
+                                        placeholder="numar_de_contract"
+                                    />
+
+                                    <label>Data contractului</label>
+                                    <input
+                                        type="datetime-local"
+                                        name="data_contractului"
+                                        value={filters.data_contractului || ""}
+                                        onChange={handleInputChange}
+                                    />
+
+                                    {/* <div className="toggle-container">
+                                        <label className="toggle-label">Contract trimis</label>
+                                        <label className="switch">
+                                            <input
+                                                type="checkbox"
+                                                checked={Boolean(filters.contract_trimis)} // ✅ Преобразуем значение в Boolean, чтобы избежать ошибок
+                                                onChange={(e) =>
+                                                    setFilters((prev) => ({ ...prev, contract_trimis: e.target.checked })) // ✅ Обновляем `filters`
+                                                }
+                                            />
+                                            <span className="slider round"></span>
+                                        </label>
+                                    </div> */}
+
+                                </div>
+
                                 <div className="modal-buttons">
                                     <button onClick={handleApplyFilter} className="apply-btn">Aplica filtru</button>
                                     <button onClick={handleResetFilters} className="reset-btn">Reset filtru</button>
                                     <button onClick={onClose} className="cancel-btn">Close</button>
                                 </div>
+
                             </>
                         )}
 

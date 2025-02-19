@@ -133,3 +133,21 @@
     background-color: palegreen;
     color: black;
 }
+
+.container-extra-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border: 5px solid #ddd;
+    border-radius: 8px;
+    padding: 5px;
+}
+
+.container-extra-contract {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border: 5px solid #ddd;
+    border-radius: 8px;
+    padding: 5px;
+}
