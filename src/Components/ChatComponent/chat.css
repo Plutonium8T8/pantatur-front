@@ -67,6 +67,10 @@
     color: #333;
 }
 
+.message .text img {
+    max-height: 65vh;
+}
+
 .message.sent .text {
     background-color: #0f824c;
     color: #fff;
