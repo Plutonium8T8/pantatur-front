@@ -684,6 +684,54 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                     />
 
                                 </div>
+
+                                <div className="container-extra-group">
+
+                                    <h3>Control calitate</h3>
+
+                                    <label>Motivul refuzului</label>
+                                    <CustomMultiSelect
+                                        options={motivulRefuzuluiOptions}
+                                        placeholder="Motivul refuzului"
+                                        onChange={(values) => handleMultiSelectChange("motivul_refuzului", values)}
+                                        selectedValues={filters.motivul_refuzului}
+                                    />
+                                    <label>Evaluare odihnă</label>
+                                    <CustomMultiSelect
+                                        options={evaluareOdihnaOptions}
+                                        placeholder="Evaluare odihnă"
+                                        onChange={(values) => handleMultiSelectChange("evaluareOdihnaOptions", values)}
+                                        selectedValues={filters.evaluareOdihnaOptions}
+                                    />
+                                    <label>Următoarea vacanță</label>
+                                    <input
+                                        type="text"
+                                        name="urmatoarea_vacanta"
+                                        value={filters.urmatoarea_vacanta || ""}
+                                        onChange={handleInputChange}
+                                        placeholder="urmatoarea_vacanta"
+                                        className={filters.urmatoarea_vacanta ? "filled-field" : ""} // ✅ Если заполнено, выделяем
+                                    />
+                                    <label>Manager</label>
+                                    <input
+                                        type="text"
+                                        name="manager"
+                                        value={filters.manager || ""}
+                                        onChange={handleInputChange}
+                                        placeholder="Manager"
+                                        className={filters.manager ? "filled-field" : ""} // ✅ Если заполнено, выделяем
+                                    />
+                                    <label>Vacanța</label>
+                                    <input
+                                        type="text"
+                                        name="vacanta"
+                                        value={filters.vacanta || ""}
+                                        onChange={handleInputChange}
+                                        placeholder="vacanta"
+                                        className={filters.vacanta ? "filled-field" : ""} // ✅ Если заполнено, выделяем
+                                    />
+                                </div>
+
                                 <div className="modal-buttons">
                                     <button onClick={handleApplyFilter} className="apply-btn">Aplica filtru</button>
                                     <button onClick={handleResetFilters} className="reset-btn">Reset filtru</button>
