@@ -233,6 +233,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                 <div className="modal-buttons">
                                     <button onClick={handleApplyLocalFilter} className="apply-btn">Aplica filtru</button>
                                     <button onClick={handleResetFilters} className="reset-btn">Reset filter</button>
+                                    <button onClick={onClose} className="cancel-btn">Close</button>
                                 </div>
                             </>
                         )}
