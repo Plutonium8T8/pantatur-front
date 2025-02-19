@@ -146,3 +146,11 @@
 .slider {
     border: 1px solid gray;
 }
+
+.filled-field {
+    border: 2px solid #4CAF50 !important;
+    /* Зеленая рамка */
+    background-color: rgba(76, 175, 80, 0.1);
+    /* Легкий зеленый фон */
+    transition: all 0.3s ease-in-out;
+}
