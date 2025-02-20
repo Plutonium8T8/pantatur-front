@@ -62,8 +62,8 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
       contact: editedTicket.contact || '',
       name: editedTicket.name,
       surname: editedTicket.surname,
-      mail: editedTicket.email,
-      telefon: editedTicket.phone,
+      email: editedTicket.email,
+      phone: editedTicket.phone,
     };
 
     const cleanedData = Object.fromEntries(
