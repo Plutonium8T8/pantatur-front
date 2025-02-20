@@ -35,7 +35,6 @@ import { workflowOptions } from '../../FormOptions/WorkFlowOption';
 import { evaluareOdihnaOptions } from '../../FormOptions/EvaluareVacantaOptions';
 import { valutaOptions } from '../../FormOptions/ValutaOptions';
 import { ibanOptions } from '../../FormOptions/IbanOptions';
-import CustomMultiSelect from '../MultipleSelect/MultipleSelect';
 
 const ChatComponent = ({ }) => {
     const { userId } = useUser();
@@ -71,6 +70,7 @@ const ChatComponent = ({ }) => {
     const [searchQuery, setSearchQuery] = useState("");
     const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
     const [activeTab, setActiveTab] = useState("extraForm"); // По умолчанию вкладка Extra Form
+    const [filteredTicketIds, setFilteredTicketIds] = useState(null);
 
     const platformIcons = {
         "facebook": <FaFacebook />,
@@ -1130,53 +1130,25 @@ const ChatComponent = ({ }) => {
     // }, [selectTicketId]);
 
     const sortedTickets = useMemo(() => {
-        let filtered = tickets;
+        let filtered = [...tickets]; // Используем копию массива, чтобы избежать мутаций
 
-        // 1️⃣ Применяем фильтрацию из applyFilters
-        if (Object.values(appliedFilters).some(value => value)) {
-            if (appliedFilters.creation_date) {
-                filtered = filtered.filter(ticket => ticket.creation_date.startsWith(appliedFilters.creation_date));
-            }
-            if (appliedFilters.last_interaction_date) {
-                filtered = filtered.filter(ticket => ticket.last_interaction_date.startsWith(appliedFilters.last_interaction_date));
-            }
-            if (appliedFilters.technician_id) {
-                filtered = filtered.filter(ticket => String(ticket.technician_id) === appliedFilters.technician_id);
-            }
-            if (appliedFilters.workflow) {
-                filtered = filtered.filter(ticket => ticket.workflow === appliedFilters.workflow);
-            }
-            if (appliedFilters.priority) {
-                filtered = filtered.filter(ticket => ticket.priority === appliedFilters.priority);
-            }
-            if (appliedFilters.tags) {
-                filtered = filtered.filter(ticket => {
-                    if (!ticket.tags) return false;
-                    const ticketTags = ticket.tags.replace(/[{}]/g, "").split(",").map(tag => tag.trim());
-                    return ticketTags.includes(appliedFilters.tags);
-                });
-            }
-            if (appliedFilters.platform) {
-                const ticketIds = messages
-                    .filter(msg => msg.platform === appliedFilters.platform)
-                    .map(msg => msg.ticket_id);
-                filtered = filtered.filter(ticket => ticketIds.includes(ticket.id));
-            }
-            if (appliedFilters.sender_id) {
-                const ticketIds = messages
-                    .filter(msg => String(msg.sender_id) === appliedFilters.sender_id)
-                    .map(msg => msg.ticket_id);
-                filtered = filtered.filter(ticket => ticketIds.includes(ticket.id));
-            }
+        console.log("📌 Исходные тикеты:", tickets);
+        console.log("🎯 ID тикетов из фильтра:", filteredTicketIds);
+
+        // 1️⃣ Фильтр по ID тикетов из `TicketFilterModal`
+        if (filteredTicketIds !== null && filteredTicketIds.length > 0) {
+            filtered = filtered.filter(ticket => filteredTicketIds.includes(Number(ticket.id)));
+            console.log("🔍 После фильтрации по ID:", filtered);
         }
 
-        // 2️⃣ Фильтр "Мои тикеты"
+        // 2️⃣ Фильтрация "Мои тикеты"
         if (showMyTickets) {
             filtered = filtered.filter(ticket => ticket.technician_id === userId);
         }
 
-        // 3️⃣ Фильтр по поисковому запросу
+        // 3️⃣ Фильтрация по поисковому запросу (ID, контакт, теги)
         if (searchQuery.trim()) {
+            const lowerSearchQuery = searchQuery.toLowerCase();
             filtered = filtered.filter(ticket => {
                 const ticketId = ticket.id.toString().toLowerCase();
                 const ticketContact = ticket.contact ? ticket.contact.toLowerCase() : "";
@@ -1185,38 +1157,16 @@ const ChatComponent = ({ }) => {
                     : ticket.tags.replace(/[{}]/g, "").split(",").map(tag => tag.trim().toLowerCase());
 
                 return (
-                    ticketId.includes(searchQuery) ||
-                    ticketContact.includes(searchQuery) ||
-                    tags.some(tag => tag.includes(searchQuery))
+                    ticketId.includes(lowerSearchQuery) ||
+                    ticketContact.includes(lowerSearchQuery) ||
+                    tags.some(tag => tag.includes(lowerSearchQuery))
                 );
             });
         }
 
-        // 4️⃣ Функция для получения времени последнего сообщения тикета
-        const getLastMessageTime = (ticketId) => {
-            const ticketMessages = messages.filter(msg => msg.ticket_id === ticketId);
-            if (!ticketMessages.length) return null;
-
-            return ticketMessages.reduce((latest, current) =>
-                new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
-            ).time_sent;
-        };
-
-        // 5️⃣ Разделяем выбранный тикет и остальные
-        const selectedTicket = filtered.find(ticket => ticket.id === selectTicketId);
-        let otherTickets = filtered.filter(ticket => ticket.id !== selectTicketId);
-
-        // 6️⃣ Сортировка по последнему сообщению (по убыванию)
-        otherTickets.sort((a, b) => {
-            const lastMessageA = getLastMessageTime(a.id);
-            const lastMessageB = getLastMessageTime(b.id);
-
-            return new Date(lastMessageB) - new Date(lastMessageA);
-        });
-
-        // 7️⃣ Если выбранный тикет есть в списке, помещаем его в начало
-        return selectedTicket ? [selectedTicket, ...otherTickets] : otherTickets;
-    }, [tickets, messages, appliedFilters, showMyTickets, searchQuery, selectTicketId, userId]);
+        console.log("✅ Итоговый список тикетов:", filtered);
+        return filtered;
+    }, [tickets, filteredTicketIds, appliedFilters, showMyTickets, searchQuery, userId]);
 
 
     // useEffect(() => {
@@ -1390,7 +1340,28 @@ const ChatComponent = ({ }) => {
                         <TicketFilterModal
                             isOpen={isFilterOpen}
                             onClose={() => setIsFilterOpen(false)}
-                            onApplyFilter={applyFilters}
+                            onApplyFilter={(updatedFilters, ticketIds) => {
+                                console.log("🚀 Фильтр применен в чате:", updatedFilters);
+                                console.log("📥 Полученные ticketIds с API:", ticketIds);
+
+                                if (!ticketIds || ticketIds.length === 0) {
+                                    console.log("♻️ Сброс фильтра: показываем все тикеты.");
+                                    setAppliedFilters({});
+                                    setFilteredTicketIds(null);
+                                    return;
+                                }
+
+                                // ✅ Разворачиваем `ticketIds`, если он вложенный массив
+                                const flatTicketIds = ticketIds.flat(Infinity)
+                                    .map(ticket => ticket?.id || ticket) // Поддержка форматов { id: 7477 } и [7477]
+                                    .filter(id => typeof id === "number" || !isNaN(Number(id))) // Убираем некорректные значения
+                                    .map(id => Number(id)); // Приводим все `id` к числу
+
+                                console.log("📤 Развернутые ticketIds:", flatTicketIds);
+
+                                setAppliedFilters(updatedFilters);
+                                setFilteredTicketIds(flatTicketIds.length > 0 ? flatTicketIds : null);
+                            }}
                         />
                     </>
                 )}
