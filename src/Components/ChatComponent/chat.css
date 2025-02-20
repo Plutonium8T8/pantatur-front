@@ -282,7 +282,7 @@
 .selects-container {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    /* gap: 8px; */
     text-align: left;
 }
 
@@ -572,7 +572,11 @@
 }
 
 .tab-content {
-    padding: 20px;
+    padding: 0px 20px 20px 20px;
+}
+
+.tab-content-chat {
+    padding: 20px 20px 20px 20px;
 }
 
 .image-preview-in-chat {
@@ -633,9 +637,9 @@
     border: 1px solid #ddd;
 }
 
-.extra-info-content .selects-container {
+/* .extra-info-content .selects-container {
     gap: 0;
-}
+} */
 
 .client-header {
     display: flex;

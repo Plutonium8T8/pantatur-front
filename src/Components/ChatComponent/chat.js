@@ -1760,7 +1760,7 @@ const ChatComponent = ({ }) => {
                         </div>
 
 
-                        <div className="tab-content">
+                        <div className="tab-content-chat">
                             {activeTab && selectTicketId && isLoading ? (
                                 <p>Loading...</p>
                             ) : (
