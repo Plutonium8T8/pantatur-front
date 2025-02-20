@@ -180,7 +180,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
             <input
               type="tel"
               name="phone"
-              value={editedTicket.phone || ''}
+              value={editedTicket.phone && editedTicket.phone !== "{NULL}" ? editedTicket.phone.replace(/[{}]/g, '') : ''}
               onChange={handleInputChange}
               placeholder={translations['phone'][language]}
               required
