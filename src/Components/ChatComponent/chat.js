@@ -1164,9 +1164,57 @@ const ChatComponent = ({ }) => {
             });
         }
 
-        console.log("✅ Итоговый список тикетов:", filtered);
-        return filtered;
-    }, [tickets, filteredTicketIds, appliedFilters, showMyTickets, searchQuery, userId]);
+        // 4️⃣ Фильтрация по `appliedFilters`
+        if (Object.values(appliedFilters).some(value => value)) {
+            if (appliedFilters.creation_date) {
+                filtered = filtered.filter(ticket => ticket.creation_date.startsWith(appliedFilters.creation_date));
+            }
+            if (appliedFilters.last_interaction_date) {
+                filtered = filtered.filter(ticket => ticket.last_interaction_date.startsWith(appliedFilters.last_interaction_date));
+            }
+            if (appliedFilters.technician_id) {
+                filtered = filtered.filter(ticket => String(ticket.technician_id) === appliedFilters.technician_id);
+            }
+            if (appliedFilters.workflow) {
+                filtered = filtered.filter(ticket => ticket.workflow === appliedFilters.workflow);
+            }
+            if (appliedFilters.priority) {
+                filtered = filtered.filter(ticket => ticket.priority === appliedFilters.priority);
+            }
+            if (appliedFilters.tags) {
+                filtered = filtered.filter(ticket => {
+                    if (!ticket.tags) return false;
+                    const ticketTags = ticket.tags.replace(/[{}]/g, "").split(",").map(tag => tag.trim());
+                    return ticketTags.includes(appliedFilters.tags);
+                });
+            }
+        }
+
+        // 5️⃣ Функция для получения времени последнего сообщения тикета
+        const getLastMessageTime = (ticketId) => {
+            const ticketMessages = messages.filter(msg => msg.ticket_id === ticketId);
+            if (!ticketMessages.length) return null;
+
+            return ticketMessages.reduce((latest, current) =>
+                new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
+            ).time_sent;
+        };
+
+        // 6️⃣ Разделяем выбранный тикет и остальные
+        const selectedTicket = filtered.find(ticket => ticket.id === selectTicketId);
+        let otherTickets = filtered.filter(ticket => ticket.id !== selectTicketId);
+
+        // 7️⃣ Сортировка по последнему сообщению (по убыванию)
+        otherTickets.sort((a, b) => {
+            const lastMessageA = getLastMessageTime(a.id);
+            const lastMessageB = getLastMessageTime(b.id);
+
+            return new Date(lastMessageB) - new Date(lastMessageA);
+        });
+
+        console.log("✅ Итоговый список тикетов:", selectedTicket ? [selectedTicket, ...otherTickets] : otherTickets);
+        return selectedTicket ? [selectedTicket, ...otherTickets] : otherTickets;
+    }, [tickets, messages, filteredTicketIds, appliedFilters, showMyTickets, searchQuery, selectTicketId, userId]);
 
 
     // useEffect(() => {
