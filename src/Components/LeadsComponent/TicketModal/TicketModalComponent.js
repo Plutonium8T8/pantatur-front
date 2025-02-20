@@ -139,7 +139,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
         </header>
         <div className="ticket-modal-form">
           <div className="container-select-priority-workflow">
-            <Priority ticket={editedTicket} onChange={handleInputChange} />
+            <Priority ticket={editedTicket} onChange={handleInputChange} disabled={true} />
             <Workflow ticket={editedTicket} onChange={handleInputChange} disabled={true} />
           </div>
           <div className="divider-line"></div>
