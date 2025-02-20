@@ -247,7 +247,7 @@ const ChatComponent = ({ }) => {
         "Contract semnat",
         "Plată primită",
         "Contract încheiat",
-        "Realizat cu succes", // Новый этап
+        "Realizat cu succes",
         "Închis și nerealizat"
     ];
 
