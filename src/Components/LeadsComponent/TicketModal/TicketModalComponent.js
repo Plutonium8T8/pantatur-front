@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { FaUser, FaTrash } from 'react-icons/fa';
 import './TicketModalComponent.css';
 import Priority from '../../PriorityComponent/PriorityComponent';
@@ -14,10 +14,16 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
   const language = localStorage.getItem('language') || 'RO';
 
   const { setTickets } = useAppContext();
-  const { userId, hasRole } = useUser();
+  const { userId, hasRole, isLoadingRoles } = useUser();
 
-  // Проверяем, есть ли у пользователя ROLE_ADMIN
-  const isAdmin = hasRole("ROLE_ADMIN");
+  // Состояние для isAdmin, обновляется после загрузки ролей
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    if (!isLoadingRoles) {
+      setIsAdmin(hasRole("ROLE_ADMIN"));
+    }
+  }, [isLoadingRoles, hasRole]);
 
   const parseTags = (tags) => {
     if (Array.isArray(tags)) {
@@ -131,6 +137,9 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
     }
   };
 
+  // Определяем, когда Workflow должен быть disabled
+  const AdminRoles = isLoadingRoles ? true : !isAdmin;
+
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-container" ref={modalRef} onClick={(e) => e.stopPropagation()}>
@@ -141,8 +150,8 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
         </header>
         <div className="ticket-modal-form">
           <div className="container-select-priority-workflow">
-            <Priority ticket={editedTicket} onChange={handleInputChange} disabled={!isAdmin} />
-            <Workflow ticket={editedTicket} onChange={handleInputChange} disabled={!isAdmin} />
+            <Priority ticket={editedTicket} onChange={handleInputChange} disabled={AdminRoles} />
+            <Workflow ticket={editedTicket} onChange={handleInputChange} disabled={AdminRoles} />
           </div>
           <div className="divider-line"></div>
           <div className="input-group">

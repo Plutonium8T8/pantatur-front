@@ -24,7 +24,7 @@ function App() {
   const [isTaskComponentOpen, setIsTaskComponentOpen] = useState(false);
   const [isAccountComponentOpen, setIsAccountComponentOpen] = useState(false);
 
-  const { userId, setUserId, name, setName, surname, setSurname, userRoles, setUserRoles, hasRole } = useUser();
+  const { userId, setUserId, name, setName, surname, setSurname, userRoles, hasRole, isLoadingRoles } = useUser();
   const { enqueueSnackbar } = useSnackbar();
 
   const fetchSession = async () => {
@@ -36,7 +36,6 @@ function App() {
       setUserId(null);
       setName(null);
       setSurname(null);
-      setUserRoles([]);
       setIsLoading(false);
       return;
     }
@@ -73,63 +72,25 @@ function App() {
     }
   };
 
-  const fetchRoles = async () => {
-    if (!userId) return;
-
-    try {
-      const token = Cookies.get("jwt");
-      const response = await fetch(`https://pandatur-api.com/api/users/${userId}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-          Origin: 'https://plutonium8t8.github.io',
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log("✅ Роли пользователя загружены:", data.roles);
-
-        // Распарсим строки JSON в массив
-        const parsedRoles = JSON.parse(data.roles);
-        setUserRoles(parsedRoles);
-      } else {
-        console.error(`❌ Ошибка загрузки ролей: ${response.status} - ${response.statusText}`);
-      }
-    } catch (error) {
-      console.error("❌ Ошибка при загрузке ролей:", error.message);
-    }
-  };
-
   useEffect(() => {
     fetchSession();
   }, []);
 
-  useEffect(() => {
-    if (isLoggedIn && userId) {
-      fetchRoles();
-    } else {
-      setUserRoles([]);
-    }
-  }, [isLoggedIn, userId]);
-
   const handleLogin = async () => {
     console.log("🔄 Логин: обновляем сессию...");
     await fetchSession();
-    console.log("🔄 Логин: загружаем роли...");
-    await fetchRoles();
   };
 
   const handleLogout = () => {
     console.log("❌ Выход: очищаем токен, роли и сессию...");
     Cookies.remove("jwt");
     setIsLoggedIn(false);
-    setUserRoles([]);
     setUserId(null);
+    setName(null);
+    setSurname(null);
   };
 
-  if (isLoading) {
+  if (isLoading || isLoadingRoles) {
     return <div className="spinner"></div>;
   }
 

@@ -37,7 +37,7 @@ import { valutaOptions } from '../../FormOptions/ValutaOptions';
 import { ibanOptions } from '../../FormOptions/IbanOptions';
 
 const ChatComponent = ({ }) => {
-    const { userId } = useUser();
+    const { userId, hasRole, isLoadingRoles } = useUser();
     const [managerMessage, setManagerMessage] = useState('');
     const { tickets, updateTicket, setTickets, messages, setMessages, markMessagesAsRead, socketRef } = useAppContext();
     const [selectTicketId, setSelectTicketId] = useState(null);
@@ -71,6 +71,7 @@ const ChatComponent = ({ }) => {
     const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
     const [activeTab, setActiveTab] = useState("extraForm"); // По умолчанию вкладка Extra Form
     const [filteredTicketIds, setFilteredTicketIds] = useState(null);
+    const [isAdmin, setIsAdmin] = useState(false);
 
     const platformIcons = {
         "facebook": <FaFacebook />,
@@ -79,6 +80,14 @@ const ChatComponent = ({ }) => {
         "viber": <SiViber />,
         "telegram": <FaTelegram />
     };
+
+    useEffect(() => {
+        if (!isLoadingRoles) {
+            setIsAdmin(hasRole("ROLE_ADMIN"));
+        }
+    }, [isLoadingRoles, hasRole]);
+
+    const AdminRoles = isLoadingRoles ? true : !isAdmin;
 
     const applyFilters = (filters) => {
         setAppliedFilters(filters);
@@ -2199,19 +2208,21 @@ const ChatComponent = ({ }) => {
                                 id="commission-input"
                                 disabled={true}
                             />
-                            <div className="toggle-container">
-                                <label className="toggle-label">Control Admin</label>
-                                <label className={`switch ${fieldErrors.control_admin ? "invalid-toggle" : ""}`}>
-                                    <input
-                                        type="checkbox"
-                                        checked={extraInfo[selectTicketId]?.control_admin || false}
-                                        onChange={(e) =>
-                                            handleSelectChangeExtra(selectTicketId, 'control_admin', e.target.checked)
-                                        }
-                                    />
-                                    <span className="slider round"></span>
-                                </label>
-                            </div>
+                            {isAdmin && (
+                                <div className="toggle-container">
+                                    <label className="toggle-label">Control Admin</label>
+                                    <label className={`switch ${fieldErrors.control_admin ? "invalid-toggle" : ""}`}>
+                                        <input
+                                            type="checkbox"
+                                            checked={extraInfo[selectTicketId]?.control_admin || false}
+                                            onChange={(e) =>
+                                                handleSelectChangeExtra(selectTicketId, 'control_admin', e.target.checked)
+                                            }
+                                        />
+                                        <span className="slider round"></span>
+                                    </label>
+                                </div>
+                            )}
                         </div>
                     )}
                     {activeTab === 'Invoice' && selectTicketId && (
