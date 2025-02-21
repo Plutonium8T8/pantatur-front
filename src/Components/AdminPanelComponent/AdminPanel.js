@@ -50,9 +50,12 @@ const ScheduleComponent = () => {
       const response = await fetch(`https://pandatur-api.com/api/technicians/${technicianId}/schedule/${dayOfWeek}`, {
         method: "DELETE",
         headers: {
-          Authorization: `Bearer ${token}`,
+          "Authorization": `Bearer ${token}`,
+          "Origin": 'https://pandaturcrm.com',
           "Content-Type": "application/json",
-          Origin: 'https://plutonium8t8.github.io',
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          "Pragma": "no-cache",
+          "Expires": "0"
         },
         body: JSON.stringify({
           start: intervalToDelete.start,
@@ -95,9 +98,12 @@ const ScheduleComponent = () => {
     fetch("https://pandatur-api.com/api/users-technician", {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${token}`,
+        "Authorization": `Bearer ${token}`,
+        "Origin": 'https://pandaturcrm.com',
         "Content-Type": "application/json",
-        Origin: 'https://plutonium8t8.github.io',
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0"
       },
     })
       .then((response) => response.json())
@@ -151,9 +157,12 @@ const ScheduleComponent = () => {
       const usersResponse = await fetch("https://pandatur-api.com/api/users-technician", {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${token}`,
+          "Authorization": `Bearer ${token}`,
+          "Origin": 'https://pandaturcrm.com',
           "Content-Type": "application/json",
-          Origin: 'https://plutonium8t8.github.io',
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          "Pragma": "no-cache",
+          "Expires": "0"
         },
       });
       const usersData = await usersResponse.json();
@@ -162,9 +171,12 @@ const ScheduleComponent = () => {
       const scheduleResponse = await fetch("https://pandatur-api.com/api/technicians/schedules", {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${token}`,
+          "Authorization": `Bearer ${token}`,
+          "Origin": 'https://pandaturcrm.com',
           "Content-Type": "application/json",
-          Origin: 'https://plutonium8t8.github.io',
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          "Pragma": "no-cache",
+          "Expires": "0"
         },
       });
       const scheduleData = await scheduleResponse.json();
@@ -238,9 +250,12 @@ const ScheduleComponent = () => {
       const response = await fetch(`https://pandatur-api.com/api/technicians/${technicianId}/schedule/${dayOfWeek}`, {
         method: "DELETE",
         headers: {
-          Authorization: `Bearer ${token}`,
+          "Authorization": `Bearer ${token}`,
+          "Origin": 'https://pandaturcrm.com',
           "Content-Type": "application/json",
-          Origin: 'https://plutonium8t8.github.io',
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          "Pragma": "no-cache",
+          "Expires": "0"
         },
         body: JSON.stringify(newInterval), // Отправляем сам объект напрямую
       });
@@ -284,9 +299,12 @@ const ScheduleComponent = () => {
       const response = await fetch(`https://pandatur-api.com/api/technicians/${technicianId}/schedule/${dayOfWeek}`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`,
+          "Authorization": `Bearer ${token}`,
+          "Origin": 'https://pandaturcrm.com',
           "Content-Type": "application/json",
-          Origin: 'https://plutonium8t8.github.io',
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          "Pragma": "no-cache",
+          "Expires": "0"
         },
         body: JSON.stringify(newInterval), // Отправляем сам объект напрямую
       });

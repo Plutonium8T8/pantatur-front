@@ -27,10 +27,13 @@ const NotificationModal = ({ isOpen, onClose }) => {
             const response = await fetch(`https://pandatur-api.com/api/notification/${userId}`, {
                 method: "GET",
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    "Authorization": `Bearer ${token}`,
+                    "Origin": 'https://pandaturcrm.com',
                     "Content-Type": "application/json",
-                    Origin: 'https://plutonium8t8.github.io',
-                },
+                    "Cache-Control": "no-cache, no-store, must-revalidate",
+                    "Pragma": "no-cache",
+                    "Expires": "0"
+                  },
             });
             if (response.ok) {
                 const data = await response.json();
@@ -51,10 +54,13 @@ const NotificationModal = ({ isOpen, onClose }) => {
             const response = await fetch("https://pandatur-api.com/api/notification", {
                 method: "POST",
                 headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Origin": 'https://pandaturcrm.com',
                     "Content-Type": "application/json",
-                    Origin: 'https://plutonium8t8.github.io',
-                    Authorization: `Bearer ${token}`,
-                },
+                    "Cache-Control": "no-cache, no-store, must-revalidate",
+                    "Pragma": "no-cache",
+                    "Expires": "0"
+                  },
                 body: JSON.stringify({
                     time: notificationDate,
                     description: notificationContent,
@@ -80,10 +86,13 @@ const NotificationModal = ({ isOpen, onClose }) => {
             const response = await fetch("https://pandatur-api.com/api/notification/client", {
                 method: "DELETE",
                 headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Origin": 'https://pandaturcrm.com',
                     "Content-Type": "application/json",
-                    Origin: 'https://plutonium8t8.github.io',
-                    Authorization: `Bearer ${token}`,
-                },
+                    "Cache-Control": "no-cache, no-store, must-revalidate",
+                    "Pragma": "no-cache",
+                    "Expires": "0"
+                  },
                 body: JSON.stringify({
                     client_id: userId,
                 }),
@@ -104,10 +113,13 @@ const NotificationModal = ({ isOpen, onClose }) => {
             const response = await fetch("https://pandatur-api.com/api/notification", {
                 method: "PATCH",
                 headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Origin": 'https://pandaturcrm.com',
                     "Content-Type": "application/json",
-                    Origin: 'https://plutonium8t8.github.io',
-                    Authorization: `Bearer ${token}`,
-                },
+                    "Cache-Control": "no-cache, no-store, must-revalidate",
+                    "Pragma": "no-cache",
+                    "Expires": "0"
+                  },
                 body: JSON.stringify({
                     id: id,
                     status: true,

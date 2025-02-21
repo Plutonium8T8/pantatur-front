@@ -91,9 +91,12 @@ const Leads = () => {
       const response = await fetch(`https://pandatur-api.com/api/tickets/${ticketId}`, {
         method: 'PATCH',
         headers: {
-          'Content-Type': 'application/json',
-          Origin: 'https://plutonium8t8.github.io',
-          Authorization: `Bearer ${token}`,
+          "Authorization": `Bearer ${token}`,
+          "Origin": 'https://pandaturcrm.com',
+          "Content-Type": "application/json",
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          "Pragma": "no-cache",
+          "Expires": "0"
         },
         credentials: 'include',
         body: JSON.stringify({ workflow: newWorkflow }),
