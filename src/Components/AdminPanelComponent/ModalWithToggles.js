@@ -19,10 +19,13 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                 const response = await fetch(`https://pandatur-api.com/api/users/${employee.id}`, {
                     method: "GET",
                     headers: {
-                        Authorization: `Bearer ${token}`,
+                        "Authorization": `Bearer ${token}`,
+                        "Origin": 'https://pandaturcrm.com',
                         "Content-Type": "application/json",
-                        Origin: 'https://plutonium8t8.github.io',
-                    },
+                        "Cache-Control": "no-cache, no-store, must-revalidate",
+                        "Pragma": "no-cache",
+                        "Expires": "0"
+                      },
                 });
                 if (response.ok) {
                     const data = await response.json();
@@ -43,10 +46,13 @@ const ModalWithToggles = ({ employee, closeModal }) => {
             const response = await fetch("https://pandatur-api.com/admin/user/roles", {
                 method: "POST",
                 headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Origin": 'https://pandaturcrm.com',
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                    Origin: 'https://plutonium8t8.github.io',
-                },
+                    "Cache-Control": "no-cache, no-store, must-revalidate",
+                    "Pragma": "no-cache",
+                    "Expires": "0"
+                  },
                 body: JSON.stringify({
                     id: employee.id,
                     role,
@@ -71,10 +77,13 @@ const ModalWithToggles = ({ employee, closeModal }) => {
             const response = await fetch("https://pandatur-api.com/admin/user/roles", {
                 method: "DELETE",
                 headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Origin": 'https://pandaturcrm.com',
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                    Origin: 'https://plutonium8t8.github.io',
-                },
+                    "Cache-Control": "no-cache, no-store, must-revalidate",
+                    "Pragma": "no-cache",
+                    "Expires": "0"
+                  },
                 body: JSON.stringify({
                     id: employee.id,
                     role,

@@ -44,7 +44,14 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
             const token = Cookies.get("jwt");
             const response = await fetch("https://pandatur-api.com/api/tickets", {
                 method: "GET",
-                headers: { Authorization: `Bearer ${token}` },
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Origin": 'https://pandaturcrm.com',
+                    "Content-Type": "application/json",
+                    "Cache-Control": "no-cache, no-store, must-revalidate",
+                    "Pragma": "no-cache",
+                    "Expires": "0"
+                  },
             });
 
             if (response.ok) {
@@ -65,10 +72,13 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
             const response = await fetch(`https://pandatur-api.com/api/task/user/${userId}`, {
                 method: "GET",
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    "Authorization": `Bearer ${token}`,
+                    "Origin": 'https://pandaturcrm.com',
                     "Content-Type": "application/json",
-                    Origin: 'https://plutonium8t8.github.io',
-                },
+                    "Cache-Control": "no-cache, no-store, must-revalidate",
+                    "Pragma": "no-cache",
+                    "Expires": "0"
+                  },
             });
 
             if (!response.ok) {
@@ -106,10 +116,13 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
             const response = await fetch("https://pandatur-api.com/api/task", {
                 method: "POST",
                 headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Origin": 'https://pandaturcrm.com',
                     "Content-Type": "application/json",
-                    Origin: 'https://plutonium8t8.github.io',
-                    Authorization: `Bearer ${token}`,
-                },
+                    "Cache-Control": "no-cache, no-store, must-revalidate",
+                    "Pragma": "no-cache",
+                    "Expires": "0"
+                  },
                 body: JSON.stringify(taskData),
             });
 
@@ -133,9 +146,13 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
             const response = await fetch(`https://pandatur-api.com/api/task/clear`, {
                 method: "DELETE",
                 headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Origin": 'https://pandaturcrm.com',
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
+                    "Cache-Control": "no-cache, no-store, must-revalidate",
+                    "Pragma": "no-cache",
+                    "Expires": "0"
+                  },
                 body: JSON.stringify({
                     technician_id: userId,
                 }),
@@ -156,9 +173,13 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
             const response = await fetch("https://pandatur-api.com/api/task", {
                 method: "PATCH",
                 headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Origin": 'https://pandaturcrm.com',
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
+                    "Cache-Control": "no-cache, no-store, must-revalidate",
+                    "Pragma": "no-cache",
+                    "Expires": "0"
+                  },
                 body: JSON.stringify({
                     id: id,
                     status: true,
@@ -180,10 +201,13 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
             const response = await fetch("https://pandatur-api.com/api/users-technician", {
                 method: "GET",
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    "Authorization": `Bearer ${token}`,
+                    "Origin": 'https://pandaturcrm.com',
                     "Content-Type": "application/json",
-                    Origin: 'https://plutonium8t8.github.io',
-                },
+                    "Cache-Control": "no-cache, no-store, must-revalidate",
+                    "Pragma": "no-cache",
+                    "Expires": "0"
+                  },
             });
 
             if (!response.ok) {

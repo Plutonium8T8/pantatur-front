@@ -44,9 +44,12 @@ function App() {
       const response = await fetch('https://pandatur-api.com/session', {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-          Origin: 'https://plutonium8t8.github.io',
+          "Authorization": `Bearer ${token}`,
+          "Origin": 'https://pandaturcrm.com',
+          "Content-Type": "application/json",
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          "Pragma": "no-cache",
+          "Expires": "0"
         },
         credentials: 'include',
       });

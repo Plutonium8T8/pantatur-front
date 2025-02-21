@@ -52,9 +52,12 @@ const UserPage = ({ isOpen, onClose }) => {
         {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${token}`,
+            "Authorization": `Bearer ${token}`,
+            "Origin": 'https://pandaturcrm.com',
             "Content-Type": "application/json",
-            Origin: 'https://plutonium8t8.github.io',
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache",
+            "Expires": "0"
           },
         }
       );
@@ -80,9 +83,12 @@ const UserPage = ({ isOpen, onClose }) => {
         {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${token}`,
+            "Authorization": `Bearer ${token}`,
+            "Origin": 'https://pandaturcrm.com',
             "Content-Type": "application/json",
-            Origin: 'https://plutonium8t8.github.io',
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache",
+            "Expires": "0"
           },
         }
       );
@@ -113,9 +119,12 @@ const UserPage = ({ isOpen, onClose }) => {
         {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${token}`,
+            "Authorization": `Bearer ${token}`,
+            "Origin": 'https://pandaturcrm.com',
             "Content-Type": "application/json",
-            Origin: 'https://plutonium8t8.github.io',
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache",
+            "Expires": "0"
           },
         }
       );
@@ -165,9 +174,12 @@ const UserPage = ({ isOpen, onClose }) => {
         {
           method: "PATCH",
           headers: {
+            "Authorization": `Bearer ${token}`,
+            "Origin": 'https://pandaturcrm.com',
             "Content-Type": "application/json",
-            Origin: 'https://plutonium8t8.github.io',
-            Authorization: `Bearer ${token}`,
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache",
+            "Expires": "0"
           },
           body: JSON.stringify({
             email: users.email,
@@ -187,9 +199,12 @@ const UserPage = ({ isOpen, onClose }) => {
         {
           method: "PATCH",
           headers: {
+            "Authorization": `Bearer ${token}`,
+            "Origin": 'https://pandaturcrm.com',
             "Content-Type": "application/json",
-            Origin: 'https://plutonium8t8.github.io',
-            Authorization: `Bearer ${token}`,
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache",
+            "Expires": "0"
           },
           body: JSON.stringify({
             name: usersExtended.name,
@@ -216,9 +231,12 @@ const UserPage = ({ isOpen, onClose }) => {
         {
           method: "PATCH",
           headers: {
+            "Authorization": `Bearer ${token}`,
+            "Origin": 'https://pandaturcrm.com',
             "Content-Type": "application/json",
-            Origin: 'https://plutonium8t8.github.io',
-            Authorization: `Bearer ${token}`,
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache",
+            "Expires": "0"
           },
           body: JSON.stringify({
             department: usersTechnician.department,

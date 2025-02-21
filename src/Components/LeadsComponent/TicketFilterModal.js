@@ -87,9 +87,13 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
             const response = await fetch("https://pandatur-api.com/api/apply-filter", {
                 method: "POST",
                 headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Origin": 'https://pandaturcrm.com',
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
+                    "Cache-Control": "no-cache, no-store, must-revalidate",
+                    "Pragma": "no-cache",
+                    "Expires": "0"
+                  },
                 body: JSON.stringify(formattedFilters),
             });
 
@@ -125,10 +129,13 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                 const response = await fetch("https://pandatur-api.com/api/users-technician", {
                     method: "GET",
                     headers: {
-                        Authorization: `Bearer ${token}`,
+                        "Authorization": `Bearer ${token}`,
+                        "Origin": 'https://pandaturcrm.com',
                         "Content-Type": "application/json",
-                        Origin: "https://plutonium8t8.github.io",
-                    },
+                        "Cache-Control": "no-cache, no-store, must-revalidate",
+                        "Pragma": "no-cache",
+                        "Expires": "0"
+                      },
                 });
 
                 if (!response.ok) {
