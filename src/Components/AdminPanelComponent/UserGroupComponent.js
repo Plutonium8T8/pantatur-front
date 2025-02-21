@@ -24,13 +24,9 @@ const UserGroupComponent = ({ onChange, userId, roles }) => {
                 const response = await fetch("https://pandatur-api.com/api/user-groups", {
                     method: "GET",
                     headers: {
-                        "Authorization": `Bearer ${token}`,
-                        "Origin": 'https://pandaturcrm.com',
+                        Authorization: `Bearer ${token}`,
                         "Content-Type": "application/json",
-                        "Cache-Control": "no-cache, no-store, must-revalidate",
-                        "Pragma": "no-cache",
-                        "Expires": "0"
-                      },
+                    },
                     credentials: "include",
                 });
 
@@ -58,13 +54,9 @@ const UserGroupComponent = ({ onChange, userId, roles }) => {
             const response = await fetch("https://pandatur-api.com/api/user-groups", {
                 method: "POST",
                 headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Origin": 'https://pandaturcrm.com',
                     "Content-Type": "application/json",
-                    "Cache-Control": "no-cache, no-store, must-revalidate",
-                    "Pragma": "no-cache",
-                    "Expires": "0"
-                  },
+                    Authorization: `Bearer ${token}`,
+                },
                 credentials: "include",
                 body: JSON.stringify({ name, roles }), // Default empty roles
             });
@@ -92,13 +84,9 @@ const UserGroupComponent = ({ onChange, userId, roles }) => {
             const response = await fetch(`https://pandatur-api.com/api/user-groups/${groupId}/assign/${userId}`, {
                 method: "PATCH",
                 headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Origin": 'https://pandaturcrm.com',
                     "Content-Type": "application/json",
-                    "Cache-Control": "no-cache, no-store, must-revalidate",
-                    "Pragma": "no-cache",
-                    "Expires": "0"
-                  },
+                    Authorization: `Bearer ${token}`,
+                },
                 credentials: "include",
             });
 
@@ -124,13 +112,9 @@ const UserGroupComponent = ({ onChange, userId, roles }) => {
             const response = await fetch(`https://pandatur-api.com/api/user-groups/${groupId}`, {
                 method: "DELETE",
                 headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Origin": 'https://pandaturcrm.com',
                     "Content-Type": "application/json",
-                    "Cache-Control": "no-cache, no-store, must-revalidate",
-                    "Pragma": "no-cache",
-                    "Expires": "0"
-                  },
+                    Authorization: `Bearer ${token}`,
+                },
                 credentials: "include",
             });
 

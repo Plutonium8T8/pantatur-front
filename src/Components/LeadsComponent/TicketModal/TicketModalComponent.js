@@ -89,12 +89,9 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
       const response = await fetch(url, {
         method,
         headers: {
-          "Authorization": `Bearer ${token}`,
-          "Origin": 'https://pandaturcrm.com',
-          "Content-Type": "application/json",
-          "Cache-Control": "no-cache, no-store, must-revalidate",
-          "Pragma": "no-cache",
-          "Expires": "0"
+          'Content-Type': 'application/json',
+          Origin: 'https://plutonium8t8.github.io',
+          Authorization: `Bearer ${token}`,
         },
         credentials: 'include',
         body: JSON.stringify(cleanedData),
@@ -124,12 +121,9 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
       const response = await fetch(`https://pandatur-api.com/api/tickets/${editedTicket?.id}`, {
         method: 'DELETE',
         headers: {
-          "Authorization": `Bearer ${token}`,
-          "Origin": 'https://pandaturcrm.com',
-          "Content-Type": "application/json",
-          "Cache-Control": "no-cache, no-store, must-revalidate",
-          "Pragma": "no-cache",
-          "Expires": "0"
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          Origin: 'https://plutonium8t8.github.io',
         },
         credentials: 'include',
       });

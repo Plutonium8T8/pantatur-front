@@ -125,13 +125,10 @@ const ChatComponent = ({ }) => {
             const response = await fetch(`https://pandatur-api.com/api/ticket-info/${selectTicketId}`, {
                 method: 'GET',
                 headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Origin": 'https://pandaturcrm.com',
-                    "Content-Type": "application/json",
-                    "Cache-Control": "no-cache, no-store, must-revalidate",
-                    "Pragma": "no-cache",
-                    "Expires": "0"
-                  },
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                    Origin: 'https://plutonium8t8.github.io',
+                },
             });
 
             if (!response.ok) {
@@ -182,13 +179,10 @@ const ChatComponent = ({ }) => {
             const response = await fetch(`https://pandatur-api.com/api/ticket-info/${selectTicketId}`, {
                 method: 'POST',
                 headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Origin": 'https://pandaturcrm.com',
-                    "Content-Type": "application/json",
-                    "Cache-Control": "no-cache, no-store, must-revalidate",
-                    "Pragma": "no-cache",
-                    "Expires": "0"
-                  },
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                    Origin: 'https://plutonium8t8.github.io',
+                },
                 body: JSON.stringify({
                     ...ticketExtraInfo, // Сначала добавляем все свойства из ticketExtraInfo
                 }),
@@ -685,13 +679,10 @@ const ChatComponent = ({ }) => {
             const response = await fetch(`https://pandatur-api.com/api/tickets/${selectTicketId}`, {
                 method: 'PATCH',
                 headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Origin": 'https://pandaturcrm.com',
-                    "Content-Type": "application/json",
-                    "Cache-Control": "no-cache, no-store, must-revalidate",
-                    "Pragma": "no-cache",
-                    "Expires": "0"
-                  },
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                    Origin: 'https://plutonium8t8.github.io',
+                },
                 credentials: "include",
                 body: JSON.stringify({ technician_id: newTechnicianId }),
             });
@@ -724,13 +715,8 @@ const ChatComponent = ({ }) => {
                 method: 'POST',
                 body: formData,
                 headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Origin": 'https://pandaturcrm.com',
-                    "Content-Type": "application/json",
-                    "Cache-Control": "no-cache, no-store, must-revalidate",
-                    "Pragma": "no-cache",
-                    "Expires": "0"
-                  },
+                    Authorization: `Bearer ${token}`,
+                },
             });
 
             console.log('Статус ответа:', response.status);
@@ -874,13 +860,10 @@ const ChatComponent = ({ }) => {
             const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Origin": 'https://pandaturcrm.com',
-                    "Content-Type": "application/json",
-                    "Cache-Control": "no-cache, no-store, must-revalidate",
-                    "Pragma": "no-cache",
-                    "Expires": "0"
-                  },
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${Cookies.get('jwt')}`,
+                    Origin: 'https://plutonium8t8.github.io',
+                },
                 body: JSON.stringify(messageData),
             });
 
@@ -969,13 +952,10 @@ const ChatComponent = ({ }) => {
             const response = await fetch(`https://pandatur-api.com/api/users-extended/${selectedClient}`, {
                 method: "PATCH",
                 headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Origin": 'https://pandaturcrm.com',
                     "Content-Type": "application/json",
-                    "Cache-Control": "no-cache, no-store, must-revalidate",
-                    "Pragma": "no-cache",
-                    "Expires": "0"
-                  },
+                    Authorization: `Bearer ${token}`,
+                    Origin: 'https://plutonium8t8.github.io',
+                },
                 body: JSON.stringify(payload),
             });
 
@@ -1091,13 +1071,10 @@ const ChatComponent = ({ }) => {
             const response = await fetch("https://pandatur-api.com/api/merge/tickets", {
                 method: "PATCH",
                 headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Origin": 'https://pandaturcrm.com',
                     "Content-Type": "application/json",
-                    "Cache-Control": "no-cache, no-store, must-revalidate",
-                    "Pragma": "no-cache",
-                    "Expires": "0"
-                  },
+                    Authorization: `Bearer ${token}`,
+                    Origin: 'https://plutonium8t8.github.io',
+                },
                 body: JSON.stringify({
                     ticket_old: ticketOld,
                     ticket_new: ticketNew
@@ -1132,13 +1109,10 @@ const ChatComponent = ({ }) => {
             const response = await fetch("https://pandatur-api.com/api/users-client/merge", {
                 method: "PATCH",
                 headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Origin": 'https://pandaturcrm.com',
                     "Content-Type": "application/json",
-                    "Cache-Control": "no-cache, no-store, must-revalidate",
-                    "Pragma": "no-cache",
-                    "Expires": "0"
-                  },
+                    Authorization: `Bearer ${token}`,
+                    Origin: 'https://plutonium8t8.github.io',
+                },
                 body: JSON.stringify({
                     old_user_id: oldUserId,
                     new_user_id: newUserId

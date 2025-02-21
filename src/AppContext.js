@@ -191,12 +191,9 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       const response = await fetch('https://pandatur-api.com/api/tickets', {
         method: 'GET',
         headers: {
-          "Authorization": `Bearer ${token}`,
-          "Origin": 'https://pandaturcrm.com',
-          "Content-Type": "application/json",
-          "Cache-Control": "no-cache, no-store, must-revalidate",
-          "Pragma": "no-cache",
-          "Expires": "0"
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          Origin: 'https://plutonium8t8.github.io'
         },
         credentials: 'include',
       });
@@ -232,12 +229,9 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       const response = await fetch(`https://pandatur-api.com/api/tickets/${ticketId}`, {
         method: 'GET',
         headers: {
-          "Authorization": `Bearer ${token}`,
-          "Origin": 'https://pandaturcrm.com',
-          "Content-Type": "application/json",
-          "Cache-Control": "no-cache, no-store, must-revalidate",
-          "Pragma": "no-cache",
-          "Expires": "0"
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          Origin: 'https://plutonium8t8.github.io'
         },
         credentials: 'include',
       });
@@ -279,12 +273,9 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       const response = await fetch(`https://pandatur-api.com/api/tickets/${updateData.id}`, {
         method: 'PATCH',
         headers: {
-          "Authorization": `Bearer ${token}`,
-          "Origin": 'https://pandaturcrm.com',
-          "Content-Type": "application/json",
-          "Cache-Control": "no-cache, no-store, must-revalidate",
-          "Pragma": "no-cache",
-          "Expires": "0"
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          Origin: 'https://plutonium8t8.github.io'
         },
         credentials: 'include',
         body: JSON.stringify(updateData),
@@ -319,12 +310,9 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       const response = await fetch('https://pandatur-api.com/api/messages', {
         method: 'GET',
         headers: {
-          "Authorization": `Bearer ${token}`,
-          "Origin": 'https://pandaturcrm.com',
-          "Content-Type": "application/json",
-          "Cache-Control": "no-cache, no-store, must-revalidate",
-          "Pragma": "no-cache",
-          "Expires": "0"
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          Origin: 'https://plutonium8t8.github.io'
         },
       });
 
@@ -350,14 +338,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       if (!token) return;
       const response = await fetch(`https://pandatur-api.com/api/messages/ticket/${ticket_id}`, {
         method: 'GET',
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Origin": 'https://pandaturcrm.com',
-          "Content-Type": "application/json",
-          "Cache-Control": "no-cache, no-store, must-revalidate",
-          "Pragma": "no-cache",
-          "Expires": "0"
-        },
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
       });
       if (!response.ok) throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
       const data = await response.json();

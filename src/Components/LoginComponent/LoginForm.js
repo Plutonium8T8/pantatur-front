@@ -42,13 +42,8 @@ const LoginForm = ({ onLoginSuccess }) => {
     try {
       const response = await fetch(url, {
         method: 'POST',
-        headers: {
-          "Origin": 'https://pandaturcrm.com',
-          "Content-Type": "application/json",
-          "Cache-Control": "no-cache, no-store, must-revalidate",
-          "Pragma": "no-cache",
-          "Expires": "0"
-        },
+        headers: { 'Content-Type': 'application/json' },
+        Origin: 'https://plutonium8t8.github.io',
         body: JSON.stringify(data),
         credentials: 'include',
       });
