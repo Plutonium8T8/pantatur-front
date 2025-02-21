@@ -71,12 +71,8 @@ export const UserProvider = ({ children }) => {
       const response = await fetch(`https://pandatur-api.com/api/users/${userId}`, {
         method: "GET",
         headers: {
-          "Authorization": `Bearer ${token}`,
-          "Origin": 'https://pandaturcrm.com',
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
-          "Cache-Control": "no-cache, no-store, must-revalidate",
-          "Pragma": "no-cache",
-          "Expires": "0"
         },
       });
 
