@@ -104,7 +104,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         // alert(translations["WebSocket off"][language] || "WebSocket este oprit. Te rog să reîncarci pagina!");
         // window.location.reload();
       };
-      socketInstance.onerror = (error) => console.error('WebSocket ошибка:', error);
+      // socketInstance.onerror = (error) => console.error('WebSocket ошибка:', error);
     }
 
     return () => {
