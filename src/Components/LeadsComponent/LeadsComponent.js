@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useAppContext } from '../../AppContext';
 import { priorityOptions } from '../../FormOptions/PriorityOption';
 import { workflowOptions } from '../../FormOptions/WorkFlowOption';
@@ -6,19 +6,22 @@ import SpinnerOverlay from './SpinnerOverlayComponent';
 import WorkflowColumn from './WorkflowColumnComponent';
 import TicketModal from './TicketModal/TicketModalComponent';
 import TicketFilterModal from './TicketFilterModal';
+import TicketRow from './TicketRowComponent';
 import Cookies from 'js-cookie';
 import '../../App.css';
 import '../SnackBarComponent/SnackBarComponent.css';
-import { FaFilter } from 'react-icons/fa';
+import { FaFilter, FaTable, FaColumns, FaTrash, FaEdit } from 'react-icons/fa';
 import { translations } from '../utils/translations';
 
 const Leads = () => {
-  const { tickets, isLoading, setTickets, messages } = useAppContext();
-  const [filteredTicketIds, setFilteredTicketIds] = useState(null); // 🚀 Новый стейт для ID отфильтрованных тикетов
+  const { tickets, isLoading, setTickets } = useAppContext();
+  const [isTableView, setIsTableView] = useState(false);
+  const [filteredTicketIds, setFilteredTicketIds] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentTicket, setCurrentTicket] = useState(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [selectedTickets, setSelectedTickets] = useState([]);
   const [selectedWorkflow, setSelectedWorkflow] = useState(
     workflowOptions.filter(wf => wf !== "Realizat cu succes" && wf !== "Închis și nerealizat")
   );
@@ -38,23 +41,49 @@ const Leads = () => {
   // **Фильтрация тикетов**
   const filteredTickets = useMemo(() => {
     let result = tickets;
-
-    // ✅ Если `filteredTicketIds === null`, значит, фильтр не применён – показываем все тикеты
     if (filteredTicketIds === null) return result;
-
-    // ✅ Если `filteredTicketIds` пуст (`[]`), ничего не показываем
     if (filteredTicketIds.length === 0) return [];
-
-    // ✅ Фильтруем по ID
     result = result.filter(ticket => filteredTicketIds.includes(ticket.id));
-
-    // ✅ Применяем фильтр по `workflow`
     if (selectedWorkflow.length > 0) {
       result = result.filter(ticket => selectedWorkflow.includes(ticket.workflow));
     }
-
     return result;
   }, [tickets, filteredTicketIds, selectedWorkflow]);
+
+  // Выбор тикетов
+  const toggleSelectTicket = (ticketId) => {
+    setSelectedTickets((prev) =>
+      prev.includes(ticketId) ? prev.filter((id) => id !== ticketId) : [...prev, ticketId]
+    );
+  };
+
+  // Выбор всех тикетов
+  const toggleSelectAll = (e) => {
+    if (e.target.checked) {
+      setSelectedTickets(filteredTickets.map(ticket => ticket.id));
+    } else {
+      setSelectedTickets([]);
+    }
+  };
+
+  // Массовое удаление тикетов
+  const deleteSelectedTickets = () => {
+    if (selectedTickets.length === 0) return;
+    const newTickets = tickets.filter(ticket => !selectedTickets.includes(ticket.id));
+    setTickets(newTickets);
+    setSelectedTickets([]);
+  };
+
+  const editSelectedTickets = () => {
+    if (selectedTickets.length === 0) return;
+
+    // Открываем модалку редактирования с первым выделенным тикетом
+    const ticketToEdit = tickets.find(ticket => ticket.id === selectedTickets[0]);
+    if (ticketToEdit) {
+      setCurrentTicket(ticketToEdit);
+      setIsModalOpen(true);
+    }
+  };
 
   const updateWorkflow = async (ticketId, newWorkflow) => {
     try {
@@ -125,6 +154,7 @@ const Leads = () => {
           <button onClick={openCreateTicketModal} className="button-add-ticket">
             {translations["Adaugă lead"][language]}
           </button>
+
           <input
             type="text"
             value={searchTerm}
@@ -132,28 +162,82 @@ const Leads = () => {
             placeholder={translations["Cauta dupa Lead, Client sau Tag"][language]}
             className="search-input"
           />
+          <button onClick={() => setIsTableView(prev => !prev)} className="button-toggle-view">
+            {isTableView ? <FaColumns /> : <FaTable />}
+            {isTableView ? 'Colon' : 'List'}
+          </button>
+
+          <div className="ticket-counter-row">
+            All tickets: {tickets.length} | Filtered: {filteredTickets.length}
+          </div>
+
+          {selectedTickets.length > 0 && (
+            <button onClick={deleteSelectedTickets} className="button-delete">
+              <FaTrash /> Удалить ({selectedTickets.length})
+            </button>
+          )}
+
+          {selectedTickets.length > 0 && (
+            <button onClick={() => editSelectedTickets()} className="button-edit">
+              <FaEdit /> Редактировать ({selectedTickets.length})
+            </button>
+          )}
+
           <button onClick={() => setIsFilterOpen(true)} className="button-filter">
             <FaFilter />
             {Object.values(filters).some(value => Array.isArray(value) ? value.length > 0 : value) && <span className="filter-indicator"></span>}
           </button>
+
         </div>
       </div>
+
       <div className="container-tickets">
-        {workflowOptions
-          .filter(workflow => selectedWorkflow.includes(workflow))
-          .map((workflow) => (
-            <WorkflowColumn
-              key={workflow}
-              workflow={workflow}
-              tickets={filteredTickets}
-              searchTerm={searchTerm}
-              onEditTicket={(ticket) => {
-                setCurrentTicket(ticket);
-                setIsModalOpen(true);
-              }}
-              onUpdateWorkflow={updateWorkflow}
-            />
-          ))}
+        {isTableView ? (
+          <table className="ticket-table">
+            <thead>
+              <tr>
+                <th>Check</th>
+                <th>ID</th>
+                <th>Contact</th>
+                <th>Nume</th>
+                <th>Prenume</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Descriere</th>
+                <th>Tags</th>
+                <th>Priority</th>
+                <th>Workflow</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredTickets.map((ticket) => (
+                <TicketRow
+                  key={ticket.id}
+                  ticket={ticket}
+                  isSelected={selectedTickets.includes(ticket.id)}
+                  onSelect={isTableView ? toggleSelectTicket : undefined} // Только в таблице
+                  onEditTicket={setCurrentTicket}
+                />
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          workflowOptions
+            .filter(workflow => selectedWorkflow.includes(workflow))
+            .map((workflow) => (
+              <WorkflowColumn
+                key={workflow}
+                workflow={workflow}
+                tickets={filteredTickets}
+                searchTerm={searchTerm}
+                onEditTicket={(ticket) => {
+                  setCurrentTicket(ticket);
+                  setIsModalOpen(true);
+                }}
+                onUpdateWorkflow={updateWorkflow}
+              />
+            ))
+        )}
       </div>
       {isLoading && <SpinnerOverlay />}
       {isModalOpen && currentTicket && (
