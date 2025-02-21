@@ -23,9 +23,9 @@ function App() {
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
   const [isTaskComponentOpen, setIsTaskComponentOpen] = useState(false);
   const [isAccountComponentOpen, setIsAccountComponentOpen] = useState(false);
-  const { userId, setUserId, name, setName, surname, setSurname } = useUser();
+
+  const { userId, setUserId, name, setName, surname, setSurname, userRoles, setUserRoles, hasRole } = useUser();
   const { enqueueSnackbar } = useSnackbar();
-  const [userRoles, setUserRoles] = useState(null);
 
   const fetchSession = async () => {
     const token = Cookies.get('jwt');
@@ -36,6 +36,7 @@ function App() {
       setUserId(null);
       setName(null);
       setSurname(null);
+      setUserRoles([]);
       setIsLoading(false);
       return;
     }
@@ -58,29 +59,20 @@ function App() {
         console.log("✅ Сессия активна, user_id:", data.user_id);
         setIsLoggedIn(true);
         setUserId(data.user_id);
-        setName(data.username || ""); // Устанавливаем имя, если есть
-        setSurname(data.surname || ""); // Устанавливаем фамилию, если есть
+        setName(data.username || "");
+        setSurname(data.surname || "");
       } else {
         console.log("❌ Нет user_id в ответе, выход...");
-        Cookies.remove('jwt');
-        setIsLoggedIn(false);
-        setUserId(null);
-        setName(null);
-        setSurname(null);
+        handleLogout();
       }
     } catch (error) {
       console.log("❌ Ошибка при запросе сессии:", error.message);
-      Cookies.remove('jwt');
-      setIsLoggedIn(false);
-      setUserId(null);
-      setName(null);
-      setSurname(null);
+      handleLogout();
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Функция для загрузки ролей
   const fetchRoles = async () => {
     if (!userId) return;
 
@@ -98,7 +90,10 @@ function App() {
       if (response.ok) {
         const data = await response.json();
         console.log("✅ Роли пользователя загружены:", data.roles);
-        setUserRoles(data.roles);
+
+        // Распарсим строки JSON в массив
+        const parsedRoles = JSON.parse(data.roles);
+        setUserRoles(parsedRoles);
       } else {
         console.error(`❌ Ошибка загрузки ролей: ${response.status} - ${response.statusText}`);
       }
@@ -107,21 +102,18 @@ function App() {
     }
   };
 
-  // Загружаем сессию при загрузке страницы
   useEffect(() => {
     fetchSession();
   }, []);
 
-  // Загружаем роли после обновления userId
   useEffect(() => {
     if (isLoggedIn && userId) {
       fetchRoles();
     } else {
-      setUserRoles(null);
+      setUserRoles([]);
     }
   }, [isLoggedIn, userId]);
 
-  // 🔥 Функция логина: сначала обновляем сессию, затем роли
   const handleLogin = async () => {
     console.log("🔄 Логин: обновляем сессию...");
     await fetchSession();
@@ -129,12 +121,11 @@ function App() {
     await fetchRoles();
   };
 
-  // 🔥 Функция выхода: очищаем все данные
   const handleLogout = () => {
     console.log("❌ Выход: очищаем токен, роли и сессию...");
     Cookies.remove("jwt");
     setIsLoggedIn(false);
-    setUserRoles(null);
+    setUserRoles([]);
     setUserId(null);
   };
 
@@ -144,7 +135,7 @@ function App() {
 
   const NoAccess = () => (
     <div style={{ textAlign: 'center', marginTop: '50px', fontSize: '18px', color: 'red' }}>
-      <h2>No acces page!</h2>
+      <h2>No access page!</h2>
     </div>
   );
 
@@ -171,7 +162,7 @@ function App() {
                       <Route path="/" element={<Navigate to="/leads" />} />
                       <Route path="/leads" element={<Leads />} />
                       <Route path="/chat/:ticketId?" element={<ChatComponent />} />
-                      <Route path="/admin-panel" element={userRoles && userRoles.includes("ROLE_ADMIN") ? <AdminPanel /> : <NoAccess />} />
+                      <Route path="/admin-panel" element={hasRole("ROLE_ADMIN") ? <AdminPanel /> : <NoAccess />} />
                       <Route path="*" element={<Navigate to="/index.html" />} />
                     </Routes>
                   </div>

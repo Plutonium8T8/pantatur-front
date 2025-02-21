@@ -7,28 +7,30 @@ import TagInput from '../../TagsComponent/TagComponent';
 import { useUser } from '../../../UserContext';
 import Cookies from 'js-cookie';
 import { translations } from "../../utils/translations";
-import { useAppContext } from '../../../AppContext'; // Используем AppContext для работы с tickets
+import { useAppContext } from '../../../AppContext';
 
 const TicketModal = ({ ticket, onClose, onSave }) => {
   const modalRef = useRef(null);
   const language = localStorage.getItem('language') || 'RO';
 
-  const { setTickets } = useAppContext(); // Обновление тикетов через контекст
-  const { userId } = useUser();
+  const { setTickets } = useAppContext();
+  const { userId, hasRole } = useUser();
 
-  // Функция для обработки тегов
+  // Проверяем, есть ли у пользователя ROLE_ADMIN
+  const isAdmin = hasRole("ROLE_ADMIN");
+
   const parseTags = (tags) => {
     if (Array.isArray(tags)) {
       return tags;
     }
     if (typeof tags === 'string' && tags.startsWith('{') && tags.endsWith('}')) {
       return tags
-        .slice(1, -1) // Убираем `{` и `}`
-        .split(',') // Разделяем по запятой
-        .map((tag) => tag.trim()) // Убираем пробелы
-        .filter((tag) => tag !== ''); // Убираем пустые строки
+        .slice(1, -1)
+        .split(',')
+        .map(tag => tag.trim())
+        .filter(tag => tag !== '');
     }
-    return []; // Если формат неизвестен, возвращаем пустой массив
+    return [];
   };
 
   const [editedTicket, setEditedTicket] = useState(() => ({
@@ -139,8 +141,8 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
         </header>
         <div className="ticket-modal-form">
           <div className="container-select-priority-workflow">
-            <Priority ticket={editedTicket} onChange={handleInputChange} disabled={false} />
-            <Workflow ticket={editedTicket} onChange={handleInputChange} disabled={false} />
+            <Priority ticket={editedTicket} onChange={handleInputChange} disabled={!isAdmin} />
+            <Workflow ticket={editedTicket} onChange={handleInputChange} disabled={!isAdmin} />
           </div>
           <div className="divider-line"></div>
           <div className="input-group">

@@ -8,14 +8,14 @@ export const UserProvider = ({ children }) => {
     return savedUserId ? Number(savedUserId) : null;
   });
 
-  const [name, setName] = useState(() => {
-    return localStorage.getItem('user_name') || null;
+  const [name, setName] = useState(() => localStorage.getItem('user_name') || null);
+  const [surname, setSurname] = useState(() => localStorage.getItem('user_surname') || null);
+  const [userRoles, setUserRoles] = useState(() => {
+    const savedRoles = localStorage.getItem('user_roles');
+    return savedRoles ? JSON.parse(savedRoles) : [];
   });
 
-  const [surname, setSurname] = useState(() => {
-    return localStorage.getItem('user_surname') || null;
-  });
-
+  // Сохранение userId в localStorage
   useEffect(() => {
     if (userId) {
       localStorage.setItem('user_id', userId);
@@ -24,6 +24,7 @@ export const UserProvider = ({ children }) => {
     }
   }, [userId]);
 
+  // Сохранение name в localStorage
   useEffect(() => {
     if (name) {
       localStorage.setItem('user_name', name);
@@ -32,6 +33,7 @@ export const UserProvider = ({ children }) => {
     }
   }, [name]);
 
+  // Сохранение surname в localStorage
   useEffect(() => {
     if (surname) {
       localStorage.setItem('user_surname', surname);
@@ -40,8 +42,20 @@ export const UserProvider = ({ children }) => {
     }
   }, [surname]);
 
+  // Сохранение ролей пользователя в localStorage
+  useEffect(() => {
+    if (userRoles.length > 0) {
+      localStorage.setItem('user_roles', JSON.stringify(userRoles));
+    } else {
+      localStorage.removeItem('user_roles');
+    }
+  }, [userRoles]);
+
+  // Функция для проверки наличия роли у пользователя
+  const hasRole = (role) => userRoles.includes(role);
+
   return (
-    <UserContext.Provider value={{ userId, setUserId, name, setName, surname, setSurname }}>
+    <UserContext.Provider value={{ userId, setUserId, name, setName, surname, setSurname, userRoles, setUserRoles, hasRole }}>
       {children}
     </UserContext.Provider>
   );
