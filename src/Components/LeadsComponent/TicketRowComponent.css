@@ -120,29 +120,6 @@
     padding: 10px;
 }
 
-/* Стили для кнопки редактирования */
-.edit-button {
-    background-color: #007bff;
-    border: none;
-    color: white;
-    padding: 6px 10px;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-}
-
-/* Анимация при наведении */
-.edit-button:hover {
-    background-color: #0056b3;
-    transform: scale(1.1);
-}
-
 /* Чекбокс теперь не смещает ID */
 .ticket-checkbox-row {
     width: 40px;
@@ -178,4 +155,14 @@
     border-radius: 5px;
     display: inline-block;
     margin-left: 15px;
+}
+
+.button-delete-row {
+    display: flex;
+    background-color: #dc3545;
+}
+
+.button-edit-row {
+    display: flex;
+    background-color: #ffc107;
 }

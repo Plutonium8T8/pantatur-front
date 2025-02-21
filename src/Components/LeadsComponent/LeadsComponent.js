@@ -172,13 +172,13 @@ const Leads = () => {
           </div>
 
           {selectedTickets.length > 0 && (
-            <button onClick={deleteSelectedTickets} className="button-delete">
+            <button onClick={deleteSelectedTickets} className="button-delete-row">
               <FaTrash /> Удалить ({selectedTickets.length})
             </button>
           )}
 
           {selectedTickets.length > 0 && (
-            <button onClick={() => editSelectedTickets()} className="button-edit">
+            <button onClick={() => editSelectedTickets()} className="button-edit-row">
               <FaEdit /> Редактировать ({selectedTickets.length})
             </button>
           )}
