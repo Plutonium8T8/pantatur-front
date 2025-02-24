@@ -1100,7 +1100,6 @@ export const translations = {
        "RO": "Nu există potriviri",
        "RU": "Нет совпадений"
     },
-    
 };
 
 // import { translations } from '../utils/translations';
