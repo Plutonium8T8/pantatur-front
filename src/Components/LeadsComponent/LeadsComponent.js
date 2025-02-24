@@ -11,7 +11,7 @@ import Cookies from 'js-cookie';
 import '../../App.css';
 import '../SnackBarComponent/SnackBarComponent.css';
 import { FaFilter, FaTable, FaColumns, FaTrash, FaEdit } from 'react-icons/fa';
-import { translations } from '../utils/translations';
+import { getLanguageByKey } from "../../Components/utils/getTranslationByKey"
 
 const Leads = () => {
   const { tickets, isLoading, setTickets } = useAppContext();
@@ -25,7 +25,6 @@ const Leads = () => {
   const [selectedWorkflow, setSelectedWorkflow] = useState(
     workflowOptions.filter(wf => wf !== "Realizat cu succes" && wf !== "Închis și nerealizat")
   );
-  const language = localStorage.getItem('language') || 'RO';
 
   const [filters, setFilters] = useState({
     creation_date: '',
@@ -100,7 +99,7 @@ const Leads = () => {
       });
 
       if (response.status === 401) {
-        alert(translations["Sesia a expirat"][language] || "Sesia a expirat, te rog sa accesezi din nou pagina!");
+        alert(getLanguageByKey("Sesia a expirat") || "Sesia a expirat, te rog sa accesezi din nou pagina!");
         window.location.reload();
         return;
       }
@@ -152,14 +151,14 @@ const Leads = () => {
       <div className="dashboard-header">
         <div className="header">
           <button onClick={openCreateTicketModal} className="button-add-ticket">
-            {translations["Adaugă lead"][language]}
+            {getLanguageByKey("Adaugă lead")}
           </button>
 
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder={translations["Cauta dupa Lead, Client sau Tag"][language]}
+            placeholder={getLanguageByKey("Cauta dupa Lead, Client sau Tag")}
             className="search-input"
           />
           <button onClick={() => setIsTableView(prev => !prev)} className="button-toggle-view">
@@ -167,19 +166,19 @@ const Leads = () => {
             {isTableView ? 'Colon' : 'List'}
           </button>
 
-          <div className="ticket-counter-row">
-            All tickets: {tickets.length} | Filtered: {filteredTickets.length}
+          <div style={{border: "10px solid red"}} className="ticket-counter-row">
+            {getLanguageByKey("Toate tichetele")}: {tickets.length} | {getLanguageByKey("Filtrate")}: {filteredTickets.length}
           </div>
 
           {selectedTickets.length > 0 && (
             <button onClick={deleteSelectedTickets} className="button-delete-row">
-              <FaTrash /> Удалить ({selectedTickets.length})
+              <FaTrash /> {getLanguageByKey("Ștergere")} ({selectedTickets.length})
             </button>
           )}
 
           {selectedTickets.length > 0 && (
             <button onClick={() => editSelectedTickets()} className="button-edit-row">
-              <FaEdit /> Редактировать ({selectedTickets.length})
+              <FaEdit /> {getLanguageByKey("Editare")} ({selectedTickets.length})
             </button>
           )}
 
@@ -196,27 +195,27 @@ const Leads = () => {
           <table className="ticket-table">
             <thead>
               <tr>
-                <th>Check</th>
+                <th>{getLanguageByKey("Verificare")}</th>
                 <th>ID</th>
-                <th>Contact</th>
-                <th>Nume</th>
-                <th>Prenume</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Descriere</th>
-                <th>Tags</th>
-                <th>Priority</th>
-                <th>Workflow</th>
+                <th>{getLanguageByKey("Contact")}</th>
+                <th>{getLanguageByKey("Nume")}</th>
+                <th>{getLanguageByKey("Prenume")}</th>
+                <th>{getLanguageByKey("Email")}</th>
+                <th>{getLanguageByKey("Telefon")}</th>
+                <th>{getLanguageByKey("Descriere")}</th>
+                <th>{getLanguageByKey("Tag-uri")}</th>
+                <th>{getLanguageByKey("Prioritate")}</th>
+                <th>{getLanguageByKey("Workflow")}</th>
               </tr>
             </thead>
             <tbody>
               {filteredTickets.map((ticket) => (
                 <TicketRow
-                  key={ticket.id}
-                  ticket={ticket}
-                  isSelected={selectedTickets.includes(ticket.id)}
-                  onSelect={isTableView ? toggleSelectTicket : undefined} // Только в таблице
-                  onEditTicket={setCurrentTicket}
+                key={ticket.id}
+                ticket={ticket}
+                isSelected={selectedTickets.includes(ticket.id)}
+                onSelect={isTableView ? toggleSelectTicket : undefined} // Только в таблице
+                onEditTicket={setCurrentTicket}
                 />
               ))}
             </tbody>
