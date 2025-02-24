@@ -265,7 +265,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
 
                         {filterGroups[activeTab].includes("tags") && (
                             <>
-                             
+
                                 <h2>{translations['Filtru pentru Lead'][language]}</h2>
                                 <div className="container-extra-group">
 
@@ -357,7 +357,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         selectedValues={filters.denumirea_excursiei_turului}
                                     />
 
-                                    
+
                                     <label>{translations["Data vizita in oficiu"][language]}</label>
                                     <input
                                         type="datetime-local"
@@ -367,7 +367,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         className={filters.data_venit_in_oficiu ? "filled-field" : ""} // ✅ Если заполнено, выделяем
                                     />
 
-                                     <label>{translations["Data plecarii"][language]}</label>
+                                    <label>{translations["Data plecarii"][language]}</label>
                                     <input
                                         type="datetime-local"
                                         name="data_plecarii"
