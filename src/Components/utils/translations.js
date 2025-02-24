@@ -702,10 +702,6 @@ export const translations = {
         "RO": "După participant",
         "RU": "По участнику"
     },
-    "Taguri": {
-        "RO": "Taguri",
-        "RU": "Теги"
-    },
     "Introdu tag": {
         "RO": "Introdu tag",
         "RU": "Введите тег"
@@ -948,144 +944,163 @@ export const translations = {
         'RO': "Deschide în noua filă",
         'RU': "Открыть в новой вкладке"
     },
-    "Data creare Lead": {
-        'RO': "Data creare Lead",
-        'RU': "Открыть в новой вкладке"
+   "Data creare Lead": {
+        "RO": "Data creare lead",
+        "RU": "Дата создания лида"
     },
     "Data ultima actualizare Lead": {
-        'RO': "Data ultima actualizare Lead",
-        'RU': "Открыть в новой вкладке"
+        "RO": "Data ultima actualizare lead",
+        "RU": "Дата последнего обновления лида"
     },
     "Prioritate Lead": {
-        'RO': "Prioritate Lead",
-        'RU': "Открыть в новой вкладке"
+        "RO": "Prioritate lead",
+        "RU": "Приоритет лида"
     },
     "Alege prioritatea": {
-        'RO': "Alege prioritatea",
-        'RU': "Открыть в новой вкладке"
+        "RO": "Alege prioritatea",
+        "RU": "Выберите приоритет"
     },
     "Responsabil Lead": {
-        'RO': "Responsabil Lead",
-        'RU': ""
+        "RO": "Responsabil lead",
+        "RU": "Ответственный за лид"
     },
     "Alege responsabil lead": {
-        'RO': "Alege responsabil lead",
-        'RU': ""
+        "RO": "Alege responsabil lead",
+        "RU": "Выберите ответственного за лид"
     },
     "Tag-uri": {
-        'RO': "Tag-uri",
-        'RU': ""
+        "RO": "Tag-uri",
+        "RU": "Теги"
     },
     "Introdu tag-uri separate prin virgule": {
-        'RO': "Introdu tag-uri separate prin virgule",
-        'RU': ""
+        "RO": "Introdu tag-uri separate prin virgule",
+        "RU": "Введите теги, разделенные запятыми"
     },
     "Sursa Lead": {
-        'RO': "Sursa Lead",
-        'RU': ""
+        "RO": "Sursa lead",
+        "RU": "Источник лида"
     },
     "Alege sursa lead": {
-        'RO': "Alege sursa lead",
-        'RU': ""
+        "RO": "Alege sursa lead",
+        "RU": "Выберите источник лида"
     },
     "Alege promo": {
-        'RO': "Alege promo",
-        'RU': ""
+        "RO": "Alege promo",
+        "RU": "Выберите промо"
     },
     "Alege marketing": {
-        'RO': "Alege marketing",
-        'RU': ""
+        "RO": "Alege marketing",
+        "RU": "Выберите маркетинг"
     },
     "Tara": {
-        'RO': "Tara",
-        'RU': ""
+        "RO": "Tara",
+        "RU": "Страна"
     },
     "Alege tara": {
-        'RO': "Alege tara",
-        'RU': ""
+        "RO": "Alege tara",
+        "RU": "Выберите страну"
     },
     "Alege transport": {
-        'RO': "Alege transport",
-        'RU': ""
+        "RO": "Alege transport",
+        "RU": "Выберите транспорт"
     },
     "Nume excursie": {
-        'RO': "Nume excursie",
-        'RU': ""
+        "RO": "Nume excursie",
+        "RU": "Название экскурсии"
     },
     "Alege excursie": {
-        'RO': "Alege excursie",
-        'RU': ""
+        "RO": "Alege excursie",
+        "RU": "Выберите экскурсию"
     },
     "Data vizita in oficiu": {
-        'RO': "Data vizita in oficiu",
-        'RU': ""
-    },
-    "Vânzare €": {
-        'RO': "Vânzare €",
-        'RU': ""
+        "RO": "Data vizita in oficiu",
+        "RU": "Дата визита в офис"
     },
     "Alege serviciu": {
-        'RO': "Alege serviciu",
-        'RU': ""
+        "RO": "Alege serviciu",
+        "RU": "Выберите услугу"
     },
     "Procesare achizitionarii": {
-        'RO': "Procesare achizitionarii",
-        'RU': ""
+        "RO": "Procesare achizitionarii",
+        "RU": "Обработка покупки"
     },
     "Alege achiziție": {
-        'RO': "Alege achiziție",
-        'RU': ""
+        "RO": "Alege achiziție",
+        "RU": "Выберите покупку"
     },
     "Selectează statutul plății": {
-        'RO': "Selectează statutul plății",
-        'RU': ""
+        "RO": "Selectează statutul plății",
+        "RU": "Выберите статус оплаты"
     },
     "Control Admin": {
-        'RO': "Control Admin",
-        'RU': ""
+        "RO": "Control Admin",
+        "RU": "Административный контроль"
     },
     "Selectează valuta contului": {
-        'RO': "Selectează valuta contului",
-        'RU': ""
+        "RO": "Selectează valuta contului",
+        "RU": "Выберите валюту счета"
     },
     "Selectează IBAN": {
-        'RO': "Selectează IBAN",
-        'RU': ""
+        "RO": "Selectează IBAN",
+        "RU": "Выберите IBAN"
     },
     "Aplica filtru": {
-        'RO': "Aplica filtru",
-        'RU': ""
+        "RO": "Aplica filtru",
+        "RU": "Применить фильтр"
     },
     "Reset filtru": {
-        'RO': "Reset filtru",
-        'RU': ""
+        "RO": "Reset filtru",
+        "RU": "Сбросить фильтр"
     },
     "Close": {
-        'RO': "Close",
-        'RU': ""
+        "RO": "Close",
+        "RU": "Закрыть"
     },
     "Platforma mesaj": {
-        'RO': "Platforma mesaj",
-        'RU': ""
+        "RO": "Platforma mesaj",
+        "RU": "Платформа сообщений"
     },
     "Filtru pentru mesaje (coming soon)": {
-        'RO': "Filtru pentru mesaje (coming soon)",
-        'RU': ""
+        "RO": "Filtru pentru mesaje (coming soon)",
+        "RU": "Фильтр для сообщений (скоро)"
     },
     "Workflow": {
-        'RO': "Workflow",
-        'RU': ""
+        "RO": "Workflow",
+        "RU": "Рабочий процесс"
     },
     "Alege workflow pentru afisare in sistem": {
-        'RO': "Alege workflow pentru afisare in sistem",
-        'RU': ""
+        "RO": "Alege workflow pentru afisare in sistem",
+        "RU": "Выберите рабочий процесс для отображения в системе"
     },
     "Filtru pentru Lead": {
-        'RO': "Filtru pentru Lead",
-        'RU': ""
-    }
-
-
+        "RO": "Filtru pentru Lead",
+        "RU": "Фильтр для лида"
+    },
+    "Filtru de sistem": {
+        "RO": "Filtru de sistem",
+        "RU": "Системный фильтр"
+    },
+    "Reset filter": {
+       "RO": "Reset filter",
+       "RU": "Сбросить фильтр"
+    },
+    "Tipul serviciului": {
+       "RO": "Tipul serviciului",
+       "RU": "Тип услуги"
+    },
+    "Selectează toate": {
+        "RO": "Selectează toate",
+        "RU": "Выбрать все"
+    },
+    "Căutare": {
+       "RO": "Căutare",
+       "RU": "Поиск"
+    },
+    "Nu există potriviri": {
+       "RO": "Nu există potriviri",
+       "RU": "Нет совпадений"
+    },
+    
 };
 
 // import { translations } from '../utils/translations';

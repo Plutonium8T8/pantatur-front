@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./CustomMultiSelect.css";
 
-const CustomMultiSelect = ({ options = [], placeholder = "Выберите...", onChange, selectedValues = [] }) => {
+import { getLanguageByKey } from "../utils/getTranslationByKey";
+
+const CustomMultiSelect = ({ options = [], placeholder = getLanguageByKey("Select..."), onChange, selectedValues = [] }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
@@ -72,14 +74,14 @@ const CustomMultiSelect = ({ options = [], placeholder = "Выберите...", 
                     <input
                         type="text"
                         className="search-input-multi"
-                        placeholder="Поиск"
+                        placeholder={getLanguageByKey("Căutare")}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                     <div className="options-list">
                         <div className="option select-all" onClick={toggleSelectAll}>
                             <input type="checkbox" checked={selectedValues.length === options.length} readOnly />
-                            <span>Выбрать все</span>
+                            <span>{getLanguageByKey("Selectează toate")}</span>
                         </div>
 
                         {filteredOptions.length > 0 ? (
@@ -90,7 +92,7 @@ const CustomMultiSelect = ({ options = [], placeholder = "Выберите...", 
                                 </div>
                             ))
                         ) : (
-                            <div className="no-match">Нет совпадений</div>
+                            <div className="no-match">{getLanguageByKey("Nu există potriviri")}</div>
                         )}
                     </div>
                 </div>

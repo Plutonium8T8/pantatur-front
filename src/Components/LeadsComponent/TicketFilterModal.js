@@ -136,7 +136,6 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                 });
 
                 if (!response.ok) {
-                    // TODO: Please translate my
                     throw new Error(`Ошибка при получении списка техников: ${response.status}`);
                 }
 
@@ -301,7 +300,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         selectedValues={filters.technician_id}
                                     />
 
-                                    <label>{translations['Tag-uri'][language]}}</label>
+                                    <label>{translations['Tag-uri'][language]}</label>
                                     <input
                                         type="text"
                                         name="tags"
@@ -388,7 +387,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
 
                                     />
 
-                                    <label>{translations["Vânzare €"][language]}</label>
+                                    <label>{translations["Vânzare"][language]} €</label>
                                     <input
                                         type="number"
                                         name="buget"
@@ -684,7 +683,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                     <label>{translations["IBAN"][language]}</label>
                                     <CustomMultiSelect
                                         options={ibanOptions}
-                                        placeholder={translations["Selectează IBANBAN"][language]}
+                                        placeholder={translations["Selectează IBAN"][language]}
                                         onChange={(values) => handleMultiSelectChange("iban", values)}
                                         selectedValues={filters.iban}
                                     />
