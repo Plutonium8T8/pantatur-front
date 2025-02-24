@@ -16,13 +16,10 @@ const TechnicianSelect = ({ onTechnicianChange, selectedTechnicianId }) => {
             const response = await fetch('https://pandatur-api.com/api/users-technician', {
                 method: 'GET',
                 headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Origin": 'https://pandaturcrm.com',
-                    "Content-Type": "application/json",
-                    "Cache-Control": "no-cache, no-store, must-revalidate",
-                    "Pragma": "no-cache",
-                    "Expires": "0"
-                  },
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                    Origin: 'https://plutonium8t8.github.io',
+                },
             });
 
             if (!response.ok) {
