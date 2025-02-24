@@ -870,6 +870,8 @@ const ChatComponent = ({ }) => {
 
             setManagerMessage('');
 
+            const token = Cookies.get('jwt');
+
             // 🔹 Отправка сообщения
             const response = await fetch(apiUrl, {
                 method: 'POST',

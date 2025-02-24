@@ -45,9 +45,6 @@ const LoginForm = ({ onLoginSuccess }) => {
         headers: {
           "Origin": 'https://pandaturcrm.com',
           "Content-Type": "application/json",
-          "Cache-Control": "no-cache, no-store, must-revalidate",
-          "Pragma": "no-cache",
-          "Expires": "0"
         },
         body: JSON.stringify(data),
         credentials: 'include',
