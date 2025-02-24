@@ -17,6 +17,10 @@ import { ibanOptions } from '../../FormOptions/IbanOptions';
 import CustomMultiSelect from "../MultipleSelect/MultipleSelect";
 import Cookies from "js-cookie";
 import "./Modal.css";
+import { translations } from "../utils/translations";
+
+const language = localStorage.getItem('language') || 'RO';
+
 
 const platformOptions = ["telegram", "viber", "whatsapp", "facebook", "instagram", "sipuni"];
 
@@ -132,6 +136,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                 });
 
                 if (!response.ok) {
+                    // TODO: Please translate my
                     throw new Error(`Ошибка при получении списка техников: ${response.status}`);
                 }
 
@@ -241,30 +246,31 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
 
                         {filterGroups[activeTab].includes("workflow") && (
                             <>
-                                <h2>Filtru de sistem</h2>
+                                <h2>{translations['Filtru de sistem'][language]}</h2>
                                 <div className="workflow-multi-select">
-                                    <label>Workflow</label>
+                                    <label>{translations['Workflow'][language]}</label>
                                     <CustomMultiSelect
                                         options={workflowOptions}
-                                        placeholder="Alege workflow pentru afisare in sistem"
+                                        placeholder={translations['Alege workflow pentru afisare in sistem'][language]}
                                         onChange={values => handleMultiSelectChange("workflow", values)}
                                         selectedValues={filters.workflow}
                                     />
                                 </div>
                                 <div className="modal-buttons">
-                                    <button onClick={handleApplyLocalFilter} className="apply-btn">Aplica filtru</button>
-                                    <button onClick={handleResetFilters} className="reset-btn">Reset filter</button>
-                                    <button onClick={onClose} className="cancel-btn">Close</button>
+                                    <button onClick={handleApplyLocalFilter} className="apply-btn">{translations['Aplica filtru'][language]}</button>
+                                    <button onClick={handleResetFilters} className="reset-btn">{translations['Reset filter'][language]}</button>
+                                    <button onClick={onClose} className="cancel-btn">{translations['Close'][language]}</button>
                                 </div>
                             </>
                         )}
 
                         {filterGroups[activeTab].includes("tags") && (
                             <>
-                                <h2>Filtru pentru Lead</h2>
+                             
+                                <h2>{translations['Filtru pentru Lead'][language]}</h2>
                                 <div className="container-extra-group">
 
-                                    <label>Data creare Lead</label>
+                                    <label>{translations['Data creare Lead'][language]}</label>
                                     <input
                                         type="date"
                                         name="creation_date"
@@ -272,7 +278,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         onChange={handleInputChange}
                                         className={filters.numar_de_contract ? "filled-field" : ""} // ✅ Если заполнено, выделяем
                                     />
-                                    <label>Data ultima actualizare Lead</label>
+                                    <label>{translations['Data ultima actualizare Lead'][language]}</label>
                                     <input
                                         type="date"
                                         name="last_interaction_date"
@@ -280,79 +286,80 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         onChange={handleInputChange}
                                         className={filters.last_interaction_date ? "filled-field" : ""} // ✅ Если заполнено, выделяем
                                     />
-                                    <label>Prioritate Lead</label>
+                                    <label>{translations['Prioritate Lead'][language]}</label>
                                     <CustomMultiSelect
                                         options={priorityOptions}
-                                        placeholder="Alege prioritatea"
+                                        placeholder={translations['Alege prioritatea'][language]}
                                         onChange={values => handleMultiSelectChange("priority", values)}
                                         selectedValues={filters.priority}
                                     />
-                                    <label>Responsabil Lead</label>
+                                    <label>{translations['Responsabil Lead'][language]}</label>
                                     <CustomMultiSelect
                                         options={technicians}
-                                        placeholder="Alege responsabil lead"
+                                        placeholder={translations['Alege responsabil lead'][language]}
                                         onChange={values => handleMultiSelectChange("technician_id", values)}
                                         selectedValues={filters.technician_id}
                                     />
 
-                                    <label>Tag-uri</label>
+                                    <label>{translations['Tag-uri'][language]}}</label>
                                     <input
                                         type="text"
                                         name="tags"
                                         value={filters.tags.length > 0 ? filters.tags.join(", ") : ""} // ✅ Проверяем, пуст ли массив
                                         onChange={handleInputChange}
-                                        placeholder="Introdu tag-uri separate prin virgule"
+                                        placeholder={translations['Introdu tag-uri separate prin virgule'][language]}
                                         className={filters.tags.length > 0 ? "filled-field" : ""} // ✅ Подсвечиваем только если есть значения
                                     />
-                                    <label>Sursa Lead</label>
+                                    <label>{translations['Sursa Lead'][language]}</label>
                                     <CustomMultiSelect
                                         options={sourceOfLeadOptions}
-                                        placeholder="Alege sursa lead"
+                                        placeholder={translations['Alege sursa lead'][language]}
                                         onChange={values => handleMultiSelectChange("sursa_lead", values)}
                                         selectedValues={filters.sursa_lead}
                                     />
 
-                                    <label>Promo</label>
+                                    <label>{translations['Promo'][language]}</label>
                                     <CustomMultiSelect
                                         options={promoOptions}
-                                        placeholder="Alege promo"
+                                        placeholder={translations['Alege promo'][language]}
                                         onChange={values => handleMultiSelectChange("promo", values)}
                                         selectedValues={filters.promo}
                                     />
 
-                                    <label>Marketing</label>
+                                    <label>{translations['Marketing'][language]}</label>
                                     <CustomMultiSelect
                                         options={marketingOptions}
-                                        placeholder="Alege marketing"
+                                        placeholder={translations['Alege marketing'][language]}
                                         onChange={values => handleMultiSelectChange("marketing", values)}
                                         selectedValues={filters.marketing}
                                     />
 
-                                    <label>Tara</label>
+                                    <label>{translations['Tara'][language]}</label>
                                     <CustomMultiSelect
                                         options={countryOptions}
-                                        placeholder="Alege tara"
+                                        placeholder={translations['Alege tara'][language]}
                                         onChange={values => handleMultiSelectChange("tara", values)}
                                         selectedValues={filters.tara}
                                     />
 
-                                    <label>Transport</label>
+                                    <label>{translations['Transport'][language]}</label>
                                     <CustomMultiSelect
                                         options={transportOptions}
-                                        placeholder="Alege transport"
+                                        placeholder={translations['Alege transport'][language]}
                                         onChange={values => handleMultiSelectChange("tip_de_transport", values)}
                                         selectedValues={filters.tip_de_transport}
                                     />
 
-                                    <label>Nume excursie</label>
+                                    <label>{translations['Nume excursie'][language]}</label>
                                     <CustomMultiSelect
                                         options={nameExcursionOptions}
-                                        placeholder="Alege excursie"
+                                        placeholder={translations['Alege excursie'][language]}
                                         onChange={values => handleMultiSelectChange("denumirea_excursiei_turului", values)}
                                         selectedValues={filters.denumirea_excursiei_turului}
                                     />
 
-                                    <label>Data vizita in oficiu</label>
+                                    
+                                    <label>{translations["Data vizita in oficiu"][language]}</label>
                                     <input
                                         type="datetime-local"
                                         name="data_venit_in_oficiu"
@@ -361,7 +368,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         className={filters.data_venit_in_oficiu ? "filled-field" : ""} // ✅ Если заполнено, выделяем
                                     />
 
-                                    <label>Data plecarii</label>
+                                     <label>{translations["Data plecarii"][language]}</label>
                                     <input
                                         type="datetime-local"
                                         name="data_plecarii"
@@ -371,7 +378,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
 
                                     />
 
-                                    <label>Data intoarcerii</label>
+                                    <label>{translations["Data intoarcerii"][language]}</label>
                                     <input
                                         type="datetime-local"
                                         name="data_intoarcerii"
@@ -381,34 +388,34 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
 
                                     />
 
-                                    <label>Vânzare €</label>
+                                    <label>{translations["Vânzare €"][language]}</label>
                                     <input
                                         type="number"
                                         name="buget"
                                         value={filters.buget || ""}
                                         onChange={handleInputChange}
-                                        placeholder="Indicați suma în euro"
+                                        placeholder={translations["Indicați suma în euro"][language]}
                                         className={filters.buget ? "filled-field" : ""} // ✅ Если заполнено, выделяем
 
                                     />
 
-                                    <label>Tipul serviciului</label>
+                                    <label>{translations["Tipul serviciului"][language]}</label>
                                     <CustomMultiSelect
                                         options={serviceTypeOptions}
-                                        placeholder="Alege serviciu"
+                                        placeholder={translations["Alege serviciu"][language]}
                                         onChange={(values) => handleMultiSelectChange("tipul_serviciului", values)}
                                         selectedValues={filters.tipul_serviciului}
                                     />
 
-                                    <label>Procesare achizitionarii</label>
+                                    <label>{translations["Procesare achizitionarii"][language]}</label>
                                     <CustomMultiSelect
                                         options={purchaseProcessingOptions}
-                                        placeholder="Alege achiziție"
+                                        placeholder={translations["Alege achiziție"][language]}
                                         onChange={(values) => handleMultiSelectChange("procesarea_achizitionarii", values)}
                                         selectedValues={filters.procesarea_achizitionarii}
                                     />
 
-                                    <label>Data cererii de retur</label>
+                                    <label>{translations["Data cererii de retur"][language]}</label>
                                     <input
                                         type="datetime-local"
                                         name="data_cererii_de_retur"
@@ -420,19 +427,19 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
 
                                 <div className="container-extra-group">
 
-                                    <h3>Contract</h3>
+                                    <h3>{translations["Contract"][language]}</h3>
 
-                                    <label>Nr de contract</label>
+                                    <label>{translations["Nr de contract"][language]}</label>
                                     <input
                                         type="text"
                                         name="numar_de_contract"
                                         value={filters.numar_de_contract || ""}
                                         onChange={handleInputChange}
-                                        placeholder="numar_de_contract"
+                                        placeholder={translations["Nr de contract"][language]}
                                         className={filters.numar_de_contract ? "filled-field" : ""} // ✅ Если заполнено, выделяем
                                     />
 
-                                    <label>Data contractului</label>
+                                    <label>{translations["Data contractului"][language]}</label>
                                     <input
                                         type="datetime-local"
                                         name="data_contractului"
@@ -442,7 +449,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                     />
 
                                     <div className="toggle-container">
-                                        <label className="toggle-label">Contract trimis</label>
+                                        <label className="toggle-label">{translations["Contract trimis"][language]}</label>
                                         <label className="switch">
                                             <input
                                                 type="checkbox"
@@ -456,7 +463,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                     </div>
 
                                     <div className="toggle-container">
-                                        <label className="toggle-label">Contract semnat</label>
+                                        <label className="toggle-label">{translations["Contract semnat"][language]}</label>
                                         <label className="switch">
                                             <input
                                                 type="checkbox"
@@ -469,28 +476,28 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         </label>
                                     </div>
 
-                                    <label>Operator turistic</label>
+                                    <label>{translations["Operator turistic"][language]}</label>
                                     <input
                                         type="text"
                                         name="tour_operator"
                                         value={filters.tour_operator || ""}
                                         onChange={handleInputChange}
-                                        placeholder="Operator turistic"
+                                        placeholder={translations["Operator turistic"][language]}
                                         className={filters.tour_operator ? "filled-field" : ""} // ✅ Если заполнено, выделяем
                                     />
 
-                                    <label>Nr cererii de la operator</label>
+                                    <label>{translations["Nr cererii de la operator"][language]}</label>
                                     <input
                                         type="text"
                                         name="numarul_cererii_de_la_operator"
                                         value={filters.numarul_cererii_de_la_operator || ""}
                                         onChange={handleInputChange}
-                                        placeholder="Nr cererii de la operator"
+                                        placeholder={translations["Nr cererii de la operator"][language]}
                                         className={filters.numarul_cererii_de_la_operator ? "filled-field" : ""} // ✅ Если заполнено, выделяем
                                     />
 
                                     <div className="toggle-container">
-                                        <label className="toggle-label">Achitare efectuată</label>
+                                        <label className="toggle-label">{translations["Achitare efectuată"][language]}</label>
                                         <label className="switch">
                                             <input
                                                 type="checkbox"
@@ -504,7 +511,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                     </div>
 
                                     <div className="toggle-container">
-                                        <label className="toggle-label">Rezervare confirmată</label>
+                                        <label className="toggle-label">{translations["Rezervare confirmată"][language]}</label>
                                         <label className="switch">
                                             <input
                                                 type="checkbox"
@@ -518,7 +525,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                     </div>
 
                                     <div className="toggle-container">
-                                        <label className="toggle-label">Contract arhivat</label>
+                                        <label className="toggle-label">{translations["Contract arhivat"][language]}</label>
                                         <label className="switch">
                                             <input
                                                 type="checkbox"
@@ -531,25 +538,25 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         </label>
                                     </div>
 
-                                    <label>Plată primită</label>
+                                    <label>{translations["Plată primită"][language]}</label>
                                     <CustomMultiSelect
                                         options={paymentStatusOptions}
-                                        placeholder="Selectează statutul plății"
+                                        placeholder={translations["Selectează statutul plății"][language]}
                                         onChange={(values) => handleMultiSelectChange("statutul_platii", values)}
                                         selectedValues={filters.statutul_platii}
                                     />
 
-                                    <label>Avans euro €</label>
+                                    <label>{translations["Avans euro"][language]} €</label>
                                     <input
                                         type="number"
                                         name="avans_euro"
                                         value={filters.avans_euro || ""}
                                         onChange={handleInputChange}
-                                        placeholder="avans_euro"
+                                        placeholder={translations["Plată primită"][language]}
                                         className={filters.avans_euro ? "filled-field" : ""} // ✅ Если заполнено, выделяем
                                     />
 
-                                    <label>Data avansului</label>
+                                    <label>{translations["Data avansului"][language]}</label>
                                     <input
                                         type="datetime-local"
                                         name="data_avansului"
@@ -558,7 +565,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         className={filters.data_avansului ? "filled-field" : ""} // ✅ Если заполнено, выделяем
                                     />
 
-                                    <label>Data de plată integrală</label>
+                                    <label>{translations["Data de plată integrală"][language]}</label>
                                     <input
                                         type="datetime-local"
                                         name="data_de_plata_integrala"
@@ -567,38 +574,38 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         className={filters.data_de_plata_integrala ? "filled-field" : ""} // ✅ Если заполнено, выделяем
                                     />
 
-                                    <label>Preț NETTO €</label>
+                                    <label>{translations["Preț NETTO"][language]} €</label>
                                     <input
                                         type="number"
                                         name="pret_netto"
                                         value={filters.pret_netto || ""}
                                         onChange={handleInputChange}
-                                        placeholder="pret_netto"
+                                        placeholder={translations["Preț NETTO"][language]}
                                         className={filters.pret_netto ? "filled-field" : ""} // ✅ Если заполнено, выделяем
                                     />
 
-                                    <label>Achitat client</label>
+                                    <label>{translations["Achitat client"][language]}</label>
                                     <input
                                         type="number"
                                         name="achitat_client"
                                         value={filters.achitat_client || ""}
                                         onChange={handleInputChange}
-                                        placeholder="achitat_client"
+                                        placeholder={translations["Achitat client"][language]}
                                         className={filters.achitat_client ? "filled-field" : ""} // ✅ Если заполнено, выделяем
                                     />
 
-                                    <label>Comision companie €</label>
+                                    <label>{translations["Comision companie"][language]} €</label>
                                     <input
                                         type="number"
                                         name="comission_companie"
                                         value={filters.comission_companie || ""}
                                         onChange={handleInputChange}
-                                        placeholder="comission_companie"
+                                        placeholder={translations["Comision companie"][language]}
                                         className={filters.comission_companie ? "filled-field" : ""} // ✅ Если заполнено, выделяем
                                     />
 
                                     <div className="toggle-container">
-                                        <label className="toggle-label">Control Admin</label>
+                                        <label className="toggle-label">{translations["Control Admin"][language]}</label>
                                         <label className="switch">
                                             <input
                                                 type="checkbox"
@@ -614,70 +621,70 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                 </div>
                                 <div className="container-extra-group">
 
-                                    <h3>Invoice</h3>
+                                    <h3>{translations["Invoice"][language]}</h3>
 
-                                    <label>F/serviciu</label>
+                                    <label>{translations["F/service"][language]}</label>
                                     <input
                                         type="text"
                                         name="f_serviciu"
                                         value={filters.f_serviciu || ""}
                                         onChange={handleInputChange}
-                                        placeholder="f_serviciu"
+                                        placeholder={translations["F/service"][language]}
                                         className={filters.f_serviciu ? "filled-field" : ""} // ✅ Если заполнено, выделяем
                                     />
 
-                                    <label>F/factura</label>
+                                    <label>{translations["F/factura"][language]}</label>
                                     <input
                                         type="text"
                                         name="f_factura"
                                         value={filters.f_factura || ""}
                                         onChange={handleInputChange}
-                                        placeholder="f_factura"
+                                        placeholder={translations["F/factura"][language]}
                                         className={filters.f_factura ? "filled-field" : ""} // ✅ Если заполнено, выделяем
                                     />
 
-                                    <label>F/numarul</label>
+                                    <label>{translations["F/numarul"][language]}</label>
                                     <input
                                         type="number"
                                         name="f_numarul"
                                         value={filters.f_numarul || ""}
                                         onChange={handleInputChange}
-                                        placeholder="f_numarul"
+                                        placeholder={translations["F/numarul"][language]}
                                         className={filters.f_numarul ? "filled-field" : ""} // ✅ Если заполнено, выделяем
                                     />
 
-                                    <label>F/pret</label>
+                                    <label>{translations["F/preț"][language]}</label>
                                     <input
                                         type="number"
                                         name="f_pret"
                                         value={filters.f_pret || ""}
                                         onChange={handleInputChange}
-                                        placeholder="f_pret"
+                                        placeholder={translations["F/preț"][language]}
                                         className={filters.f_pret ? "filled-field" : ""} // ✅ Если заполнено, выделяем
                                     />
 
-                                    <label>F/suma</label>
+                                    <label>{translations["F/sumă"][language]}</label>
                                     <input
                                         type="number"
                                         name="f_suma"
                                         value={filters.f_suma || ""}
                                         onChange={handleInputChange}
-                                        placeholder="f_suma"
+                                        placeholder={translations["F/sumă"][language]}
                                         className={filters.f_suma ? "filled-field" : ""} // ✅ Если заполнено, выделяем
                                     />
 
-                                    <label>Valuta contului</label>
+                                    <label>{translations["Valuta contului"][language]}</label>
                                     <CustomMultiSelect
                                         options={valutaOptions}
-                                        placeholder="Selectează valuta_contului"
+                                        placeholder={translations["Selectează valuta contului"][language]}
                                         onChange={(values) => handleMultiSelectChange("valuta_contului", values)}
                                         selectedValues={filters.valuta_contului}
                                     />
 
-                                    <label>Iban</label>
+                                    <label>{translations["IBAN"][language]}</label>
                                     <CustomMultiSelect
                                         options={ibanOptions}
-                                        placeholder="Selectează iban"
+                                        placeholder={translations["Selectează IBANBAN"][language]}
                                         onChange={(values) => handleMultiSelectChange("iban", values)}
                                         selectedValues={filters.iban}
                                     />
@@ -686,55 +693,55 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
 
                                 <div className="container-extra-group">
 
-                                    <h3>Control calitate</h3>
+                                    <h3>{translations["Control calitate"][language]}</h3>
 
-                                    <label>Motivul refuzului</label>
+                                    <label>{translations["Motivul refuzului"][language]}</label>
                                     <CustomMultiSelect
                                         options={motivulRefuzuluiOptions}
-                                        placeholder="Motivul refuzului"
+                                        placeholder={translations["Motivul refuzului"][language]}
                                         onChange={(values) => handleMultiSelectChange("motivul_refuzului", values)}
                                         selectedValues={filters.motivul_refuzului}
                                     />
-                                    <label>Evaluare odihnă</label>
+                                    <label>{translations["Evaluare odihnă"][language]}</label>
                                     <CustomMultiSelect
                                         options={evaluareOdihnaOptions}
-                                        placeholder="Evaluare odihnă"
+                                        placeholder={translations["Evaluare odihnă"][language]}
                                         onChange={(values) => handleMultiSelectChange("evaluare_de_odihna", values)}
                                         selectedValues={filters.evaluare_de_odihna}
                                     />
-                                    <label>Următoarea vacanță</label>
+                                    <label>{translations["Următoarea vacanță"][language]}</label>
                                     <input
                                         type="text"
                                         name="urmatoarea_vacanta"
                                         value={filters.urmatoarea_vacanta || ""}
                                         onChange={handleInputChange}
-                                        placeholder="urmatoarea_vacanta"
+                                        placeholder={translations["Următoarea vacanță"][language]}
                                         className={filters.urmatoarea_vacanta ? "filled-field" : ""} // ✅ Если заполнено, выделяем
                                     />
-                                    <label>Manager</label>
+                                    <label>{translations["Manager"][language]}</label>
                                     <input
                                         type="text"
                                         name="manager"
                                         value={filters.manager || ""}
                                         onChange={handleInputChange}
-                                        placeholder="Manager"
+                                        placeholder={translations["Manager"][language]}
                                         className={filters.manager ? "filled-field" : ""} // ✅ Если заполнено, выделяем
                                     />
-                                    <label>Vacanța</label>
+                                    <label>{translations["Vacanța"][language]}</label>
                                     <input
                                         type="text"
                                         name="vacanta"
                                         value={filters.vacanta || ""}
                                         onChange={handleInputChange}
-                                        placeholder="vacanta"
+                                        placeholder={translations["Vacanța"][language]}
                                         className={filters.vacanta ? "filled-field" : ""} // ✅ Если заполнено, выделяем
                                     />
                                 </div>
 
                                 <div className="modal-buttons">
-                                    <button onClick={handleApplyFilter} className="apply-btn">Aplica filtru</button>
-                                    <button onClick={handleResetFilters} className="reset-btn">Reset filtru</button>
-                                    <button onClick={onClose} className="cancel-btn">Close</button>
+                                    <button onClick={handleApplyFilter} className="apply-btn">{translations["Aplica filtru"][language]}</button>
+                                    <button onClick={handleResetFilters} className="reset-btn">{translations["Reset filtru"][language]}</button>
+                                    <button onClick={onClose} className="cancel-btn">{translations["Close"][language]}</button>
                                 </div>
 
                             </>
@@ -742,12 +749,12 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
 
                         {filterGroups[activeTab].includes("platform") && (
                             <>
-                                <h2>Filtru pentru mesaje (coming soon)</h2>
+                                <h2>{translations["Filtru pentru mesaje (coming soon)"][language]}</h2>
                                 <div className="workflow-multi-select">
-                                    <label>Platforma mesaj</label>
+                                    <label>{translations["Platforma mesaj"][language]}</label>
                                     <CustomMultiSelect
                                         options={platformOptions}
-                                        placeholder="Alege platforma mesaj"
+                                        placeholder={translations["Platforma mesaj"][language]}
                                         onChange={values => handleMultiSelectChange("platform", values)}
                                         selectedValues={filters.platform}
                                     />

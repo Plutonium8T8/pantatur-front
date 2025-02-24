@@ -310,14 +310,6 @@ export const translations = {
         'RO': 'data nașterii',
         'RU': 'дата рождения'
     },
-    'date_of_birth': {
-        'RO': 'data nașterii',
-        'RU': 'дата рождения'
-    },
-    'date_of_birth': {
-        'RO': 'data nașterii',
-        'RU': 'дата рождения'
-    },
     'id_card_series': {
         'RO': 'seria cărții de identitate',
         'RU': 'серия удостоверения личности'
@@ -450,10 +442,6 @@ export const translations = {
         'RO': 'Nr de contract',
         'RU': 'Номер контракта'
     },
-    'Data contractului': {
-        'RO': 'Data contractului',
-        'RU': 'Дата контракта'
-    },
     'Operator turistic': {
         'RO': 'Operator turistic',
         'RU': 'Туроператор'
@@ -533,10 +521,6 @@ export const translations = {
     "Select...": {
         "RO": "Introduceți...",
         "RU": "Введите..."
-    },
-    "Alege client": {
-        "RO": "Alege client",
-        "RU": "Выберите клиента"
     },
     "Introduce un grup": {
         "RO": "Introduce un grup",
@@ -654,10 +638,6 @@ export const translations = {
         "RO": "Deschide fișier",
         "RU": "Открыть файл"
     },
-    "Alege client": {
-        "RO": "Alege client",
-        "RU": "Выбрать клиента"
-    },
     "Client": {
         "RO": "Client",
         "RU": "Клиент"
@@ -698,17 +678,9 @@ export const translations = {
         "RO": "Ultima interacțiune",
         "RU": "Последнее взаимодействие"
     },
-    "Etapa de lucru": {
-        "RO": "Etapa de lucru",
-        "RU": "Этап работы"
-    },
     "Toate etapele": {
         "RO": "Toate etapele",
         "RU": "Все этапы"
-    },
-    "Prioritate": {
-        "RO": "Prioritate",
-        "RU": "Приоритет"
     },
     "Toate prioritățile": {
         "RO": "Toate prioritățile",
@@ -773,10 +745,6 @@ export const translations = {
     "Mesaj text": {
         "RO": "Mesaj text",
         "RU": "Сбросить фильтры"
-    },
-    "Închide": {
-        "RO": "Închide",
-        "RU": "Закрыть"
     },
     'Sesia a expirat': {
         'RO': 'Sesia a expirat, te rog sa accesezi din nou pagina!',
@@ -844,7 +812,6 @@ export const translations = {
     'Clienți corporate': { 'RO': "Clienți corporate", 'RU': "Корпоративные клиенты" },
     'Trafic organic': { 'RO': "Trafic organic", 'RU': "Органический трафик" },
     'Reclamații': { 'RO': "Reclamații", 'RU': "Жалобы" },
-    'Marketing': { 'RO': "Marketing", 'RU': "Маркетинг" },
     'Resurse umane': { 'RO': "Resurse umane", 'RU': "Кадровые ресурсы" },
     'Alt motiv': { 'RO': "Alt motiv", 'RU': "Другая причина" },
     'Altele': { 'RO': "Altele", 'RU': "Другие" },
@@ -921,10 +888,6 @@ export const translations = {
         'RO': "Contract trimis",
         'RU': "Отправленный контракт"
     },
-    'Contract semnat': {
-        'RO': "Contract semnat",
-        'RU': "Подписанный контракт"
-    },
     'Achitare efectuată': {
         'RO': "Achitare efectuată",
         'RU': "Оплата произведена"
@@ -985,6 +948,143 @@ export const translations = {
         'RO': "Deschide în noua filă",
         'RU': "Открыть в новой вкладке"
     },
+    "Data creare Lead": {
+        'RO': "Data creare Lead",
+        'RU': "Открыть в новой вкладке"
+    },
+    "Data ultima actualizare Lead": {
+        'RO': "Data ultima actualizare Lead",
+        'RU': "Открыть в новой вкладке"
+    },
+    "Prioritate Lead": {
+        'RO': "Prioritate Lead",
+        'RU': "Открыть в новой вкладке"
+    },
+    "Alege prioritatea": {
+        'RO': "Alege prioritatea",
+        'RU': "Открыть в новой вкладке"
+    },
+    "Responsabil Lead": {
+        'RO': "Responsabil Lead",
+        'RU': ""
+    },
+    "Alege responsabil lead": {
+        'RO': "Alege responsabil lead",
+        'RU': ""
+    },
+    "Tag-uri": {
+        'RO': "Tag-uri",
+        'RU': ""
+    },
+    "Introdu tag-uri separate prin virgule": {
+        'RO': "Introdu tag-uri separate prin virgule",
+        'RU': ""
+    },
+    "Sursa Lead": {
+        'RO': "Sursa Lead",
+        'RU': ""
+    },
+    "Alege sursa lead": {
+        'RO': "Alege sursa lead",
+        'RU': ""
+    },
+    "Alege promo": {
+        'RO': "Alege promo",
+        'RU': ""
+    },
+    "Alege marketing": {
+        'RO': "Alege marketing",
+        'RU': ""
+    },
+    "Tara": {
+        'RO': "Tara",
+        'RU': ""
+    },
+    "Alege tara": {
+        'RO': "Alege tara",
+        'RU': ""
+    },
+    "Alege transport": {
+        'RO': "Alege transport",
+        'RU': ""
+    },
+    "Nume excursie": {
+        'RO': "Nume excursie",
+        'RU': ""
+    },
+    "Alege excursie": {
+        'RO': "Alege excursie",
+        'RU': ""
+    },
+    "Data vizita in oficiu": {
+        'RO': "Data vizita in oficiu",
+        'RU': ""
+    },
+    "Vânzare €": {
+        'RO': "Vânzare €",
+        'RU': ""
+    },
+    "Alege serviciu": {
+        'RO': "Alege serviciu",
+        'RU': ""
+    },
+    "Procesare achizitionarii": {
+        'RO': "Procesare achizitionarii",
+        'RU': ""
+    },
+    "Alege achiziție": {
+        'RO': "Alege achiziție",
+        'RU': ""
+    },
+    "Selectează statutul plății": {
+        'RO': "Selectează statutul plății",
+        'RU': ""
+    },
+    "Control Admin": {
+        'RO': "Control Admin",
+        'RU': ""
+    },
+    "Selectează valuta contului": {
+        'RO': "Selectează valuta contului",
+        'RU': ""
+    },
+    "Selectează IBAN": {
+        'RO': "Selectează IBAN",
+        'RU': ""
+    },
+    "Aplica filtru": {
+        'RO': "Aplica filtru",
+        'RU': ""
+    },
+    "Reset filtru": {
+        'RO': "Reset filtru",
+        'RU': ""
+    },
+    "Close": {
+        'RO': "Close",
+        'RU': ""
+    },
+    "Platforma mesaj": {
+        'RO': "Platforma mesaj",
+        'RU': ""
+    },
+    "Filtru pentru mesaje (coming soon)": {
+        'RO': "Filtru pentru mesaje (coming soon)",
+        'RU': ""
+    },
+    "Workflow": {
+        'RO': "Workflow",
+        'RU': ""
+    },
+    "Alege workflow pentru afisare in sistem": {
+        'RO': "Alege workflow pentru afisare in sistem",
+        'RU': ""
+    },
+    "Filtru pentru Lead": {
+        'RO': "Filtru pentru Lead",
+        'RU': ""
+    }
+
 
 };
 
