@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { workflowStyles } from '../utils/workflowStyles';
 import './TicketRowComponent.css';
 
@@ -21,7 +22,9 @@ const TicketRow = ({ ticket, isSelected = false, onSelect = () => { }, onEditTic
                     onChange={() => onSelect(ticket.id)}
                 />
             </td>
-            <td className="ticket-id-row">#{ticket.id}</td>
+            <td className="ticket-id-row">
+                <Link to={`/chat/${ticket.id}`} className="ticket-id-link">#{ticket.id}</Link>
+            </td>
             <td className="ticket-contact-row">{cleanValue(ticket.contact)}</td>
             <td className="ticket-name-row">{cleanValue(ticket.name)}</td>
             <td className="ticket-surname-row">{cleanValue(ticket.surname)}</td>
