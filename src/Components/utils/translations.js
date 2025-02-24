@@ -1127,6 +1127,14 @@ export const translations = {
     "Filtrate": {
         "RO": "Filtrate",
         "RU": "Отфильтровано"
+    },
+    "Coloană": {
+        "RO": "Coloană",
+        "RU": "Столбец"
+    },
+    "Listă": {
+        "RO": "Listă",
+        "RU": "Список"
     }
     
 };

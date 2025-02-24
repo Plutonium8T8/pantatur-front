@@ -11,7 +11,7 @@ import Cookies from 'js-cookie';
 import '../../App.css';
 import '../SnackBarComponent/SnackBarComponent.css';
 import { FaFilter, FaTable, FaColumns, FaTrash, FaEdit } from 'react-icons/fa';
-import { getLanguageByKey } from "../../Components/utils/getTranslationByKey"
+import { getLanguageByKey } from '../../Components/utils/getTranslationByKey'
 
 const Leads = () => {
   const { tickets, isLoading, setTickets } = useAppContext();
@@ -163,10 +163,10 @@ const Leads = () => {
           />
           <button onClick={() => setIsTableView(prev => !prev)} className="button-toggle-view">
             {isTableView ? <FaColumns /> : <FaTable />}
-            {isTableView ? 'Colon' : 'List'}
+             {getLanguageByKey(isTableView ? "Coloană" : "Listă")}
           </button>
 
-          <div style={{border: "10px solid red"}} className="ticket-counter-row">
+          <div className="ticket-counter-row">
             {getLanguageByKey("Toate tichetele")}: {tickets.length} | {getLanguageByKey("Filtrate")}: {filteredTickets.length}
           </div>
 
