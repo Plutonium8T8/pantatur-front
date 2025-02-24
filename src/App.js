@@ -39,6 +39,7 @@ function App() {
       setIsLoading(false);
       return;
     }
+    setIsLoading(true);
 
     try {
       const response = await fetch('https://pandatur-api.com/session', {
