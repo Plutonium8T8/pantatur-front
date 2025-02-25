@@ -36,6 +36,7 @@ import { evaluareOdihnaOptions } from '../../FormOptions/EvaluareVacantaOptions'
 import { valutaOptions } from '../../FormOptions/ValutaOptions';
 import { ibanOptions } from '../../FormOptions/IbanOptions';
 import { api } from "../../api"
+import { showServerError } from "../../Components/utils/showServerError"
 
 const ChatComponent = ({ }) => {
     const { userId, hasRole, isLoadingRoles } = useUser();
@@ -122,23 +123,9 @@ const ChatComponent = ({ }) => {
     // Получение дополнительной информации для тикета
     const fetchTicketExtraInfo = async (selectTicketId) => {
         try {
-            const token = Cookies.get('jwt');
-            const response = await fetch(`https://pandatur-api.com/api/ticket-info/${selectTicketId}`, {
-                method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                    Origin: 'https://plutonium8t8.github.io',
-                },
-            });
 
-            if (!response.ok) {
-                throw new Error('Ошибка при получении дополнительной информации');
-            }
+            const data = await api.tickets.ticket.info(selectTicketId)
 
-            const data = await response.json();
-            // enqueueSnackbar('Загружено доп инфо по тикетам!', { variant: 'success' });
-            // Обновляем состояние с дополнительной информацией о тикете
             setExtraInfo((prevState) => ({
                 ...prevState,
                 [selectTicketId]: data, // Сохраняем информацию для текущего тикета
@@ -177,29 +164,8 @@ const ChatComponent = ({ }) => {
         setIsLoading(true); // Устанавливаем состояние загрузки в true
 
         try {
-            const response = await fetch(`https://pandatur-api.com/api/ticket-info/${selectTicketId}`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                    Origin: 'https://plutonium8t8.github.io',
-                },
-                body: JSON.stringify({
-                    ...ticketExtraInfo, // Сначала добавляем все свойства из ticketExtraInfo
-                }),
-            });
-
-            // Логируем отправляемые данные
-            console.log('Отправляемые данные:', {
-                ...ticketExtraInfo,
-            });
-
-            if (!response.ok) {
-                throw new Error(`Ошибка при отправке данных. Статус: ${response.status}`);
-            }
-
-            const result = await response.json();
-
+            const result = await api.tickets.ticket.update(selectTicketId, ticketExtraInfo)
+           
             enqueueSnackbar('Данные успешно обновлены', { variant: 'success' });
             console.log('Данные успешно отправлены:', result);
         } catch (error) {
@@ -676,27 +642,12 @@ const ChatComponent = ({ }) => {
         }
 
         try {
-            const token = Cookies.get('jwt');
-            const response = await fetch(`https://pandatur-api.com/api/tickets/${selectTicketId}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                    Origin: 'https://plutonium8t8.github.io',
-                },
-                credentials: "include",
-                body: JSON.stringify({ technician_id: newTechnicianId }),
-            });
-
-            if (!response.ok) {
-                throw new Error(`Ошибка при обновлении technician_id. Код: ${response.status}`);
-            }
-
-            const updatedTicket = await response.json();
-            console.log('Тикет успешно обновлён:', updatedTicket);
-
+           await api.tickets.updateById(selectTicketId, { technician_id: newTechnicianId })
+           
+            enqueueSnackbar("Список тикетов успешно обновлён", {variant: "success"})
             console.log('Список тикетов успешно обновлён.');
         } catch (error) {
+            enqueueSnackbar(error.message, {variant: "error"})
             console.error('Ошибка при обновлении technician_id:', error.message);
         }
     };
@@ -1034,30 +985,14 @@ const ChatComponent = ({ }) => {
         }
 
         try {
-            const token = Cookies.get('jwt');
-            const response = await fetch("https://pandatur-api.com/api/merge/tickets", {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                    Origin: 'https://plutonium8t8.github.io',
-                },
-                body: JSON.stringify({
-                    ticket_old: ticketOld,
-                    ticket_new: ticketNew
-                })
-            });
+             await api.tickets.merge({
+                ticket_old: ticketOld,
+                ticket_new: ticketNew
+            })
 
-            if (!response.ok) {
-                throw new Error("Eroare la combinarea biletelor");
-            }
-
-            const result = await response.json();
-            alert("Biletele au fost combinate cu succes!");
-            console.log(result);
+            enqueueSnackbar("Biletele au fost combinate cu succes!", { variant: 'success' });
         } catch (error) {
-            console.error("Eroare:", error);
-            alert("Eroare la combinarea biletelor!");
+            enqueueSnackbar(showServerError(error), { variant: 'error' });
         }
     };
 
@@ -1071,17 +1006,14 @@ const ChatComponent = ({ }) => {
         }
 
         try {
-
-            const result = await api.users.clientMerge({
+              await api.users.clientMerge({
                 old_user_id: oldUserId,
                 new_user_id: newUserId
             })
-    
-            alert("Utilizatorii au fost combinați cu succes!");
-            console.log(result);
+
+            enqueueSnackbar("Utilizatorii au fost combinați cu succes!", { variant: 'success' });
         } catch (error) {
-            console.error("Eroare:", error);
-            alert("Eroare la combinarea utilizatorilor!");
+            enqueueSnackbar("Eroare la combinarea utilizatorilor", { variant: 'error' });
         }
     };
 

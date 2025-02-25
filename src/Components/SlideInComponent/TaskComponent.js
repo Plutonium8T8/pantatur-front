@@ -42,19 +42,10 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
 
     const fetchTicketsID = async () => {
         try {
-            const token = Cookies.get("jwt");
-            const response = await fetch("https://pandatur-api.com/api/tickets", {
-                method: "GET",
-                headers: { Authorization: `Bearer ${token}` },
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                setTicketIds(data.map((ticket) => ticket.id)); // Сохраняем ticket_id
-                console.log("Ticket IDs:", data.map((ticket) => ticket.id));
-            } else {
-                console.error("Error fetching tickets:", response.statusText);
-            }
+            const data = await api.tickets.list()
+           
+            setTicketIds(data.map((ticket) => ticket.id)); // Сохраняем ticket_id
+            
         } catch (error) {
             console.error("Error fetching tickets:", error.message);
         }
