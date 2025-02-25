@@ -226,30 +226,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
 
   const updateTicket = async (updateData) => {
     try {
-      const token = Cookies.get('jwt');
-      if (!token) {
-        throw new Error('Token is missing. Authorization required.');
-      }
-
-      const response = await fetch(`https://pandatur-api.com/api/tickets/${updateData.id}`, {
-        method: 'PATCH',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          Origin: 'https://plutonium8t8.github.io'
-        },
-        credentials: 'include',
-        body: JSON.stringify(updateData),
-      });
-
-      if (!response.ok) {
-        const errorDetails = await response.json();
-        throw new Error(
-          `Error updating ticket: ${response.status} ${response.statusText}. Details: ${JSON.stringify(errorDetails)}`
-        );
-      }
-
-      const updatedTicket = await response.json();
+       const updatedTicket = await api.tickets.updateById(updateData.id, updateData)
 
       // Синхронизация тикетов через WebSocket
       return updatedTicket;
@@ -263,27 +240,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   const getClientMessages = async () => {
     
     try {
-      const token = Cookies.get('jwt');
-      if (!token) {
-        console.warn('Нет токена. Пропускаем загрузку сообщений.');
-        return;
-      }
-
-      const response = await fetch('https://pandatur-api.com/api/messages', {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          Origin: 'https://plutonium8t8.github.io'
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      // console.log("Сообщения, загруженные из API:", data);
+      const data = await api.messages.list()
 
       setMessages(data); // Обновляем состояние всех сообщений
     } catch (error) {
@@ -294,16 +251,9 @@ export const AppProvider = ({ children, isLoggedIn }) => {
 
   // Функция для получения сообщений для конкретного client_id
   const getClientMessagesSingle = async (ticket_id) => {
-    console.log("Обновление сообщений для тикета:", ticket_id);
-    try {
-      const token = Cookies.get('jwt');
-      if (!token) return;
-      const response = await fetch(`https://pandatur-api.com/api/messages/ticket/${ticket_id}`, {
-        method: 'GET',
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-      });
-      if (!response.ok) throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
-      const data = await response.json();
+     try {
+
+      const data = await api.messages.messagesTicketById(ticket_id)
 
       if (Array.isArray(data)) {
         setMessages((prevMessages) => {

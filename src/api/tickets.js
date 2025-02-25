@@ -11,5 +11,11 @@ export const tickets = {
         const {data } = await baseAxios.get(`/tickets/${id}`)
 
         return data
+    },
+
+    updateById: async (id, body) => {
+        const {data} = await baseAxios.patch(`/tickets/${id}`, body)
+
+        return data
     }
 }
