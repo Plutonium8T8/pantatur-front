@@ -1100,6 +1100,43 @@ export const translations = {
        "RO": "Nu există potriviri",
        "RU": "Нет совпадений"
     },
+    "Alege client": {
+        "RO": "Alege client",
+        "RU": "Выберите клиента"
+    },
+    "Verificare": {
+        "RO": "Verificare",
+        "RU": "Проверка"
+    },
+    "Email": {
+        "RO": "Email",
+        "RU": "Проверка"
+    },
+    "Ștergere": {
+        "RO": "Ștergere",
+        "RU": "Удалить"
+    },
+    "Editare": {
+        "RO": "Editare",
+        "RU": "Редактировать"
+    },
+    "Toate tichetele": {
+        "RO": "Toate tichetele",
+        "RU": "Все билеты"
+    },
+    "Filtrate": {
+        "RO": "Filtrate",
+        "RU": "Отфильтровано"
+    },
+    "Coloană": {
+        "RO": "Coloană",
+        "RU": "Столбец"
+    },
+    "Listă": {
+        "RO": "Listă",
+        "RU": "Список"
+    }
+    
 };
 
 // import { translations } from '../utils/translations';
