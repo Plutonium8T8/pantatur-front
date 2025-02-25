@@ -1,11 +1,9 @@
 import React from 'react';
 import TicketCard from './TicketCardComponent';
 import { workflowStyles, workflowBrightStyles } from '../utils/workflowStyles';
-import { translations } from "../utils/translations";
+import { getLanguageByKey } from "../utils/getTranslationByKey"
 
 const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket }) => {
-    const language = localStorage.getItem('language') || 'RO';
-
     const parseTags = (tags) => {
         if (Array.isArray(tags)) {
             return tags;
@@ -65,7 +63,8 @@ const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket }) => {
                 style={{
                     backgroundColor: workflowBrightStyles[workflow]?.backgroundColor || '',
                 }}>
-                {translations[workflow][language]}
+                    
+               {getLanguageByKey(workflow)}
 
                 <div className="ticket-counter-display">
                     <div className="ticket-counter ticket-counter-red">
