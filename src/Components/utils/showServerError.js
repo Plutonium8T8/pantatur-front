@@ -1,5 +1,7 @@
 import {getLanguageByKey} from "../../Components/utils/getTranslationByKey"
 
 export const showServerError = (error) => {
-    return error?.response?.data?.message || getLanguageByKey("Eroare neașteptată, încercați mai târziu")
+    const serverMessage = error?.response?.data
+
+    return serverMessage?.message || serverMessage?.error  || getLanguageByKey("Eroare neașteptată, încercați mai târziu")
 }

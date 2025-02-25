@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { startOfWeek, addDays, format } from "date-fns";
-import Cookies from 'js-cookie';
 import ModalWithToggles from "./ModalWithToggles"; // Импортируем компонент модалки
 import './AdminPanel.css';
 import { FaMinus, FaPlus, FaTrash } from "react-icons/fa";
@@ -8,6 +7,8 @@ import { translations } from "../utils/translations";
 import ToggleComponent from "./ToggleComponent";
 import SpinnerOverlay from "../LeadsComponent/SpinnerOverlayComponent";
 import { api } from "../../api"
+import { useSnackbar } from 'notistack';
+import { showServerError } from "../../Components/utils/showServerError"
 
 const ScheduleComponent = () => {
   const [schedule, setSchedule] = useState([]);
@@ -21,6 +22,7 @@ const ScheduleComponent = () => {
   const [selectedUser, setSelectedUser] = useState(null); // Хранит выбранного пользователя
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
   const language = localStorage.getItem('language') || 'RO';
 
   // Закрытие модалки
@@ -46,34 +48,17 @@ const ScheduleComponent = () => {
       // Интервал, который нужно удалить
       const intervalToDelete = intervals[index];
 
-      // Отправляем DELETE-запрос на сервер
-      const token = Cookies.get("jwt");
-      const response = await fetch(`https://pandatur-api.com/api/technicians/${technicianId}/schedule/${dayOfWeek}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-          Origin: 'https://plutonium8t8.github.io',
-        },
-        body: JSON.stringify({
-          start: intervalToDelete.start,
-          end: intervalToDelete.end,
-          timezone: "EST", // Используйте временной пояс, подходящий вашему приложению
-        }),
-      });
+      await api.technicians.removeSchedule(technicianId, dayOfWeek, {
+        start: intervalToDelete.start,
+        end: intervalToDelete.end,
+        timezone: "EST", // Используйте временной пояс, подходящий вашему приложению
+      })
 
-      if (!response.ok) {
-        throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
-      }
-
-      console.log(`Интервал ${intervalToDelete.start} - ${intervalToDelete.end} для ${dayOfWeek} удалён успешно.`);
-
-      // Удаляем интервал из локального состояния
       const updatedIntervals = intervals.filter((_, i) => i !== index);
       setIntervals(updatedIntervals);
       fetchData();
     } catch (error) {
-      console.error("Ошибка при удалении интервала:", error);
+      enqueueSnackbar(showServerError(error), {variant: "error"})
     }
   };
 
@@ -138,23 +123,11 @@ const ScheduleComponent = () => {
     try {
       setIsLoading(true); // Начало загрузки
 
-      
-      const token = Cookies.get("jwt");
-      
+            
       const usersData = await api.users.technician()
 
-      // Fetch technicians' schedule
-      const scheduleResponse = await fetch("https://pandatur-api.com/api/technicians/schedules", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-          Origin: 'https://plutonium8t8.github.io',
-        },
-      });
-      const scheduleData = await scheduleResponse.json();
+      const scheduleData = await api.technicians.schedules()
 
-      // Объединяем данные
       const combinedSchedule = usersData.map((user) => {
         const userId = user.id.id;
         const userSchedule = scheduleData.find((schedule) => schedule.technician_id === userId);
@@ -219,22 +192,8 @@ const ScheduleComponent = () => {
       console.log("Отправляем данные на сервер:", newInterval);
 
       // Отправляем POST-запрос на сервер
-      const token = Cookies.get("jwt");
-      const response = await fetch(`https://pandatur-api.com/api/technicians/${technicianId}/schedule/${dayOfWeek}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-          Origin: 'https://plutonium8t8.github.io',
-        },
-        body: JSON.stringify(newInterval), // Отправляем сам объект напрямую
-      });
 
-      if (!response.ok) {
-        throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
-      }
-
-      console.log(`Новый интервал ${newInterval.start} - ${newInterval.end} для ${dayOfWeek} добавлен успешно.`);
+      await api.technicians.removeSchedule(technicianId, dayOfWeek, newInterval)
 
       // Обновляем локальное состояние
       setIntervals((prev) => [...prev, newInterval]);
@@ -242,11 +201,11 @@ const ScheduleComponent = () => {
       setEndTime("");
       fetchData();
     } catch (error) {
-      console.error("Ошибка при добавлении интервала:", error);
+      enqueueSnackbar(showServerError(error), {variant: "error"})
     }
   };
 
-  const AddInterval = async () => {
+  const addInterval = async () => {
     try {
       // Получаем данные о текущем сотруднике и выбранном дне
       const technicianId = schedule[selectedEmployee]?.id;
@@ -259,38 +218,14 @@ const ScheduleComponent = () => {
         timezone: "EST", // Указываем временную зону
       };
 
-      // Логируем данные перед отправкой
-      console.log("Отправляем данные на сервер:", newInterval);
-      console.log("Текущий сотрудник:", technicianId);
-      console.log("Текущий день недели:", dayOfWeek);
-      console.log("Отправляемый интервал:", newInterval);
-      // Отправляем POST-запрос на сервер
-      const token = Cookies.get("jwt");
-      const response = await fetch(`https://pandatur-api.com/api/technicians/${technicianId}/schedule/${dayOfWeek}`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-          Origin: 'https://plutonium8t8.github.io',
-        },
-        body: JSON.stringify(newInterval), // Отправляем сам объект напрямую
-      });
+     await api.technicians.addSchedule(technicianId, dayOfWeek, newInterval)
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Ошибка ответа сервера:", errorData);
-        throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
-      }
-
-      console.log(`Новый интервал ${newInterval.start} - ${newInterval.end} для ${dayOfWeek} добавлен успешно.`);
-
-      // Обновляем локальное состояние
       setIntervals((prev) => [...prev, newInterval]);
       setStartTime("");
       setEndTime("");
       fetchData();
     } catch (error) {
-      console.error("Ошибка при добавлении интервала:", error);
+      enqueueSnackbar(showServerError(error), {variant: "error"})
 
     }
   };
@@ -436,7 +371,7 @@ const ScheduleComponent = () => {
                     <button
                       type="button" // Добавлено, чтобы предотвратить отправку формы
                       className="add-button-plus"
-                      onClick={AddInterval}
+                      onClick={addInterval}
                     >
                       <FaPlus />
                     </button>
