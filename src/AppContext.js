@@ -5,6 +5,7 @@ import { FaEnvelope, FaTrash } from 'react-icons/fa';
 import { useUser } from './UserContext';
 import { truncateText } from './stringUtils';
 import { translations } from './Components/utils/translations';
+import { api } from './api';
 
 const AppContext = createContext();
 
@@ -182,27 +183,8 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   const fetchTickets = async () => {
     try {
       setIsLoading(true);
-      const token = Cookies.get('jwt');
 
-      if (!token) {
-        console.warn('Нет токена. Пропускаем загрузку тикетов.');
-        return [];
-      }
-      const response = await fetch('https://pandatur-api.com/api/tickets', {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          Origin: 'https://plutonium8t8.github.io'
-        },
-        credentials: 'include',
-      });
-
-      if (!response.ok) {
-        throw new Error(`Ошибка при получении тикетов. Код статуса: ${response.status}`);
-      }
-
-      const data = await response.json();
+      const data = await api.tickets.list()
 
       setTickets(data);
       setTicketIds(data.map((ticket) => ticket.id));
@@ -219,29 +201,8 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   const fetchSingleTicket = async (ticketId) => {
     try {
       setIsLoading(true);
-      const token = Cookies.get('jwt');
-
-      if (!token) {
-        console.warn('Нет токена. Пропускаем загрузку тикета.');
-        return null;
-      }
-
-      const response = await fetch(`https://pandatur-api.com/api/tickets/${ticketId}`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          Origin: 'https://plutonium8t8.github.io'
-        },
-        credentials: 'include',
-      });
-
-      if (!response.ok) {
-        throw new Error(`Ошибка при получении тикета. Код статуса: ${response.status}`);
-      }
-
-      const ticket = await response.json();
-      console.log('Загруженный тикет:', ticket);
+      
+      const ticket = await api.ticket.getById(ticketId)
 
       setTickets((prevTickets) => {
         const existingTicket = prevTickets.find((t) => t.id === ticketId);
@@ -300,6 +261,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
 
   // Функция загрузки сообщений клиента
   const getClientMessages = async () => {
+    
     try {
       const token = Cookies.get('jwt');
       if (!token) {

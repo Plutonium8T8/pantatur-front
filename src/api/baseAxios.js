@@ -1,6 +1,5 @@
 import axios from "axios"
-
-console.log(process.env.REACT_APP_ORIGIN_HEADER, "process.env.REACT_APP_ORIGIN_HEADER")
+import { axiosInterceptor } from "./interceptors"
 
 export const baseAxios = axios.create({
      baseURL: process.env.REACT_APP_API_URL,
@@ -10,3 +9,5 @@ export const baseAxios = axios.create({
         "Origin": process.env.REACT_APP_ORIGIN_HEADER,
       }
 })
+
+axiosInterceptor(baseAxios)
