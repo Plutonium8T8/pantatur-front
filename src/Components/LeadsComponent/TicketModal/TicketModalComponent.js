@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { FaUser, FaTrash } from 'react-icons/fa';
 import './TicketModalComponent.css';
 import Priority from '../../PriorityComponent/PriorityComponent';
@@ -7,28 +7,36 @@ import TagInput from '../../TagsComponent/TagComponent';
 import { useUser } from '../../../UserContext';
 import Cookies from 'js-cookie';
 import { translations } from "../../utils/translations";
-import { useAppContext } from '../../../AppContext'; // Используем AppContext для работы с tickets
+import { useAppContext } from '../../../AppContext';
 
 const TicketModal = ({ ticket, onClose, onSave }) => {
   const modalRef = useRef(null);
   const language = localStorage.getItem('language') || 'RO';
 
-  const { setTickets } = useAppContext(); // Обновление тикетов через контекст
-  const { userId } = useUser();
+  const { setTickets } = useAppContext();
+  const { userId, hasRole, isLoadingRoles } = useUser();
 
-  // Функция для обработки тегов
+  // Состояние для isAdmin, обновляется после загрузки ролей
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    if (!isLoadingRoles) {
+      setIsAdmin(hasRole("ROLE_ADMIN"));
+    }
+  }, [isLoadingRoles, hasRole]);
+
   const parseTags = (tags) => {
     if (Array.isArray(tags)) {
       return tags;
     }
     if (typeof tags === 'string' && tags.startsWith('{') && tags.endsWith('}')) {
       return tags
-        .slice(1, -1) // Убираем `{` и `}`
-        .split(',') // Разделяем по запятой
-        .map((tag) => tag.trim()) // Убираем пробелы
-        .filter((tag) => tag !== ''); // Убираем пустые строки
+        .slice(1, -1)
+        .split(',')
+        .map(tag => tag.trim())
+        .filter(tag => tag !== '');
     }
-    return []; // Если формат неизвестен, возвращаем пустой массив
+    return [];
   };
 
   const [editedTicket, setEditedTicket] = useState(() => ({
@@ -60,10 +68,10 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
       ticket_id: editedTicket.id || userId,
       technician_id: userId,
       contact: editedTicket.contact || '',
-      nume: editedTicket.name,
-      prenume: editedTicket.surname,
-      mail: editedTicket.email,
-      telefon: editedTicket.phone,
+      name: editedTicket.name,
+      surname: editedTicket.surname,
+      email: editedTicket.email,
+      phone: editedTicket.phone,
     };
 
     const cleanedData = Object.fromEntries(
@@ -129,6 +137,9 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
     }
   };
 
+  // Определяем, когда Workflow должен быть disabled
+  const AdminRoles = isLoadingRoles ? true : !isAdmin;
+
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-container" ref={modalRef} onClick={(e) => e.stopPropagation()}>
@@ -139,8 +150,8 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
         </header>
         <div className="ticket-modal-form">
           <div className="container-select-priority-workflow">
-            <Priority ticket={editedTicket} onChange={handleInputChange} />
-            <Workflow ticket={editedTicket} onChange={handleInputChange} />
+            <Priority ticket={editedTicket} onChange={handleInputChange} disabled={AdminRoles} />
+            <Workflow ticket={editedTicket} onChange={handleInputChange} disabled={AdminRoles} />
           </div>
           <div className="divider-line"></div>
           <div className="input-group">
@@ -180,7 +191,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
             <input
               type="tel"
               name="phone"
-              value={editedTicket.phone || ''}
+              value={editedTicket.phone && editedTicket.phone !== "{NULL}" ? editedTicket.phone.replace(/[{}]/g, '') : ''}
               onChange={handleInputChange}
               placeholder={translations['phone'][language]}
               required

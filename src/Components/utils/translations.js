@@ -43,6 +43,10 @@ export const translations = {
         'RO': 'Contract încheiat',
         'RU': 'Договор завершён'
     },
+    'Realizat cu succes': {
+        'RO': 'Realizat cu succes',
+        'RU': 'Успешно реализовано'
+    },
     'Caută leaduri': {
         'RO': 'Caută leaduri',
         'RU': 'Искать лиды'
@@ -306,14 +310,6 @@ export const translations = {
         'RO': 'data nașterii',
         'RU': 'дата рождения'
     },
-    'date_of_birth': {
-        'RO': 'data nașterii',
-        'RU': 'дата рождения'
-    },
-    'date_of_birth': {
-        'RO': 'data nașterii',
-        'RU': 'дата рождения'
-    },
     'id_card_series': {
         'RO': 'seria cărții de identitate',
         'RU': 'серия удостоверения личности'
@@ -446,10 +442,6 @@ export const translations = {
         'RO': 'Nr de contract',
         'RU': 'Номер контракта'
     },
-    'Data contractului': {
-        'RO': 'Data contractului',
-        'RU': 'Дата контракта'
-    },
     'Operator turistic': {
         'RO': 'Operator turistic',
         'RU': 'Туроператор'
@@ -529,10 +521,6 @@ export const translations = {
     "Select...": {
         "RO": "Introduceți...",
         "RU": "Введите..."
-    },
-    "Alege client": {
-        "RO": "Alege client",
-        "RU": "Выберите клиента"
     },
     "Introduce un grup": {
         "RO": "Introduce un grup",
@@ -650,10 +638,6 @@ export const translations = {
         "RO": "Deschide fișier",
         "RU": "Открыть файл"
     },
-    "Alege client": {
-        "RO": "Alege client",
-        "RU": "Выбрать клиента"
-    },
     "Client": {
         "RO": "Client",
         "RU": "Клиент"
@@ -694,17 +678,9 @@ export const translations = {
         "RO": "Ultima interacțiune",
         "RU": "Последнее взаимодействие"
     },
-    "Etapa de lucru": {
-        "RO": "Etapa de lucru",
-        "RU": "Этап работы"
-    },
     "Toate etapele": {
         "RO": "Toate etapele",
         "RU": "Все этапы"
-    },
-    "Prioritate": {
-        "RO": "Prioritate",
-        "RU": "Приоритет"
     },
     "Toate prioritățile": {
         "RO": "Toate prioritățile",
@@ -725,10 +701,6 @@ export const translations = {
     "După participant": {
         "RO": "După participant",
         "RU": "По участнику"
-    },
-    "Taguri": {
-        "RO": "Taguri",
-        "RU": "Теги"
     },
     "Introdu tag": {
         "RO": "Introdu tag",
@@ -769,10 +741,6 @@ export const translations = {
     "Mesaj text": {
         "RO": "Mesaj text",
         "RU": "Сбросить фильтры"
-    },
-    "Închide": {
-        "RO": "Închide",
-        "RU": "Закрыть"
     },
     'Sesia a expirat': {
         'RO': 'Sesia a expirat, te rog sa accesezi din nou pagina!',
@@ -840,7 +808,6 @@ export const translations = {
     'Clienți corporate': { 'RO': "Clienți corporate", 'RU': "Корпоративные клиенты" },
     'Trafic organic': { 'RO': "Trafic organic", 'RU': "Органический трафик" },
     'Reclamații': { 'RO': "Reclamații", 'RU': "Жалобы" },
-    'Marketing': { 'RO': "Marketing", 'RU': "Маркетинг" },
     'Resurse umane': { 'RO': "Resurse umane", 'RU': "Кадровые ресурсы" },
     'Alt motiv': { 'RO': "Alt motiv", 'RU': "Другая причина" },
     'Altele': { 'RO': "Altele", 'RU': "Другие" },
@@ -917,10 +884,6 @@ export const translations = {
         'RO': "Contract trimis",
         'RU': "Отправленный контракт"
     },
-    'Contract semnat': {
-        'RO': "Contract semnat",
-        'RU': "Подписанный контракт"
-    },
     'Achitare efectuată': {
         'RO': "Achitare efectuată",
         'RU': "Оплата произведена"
@@ -981,7 +944,199 @@ export const translations = {
         'RO': "Deschide în noua filă",
         'RU': "Открыть в новой вкладке"
     },
-
+   "Data creare Lead": {
+        "RO": "Data creare lead",
+        "RU": "Дата создания лида"
+    },
+    "Data ultima actualizare Lead": {
+        "RO": "Data ultima actualizare lead",
+        "RU": "Дата последнего обновления лида"
+    },
+    "Prioritate Lead": {
+        "RO": "Prioritate lead",
+        "RU": "Приоритет лида"
+    },
+    "Alege prioritatea": {
+        "RO": "Alege prioritatea",
+        "RU": "Выберите приоритет"
+    },
+    "Responsabil Lead": {
+        "RO": "Responsabil lead",
+        "RU": "Ответственный за лид"
+    },
+    "Alege responsabil lead": {
+        "RO": "Alege responsabil lead",
+        "RU": "Выберите ответственного за лид"
+    },
+    "Tag-uri": {
+        "RO": "Tag-uri",
+        "RU": "Теги"
+    },
+    "Introdu tag-uri separate prin virgule": {
+        "RO": "Introdu tag-uri separate prin virgule",
+        "RU": "Введите теги, разделенные запятыми"
+    },
+    "Sursa Lead": {
+        "RO": "Sursa lead",
+        "RU": "Источник лида"
+    },
+    "Alege sursa lead": {
+        "RO": "Alege sursa lead",
+        "RU": "Выберите источник лида"
+    },
+    "Alege promo": {
+        "RO": "Alege promo",
+        "RU": "Выберите промо"
+    },
+    "Alege marketing": {
+        "RO": "Alege marketing",
+        "RU": "Выберите маркетинг"
+    },
+    "Tara": {
+        "RO": "Tara",
+        "RU": "Страна"
+    },
+    "Alege tara": {
+        "RO": "Alege tara",
+        "RU": "Выберите страну"
+    },
+    "Alege transport": {
+        "RO": "Alege transport",
+        "RU": "Выберите транспорт"
+    },
+    "Nume excursie": {
+        "RO": "Nume excursie",
+        "RU": "Название экскурсии"
+    },
+    "Alege excursie": {
+        "RO": "Alege excursie",
+        "RU": "Выберите экскурсию"
+    },
+    "Data vizita in oficiu": {
+        "RO": "Data vizita in oficiu",
+        "RU": "Дата визита в офис"
+    },
+    "Alege serviciu": {
+        "RO": "Alege serviciu",
+        "RU": "Выберите услугу"
+    },
+    "Procesare achizitionarii": {
+        "RO": "Procesare achizitionarii",
+        "RU": "Обработка покупки"
+    },
+    "Alege achiziție": {
+        "RO": "Alege achiziție",
+        "RU": "Выберите покупку"
+    },
+    "Selectează statutul plății": {
+        "RO": "Selectează statutul plății",
+        "RU": "Выберите статус оплаты"
+    },
+    "Control Admin": {
+        "RO": "Control Admin",
+        "RU": "Административный контроль"
+    },
+    "Selectează valuta contului": {
+        "RO": "Selectează valuta contului",
+        "RU": "Выберите валюту счета"
+    },
+    "Selectează IBAN": {
+        "RO": "Selectează IBAN",
+        "RU": "Выберите IBAN"
+    },
+    "Aplica filtru": {
+        "RO": "Aplica filtru",
+        "RU": "Применить фильтр"
+    },
+    "Reset filtru": {
+        "RO": "Reset filtru",
+        "RU": "Сбросить фильтр"
+    },
+    "Close": {
+        "RO": "Close",
+        "RU": "Закрыть"
+    },
+    "Platforma mesaj": {
+        "RO": "Platforma mesaj",
+        "RU": "Платформа сообщений"
+    },
+    "Filtru pentru mesaje (coming soon)": {
+        "RO": "Filtru pentru mesaje (coming soon)",
+        "RU": "Фильтр для сообщений (скоро)"
+    },
+    "Workflow": {
+        "RO": "Workflow",
+        "RU": "Рабочий процесс"
+    },
+    "Alege workflow pentru afisare in sistem": {
+        "RO": "Alege workflow pentru afisare in sistem",
+        "RU": "Выберите рабочий процесс для отображения в системе"
+    },
+    "Filtru pentru Lead": {
+        "RO": "Filtru pentru Lead",
+        "RU": "Фильтр для лида"
+    },
+    "Filtru de sistem": {
+        "RO": "Filtru de sistem",
+        "RU": "Системный фильтр"
+    },
+    "Reset filter": {
+       "RO": "Reset filter",
+       "RU": "Сбросить фильтр"
+    },
+    "Tipul serviciului": {
+       "RO": "Tipul serviciului",
+       "RU": "Тип услуги"
+    },
+    "Selectează toate": {
+        "RO": "Selectează toate",
+        "RU": "Выбрать все"
+    },
+    "Căutare": {
+       "RO": "Căutare",
+       "RU": "Поиск"
+    },
+    "Nu există potriviri": {
+       "RO": "Nu există potriviri",
+       "RU": "Нет совпадений"
+    },
+    "Alege client": {
+        "RO": "Alege client",
+        "RU": "Выберите клиента"
+    },
+    "Verificare": {
+        "RO": "Verificare",
+        "RU": "Проверка"
+    },
+    "Email": {
+        "RO": "Email",
+        "RU": "Проверка"
+    },
+    "Ștergere": {
+        "RO": "Ștergere",
+        "RU": "Удалить"
+    },
+    "Editare": {
+        "RO": "Editare",
+        "RU": "Редактировать"
+    },
+    "Toate tichetele": {
+        "RO": "Toate tichetele",
+        "RU": "Все билеты"
+    },
+    "Filtrate": {
+        "RO": "Filtrate",
+        "RU": "Отфильтровано"
+    },
+    "Coloană": {
+        "RO": "Coloană",
+        "RU": "Столбец"
+    },
+    "Listă": {
+        "RO": "Listă",
+        "RU": "Список"
+    }
+    
 };
 
 // import { translations } from '../utils/translations';

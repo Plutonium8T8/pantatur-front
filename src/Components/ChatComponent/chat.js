@@ -37,7 +37,7 @@ import { valutaOptions } from '../../FormOptions/ValutaOptions';
 import { ibanOptions } from '../../FormOptions/IbanOptions';
 
 const ChatComponent = ({ }) => {
-    const { userId } = useUser();
+    const { userId, hasRole, isLoadingRoles } = useUser();
     const [managerMessage, setManagerMessage] = useState('');
     const { tickets, updateTicket, setTickets, messages, setMessages, markMessagesAsRead, socketRef } = useAppContext();
     const [selectTicketId, setSelectTicketId] = useState(null);
@@ -70,6 +70,8 @@ const ChatComponent = ({ }) => {
     const [searchQuery, setSearchQuery] = useState("");
     const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
     const [activeTab, setActiveTab] = useState("extraForm"); // По умолчанию вкладка Extra Form
+    const [filteredTicketIds, setFilteredTicketIds] = useState(null);
+    const [isAdmin, setIsAdmin] = useState(false);
 
     const platformIcons = {
         "facebook": <FaFacebook />,
@@ -78,6 +80,14 @@ const ChatComponent = ({ }) => {
         "viber": <SiViber />,
         "telegram": <FaTelegram />
     };
+
+    useEffect(() => {
+        if (!isLoadingRoles) {
+            setIsAdmin(hasRole("ROLE_ADMIN"));
+        }
+    }, [isLoadingRoles, hasRole]);
+
+    const AdminRoles = isLoadingRoles ? true : !isAdmin;
 
     const applyFilters = (filters) => {
         setAppliedFilters(filters);
@@ -231,7 +241,7 @@ const ChatComponent = ({ }) => {
             console.warn('Тикет не найден!');
             setSelectedTechnicianId(null);
         }
-        navigate(`/chat/${ticketId}`);
+        // navigate(`/chat/${ticketId}`);
         // Помечаем все сообщения как прочитанные (отправляем `seen`)
         markMessagesAsRead(ticketId);
     };
@@ -245,8 +255,9 @@ const ChatComponent = ({ }) => {
         "Aprobat cu client",
         "Contract semnat",
         "Plată primită",
-        "Închis și nerealizat",
-        "Contract încheiat"
+        "Contract încheiat",
+        "Realizat cu succes",
+        "Închis și nerealizat"
     ];
 
     // Индексы этапов
@@ -255,14 +266,14 @@ const ChatComponent = ({ }) => {
         return acc;
     }, {});
 
-    // Состояния ошибок для каждого поля
+    // Состояния ошибок
     const [fieldErrors, setFieldErrors] = useState({});
 
     // Получение текущего тикета
     const updatedTicket = tickets.find(ticket => ticket.id === selectTicketId) || null;
     const currentWorkflowIndex = updatedTicket ? workflowIndices[updatedTicket.workflow] : -1;
 
-    // Обязательные поля для каждого этапа (без "Închis și nerealizat")
+    // Обязательные поля для каждого этапа
     const requiredFields = {
         "Luat în lucru": ["sursa_lead", "promo", "marketing"],
         "Ofertă trimisă": ["tipul_serviciului", "tara", "tip_de_transport", "denumirea_excursiei_turului"],
@@ -273,13 +284,13 @@ const ChatComponent = ({ }) => {
             "buget", "data_plecarii", "data_intoarcerii", "tour_operator",
             "numarul_cererii_de_la_operator", "rezervare_confirmata",
             "contract_arhivat", "statutul_platii", "pret_netto", "comission_companie"
-        ]
+        ],
+        "Realizat cu succes": ["control_admin"] // Новое обязательное поле
     };
 
     // Функция валидации перед изменением workflow
     const validateFields = (workflow) => {
         if (workflow === "Închis și nerealizat") {
-            // Проверка только поля "Motivul refuzului"
             if (!extraInfo[selectTicketId]?.motivul_refuzului) {
                 setFieldErrors(prev => ({ ...prev, motivul_refuzului: true }));
                 enqueueSnackbar(`Completați "Motivul refuzului" înainte de a face modificări!`, { variant: 'error' });
@@ -289,8 +300,6 @@ const ChatComponent = ({ }) => {
         }
 
         let missingFields = [];
-
-        // Проверяем текущий и все предыдущие этапы
         const workflowIndex = workflowIndices[workflow];
 
         for (const [step, fields] of Object.entries(requiredFields)) {
@@ -300,7 +309,6 @@ const ChatComponent = ({ }) => {
         }
 
         if (missingFields.length) {
-            // Обновляем состояния ошибок только для отсутствующих полей
             setFieldErrors(prev => ({
                 ...prev,
                 ...Object.fromEntries(missingFields.map(field => [field, true]))
@@ -322,16 +330,11 @@ const ChatComponent = ({ }) => {
             return;
         }
 
-        const currentIndex = workflowIndices[updatedTicket.workflow];
-        const newIndex = workflowIndices[newWorkflow];
-
-        // Сбрасываем ошибки, которые не относятся к текущему и предыдущим этапам
         const workflowIndex = workflowIndices[newWorkflow];
         let newFieldErrors = {};
 
         for (const [step, fields] of Object.entries(requiredFields)) {
             if (workflowIndices[step] <= workflowIndex) {
-                // Проверяем, какие поля отсутствуют и обновляем состояние ошибок
                 fields.forEach(field => {
                     if (!extraInfo[selectTicketId]?.[field]) {
                         newFieldErrors[field] = true;
@@ -350,7 +353,6 @@ const ChatComponent = ({ }) => {
 
         setFieldErrors(newFieldErrors);
 
-        // Если есть ошибки, не обновляем workflow
         if (Object.keys(newFieldErrors).length > 0) {
             enqueueSnackbar(`Completați toate câmpurile obligatorii pentru "${newWorkflow}" și etapele anterioare înainte de a face modificări!`, { variant: 'error' });
             return;
@@ -382,11 +384,12 @@ const ChatComponent = ({ }) => {
         }
     };
 
+    // Сброс ошибок при смене тикета
     useEffect(() => {
-        // Сбрасываем ошибки при выборе нового тикета
         setFieldErrors({});
-    }, [selectTicketId]); // Запуск при изменении `selectTicketId`
+    }, [selectTicketId]);
 
+    // Подсветка ошибок в табах
     const getTabErrorIndicator = (tab) => {
         const tabFields = {
             extraForm: ["buget", "data_plecarii", "data_intoarcerii", "sursa_lead", "promo", "marketing"],
@@ -398,6 +401,16 @@ const ChatComponent = ({ }) => {
 
         return tabFields[tab]?.some(field => fieldErrors[field]) ? "🔴" : "";
     };
+
+    useEffect(() => {
+        const pretNetto = extraInfo[selectTicketId]?.pret_netto;
+        const buget = extraInfo[selectTicketId]?.buget;
+
+        if (pretNetto !== "" && buget !== "" && pretNetto !== undefined && buget !== undefined) {
+            const newComision = parseFloat(buget) - parseFloat(pretNetto);
+            handleFieldChange("comission_companie", newComision.toFixed(2)); // Автообновление
+        }
+    }, [extraInfo[selectTicketId]?.pret_netto, extraInfo[selectTicketId]?.buget, selectTicketId]);
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Закрытие меню при клике вне его области
@@ -843,6 +856,8 @@ const ChatComponent = ({ }) => {
 
             setManagerMessage('');
 
+            const token = Cookies.get('jwt');
+
             // 🔹 Отправка сообщения
             const response = await fetch(apiUrl, {
                 method: 'POST',
@@ -1126,9 +1141,41 @@ const ChatComponent = ({ }) => {
     // }, [selectTicketId]);
 
     const sortedTickets = useMemo(() => {
-        let filtered = tickets;
+        let filtered = [...tickets]; // Используем копию массива, чтобы избежать мутаций
 
-        // 1️⃣ Применяем фильтрацию из applyFilters
+        console.log("📌 Исходные тикеты:", tickets);
+        console.log("🎯 ID тикетов из фильтра:", filteredTicketIds);
+
+        // 1️⃣ Фильтр по ID тикетов из `TicketFilterModal`
+        if (filteredTicketIds !== null && filteredTicketIds.length > 0) {
+            filtered = filtered.filter(ticket => filteredTicketIds.includes(Number(ticket.id)));
+            console.log("🔍 После фильтрации по ID:", filtered);
+        }
+
+        // 2️⃣ Фильтрация "Мои тикеты"
+        if (showMyTickets) {
+            filtered = filtered.filter(ticket => ticket.technician_id === userId);
+        }
+
+        // 3️⃣ Фильтрация по поисковому запросу (ID, контакт, теги)
+        if (searchQuery.trim()) {
+            const lowerSearchQuery = searchQuery.toLowerCase();
+            filtered = filtered.filter(ticket => {
+                const ticketId = ticket.id.toString().toLowerCase();
+                const ticketContact = ticket.contact ? ticket.contact.toLowerCase() : "";
+                const tags = Array.isArray(ticket.tags)
+                    ? ticket.tags.map(tag => tag.toLowerCase())
+                    : ticket.tags.replace(/[{}]/g, "").split(",").map(tag => tag.trim().toLowerCase());
+
+                return (
+                    ticketId.includes(lowerSearchQuery) ||
+                    ticketContact.includes(lowerSearchQuery) ||
+                    tags.some(tag => tag.includes(lowerSearchQuery))
+                );
+            });
+        }
+
+        // 4️⃣ Фильтрация по `appliedFilters`
         if (Object.values(appliedFilters).some(value => value)) {
             if (appliedFilters.creation_date) {
                 filtered = filtered.filter(ticket => ticket.creation_date.startsWith(appliedFilters.creation_date));
@@ -1152,43 +1199,9 @@ const ChatComponent = ({ }) => {
                     return ticketTags.includes(appliedFilters.tags);
                 });
             }
-            if (appliedFilters.platform) {
-                const ticketIds = messages
-                    .filter(msg => msg.platform === appliedFilters.platform)
-                    .map(msg => msg.ticket_id);
-                filtered = filtered.filter(ticket => ticketIds.includes(ticket.id));
-            }
-            if (appliedFilters.sender_id) {
-                const ticketIds = messages
-                    .filter(msg => String(msg.sender_id) === appliedFilters.sender_id)
-                    .map(msg => msg.ticket_id);
-                filtered = filtered.filter(ticket => ticketIds.includes(ticket.id));
-            }
         }
 
-        // 2️⃣ Фильтр "Мои тикеты"
-        if (showMyTickets) {
-            filtered = filtered.filter(ticket => ticket.technician_id === userId);
-        }
-
-        // 3️⃣ Фильтр по поисковому запросу
-        if (searchQuery.trim()) {
-            filtered = filtered.filter(ticket => {
-                const ticketId = ticket.id.toString().toLowerCase();
-                const ticketContact = ticket.contact ? ticket.contact.toLowerCase() : "";
-                const tags = Array.isArray(ticket.tags)
-                    ? ticket.tags.map(tag => tag.toLowerCase())
-                    : ticket.tags.replace(/[{}]/g, "").split(",").map(tag => tag.trim().toLowerCase());
-
-                return (
-                    ticketId.includes(searchQuery) ||
-                    ticketContact.includes(searchQuery) ||
-                    tags.some(tag => tag.includes(searchQuery))
-                );
-            });
-        }
-
-        // 4️⃣ Функция для получения времени последнего сообщения тикета
+        // 5️⃣ Функция для получения времени последнего сообщения тикета
         const getLastMessageTime = (ticketId) => {
             const ticketMessages = messages.filter(msg => msg.ticket_id === ticketId);
             if (!ticketMessages.length) return null;
@@ -1198,21 +1211,17 @@ const ChatComponent = ({ }) => {
             ).time_sent;
         };
 
-        // 5️⃣ Разделяем выбранный тикет и остальные
-        const selectedTicket = filtered.find(ticket => ticket.id === selectTicketId);
-        let otherTickets = filtered.filter(ticket => ticket.id !== selectTicketId);
-
         // 6️⃣ Сортировка по последнему сообщению (по убыванию)
-        otherTickets.sort((a, b) => {
+        filtered.sort((a, b) => {
             const lastMessageA = getLastMessageTime(a.id);
             const lastMessageB = getLastMessageTime(b.id);
 
             return new Date(lastMessageB) - new Date(lastMessageA);
         });
 
-        // 7️⃣ Если выбранный тикет есть в списке, помещаем его в начало
-        return selectedTicket ? [selectedTicket, ...otherTickets] : otherTickets;
-    }, [tickets, messages, appliedFilters, showMyTickets, searchQuery, selectTicketId, userId]);
+        console.log("✅ Итоговый список тикетов:", filtered);
+        return filtered;
+    }, [tickets, messages, filteredTicketIds, appliedFilters, showMyTickets, searchQuery, userId]);
 
 
     // useEffect(() => {
@@ -1262,18 +1271,6 @@ const ChatComponent = ({ }) => {
             markMessagesAsRead(selectTicketId);
         }
     }, [messages, selectTicketId, markMessagesAsRead, userId]);
-
-    // console.log("Validation errors:", validationErrors);
-
-    useEffect(() => {
-        const pretNetto = extraInfo[selectTicketId]?.pret_netto;
-        const buget = extraInfo[selectTicketId]?.buget;
-
-        if (pretNetto !== "" && buget !== "" && pretNetto !== undefined && buget !== undefined) {
-            const newComision = parseFloat(buget) - parseFloat(pretNetto);
-            handleFieldChange("comission_companie", newComision.toFixed(2)); // Автообновление
-        }
-    }, [extraInfo[selectTicketId]?.pret_netto, extraInfo[selectTicketId]?.buget, selectTicketId]);
 
     return (
         <div className="chat-container">
@@ -1398,7 +1395,28 @@ const ChatComponent = ({ }) => {
                         <TicketFilterModal
                             isOpen={isFilterOpen}
                             onClose={() => setIsFilterOpen(false)}
-                            onApplyFilter={applyFilters}
+                            onApplyFilter={(updatedFilters, ticketIds) => {
+                                console.log("🚀 Фильтр применен в чате:", updatedFilters);
+                                console.log("📥 Полученные ticketIds с API:", ticketIds);
+
+                                if (!ticketIds || ticketIds.length === 0) {
+                                    console.log("♻️ Сброс фильтра: показываем все тикеты.");
+                                    setAppliedFilters({});
+                                    setFilteredTicketIds(null);
+                                    return;
+                                }
+
+                                // ✅ Разворачиваем `ticketIds`, если он вложенный массив
+                                const flatTicketIds = ticketIds.flat(Infinity)
+                                    .map(ticket => ticket?.id || ticket) // Поддержка форматов { id: 7477 } и [7477]
+                                    .filter(id => typeof id === "number" || !isNaN(Number(id))) // Убираем некорректные значения
+                                    .map(id => Number(id)); // Приводим все `id` к числу
+
+                                console.log("📤 Развернутые ticketIds:", flatTicketIds);
+
+                                setAppliedFilters(updatedFilters);
+                                setFilteredTicketIds(flatTicketIds.length > 0 ? flatTicketIds : null);
+                            }}
                         />
                     </>
                 )}
@@ -1749,7 +1767,7 @@ const ChatComponent = ({ }) => {
                         </div>
 
 
-                        <div className="tab-content">
+                        <div className="tab-content-chat">
                             {activeTab && selectTicketId && isLoading ? (
                                 <p>Loading...</p>
                             ) : (
@@ -1955,54 +1973,6 @@ const ChatComponent = ({ }) => {
                                         className="input-field"
                                         placeholder="Prenume"
                                     />
-                                    {/* <Input
-                                        label="Data nașterii"
-                                        type="date"
-                                        value={personalInfo[selectedClient]?.date_of_birth ?? ""}
-                                        onChange={(e) =>
-                                            handleSelectChange(selectedClient, 'date_of_birth', e.target.value)
-                                        }
-                                        className="input-field"
-                                    />
-                                    <Input
-                                        label="Seria buletinului"
-                                        type="text"
-                                        value={personalInfo[selectedClient]?.id_card_series ?? ""}
-                                        onChange={(e) =>
-                                            handleSelectChange(selectedClient, 'id_card_series', e.target.value)
-                                        }
-                                        className="input-field"
-                                        placeholder="Seria buletinului"
-                                    />
-                                    <Input
-                                        label="Numărul buletinului"
-                                        type="text"
-                                        value={personalInfo[selectedClient]?.id_card_number ?? ""}
-                                        onChange={(e) =>
-                                            handleSelectChange(selectedClient, 'id_card_number', e.target.value)
-                                        }
-                                        className="input-field"
-                                        placeholder="Numărul buletinului"
-                                    />
-                                    <Input
-                                        label="Data eliberării buletinului"
-                                        type="date"
-                                        value={personalInfo[selectedClient]?.id_card_release ?? ""}
-                                        onChange={(e) =>
-                                            handleSelectChange(selectedClient, 'id_card_release', e.target.value)
-                                        }
-                                        className="input-field"
-                                    />
-                                    <Input
-                                        label="IDNP"
-                                        type="text"
-                                        value={personalInfo[selectedClient]?.idnp ?? ""}
-                                        onChange={(e) =>
-                                            handleSelectChange(selectedClient, 'idnp', e.target.value)
-                                        }
-                                        className="input-field"
-                                        placeholder="IDNP"
-                                    /> */}
                                     <Input
                                         label="Adresă"
                                         type="text"
@@ -2203,7 +2173,7 @@ const ChatComponent = ({ }) => {
                                 }
                                 className="input-field"
                                 placeholder="Achitat client"
-                                id="price-neto-input"
+                                id="achitat-client"
                             />
                             <Input
                                 label="Restanță client"
@@ -2236,19 +2206,21 @@ const ChatComponent = ({ }) => {
                                 id="commission-input"
                                 disabled={true}
                             />
-                            {/* <div className="toggle-container">
-                                <label className="toggle-label">control pentru admin toogle</label>
-                                <label className="switch">
-                                    <input
-                                        type="checkbox"
-                                        checked={extraInfo[selectTicketId]?.control_pentru_admin_toogle || false}
-                                        onChange={(e) =>
-                                            handleSelectChangeExtra(selectTicketId, 'control pentru admin toogle', e.target.checked)
-                                        }
-                                    />
-                                    <span className="slider round"></span>
-                                </label>
-                            </div> */}
+                            {isAdmin && (
+                                <div className="toggle-container">
+                                    <label className="toggle-label">Control Admin</label>
+                                    <label className={`switch ${fieldErrors.control_admin ? "invalid-toggle" : ""}`}>
+                                        <input
+                                            type="checkbox"
+                                            checked={extraInfo[selectTicketId]?.control_admin || false}
+                                            onChange={(e) =>
+                                                handleSelectChangeExtra(selectTicketId, 'control_admin', e.target.checked)
+                                            }
+                                        />
+                                        <span className="slider round"></span>
+                                    </label>
+                                </div>
+                            )}
                         </div>
                     )}
                     {activeTab === 'Invoice' && selectTicketId && (

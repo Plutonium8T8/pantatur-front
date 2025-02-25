@@ -67,6 +67,10 @@
     color: #333;
 }
 
+.message .text img {
+    max-height: 65vh;
+}
+
 .message.sent .text {
     background-color: #0f824c;
     color: #fff;
@@ -278,7 +282,7 @@
 .selects-container {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    /* gap: 8px; */
     text-align: left;
 }
 
@@ -568,7 +572,11 @@
 }
 
 .tab-content {
-    padding: 20px;
+    padding: 0px 20px 20px 20px;
+}
+
+.tab-content-chat {
+    padding: 20px 20px 20px 20px;
 }
 
 .image-preview-in-chat {
@@ -629,9 +637,9 @@
     border: 1px solid #ddd;
 }
 
-.extra-info-content .selects-container {
+/* .extra-info-content .selects-container {
     gap: 0;
-}
+} */
 
 .client-header {
     display: flex;
@@ -787,7 +795,7 @@ input:checked+.slider:before {
     border-radius: 100%;
     text-align: center;
     cursor: pointer;
-    z-index: 100;
+    /* z-index: 100; */
     font-size: 16px;
     transition: left 0.3s ease-in-out, background-color 0.2s;
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);

@@ -9,7 +9,7 @@ const workflowOptions = rawWorkflowOptions.map((workflow) => ({
   label: workflow,
 }));
 
-export const Workflow = ({ ticket, onChange = () => { } }) => {
+export const Workflow = ({ ticket, onChange = () => { }, disabled = false }) => {
   const language = localStorage.getItem('language') || 'RO';
 
   const customStyles = {
@@ -20,7 +20,7 @@ export const Workflow = ({ ticket, onChange = () => { } }) => {
         : workflowStyles[state.data.value]?.backgroundColor || '#fff',
       color: '#000',
       padding: '10px',
-      cursor: 'pointer',
+      cursor: disabled ? 'not-allowed' : 'pointer',
     }),
     control: (provided, state) => ({
       ...provided,
@@ -28,6 +28,8 @@ export const Workflow = ({ ticket, onChange = () => { } }) => {
       backgroundColor: workflowStyles[ticket?.workflow]?.backgroundColor || '#fff',
       color: '#000',
       boxShadow: state.isFocused ? `0 0 0 2px ${workflowStyles[ticket?.workflow]?.borderColor || '#aaa'}` : 'none',
+      opacity: disabled ? 0.5 : 1,
+      cursor: disabled ? 'not-allowed' : 'default',
       '&:hover': {
         borderColor: workflowStyles[ticket?.workflow]?.borderColor || '#aaa',
       },
@@ -51,11 +53,12 @@ export const Workflow = ({ ticket, onChange = () => { } }) => {
         options={workflowOptions}
         value={selectedOption || null}
         onChange={(selected) =>
-          onChange({ target: { name: 'workflow', value: selected.value } })
+          !disabled && onChange({ target: { name: 'workflow', value: selected.value } })
         }
         styles={customStyles}
         isSearchable={false}
         getOptionLabel={(e) => translations[e.value]?.[language] || e.label}
+        isDisabled={disabled}
       />
     </div>
   );

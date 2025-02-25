@@ -1,0 +1,196 @@
+/* 🏁 Основные стили таблицы */
+.ticket-table {
+    width: 1700px;
+    border-collapse: separate;
+    border-spacing: 0 6px;
+    font-size: 14px;
+}
+
+/* Заголовки */
+.ticket-table th {
+    background-color: #f8f9fa;
+    color: #333;
+    font-weight: bold;
+    text-align: center;
+    padding: 12px;
+    border-bottom: 2px solid #ddd;
+}
+
+/* Строки */
+.ticket-row {
+    background: white;
+    transition: 0.2s ease-in-out;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.ticket-row:hover {
+    background-color: #f1f8ff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* Выбранный тикет */
+.ticket-row.selected {
+    background-color: #d1ecf1;
+}
+
+/* Ячейки */
+.ticket-checkbox-row,
+.ticket-id-row,
+.ticket-contact-row,
+.ticket-name-row,
+.ticket-surname-row,
+.ticket-email-row,
+.ticket-phone-row,
+.ticket-description-row,
+.ticket-tags-row,
+.ticket-priority-row,
+.ticket-workflow-row,
+.ticket-actions-row {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Чекбокс */
+.ticket-checkbox-row input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+/* Приоритет */
+.ticket-priority-row {
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+/* Цвета приоритетов */
+.priority-высокий {
+    background-color: #dc3545;
+    color: white;
+}
+
+.priority-средний {
+    background-color: #ffc107;
+    color: black;
+}
+
+.priority-низкий {
+    background-color: #28a745;
+    color: white;
+}
+
+.priority-default {
+    background-color: #ddd;
+    color: black;
+}
+
+/* Workflow (Статус) */
+.ticket-workflow-row {
+    font-weight: bold;
+    color: #17a2b8;
+}
+
+/* Кнопка редактирования */
+.ticket-actions-row {
+    text-align: center;
+    background-color: black;
+}
+
+.edit-button {
+    background-color: #007bff;
+    border: none;
+    color: white;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background-color 0.2s ease-in-out;
+    font-size: 14px;
+}
+
+.edit-button:hover {
+    background-color: #0056b3;
+}
+
+/* Контейнер для кнопки редактирования */
+.ticket-actions-row {
+    text-align: center;
+    padding: 10px;
+}
+
+/* Чекбокс теперь не смещает ID */
+.ticket-checkbox-row {
+    width: 40px;
+    text-align: center;
+}
+
+.ticket-checkbox-row input {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.button-edit {
+    background-color: #ffc107;
+    border: none;
+    color: white;
+    padding: 6px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.button-edit:hover {
+    background-color: #e0a800;
+}
+
+.ticket-counter-row {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    padding: 5px 10px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    display: inline-block;
+    margin-left: 15px;
+}
+
+.button-delete-row {
+    display: flex;
+    background-color: #dc3545;
+}
+
+.button-edit-row {
+    display: flex;
+    background-color: #ffc107;
+}
+
+.ticket-tags-row {
+    max-width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ticket-tags-row .tag {
+    display: inline-block;
+    background-color: #f8f9fa;
+    color: #555;
+    padding: 3px 8px;
+    margin: 2px;
+    border-radius: 4px;
+    font-size: 12px;
+    border: 1px solid #ddd;
+}
+
+.ticket-id-link {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.ticket-id-link:hover {
+    text-decoration: underline;
+}
