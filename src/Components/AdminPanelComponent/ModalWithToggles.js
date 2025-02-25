@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import Cookies from "js-cookie";
 import "./ModalWithToggles.css";
-import { FaHandshake } from "react-icons/fa";
 import ToggleComponent from "./ToggleComponent";
-import UserGroupComponent from "./UserGroupComponent";
 import { api } from "../../api"
+import { showServerError } from "../../Components/utils/showServerError"
+import { useSnackbar } from 'notistack';
 
 const ModalWithToggles = ({ employee, closeModal }) => {
     const [roles, setRoles] = useState([]);
-        const [error, setError] = useState(null);
+
+    const { enqueueSnackbar } = useSnackbar()
 
     useEffect(() => {
         fetchRoles();
@@ -21,66 +21,38 @@ const ModalWithToggles = ({ employee, closeModal }) => {
                 setRoles(data.roles);
                 
             } catch (error) {
-                console.error("Ошибка загрузки уведомлений:", error.message);
+                enqueueSnackbar(showServerError(error), {variant: "error"})
             }
         };
 
     const sendPermissionToServer = async (role) => {
-        const token = Cookies.get("jwt");
         try {
-            console.log(`Отправка: role=${role}`);
-
-            const response = await fetch("https://pandatur-api.com/admin/user/roles", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                    Origin: 'https://plutonium8t8.github.io',
-                },
-                body: JSON.stringify({
-                    id: employee.id,
-                    role,
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error(`Ошибка: ${response.status}`);
-            }
+            await api.admin.user.updateRoles({
+                id: employee.id,
+                role,
+            })
 
             fetchRoles();
         } catch (error) {
-            console.error(`Ошибка при добавлении разрешения "${role}":`, error);
+            enqueueSnackbar(showServerError(error), {variant: "error"})
         }
     };
 
     const deletePermissionToServer = async (role) => {
-        const token = Cookies.get("jwt");
         try {
-            console.log(`Удаление: role=${role}`);
 
-            const response = await fetch("https://pandatur-api.com/admin/user/roles", {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                    Origin: 'https://plutonium8t8.github.io',
-                },
-                body: JSON.stringify({
-                    id: employee.id,
-                    role,
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error(`Ошибка: ${response.status}`);
-            }
-
+            await api.admin.user.deleteRoles({
+                id: employee.id,
+                role,
+            })
+           
             fetchRoles();
         } catch (error) {
             console.error(`Ошибка при удалении разрешения "${role}":`, error);
         }
     };
 
+    // TODO: Need to review this function
     const handleToggleChange = (permission, isActive) => {
         if (isActive) {
             deletePermissionToServer(permission);

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Cookies from "js-cookie";
 import "./ModalWithToggles.css";
 import { FaHandshake } from "react-icons/fa";
 import UserGroupComponent from "./UserGroupComponent";
@@ -27,26 +26,11 @@ const ToggleComponent = ({ employee }) => {
     };
 
     const sendPermissionToServer = async (role) => {
-        const token = Cookies.get("jwt");
         try {
-            console.log(`Отправка: role=${role}`);
-
-            const response = await fetch("https://pandatur-api.com/admin/user/roles", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                    Origin: 'https://plutonium8t8.github.io',
-                },
-                body: JSON.stringify({
-                    id: employee.id,
-                    role: "ROLE_" + role,
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error(`Ошибка: ${response.status}`);
-            }
+            await api.admin.user.updateRoles({
+                id: employee.id,
+                role: "ROLE_" + role,
+            })
 
             fetchRoles();
         } catch (error) {
@@ -55,26 +39,8 @@ const ToggleComponent = ({ employee }) => {
     };
 
     const deletePermissionToServer = async (role) => {
-        const token = Cookies.get("jwt");
         try {
-            console.log(`Удаление: role=${role}`);
-
-            const response = await fetch("https://pandatur-api.com/admin/user/roles", {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                    Origin: 'https://plutonium8t8.github.io',
-                },
-                body: JSON.stringify({
-                    id: employee.id,
-                    role: "ROLE_" + role,
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error(`Ошибка: ${response.status}`);
-            }
+            await api.admin.user.deleteRoles()
 
             fetchRoles();
         } catch (error) {
