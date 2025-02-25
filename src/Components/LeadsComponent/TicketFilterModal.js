@@ -56,7 +56,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
 
 
     const filterDefaults = {
-        workflow: workflowOptions.filter(wf => wf !== translations["Realizat cu succes"][language] && wf !== translations["Închis și nerealizat"][language]),
+        workflow: workflowOptions.filter(wf => wf !== "Realizat cu succes" && wf !== "Închis și nerealizat"),
         tags: [],
     };
 

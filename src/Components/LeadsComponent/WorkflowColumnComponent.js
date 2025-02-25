@@ -1,6 +1,7 @@
 import React from 'react';
 import TicketCard from './TicketCardComponent';
 import { workflowStyles, workflowBrightStyles } from '../utils/workflowStyles';
+import { getLanguageByKey } from "../utils/getTranslationByKey"
 
 const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket }) => {
     const parseTags = (tags) => {
@@ -62,7 +63,8 @@ const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket }) => {
                 style={{
                     backgroundColor: workflowBrightStyles[workflow]?.backgroundColor || '',
                 }}>
-                {workflow}
+                    
+               {getLanguageByKey(workflow)}
 
                 <div className="ticket-counter-display">
                     <div className="ticket-counter ticket-counter-red">
