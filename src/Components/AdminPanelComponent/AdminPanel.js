@@ -7,6 +7,7 @@ import { FaMinus, FaPlus, FaTrash } from "react-icons/fa";
 import { translations } from "../utils/translations";
 import ToggleComponent from "./ToggleComponent";
 import SpinnerOverlay from "../LeadsComponent/SpinnerOverlayComponent";
+import { api } from "../../api"
 
 const ScheduleComponent = () => {
   const [schedule, setSchedule] = useState([]);
@@ -90,16 +91,8 @@ const ScheduleComponent = () => {
   };
 
   useEffect(() => {
-    const token = Cookies.get("jwt");
-
-    fetch("https://pandatur-api.com/api/users-technician", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-        Origin: 'https://plutonium8t8.github.io',
-      },
-    })
+    
+    api.users.technician()
       .then((response) => response.json())
       .then((data) => {
         const formattedSchedule = data.map((technician) => ({
@@ -145,18 +138,10 @@ const ScheduleComponent = () => {
     try {
       setIsLoading(true); // Начало загрузки
 
+      
       const token = Cookies.get("jwt");
-
-      // Fetch users-technician
-      const usersResponse = await fetch("https://pandatur-api.com/api/users-technician", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-          Origin: 'https://plutonium8t8.github.io',
-        },
-      });
-      const usersData = await usersResponse.json();
+      
+      const usersData = await api.users.technician()
 
       // Fetch technicians' schedule
       const scheduleResponse = await fetch("https://pandatur-api.com/api/technicians/schedules", {

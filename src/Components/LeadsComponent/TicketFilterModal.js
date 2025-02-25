@@ -18,6 +18,7 @@ import CustomMultiSelect from "../MultipleSelect/MultipleSelect";
 import Cookies from "js-cookie";
 import "./Modal.css";
 import { translations } from "../utils/translations";
+import { api } from "../../api"
 
 const language = localStorage.getItem('language') || 'RO';
 
@@ -123,23 +124,12 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
     }, [filters.workflow]);
 
     useEffect(() => {
+
         const fetchTechnicians = async () => {
             try {
-                const token = Cookies.get("jwt");
-                const response = await fetch("https://pandatur-api.com/api/users-technician", {
-                    method: "GET",
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                        Origin: "https://plutonium8t8.github.io",
-                    },
-                });
 
-                if (!response.ok) {
-                    throw new Error(`Ошибка при получении списка техников: ${response.status}`);
-                }
-
-                const data = await response.json();
+                const data = await api.users.technician()
+                
                 const formattedTechnicians = data.map(item => `${item.id.id}: ${item.id.name} ${item.id.surname}`.trim());
                 setTechnicians(formattedTechnicians);
             } catch (error) {

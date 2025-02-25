@@ -4,6 +4,7 @@ import "./ModalWithToggles.css";
 import { FaHandshake } from "react-icons/fa";
 import ToggleComponent from "./ToggleComponent";
 import UserGroupComponent from "./UserGroupComponent";
+import { api } from "../../api"
 
 const ModalWithToggles = ({ employee, closeModal }) => {
     const [roles, setRoles] = useState([]);
@@ -15,21 +16,10 @@ const ModalWithToggles = ({ employee, closeModal }) => {
 
     const fetchRoles = async () => {
             try {
-                const token = Cookies.get("jwt");
-                const response = await fetch(`https://pandatur-api.com/api/users/${employee.id}`, {
-                    method: "GET",
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                        Origin: 'https://plutonium8t8.github.io',
-                    },
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    setRoles(data.roles);
-                } else {
-                    console.error(`Ошибка: ${response.status} - ${response.statusText}`);
-                }
+                const data = await api.users.getById(employee.id)
+
+                setRoles(data.roles);
+                
             } catch (error) {
                 console.error("Ошибка загрузки уведомлений:", error.message);
             }

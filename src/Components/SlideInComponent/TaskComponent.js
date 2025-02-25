@@ -3,6 +3,7 @@ import Cookies from "js-cookie";
 import { useUser } from "../../UserContext";
 import "./SlideInModal.css";
 import { translations } from "../utils/translations";
+import { api } from "../../api"
 
 const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
     const [tasks, setTasks] = useState([]);
@@ -175,22 +176,9 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
     };
 
     const fetchUsers = async () => {
+        
         try {
-            const token = Cookies.get("jwt");
-            const response = await fetch("https://pandatur-api.com/api/users-technician", {
-                method: "GET",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                    Origin: 'https://plutonium8t8.github.io',
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error(`Ошибка загрузки пользователей: ${response.status} - ${response.statusText}`);
-            }
-
-            const usersData = await response.json();
+            const usersData = await api.users.technician()
 
             // Корректное извлечение ID, имени и фамилии
             const formattedUsers = usersData.map((user) => ({

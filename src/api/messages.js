@@ -2,7 +2,7 @@ import { baseAxios } from "./baseAxios"
 
 export const messages = {
     list: async () => { 
-        const {data } = await baseAxios.get("/api/tickets")
+        const {data } = await baseAxios.get("/api/messages")
 
         return data
     },

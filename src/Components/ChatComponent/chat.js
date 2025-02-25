@@ -35,6 +35,7 @@ import { workflowOptions } from '../../FormOptions/WorkFlowOption';
 import { evaluareOdihnaOptions } from '../../FormOptions/EvaluareVacantaOptions';
 import { valutaOptions } from '../../FormOptions/ValutaOptions';
 import { ibanOptions } from '../../FormOptions/IbanOptions';
+import { api } from "../../api"
 
 const ChatComponent = ({ }) => {
     const { userId, hasRole, isLoadingRoles } = useUser();
@@ -944,29 +945,9 @@ const ChatComponent = ({ }) => {
         };
 
         try {
-            const token = Cookies.get('jwt');
 
-            if (!token) {
-                alert("Ошибка: отсутствует токен аутентификации.");
-                return;
-            }
-
-            const response = await fetch(`https://pandatur-api.com/api/users-extended/${selectedClient}`, {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                    Origin: 'https://plutonium8t8.github.io',
-                },
-                body: JSON.stringify(payload),
-            });
-
-            if (!response.ok) {
-                const errorText = await response.text(); // Получаем текст ошибки
-                throw new Error(`Ошибка при отправке данных: ${response.status} - ${errorText}`);
-            }
-
-            const result = await response.json();
+            const result = await api.users.updataExtended(selectedClient, payload)
+           
             console.log("Данные успешно обновлены:", result);
             alert("Личные данные успешно сохранены!");
 
@@ -984,24 +965,8 @@ const ChatComponent = ({ }) => {
 
     const fetchClientDataPersonal = async (selectedClient, setPersonalInfo) => {
         try {
-            const token = Cookies.get('jwt');
+            const data = await api.users.extended(selectedClient)
 
-            const response = await fetch(`https://pandatur-api.com/api/users-extended/${selectedClient}`, {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                    Origin: 'https://plutonium8t8.github.io',
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error(`Ошибка: ${response.status}`);
-            }
-
-            const data = await response.json();
-            // console.log('Полученные данные клиента:', data);
-
-            // Устанавливаем полученные данные в `personalInfo`
             setPersonalInfo(prev => ({
                 ...prev,
                 [selectedClient]: { ...data } // Обновляем данные для выбранного клиента
@@ -1106,26 +1071,12 @@ const ChatComponent = ({ }) => {
         }
 
         try {
-            const token = Cookies.get('jwt');
 
-            const response = await fetch("https://pandatur-api.com/api/users-client/merge", {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                    Origin: 'https://plutonium8t8.github.io',
-                },
-                body: JSON.stringify({
-                    old_user_id: oldUserId,
-                    new_user_id: newUserId
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error("Eroare la combinarea utilizatorilor");
-            }
-
-            const result = await response.json();
+            const result = await api.users.clientMerge({
+                old_user_id: oldUserId,
+                new_user_id: newUserId
+            })
+    
             alert("Utilizatorii au fost combinați cu succes!");
             console.log(result);
         } catch (error) {
