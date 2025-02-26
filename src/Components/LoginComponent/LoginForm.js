@@ -4,6 +4,7 @@ import Cookies from 'js-cookie';
 import { useUser } from '../../UserContext';
 import { api } from '../../api';
 import { showServerError } from '../utils/showServerError';
+import { useSnackbar } from 'notistack';
 
 
 const setCookieToken = (token) => {
@@ -20,6 +21,7 @@ const LoginForm = ({ onLoginSuccess }) => {
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { setUserId } = useUser();
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleInputChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -62,8 +64,8 @@ const LoginForm = ({ onLoginSuccess }) => {
         }
        
 
-    } catch (error) {
-        setMessage(showServerError(error));
+    } catch (error) { 
+      enqueueSnackbar(showServerError(error), {variant: "error"})
     } finally {
         setIsLoading(false);
     }
