@@ -1,6 +1,5 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
 import { useAppContext } from '../../AppContext'; // Подключаем AppContext
 import { translations } from '../utils/translations';
 import './SideBar.css';
@@ -15,6 +14,7 @@ import {
     FaSignOutAlt,
     FaUserSecret
 } from 'react-icons/fa';
+import { clearCookie } from "../../Components/utils/clearCookies"
 
 const CustomSidebar = ({ onOpenNotifications, onOpenTasks, onOpenAccount }) => {
     const location = useLocation();
@@ -32,12 +32,6 @@ const CustomSidebar = ({ onOpenNotifications, onOpenTasks, onOpenAccount }) => {
 
     const handleNavigate = (page) => {
         navigate(`/${page}`);
-    };
-
-    const handleLogOut = () => {
-        Cookies.remove('jwt');
-        Cookies.remove('PHPSESSID');
-        window.location.reload();
     };
 
     return (
@@ -105,7 +99,7 @@ const CustomSidebar = ({ onOpenNotifications, onOpenTasks, onOpenAccount }) => {
                 </div>
             </div>
             <div className="container-log-out">
-                <div className="menu-item" onClick={handleLogOut}>
+                <div className="menu-item" onClick={clearCookie}>
                     <FaSignOutAlt size={24} />
                     <span>{translations['Log Out'][language]}</span>
                 </div>

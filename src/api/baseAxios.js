@@ -1,5 +1,5 @@
 import axios from "axios"
-import { axiosInterceptor } from "./interceptors"
+import { authInterceptor, responseInterceptor } from "./interceptors"
 
 export const baseAxios = axios.create({
      baseURL: process.env.REACT_APP_API_URL,
@@ -10,4 +10,6 @@ export const baseAxios = axios.create({
       }
 })
 
-axiosInterceptor(baseAxios)
+baseAxios.interceptors.request.use(authInterceptor);
+baseAxios.interceptors.response.use(...responseInterceptor);
+
