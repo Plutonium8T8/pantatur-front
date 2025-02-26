@@ -39,7 +39,7 @@ import { ibanOptions } from '../../FormOptions/IbanOptions';
 const ChatComponent = ({ }) => {
     const { userId, hasRole, isLoadingRoles } = useUser();
     const [managerMessage, setManagerMessage] = useState('');
-    const { tickets, updateTicket, setTickets, messages, setMessages, markMessagesAsRead, socketRef } = useAppContext();
+    const { tickets, updateTicket, setTickets, messages, setMessages, markMessagesAsRead, socketRef, getClientMessagesSingle } = useAppContext();
     const [selectTicketId, setSelectTicketId] = useState(null);
     const [extraInfo, setExtraInfo] = useState({}); // Состояние для дополнительной информации каждого тикета
     const [personalInfo, setPersonalInfo] = useState({});
@@ -48,7 +48,6 @@ const ChatComponent = ({ }) => {
     const [isLoading, setIsLoading] = useState(false); // Состояние загрузки
     const [selectedTechnicianId, setSelectedTechnicianId] = useState('');
     const { enqueueSnackbar } = useSnackbar();
-    const navigate = useNavigate(); // Хук для навигации
     const [menuMessageId, setMenuMessageId] = useState(null);
     const [editMessageId, setEditMessageId] = useState(null);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -241,8 +240,11 @@ const ChatComponent = ({ }) => {
             console.warn('Тикет не найден!');
             setSelectedTechnicianId(null);
         }
-        // navigate(`/chat/${ticketId}`);
-        // Помечаем все сообщения как прочитанные (отправляем `seen`)
+
+        // 🔥 Передаем ticketId в getClientMessagesSingle
+        getClientMessagesSingle(ticketId);
+
+        // Помечаем сообщения как прочитанные
         markMessagesAsRead(ticketId);
     };
 
@@ -1272,6 +1274,19 @@ const ChatComponent = ({ }) => {
         }
     }, [messages, selectTicketId, markMessagesAsRead, userId]);
 
+    const formatTimeSent = (timeString) => {
+        if (!timeString || typeof timeString !== "string") return "—";
+
+        const [datePart, timePart] = timeString.split(" ");
+        if (!datePart || !timePart) return "—";
+
+        const [day, month, year] = datePart.split("/").map(Number);
+        const [hour, minute] = timePart.split(":").map(Number);
+
+        const date = new Date(year, month - 1, day, hour, minute);
+        return isNaN(date.getTime()) ? "—" : date.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" });
+    };
+
     return (
         <div className="chat-container">
             {/* Контейнер списка чатов */}
@@ -1307,23 +1322,9 @@ const ChatComponent = ({ }) => {
 
                         <div className="chat-item-container">
                             {sortedTickets.map(ticket => {
-                                const ticketMessages = messages.filter(msg => msg.ticket_id === ticket.id);
-                                const unreadCounts = ticketMessages.filter(
-                                    msg => msg.seen_by != null && msg.seen_by == '{}' && msg.sender_id !== 1 && msg.sender_id !== userId
-                                ).length;
-
-                                const lastMessage = ticketMessages.length
-                                    ? ticketMessages.reduce((latest, current) =>
-                                        new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
-                                    )
-                                    : { message: "", time_sent: null };
-
-                                const formattedTime = lastMessage.time_sent
-                                    ? new Date(lastMessage.time_sent).toLocaleTimeString("ru-RU", {
-                                        hour: "2-digit",
-                                        minute: "2-digit",
-                                    })
-                                    : null;
+                                const unreadCounts = ticket.unseen_count || 0; // Количество непрочитанных сообщений
+                                const lastMessage = ticket.last_message?.trim() || "No messages"; // Последнее сообщение
+                                const formattedTime = formatTimeSent(ticket.time_sent); // Исправленный формат времени
 
                                 const tags = parseTags(ticket.tags);
 
@@ -1367,14 +1368,8 @@ const ChatComponent = ({ }) => {
                                         <div className="container-time-tasks-chat">
                                             <div className="info-message">
                                                 <div className="last-message-container">
-                                                    <div className="last-message-ticket">
-                                                        {lastMessage?.mtype === 'text'
-                                                            ? lastMessage.message
-                                                            : lastMessage?.mtype
-                                                                ? getMessageTypeLabel(lastMessage.mtype)
-                                                                : "No messages"}
-                                                    </div>
-                                                    <div className='chat-time'>{formattedTime || "—"}</div>
+                                                    <div className="last-message-ticket">{lastMessage}</div>
+                                                    <div className='chat-time'>{formattedTime}</div>
                                                     {unreadCounts > 0 && (
                                                         <div className="unread-count">{unreadCounts}</div>
                                                     )}
@@ -1439,8 +1434,12 @@ const ChatComponent = ({ }) => {
                                 ? selectedTicket.client_id.toString().replace(/[{}]/g, "").split(',').map(id => Number(id))
                                 : [];
 
+                            // Оставляем в messages только сообщения, относящиеся к загруженным тикетам
                             const sortedMessages = messages
-                                .filter(msg => msg.ticket_id === selectTicketId)
+                                .filter((msg, index, self) =>
+                                    msg.ticket_id === selectTicketId &&
+                                    self.findIndex(m => m.id === msg.id) === index // Убираем дубликаты
+                                )
                                 .sort((a, b) => new Date(a.time_sent) - new Date(b.time_sent));
 
                             const groupedMessages = sortedMessages.reduce((acc, msg) => {
