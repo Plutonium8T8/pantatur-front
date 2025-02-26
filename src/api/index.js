@@ -8,6 +8,7 @@ import { technicians } from "./technicians"
  import { dashboard } from "./dashboard"
  import { task } from "./task"
  import { notification } from "./notification"
+ import { standalone } from "./standalone"
  
 export const api = {
     auth,
@@ -19,5 +20,6 @@ export const api = {
     user,
     dashboard,
     task,
-    notification
+    notification,
+    standalone
 }

@@ -15,7 +15,6 @@ import { evaluareOdihnaOptions } from '../../FormOptions/EvaluareVacantaOptions'
 import { valutaOptions } from '../../FormOptions/ValutaOptions';
 import { ibanOptions } from '../../FormOptions/IbanOptions';
 import CustomMultiSelect from "../MultipleSelect/MultipleSelect";
-import Cookies from "js-cookie";
 import "./Modal.css";
 import { translations } from "../utils/translations";
 import { api } from "../../api"
@@ -88,19 +87,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
         console.log("🚀 Отправляем данные в API:", formattedFilters);
 
         try {
-            const token = Cookies.get("jwt");
-            const response = await fetch("https://pandatur-api.com/api/apply-filter", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify(formattedFilters),
-            });
-
-            if (!response.ok) throw new Error(`Ошибка: ${response.status}`);
-
-            let ticketData = await response.json();
+            const ticketData = await api.standalone.applyFilter(formattedFilters)
             const ticketIds = ticketData.flat().map(ticket => ticket.id);
 
             console.log("✅ Отфильтрованные ID тикетов:", ticketIds);
