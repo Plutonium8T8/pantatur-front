@@ -5,6 +5,7 @@ import { users } from "./users"
 import { technicians } from "./technicians"
  import { admin } from "./admin"
  import { user } from "./user"
+ import { dashboard } from "./dashboard"
 
 export const api = {
     auth,
@@ -13,5 +14,6 @@ export const api = {
     users,
     technicians,
     admin,
-    user
+    user,
+    dashboard
 }

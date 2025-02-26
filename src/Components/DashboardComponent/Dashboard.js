@@ -3,7 +3,6 @@ import { Bar, Pie, Line, PolarArea } from "react-chartjs-2";
 import GridLayout from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
-import Cookies from "js-cookie";
 import { translations } from '../utils/translations';
 import {
   Chart as ChartJS,
@@ -18,6 +17,7 @@ import {
   ArcElement,
   RadialLinearScale,
 } from "chart.js";
+import { api } from "../../api"
 
 ChartJS.register(
   CategoryScale,
@@ -78,6 +78,10 @@ const workflowColors = {
   "Ofertă trimisă": { background: "rgba(155, 89, 182, 0.5)", border: "rgba(155, 89, 182, 1)" }, // Violet
 };
 
+const preventServerError = (data) => {
+  return typeof data === "string" ? [] : data
+}
+
 const Dashboard = () => {
   const [statistics, setStatistics] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -87,22 +91,10 @@ const Dashboard = () => {
   const fetchStatistics = useCallback(async () => {
     setIsLoading(true);
     try {
-      const token = Cookies.get("jwt");
-      const response = await fetch(
-        "https://pandatur-api.com/api/dashboard/statistics",
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        }
-      );
-      if (!response.ok) throw new Error("Failed to fetch statistics.");
-      const statsData = await response.json();
-      console.log(statsData[0]);
-      setStatistics(statsData[0] || []); 
+
+      const statsData = await api.dashboard.statistics()
+
+      setStatistics(preventServerError(statsData[0])); 
     } catch (error) {
       console.error("Error fetching statistics:", error);
       setStatistics([]);
@@ -188,7 +180,7 @@ const Dashboard = () => {
     3
   ];
 
-  const layout = statistics.map((_, index) => ({
+  const layout = statistics?.map((_, index) => ({
     i: `${index + 1}`,
     x: positionX[index] - 1,
     y: positionY[index] - 1,
@@ -232,7 +224,7 @@ const Dashboard = () => {
         isResizable={true}
         isDraggable={true}
       >
-        {statistics.map((statArray, index) => {
+        {statistics?.map((statArray, index) => {
           const chartType = layout[index].type;
           const ChartComponent = chartComponents[chartType];
           const chartLabel = layout[index].label;
