@@ -41,7 +41,7 @@ import { showServerError } from "../../Components/utils/showServerError"
 const ChatComponent = ({ }) => {
     const { userId, hasRole, isLoadingRoles } = useUser();
     const [managerMessage, setManagerMessage] = useState('');
-    const { tickets, updateTicket, setTickets, messages, setMessages, markMessagesAsRead, socketRef } = useAppContext();
+    const { tickets, updateTicket, setTickets, messages, setMessages, markMessagesAsRead, socketRef, getClientMessagesSingle } = useAppContext();
     const [selectTicketId, setSelectTicketId] = useState(null);
     const [extraInfo, setExtraInfo] = useState({}); // Состояние для дополнительной информации каждого тикета
     const [personalInfo, setPersonalInfo] = useState({});
@@ -50,7 +50,6 @@ const ChatComponent = ({ }) => {
     const [isLoading, setIsLoading] = useState(false); // Состояние загрузки
     const [selectedTechnicianId, setSelectedTechnicianId] = useState('');
     const { enqueueSnackbar } = useSnackbar();
-    const navigate = useNavigate(); // Хук для навигации
     const [menuMessageId, setMenuMessageId] = useState(null);
     const [editMessageId, setEditMessageId] = useState(null);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -197,7 +196,7 @@ const ChatComponent = ({ }) => {
         }
     };
 
-    const handleTicketClick = (ticketId) => {
+    const handleTicketClick = async (ticketId) => {
         setSelectTicketId(ticketId);
 
         const selectedTicket = tickets.find((ticket) => ticket.id === ticketId);
@@ -208,8 +207,30 @@ const ChatComponent = ({ }) => {
             console.warn('Тикет не найден!');
             setSelectedTechnicianId(null);
         }
-        // navigate(`/chat/${ticketId}`);
-        // Помечаем все сообщения как прочитанные (отправляем `seen`)
+
+        try {
+            // 🔥 Загружаем сообщения для тикета
+            const messages = await getClientMessagesSingle(ticketId);
+
+            if (messages && messages.length > 0) {
+                const latestMessage = messages.reduce((latest, current) =>
+                    new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
+                );
+
+                // 🔥 Обновляем last_message и time_sent у тикета
+                setTickets((prevTickets) =>
+                    prevTickets.map((ticket) =>
+                        ticket.id === ticketId
+                            ? { ...ticket, last_message: latestMessage.message, time_sent: latestMessage.time_sent }
+                            : ticket
+                    )
+                );
+            }
+        } catch (error) {
+            console.error("Ошибка загрузки сообщений:", error);
+        }
+
+        // Помечаем сообщения как прочитанные
         markMessagesAsRead(ticketId);
     };
 
@@ -1155,6 +1176,21 @@ const ChatComponent = ({ }) => {
         }
     }, [messages, selectTicketId, markMessagesAsRead, userId]);
 
+    const formatTimeSent = (time) => {
+        if (!time) return "—"; // Отображаем линию, если времени нет
+        const [date, timePart] = time.split(" ");
+        const [day, month, year] = date.split("-"); // Парсим дату вручную
+        const formattedDate = `${year}-${month}-${day}T${timePart}`; // Собираем в ISO-формат
+        const parsedDate = new Date(formattedDate);
+
+        if (isNaN(parsedDate.getTime())) return "—"; // Если не получилось распарсить
+
+        return parsedDate.toLocaleTimeString("ru-RU", {
+            hour: "2-digit",
+            minute: "2-digit"
+        });
+    };
+
     return (
         <div className="chat-container">
             {/* Контейнер списка чатов */}
@@ -1190,23 +1226,21 @@ const ChatComponent = ({ }) => {
 
                         <div className="chat-item-container">
                             {sortedTickets.map(ticket => {
+                                const unreadCounts = ticket.unseen_count || 0;
+
+                                // Фильтруем сообщения по тикету
                                 const ticketMessages = messages.filter(msg => msg.ticket_id === ticket.id);
-                                const unreadCounts = ticketMessages.filter(
-                                    msg => msg.seen_by != null && msg.seen_by == '{}' && msg.sender_id !== 1 && msg.sender_id !== userId
-                                ).length;
 
-                                const lastMessage = ticketMessages.length
-                                    ? ticketMessages.reduce((latest, current) =>
-                                        new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
-                                    )
-                                    : { message: "", time_sent: null };
-
-                                const formattedTime = lastMessage.time_sent
-                                    ? new Date(lastMessage.time_sent).toLocaleTimeString("ru-RU", {
-                                        hour: "2-digit",
-                                        minute: "2-digit",
-                                    })
+                                // ✅ Находим самое свежее сообщение из загруженных сообщений
+                                const lastLoadedMessage = ticketMessages.length
+                                    ? ticketMessages.sort((a, b) => new Date(b.time_sent) - new Date(a.time_sent))[0]
                                     : null;
+
+                                // ✅ Выбираем, какое последнее сообщение показать (загруженное или из тикета)
+                                const lastMessage = lastLoadedMessage?.message || ticket.last_message || "No messages";
+
+                                // ✅ Аналогично для времени
+                                const formattedTime = formatTimeSent(lastLoadedMessage?.time_sent || ticket.time_sent);
 
                                 const tags = parseTags(ticket.tags);
 
@@ -1250,14 +1284,8 @@ const ChatComponent = ({ }) => {
                                         <div className="container-time-tasks-chat">
                                             <div className="info-message">
                                                 <div className="last-message-container">
-                                                    <div className="last-message-ticket">
-                                                        {lastMessage?.mtype === 'text'
-                                                            ? lastMessage.message
-                                                            : lastMessage?.mtype
-                                                                ? getMessageTypeLabel(lastMessage.mtype)
-                                                                : "No messages"}
-                                                    </div>
-                                                    <div className='chat-time'>{formattedTime || "—"}</div>
+                                                    <div className="last-message-ticket">{lastMessage}</div>
+                                                    <div className='chat-time'>{formattedTime}</div>
                                                     {unreadCounts > 0 && (
                                                         <div className="unread-count">{unreadCounts}</div>
                                                     )}
@@ -1322,21 +1350,24 @@ const ChatComponent = ({ }) => {
                                 ? selectedTicket.client_id.toString().replace(/[{}]/g, "").split(',').map(id => Number(id))
                                 : [];
 
+                            // Оставляем в messages только сообщения, относящиеся к загруженным тикетам
                             const sortedMessages = messages
-                                .filter(msg => msg.ticket_id === selectTicketId)
+                                .filter((msg, index, self) =>
+                                    msg.ticket_id === selectTicketId &&
+                                    self.findIndex(m => m.id === msg.id) === index // Убираем дубликаты
+                                )
                                 .sort((a, b) => new Date(a.time_sent) - new Date(b.time_sent));
 
                             const groupedMessages = sortedMessages.reduce((acc, msg) => {
-                                const messageDate = new Date(msg.time_sent).toLocaleDateString("ru-RU", {
-                                    year: "numeric",
-                                    month: "long",
-                                    day: "numeric",
-                                });
+                                const [date] = msg.time_sent.split(" "); // Разделяем дату и время
+                                const [day, month, year] = date.split("-"); // Разбираем вручную
+                                const formattedDate = `${day} ${new Date(`${year}-${month}-${day}`).toLocaleString("ru-RU", { month: "long", year: "numeric" })}`;
 
-                                if (!acc[messageDate]) acc[messageDate] = [];
-                                acc[messageDate].push(msg);
+                                if (!acc[formattedDate]) acc[formattedDate] = [];
+                                acc[formattedDate].push(msg);
                                 return acc;
                             }, {});
+
 
                             return Object.entries(groupedMessages).map(([date, msgs]) => {
                                 let groupedByClient = [];
@@ -1432,7 +1463,6 @@ const ChatComponent = ({ }) => {
                                                                     <div className="text">
                                                                         {renderContent()}
                                                                         <div className="message-time">
-                                                                            {/* Отображаем имя только если сообщение от клиента */}
                                                                             {msg.sender_id !== 1 && msg.sender_id !== userId && (
                                                                                 <span className="client-name">
                                                                                     {personalInfo[msg.client_id]?.name || ""} {personalInfo[msg.client_id]?.surname || ""}
@@ -1440,17 +1470,12 @@ const ChatComponent = ({ }) => {
                                                                             )}
                                                                             <div
                                                                                 className="reaction-toggle-button"
-                                                                                onClick={() =>
-                                                                                    setSelectedMessageId(selectedMessageId === msg.id ? null : msg.id)
-                                                                                }
+                                                                                onClick={() => setSelectedMessageId(selectedMessageId === msg.id ? null : msg.id)}
                                                                             >
                                                                                 {lastReaction || "☺"}
                                                                             </div>
                                                                             <div className='time-messages'>
-                                                                                {new Date(msg.time_sent).toLocaleTimeString("ru-RU", {
-                                                                                    hour: "2-digit",
-                                                                                    minute: "2-digit",
-                                                                                })}
+                                                                                {formatTimeSent(msg.time_sent)}
                                                                             </div>
                                                                         </div>
                                                                         {selectedMessageId === msg.id && (
