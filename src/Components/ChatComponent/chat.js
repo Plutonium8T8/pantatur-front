@@ -208,7 +208,7 @@ const ChatComponent = ({ }) => {
             console.warn('Тикет не найден!');
             setSelectedTechnicianId(null);
         }
-        navigate(`/chat/${ticketId}`);
+        // navigate(`/chat/${ticketId}`);
         // Помечаем все сообщения как прочитанные (отправляем `seen`)
         markMessagesAsRead(ticketId);
     };
@@ -1094,21 +1094,17 @@ const ChatComponent = ({ }) => {
             ).time_sent;
         };
 
-        // 6️⃣ Разделяем выбранный тикет и остальные
-        const selectedTicket = filtered.find(ticket => ticket.id === selectTicketId);
-        let otherTickets = filtered.filter(ticket => ticket.id !== selectTicketId);
-
-        // 7️⃣ Сортировка по последнему сообщению (по убыванию)
-        otherTickets.sort((a, b) => {
+        // 6️⃣ Сортировка по последнему сообщению (по убыванию)
+        filtered.sort((a, b) => {
             const lastMessageA = getLastMessageTime(a.id);
             const lastMessageB = getLastMessageTime(b.id);
 
             return new Date(lastMessageB) - new Date(lastMessageA);
         });
 
-        console.log("✅ Итоговый список тикетов:", selectedTicket ? [selectedTicket, ...otherTickets] : otherTickets);
-        return selectedTicket ? [selectedTicket, ...otherTickets] : otherTickets;
-    }, [tickets, messages, filteredTicketIds, appliedFilters, showMyTickets, searchQuery, selectTicketId, userId]);
+        console.log("✅ Итоговый список тикетов:", filtered);
+        return filtered;
+    }, [tickets, messages, filteredTicketIds, appliedFilters, showMyTickets, searchQuery, userId]);
 
 
     // useEffect(() => {
