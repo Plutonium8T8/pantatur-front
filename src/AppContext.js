@@ -226,7 +226,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         return null;
       }
 
-      const response = await fetch(`https://pandatur-api.com/api/tickets/${ticketId}`, {
+      const response = await fetch(`https://pandatur-api.com/api/light/ticket/${ticketId}`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
