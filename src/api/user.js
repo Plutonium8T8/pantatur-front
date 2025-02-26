@@ -1,26 +1,27 @@
-import { baseAxios } from "./baseAxios"
+import { baseAxios } from "./baseAxios";
 
 export const user = {
-    groupsList: async () => {
-        const { data } = await baseAxios.get("/api/user-groups")
+  groupsList: async () => {
+    const { data } = await baseAxios.get("/api/user-groups");
 
-        return data
-    },
+    return data;
+  },
 
-    addGroup: async (body) => {
-        const { data } = await baseAxios.post("/api/user-groups", body)
+  addGroup: async (body) => {
+    const { data } = await baseAxios.post("/api/user-groups", body);
 
-        return data
-    },
+    return data;
+  },
 
-    assignGroups: async (groupId, userId) => {
-        const { data } = await baseAxios.patch(`api/user-groups/${groupId}/assign/${userId}`)
+  assignGroups: async (groupId, userId) => {
+    const { data } = await baseAxios.patch(
+      `api/user-groups/${groupId}/assign/${userId}`,
+    );
 
-        return data
-    },
+    return data;
+  },
 
-    deleteGroups: async (id) => {
-        await baseAxios.delete(`api/user-groups/${id}`)
-
-    }
-}
+  deleteGroups: async (id) => {
+    await baseAxios.delete(`api/user-groups/${id}`);
+  },
+};

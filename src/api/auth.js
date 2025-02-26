@@ -1,23 +1,21 @@
-import { baseAxios } from "./baseAxios"
-
+import { baseAxios } from "./baseAxios";
 
 export const auth = {
-    login: async (body) => {
-        const {data} = await baseAxios.post("/api/login", body)
+  login: async (body) => {
+    const { data } = await baseAxios.post("/api/login", body);
 
-        return data
-    },
+    return data;
+  },
 
-    register: async (body) => {
-        const {data} = await baseAxios.post("/api/register", body)
+  register: async (body) => {
+    const { data } = await baseAxios.post("/api/register", body);
 
-        return data
-    },
+    return data;
+  },
 
-    session: async () => {
-        const {data} = await baseAxios.get("/session")
+  session: async () => {
+    const { data } = await baseAxios.get("/session");
 
-        return data
-    }
-    
-}
+    return data;
+  },
+};
