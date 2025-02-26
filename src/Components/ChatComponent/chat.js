@@ -1209,21 +1209,17 @@ const ChatComponent = ({ }) => {
             ).time_sent;
         };
 
-        // 6️⃣ Разделяем выбранный тикет и остальные
-        const selectedTicket = filtered.find(ticket => ticket.id === selectTicketId);
-        let otherTickets = filtered.filter(ticket => ticket.id !== selectTicketId);
-
-        // 7️⃣ Сортировка по последнему сообщению (по убыванию)
-        otherTickets.sort((a, b) => {
+        // 6️⃣ Сортировка по последнему сообщению (по убыванию)
+        filtered.sort((a, b) => {
             const lastMessageA = getLastMessageTime(a.id);
             const lastMessageB = getLastMessageTime(b.id);
 
             return new Date(lastMessageB) - new Date(lastMessageA);
         });
 
-        console.log("✅ Итоговый список тикетов:", selectedTicket ? [selectedTicket, ...otherTickets] : otherTickets);
-        return selectedTicket ? [selectedTicket, ...otherTickets] : otherTickets;
-    }, [tickets, messages, filteredTicketIds, appliedFilters, showMyTickets, searchQuery, selectTicketId, userId]);
+        console.log("✅ Итоговый список тикетов:", filtered);
+        return filtered;
+    }, [tickets, messages, filteredTicketIds, appliedFilters, showMyTickets, searchQuery, userId]);
 
 
     // useEffect(() => {
@@ -1274,6 +1270,16 @@ const ChatComponent = ({ }) => {
         }
     }, [messages, selectTicketId, markMessagesAsRead, userId]);
 
+    const formatDateString = (dateString) => {
+        const parts = dateString.split(" ");
+        if (parts.length !== 2) return null;
+
+        const [date, time] = parts;
+        const [day, month, year] = date.split("-");
+
+        return `${year}-${month}-${day}T${time}`;
+    };
+
     return (
         <div className="chat-container">
             {/* Контейнер списка чатов */}
@@ -1314,18 +1320,31 @@ const ChatComponent = ({ }) => {
                                     msg => msg.seen_by != null && msg.seen_by == '{}' && msg.sender_id !== 1 && msg.sender_id !== userId
                                 ).length;
 
+                                const parseDate = (dateString) => {
+                                    if (!dateString) return null;
+                                    const parts = dateString.split(" ");
+                                    if (parts.length !== 2) return null;
+
+                                    const [date, time] = parts;
+                                    const [day, month, year] = date.split("-");
+
+                                    return new Date(`${year}-${month}-${day}T${time}`);
+                                };
+
                                 const lastMessage = ticketMessages.length
                                     ? ticketMessages.reduce((latest, current) =>
-                                        new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
+                                        parseDate(current.time_sent) > parseDate(latest.time_sent) ? current : latest
                                     )
                                     : { message: "", time_sent: null };
 
+
                                 const formattedTime = lastMessage.time_sent
-                                    ? new Date(lastMessage.time_sent).toLocaleTimeString("ru-RU", {
+                                    ? parseDate(lastMessage.time_sent)?.toLocaleTimeString("ru-RU", {
                                         hour: "2-digit",
                                         minute: "2-digit",
-                                    })
-                                    : null;
+                                    }) || "—"
+                                    : "—";
+
 
                                 const tags = parseTags(ticket.tags);
 
@@ -1441,16 +1460,28 @@ const ChatComponent = ({ }) => {
                                 ? selectedTicket.client_id.toString().replace(/[{}]/g, "").split(',').map(id => Number(id))
                                 : [];
 
+                            const parseDate = (dateString) => {
+                                if (!dateString) return null;
+                                const parts = dateString.split(" ");
+                                if (parts.length !== 2) return null;
+
+                                const [date, time] = parts;
+                                const [day, month, year] = date.split("-");
+
+                                return new Date(`${year}-${month}-${day}T${time}`);
+                            };
+
                             const sortedMessages = messages
                                 .filter(msg => msg.ticket_id === selectTicketId)
-                                .sort((a, b) => new Date(a.time_sent) - new Date(b.time_sent));
+                                .sort((a, b) => parseDate(a.time_sent) - parseDate(b.time_sent));
+
 
                             const groupedMessages = sortedMessages.reduce((acc, msg) => {
-                                const messageDate = new Date(msg.time_sent).toLocaleDateString("ru-RU", {
+                                const messageDate = parseDate(msg.time_sent)?.toLocaleDateString("ru-RU", {
                                     year: "numeric",
                                     month: "long",
                                     day: "numeric",
-                                });
+                                }) || "—";
 
                                 if (!acc[messageDate]) acc[messageDate] = [];
                                 acc[messageDate].push(msg);
@@ -1566,10 +1597,10 @@ const ChatComponent = ({ }) => {
                                                                                 {lastReaction || "☺"}
                                                                             </div>
                                                                             <div className='time-messages'>
-                                                                                {new Date(msg.time_sent).toLocaleTimeString("ru-RU", {
+                                                                                {parseDate(msg.time_sent)?.toLocaleTimeString("ru-RU", {
                                                                                     hour: "2-digit",
                                                                                     minute: "2-digit",
-                                                                                })}
+                                                                                }) || "—"}
                                                                             </div>
                                                                         </div>
                                                                         {selectedMessageId === msg.id && (
