@@ -346,11 +346,27 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       const data = await response.json();
 
       setMessages(prevMessages => {
-        // Убираем дубликаты сообщений
         const existingMessageIds = new Set(prevMessages.map(msg => msg.id));
         const newMessages = data.filter(msg => !existingMessageIds.has(msg.id));
+        const updatedMessages = [...prevMessages, ...newMessages];
 
-        return [...prevMessages, ...newMessages]; // Добавляем новые сообщения
+        // ✅ Определяем самое свежее сообщение
+        const lastMsg = updatedMessages.sort((a, b) => new Date(b.time_sent) - new Date(a.time_sent))[0];
+
+        // ✅ Обновляем тикет, если новое последнее сообщение свежее
+        setTickets(prevTickets =>
+          prevTickets.map(ticket =>
+            ticket.id === ticket_id
+              ? {
+                ...ticket,
+                last_message: lastMsg?.message || ticket.last_message,
+                time_sent: lastMsg?.time_sent || ticket.time_sent,
+              }
+              : ticket
+          )
+        );
+
+        return updatedMessages;
       });
 
       console.log("Сообщения загружены:", data);
@@ -364,29 +380,23 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     switch (message.type) {
       case 'message': {
         console.log("Новое сообщение из WebSocket:", message.data);
-
         const ticketId = message.data.ticket_id;
 
-        // Делаем запрос на обновление сообщений, но не затираем старые
+        // ✅ Запрос на обновление сообщений (не затираем старые)
         getClientMessagesSingle(ticketId)
-          .then(() => {
-            console.log(`Сообщения для тикета ${ticketId} обновлены.`);
-          })
-          .catch((err) => {
-            console.error("Ошибка при обновлении сообщений с сервера:", err);
-          });
+          .then(() => console.log(`Сообщения для тикета ${ticketId} обновлены.`))
+          .catch(err => console.error("Ошибка при обновлении сообщений с сервера:", err));
 
-        // Добавляем сообщение в state, если его еще нет
-        setMessages((prevMessages) => {
+        setMessages(prevMessages => {
           if (!prevMessages.some(msg => msg.id === message.data.id)) {
             return [...prevMessages, message.data];
           }
           return prevMessages;
         });
 
-        // 🔄 Обновляем последнее сообщение и время в соответствующем тикете
-        setTickets((prevTickets) =>
-          prevTickets.map((ticket) =>
+        // ✅ Обновляем последнее сообщение в тикете
+        setTickets(prevTickets =>
+          prevTickets.map(ticket =>
             ticket.id === ticketId
               ? {
                 ...ticket,
@@ -397,38 +407,6 @@ export const AppProvider = ({ children, isLoggedIn }) => {
           )
         );
 
-        // Проверяем, связан ли тикет с текущим пользователем
-        const ticket = ticketsRef.current.find(
-          (t) => t.client_id === message.data.client_id
-        );
-
-        if (ticket && ticket.technician_id === userId) {
-          const messageText = truncateText(message.data.message, 40);
-
-          enqueueSnackbar(
-            '', // Текст можно оставить пустым, так как используется кастомное отображение
-            {
-              variant: 'info',
-              action: (snackbarId) => (
-                <div className="snack-bar-notification">
-                  <div className="snack-object" onClick={() => closeSnackbar(snackbarId)}>
-                    <div className="snack-icon">
-                      <FaEnvelope />
-                    </div>
-                    <div className="snack-message">
-                      <strong>Клиент {message.data.client_id}</strong>: {messageText}
-                    </div>
-                  </div>
-                  <div className="snack-close">
-                    <button onClick={() => closeSnackbar(snackbarId)}>
-                      <FaTrash />
-                    </button>
-                  </div>
-                </div>
-              ),
-            }
-          );
-        }
         break;
       }
       case 'seen': {

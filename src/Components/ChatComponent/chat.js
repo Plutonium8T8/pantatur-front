@@ -1343,21 +1343,21 @@ const ChatComponent = ({ }) => {
 
                         <div className="chat-item-container">
                             {sortedTickets.map(ticket => {
-                                const unreadCounts = ticket.unseen_count || 0; // Количество непрочитанных сообщений
+                                const unreadCounts = ticket.unseen_count || 0;
 
-                                // Если тикет открыт, используем последнее загруженное сообщение, иначе берем из тикета
-                                const lastMessage = ticket.id === selectTicketId && messages.length
-                                    ? messages
-                                        .filter(msg => msg.ticket_id === ticket.id)
-                                        .sort((a, b) => new Date(b.time_sent) - new Date(a.time_sent))[0]?.message || "No messages"
-                                    : ticket.last_message?.trim() || "No messages";
+                                // Фильтруем сообщения по тикету
+                                const ticketMessages = messages.filter(msg => msg.ticket_id === ticket.id);
 
-                                // Аналогично, обновляем время
-                                const formattedTime = ticket.id === selectTicketId && messages.length
-                                    ? formatTimeSent(messages
-                                        .filter(msg => msg.ticket_id === ticket.id)
-                                        .sort((a, b) => new Date(b.time_sent) - new Date(a.time_sent))[0]?.time_sent)
-                                    : formatTimeSent(ticket.time_sent);
+                                // ✅ Находим самое свежее сообщение из загруженных сообщений
+                                const lastLoadedMessage = ticketMessages.length
+                                    ? ticketMessages.sort((a, b) => new Date(b.time_sent) - new Date(a.time_sent))[0]
+                                    : null;
+
+                                // ✅ Выбираем, какое последнее сообщение показать (загруженное или из тикета)
+                                const lastMessage = lastLoadedMessage?.message || ticket.last_message || "No messages";
+
+                                // ✅ Аналогично для времени
+                                const formattedTime = formatTimeSent(lastLoadedMessage?.time_sent || ticket.time_sent);
 
                                 const tags = parseTags(ticket.tags);
 
@@ -1476,16 +1476,15 @@ const ChatComponent = ({ }) => {
                                 .sort((a, b) => new Date(a.time_sent) - new Date(b.time_sent));
 
                             const groupedMessages = sortedMessages.reduce((acc, msg) => {
-                                const messageDate = new Date(msg.time_sent).toLocaleDateString("ru-RU", {
-                                    year: "numeric",
-                                    month: "long",
-                                    day: "numeric",
-                                });
+                                const [date] = msg.time_sent.split(" "); // Разделяем дату и время
+                                const [day, month, year] = date.split("-"); // Разбираем вручную
+                                const formattedDate = `${day} ${new Date(`${year}-${month}-${day}`).toLocaleString("ru-RU", { month: "long", year: "numeric" })}`;
 
-                                if (!acc[messageDate]) acc[messageDate] = [];
-                                acc[messageDate].push(msg);
+                                if (!acc[formattedDate]) acc[formattedDate] = [];
+                                acc[formattedDate].push(msg);
                                 return acc;
                             }, {});
+
 
                             return Object.entries(groupedMessages).map(([date, msgs]) => {
                                 let groupedByClient = [];
