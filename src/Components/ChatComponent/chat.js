@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { FaArrowLeft, FaArrowRight, FaFile, FaPaperPlane, FaSmile } from 'react-icons/fa';
 import Select from '../SelectComponent/SelectComponent';
 import { useUser } from '../../UserContext';
@@ -28,13 +28,16 @@ import { translations } from '../utils/translations';
 import TicketFilterModal from '../LeadsComponent/TicketFilterModal';
 import { FaFacebook, FaInstagram, FaWhatsapp, FaTelegram } from "react-icons/fa";
 import { SiViber } from "react-icons/si";
-import { useLocation } from 'react-router-dom';
 import TaskModal from '../SlideInComponent/TaskComponent';
 import { FaTasks } from 'react-icons/fa';
 import { workflowOptions } from '../../FormOptions/WorkFlowOption';
 import { evaluareOdihnaOptions } from '../../FormOptions/EvaluareVacantaOptions';
 import { valutaOptions } from '../../FormOptions/ValutaOptions';
 import { ibanOptions } from '../../FormOptions/IbanOptions';
+
+const getIdFromURL = (pathname) => {
+    return pathname.startsWith("/chat") ? pathname.split("/")[2] : false
+  }
 
 const ChatComponent = ({ }) => {
     const { userId, hasRole, isLoadingRoles } = useUser();
@@ -71,6 +74,8 @@ const ChatComponent = ({ }) => {
     const [activeTab, setActiveTab] = useState("extraForm"); // По умолчанию вкладка Extra Form
     const [filteredTicketIds, setFilteredTicketIds] = useState(null);
     const [isAdmin, setIsAdmin] = useState(false);
+    const navigate = useNavigate()
+    const { pathname } = useLocation()
 
     const platformIcons = {
         "facebook": <FaFacebook />,
@@ -103,6 +108,16 @@ const ChatComponent = ({ }) => {
             setSelectTicketId(Number(ticketId));
         }
     }, [ticketId, setSelectTicketId]);
+
+
+    useEffect(() => {
+        const ticketId = getIdFromURL(pathname)
+        
+        if(ticketId){
+          getClientMessagesSingle(ticketId)
+        }
+   
+     }, [])
 
     // Прокручиваем к активному чату, если selectTicketId изменился и тикеты загружены
     // useEffect(() => {
@@ -230,6 +245,8 @@ const ChatComponent = ({ }) => {
     };
 
     const handleTicketClick = async (ticketId) => {
+
+        navigate(`/chat/${ticketId}`)
         setSelectTicketId(ticketId);
 
         const selectedTicket = tickets.find((ticket) => ticket.id === ticketId);
@@ -1360,7 +1377,10 @@ const ChatComponent = ({ }) => {
                                 const tags = parseTags(ticket.tags);
 
                                 return (
-                                    <div
+                                    // <Link to={`/chat/${ticket.id}`}>
+                                    
+                                    
+                                    <div 
                                         key={ticket.id}
                                         className={`chat-item ${ticket.id === selectTicketId ? "active" : ""}`}
                                         onClick={() => handleTicketClick(ticket.id)}
@@ -1408,6 +1428,7 @@ const ChatComponent = ({ }) => {
                                             </div>
                                         </div>
                                     </div>
+                                    // </Link>
                                 );
                             })}
                         </div>

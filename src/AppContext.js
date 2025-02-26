@@ -5,8 +5,13 @@ import { FaEnvelope, FaTrash } from 'react-icons/fa';
 import { useUser } from './UserContext';
 import { truncateText } from './stringUtils';
 import { translations } from './Components/utils/translations';
+import { useLocation } from "react-router-dom"
 
 const AppContext = createContext();
+
+const getIdFromURL = (pathname) => {
+  return pathname.startsWith("/chat") ? pathname.split("/")[2] : false
+}
 
 export const useAppContext = () => useContext(AppContext);
 
@@ -23,6 +28,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   const ticketsRef = useRef(tickets);
   const [unreadMessages, setUnreadMessages] = useState(new Map()); // Оптимизированное хранение непрочитанных сообщений
   const language = localStorage.getItem('language') || 'RO';
+  const { pathname } = useLocation();
 
   useEffect(() => {
     let pingInterval;
@@ -331,6 +337,17 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   // };
 
   // Функция для получения сообщений для конкретного client_id
+
+
+  useEffect(() => {
+     const ticketId = getIdFromURL(pathname)
+     
+     if(ticketId){
+       getClientMessagesSingle(ticketId)
+     }
+
+  }, [])
+
   const getClientMessagesSingle = async (ticket_id) => {
     console.log("Загружаем сообщения для тикета:", ticket_id);
     try {

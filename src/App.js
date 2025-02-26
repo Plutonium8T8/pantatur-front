@@ -123,7 +123,7 @@ function App() {
                       <Route path="/dashboard" element={<Dashboard />} />
                       <Route path="/" element={<Navigate to="/leads" />} />
                       <Route path="/leads" element={<Leads />} />
-                      <Route path="/chat/:ticketId?" element={<ChatComponent />} />
+                      <Route path="/chat/:ticketId" element={<ChatComponent />} />
                       <Route path="/admin-panel" element={hasRole("ROLE_ADMIN") ? <AdminPanel /> : <NoAccess />} />
                       <Route path="*" element={<Navigate to="/index.html" />} />
                     </Routes>
