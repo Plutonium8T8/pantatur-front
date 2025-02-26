@@ -2,7 +2,7 @@ import Cookies from "js-cookie";
 import { clearCookies } from "../Components/utils/clearCookies"
 
 const STATUS_CODE = [401, 403];
-const ERROR_MESSAGES = ["Invalid JWT Token"];
+const ERROR_MESSAGES = ["Invalid JWT Token", "Invalid credentials."];
 
 export const authInterceptor = (config) => {
   if (!config.headers) config.headers = {};

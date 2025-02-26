@@ -1,39 +1,54 @@
-import {  baseAxios } from "./baseAxios"
+import { baseAxios } from "./baseAxios";
 
 export const users = {
-    getById: async (id) => {
-        const { data } = await baseAxios.get(`/api/users/${id}`)
+  getById: async (id) => {
+    const { data } = await baseAxios.get(`/api/users/${id}`);
 
-        return data
-    },
+    return data;
+  },
 
-    technician: async () => {
-        const { data } = await baseAxios.get("/api/users-technician")
+  technician: async () => {
+    const { data } = await baseAxios.get("/api/users-technician");
 
-        return data
-    },
+    return data;
+  },
 
-    extended: async (selectClient) => {
-        const { data } = await baseAxios.get(`/api/users-extended/${selectClient}`)
+  getTechnicianById: async (id) => {
+    const { data } = await baseAxios.get(`/api/users-technician/${id}`);
 
-        return data
-    },
+    return data;
+  },
 
-    updataExtended: async (selectClient, body) => {
-        const { data } = await baseAxios.patch(`/api/users-extended/${selectClient}`, body)
+  updateTechnician: async (id, body) => {
+    const { data } = await baseAxios.patch(`/api/users-technician/${id}`, body);
 
-        return data
-    },
+    return data;
+  },
 
-    updateUsernameAndEmail: async (id, body) => {
-        const { data } = await baseAxios.patch(`/api/users/${id}`, body)
+  extended: async (selectClient) => {
+    const { data } = await baseAxios.get(`/api/users-extended/${selectClient}`);
 
-        return  data
-    },
+    return data;
+  },
 
-    clientMerge: async (body) => {
-        const { data } = await baseAxios.patch("/api/users-client/merge", body)
+  updataExtended: async (selectClient, body) => {
+    const { data } = await baseAxios.patch(
+      `/api/users-extended/${selectClient}`,
+      body,
+    );
 
-        return data
-    }
-}
+    return data;
+  },
+
+  updateUsernameAndEmail: async (id, body) => {
+    const { data } = await baseAxios.patch(`/api/users/${id}`, body);
+
+    return data;
+  },
+
+  clientMerge: async (body) => {
+    const { data } = await baseAxios.patch("/api/users-client/merge", body);
+
+    return data;
+  },
+};
