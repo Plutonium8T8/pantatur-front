@@ -1377,9 +1377,6 @@ const ChatComponent = ({ }) => {
                                 const tags = parseTags(ticket.tags);
 
                                 return (
-                                    // <Link to={`/chat/${ticket.id}`}>
-                                    
-                                    
                                     <div 
                                         key={ticket.id}
                                         className={`chat-item ${ticket.id === selectTicketId ? "active" : ""}`}
@@ -1428,7 +1425,6 @@ const ChatComponent = ({ }) => {
                                             </div>
                                         </div>
                                     </div>
-                                    // </Link>
                                 );
                             })}
                         </div>
