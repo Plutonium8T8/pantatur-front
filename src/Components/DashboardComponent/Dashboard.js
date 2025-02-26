@@ -78,7 +78,7 @@ const workflowColors = {
   "Ofertă trimisă": { background: "rgba(155, 89, 182, 0.5)", border: "rgba(155, 89, 182, 1)" }, // Violet
 };
 
-const preventServerError = (data) => {
+const normalizeToArray = (data) => {
   return typeof data === "string" ? [] : data
 }
 
@@ -94,7 +94,7 @@ const Dashboard = () => {
 
       const statsData = await api.dashboard.statistics()
 
-      setStatistics(preventServerError(statsData[0])); 
+      setStatistics(normalizeToArray(statsData[0])); 
     } catch (error) {
       console.error("Error fetching statistics:", error);
       setStatistics([]);
