@@ -40,7 +40,10 @@ const ToggleComponent = ({ employee }) => {
 
     const deletePermissionToServer = async (role) => {
         try {
-            await api.admin.user.deleteRoles()
+            await api.admin.user.deleteRoles({
+                id: employee.id,
+                role: "ROLE_" + role,
+            })
 
             fetchRoles();
         } catch (error) {

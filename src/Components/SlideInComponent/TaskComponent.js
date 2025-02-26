@@ -27,7 +27,7 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
     const language = localStorage.getItem('language') || 'RO';
 
     useEffect(() => {
-        if (true) {
+        if (isOpen && userId) {
             console.log("Modal is open. Fetching data...");
             fetchTasks();
             fetchTicketsID();
@@ -89,11 +89,11 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
             await api.task.create(taskData)
 
             fetchTasks();
-        } catch (error) {
             setTaskContent("");
             setTaskDate("");
             setTaskFor(""); 
-
+        } catch (error) {
+            enqueueSnackbar(showServerError(error), {variant: "error"})
             console.error("❌ Ошибка при создании задачи:", error.message);
         }
     };
@@ -104,6 +104,9 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
             await api.task.delete({
                 technician_id: userId,
             })
+            
+            setTasks([]);
+            
         } catch (error) {
             enqueueSnackbar(showServerError(error), {variant: "error"})
         }
