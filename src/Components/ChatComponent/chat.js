@@ -817,38 +817,19 @@ const ChatComponent = ({ }) => {
             console.log('Отправляемые данные:', JSON.stringify(messageData, null, 2));
 
             // 🔹 Определяем API в зависимости от платформы
-            let apiUrl = 'https://pandatur-api.com/messages/send'; // API по умолчанию
+            let apiUrl = api.messages.send.create
 
             if (platform === "telegram") {
-                apiUrl = 'https://pandatur-api.com/messages/send/telegram';
+                apiUrl = api.messages.send.telegram
             } else if (platform === "viber") {
-                apiUrl = 'https://pandatur-api.com/messages/send/viber';
+                apiUrl = api.messages.send.viber
             }
-
-            console.log(`📡 Отправка сообщения через API: ${apiUrl}`);
 
             setManagerMessage('');
 
-            const token = Cookies.get('jwt');
+            await apiUrl(messageData)
 
-            // 🔹 Отправка сообщения
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${Cookies.get('jwt')}`,
-                    Origin: 'https://plutonium8t8.github.io',
-                },
-                body: JSON.stringify(messageData),
-            });
-
-            if (!response.ok) {
-                const responseData = await response.json();
-                console.error('Ошибка с сервера:', responseData.message);
-                return;
-            }
-
-            console.log(`✅ Сообщение успешно отправлено через API ${apiUrl}:`, messageData);
+             console.log(`✅ Сообщение успешно отправлено через API ${apiUrl}:`, messageData);
 
             // 🔹 Добавляем сообщение в локальный state
             setMessages((prevMessages) => [...prevMessages, { ...messageData, seenAt: false }]);
