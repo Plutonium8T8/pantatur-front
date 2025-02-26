@@ -678,31 +678,13 @@ const ChatComponent = ({ }) => {
     const uploadFile = async (file) => {
         const formData = new FormData();
         formData.append('file', file);
-        const token = Cookies.get('jwt'); // Используем JWT токен для авторизации
-
-        console.log('Подготовка к загрузке файла...');
-        console.log('FormData:', formData);
 
         try {
-            const response = await fetch('https://pandatur-api.com/api/messages/upload', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
 
-            console.log('Статус ответа:', response.status);
+            const data = await api.messages.upload(formData)
 
-            if (response.ok) {
-                const data = await response.json();
-                console.log('Файл успешно загружен:', data);
-                return data; // Ожидается объект с полем `url`
-            } else {
-                const errorMessage = `Ошибка загрузки файла. Статус: ${response.status}`;
-                console.error(errorMessage);
-                throw new Error(errorMessage);
-            }
+            return data
+
         } catch (error) {
             console.error('Ошибка загрузки файла:', error);
             throw error;
