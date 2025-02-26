@@ -6,7 +6,6 @@ export const baseAxios = axios.create({
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
-    // Origin: process.env.REACT_APP_ORIGIN_HEADER,
   },
 });
 
