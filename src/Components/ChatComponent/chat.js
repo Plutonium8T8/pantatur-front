@@ -229,7 +229,7 @@ const ChatComponent = ({ }) => {
         }
     };
 
-    const handleTicketClick = (ticketId) => {
+    const handleTicketClick = async (ticketId) => {
         setSelectTicketId(ticketId);
 
         const selectedTicket = tickets.find((ticket) => ticket.id === ticketId);
@@ -241,8 +241,27 @@ const ChatComponent = ({ }) => {
             setSelectedTechnicianId(null);
         }
 
-        // 🔥 Передаем ticketId в getClientMessagesSingle
-        getClientMessagesSingle(ticketId);
+        try {
+            // 🔥 Загружаем сообщения для тикета
+            const messages = await getClientMessagesSingle(ticketId);
+
+            if (messages && messages.length > 0) {
+                const latestMessage = messages.reduce((latest, current) =>
+                    new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
+                );
+
+                // 🔥 Обновляем last_message и time_sent у тикета
+                setTickets((prevTickets) =>
+                    prevTickets.map((ticket) =>
+                        ticket.id === ticketId
+                            ? { ...ticket, last_message: latestMessage.message, time_sent: latestMessage.time_sent }
+                            : ticket
+                    )
+                );
+            }
+        } catch (error) {
+            console.error("Ошибка загрузки сообщений:", error);
+        }
 
         // Помечаем сообщения как прочитанные
         markMessagesAsRead(ticketId);
@@ -1323,8 +1342,20 @@ const ChatComponent = ({ }) => {
                         <div className="chat-item-container">
                             {sortedTickets.map(ticket => {
                                 const unreadCounts = ticket.unseen_count || 0; // Количество непрочитанных сообщений
-                                const lastMessage = ticket.last_message?.trim() || "No messages"; // Последнее сообщение
-                                const formattedTime = formatTimeSent(ticket.time_sent); // Исправленный формат времени
+
+                                // Если тикет открыт, используем последнее загруженное сообщение, иначе берем из тикета
+                                const lastMessage = ticket.id === selectTicketId && messages.length
+                                    ? messages
+                                        .filter(msg => msg.ticket_id === ticket.id)
+                                        .sort((a, b) => new Date(b.time_sent) - new Date(a.time_sent))[0]?.message || "No messages"
+                                    : ticket.last_message?.trim() || "No messages";
+
+                                // Аналогично, обновляем время
+                                const formattedTime = ticket.id === selectTicketId && messages.length
+                                    ? formatTimeSent(messages
+                                        .filter(msg => msg.ticket_id === ticket.id)
+                                        .sort((a, b) => new Date(b.time_sent) - new Date(a.time_sent))[0]?.time_sent)
+                                    : formatTimeSent(ticket.time_sent);
 
                                 const tags = parseTags(ticket.tags);
 

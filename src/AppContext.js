@@ -384,6 +384,19 @@ export const AppProvider = ({ children, isLoggedIn }) => {
           return prevMessages;
         });
 
+        // 🔄 Обновляем последнее сообщение и время в соответствующем тикете
+        setTickets((prevTickets) =>
+          prevTickets.map((ticket) =>
+            ticket.id === ticketId
+              ? {
+                ...ticket,
+                last_message: message.data.message || "No message",
+                time_sent: message.data.time_sent || ticket.time_sent,
+              }
+              : ticket
+          )
+        );
+
         // Проверяем, связан ли тикет с текущим пользователем
         const ticket = ticketsRef.current.find(
           (t) => t.client_id === message.data.client_id
@@ -398,10 +411,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
               variant: 'info',
               action: (snackbarId) => (
                 <div className="snack-bar-notification">
-                  <div
-                    className="snack-object"
-                    onClick={() => closeSnackbar(snackbarId)}
-                  >
+                  <div className="snack-object" onClick={() => closeSnackbar(snackbarId)}>
                     <div className="snack-icon">
                       <FaEnvelope />
                     </div>
