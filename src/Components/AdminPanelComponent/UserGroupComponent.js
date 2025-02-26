@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Cookies from "js-cookie";
 import "./ModalWithToggles.css";
 import { FaTrash } from "react-icons/fa";
 import { translations } from "../utils/translations";
@@ -8,7 +7,6 @@ import { useSnackbar } from 'notistack';
 import { getLanguageByKey } from "../utils/getTranslationByKey";
 
 const UserGroupComponent = ({ onChange, userId, roles }) => {
-    console.log("🚀 ~ UserGroupComponent ~ userId:", userId)
     const language = localStorage.getItem("language") || "RO";
     const [userGroups, setUserGroups] = useState([]);
     const [inputValue, setInputValue] = useState("");

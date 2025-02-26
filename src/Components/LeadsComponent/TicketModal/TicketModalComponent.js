@@ -112,7 +112,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
   const AdminRoles = isLoadingRoles ? true : !isAdmin;
 
   return (
-    <div style={{border: "10px solid red"}} className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay" onClick={onClose}>
       <div className="modal-container" ref={modalRef} onClick={(e) => e.stopPropagation()}>
         <header className="modal-header">
           <h2>
