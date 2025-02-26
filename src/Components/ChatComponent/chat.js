@@ -1293,17 +1293,19 @@ const ChatComponent = ({ }) => {
         }
     }, [messages, selectTicketId, markMessagesAsRead, userId]);
 
-    const formatTimeSent = (timeString) => {
-        if (!timeString || typeof timeString !== "string") return "—";
+    const formatTimeSent = (time) => {
+        if (!time) return "—"; // Отображаем линию, если времени нет
+        const [date, timePart] = time.split(" ");
+        const [day, month, year] = date.split("-"); // Парсим дату вручную
+        const formattedDate = `${year}-${month}-${day}T${timePart}`; // Собираем в ISO-формат
+        const parsedDate = new Date(formattedDate);
 
-        const [datePart, timePart] = timeString.split(" ");
-        if (!datePart || !timePart) return "—";
+        if (isNaN(parsedDate.getTime())) return "—"; // Если не получилось распарсить
 
-        const [day, month, year] = datePart.split("/").map(Number);
-        const [hour, minute] = timePart.split(":").map(Number);
-
-        const date = new Date(year, month - 1, day, hour, minute);
-        return isNaN(date.getTime()) ? "—" : date.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" });
+        return parsedDate.toLocaleTimeString("ru-RU", {
+            hour: "2-digit",
+            minute: "2-digit"
+        });
     };
 
     return (
@@ -1579,7 +1581,6 @@ const ChatComponent = ({ }) => {
                                                                     <div className="text">
                                                                         {renderContent()}
                                                                         <div className="message-time">
-                                                                            {/* Отображаем имя только если сообщение от клиента */}
                                                                             {msg.sender_id !== 1 && msg.sender_id !== userId && (
                                                                                 <span className="client-name">
                                                                                     {personalInfo[msg.client_id]?.name || ""} {personalInfo[msg.client_id]?.surname || ""}
@@ -1587,17 +1588,12 @@ const ChatComponent = ({ }) => {
                                                                             )}
                                                                             <div
                                                                                 className="reaction-toggle-button"
-                                                                                onClick={() =>
-                                                                                    setSelectedMessageId(selectedMessageId === msg.id ? null : msg.id)
-                                                                                }
+                                                                                onClick={() => setSelectedMessageId(selectedMessageId === msg.id ? null : msg.id)}
                                                                             >
                                                                                 {lastReaction || "☺"}
                                                                             </div>
                                                                             <div className='time-messages'>
-                                                                                {new Date(msg.time_sent).toLocaleTimeString("ru-RU", {
-                                                                                    hour: "2-digit",
-                                                                                    minute: "2-digit",
-                                                                                })}
+                                                                                {formatTimeSent(msg.time_sent)}
                                                                             </div>
                                                                         </div>
                                                                         {selectedMessageId === msg.id && (
