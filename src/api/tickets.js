@@ -35,6 +35,11 @@ export const tickets = {
         return data
     },
 
+    light: async () => {
+        const {data} = await baseAxios.get(`/api/light/tickets`)
+
+        return data
+    },
 
     ticket: {
         info: async (id) => {
@@ -45,6 +50,12 @@ export const tickets = {
 
         update: async (id, body) => {
             const {data} = await baseAxios.post(`/api/ticket-info/${id}`, body)
+
+            return data
+        },
+
+        light: async (id) => {
+            const {data} = await baseAxios.get(`/api/light/ticket/${id}`)
 
             return data
         }

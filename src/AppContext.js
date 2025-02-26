@@ -183,27 +183,9 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   const fetchTickets = async () => {
     try {
       setIsLoading(true);
-      const token = Cookies.get('jwt');
+     
+      const data = await api.tickets.light()
 
-      if (!token) {
-        console.warn('Нет токена. Пропускаем загрузку тикетов.');
-        return [];
-      }
-      const response = await fetch('https://pandatur-api.com/api/light/tickets', {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          Origin: 'https://plutonium8t8.github.io'
-        },
-        credentials: 'include',
-      });
-
-      if (!response.ok) {
-        throw new Error(`Ошибка при получении тикетов. Код статуса: ${response.status}`);
-      }
-
-      const data = await response.json();
 
       setTickets(data);
       setTicketIds(data.map((ticket) => ticket.id));
@@ -220,28 +202,9 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   const fetchSingleTicket = async (ticketId) => {
     try {
       setIsLoading(true);
-      const token = Cookies.get('jwt');
 
-      if (!token) {
-        console.warn('Нет токена. Пропускаем загрузку тикета.');
-        return null;
-      }
-
-      const response = await fetch(`https://pandatur-api.com/api/light/ticket/${ticketId}`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          Origin: 'https://plutonium8t8.github.io'
-        },
-        credentials: 'include',
-      });
-
-      if (!response.ok) {
-        throw new Error(`Ошибка при получении тикета. Код статуса: ${response.status}`);
-      }
-
-      const ticket = await response.json();
+      const ticket = await api.tickets.ticket.light(ticketId)
+    
       console.log('Загруженный тикет:', ticket);
 
       setTickets((prevTickets) => {
