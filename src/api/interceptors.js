@@ -1,5 +1,5 @@
 import Cookies from "js-cookie";
-import { clearCookie } from "../Components/utils/clearCookies"
+import { clearCookies } from "../Components/utils/clearCookies"
 
 const STATUS_CODE = [401, 403];
 const ERROR_MESSAGES = ["Invalid JWT Token"];
@@ -20,7 +20,7 @@ export const responseInterceptor = [
       STATUS_CODE.includes(err?.response?.status) &&
       ERROR_MESSAGES.some((e) => e === err?.response?.data?.message)
     ) {
-      clearCookie()
+      clearCookies()
     }
 
     return Promise.reject(err);

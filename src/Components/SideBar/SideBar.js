@@ -14,7 +14,7 @@ import {
     FaSignOutAlt,
     FaUserSecret
 } from 'react-icons/fa';
-import { clearCookie } from "../../Components/utils/clearCookies"
+import { clearCookies } from "../../Components/utils/clearCookies"
 
 const CustomSidebar = ({ onOpenNotifications, onOpenTasks, onOpenAccount }) => {
     const location = useLocation();
@@ -99,7 +99,7 @@ const CustomSidebar = ({ onOpenNotifications, onOpenTasks, onOpenAccount }) => {
                 </div>
             </div>
             <div className="container-log-out">
-                <div className="menu-item" onClick={clearCookie}>
+                <div className="menu-item" onClick={clearCookies}>
                     <FaSignOutAlt size={24} />
                     <span>{translations['Log Out'][language]}</span>
                 </div>
