@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
-import Cookies from "js-cookie";
 import { useUser } from "../../UserContext";
 import "./SlideInModal.css";
 import { FaTimes, FaBell } from "react-icons/fa";
 import { translations } from "../utils/translations";
+import { api } from "../../api"
+import { useSnackbar } from 'notistack';
+import { showServerError } from "../../Components/utils/showServerError"
 
 const NotificationModal = ({ isOpen, onClose }) => {
     const [notifications, setNotifications] = useState([]);
@@ -11,6 +13,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
     const [notificationDate, setNotificationDate] = useState("");
     const { userId } = useUser();
     const [error, setError] = useState(null);
+    const { enqueueSnackbar } = useSnackbar()
 
     const language = localStorage.getItem('language') || 'RO';
 
@@ -23,22 +26,12 @@ const NotificationModal = ({ isOpen, onClose }) => {
     // Получение списка уведомлений
     const fetchNotifications = async () => {
         try {
-            const token = Cookies.get("jwt");
-            const response = await fetch(`https://pandatur-api.com/api/notification/${userId}`, {
-                method: "GET",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                    Origin: 'https://plutonium8t8.github.io',
-                },
-            });
-            if (response.ok) {
-                const data = await response.json();
-                setNotifications(data);
-            } else {
-                console.error(`Ошибка: ${response.status} - ${response.statusText}`);
-            }
+            const data = await api.notification.getById(userId)
+
+            setNotifications(data);
+            
         } catch (error) {
+            enqueueSnackbar(showServerError(error), {variant: "error"})
             console.error("Ошибка загрузки уведомлений:", error.message);
         }
     };
@@ -47,78 +40,49 @@ const NotificationModal = ({ isOpen, onClose }) => {
     const handleNotificationSubmit = async (e) => {
         e.preventDefault();
         try {
-            const token = Cookies.get("jwt");
-            const response = await fetch("https://pandatur-api.com/api/notification", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Origin: 'https://plutonium8t8.github.io',
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                    time: notificationDate,
-                    description: notificationContent,
-                    client_id: userId,
-                    status: false, 
-                }),
-            });
-            if (response.ok) {
-                fetchNotifications();
-                setNotificationContent("");
-                setNotificationDate("");
-            } else {
-                console.error(`Ошибка создания уведомления: ${response.status}`);
-            }
+            await api.notification.create({
+                time: notificationDate,
+                description: notificationContent,
+                client_id: userId,
+                status: false, 
+            })
+         
+            fetchNotifications();
+            setNotificationContent("");
+            setNotificationDate("");
+          
         } catch (error) {
+            enqueueSnackbar(showServerError(error), {variant: "error"})
             console.error("Ошибка создания уведомления:", error.message);
         }
     };
 
     const handleClearAllNotifications = async () => {
         try {
-            const token = Cookies.get("jwt");
-            const response = await fetch("https://pandatur-api.com/api/notification/client", {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json",
-                    Origin: 'https://plutonium8t8.github.io',
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                    client_id: userId,
-                }),
-            });
-            if (response.ok) {
-                setNotifications([]);
-            } else {
-                console.error(`Ошибка удаления уведомлений: ${response.status}`);
-            }
+            await api.notification.delete({
+                client_id: userId,
+            })
+
+            setNotifications([]);
+
         } catch (error) {
+            enqueueSnackbar(showServerError(error), {variant: "error"})
             console.error("Ошибка удаления уведомлений:", error.message);
         }
     };    
 
     const handleMarkAsSeen = async (id) => {
         try {
-            const token = Cookies.get("jwt");
-            const response = await fetch("https://pandatur-api.com/api/notification", {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    Origin: 'https://plutonium8t8.github.io',
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                    id: id,
-                    status: true,
-                }),
-            });
-            if (response.ok) {
-                fetchNotifications(); 
-            } else {
-                console.error(`Ошибка обновления статуса: ${response.status}`);
-            }
+
+            await api.notification.updata({
+                id: id,
+                status: true,
+            })
+
+            fetchNotifications(); 
+
         } catch (error) {
+            enqueueSnackbar(showServerError(error), {variant: "error"})
             console.error("Ошибка обновления статуса:", error.message);
         }
     };
