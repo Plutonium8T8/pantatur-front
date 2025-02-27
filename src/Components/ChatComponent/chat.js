@@ -87,16 +87,8 @@ const ChatComponent = () => {
         }
     }, [isLoadingRoles, hasRole]);
 
-    const AdminRoles = isLoadingRoles ? true : !isAdmin;
-
     const applyFilters = (filters) => {
         setAppliedFilters(filters);
-    };
-
-    const handleClientClick = (id) => {
-        setSelectedClient(id);
-        console.log("Выбран клиент:", id);
-        // Здесь можно добавить дополнительную логику, например, фильтрацию сообщений
     };
 
     useEffect(() => {
@@ -1954,13 +1946,13 @@ const ChatComponent = () => {
                             <div className="merge-tickets">
                                 <input
                                     type="number"
-                                    value={ticketId} // ticket_old всегда равен ticketId
+                                    value={ticketId}
                                     onChange={(e) =>
                                         handleSelectChangeExtra(selectTicketId, 'ticket_id_old', e.target.value)
                                     }
                                     className="input-field"
                                     placeholder="Introduceți ID vechi"
-                                    disabled // Поле отключено, так как old_user_id фиксирован
+                                    disabled
                                 />
                                 <input
                                     type="number"
@@ -2027,10 +2019,10 @@ const ChatComponent = () => {
                                 <div className="merge-client">
                                     <input
                                         type="number"
-                                        value={selectedClient} // old_user_id фиксирован
+                                        value={selectedClient || ""}
                                         className="input-field"
                                         placeholder="Introduceți ID vechi"
-                                        disabled // Поле отключено, так как old_user_id фиксирован
+                                        disabled
                                     />
                                     <input
                                         type="number"
