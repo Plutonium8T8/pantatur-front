@@ -18,4 +18,8 @@ export const auth = {
 
     return data;
   },
+
+  logout: async () => {
+    await baseAxios.post("/api/logout");
+  },
 };
