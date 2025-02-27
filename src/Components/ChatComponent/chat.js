@@ -118,7 +118,7 @@ const ChatComponent = () => {
     const fetchTicketExtraInfo = async (selectTicketId) => {
         try {
 
-            const data = await api.tickets.ticket.info(selectTicketId)
+            const data = await api.tickets.ticket.getInfo(selectTicketId)
 
             setExtraInfo((prevState) => ({
                 ...prevState,
@@ -157,7 +157,7 @@ const ChatComponent = () => {
         setIsLoading(true); // Устанавливаем состояние загрузки в true
 
         try {
-            const result = await api.tickets.ticket.update(selectTicketId, ticketExtraInfo)
+            const result = await api.tickets.ticket.create(selectTicketId, ticketExtraInfo)
            
             enqueueSnackbar('Данные успешно обновлены', { variant: 'success' });
             console.log('Данные успешно отправлены:', result);
@@ -875,7 +875,7 @@ const ChatComponent = () => {
 
         try {
 
-            const result = await api.users.updataExtended(selectedClient, payload)
+            const result = await api.users.updateExtended(selectedClient, payload)
            
             console.log("Данные успешно обновлены:", result);
             alert("Личные данные успешно сохранены!");
@@ -894,7 +894,7 @@ const ChatComponent = () => {
 
     const fetchClientDataPersonal = async (selectedClient, setPersonalInfo) => {
         try {
-            const data = await api.users.extended(selectedClient)
+            const data = await api.users.getExtendedById(selectedClient)
 
             setPersonalInfo(prev => ({
                 ...prev,

@@ -48,7 +48,7 @@ const ScheduleComponent = () => {
       // Интервал, который нужно удалить
       const intervalToDelete = intervals[index];
 
-      await api.technicians.removeSchedule(technicianId, dayOfWeek, {
+      await api.technicians.deleteSchedule(technicianId, dayOfWeek, {
         start: intervalToDelete.start,
         end: intervalToDelete.end,
         timezone: "EST", // Используйте временной пояс, подходящий вашему приложению
@@ -77,7 +77,7 @@ const ScheduleComponent = () => {
 
   useEffect(() => {
     
-    api.users.technician()
+    api.users.getTechnicianList()
       .then((response) => response.json())
       .then((data) => {
         const formattedSchedule = data.map((technician) => ({
@@ -124,9 +124,9 @@ const ScheduleComponent = () => {
       setIsLoading(true); // Начало загрузки
 
             
-      const usersData = await api.users.technician()
+      const usersData = await api.users.getTechnicianList()
 
-      const scheduleData = await api.technicians.schedules()
+      const scheduleData = await api.technicians.getSchedules()
 
       const combinedSchedule = usersData.map((user) => {
         const userId = user.id.id;
@@ -193,7 +193,7 @@ const ScheduleComponent = () => {
 
       // Отправляем POST-запрос на сервер
 
-      await api.technicians.removeSchedule(technicianId, dayOfWeek, newInterval)
+      await api.technicians.deleteSchedule(technicianId, dayOfWeek, newInterval)
 
       // Обновляем локальное состояние
       setIntervals((prev) => [...prev, newInterval]);
@@ -218,7 +218,7 @@ const ScheduleComponent = () => {
         timezone: "EST", // Указываем временную зону
       };
 
-     await api.technicians.addSchedule(technicianId, dayOfWeek, newInterval)
+     await api.technicians.createSchedule(technicianId, dayOfWeek, newInterval)
 
       setIntervals((prev) => [...prev, newInterval]);
       setStartTime("");

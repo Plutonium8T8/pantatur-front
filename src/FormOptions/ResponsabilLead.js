@@ -12,7 +12,7 @@ const TechnicianSelect = ({ onTechnicianChange, selectedTechnicianId }) => {
         setIsLoading(true);
 
         try {
-            const data = await api.users.technician()
+            const data = await api.users.getTechnicianList()
 
             const formattedData = data.map((item) => ({
                 id: item.id.id,

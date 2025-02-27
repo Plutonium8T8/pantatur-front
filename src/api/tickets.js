@@ -35,26 +35,26 @@ export const tickets = {
     return data;
   },
 
-  light: async () => {
+  getLightList: async () => {
     const { data } = await baseAxios.get(`/api/light/tickets`);
 
     return data;
   },
 
   ticket: {
-    info: async (id) => {
+    getInfo: async (id) => {
       const { data } = await baseAxios.get(`/api/ticket-info/${id}`);
 
       return data;
     },
 
-    update: async (id, body) => {
+    create: async (id, body) => {
       const { data } = await baseAxios.post(`/api/ticket-info/${id}`, body);
 
       return data;
     },
 
-    light: async (id) => {
+    getLightById: async (id) => {
       const { data } = await baseAxios.get(`/api/light/ticket/${id}`);
 
       return data;

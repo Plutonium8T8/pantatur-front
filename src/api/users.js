@@ -7,7 +7,7 @@ export const users = {
     return data;
   },
 
-  technician: async () => {
+  getTechnicianList: async () => {
     const { data } = await baseAxios.get("/api/users-technician");
 
     return data;
@@ -25,15 +25,15 @@ export const users = {
     return data;
   },
 
-  extended: async (selectClient) => {
-    const { data } = await baseAxios.get(`/api/users-extended/${selectClient}`);
+  getExtendedById: async (id) => {
+    const { data } = await baseAxios.get(`/api/users-extended/${id}`);
 
     return data;
   },
 
-  updataExtended: async (selectClient, body) => {
+  updateExtended: async (id, body) => {
     const { data } = await baseAxios.patch(
-      `/api/users-extended/${selectClient}`,
+      `/api/users-extended/${id}`,
       body,
     );
 

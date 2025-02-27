@@ -2,7 +2,7 @@ import { baseAxios } from "./baseAxios";
 
 export const admin = {
   user: {
-    updateRoles: async (body) => {
+    createRoles: async (body) => {
       const { data } = await baseAxios.post("/admin/user/roles", body);
 
       return data;

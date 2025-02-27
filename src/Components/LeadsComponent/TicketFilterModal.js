@@ -115,7 +115,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
         const fetchTechnicians = async () => {
             try {
 
-                const data = await api.users.technician()
+                const data = await api.users.getTechnicianList()
                 
                 const formattedTechnicians = data.map(item => `${item.id.id}: ${item.id.name} ${item.id.surname}`.trim());
                 setTechnicians(formattedTechnicians);

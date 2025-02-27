@@ -74,7 +74,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
     const handleMarkAsSeen = async (id) => {
         try {
 
-            await api.notification.updata({
+            await api.notification.update({
                 id: id,
                 status: true,
             })

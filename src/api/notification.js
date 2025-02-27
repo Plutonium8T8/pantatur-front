@@ -15,7 +15,7 @@ export const notification = {
     return data;
   },
 
-  updata: async (body) => {
+  update: async (body) => {
     const { data } = await baseAxios.patch("/api/notification", body);
 
     return data;

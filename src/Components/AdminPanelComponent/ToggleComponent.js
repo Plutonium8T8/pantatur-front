@@ -27,7 +27,7 @@ const ToggleComponent = ({ employee }) => {
 
     const sendPermissionToServer = async (role) => {
         try {
-            await api.admin.user.updateRoles({
+            await api.admin.user.createRoles({
                 id: employee.id,
                 role: "ROLE_" + role,
             })

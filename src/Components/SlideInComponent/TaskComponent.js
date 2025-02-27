@@ -57,7 +57,7 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
     const fetchTasks = async () => {
         try {
 
-            const data = await api.task.taskByUserId(userId)
+            const data = await api.task.getByUserId(userId)
 
             setTasks(data);
             console.log("tasksssssss", data);
@@ -128,7 +128,7 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
     const fetchUsers = async () => {
         
         try {
-            const usersData = await api.users.technician()
+            const usersData = await api.users.getTechnicianList()
 
             // Корректное извлечение ID, имени и фамилии
             const formattedUsers = usersData.map((user) => ({

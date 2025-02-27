@@ -1,13 +1,13 @@
 import { baseAxios } from "./baseAxios";
 
 export const user = {
-  groupsList: async () => {
+  getGroupsList: async () => {
     const { data } = await baseAxios.get("/api/user-groups");
 
     return data;
   },
 
-  addGroup: async (body) => {
+  createGroup: async (body) => {
     const { data } = await baseAxios.post("/api/user-groups", body);
 
     return data;

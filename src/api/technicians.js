@@ -1,22 +1,22 @@
 import { baseAxios } from "./baseAxios";
 
 export const technicians = {
-  schedules: async () => {
+  getSchedules: async () => {
     const { data } = await baseAxios.get("/api/technicians/schedules");
 
     return data;
   },
 
-  removeSchedule: async (technicianId, dayOfWeek, body) => {
+  deleteSchedule: async (id, dayOfWeek, body) => {
     await baseAxios.delete(
-      `/api/technicians/${technicianId}/schedule/${dayOfWeek}`,
+      `/api/technicians/${id}/schedule/${dayOfWeek}`,
       { data: body },
     );
   },
 
-  addSchedule: async (technicianId, dayOfWeek, body) => {
+  createSchedule: async (id, dayOfWeek, body) => {
     const { data } = await baseAxios.post(
-      `api/technicians/${technicianId}/schedule/${dayOfWeek}`,
+      `api/technicians/${id}/schedule/${dayOfWeek}`,
       body,
     );
 

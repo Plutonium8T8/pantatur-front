@@ -184,7 +184,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     try {
       setIsLoading(true);
      
-      const data = await api.tickets.light()
+      const data = await api.tickets.getLightList()
 
 
       setTickets(data);
@@ -203,7 +203,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     try {
       setIsLoading(true);
 
-      const ticket = await api.tickets.ticket.light(ticketId)
+      const ticket = await api.tickets.ticket.getLightById(ticketId)
     
       console.log('Загруженный тикет:', ticket);
 

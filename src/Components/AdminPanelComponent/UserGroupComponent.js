@@ -18,7 +18,7 @@ const UserGroupComponent = ({ onChange, userId, roles }) => {
     useEffect(() => {
         const fetchUserGroups = async () => {
             try {
-                const data = await api.user.groupsList()
+                const data = await api.user.getGroupsList()
             
                 setUserGroups(data); // Set user groups from API response
                 setSuggestions(data.map(group => group.name)); // Store names for suggestions
@@ -37,7 +37,7 @@ const UserGroupComponent = ({ onChange, userId, roles }) => {
     const addUserGroup = async (name) => {
         try {
 
-            const newUserGroup = await api.user.addGroup({ name, roles })
+            const newUserGroup = await api.user.createGroup({ name, roles })
 
             setUserGroups((prev) => [...prev, newUserGroup]); // Add new group to state
             setSuggestions([...suggestions, newUserGroup.name]);

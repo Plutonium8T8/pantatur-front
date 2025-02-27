@@ -7,7 +7,6 @@ import { useSnackbar } from 'notistack';
 
 const ModalWithToggles = ({ employee, closeModal }) => {
     const [roles, setRoles] = useState([]);
-
     const { enqueueSnackbar } = useSnackbar()
 
     useEffect(() => {
@@ -27,7 +26,7 @@ const ModalWithToggles = ({ employee, closeModal }) => {
 
     const sendPermissionToServer = async (role) => {
         try {
-            await api.admin.user.updateRoles({
+            await api.admin.user.createRoles({
                 id: employee.id,
                 role,
             })

@@ -56,7 +56,7 @@ const UserPage = ({ isOpen, onClose }) => {
         email: userData.email || "",
       }));
 
-      const extendedData = await api.users.extended(userId);
+      const extendedData = await api.users.getExtendedById(userId);
 
       setUsersExtended((prev) => ({
         ...prev,
@@ -111,7 +111,7 @@ const UserPage = ({ isOpen, onClose }) => {
         username: users.username,
       });
 
-      await api.users.updataExtended(userId, {
+      await api.users.updateExtended(userId, {
         name: usersExtended.name,
         surname: usersExtended.surname,
         address: usersExtended.address,
@@ -165,7 +165,7 @@ const UserPage = ({ isOpen, onClose }) => {
                       "password_reset_token",
                       "password_reset_requested_at",
                       "id",
-                    ].includes(attribute),
+                    ].includes(attribute)
                 )
                 .map((key) => (
                   <input
@@ -181,10 +181,7 @@ const UserPage = ({ isOpen, onClose }) => {
 
             <div className="input-group">
               <h3>{translations["Informații extinse"][language]}</h3>
-              {Object.keys(usersExtended)
-                .filter(
-                  (attribute) => !["user", "photo", "id"].includes(attribute),
-                )
+              {Object.keys(usersExtended).filter((attribute) => !["user", "photo", "id"].includes(attribute))
                 .map((key) => (
                   <input
                     key={key}
