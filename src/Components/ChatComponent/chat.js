@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import {  useParams, useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaArrowRight, FaFile, FaPaperPlane, FaSmile } from 'react-icons/fa';
 import Select from '../SelectComponent/SelectComponent';
 import { useUser } from '../../UserContext';
@@ -38,12 +38,12 @@ import { ibanOptions } from '../../FormOptions/IbanOptions';
 import { api } from "../../api"
 import { showServerError } from "../../Components/utils/showServerError"
 
-const ChatComponent = ({ }) => {
+const ChatComponent = () => {
     const { userId, hasRole, isLoadingRoles } = useUser();
     const [managerMessage, setManagerMessage] = useState('');
     const { tickets, updateTicket, setTickets, messages, setMessages, markMessagesAsRead, socketRef, getClientMessagesSingle } = useAppContext();
     const [selectTicketId, setSelectTicketId] = useState(null);
-    const [extraInfo, setExtraInfo] = useState({}); // Состояние для дополнительной информации каждого тикета
+    const [extraInfo, setExtraInfo] = useState(); // Состояние для дополнительной информации каждого тикета
     const [personalInfo, setPersonalInfo] = useState({});
     const messageContainerRef = useRef(null);
     const { ticketId } = useParams(); // Получаем clientId из URL
@@ -73,6 +73,7 @@ const ChatComponent = ({ }) => {
     const [activeTab, setActiveTab] = useState("extraForm"); // По умолчанию вкладка Extra Form
     const [filteredTicketIds, setFilteredTicketIds] = useState(null);
     const [isAdmin, setIsAdmin] = useState(false);
+    const navigate = useNavigate()
 
     const platformIcons = {
         "facebook": <FaFacebook />,
@@ -88,16 +89,8 @@ const ChatComponent = ({ }) => {
         }
     }, [isLoadingRoles, hasRole]);
 
-    const AdminRoles = isLoadingRoles ? true : !isAdmin;
-
     const applyFilters = (filters) => {
         setAppliedFilters(filters);
-    };
-
-    const handleClientClick = (id) => {
-        setSelectedClient(id);
-        console.log("Выбран клиент:", id);
-        // Здесь можно добавить дополнительную логику, например, фильтрацию сообщений
     };
 
     useEffect(() => {
@@ -115,6 +108,8 @@ const ChatComponent = ({ }) => {
 
     useEffect(() => {
         if (selectTicketId) {
+            getClientMessagesSingle(selectTicketId)
+            fetchClientDataPersonal(selectTicketId, setPersonalInfo)
             fetchTicketExtraInfo(selectTicketId); // Загружаем дополнительную информацию при изменении тикета
         }
     }, [selectTicketId]);
@@ -146,7 +141,6 @@ const ChatComponent = ({ }) => {
                     [field]: value,
                 },
             };
-            // console.log("Обновленное состояние extraInfo:", newState);
             return newState;
         });
     };
@@ -154,7 +148,7 @@ const ChatComponent = ({ }) => {
     // отправка данных формы в бэк
     const sendExtraInfo = async () => {
         const token = Cookies.get('jwt'); // Получение токена из cookie
-        const ticketExtraInfo = extraInfo[selectTicketId]; // Получаем информацию для выбранного тикета
+        const ticketExtraInfo = extraInfo?.[selectTicketId]; // Получаем информацию для выбранного тикета
 
         if (!ticketExtraInfo) {
             console.warn('Нет дополнительной информации для выбранного тикета.', ticketExtraInfo);
@@ -198,6 +192,7 @@ const ChatComponent = ({ }) => {
 
     const handleTicketClick = async (ticketId) => {
         setSelectTicketId(ticketId);
+        navigate(`/chat/${ticketId}`)
 
         const selectedTicket = tickets.find((ticket) => ticket.id === ticketId);
 
@@ -279,7 +274,7 @@ const ChatComponent = ({ }) => {
     // Функция валидации перед изменением workflow
     const validateFields = (workflow) => {
         if (workflow === "Închis și nerealizat") {
-            if (!extraInfo[selectTicketId]?.motivul_refuzului) {
+            if (!extraInfo?.[selectTicketId]?.motivul_refuzului) {
                 setFieldErrors(prev => ({ ...prev, motivul_refuzului: true }));
                 enqueueSnackbar(`Completați "Motivul refuzului" înainte de a face modificări!`, { variant: 'error' });
                 return false;
@@ -292,7 +287,7 @@ const ChatComponent = ({ }) => {
 
         for (const [step, fields] of Object.entries(requiredFields)) {
             if (workflowIndices[step] <= workflowIndex) {
-                missingFields.push(...fields.filter(field => !extraInfo[selectTicketId]?.[field]));
+                missingFields.push(...fields.filter(field => !extraInfo?.[selectTicketId]?.[field]));
             }
         }
 
@@ -324,7 +319,7 @@ const ChatComponent = ({ }) => {
         for (const [step, fields] of Object.entries(requiredFields)) {
             if (workflowIndices[step] <= workflowIndex) {
                 fields.forEach(field => {
-                    if (!extraInfo[selectTicketId]?.[field]) {
+                    if (!extraInfo?.[selectTicketId]?.[field]) {
                         newFieldErrors[field] = true;
                     }
                 });
@@ -334,7 +329,7 @@ const ChatComponent = ({ }) => {
         // Если выбран "Închis și nerealizat", оставляем только ошибку "motivul_refuzului"
         if (newWorkflow === "Închis și nerealizat") {
             newFieldErrors = {};
-            if (!extraInfo[selectTicketId]?.motivul_refuzului) {
+            if (!extraInfo?.[selectTicketId]?.motivul_refuzului) {
                 newFieldErrors.motivul_refuzului = true;
             }
         }
@@ -391,15 +386,14 @@ const ChatComponent = ({ }) => {
     };
 
     useEffect(() => {
-        const pretNetto = extraInfo[selectTicketId]?.pret_netto;
-        const buget = extraInfo[selectTicketId]?.buget;
+        const pretNetto = extraInfo?.[selectTicketId]?.pret_netto;
+        const buget = extraInfo?.[selectTicketId]?.buget;
 
         if (pretNetto !== "" && buget !== "" && pretNetto !== undefined && buget !== undefined) {
             const newComision = parseFloat(buget) - parseFloat(pretNetto);
             handleFieldChange("comission_companie", newComision.toFixed(2)); // Автообновление
         }
-    }, [extraInfo[selectTicketId]?.pret_netto, extraInfo[selectTicketId]?.buget, selectTicketId]);
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    }, [extraInfo?.[selectTicketId]?.pret_netto, extraInfo?.[selectTicketId]?.buget, selectTicketId]);
 
     // Закрытие меню при клике вне его области
     const handleOutsideClick = (event) => {
@@ -961,7 +955,7 @@ const ChatComponent = ({ }) => {
 
     const handleMergeTickets = async () => {
         const ticketOld = ticketId;
-        const ticketNew = extraInfo[selectTicketId]?.ticket_id_new;
+        const ticketNew = extraInfo?.[selectTicketId]?.ticket_id_new;
 
         if (!ticketOld || !ticketNew) {
             alert("Introduceți ambele ID-uri!");
@@ -982,7 +976,7 @@ const ChatComponent = ({ }) => {
 
     const handleMergeClients = async () => {
         const oldUserId = selectedClient; // old_user_id фиксирован
-        const newUserId = extraInfo[selectedClient]?.new_user_id;
+        const newUserId = extraInfo?.[selectedClient]?.new_user_id;
 
         if (!newUserId) {
             alert("Introduceți ID-ul nou al utilizatorului!");
@@ -1561,7 +1555,7 @@ const ChatComponent = ({ }) => {
                             <div className="client-select-container">
                                 <select
                                     className="task-select"
-                                    value={selectedClient}
+                                    value={selectedClient || ""}
                                     onChange={(e) => setSelectedClient(e.target.value)}
                                 >
                                     <option value="" disabled>{translations["Alege client"][language]}</option>
@@ -1672,7 +1666,7 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="Vânzare €"
                                     type="number"
-                                    value={extraInfo[selectTicketId]?.buget || ""}
+                                    value={extraInfo?.[selectTicketId]?.buget || ""}
                                     onChange={(e) => handleFieldChange("buget", e.target.value)}
                                     className={`input-field ${fieldErrors.buget ? "invalid-field" : ""}`}
                                     placeholder="Indicați suma în euro"
@@ -1681,7 +1675,7 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="Data venit in oficiu"
                                     type="datetime-local"
-                                    value={extraInfo[selectTicketId]?.data_venit_in_oficiu || ""}
+                                    value={extraInfo?.[selectTicketId]?.data_venit_in_oficiu || ""}
                                     onChange={(e) =>
                                         handleSelectChangeExtra(selectTicketId, 'data_venit_in_oficiu', e.target.value)
                                     }
@@ -1692,7 +1686,7 @@ const ChatComponent = ({ }) => {
                                     label="Status sunet telefonic"
                                     id="status_sunet_telefonic"
                                     className="input-field"
-                                    value={extraInfo[selectTicketId]?.status_sunet_telefonic || ""}
+                                    value={extraInfo?.[selectTicketId]?.status_sunet_telefonic || ""}
                                     onChange={(value) =>
                                         handleSelectChangeExtra(selectTicketId, 'status_sunet_telefonic', value)
                                     }
@@ -1701,7 +1695,7 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="Data și ora plecării"
                                     type="datetime-local"
-                                    value={extraInfo[selectTicketId]?.data_plecarii || ""}
+                                    value={extraInfo?.[selectTicketId]?.data_plecarii || ""}
                                     onChange={(e) => handleFieldChange("data_plecarii", e.target.value)}
                                     className={`input-field ${fieldErrors.data_plecarii ? "invalid-field" : ""}`}
                                 />
@@ -1709,7 +1703,7 @@ const ChatComponent = ({ }) => {
                                 <Input
                                     label="Data și ora întoarcerii"
                                     type="datetime-local"
-                                    value={extraInfo[selectTicketId]?.data_intoarcerii || ""}
+                                    value={extraInfo?.[selectTicketId]?.data_intoarcerii || ""}
                                     onChange={(e) => handleFieldChange("data_intoarcerii", e.target.value)}
                                     className={`input-field ${fieldErrors.data_intoarcerii ? "invalid-field" : ""}`}
                                 />
@@ -1718,7 +1712,7 @@ const ChatComponent = ({ }) => {
                                     options={sourceOfLeadOptions}
                                     label="Sursă lead"
                                     id="lead-source-select"
-                                    value={extraInfo[selectTicketId]?.sursa_lead || ""}
+                                    value={extraInfo?.[selectTicketId]?.sursa_lead || ""}
                                     onChange={(value) => handleFieldChange("sursa_lead", value)}
                                     hasError={fieldErrors.sursa_lead}
                                 />
@@ -1727,7 +1721,7 @@ const ChatComponent = ({ }) => {
                                     options={promoOptions}
                                     label="Promo"
                                     id="promo-select"
-                                    value={extraInfo[selectTicketId]?.promo || ""}
+                                    value={extraInfo?.[selectTicketId]?.promo || ""}
                                     onChange={(value) => handleFieldChange("promo", value)}
                                     hasError={fieldErrors.promo}
                                 />
@@ -1736,7 +1730,7 @@ const ChatComponent = ({ }) => {
                                     options={marketingOptions}
                                     label="Marketing"
                                     id="marketing-select"
-                                    value={extraInfo[selectTicketId]?.marketing || ""}
+                                    value={extraInfo?.[selectTicketId]?.marketing || ""}
                                     onChange={(value) => handleFieldChange("marketing", value)}
                                     hasError={fieldErrors.marketing}
                                 />
@@ -1745,7 +1739,7 @@ const ChatComponent = ({ }) => {
                                     options={serviceTypeOptions}
                                     label="Serviciu"
                                     id="service-select"
-                                    value={extraInfo[selectTicketId]?.tipul_serviciului || ""}
+                                    value={extraInfo?.[selectTicketId]?.tipul_serviciului || ""}
                                     onChange={(value) => handleFieldChange("tipul_serviciului", value)}
                                     hasError={fieldErrors.tipul_serviciului}
                                 />
@@ -1754,7 +1748,7 @@ const ChatComponent = ({ }) => {
                                     options={countryOptions}
                                     label="Țară"
                                     id="country-select"
-                                    value={extraInfo[selectTicketId]?.tara || ""}
+                                    value={extraInfo?.[selectTicketId]?.tara || ""}
                                     onChange={(value) => handleFieldChange("tara", value)}
                                     hasError={fieldErrors.tara}
                                 />
@@ -1763,7 +1757,7 @@ const ChatComponent = ({ }) => {
                                     options={transportOptions}
                                     label="Transport"
                                     id="transport-select"
-                                    value={extraInfo[selectTicketId]?.tip_de_transport || ""}
+                                    value={extraInfo?.[selectTicketId]?.tip_de_transport || ""}
                                     onChange={(value) => handleFieldChange("tip_de_transport", value)}
                                     hasError={fieldErrors.tip_de_transport}
                                 />
@@ -1772,7 +1766,7 @@ const ChatComponent = ({ }) => {
                                     options={nameExcursionOptions}
                                     label="Excursie"
                                     id="excursie-select"
-                                    value={extraInfo[selectTicketId]?.denumirea_excursiei_turului || ""}
+                                    value={extraInfo?.[selectTicketId]?.denumirea_excursiei_turului || ""}
                                     onChange={(value) => handleFieldChange("denumirea_excursiei_turului", value)}
                                     hasError={fieldErrors.denumirea_excursiei_turului}
                                 />
@@ -1781,14 +1775,14 @@ const ChatComponent = ({ }) => {
                                     options={purchaseProcessingOptions}
                                     label="Achiziție"
                                     id="purchase-select"
-                                    value={extraInfo[selectTicketId]?.procesarea_achizitionarii || ""}
+                                    value={extraInfo?.[selectTicketId]?.procesarea_achizitionarii || ""}
                                     onChange={(value) => handleFieldChange("procesarea_achizitionarii", value)}
                                     hasError={fieldErrors.procesarea_achizitionarii}
                                 />
                                 <Input
                                     label="Data cererii de retur"
                                     type="datetime-local"
-                                    value={extraInfo[selectTicketId]?.data_cererii_de_retur || ""}
+                                    value={extraInfo?.[selectTicketId]?.data_cererii_de_retur || ""}
                                     onChange={(e) =>
                                         handleSelectChangeExtra(selectTicketId, 'data_cererii_de_retur', e.target.value)
                                     }
@@ -1798,17 +1792,17 @@ const ChatComponent = ({ }) => {
                             <div className="merge-tickets">
                                 <input
                                     type="number"
-                                    value={ticketId} // ticket_old всегда равен ticketId
+                                    value={ticketId}
                                     onChange={(e) =>
                                         handleSelectChangeExtra(selectTicketId, 'ticket_id_old', e.target.value)
                                     }
                                     className="input-field"
                                     placeholder="Introduceți ID vechi"
-                                    disabled // Поле отключено, так как old_user_id фиксирован
+                                    disabled
                                 />
                                 <input
                                     type="number"
-                                    value={extraInfo[selectTicketId]?.ticket_id_new || ""}
+                                    value={extraInfo?.[selectTicketId]?.ticket_id_new || ""}
                                     onChange={(e) =>
                                         handleSelectChangeExtra(selectTicketId, 'ticket_id_new', e.target.value)
                                     }
@@ -1871,14 +1865,14 @@ const ChatComponent = ({ }) => {
                                 <div className="merge-client">
                                     <input
                                         type="number"
-                                        value={selectedClient} // old_user_id фиксирован
+                                        value={selectedClient || ""}
                                         className="input-field"
                                         placeholder="Introduceți ID vechi"
-                                        disabled // Поле отключено, так как old_user_id фиксирован
+                                        disabled
                                     />
                                     <input
                                         type="number"
-                                        value={extraInfo[selectedClient]?.new_user_id || ""}
+                                        value={extraInfo?.[selectedClient]?.new_user_id || ""}
                                         onChange={(e) =>
                                             handleSelectChangeExtra(selectedClient, 'new_user_id', e.target.value)
                                         }
@@ -1897,7 +1891,7 @@ const ChatComponent = ({ }) => {
                             <Input
                                 label="Nr de contract"
                                 type="text"
-                                value={extraInfo[selectTicketId]?.numar_de_contract || ""}
+                                value={extraInfo?.[selectTicketId]?.numar_de_contract || ""}
                                 onChange={(e) => handleFieldChange("numar_de_contract", e.target.value)}
                                 className={`input-field ${fieldErrors.numar_de_contract ? "invalid-field" : ""}`}
                                 placeholder="Nr de contract"
@@ -1907,7 +1901,7 @@ const ChatComponent = ({ }) => {
                             <Input
                                 label="Data contractului"
                                 type="date"
-                                value={extraInfo[selectTicketId]?.data_contractului || ""}
+                                value={extraInfo?.[selectTicketId]?.data_contractului || ""}
                                 onChange={(e) => handleFieldChange("data_contractului", e.target.value)}
                                 className={`input-field ${fieldErrors.data_contractului ? "invalid-field" : ""}`}
                             />
@@ -1917,7 +1911,7 @@ const ChatComponent = ({ }) => {
                                 <label className={`switch ${fieldErrors.contract_trimis ? "invalid-toggle" : ""}`}>
                                     <input
                                         type="checkbox"
-                                        checked={extraInfo[selectTicketId]?.contract_trimis || false}
+                                        checked={extraInfo?.[selectTicketId]?.contract_trimis || false}
                                         onChange={(e) => handleFieldChange("contract_trimis", e.target.checked)}
                                     />
                                     <span className="slider round"></span>
@@ -1929,7 +1923,7 @@ const ChatComponent = ({ }) => {
                                 <label className={`switch ${fieldErrors.contract_semnat ? "invalid-toggle" : ""}`}>
                                     <input
                                         type="checkbox"
-                                        checked={extraInfo[selectTicketId]?.contract_semnat || false}
+                                        checked={extraInfo?.[selectTicketId]?.contract_semnat || false}
                                         onChange={(e) => handleFieldChange("contract_semnat", e.target.checked)}
                                     />
                                     <span className="slider round"></span>
@@ -1939,7 +1933,7 @@ const ChatComponent = ({ }) => {
                             <Input
                                 label="Operator turistic"
                                 type="text"
-                                value={extraInfo[selectTicketId]?.tour_operator || ""}
+                                value={extraInfo?.[selectTicketId]?.tour_operator || ""}
                                 onChange={(e) => handleFieldChange("tour_operator", e.target.value)}
                                 className={`input-field ${fieldErrors.tour_operator ? "invalid-field" : ""}`}
                                 placeholder="Operator turistic"
@@ -1949,7 +1943,7 @@ const ChatComponent = ({ }) => {
                             <Input
                                 label="Nr cererii de la operator"
                                 type="text"
-                                value={extraInfo[selectTicketId]?.numarul_cererii_de_la_operator || ""}
+                                value={extraInfo?.[selectTicketId]?.numarul_cererii_de_la_operator || ""}
                                 onChange={(e) => handleFieldChange("numarul_cererii_de_la_operator", e.target.value)}
                                 className={`input-field ${fieldErrors.numarul_cererii_de_la_operator ? "invalid-field" : ""}`}
                                 placeholder="Nr cererii de la operator"
@@ -1961,7 +1955,7 @@ const ChatComponent = ({ }) => {
                                 <label className={`switch ${fieldErrors.achitare_efectuata ? "invalid-toggle" : ""}`}>
                                     <input
                                         type="checkbox"
-                                        checked={extraInfo[selectTicketId]?.achitare_efectuata || false}
+                                        checked={extraInfo?.[selectTicketId]?.achitare_efectuata || false}
                                         onChange={(e) => handleFieldChange("achitare_efectuata", e.target.checked)}
                                     />
                                     <span className="slider round"></span>
@@ -1973,7 +1967,7 @@ const ChatComponent = ({ }) => {
                                 <label className={`switch ${fieldErrors.rezervare_confirmata ? "invalid-toggle" : ""}`}>
                                     <input
                                         type="checkbox"
-                                        checked={extraInfo[selectTicketId]?.rezervare_confirmata || false}
+                                        checked={extraInfo?.[selectTicketId]?.rezervare_confirmata || false}
                                         onChange={(e) => handleFieldChange("rezervare_confirmata", e.target.checked)}
                                     />
                                     <span className="slider round"></span>
@@ -1985,7 +1979,7 @@ const ChatComponent = ({ }) => {
                                 <label className={`switch ${fieldErrors.contract_arhivat ? "invalid-toggle" : ""}`}>
                                     <input
                                         type="checkbox"
-                                        checked={extraInfo[selectTicketId]?.contract_arhivat || false}
+                                        checked={extraInfo?.[selectTicketId]?.contract_arhivat || false}
                                         onChange={(e) => handleFieldChange("contract_arhivat", e.target.checked)}
                                     />
                                     <span className="slider round"></span>
@@ -1996,13 +1990,13 @@ const ChatComponent = ({ }) => {
                                 options={paymentStatusOptions}
                                 label="Plată primită"
                                 id="payment-select"
-                                value={extraInfo[selectTicketId]?.statutul_platii || ""}
+                                value={extraInfo?.[selectTicketId]?.statutul_platii || ""}
                                 onChange={(value) => handleFieldChange("statutul_platii", value)}
                                 hasError={fieldErrors.statutul_platii}
                             />
                             <Input
                                 label="Avans euro €"
-                                value={extraInfo[selectTicketId]?.avans_euro || ""}
+                                value={extraInfo?.[selectTicketId]?.avans_euro || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'avans_euro', e.target.value)
                                 }
@@ -2013,7 +2007,7 @@ const ChatComponent = ({ }) => {
                             <Input
                                 label="Data avansului"
                                 type="date"
-                                value={extraInfo[selectTicketId]?.data_avansului || ""}
+                                value={extraInfo?.[selectTicketId]?.data_avansului || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'data_avansului', e.target.value)
                                 }
@@ -2022,7 +2016,7 @@ const ChatComponent = ({ }) => {
                             <Input
                                 label="Data de plată integrală"
                                 type="date"
-                                value={extraInfo[selectTicketId]?.data_de_plata_integrala || ""}
+                                value={extraInfo?.[selectTicketId]?.data_de_plata_integrala || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'data_de_plata_integrala', e.target.value)
                                 }
@@ -2030,7 +2024,7 @@ const ChatComponent = ({ }) => {
                             />
                             <Input
                                 label="Preț NETTO €"
-                                value={extraInfo[selectTicketId]?.pret_netto || ""}
+                                value={extraInfo?.[selectTicketId]?.pret_netto || ""}
                                 onChange={(e) => handleFieldChange("pret_netto", e.target.value)}
                                 className={`input-field ${fieldErrors.pret_netto ? "invalid-field" : ""}`}
                                 placeholder="Preț netto (euro)"
@@ -2038,7 +2032,7 @@ const ChatComponent = ({ }) => {
                             />
                             <Input
                                 label="Achitat client"
-                                value={extraInfo[selectTicketId]?.achitat_client || ""}
+                                value={extraInfo?.[selectTicketId]?.achitat_client || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'achitat_client', e.target.value)
                                 }
@@ -2048,7 +2042,7 @@ const ChatComponent = ({ }) => {
                             />
                             <Input
                                 label="Restanță client"
-                                value={extraInfo[selectTicketId]?.restant_client || ""}
+                                value={extraInfo?.[selectTicketId]?.restant_client || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'restant_client', e.target.value)
                                 }
@@ -2059,7 +2053,7 @@ const ChatComponent = ({ }) => {
                             />
                             <Input
                                 label="Comision companie €"
-                                value={extraInfo[selectTicketId]?.comission_companie || ""}
+                                value={extraInfo?.[selectTicketId]?.comission_companie || ""}
                                 onChange={(e) => handleFieldChange("comission_companie", e.target.value)}
                                 className={`input-field ${fieldErrors.comission_companie ? "invalid-field" : ""}`}
                                 placeholder="Comision companie"
@@ -2068,7 +2062,7 @@ const ChatComponent = ({ }) => {
                             />
                             <Input
                                 label="Statut achitare"
-                                value={extraInfo[selectTicketId]?.restant_client || ""}
+                                value={extraInfo?.[selectTicketId]?.restant_client || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'restant_client', e.target.value)
                                 }
@@ -2083,7 +2077,7 @@ const ChatComponent = ({ }) => {
                                     <label className={`switch ${fieldErrors.control_admin ? "invalid-toggle" : ""}`}>
                                         <input
                                             type="checkbox"
-                                            checked={extraInfo[selectTicketId]?.control_admin || false}
+                                            checked={extraInfo?.[selectTicketId]?.control_admin || false}
                                             onChange={(e) =>
                                                 handleSelectChangeExtra(selectTicketId, 'control_admin', e.target.checked)
                                             }
@@ -2098,7 +2092,7 @@ const ChatComponent = ({ }) => {
                         <div className="extra-info-content">
                             <Input
                                 label="F/service"
-                                value={extraInfo[selectTicketId]?.f_serviciu || ""}
+                                value={extraInfo?.[selectTicketId]?.f_serviciu || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'f_serviciu', e.target.value)
                                 }
@@ -2108,7 +2102,7 @@ const ChatComponent = ({ }) => {
                             />
                             <Input
                                 label="F/factura"
-                                value={extraInfo[selectTicketId]?.f_nr_factura || ""}
+                                value={extraInfo?.[selectTicketId]?.f_nr_factura || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'f_nr_factura', e.target.value)
                                 }
@@ -2118,7 +2112,7 @@ const ChatComponent = ({ }) => {
                             />
                             <Input
                                 label="F/numarul"
-                                value={extraInfo[selectTicketId]?.f_numarul || ""}
+                                value={extraInfo?.[selectTicketId]?.f_numarul || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'f_numarul', e.target.value)
                                 }
@@ -2128,7 +2122,7 @@ const ChatComponent = ({ }) => {
                             />
                             <Input
                                 label="F/preț"
-                                value={extraInfo[selectTicketId]?.f_pret || ""}
+                                value={extraInfo?.[selectTicketId]?.f_pret || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'f_pret', e.target.value)
                                 }
@@ -2138,7 +2132,7 @@ const ChatComponent = ({ }) => {
                             />
                             <Input
                                 label="F/sumă"
-                                value={extraInfo[selectTicketId]?.f_suma || ""}
+                                value={extraInfo?.[selectTicketId]?.f_suma || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'f_suma', e.target.value)
                                 }
@@ -2150,7 +2144,7 @@ const ChatComponent = ({ }) => {
                                 options={valutaOptions}
                                 label="Valuta contului"
                                 id="payment-select"
-                                value={extraInfo[selectTicketId]?.valuta_contului || ""}
+                                value={extraInfo?.[selectTicketId]?.valuta_contului || ""}
                                 onChange={(value) =>
                                     handleSelectChangeExtra(selectTicketId, 'valuta_contului', value)
                                 }
@@ -2159,21 +2153,11 @@ const ChatComponent = ({ }) => {
                                 options={ibanOptions}
                                 label="IBAN"
                                 id="payment-select"
-                                value={extraInfo[selectTicketId]?.iban || ""}
+                                value={extraInfo?.[selectTicketId]?.iban || ""}
                                 onChange={(value) =>
                                     handleSelectChangeExtra(selectTicketId, 'iban', value)
                                 }
                             />
-                            {/* <Select
-                                options={paymentStatusOptions}
-                                label="Adaugă document"
-                                id="payment-select"
-                                value={extraInfo[selectTicketId]?.adauga_document || ""}
-                                onChange={(value) =>
-                                    handleSelectChangeExtra(selectTicketId, 'adauga_document', value)
-                                }
-                            /> */}
-                            {/* /<div>document list</div> */}
                         </div>
                     )}
                     {activeTab === 'Media' && selectTicketId && (
@@ -2231,7 +2215,7 @@ const ChatComponent = ({ }) => {
                                 options={motivulRefuzuluiOptions}
                                 label="Motivul refuzului"
                                 id="motivul_refuzului"
-                                value={extraInfo[selectTicketId]?.motivul_refuzului || ""}
+                                value={extraInfo?.[selectTicketId]?.motivul_refuzului || ""}
                                 onChange={(value) => handleFieldChange("motivul_refuzului", value)}
                                 hasError={fieldErrors.motivul_refuzului}
                             />
@@ -2239,14 +2223,14 @@ const ChatComponent = ({ }) => {
                                 options={evaluareOdihnaOptions}
                                 label="Evaluare odihnă"
                                 id="evaluare_de_odihna"
-                                value={extraInfo[selectTicketId]?.evaluare_de_odihna || ""}
+                                value={extraInfo?.[selectTicketId]?.evaluare_de_odihna || ""}
                                 onChange={(value) =>
                                     handleSelectChangeExtra(selectTicketId, 'evaluare_de_odihna', value)
                                 }
                             />
                             <Input
                                 label="Următoarea vacanță"
-                                value={extraInfo[selectTicketId]?.urmatoarea_vacanta || ""}
+                                value={extraInfo?.[selectTicketId]?.urmatoarea_vacanta || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'urmatoarea_vacanta', e.target.value)
                                 }
@@ -2256,7 +2240,7 @@ const ChatComponent = ({ }) => {
                             />
                             <Input
                                 label="Manager"
-                                value={extraInfo[selectTicketId]?.manager || ""}
+                                value={extraInfo?.[selectTicketId]?.manager || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'manager', e.target.value)
                                 }
@@ -2266,7 +2250,7 @@ const ChatComponent = ({ }) => {
                             />
                             <Input
                                 label="Vacanța"
-                                value={extraInfo[selectTicketId]?.vacanta || ""}
+                                value={extraInfo?.[selectTicketId]?.vacanta || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'vacanta', e.target.value)
                                 }
