@@ -1,9 +1,9 @@
 import React, { createContext, useState, useEffect, useContext, useRef } from 'react';
-import Cookies from 'js-cookie';
 import { useSnackbar } from 'notistack';
 import { FaEnvelope, FaTrash } from 'react-icons/fa';
 import { useUser } from './UserContext';
 import { truncateText } from './stringUtils';
+import { api } from "./api"
 
 const AppContext = createContext();
 
@@ -184,29 +184,9 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   const fetchTickets = async () => {
     try {
       setIsLoading(true);
-      const token = Cookies.get('jwt');
 
-      if (!token) {
-        console.warn('Нет токена. Пропускаем загрузку тикетов.');
-        return [];
-      }
-
-      const response = await fetch('https://pandatur-api.com/api/light/tickets', {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          Origin: 'https://plutonium8t8.github.io'
-        },
-        credentials: 'include',
-      });
-
-      if (!response.ok) {
-        throw new Error(`Ошибка при получении тикетов. Код статуса: ${response.status}`);
-      }
-
-      const data = await response.json();
-
+      const data = await api.tickets.getLightList()
+      
       // Обрабатываем данные тикетов
       const processedTickets = data.map(ticket => ({
         ...ticket,
@@ -233,29 +213,8 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   const fetchSingleTicket = async (ticketId) => {
     try {
       setIsLoading(true);
-      const token = Cookies.get('jwt');
 
-      if (!token) {
-        console.warn('Нет токена. Пропускаем загрузку тикета.');
-        return null;
-      }
-
-      const response = await fetch(`https://pandatur-api.com/api/light/ticket/${ticketId}`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          Origin: 'https://plutonium8t8.github.io'
-        },
-        credentials: 'include',
-      });
-
-      if (!response.ok) {
-        throw new Error(`Ошибка при получении тикета. Код статуса: ${response.status}`);
-      }
-
-      const ticket = await response.json();
-      console.log('Загруженный тикет:', ticket);
+      const ticket = await api.tickets.getLightById(ticketId)
 
       setTickets((prevTickets) => {
         const existingTicket = prevTickets.find((t) => t.id === ticketId);
@@ -279,31 +238,9 @@ export const AppProvider = ({ children, isLoggedIn }) => {
 
   const updateTicket = async (updateData) => {
     try {
-      const token = Cookies.get('jwt');
-      if (!token) {
-        throw new Error('Token is missing. Authorization required.');
-      }
 
-      const response = await fetch(`https://pandatur-api.com/api/tickets/${updateData.id}`, {
-        method: 'PATCH',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          Origin: 'https://plutonium8t8.github.io'
-        },
-        credentials: 'include',
-        body: JSON.stringify(updateData),
-      });
-
-      if (!response.ok) {
-        const errorDetails = await response.json();
-        throw new Error(
-          `Error updating ticket: ${response.status} ${response.statusText}. Details: ${JSON.stringify(errorDetails)}`
-        );
-      }
-
-      const updatedTicket = await response.json();
-
+      const updatedTicket = await api.tickets.updateById(updateData.id, updateData)
+  
       // Синхронизация тикетов через WebSocket
       return updatedTicket;
     } catch (error) {
@@ -348,17 +285,8 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   const getClientMessagesSingle = async (ticket_id) => {
     console.log("Обновление сообщений для тикета:", ticket_id);
     try {
-      const token = Cookies.get('jwt');
-      if (!token) return;
 
-      const response = await fetch(`https://pandatur-api.com/api/messages/ticket/${ticket_id}`, {
-        method: 'GET',
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-      });
-
-      if (!response.ok) throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
-
-      const data = await response.json();
+      const data = await api.messages.messagesTicketById(ticket_id)
 
       if (Array.isArray(data)) {
         setMessages((prevMessages) => {
