@@ -1270,14 +1270,23 @@ const ChatComponent = ({ }) => {
         }
     }, [messages, selectTicketId, markMessagesAsRead, userId]);
 
-    const formatDateString = (dateString) => {
+    const formatDateTime = (dateString) => {
+        if (!dateString) return "—";
+
         const parts = dateString.split(" ");
-        if (parts.length !== 2) return null;
+        if (parts.length !== 2) return "—";
 
-        const [date, time] = parts;
-        const [day, month, year] = date.split("-");
+        const [datePart, timePart] = parts;
+        const [day, month, year] = datePart.split("-");
 
-        return `${year}-${month}-${day}T${time}`;
+        if (!day || !month || !year) return "—";
+
+        const formattedDate = new Date(`${year}-${month}-${day}T${timePart}`);
+
+        return formattedDate.toLocaleTimeString("ru-RU", {
+            hour: "2-digit",
+            minute: "2-digit",
+        }) || "—";
     };
 
     return (
@@ -1315,36 +1324,13 @@ const ChatComponent = ({ }) => {
 
                         <div className="chat-item-container">
                             {sortedTickets.map(ticket => {
-                                const ticketMessages = messages.filter(msg => msg.ticket_id === ticket.id);
-                                const unreadCounts = ticketMessages.filter(
-                                    msg => msg.seen_by != null && msg.seen_by == '{}' && msg.sender_id !== 1 && msg.sender_id !== userId
-                                ).length;
-
-                                const parseDate = (dateString) => {
-                                    if (!dateString) return null;
-                                    const parts = dateString.split(" ");
-                                    if (parts.length !== 2) return null;
-
-                                    const [date, time] = parts;
-                                    const [day, month, year] = date.split("-");
-
-                                    return new Date(`${year}-${month}-${day}T${time}`);
-                                };
-
-                                const lastMessage = ticketMessages.length
-                                    ? ticketMessages.reduce((latest, current) =>
-                                        parseDate(current.time_sent) > parseDate(latest.time_sent) ? current : latest
-                                    )
-                                    : { message: "", time_sent: null };
-
-
-                                const formattedTime = lastMessage.time_sent
-                                    ? parseDate(lastMessage.time_sent)?.toLocaleTimeString("ru-RU", {
+                                // Форматирование времени
+                                const formattedTime = ticket.time_sent
+                                    ? new Date(ticket.time_sent).toLocaleTimeString("ru-RU", {
                                         hour: "2-digit",
                                         minute: "2-digit",
                                     }) || "—"
                                     : "—";
-
 
                                 const tags = parseTags(ticket.tags);
 
@@ -1389,15 +1375,11 @@ const ChatComponent = ({ }) => {
                                             <div className="info-message">
                                                 <div className="last-message-container">
                                                     <div className="last-message-ticket">
-                                                        {lastMessage?.mtype === 'text'
-                                                            ? lastMessage.message
-                                                            : lastMessage?.mtype
-                                                                ? getMessageTypeLabel(lastMessage.mtype)
-                                                                : "No messages"}
+                                                        {ticket.last_message || "No messages"}
                                                     </div>
-                                                    <div className='chat-time'>{formattedTime || "—"}</div>
-                                                    {unreadCounts > 0 && (
-                                                        <div className="unread-count">{unreadCounts}</div>
+                                                    <div className='chat-time'>{formatDateTime(ticket.time_sent)}</div>
+                                                    {ticket.unseen_count > 0 && (
+                                                        <div className="unread-count">{ticket.unseen_count}</div>
                                                     )}
                                                 </div>
                                             </div>
@@ -1429,9 +1411,9 @@ const ChatComponent = ({ }) => {
 
                                 // ✅ Разворачиваем `ticketIds`, если он вложенный массив
                                 const flatTicketIds = ticketIds.flat(Infinity)
-                                    .map(ticket => ticket?.id || ticket) // Поддержка форматов { id: 7477 } и [7477]
-                                    .filter(id => typeof id === "number" || !isNaN(Number(id))) // Убираем некорректные значения
-                                    .map(id => Number(id)); // Приводим все `id` к числу
+                                    .map(ticket => ticket?.id || ticket)
+                                    .filter(id => typeof id === "number" || !isNaN(Number(id)))
+                                    .map(id => Number(id));
 
                                 console.log("📤 Развернутые ticketIds:", flatTicketIds);
 

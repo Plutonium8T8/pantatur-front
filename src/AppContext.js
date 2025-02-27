@@ -188,7 +188,8 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         console.warn('Нет токена. Пропускаем загрузку тикетов.');
         return [];
       }
-      const response = await fetch('https://pandatur-api.com/api/tickets', {
+
+      const response = await fetch('https://pandatur-api.com/api/light/tickets', {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -204,10 +205,21 @@ export const AppProvider = ({ children, isLoggedIn }) => {
 
       const data = await response.json();
 
-      setTickets(data);
-      setTicketIds(data.map((ticket) => ticket.id));
+      // Обрабатываем данные тикетов
+      const processedTickets = data.map(ticket => ({
+        ...ticket,
+        client_ids: ticket.client_id
+          ? ticket.client_id.replace(/[{}]/g, "").split(',').map(id => Number(id))
+          : [],
+        last_message: ticket.last_message || "Нет сообщений",
+        time_sent: ticket.time_sent || null,
+        unseen_count: ticket.unseen_count || 0
+      }));
 
-      return data;
+      setTickets(processedTickets);
+      setTicketIds(processedTickets.map(ticket => ticket.id));
+
+      return processedTickets;
     } catch (error) {
       console.error('Ошибка при загрузке тикетов:', error);
       return [];
@@ -226,7 +238,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         return null;
       }
 
-      const response = await fetch(`https://pandatur-api.com/api/tickets/${ticketId}`, {
+      const response = await fetch(`https://pandatur-api.com/api/light/ticket/${ticketId}`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -299,36 +311,36 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   };
 
   // Функция загрузки сообщений клиента
-  const getClientMessages = async () => {
-    try {
-      const token = Cookies.get('jwt');
-      if (!token) {
-        console.warn('Нет токена. Пропускаем загрузку сообщений.');
-        return;
-      }
+  // const getClientMessages = async () => {
+  //   try {
+  //     const token = Cookies.get('jwt');
+  //     if (!token) {
+  //       console.warn('Нет токена. Пропускаем загрузку сообщений.');
+  //       return;
+  //     }
 
-      const response = await fetch('https://pandatur-api.com/api/messages', {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          Origin: 'https://plutonium8t8.github.io'
-        },
-      });
+  //     const response = await fetch('https://pandatur-api.com/api/messages', {
+  //       method: 'GET',
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //         'Content-Type': 'application/json',
+  //         Origin: 'https://plutonium8t8.github.io'
+  //       },
+  //     });
 
-      if (!response.ok) {
-        throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
-      }
+  //     if (!response.ok) {
+  //       throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
+  //     }
 
-      const data = await response.json();
-      // console.log("Сообщения, загруженные из API:", data);
+  //     const data = await response.json();
+  //     // console.log("Сообщения, загруженные из API:", data);
 
-      setMessages(data); // Обновляем состояние всех сообщений
-    } catch (error) {
-      enqueueSnackbar('Не удалось получить сообщения!', { variant: 'error' });
-      console.error('Ошибка при получении сообщений:', error.message);
-    }
-  };
+  //     setMessages(data); // Обновляем состояние всех сообщений
+  //   } catch (error) {
+  //     enqueueSnackbar('Не удалось получить сообщения!', { variant: 'error' });
+  //     console.error('Ошибка при получении сообщений:', error.message);
+  //   }
+  // };
 
   // Функция для получения сообщений для конкретного client_id
   const getClientMessagesSingle = async (ticket_id) => {
@@ -524,7 +536,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      getClientMessages();
+      // getClientMessages();
       fetchTickets();
     }
   }, [isLoggedIn]);
