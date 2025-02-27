@@ -523,6 +523,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       updateTicket,
       fetchTickets,
       socketRef,
+      getClientMessagesSingle
     }}>
       {children}
     </AppContext.Provider>

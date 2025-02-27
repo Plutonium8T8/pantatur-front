@@ -39,7 +39,7 @@ import { ibanOptions } from '../../FormOptions/IbanOptions';
 const ChatComponent = ({ }) => {
     const { userId, hasRole, isLoadingRoles } = useUser();
     const [managerMessage, setManagerMessage] = useState('');
-    const { tickets, updateTicket, setTickets, messages, setMessages, markMessagesAsRead, socketRef, selectTicketId, setSelectTicketId } = useAppContext();
+    const { tickets, updateTicket, setTickets, messages, setMessages, markMessagesAsRead, socketRef, selectTicketId, setSelectTicketId, getClientMessagesSingle } = useAppContext();
     const [extraInfo, setExtraInfo] = useState({}); // Состояние для дополнительной информации каждого тикета
     const [personalInfo, setPersonalInfo] = useState({});
     const messageContainerRef = useRef(null);
@@ -229,8 +229,8 @@ const ChatComponent = ({ }) => {
         }
     };
 
-    const handleTicketClick = (ticketId) => {
-        setSelectTicketId(ticketId);  // Теперь WebSocket знает, какой тикет открыт
+    const handleTicketClick = async (ticketId) => {
+        setSelectTicketId(ticketId);  // Устанавливаем выбранный тикет
 
         const selectedTicket = tickets.find((ticket) => ticket.id === ticketId);
         if (selectedTicket) {
@@ -241,7 +241,10 @@ const ChatComponent = ({ }) => {
         }
 
         navigate(`/chat/${ticketId}`);
-        markMessagesAsRead(ticketId);
+        markMessagesAsRead(ticketId); // Отмечаем сообщения как прочитанные
+
+        // Загружаем все сообщения тикета
+        await getClientMessagesSingle(ticketId);
     };
 
     const workflowOptions = [
