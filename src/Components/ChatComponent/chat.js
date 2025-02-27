@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import {  useParams, useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaArrowRight, FaFile, FaPaperPlane, FaSmile } from 'react-icons/fa';
 import Select from '../SelectComponent/SelectComponent';
 import { useUser } from '../../UserContext';
@@ -113,6 +113,8 @@ const ChatComponent = ({ }) => {
 
     useEffect(() => {
         if (selectTicketId) {
+            getClientMessagesSingle(selectTicketId)
+            fetchClientDataPersonal(selectTicketId, setPersonalInfo)
             fetchTicketExtraInfo(selectTicketId); // Загружаем дополнительную информацию при изменении тикета
         }
     }, [selectTicketId]);
@@ -230,7 +232,8 @@ const ChatComponent = ({ }) => {
     };
 
     const handleTicketClick = async (ticketId) => {
-        setSelectTicketId(ticketId); // Устанавливаем активный тикет
+        setSelectTicketId(ticketId);
+        navigate(`/chat/${ticketId}`)
 
         const selectedTicket = tickets.find((ticket) => ticket.id === ticketId);
         if (selectedTicket) {
