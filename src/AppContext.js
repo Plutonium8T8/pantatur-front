@@ -183,22 +183,12 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   const fetchTickets = async () => {
     try {
       setIsLoading(true);
-
+     
       const data = await api.tickets.getLightList()
 
-      // Обрабатываем данные тикетов
-      const processedTickets = data.map(ticket => ({
-        ...ticket,
-        client_ids: ticket.client_id
-          ? ticket.client_id.replace(/[{}]/g, "").split(',').map(id => Number(id))
-          : [],
-        last_message: ticket.last_message || "Нет сообщений",
-        time_sent: ticket.time_sent || null,
-        unseen_count: ticket.unseen_count || 0
-      }));
 
-      setTickets(processedTickets);
-      setTicketIds(processedTickets.map(ticket => ticket.id));
+      setTickets(data);
+      setTicketIds(data.map((ticket) => ticket.id));
 
       return data;
     } catch (error) {
