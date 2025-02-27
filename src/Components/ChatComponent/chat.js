@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import {  useParams, useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { FaArrowLeft, FaArrowRight, FaFile, FaPaperPlane, FaSmile } from 'react-icons/fa';
 import Select from '../SelectComponent/SelectComponent';
 import { useUser } from '../../UserContext';
@@ -35,21 +35,19 @@ import { workflowOptions } from '../../FormOptions/WorkFlowOption';
 import { evaluareOdihnaOptions } from '../../FormOptions/EvaluareVacantaOptions';
 import { valutaOptions } from '../../FormOptions/ValutaOptions';
 import { ibanOptions } from '../../FormOptions/IbanOptions';
-import { api } from "../../api"
-import { showServerError } from "../../Components/utils/showServerError"
 
-const ChatComponent = () => {
+const ChatComponent = ({ }) => {
     const { userId, hasRole, isLoadingRoles } = useUser();
     const [managerMessage, setManagerMessage] = useState('');
-    const { tickets, updateTicket, setTickets, messages, setMessages, markMessagesAsRead, socketRef, getClientMessagesSingle } = useAppContext();
-    const [selectTicketId, setSelectTicketId] = useState(null);
-    const [extraInfo, setExtraInfo] = useState(); // Состояние для дополнительной информации каждого тикета
+    const { tickets, updateTicket, setTickets, messages, setMessages, markMessagesAsRead, socketRef, selectTicketId, setSelectTicketId, getClientMessagesSingle } = useAppContext();
+    const [extraInfo, setExtraInfo] = useState({}); // Состояние для дополнительной информации каждого тикета
     const [personalInfo, setPersonalInfo] = useState({});
     const messageContainerRef = useRef(null);
     const { ticketId } = useParams(); // Получаем clientId из URL
     const [isLoading, setIsLoading] = useState(false); // Состояние загрузки
     const [selectedTechnicianId, setSelectedTechnicianId] = useState('');
     const { enqueueSnackbar } = useSnackbar();
+    const navigate = useNavigate(); // Хук для навигации
     const [menuMessageId, setMenuMessageId] = useState(null);
     const [editMessageId, setEditMessageId] = useState(null);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -73,7 +71,6 @@ const ChatComponent = () => {
     const [activeTab, setActiveTab] = useState("extraForm"); // По умолчанию вкладка Extra Form
     const [filteredTicketIds, setFilteredTicketIds] = useState(null);
     const [isAdmin, setIsAdmin] = useState(false);
-    const navigate = useNavigate()
 
     const platformIcons = {
         "facebook": <FaFacebook />,
@@ -89,8 +86,16 @@ const ChatComponent = () => {
         }
     }, [isLoadingRoles, hasRole]);
 
+    const AdminRoles = isLoadingRoles ? true : !isAdmin;
+
     const applyFilters = (filters) => {
         setAppliedFilters(filters);
+    };
+
+    const handleClientClick = (id) => {
+        setSelectedClient(id);
+        console.log("Выбран клиент:", id);
+        // Здесь можно добавить дополнительную логику, например, фильтрацию сообщений
     };
 
     useEffect(() => {
@@ -108,8 +113,6 @@ const ChatComponent = () => {
 
     useEffect(() => {
         if (selectTicketId) {
-            getClientMessagesSingle(selectTicketId)
-            fetchClientDataPersonal(selectTicketId, setPersonalInfo)
             fetchTicketExtraInfo(selectTicketId); // Загружаем дополнительную информацию при изменении тикета
         }
     }, [selectTicketId]);
@@ -117,9 +120,23 @@ const ChatComponent = () => {
     // Получение дополнительной информации для тикета
     const fetchTicketExtraInfo = async (selectTicketId) => {
         try {
+            const token = Cookies.get('jwt');
+            const response = await fetch(`https://pandatur-api.com/api/ticket-info/${selectTicketId}`, {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                    Origin: 'https://plutonium8t8.github.io',
+                },
+            });
 
-            const data = await api.tickets.ticket.getInfo(selectTicketId)
+            if (!response.ok) {
+                throw new Error('Ошибка при получении дополнительной информации');
+            }
 
+            const data = await response.json();
+            // enqueueSnackbar('Загружено доп инфо по тикетам!', { variant: 'success' });
+            // Обновляем состояние с дополнительной информацией о тикете
             setExtraInfo((prevState) => ({
                 ...prevState,
                 [selectTicketId]: data, // Сохраняем информацию для текущего тикета
@@ -141,6 +158,7 @@ const ChatComponent = () => {
                     [field]: value,
                 },
             };
+            // console.log("Обновленное состояние extraInfo:", newState);
             return newState;
         });
     };
@@ -148,7 +166,7 @@ const ChatComponent = () => {
     // отправка данных формы в бэк
     const sendExtraInfo = async () => {
         const token = Cookies.get('jwt'); // Получение токена из cookie
-        const ticketExtraInfo = extraInfo?.[selectTicketId]; // Получаем информацию для выбранного тикета
+        const ticketExtraInfo = extraInfo[selectTicketId]; // Получаем информацию для выбранного тикета
 
         if (!ticketExtraInfo) {
             console.warn('Нет дополнительной информации для выбранного тикета.', ticketExtraInfo);
@@ -157,8 +175,29 @@ const ChatComponent = () => {
         setIsLoading(true); // Устанавливаем состояние загрузки в true
 
         try {
-            const result = await api.tickets.ticket.create(selectTicketId, ticketExtraInfo)
-           
+            const response = await fetch(`https://pandatur-api.com/api/ticket-info/${selectTicketId}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                    Origin: 'https://plutonium8t8.github.io',
+                },
+                body: JSON.stringify({
+                    ...ticketExtraInfo, // Сначала добавляем все свойства из ticketExtraInfo
+                }),
+            });
+
+            // Логируем отправляемые данные
+            console.log('Отправляемые данные:', {
+                ...ticketExtraInfo,
+            });
+
+            if (!response.ok) {
+                throw new Error(`Ошибка при отправке данных. Статус: ${response.status}`);
+            }
+
+            const result = await response.json();
+
             enqueueSnackbar('Данные успешно обновлены', { variant: 'success' });
             console.log('Данные успешно отправлены:', result);
         } catch (error) {
@@ -191,11 +230,9 @@ const ChatComponent = () => {
     };
 
     const handleTicketClick = async (ticketId) => {
-        setSelectTicketId(ticketId);
-        navigate(`/chat/${ticketId}`)
+        setSelectTicketId(ticketId); // Устанавливаем активный тикет
 
         const selectedTicket = tickets.find((ticket) => ticket.id === ticketId);
-
         if (selectedTicket) {
             setSelectedTechnicianId(selectedTicket.technician_id || null);
         } else {
@@ -203,30 +240,13 @@ const ChatComponent = () => {
             setSelectedTechnicianId(null);
         }
 
-        try {
-            // 🔥 Загружаем сообщения для тикета
-            const messages = await getClientMessagesSingle(ticketId);
+        navigate(`/chat/${ticketId}`);
 
-            if (messages && messages.length > 0) {
-                const latestMessage = messages.reduce((latest, current) =>
-                    new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
-                );
+        // Не сбрасываем unseen_count вручную, ждем WebSocket-сообщение
+        await markMessagesAsRead(ticketId);
 
-                // 🔥 Обновляем last_message и time_sent у тикета
-                setTickets((prevTickets) =>
-                    prevTickets.map((ticket) =>
-                        ticket.id === ticketId
-                            ? { ...ticket, last_message: latestMessage.message, time_sent: latestMessage.time_sent }
-                            : ticket
-                    )
-                );
-            }
-        } catch (error) {
-            console.error("Ошибка загрузки сообщений:", error);
-        }
-
-        // Помечаем сообщения как прочитанные
-        markMessagesAsRead(ticketId);
+        // Загружаем сообщения тикета
+        await getClientMessagesSingle(ticketId);
     };
 
     const workflowOptions = [
@@ -274,7 +294,7 @@ const ChatComponent = () => {
     // Функция валидации перед изменением workflow
     const validateFields = (workflow) => {
         if (workflow === "Închis și nerealizat") {
-            if (!extraInfo?.[selectTicketId]?.motivul_refuzului) {
+            if (!extraInfo[selectTicketId]?.motivul_refuzului) {
                 setFieldErrors(prev => ({ ...prev, motivul_refuzului: true }));
                 enqueueSnackbar(`Completați "Motivul refuzului" înainte de a face modificări!`, { variant: 'error' });
                 return false;
@@ -287,7 +307,7 @@ const ChatComponent = () => {
 
         for (const [step, fields] of Object.entries(requiredFields)) {
             if (workflowIndices[step] <= workflowIndex) {
-                missingFields.push(...fields.filter(field => !extraInfo?.[selectTicketId]?.[field]));
+                missingFields.push(...fields.filter(field => !extraInfo[selectTicketId]?.[field]));
             }
         }
 
@@ -319,7 +339,7 @@ const ChatComponent = () => {
         for (const [step, fields] of Object.entries(requiredFields)) {
             if (workflowIndices[step] <= workflowIndex) {
                 fields.forEach(field => {
-                    if (!extraInfo?.[selectTicketId]?.[field]) {
+                    if (!extraInfo[selectTicketId]?.[field]) {
                         newFieldErrors[field] = true;
                     }
                 });
@@ -329,7 +349,7 @@ const ChatComponent = () => {
         // Если выбран "Închis și nerealizat", оставляем только ошибку "motivul_refuzului"
         if (newWorkflow === "Închis și nerealizat") {
             newFieldErrors = {};
-            if (!extraInfo?.[selectTicketId]?.motivul_refuzului) {
+            if (!extraInfo[selectTicketId]?.motivul_refuzului) {
                 newFieldErrors.motivul_refuzului = true;
             }
         }
@@ -386,14 +406,15 @@ const ChatComponent = () => {
     };
 
     useEffect(() => {
-        const pretNetto = extraInfo?.[selectTicketId]?.pret_netto;
-        const buget = extraInfo?.[selectTicketId]?.buget;
+        const pretNetto = extraInfo[selectTicketId]?.pret_netto;
+        const buget = extraInfo[selectTicketId]?.buget;
 
         if (pretNetto !== "" && buget !== "" && pretNetto !== undefined && buget !== undefined) {
             const newComision = parseFloat(buget) - parseFloat(pretNetto);
             handleFieldChange("comission_companie", newComision.toFixed(2)); // Автообновление
         }
-    }, [extraInfo?.[selectTicketId]?.pret_netto, extraInfo?.[selectTicketId]?.buget, selectTicketId]);
+    }, [extraInfo[selectTicketId]?.pret_netto, extraInfo[selectTicketId]?.buget, selectTicketId]);
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Закрытие меню при клике вне его области
     const handleOutsideClick = (event) => {
@@ -657,12 +678,27 @@ const ChatComponent = () => {
         }
 
         try {
-           await api.tickets.updateById(selectTicketId, { technician_id: newTechnicianId })
-           
-            enqueueSnackbar("Список тикетов успешно обновлён", {variant: "success"})
+            const token = Cookies.get('jwt');
+            const response = await fetch(`https://pandatur-api.com/api/tickets/${selectTicketId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                    Origin: 'https://plutonium8t8.github.io',
+                },
+                credentials: "include",
+                body: JSON.stringify({ technician_id: newTechnicianId }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Ошибка при обновлении technician_id. Код: ${response.status}`);
+            }
+
+            const updatedTicket = await response.json();
+            console.log('Тикет успешно обновлён:', updatedTicket);
+
             console.log('Список тикетов успешно обновлён.');
         } catch (error) {
-            enqueueSnackbar(error.message, {variant: "error"})
             console.error('Ошибка при обновлении technician_id:', error.message);
         }
     };
@@ -672,13 +708,31 @@ const ChatComponent = () => {
     const uploadFile = async (file) => {
         const formData = new FormData();
         formData.append('file', file);
+        const token = Cookies.get('jwt'); // Используем JWT токен для авторизации
+
+        console.log('Подготовка к загрузке файла...');
+        console.log('FormData:', formData);
 
         try {
+            const response = await fetch('https://pandatur-api.com/api/messages/upload', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
 
-            const data = await api.messages.upload(formData)
+            console.log('Статус ответа:', response.status);
 
-            return data
-
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Файл успешно загружен:', data);
+                return data; // Ожидается объект с полем `url`
+            } else {
+                const errorMessage = `Ошибка загрузки файла. Статус: ${response.status}`;
+                console.error(errorMessage);
+                throw new Error(errorMessage);
+            }
         } catch (error) {
             console.error('Ошибка загрузки файла:', error);
             throw error;
@@ -793,19 +847,36 @@ const ChatComponent = () => {
             console.log('Отправляемые данные:', JSON.stringify(messageData, null, 2));
 
             // 🔹 Определяем API в зависимости от платформы
-            let apiUrl = api.messages.send.create
+            let apiUrl = 'https://pandatur-api.com/messages/send'; // API по умолчанию
 
             if (platform === "telegram") {
-                apiUrl = api.messages.send.telegram
+                apiUrl = 'https://pandatur-api.com/messages/send/telegram';
             } else if (platform === "viber") {
-                apiUrl = api.messages.send.viber
+                apiUrl = 'https://pandatur-api.com/messages/send/viber';
             }
+
+            console.log(`📡 Отправка сообщения через API: ${apiUrl}`);
 
             setManagerMessage('');
 
-            await apiUrl(messageData)
+            // 🔹 Отправка сообщения
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${Cookies.get('jwt')}`,
+                    Origin: 'https://plutonium8t8.github.io',
+                },
+                body: JSON.stringify(messageData),
+            });
 
-             console.log(`✅ Сообщение успешно отправлено через API ${apiUrl}:`, messageData);
+            if (!response.ok) {
+                const responseData = await response.json();
+                console.error('Ошибка с сервера:', responseData.message);
+                return;
+            }
+
+            console.log(`✅ Сообщение успешно отправлено через API ${apiUrl}:`, messageData);
 
             // 🔹 Добавляем сообщение в локальный state
             setMessages((prevMessages) => [...prevMessages, { ...messageData, seenAt: false }]);
@@ -874,9 +945,29 @@ const ChatComponent = () => {
         };
 
         try {
+            const token = Cookies.get('jwt');
 
-            const result = await api.users.updateExtended(selectedClient, payload)
-           
+            if (!token) {
+                alert("Ошибка: отсутствует токен аутентификации.");
+                return;
+            }
+
+            const response = await fetch(`https://pandatur-api.com/api/users-extended/${selectedClient}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                    Origin: 'https://plutonium8t8.github.io',
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text(); // Получаем текст ошибки
+                throw new Error(`Ошибка при отправке данных: ${response.status} - ${errorText}`);
+            }
+
+            const result = await response.json();
             console.log("Данные успешно обновлены:", result);
             alert("Личные данные успешно сохранены!");
 
@@ -894,8 +985,24 @@ const ChatComponent = () => {
 
     const fetchClientDataPersonal = async (selectedClient, setPersonalInfo) => {
         try {
-            const data = await api.users.getExtendedById(selectedClient)
+            const token = Cookies.get('jwt');
 
+            const response = await fetch(`https://pandatur-api.com/api/users-extended/${selectedClient}`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                    Origin: 'https://plutonium8t8.github.io',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`Ошибка: ${response.status}`);
+            }
+
+            const data = await response.json();
+            // console.log('Полученные данные клиента:', data);
+
+            // Устанавливаем полученные данные в `personalInfo`
             setPersonalInfo(prev => ({
                 ...prev,
                 [selectedClient]: { ...data } // Обновляем данные для выбранного клиента
@@ -955,7 +1062,7 @@ const ChatComponent = () => {
 
     const handleMergeTickets = async () => {
         const ticketOld = ticketId;
-        const ticketNew = extraInfo?.[selectTicketId]?.ticket_id_new;
+        const ticketNew = extraInfo[selectTicketId]?.ticket_id_new;
 
         if (!ticketOld || !ticketNew) {
             alert("Introduceți ambele ID-uri!");
@@ -963,20 +1070,36 @@ const ChatComponent = () => {
         }
 
         try {
-             await api.tickets.merge({
-                ticket_old: ticketOld,
-                ticket_new: ticketNew
-            })
+            const token = Cookies.get('jwt');
+            const response = await fetch("https://pandatur-api.com/api/merge/tickets", {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                    Origin: 'https://plutonium8t8.github.io',
+                },
+                body: JSON.stringify({
+                    ticket_old: ticketOld,
+                    ticket_new: ticketNew
+                })
+            });
 
-            enqueueSnackbar("Biletele au fost combinate cu succes!", { variant: 'success' });
+            if (!response.ok) {
+                throw new Error("Eroare la combinarea biletelor");
+            }
+
+            const result = await response.json();
+            alert("Biletele au fost combinate cu succes!");
+            console.log(result);
         } catch (error) {
-            enqueueSnackbar(showServerError(error), { variant: 'error' });
+            console.error("Eroare:", error);
+            alert("Eroare la combinarea biletelor!");
         }
     };
 
     const handleMergeClients = async () => {
         const oldUserId = selectedClient; // old_user_id фиксирован
-        const newUserId = extraInfo?.[selectedClient]?.new_user_id;
+        const newUserId = extraInfo[selectedClient]?.new_user_id;
 
         if (!newUserId) {
             alert("Introduceți ID-ul nou al utilizatorului!");
@@ -984,14 +1107,31 @@ const ChatComponent = () => {
         }
 
         try {
-              await api.users.clientMerge({
-                old_user_id: oldUserId,
-                new_user_id: newUserId
-            })
+            const token = Cookies.get('jwt');
 
-            enqueueSnackbar("Utilizatorii au fost combinați cu succes!", { variant: 'success' });
+            const response = await fetch("https://pandatur-api.com/api/users-client/merge", {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                    Origin: 'https://plutonium8t8.github.io',
+                },
+                body: JSON.stringify({
+                    old_user_id: oldUserId,
+                    new_user_id: newUserId
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error("Eroare la combinarea utilizatorilor");
+            }
+
+            const result = await response.json();
+            alert("Utilizatorii au fost combinați cu succes!");
+            console.log(result);
         } catch (error) {
-            enqueueSnackbar("Eroare la combinarea utilizatorilor", { variant: 'error' });
+            console.error("Eroare:", error);
+            alert("Eroare la combinarea utilizatorilor!");
         }
     };
 
@@ -1133,19 +1273,23 @@ const ChatComponent = () => {
         }
     }, [messages, selectTicketId, markMessagesAsRead, userId]);
 
-    const formatTimeSent = (time) => {
-        if (!time) return "—"; // Отображаем линию, если времени нет
-        const [date, timePart] = time.split(" ");
-        const [day, month, year] = date.split("-"); // Парсим дату вручную
-        const formattedDate = `${year}-${month}-${day}T${timePart}`; // Собираем в ISO-формат
-        const parsedDate = new Date(formattedDate);
+    const formatDateTime = (dateString) => {
+        if (!dateString) return "—";
 
-        if (isNaN(parsedDate.getTime())) return "—"; // Если не получилось распарсить
+        const parts = dateString.split(" ");
+        if (parts.length !== 2) return "—";
 
-        return parsedDate.toLocaleTimeString("ru-RU", {
+        const [datePart, timePart] = parts;
+        const [day, month, year] = datePart.split("-");
+
+        if (!day || !month || !year) return "—";
+
+        const formattedDate = new Date(`${year}-${month}-${day}T${timePart}`);
+
+        return formattedDate.toLocaleTimeString("ru-RU", {
             hour: "2-digit",
-            minute: "2-digit"
-        });
+            minute: "2-digit",
+        }) || "—";
     };
 
     return (
@@ -1183,21 +1327,13 @@ const ChatComponent = () => {
 
                         <div className="chat-item-container">
                             {sortedTickets.map(ticket => {
-                                const unreadCounts = ticket.unseen_count || 0;
-
-                                // Фильтруем сообщения по тикету
-                                const ticketMessages = messages.filter(msg => msg.ticket_id === ticket.id);
-
-                                // ✅ Находим самое свежее сообщение из загруженных сообщений
-                                const lastLoadedMessage = ticketMessages.length
-                                    ? ticketMessages.sort((a, b) => new Date(b.time_sent) - new Date(a.time_sent))[0]
-                                    : null;
-
-                                // ✅ Выбираем, какое последнее сообщение показать (загруженное или из тикета)
-                                const lastMessage = lastLoadedMessage?.message || ticket.last_message || "No messages";
-
-                                // ✅ Аналогично для времени
-                                const formattedTime = formatTimeSent(lastLoadedMessage?.time_sent || ticket.time_sent);
+                                // Форматирование времени
+                                const formattedTime = ticket.time_sent
+                                    ? new Date(ticket.time_sent).toLocaleTimeString("ru-RU", {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                    }) || "—"
+                                    : "—";
 
                                 const tags = parseTags(ticket.tags);
 
@@ -1241,10 +1377,12 @@ const ChatComponent = () => {
                                         <div className="container-time-tasks-chat">
                                             <div className="info-message">
                                                 <div className="last-message-container">
-                                                    <div className="last-message-ticket">{lastMessage}</div>
-                                                    <div className='chat-time'>{formattedTime}</div>
-                                                    {unreadCounts > 0 && (
-                                                        <div className="unread-count">{unreadCounts}</div>
+                                                    <div className="last-message-ticket">
+                                                        {ticket.last_message || "No messages"}
+                                                    </div>
+                                                    <div className='chat-time'>{formatDateTime(ticket.time_sent)}</div>
+                                                    {ticket.unseen_count > 0 && (
+                                                        <div className="unread-count">{ticket.unseen_count}</div>
                                                     )}
                                                 </div>
                                             </div>
@@ -1276,9 +1414,9 @@ const ChatComponent = () => {
 
                                 // ✅ Разворачиваем `ticketIds`, если он вложенный массив
                                 const flatTicketIds = ticketIds.flat(Infinity)
-                                    .map(ticket => ticket?.id || ticket) // Поддержка форматов { id: 7477 } и [7477]
-                                    .filter(id => typeof id === "number" || !isNaN(Number(id))) // Убираем некорректные значения
-                                    .map(id => Number(id)); // Приводим все `id` к числу
+                                    .map(ticket => ticket?.id || ticket)
+                                    .filter(id => typeof id === "number" || !isNaN(Number(id)))
+                                    .map(id => Number(id));
 
                                 console.log("📤 Развернутые ticketIds:", flatTicketIds);
 
@@ -1307,24 +1445,33 @@ const ChatComponent = () => {
                                 ? selectedTicket.client_id.toString().replace(/[{}]/g, "").split(',').map(id => Number(id))
                                 : [];
 
-                            // Оставляем в messages только сообщения, относящиеся к загруженным тикетам
+                            const parseDate = (dateString) => {
+                                if (!dateString) return null;
+                                const parts = dateString.split(" ");
+                                if (parts.length !== 2) return null;
+
+                                const [date, time] = parts;
+                                const [day, month, year] = date.split("-");
+
+                                return new Date(`${year}-${month}-${day}T${time}`);
+                            };
+
                             const sortedMessages = messages
-                                .filter((msg, index, self) =>
-                                    msg.ticket_id === selectTicketId &&
-                                    self.findIndex(m => m.id === msg.id) === index // Убираем дубликаты
-                                )
-                                .sort((a, b) => new Date(a.time_sent) - new Date(b.time_sent));
+                                .filter(msg => msg.ticket_id === selectTicketId)
+                                .sort((a, b) => parseDate(a.time_sent) - parseDate(b.time_sent));
+
 
                             const groupedMessages = sortedMessages.reduce((acc, msg) => {
-                                const [date] = msg.time_sent.split(" "); // Разделяем дату и время
-                                const [day, month, year] = date.split("-"); // Разбираем вручную
-                                const formattedDate = `${day} ${new Date(`${year}-${month}-${day}`).toLocaleString("ru-RU", { month: "long", year: "numeric" })}`;
+                                const messageDate = parseDate(msg.time_sent)?.toLocaleDateString("ru-RU", {
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                }) || "—";
 
-                                if (!acc[formattedDate]) acc[formattedDate] = [];
-                                acc[formattedDate].push(msg);
+                                if (!acc[messageDate]) acc[messageDate] = [];
+                                acc[messageDate].push(msg);
                                 return acc;
                             }, {});
-
 
                             return Object.entries(groupedMessages).map(([date, msgs]) => {
                                 let groupedByClient = [];
@@ -1420,6 +1567,7 @@ const ChatComponent = () => {
                                                                     <div className="text">
                                                                         {renderContent()}
                                                                         <div className="message-time">
+                                                                            {/* Отображаем имя только если сообщение от клиента */}
                                                                             {msg.sender_id !== 1 && msg.sender_id !== userId && (
                                                                                 <span className="client-name">
                                                                                     {personalInfo[msg.client_id]?.name || ""} {personalInfo[msg.client_id]?.surname || ""}
@@ -1427,12 +1575,17 @@ const ChatComponent = () => {
                                                                             )}
                                                                             <div
                                                                                 className="reaction-toggle-button"
-                                                                                onClick={() => setSelectedMessageId(selectedMessageId === msg.id ? null : msg.id)}
+                                                                                onClick={() =>
+                                                                                    setSelectedMessageId(selectedMessageId === msg.id ? null : msg.id)
+                                                                                }
                                                                             >
                                                                                 {lastReaction || "☺"}
                                                                             </div>
                                                                             <div className='time-messages'>
-                                                                                {formatTimeSent(msg.time_sent)}
+                                                                                {parseDate(msg.time_sent)?.toLocaleTimeString("ru-RU", {
+                                                                                    hour: "2-digit",
+                                                                                    minute: "2-digit",
+                                                                                }) || "—"}
                                                                             </div>
                                                                         </div>
                                                                         {selectedMessageId === msg.id && (
@@ -1555,7 +1708,7 @@ const ChatComponent = () => {
                             <div className="client-select-container">
                                 <select
                                     className="task-select"
-                                    value={selectedClient || ""}
+                                    value={selectedClient}
                                     onChange={(e) => setSelectedClient(e.target.value)}
                                 >
                                     <option value="" disabled>{translations["Alege client"][language]}</option>
@@ -1666,7 +1819,7 @@ const ChatComponent = () => {
                                 <Input
                                     label="Vânzare €"
                                     type="number"
-                                    value={extraInfo?.[selectTicketId]?.buget || ""}
+                                    value={extraInfo[selectTicketId]?.buget || ""}
                                     onChange={(e) => handleFieldChange("buget", e.target.value)}
                                     className={`input-field ${fieldErrors.buget ? "invalid-field" : ""}`}
                                     placeholder="Indicați suma în euro"
@@ -1675,7 +1828,7 @@ const ChatComponent = () => {
                                 <Input
                                     label="Data venit in oficiu"
                                     type="datetime-local"
-                                    value={extraInfo?.[selectTicketId]?.data_venit_in_oficiu || ""}
+                                    value={extraInfo[selectTicketId]?.data_venit_in_oficiu || ""}
                                     onChange={(e) =>
                                         handleSelectChangeExtra(selectTicketId, 'data_venit_in_oficiu', e.target.value)
                                     }
@@ -1686,7 +1839,7 @@ const ChatComponent = () => {
                                     label="Status sunet telefonic"
                                     id="status_sunet_telefonic"
                                     className="input-field"
-                                    value={extraInfo?.[selectTicketId]?.status_sunet_telefonic || ""}
+                                    value={extraInfo[selectTicketId]?.status_sunet_telefonic || ""}
                                     onChange={(value) =>
                                         handleSelectChangeExtra(selectTicketId, 'status_sunet_telefonic', value)
                                     }
@@ -1695,7 +1848,7 @@ const ChatComponent = () => {
                                 <Input
                                     label="Data și ora plecării"
                                     type="datetime-local"
-                                    value={extraInfo?.[selectTicketId]?.data_plecarii || ""}
+                                    value={extraInfo[selectTicketId]?.data_plecarii || ""}
                                     onChange={(e) => handleFieldChange("data_plecarii", e.target.value)}
                                     className={`input-field ${fieldErrors.data_plecarii ? "invalid-field" : ""}`}
                                 />
@@ -1703,7 +1856,7 @@ const ChatComponent = () => {
                                 <Input
                                     label="Data și ora întoarcerii"
                                     type="datetime-local"
-                                    value={extraInfo?.[selectTicketId]?.data_intoarcerii || ""}
+                                    value={extraInfo[selectTicketId]?.data_intoarcerii || ""}
                                     onChange={(e) => handleFieldChange("data_intoarcerii", e.target.value)}
                                     className={`input-field ${fieldErrors.data_intoarcerii ? "invalid-field" : ""}`}
                                 />
@@ -1712,7 +1865,7 @@ const ChatComponent = () => {
                                     options={sourceOfLeadOptions}
                                     label="Sursă lead"
                                     id="lead-source-select"
-                                    value={extraInfo?.[selectTicketId]?.sursa_lead || ""}
+                                    value={extraInfo[selectTicketId]?.sursa_lead || ""}
                                     onChange={(value) => handleFieldChange("sursa_lead", value)}
                                     hasError={fieldErrors.sursa_lead}
                                 />
@@ -1721,7 +1874,7 @@ const ChatComponent = () => {
                                     options={promoOptions}
                                     label="Promo"
                                     id="promo-select"
-                                    value={extraInfo?.[selectTicketId]?.promo || ""}
+                                    value={extraInfo[selectTicketId]?.promo || ""}
                                     onChange={(value) => handleFieldChange("promo", value)}
                                     hasError={fieldErrors.promo}
                                 />
@@ -1730,7 +1883,7 @@ const ChatComponent = () => {
                                     options={marketingOptions}
                                     label="Marketing"
                                     id="marketing-select"
-                                    value={extraInfo?.[selectTicketId]?.marketing || ""}
+                                    value={extraInfo[selectTicketId]?.marketing || ""}
                                     onChange={(value) => handleFieldChange("marketing", value)}
                                     hasError={fieldErrors.marketing}
                                 />
@@ -1739,7 +1892,7 @@ const ChatComponent = () => {
                                     options={serviceTypeOptions}
                                     label="Serviciu"
                                     id="service-select"
-                                    value={extraInfo?.[selectTicketId]?.tipul_serviciului || ""}
+                                    value={extraInfo[selectTicketId]?.tipul_serviciului || ""}
                                     onChange={(value) => handleFieldChange("tipul_serviciului", value)}
                                     hasError={fieldErrors.tipul_serviciului}
                                 />
@@ -1748,7 +1901,7 @@ const ChatComponent = () => {
                                     options={countryOptions}
                                     label="Țară"
                                     id="country-select"
-                                    value={extraInfo?.[selectTicketId]?.tara || ""}
+                                    value={extraInfo[selectTicketId]?.tara || ""}
                                     onChange={(value) => handleFieldChange("tara", value)}
                                     hasError={fieldErrors.tara}
                                 />
@@ -1757,7 +1910,7 @@ const ChatComponent = () => {
                                     options={transportOptions}
                                     label="Transport"
                                     id="transport-select"
-                                    value={extraInfo?.[selectTicketId]?.tip_de_transport || ""}
+                                    value={extraInfo[selectTicketId]?.tip_de_transport || ""}
                                     onChange={(value) => handleFieldChange("tip_de_transport", value)}
                                     hasError={fieldErrors.tip_de_transport}
                                 />
@@ -1766,7 +1919,7 @@ const ChatComponent = () => {
                                     options={nameExcursionOptions}
                                     label="Excursie"
                                     id="excursie-select"
-                                    value={extraInfo?.[selectTicketId]?.denumirea_excursiei_turului || ""}
+                                    value={extraInfo[selectTicketId]?.denumirea_excursiei_turului || ""}
                                     onChange={(value) => handleFieldChange("denumirea_excursiei_turului", value)}
                                     hasError={fieldErrors.denumirea_excursiei_turului}
                                 />
@@ -1775,14 +1928,14 @@ const ChatComponent = () => {
                                     options={purchaseProcessingOptions}
                                     label="Achiziție"
                                     id="purchase-select"
-                                    value={extraInfo?.[selectTicketId]?.procesarea_achizitionarii || ""}
+                                    value={extraInfo[selectTicketId]?.procesarea_achizitionarii || ""}
                                     onChange={(value) => handleFieldChange("procesarea_achizitionarii", value)}
                                     hasError={fieldErrors.procesarea_achizitionarii}
                                 />
                                 <Input
                                     label="Data cererii de retur"
                                     type="datetime-local"
-                                    value={extraInfo?.[selectTicketId]?.data_cererii_de_retur || ""}
+                                    value={extraInfo[selectTicketId]?.data_cererii_de_retur || ""}
                                     onChange={(e) =>
                                         handleSelectChangeExtra(selectTicketId, 'data_cererii_de_retur', e.target.value)
                                     }
@@ -1792,17 +1945,17 @@ const ChatComponent = () => {
                             <div className="merge-tickets">
                                 <input
                                     type="number"
-                                    value={ticketId}
+                                    value={ticketId} // ticket_old всегда равен ticketId
                                     onChange={(e) =>
                                         handleSelectChangeExtra(selectTicketId, 'ticket_id_old', e.target.value)
                                     }
                                     className="input-field"
                                     placeholder="Introduceți ID vechi"
-                                    disabled
+                                    disabled // Поле отключено, так как old_user_id фиксирован
                                 />
                                 <input
                                     type="number"
-                                    value={extraInfo?.[selectTicketId]?.ticket_id_new || ""}
+                                    value={extraInfo[selectTicketId]?.ticket_id_new || ""}
                                     onChange={(e) =>
                                         handleSelectChangeExtra(selectTicketId, 'ticket_id_new', e.target.value)
                                     }
@@ -1865,14 +2018,14 @@ const ChatComponent = () => {
                                 <div className="merge-client">
                                     <input
                                         type="number"
-                                        value={selectedClient || ""}
+                                        value={selectedClient} // old_user_id фиксирован
                                         className="input-field"
                                         placeholder="Introduceți ID vechi"
-                                        disabled
+                                        disabled // Поле отключено, так как old_user_id фиксирован
                                     />
                                     <input
                                         type="number"
-                                        value={extraInfo?.[selectedClient]?.new_user_id || ""}
+                                        value={extraInfo[selectedClient]?.new_user_id || ""}
                                         onChange={(e) =>
                                             handleSelectChangeExtra(selectedClient, 'new_user_id', e.target.value)
                                         }
@@ -1891,7 +2044,7 @@ const ChatComponent = () => {
                             <Input
                                 label="Nr de contract"
                                 type="text"
-                                value={extraInfo?.[selectTicketId]?.numar_de_contract || ""}
+                                value={extraInfo[selectTicketId]?.numar_de_contract || ""}
                                 onChange={(e) => handleFieldChange("numar_de_contract", e.target.value)}
                                 className={`input-field ${fieldErrors.numar_de_contract ? "invalid-field" : ""}`}
                                 placeholder="Nr de contract"
@@ -1901,7 +2054,7 @@ const ChatComponent = () => {
                             <Input
                                 label="Data contractului"
                                 type="date"
-                                value={extraInfo?.[selectTicketId]?.data_contractului || ""}
+                                value={extraInfo[selectTicketId]?.data_contractului || ""}
                                 onChange={(e) => handleFieldChange("data_contractului", e.target.value)}
                                 className={`input-field ${fieldErrors.data_contractului ? "invalid-field" : ""}`}
                             />
@@ -1911,7 +2064,7 @@ const ChatComponent = () => {
                                 <label className={`switch ${fieldErrors.contract_trimis ? "invalid-toggle" : ""}`}>
                                     <input
                                         type="checkbox"
-                                        checked={extraInfo?.[selectTicketId]?.contract_trimis || false}
+                                        checked={extraInfo[selectTicketId]?.contract_trimis || false}
                                         onChange={(e) => handleFieldChange("contract_trimis", e.target.checked)}
                                     />
                                     <span className="slider round"></span>
@@ -1923,7 +2076,7 @@ const ChatComponent = () => {
                                 <label className={`switch ${fieldErrors.contract_semnat ? "invalid-toggle" : ""}`}>
                                     <input
                                         type="checkbox"
-                                        checked={extraInfo?.[selectTicketId]?.contract_semnat || false}
+                                        checked={extraInfo[selectTicketId]?.contract_semnat || false}
                                         onChange={(e) => handleFieldChange("contract_semnat", e.target.checked)}
                                     />
                                     <span className="slider round"></span>
@@ -1933,7 +2086,7 @@ const ChatComponent = () => {
                             <Input
                                 label="Operator turistic"
                                 type="text"
-                                value={extraInfo?.[selectTicketId]?.tour_operator || ""}
+                                value={extraInfo[selectTicketId]?.tour_operator || ""}
                                 onChange={(e) => handleFieldChange("tour_operator", e.target.value)}
                                 className={`input-field ${fieldErrors.tour_operator ? "invalid-field" : ""}`}
                                 placeholder="Operator turistic"
@@ -1943,7 +2096,7 @@ const ChatComponent = () => {
                             <Input
                                 label="Nr cererii de la operator"
                                 type="text"
-                                value={extraInfo?.[selectTicketId]?.numarul_cererii_de_la_operator || ""}
+                                value={extraInfo[selectTicketId]?.numarul_cererii_de_la_operator || ""}
                                 onChange={(e) => handleFieldChange("numarul_cererii_de_la_operator", e.target.value)}
                                 className={`input-field ${fieldErrors.numarul_cererii_de_la_operator ? "invalid-field" : ""}`}
                                 placeholder="Nr cererii de la operator"
@@ -1955,7 +2108,7 @@ const ChatComponent = () => {
                                 <label className={`switch ${fieldErrors.achitare_efectuata ? "invalid-toggle" : ""}`}>
                                     <input
                                         type="checkbox"
-                                        checked={extraInfo?.[selectTicketId]?.achitare_efectuata || false}
+                                        checked={extraInfo[selectTicketId]?.achitare_efectuata || false}
                                         onChange={(e) => handleFieldChange("achitare_efectuata", e.target.checked)}
                                     />
                                     <span className="slider round"></span>
@@ -1967,7 +2120,7 @@ const ChatComponent = () => {
                                 <label className={`switch ${fieldErrors.rezervare_confirmata ? "invalid-toggle" : ""}`}>
                                     <input
                                         type="checkbox"
-                                        checked={extraInfo?.[selectTicketId]?.rezervare_confirmata || false}
+                                        checked={extraInfo[selectTicketId]?.rezervare_confirmata || false}
                                         onChange={(e) => handleFieldChange("rezervare_confirmata", e.target.checked)}
                                     />
                                     <span className="slider round"></span>
@@ -1979,7 +2132,7 @@ const ChatComponent = () => {
                                 <label className={`switch ${fieldErrors.contract_arhivat ? "invalid-toggle" : ""}`}>
                                     <input
                                         type="checkbox"
-                                        checked={extraInfo?.[selectTicketId]?.contract_arhivat || false}
+                                        checked={extraInfo[selectTicketId]?.contract_arhivat || false}
                                         onChange={(e) => handleFieldChange("contract_arhivat", e.target.checked)}
                                     />
                                     <span className="slider round"></span>
@@ -1990,13 +2143,13 @@ const ChatComponent = () => {
                                 options={paymentStatusOptions}
                                 label="Plată primită"
                                 id="payment-select"
-                                value={extraInfo?.[selectTicketId]?.statutul_platii || ""}
+                                value={extraInfo[selectTicketId]?.statutul_platii || ""}
                                 onChange={(value) => handleFieldChange("statutul_platii", value)}
                                 hasError={fieldErrors.statutul_platii}
                             />
                             <Input
                                 label="Avans euro €"
-                                value={extraInfo?.[selectTicketId]?.avans_euro || ""}
+                                value={extraInfo[selectTicketId]?.avans_euro || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'avans_euro', e.target.value)
                                 }
@@ -2007,7 +2160,7 @@ const ChatComponent = () => {
                             <Input
                                 label="Data avansului"
                                 type="date"
-                                value={extraInfo?.[selectTicketId]?.data_avansului || ""}
+                                value={extraInfo[selectTicketId]?.data_avansului || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'data_avansului', e.target.value)
                                 }
@@ -2016,7 +2169,7 @@ const ChatComponent = () => {
                             <Input
                                 label="Data de plată integrală"
                                 type="date"
-                                value={extraInfo?.[selectTicketId]?.data_de_plata_integrala || ""}
+                                value={extraInfo[selectTicketId]?.data_de_plata_integrala || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'data_de_plata_integrala', e.target.value)
                                 }
@@ -2024,7 +2177,7 @@ const ChatComponent = () => {
                             />
                             <Input
                                 label="Preț NETTO €"
-                                value={extraInfo?.[selectTicketId]?.pret_netto || ""}
+                                value={extraInfo[selectTicketId]?.pret_netto || ""}
                                 onChange={(e) => handleFieldChange("pret_netto", e.target.value)}
                                 className={`input-field ${fieldErrors.pret_netto ? "invalid-field" : ""}`}
                                 placeholder="Preț netto (euro)"
@@ -2032,7 +2185,7 @@ const ChatComponent = () => {
                             />
                             <Input
                                 label="Achitat client"
-                                value={extraInfo?.[selectTicketId]?.achitat_client || ""}
+                                value={extraInfo[selectTicketId]?.achitat_client || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'achitat_client', e.target.value)
                                 }
@@ -2042,7 +2195,7 @@ const ChatComponent = () => {
                             />
                             <Input
                                 label="Restanță client"
-                                value={extraInfo?.[selectTicketId]?.restant_client || ""}
+                                value={extraInfo[selectTicketId]?.restant_client || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'restant_client', e.target.value)
                                 }
@@ -2053,7 +2206,7 @@ const ChatComponent = () => {
                             />
                             <Input
                                 label="Comision companie €"
-                                value={extraInfo?.[selectTicketId]?.comission_companie || ""}
+                                value={extraInfo[selectTicketId]?.comission_companie || ""}
                                 onChange={(e) => handleFieldChange("comission_companie", e.target.value)}
                                 className={`input-field ${fieldErrors.comission_companie ? "invalid-field" : ""}`}
                                 placeholder="Comision companie"
@@ -2062,7 +2215,7 @@ const ChatComponent = () => {
                             />
                             <Input
                                 label="Statut achitare"
-                                value={extraInfo?.[selectTicketId]?.restant_client || ""}
+                                value={extraInfo[selectTicketId]?.restant_client || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'restant_client', e.target.value)
                                 }
@@ -2077,7 +2230,7 @@ const ChatComponent = () => {
                                     <label className={`switch ${fieldErrors.control_admin ? "invalid-toggle" : ""}`}>
                                         <input
                                             type="checkbox"
-                                            checked={extraInfo?.[selectTicketId]?.control_admin || false}
+                                            checked={extraInfo[selectTicketId]?.control_admin || false}
                                             onChange={(e) =>
                                                 handleSelectChangeExtra(selectTicketId, 'control_admin', e.target.checked)
                                             }
@@ -2092,7 +2245,7 @@ const ChatComponent = () => {
                         <div className="extra-info-content">
                             <Input
                                 label="F/service"
-                                value={extraInfo?.[selectTicketId]?.f_serviciu || ""}
+                                value={extraInfo[selectTicketId]?.f_serviciu || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'f_serviciu', e.target.value)
                                 }
@@ -2102,7 +2255,7 @@ const ChatComponent = () => {
                             />
                             <Input
                                 label="F/factura"
-                                value={extraInfo?.[selectTicketId]?.f_nr_factura || ""}
+                                value={extraInfo[selectTicketId]?.f_nr_factura || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'f_nr_factura', e.target.value)
                                 }
@@ -2112,7 +2265,7 @@ const ChatComponent = () => {
                             />
                             <Input
                                 label="F/numarul"
-                                value={extraInfo?.[selectTicketId]?.f_numarul || ""}
+                                value={extraInfo[selectTicketId]?.f_numarul || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'f_numarul', e.target.value)
                                 }
@@ -2122,7 +2275,7 @@ const ChatComponent = () => {
                             />
                             <Input
                                 label="F/preț"
-                                value={extraInfo?.[selectTicketId]?.f_pret || ""}
+                                value={extraInfo[selectTicketId]?.f_pret || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'f_pret', e.target.value)
                                 }
@@ -2132,7 +2285,7 @@ const ChatComponent = () => {
                             />
                             <Input
                                 label="F/sumă"
-                                value={extraInfo?.[selectTicketId]?.f_suma || ""}
+                                value={extraInfo[selectTicketId]?.f_suma || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'f_suma', e.target.value)
                                 }
@@ -2144,7 +2297,7 @@ const ChatComponent = () => {
                                 options={valutaOptions}
                                 label="Valuta contului"
                                 id="payment-select"
-                                value={extraInfo?.[selectTicketId]?.valuta_contului || ""}
+                                value={extraInfo[selectTicketId]?.valuta_contului || ""}
                                 onChange={(value) =>
                                     handleSelectChangeExtra(selectTicketId, 'valuta_contului', value)
                                 }
@@ -2153,11 +2306,21 @@ const ChatComponent = () => {
                                 options={ibanOptions}
                                 label="IBAN"
                                 id="payment-select"
-                                value={extraInfo?.[selectTicketId]?.iban || ""}
+                                value={extraInfo[selectTicketId]?.iban || ""}
                                 onChange={(value) =>
                                     handleSelectChangeExtra(selectTicketId, 'iban', value)
                                 }
                             />
+                            {/* <Select
+                                options={paymentStatusOptions}
+                                label="Adaugă document"
+                                id="payment-select"
+                                value={extraInfo[selectTicketId]?.adauga_document || ""}
+                                onChange={(value) =>
+                                    handleSelectChangeExtra(selectTicketId, 'adauga_document', value)
+                                }
+                            /> */}
+                            {/* /<div>document list</div> */}
                         </div>
                     )}
                     {activeTab === 'Media' && selectTicketId && (
@@ -2215,7 +2378,7 @@ const ChatComponent = () => {
                                 options={motivulRefuzuluiOptions}
                                 label="Motivul refuzului"
                                 id="motivul_refuzului"
-                                value={extraInfo?.[selectTicketId]?.motivul_refuzului || ""}
+                                value={extraInfo[selectTicketId]?.motivul_refuzului || ""}
                                 onChange={(value) => handleFieldChange("motivul_refuzului", value)}
                                 hasError={fieldErrors.motivul_refuzului}
                             />
@@ -2223,14 +2386,14 @@ const ChatComponent = () => {
                                 options={evaluareOdihnaOptions}
                                 label="Evaluare odihnă"
                                 id="evaluare_de_odihna"
-                                value={extraInfo?.[selectTicketId]?.evaluare_de_odihna || ""}
+                                value={extraInfo[selectTicketId]?.evaluare_de_odihna || ""}
                                 onChange={(value) =>
                                     handleSelectChangeExtra(selectTicketId, 'evaluare_de_odihna', value)
                                 }
                             />
                             <Input
                                 label="Următoarea vacanță"
-                                value={extraInfo?.[selectTicketId]?.urmatoarea_vacanta || ""}
+                                value={extraInfo[selectTicketId]?.urmatoarea_vacanta || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'urmatoarea_vacanta', e.target.value)
                                 }
@@ -2240,7 +2403,7 @@ const ChatComponent = () => {
                             />
                             <Input
                                 label="Manager"
-                                value={extraInfo?.[selectTicketId]?.manager || ""}
+                                value={extraInfo[selectTicketId]?.manager || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'manager', e.target.value)
                                 }
@@ -2250,7 +2413,7 @@ const ChatComponent = () => {
                             />
                             <Input
                                 label="Vacanța"
-                                value={extraInfo?.[selectTicketId]?.vacanta || ""}
+                                value={extraInfo[selectTicketId]?.vacanta || ""}
                                 onChange={(e) =>
                                     handleSelectChangeExtra(selectTicketId, 'vacanta', e.target.value)
                                 }
