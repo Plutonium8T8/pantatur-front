@@ -4,7 +4,6 @@ import { useSnackbar } from 'notistack';
 import { FaEnvelope, FaTrash } from 'react-icons/fa';
 import { useUser } from './UserContext';
 import { truncateText } from './stringUtils';
-import { translations } from './Components/utils/translations';
 
 const AppContext = createContext();
 
@@ -23,6 +22,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   const ticketsRef = useRef(tickets);
   const [unreadMessages, setUnreadMessages] = useState(new Map()); // Оптимизированное хранение непрочитанных сообщений
   const language = localStorage.getItem('language') || 'RO';
+  const [selectTicketId, setSelectTicketId] = useState(null);
 
   useEffect(() => {
     let pingInterval;
@@ -134,7 +134,38 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   const markMessagesAsRead = (ticketId) => {
     if (!ticketId) return;
 
+    // Получаем WebSocket-соединение
     const socketInstance = socketRef.current;
+
+    // **Обновляем `messages`, чтобы пометить их как прочитанные**
+    setMessages((prevMessages) =>
+      prevMessages.map((msg) => {
+        if (msg.ticket_id === ticketId) {
+          return { ...msg, seen_by: JSON.stringify({ [userId]: true }), seen_at: new Date().toISOString() };
+        }
+        return msg;
+      })
+    );
+
+    // **Обновляем `unreadMessages`, удаляя все сообщения этого тикета**
+    setUnreadMessages((prevUnread) => {
+      const updatedUnread = new Map(prevUnread);
+      updatedUnread.forEach((msg, msgId) => {
+        if (msg.ticket_id === ticketId) {
+          updatedUnread.delete(msgId);
+        }
+      });
+      return updatedUnread;
+    });
+
+    // **Обновляем `unseen_count` в `tickets`**
+    setTickets((prevTickets) =>
+      prevTickets.map((ticket) =>
+        ticket.id === ticketId ? { ...ticket, unseen_count: 0 } : ticket
+      )
+    );
+
+    // **Отправляем WebSocket `seen`, только если были непрочитанные**
     if (socketInstance && socketInstance.readyState === WebSocket.OPEN) {
       const readMessageData = {
         type: 'seen',
@@ -146,37 +177,8 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       socketInstance.send(JSON.stringify(readMessageData));
       console.log(`✅ Seen отправлен для ticket_id=${ticketId}`);
     } else {
-      alert('WebSocket off. Please reload the page!');
+      console.warn("WebSocket не подключён, не удалось отправить seen.");
     }
-
-    setMessages((prevMessages) => {
-      return prevMessages.map((msg) => {
-        let seenBy = msg.seen_by;
-
-        if (typeof seenBy === "string") {
-          if (/^{\d+}$/.test(seenBy)) {
-            seenBy = { [seenBy.replace(/\D/g, '')]: true };
-          } else if (seenBy.startsWith("{") && seenBy.endsWith("}")) {
-            try {
-              seenBy = JSON.parse(seenBy);
-            } catch (error) {
-              seenBy = {};
-            }
-          } else {
-            seenBy = {};
-          }
-        }
-
-        if (msg.ticket_id === ticketId && Object.keys(seenBy).length === 0) {
-          return {
-            ...msg,
-            seen_by: JSON.stringify({ [userId]: true }),
-            seen_at: new Date().toISOString()
-          };
-        }
-        return msg;
-      });
-    });
   };
 
   const fetchTickets = async () => {
@@ -188,6 +190,8 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         console.warn('Нет токена. Пропускаем загрузку тикетов.');
         return [];
       }
+      const response = await fetch('https://pandatur-api.com/api/light/tickets', {
+
       const response = await fetch('https://pandatur-api.com/api/light/tickets', {
         method: 'GET',
         headers: {
@@ -204,10 +208,21 @@ export const AppProvider = ({ children, isLoggedIn }) => {
 
       const data = await response.json();
 
-      setTickets(data);
-      setTicketIds(data.map((ticket) => ticket.id));
+      // Обрабатываем данные тикетов
+      const processedTickets = data.map(ticket => ({
+        ...ticket,
+        client_ids: ticket.client_id
+          ? ticket.client_id.replace(/[{}]/g, "").split(',').map(id => Number(id))
+          : [],
+        last_message: ticket.last_message || "Нет сообщений",
+        time_sent: ticket.time_sent || null,
+        unseen_count: ticket.unseen_count || 0
+      }));
 
-      return data;
+      setTickets(processedTickets);
+      setTicketIds(processedTickets.map(ticket => ticket.id));
+
+      return processedTickets;
     } catch (error) {
       console.error('Ошибка при загрузке тикетов:', error);
       return [];
@@ -342,34 +357,36 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
       });
 
-      if (!response.ok) throw new Error(`Ошибка: ${response.status}`);
+      if (!response.ok) throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
+
       const data = await response.json();
 
-      setMessages(prevMessages => {
-        const existingMessageIds = new Set(prevMessages.map(msg => msg.id));
-        const newMessages = data.filter(msg => !existingMessageIds.has(msg.id));
-        const updatedMessages = [...prevMessages, ...newMessages];
+      if (Array.isArray(data)) {
+        setMessages((prevMessages) => {
+          console.log("Старые сообщения в state:", prevMessages);
+          console.log("Пришедшие новые сообщения:", data);
 
-        // ✅ Определяем самое свежее сообщение
-        const lastMsg = updatedMessages.sort((a, b) => new Date(b.time_sent) - new Date(a.time_sent))[0];
+          // Оставляем все старые сообщения, кроме тех, что принадлежат текущему тикету
+          const otherMessages = prevMessages.filter((msg) => msg.ticket_id !== ticket_id);
 
-        // ✅ Обновляем тикет, если новое последнее сообщение свежее
-        setTickets(prevTickets =>
-          prevTickets.map(ticket =>
+          return [...otherMessages, ...data];
+        });
+
+        console.log("Обновленный state сообщений:", data);
+
+        // **Перерасчёт `unseen_count`**
+        const unseenMessages = data.filter(
+          (msg) => msg.seen_by === '{}' && msg.sender_id !== userId
+        );
+
+        setTickets((prevTickets) =>
+          prevTickets.map((ticket) =>
             ticket.id === ticket_id
-              ? {
-                ...ticket,
-                last_message: lastMsg?.message || ticket.last_message,
-                time_sent: lastMsg?.time_sent || ticket.time_sent,
-              }
+              ? { ...ticket, unseen_count: unseenMessages.length }
               : ticket
           )
         );
-
-        return updatedMessages;
-      });
-
-      console.log("Сообщения загружены:", data);
+      }
     } catch (error) {
       console.error('Ошибка при получении сообщений:', error.message);
     }
@@ -380,63 +397,78 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     switch (message.type) {
       case 'message': {
         console.log("Новое сообщение из WebSocket:", message.data);
-        const ticketId = message.data.ticket_id;
 
-        // ✅ Запрос на обновление сообщений (не затираем старые)
-        getClientMessagesSingle(ticketId)
-          .then(() => console.log(`Сообщения для тикета ${ticketId} обновлены.`))
-          .catch(err => console.error("Ошибка при обновлении сообщений с сервера:", err));
+        const { ticket_id, message: msgText, time_sent, sender_id } = message.data;
 
-        setMessages(prevMessages => {
-          if (!prevMessages.some(msg => msg.id === message.data.id)) {
-            return [...prevMessages, message.data];
-          }
-          return prevMessages;
-        });
+        setMessages((prevMessages) => [...prevMessages, message.data]);
 
-        // ✅ Обновляем последнее сообщение в тикете
-        setTickets(prevTickets =>
-          prevTickets.map(ticket =>
-            ticket.id === ticketId
+        setTickets((prevTickets) =>
+          prevTickets.map((ticket) =>
+            ticket.id === ticket_id
               ? {
                 ...ticket,
-                last_message: message.data.message || "No message",
-                time_sent: message.data.time_sent || ticket.time_sent,
+                last_message: msgText,
+                time_sent: time_sent,
+                unseen_count:
+                  ticket_id === selectTicketId
+                    ? 0  // Если тикет открыт, сбрасываем непрочитанные
+                    : ticket.unseen_count + (sender_id !== userId ? 1 : 0)
               }
               : ticket
           )
         );
 
+        // Обновляем `unreadMessages`
+        setUnreadMessages((prevUnread) => {
+          const updatedUnread = new Map(prevUnread);
+
+          if (ticket_id === selectTicketId) {
+            // Если тикет открыт, удаляем все его непрочитанные сообщения
+            updatedUnread.forEach((msg, msgId) => {
+              if (msg.ticket_id === ticket_id) {
+                updatedUnread.delete(msgId);
+              }
+            });
+          } else if (sender_id !== userId) {
+            // Добавляем новое сообщение в `unreadMessages`, если оно непрочитанное
+            updatedUnread.set(message.data.id, message.data);
+          }
+
+          return updatedUnread;
+        });
+
         break;
       }
       case 'seen': {
-        const { ticket_id, seen_at, client_id } = message.data;
+        const { ticket_id, seen_at } = message.data;
 
-        console.log('🔄 Получен `seen` из WebSocket:', { ticket_id, seen_at, client_id });
+        console.log('🔄 Получен `seen` из WebSocket:', { ticket_id, seen_at });
 
         // **Обновляем `messages`**
         setMessages((prevMessages) => {
           return prevMessages.map((msg) =>
-            msg.ticket_id === ticket_id ? { ...msg, seen_at, seen_by: JSON.stringify({ [userId]: true }) } : msg
+            msg.ticket_id === ticket_id ? { ...msg, seen_at } : msg
           );
         });
 
-        // **Обновляем `unreadMessages` и `unreadCount` после `seen`**
-        setTimeout(() => {
-          setUnreadMessages((prevUnreadMessages) => {
-            const updatedUnreadMap = new Map(prevUnreadMessages);
-
-            updatedUnreadMap.forEach((msg, msgId) => {
-              if (msg.ticket_id === ticket_id) {
-                updatedUnreadMap.delete(msgId);
-              }
-            });
-
-            console.log("✅ Обновленные `unreadMessages` после `seen`:", updatedUnreadMap.size);
-            return updatedUnreadMap;
+        // **Удаляем непрочитанные сообщения из `unreadMessages`**
+        setUnreadMessages((prevUnreadMessages) => {
+          const updatedUnreadMap = new Map(prevUnreadMessages);
+          updatedUnreadMap.forEach((msg, msgId) => {
+            if (msg.ticket_id === ticket_id) {
+              updatedUnreadMap.delete(msgId);
+            }
           });
+          console.log("✅ Обновленные `unreadMessages` после `seen`:", updatedUnreadMap.size);
+          return updatedUnreadMap;
+        });
 
-        }, 100);
+        // **Обновляем unseen_count у тикетов**
+        setTickets((prevTickets) =>
+          prevTickets.map((ticket) =>
+            ticket.id === ticket_id ? { ...ticket, unseen_count: 0 } : ticket
+          )
+        );
 
         break;
       }
@@ -499,25 +531,31 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     }
   }, [isLoggedIn]);
 
+  useEffect(() => {
+    // Пересчитываем `unreadCount` по `unseen_count` из тикетов
+    const totalUnread = tickets.reduce((sum, ticket) => sum + ticket.unseen_count, 0);
+
+    console.log(`🔄 Обновленный unreadCount: ${totalUnread}`);
+    setUnreadCount(totalUnread);
+  }, [tickets, unreadMessages]); // Обновляем при изменении тикетов и непрочитанных сообщений
+
   return (
-    <AppContext.Provider
-      value={{
-        tickets,
-        setTickets,
-        ticketIds,
-        messages,
-        setMessages,
-        unreadCount,
-        markMessagesAsRead,
-        clientMessages,
-        isLoading,
-        updateTicket,
-        fetchTickets,
-        socketRef,
-        getClientMessagesSingle
-        // unreadCount: unreadMessages.size, // Количество непрочитанных сообщений
-      }}
-    >
+    <AppContext.Provider value={{
+      tickets,
+      setTickets,
+      selectTicketId,  // Делаем доступным везде
+      setSelectTicketId,
+      messages,
+      setMessages,
+      unreadCount,
+      markMessagesAsRead,
+      clientMessages,
+      isLoading,
+      updateTicket,
+      fetchTickets,
+      socketRef,
+      getClientMessagesSingle
+    }}>
       {children}
     </AppContext.Provider>
   );
