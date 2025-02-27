@@ -86,7 +86,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     };
 
     if (!socketRef.current) {
-      const socketInstance = new WebSocket('wss://pandaturws.com');
+      const socketInstance = new WebSocket(process.env.REACT_APP_WS_URL);
       socketRef.current = socketInstance;
 
       socketInstance.onopen = async () => {
