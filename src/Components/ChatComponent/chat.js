@@ -230,7 +230,7 @@ const ChatComponent = ({ }) => {
     };
 
     const handleTicketClick = async (ticketId) => {
-        setSelectTicketId(ticketId);  // Устанавливаем выбранный тикет
+        setSelectTicketId(ticketId); // Устанавливаем активный тикет
 
         const selectedTicket = tickets.find((ticket) => ticket.id === ticketId);
         if (selectedTicket) {
@@ -241,9 +241,11 @@ const ChatComponent = ({ }) => {
         }
 
         navigate(`/chat/${ticketId}`);
-        markMessagesAsRead(ticketId); // Отмечаем сообщения как прочитанные
 
-        // Загружаем все сообщения тикета
+        // Не сбрасываем unseen_count вручную, ждем WebSocket-сообщение
+        await markMessagesAsRead(ticketId);
+
+        // Загружаем сообщения тикета
         await getClientMessagesSingle(ticketId);
     };
 
