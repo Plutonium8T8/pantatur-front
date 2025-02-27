@@ -20,6 +20,6 @@ export const auth = {
   },
 
   logout: async () => {
-      await baseAxios.post("/api/logout");
-  }
+    await baseAxios.post("/api/logout");
+  },
 };
