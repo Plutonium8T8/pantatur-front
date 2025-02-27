@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
-
+import { api } from './api';
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
@@ -68,22 +68,12 @@ export const UserProvider = ({ children }) => {
         return;
       }
 
-      const response = await fetch(`https://pandatur-api.com/api/users/${userId}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const data = await api.users.getById(userId)
 
-      if (response.ok) {
-        const data = await response.json();
-        const parsedRoles = JSON.parse(data.roles);
-        setUserRoles(parsedRoles);
-        localStorage.setItem('user_roles', JSON.stringify(parsedRoles));
-      } else {
-        setUserRoles([]);
-      }
+      const parsedRoles = JSON.parse(data.roles);
+      setUserRoles(data.roles);
+      localStorage.setItem('user_roles', JSON.stringify(parsedRoles));
+
     } catch (error) {
       console.error("❌ Ошибка при загрузке ролей:", error.message);
       setUserRoles([]);

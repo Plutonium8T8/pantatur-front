@@ -7,7 +7,6 @@ import WorkflowColumn from './WorkflowColumnComponent';
 import TicketModal from './TicketModal/TicketModalComponent';
 import TicketFilterModal from './TicketFilterModal';
 import TicketRow from './TicketRowComponent';
-import Cookies from 'js-cookie';
 import '../../App.css';
 import '../SnackBarComponent/SnackBarComponent.css';
 import { FaFilter, FaTable, FaColumns, FaTrash, FaEdit } from 'react-icons/fa';
@@ -81,45 +80,6 @@ const Leads = () => {
     if (ticketToEdit) {
       setCurrentTicket(ticketToEdit);
       setIsModalOpen(true);
-    }
-  };
-
-  const updateWorkflow = async (ticketId, newWorkflow) => {
-    try {
-      const token = Cookies.get('jwt');
-      const response = await fetch(`https://pandatur-api.com/api/tickets/${ticketId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Origin: 'https://plutonium8t8.github.io',
-          Authorization: `Bearer ${token}`,
-        },
-        credentials: 'include',
-        body: JSON.stringify({ workflow: newWorkflow }),
-      });
-
-      if (response.status === 401) {
-        alert(getLanguageByKey("Sesia a expirat") || "Sesia a expirat, te rog sa accesezi din nou pagina!");
-        window.location.reload();
-        return;
-      }
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(`Failed to update workflow: ${response.status}. ${errorData.message}`, window.location.reload());
-      }
-
-      const updatedTicket = await response.json();
-
-      setTickets((prevTickets) =>
-        prevTickets.map((ticket) =>
-          ticket.id === updatedTicket.ticket_id ? updatedTicket : ticket
-        )
-      );
-
-      console.log('✅ Workflow updated locally for ticketId:', ticketId);
-    } catch (error) {
-      console.error('❌ Error updating workflow:', error);
     }
   };
 
@@ -233,8 +193,7 @@ const Leads = () => {
                   setCurrentTicket(ticket);
                   setIsModalOpen(true);
                 }}
-                onUpdateWorkflow={updateWorkflow}
-              />
+                />
             ))
         )}
       </div>

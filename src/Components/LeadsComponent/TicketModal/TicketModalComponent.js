@@ -5,12 +5,14 @@ import Priority from '../../PriorityComponent/PriorityComponent';
 import Workflow from '../../WorkFlowComponent/WorkflowComponent';
 import TagInput from '../../TagsComponent/TagComponent';
 import { useUser } from '../../../UserContext';
-import Cookies from 'js-cookie';
 import { translations } from "../../utils/translations";
 import { useAppContext } from '../../../AppContext';
-
+import { api } from "../../../api"
+import { useSnackbar } from 'notistack';
+ 
 const TicketModal = ({ ticket, onClose, onSave }) => {
   const modalRef = useRef(null);
+  const { enqueueSnackbar } = useSnackbar();
   const language = localStorage.getItem('language') || 'RO';
 
   const { setTickets } = useAppContext();
@@ -79,30 +81,9 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
     );
 
     try {
-      const token = Cookies.get('jwt');
       const isEditing = Boolean(editedTicket?.id);
-      const method = isEditing ? 'PATCH' : 'POST';
-      const url = isEditing
-        ? `https://pandatur-api.com/api/tickets/${editedTicket.id}`
-        : `https://pandatur-api.com/api/tickets`;
 
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          Origin: 'https://plutonium8t8.github.io',
-          Authorization: `Bearer ${token}`,
-        },
-        credentials: 'include',
-        body: JSON.stringify(cleanedData),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(`Failed to save ticket: ${response.status}. ${error.message}`);
-      }
-
-      const updatedTicket = await response.json();
+      const updatedTicket = isEditing ? await api.tickets.updateById(editedTicket.id, cleanedData)  : await api.tickets.createTickets(cleanedData);
 
       setTickets(prevTickets => isEditing
         ? prevTickets.map(ticket => (ticket.id === updatedTicket.id ? updatedTicket : ticket))
@@ -111,24 +92,14 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
 
       onClose();
     } catch (e) {
-      console.error('Ошибка при сохранении тикета:', e);
+      // TODO: Make a function to extract `errors` from server
+      enqueueSnackbar("Ошибка при сохранении тикета", {variant: "error"})
     }
   };
 
   const deleteTicketById = async () => {
     try {
-      const token = Cookies.get('jwt');
-      const response = await fetch(`https://pandatur-api.com/api/tickets/${editedTicket?.id}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          Origin: 'https://plutonium8t8.github.io',
-        },
-        credentials: 'include',
-      });
-
-      if (!response.ok) throw new Error('Error deleting ticket');
+      await api.tickets.deleteById(editedTicket?.id)
 
       setTickets(prevTickets => prevTickets.filter(t => t.id !== editedTicket.id));
       onClose();

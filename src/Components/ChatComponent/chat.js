@@ -35,6 +35,8 @@ import { workflowOptions } from '../../FormOptions/WorkFlowOption';
 import { evaluareOdihnaOptions } from '../../FormOptions/EvaluareVacantaOptions';
 import { valutaOptions } from '../../FormOptions/ValutaOptions';
 import { ibanOptions } from '../../FormOptions/IbanOptions';
+import { api } from "../../api"
+import { showServerError } from "../../Components/utils/showServerError"
 
 const ChatComponent = () => {
     const { userId, hasRole, isLoadingRoles } = useUser();
@@ -115,23 +117,9 @@ const ChatComponent = () => {
     // Получение дополнительной информации для тикета
     const fetchTicketExtraInfo = async (selectTicketId) => {
         try {
-            const token = Cookies.get('jwt');
-            const response = await fetch(`https://pandatur-api.com/api/ticket-info/${selectTicketId}`, {
-                method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                    Origin: 'https://plutonium8t8.github.io',
-                },
-            });
 
-            if (!response.ok) {
-                throw new Error('Ошибка при получении дополнительной информации');
-            }
+            const data = await api.tickets.ticket.getInfo(selectTicketId)
 
-            const data = await response.json();
-            // enqueueSnackbar('Загружено доп инфо по тикетам!', { variant: 'success' });
-            // Обновляем состояние с дополнительной информацией о тикете
             setExtraInfo((prevState) => ({
                 ...prevState,
                 [selectTicketId]: data, // Сохраняем информацию для текущего тикета
@@ -169,29 +157,8 @@ const ChatComponent = () => {
         setIsLoading(true); // Устанавливаем состояние загрузки в true
 
         try {
-            const response = await fetch(`https://pandatur-api.com/api/ticket-info/${selectTicketId}`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                    Origin: 'https://plutonium8t8.github.io',
-                },
-                body: JSON.stringify({
-                    ...ticketExtraInfo, // Сначала добавляем все свойства из ticketExtraInfo
-                }),
-            });
-
-            // Логируем отправляемые данные
-            console.log('Отправляемые данные:', {
-                ...ticketExtraInfo,
-            });
-
-            if (!response.ok) {
-                throw new Error(`Ошибка при отправке данных. Статус: ${response.status}`);
-            }
-
-            const result = await response.json();
-
+            const result = await api.tickets.ticket.create(selectTicketId, ticketExtraInfo)
+           
             enqueueSnackbar('Данные успешно обновлены', { variant: 'success' });
             console.log('Данные успешно отправлены:', result);
         } catch (error) {
@@ -690,27 +657,12 @@ const ChatComponent = () => {
         }
 
         try {
-            const token = Cookies.get('jwt');
-            const response = await fetch(`https://pandatur-api.com/api/tickets/${selectTicketId}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                    Origin: 'https://plutonium8t8.github.io',
-                },
-                credentials: "include",
-                body: JSON.stringify({ technician_id: newTechnicianId }),
-            });
-
-            if (!response.ok) {
-                throw new Error(`Ошибка при обновлении technician_id. Код: ${response.status}`);
-            }
-
-            const updatedTicket = await response.json();
-            console.log('Тикет успешно обновлён:', updatedTicket);
-
+           await api.tickets.updateById(selectTicketId, { technician_id: newTechnicianId })
+           
+            enqueueSnackbar("Список тикетов успешно обновлён", {variant: "success"})
             console.log('Список тикетов успешно обновлён.');
         } catch (error) {
+            enqueueSnackbar(error.message, {variant: "error"})
             console.error('Ошибка при обновлении technician_id:', error.message);
         }
     };
@@ -720,31 +672,13 @@ const ChatComponent = () => {
     const uploadFile = async (file) => {
         const formData = new FormData();
         formData.append('file', file);
-        const token = Cookies.get('jwt'); // Используем JWT токен для авторизации
-
-        console.log('Подготовка к загрузке файла...');
-        console.log('FormData:', formData);
 
         try {
-            const response = await fetch('https://pandatur-api.com/api/messages/upload', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
 
-            console.log('Статус ответа:', response.status);
+            const data = await api.messages.upload(formData)
 
-            if (response.ok) {
-                const data = await response.json();
-                console.log('Файл успешно загружен:', data);
-                return data; // Ожидается объект с полем `url`
-            } else {
-                const errorMessage = `Ошибка загрузки файла. Статус: ${response.status}`;
-                console.error(errorMessage);
-                throw new Error(errorMessage);
-            }
+            return data
+
         } catch (error) {
             console.error('Ошибка загрузки файла:', error);
             throw error;
@@ -859,38 +793,19 @@ const ChatComponent = () => {
             console.log('Отправляемые данные:', JSON.stringify(messageData, null, 2));
 
             // 🔹 Определяем API в зависимости от платформы
-            let apiUrl = 'https://pandatur-api.com/messages/send'; // API по умолчанию
+            let apiUrl = api.messages.send.create
 
             if (platform === "telegram") {
-                apiUrl = 'https://pandatur-api.com/messages/send/telegram';
+                apiUrl = api.messages.send.telegram
             } else if (platform === "viber") {
-                apiUrl = 'https://pandatur-api.com/messages/send/viber';
+                apiUrl = api.messages.send.viber
             }
-
-            console.log(`📡 Отправка сообщения через API: ${apiUrl}`);
 
             setManagerMessage('');
 
-            const token = Cookies.get('jwt');
+            await apiUrl(messageData)
 
-            // 🔹 Отправка сообщения
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${Cookies.get('jwt')}`,
-                    Origin: 'https://plutonium8t8.github.io',
-                },
-                body: JSON.stringify(messageData),
-            });
-
-            if (!response.ok) {
-                const responseData = await response.json();
-                console.error('Ошибка с сервера:', responseData.message);
-                return;
-            }
-
-            console.log(`✅ Сообщение успешно отправлено через API ${apiUrl}:`, messageData);
+             console.log(`✅ Сообщение успешно отправлено через API ${apiUrl}:`, messageData);
 
             // 🔹 Добавляем сообщение в локальный state
             setMessages((prevMessages) => [...prevMessages, { ...messageData, seenAt: false }]);
@@ -959,29 +874,9 @@ const ChatComponent = () => {
         };
 
         try {
-            const token = Cookies.get('jwt');
 
-            if (!token) {
-                alert("Ошибка: отсутствует токен аутентификации.");
-                return;
-            }
-
-            const response = await fetch(`https://pandatur-api.com/api/users-extended/${selectedClient}`, {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                    Origin: 'https://plutonium8t8.github.io',
-                },
-                body: JSON.stringify(payload),
-            });
-
-            if (!response.ok) {
-                const errorText = await response.text(); // Получаем текст ошибки
-                throw new Error(`Ошибка при отправке данных: ${response.status} - ${errorText}`);
-            }
-
-            const result = await response.json();
+            const result = await api.users.updateExtended(selectedClient, payload)
+           
             console.log("Данные успешно обновлены:", result);
             alert("Личные данные успешно сохранены!");
 
@@ -999,24 +894,8 @@ const ChatComponent = () => {
 
     const fetchClientDataPersonal = async (selectedClient, setPersonalInfo) => {
         try {
-            const token = Cookies.get('jwt');
+            const data = await api.users.getExtendedById(selectedClient)
 
-            const response = await fetch(`https://pandatur-api.com/api/users-extended/${selectedClient}`, {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                    Origin: 'https://plutonium8t8.github.io',
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error(`Ошибка: ${response.status}`);
-            }
-
-            const data = await response.json();
-            // console.log('Полученные данные клиента:', data);
-
-            // Устанавливаем полученные данные в `personalInfo`
             setPersonalInfo(prev => ({
                 ...prev,
                 [selectedClient]: { ...data } // Обновляем данные для выбранного клиента
@@ -1084,30 +963,14 @@ const ChatComponent = () => {
         }
 
         try {
-            const token = Cookies.get('jwt');
-            const response = await fetch("https://pandatur-api.com/api/merge/tickets", {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                    Origin: 'https://plutonium8t8.github.io',
-                },
-                body: JSON.stringify({
-                    ticket_old: ticketOld,
-                    ticket_new: ticketNew
-                })
-            });
+             await api.tickets.merge({
+                ticket_old: ticketOld,
+                ticket_new: ticketNew
+            })
 
-            if (!response.ok) {
-                throw new Error("Eroare la combinarea biletelor");
-            }
-
-            const result = await response.json();
-            alert("Biletele au fost combinate cu succes!");
-            console.log(result);
+            enqueueSnackbar("Biletele au fost combinate cu succes!", { variant: 'success' });
         } catch (error) {
-            console.error("Eroare:", error);
-            alert("Eroare la combinarea biletelor!");
+            enqueueSnackbar(showServerError(error), { variant: 'error' });
         }
     };
 
@@ -1121,31 +984,14 @@ const ChatComponent = () => {
         }
 
         try {
-            const token = Cookies.get('jwt');
+              await api.users.clientMerge({
+                old_user_id: oldUserId,
+                new_user_id: newUserId
+            })
 
-            const response = await fetch("https://pandatur-api.com/api/users-client/merge", {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                    Origin: 'https://plutonium8t8.github.io',
-                },
-                body: JSON.stringify({
-                    old_user_id: oldUserId,
-                    new_user_id: newUserId
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error("Eroare la combinarea utilizatorilor");
-            }
-
-            const result = await response.json();
-            alert("Utilizatorii au fost combinați cu succes!");
-            console.log(result);
+            enqueueSnackbar("Utilizatorii au fost combinați cu succes!", { variant: 'success' });
         } catch (error) {
-            console.error("Eroare:", error);
-            alert("Eroare la combinarea utilizatorilor!");
+            enqueueSnackbar("Eroare la combinarea utilizatorilor", { variant: 'error' });
         }
     };
 

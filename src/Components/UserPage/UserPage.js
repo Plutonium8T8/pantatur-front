@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from "react";
-import Cookies from "js-cookie";
 import { useUser } from "../../UserContext";
 import "./UserProfile.css";
 import { FaUser } from "react-icons/fa";
 import { translations } from "../utils/translations";
+import App from "../../App";
+import { api } from "../../api";
+import { useSnackbar } from "notistack";
+import { showServerError } from "../../Components/utils/showServerError";
 
 const UserPage = ({ isOpen, onClose }) => {
   const { userId } = useUser();
   const [error, setError] = useState(null);
+  const { enqueueSnackbar } = useSnackbar();
 
   const language = localStorage.getItem("language") || "RO";
 
@@ -44,98 +48,41 @@ const UserPage = ({ isOpen, onClose }) => {
 
   const fetchUserData = async () => {
     try {
-      const token = Cookies.get("jwt");
+      const userData = await api.users.getById(userId);
 
-      // Fetch user basic information
-      const userResponse = await fetch(
-        `https://pandatur-api.com/api/users/${userId}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-            Origin: 'https://plutonium8t8.github.io',
-          },
-        }
-      );
+      setUsers((prev) => ({
+        ...prev,
+        username: userData.username || "",
+        email: userData.email || "",
+      }));
 
-      if (userResponse.ok) {
-        const userData = await userResponse.json();
-        setUsers((prev) => ({
-          ...prev,
-          username: userData.username || "",
-          email: userData.email || "",
-        }));
-      } else {
-        console.error(
-          `Error fetching user: ${userResponse.status} - ${userResponse.statusText}`
-        );
-      }
+      const extendedData = await api.users.getExtendedById(userId);
 
-      console.log(users);
+      setUsersExtended((prev) => ({
+        ...prev,
+        name: extendedData.name || "",
+        surname: extendedData.surname || "",
+        date_of_birth: extendedData.date_of_birth || "",
+        id_card_series: extendedData.id_card_series || "",
+        id_card_number: extendedData.id_card_number || "",
+        id_card_release: extendedData.id_card_release || "",
+        idnp: extendedData.idnp || "",
+        address: extendedData.address || "",
+        phone: extendedData.phone || "",
+      }));
 
-      // Fetch extended user information
-      const extendedResponse = await fetch(
-        `https://pandatur-api.com/api/users-extended/${userId}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-            Origin: 'https://plutonium8t8.github.io',
-          },
-        }
-      );
+      const technicianData = await api.users.getTechnicianById(userId);
 
-      if (extendedResponse.ok) {
-        const extendedData = await extendedResponse.json();
-        setUsersExtended((prev) => ({
-          ...prev,
-          name: extendedData.name || "",
-          surname: extendedData.surname || "",
-          date_of_birth: extendedData.date_of_birth || "",
-          id_card_series: extendedData.id_card_series || "",
-          id_card_number: extendedData.id_card_number || "",
-          id_card_release: extendedData.id_card_release || "",
-          idnp: extendedData.idnp || "",
-          address: extendedData.address || "",
-          phone: extendedData.phone || "",
-        }));
-      } else {
-        console.error(
-          `Error fetching user_extended: ${extendedResponse.status} - ${extendedResponse.statusText}`
-        );
-      }
-
-      // Fetch technician user information
-      const technicianResponse = await fetch(
-        `https://pandatur-api.com/api/users-technician/${userId}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-            Origin: 'https://plutonium8t8.github.io',
-          },
-        }
-      );
-
-      if (technicianResponse.ok) {
-        const technicianData = await technicianResponse.json();
-        setUsersTechnician((prev) => ({
-          ...prev,
-          policy_number: technicianData.policy_number || "",
-          personal_exemption_number:
-            technicianData.personal_exemption_number || "",
-          job_title: technicianData.job_title || "",
-          department: technicianData.department || "",
-        }));
-      } else {
-        console.error(
-          `Error fetching user_technician: ${technicianResponse.status} - ${technicianResponse.statusText}`
-        );
-      }
+      setUsersTechnician((prev) => ({
+        ...prev,
+        policy_number: technicianData.policy_number || "",
+        personal_exemption_number:
+          technicianData.personal_exemption_number || "",
+        job_title: technicianData.job_title || "",
+        department: technicianData.department || "",
+      }));
     } catch (error) {
+      enqueueSnackbar(showServerError(error), { variant: "error" });
       console.error("Error fetching user data:", error.message);
     }
   };
@@ -159,84 +106,33 @@ const UserPage = ({ isOpen, onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = Cookies.get("jwt");
-      let response = await fetch(
-        `https://pandatur-api.com/api/users/${userId}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Origin: 'https://plutonium8t8.github.io',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            email: users.email,
-            username: users.username,
-          }),
-        }
-      );
+      await api.users.updateUsernameAndEmail(userId, {
+        email: users.email,
+        username: users.username,
+      });
 
-      if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`);
-      }
+      await api.users.updateExtended(userId, {
+        name: usersExtended.name,
+        surname: usersExtended.surname,
+        address: usersExtended.address,
+        date_of_birth: usersExtended.date_of_birth,
+        id_card_number: usersExtended.id_card_number,
+        id_card_release: usersExtended.id_card_release,
+        id_card_series: usersExtended.id_card_series,
+        idnp: usersExtended.idnp,
+        phone: usersExtended.phone,
+      });
 
-      console.log("User data saved successfully");
+      await api.users.updateTechnician(userId, {
+        department: usersTechnician.department,
+        job_title: usersTechnician.job_title,
+        personal_exemption_number: usersTechnician.personal_exemption_number,
+        policy_number: usersTechnician.policy_number,
+      });
 
-      response = await fetch(
-        `https://pandatur-api.com/api/users-extended/${userId}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Origin: 'https://plutonium8t8.github.io',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            name: usersExtended.name,
-            surname: usersExtended.surname,
-            address: usersExtended.address,
-            date_of_birth: usersExtended.date_of_birth,
-            id_card_number: usersExtended.id_card_number,
-            id_card_release: usersExtended.id_card_release,
-            id_card_series: usersExtended.id_card_series,
-            idnp: usersExtended.idnp,
-            phone: usersExtended.phone,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`);
-      }
-
-      console.log("User extended data saved successfully");
-
-      response = await fetch(
-        `https://pandatur-api.com/api/users-technician/${userId}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Origin: 'https://plutonium8t8.github.io',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            department: usersTechnician.department,
-            job_title: usersTechnician.job_title,
-            personal_exemption_number:
-              usersTechnician.personal_exemption_number,
-            policy_number: usersTechnician.policy_number,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`);
-      }
-
-      console.log("User technician data saved successfully");
       onClose();
     } catch (error) {
+      enqueueSnackbar(showServerError(error), { variant: "error" });
       console.error("Error saving user data:", error.message);
       setError("Error saving user data.");
     }
@@ -285,8 +181,7 @@ const UserPage = ({ isOpen, onClose }) => {
 
             <div className="input-group">
               <h3>{translations["Informații extinse"][language]}</h3>
-              {Object.keys(usersExtended)
-                .filter((attribute) => !["user", "photo", "id"].includes(attribute))
+              {Object.keys(usersExtended).filter((attribute) => !["user", "photo", "id"].includes(attribute))
                 .map((key) => (
                   <input
                     key={key}

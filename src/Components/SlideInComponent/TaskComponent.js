@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
-import Cookies from "js-cookie";
 import { useUser } from "../../UserContext";
 import "./SlideInModal.css";
 import { translations } from "../utils/translations";
+import { api } from "../../api"
+import { showServerError } from "../../Components/utils/showServerError"
+import { useSnackbar } from 'notistack';
+
 
 const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
     const [tasks, setTasks] = useState([]);
@@ -20,6 +23,7 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [searchUser, setSearchUser] = useState("");
     const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+    const { enqueueSnackbar } = useSnackbar();
     const language = localStorage.getItem('language') || 'RO';
 
     useEffect(() => {
@@ -41,19 +45,10 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
 
     const fetchTicketsID = async () => {
         try {
-            const token = Cookies.get("jwt");
-            const response = await fetch("https://pandatur-api.com/api/tickets", {
-                method: "GET",
-                headers: { Authorization: `Bearer ${token}` },
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                setTicketIds(data.map((ticket) => ticket.id)); // Сохраняем ticket_id
-                console.log("Ticket IDs:", data.map((ticket) => ticket.id));
-            } else {
-                console.error("Error fetching tickets:", response.statusText);
-            }
+            const data = await api.tickets.list()
+           
+            setTicketIds(data.map((ticket) => ticket.id)); // Сохраняем ticket_id
+            
         } catch (error) {
             console.error("Error fetching tickets:", error.message);
         }
@@ -61,24 +56,13 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
 
     const fetchTasks = async () => {
         try {
-            const token = Cookies.get("jwt");
-            const response = await fetch(`https://pandatur-api.com/api/task/user/${userId}`, {
-                method: "GET",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                    Origin: 'https://plutonium8t8.github.io',
-                },
-            });
 
-            if (!response.ok) {
-                throw new Error(`Error fetching tasks. Code: ${response.status}`);
-            }
+            const data = await api.task.getByUserId(userId)
 
-            const data = await response.json();
             setTasks(data);
             console.log("tasksssssss", data);
         } catch (error) {
+            enqueueSnackbar(showServerError(error), {variant: "error"})
             console.error("Error fetching tasks:", error.message);
         }
     };
@@ -86,7 +70,6 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
     const handleTaskSubmit = async (e) => {
         e.preventDefault();
         try {
-            const token = Cookies.get("jwt");
 
             // Проверяем, есть ли нужные данные
             if (!ticketId || !taskDate || !taskContent || !taskFor) {
@@ -103,94 +86,49 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
                 created_for: taskFor, // ID выбранного пользователя (для кого создана задача)
             };
 
-            const response = await fetch("https://pandatur-api.com/api/task", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Origin: 'https://plutonium8t8.github.io',
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify(taskData),
-            });
+            await api.task.create(taskData)
 
-            if (response.ok) {
-                console.log("✅ Задача успешно создана:", taskData);
-                fetchTasks();
-                setTaskContent("");
-                setTaskDate("");
-                setTaskFor(""); // Сброс выбранного пользователя
-            } else {
-                console.error(`❌ Ошибка создания задачи: ${response.status} - ${response.statusText}`);
-            }
+            fetchTasks();
+            setTaskContent("");
+            setTaskDate("");
+            setTaskFor(""); 
         } catch (error) {
+            enqueueSnackbar(showServerError(error), {variant: "error"})
             console.error("❌ Ошибка при создании задачи:", error.message);
         }
     };
 
     const handleClearAllTasks = async () => {
         try {
-            const token = Cookies.get("jwt");
-            const response = await fetch(`https://pandatur-api.com/api/task/clear`, {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                    technician_id: userId,
-                }),
-            });
-            if (response.ok) {
-                setTasks([]); // Clear tasks from state
-            } else {
-                console.error(`Error clearing tasks: ${response.status}`);
-            }
+            
+            await api.task.delete({
+                technician_id: userId,
+            })
+            
+            setTasks([]);
+            
         } catch (error) {
-            console.error("Error clearing tasks:", error.message);
+            enqueueSnackbar(showServerError(error), {variant: "error"})
         }
     };
 
     const handleMarkAsSeenTask = async (id) => {
         try {
-            const token = Cookies.get("jwt");
-            const response = await fetch("https://pandatur-api.com/api/task", {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                    id: id,
-                    status: true,
-                }),
-            });
-            if (response.ok) {
-                fetchTasks();
-            } else {
-                console.error(`Ошибка обновления статуса: ${response.status}`);
-            }
+            await api.task.update({
+                id: id,
+                status: true,
+            })
+            
+            fetchTasks();
         } catch (error) {
-            console.error("Ошибка обновления статуса:", error.message);
+            enqueueSnackbar(showServerError(error), {variant: "error"})
         }
     };
 
     const fetchUsers = async () => {
+        
         try {
-            const token = Cookies.get("jwt");
-            const response = await fetch("https://pandatur-api.com/api/users-technician", {
-                method: "GET",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                    Origin: 'https://plutonium8t8.github.io',
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error(`Ошибка загрузки пользователей: ${response.status} - ${response.statusText}`);
-            }
-
-            const usersData = await response.json();
+            const usersData = await api.users.getTechnicianList()
 
             // Корректное извлечение ID, имени и фамилии
             const formattedUsers = usersData.map((user) => ({
@@ -202,6 +140,7 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
             console.log("✅ Пользователи загружены:", formattedUsers);
             setUserList(formattedUsers);
         } catch (error) {
+            enqueueSnackbar(showServerError(error), {variant: "error"})
             console.error("❌ Ошибка при загрузке пользователей:", error.message);
         }
     };

@@ -68,3 +68,15 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+### create a new `.env` file
+
+## Setup file `.env`
+
+To create and copy the .env file, run the following commands in the terminal:
+
+```bash
+touch .env
+
+cp .env-example .env
+

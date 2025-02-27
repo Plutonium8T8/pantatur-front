@@ -15,9 +15,9 @@ import { evaluareOdihnaOptions } from '../../FormOptions/EvaluareVacantaOptions'
 import { valutaOptions } from '../../FormOptions/ValutaOptions';
 import { ibanOptions } from '../../FormOptions/IbanOptions';
 import CustomMultiSelect from "../MultipleSelect/MultipleSelect";
-import Cookies from "js-cookie";
 import "./Modal.css";
 import { translations } from "../utils/translations";
+import { api } from "../../api"
 
 const language = localStorage.getItem('language') || 'RO';
 
@@ -87,19 +87,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
         console.log("🚀 Отправляем данные в API:", formattedFilters);
 
         try {
-            const token = Cookies.get("jwt");
-            const response = await fetch("https://pandatur-api.com/api/apply-filter", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify(formattedFilters),
-            });
-
-            if (!response.ok) throw new Error(`Ошибка: ${response.status}`);
-
-            let ticketData = await response.json();
+            const ticketData = await api.standalone.applyFilter(formattedFilters)
             const ticketIds = ticketData.flat().map(ticket => ticket.id);
 
             console.log("✅ Отфильтрованные ID тикетов:", ticketIds);
@@ -123,23 +111,12 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
     }, [filters.workflow]);
 
     useEffect(() => {
+
         const fetchTechnicians = async () => {
             try {
-                const token = Cookies.get("jwt");
-                const response = await fetch("https://pandatur-api.com/api/users-technician", {
-                    method: "GET",
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                        Origin: "https://plutonium8t8.github.io",
-                    },
-                });
 
-                if (!response.ok) {
-                    throw new Error(`Ошибка при получении списка техников: ${response.status}`);
-                }
-
-                const data = await response.json();
+                const data = await api.users.getTechnicianList()
+                
                 const formattedTechnicians = data.map(item => `${item.id.id}: ${item.id.name} ${item.id.surname}`.trim());
                 setTechnicians(formattedTechnicians);
             } catch (error) {
