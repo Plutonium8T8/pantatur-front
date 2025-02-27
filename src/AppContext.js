@@ -4,7 +4,6 @@ import { useSnackbar } from 'notistack';
 import { FaEnvelope, FaTrash } from 'react-icons/fa';
 import { useUser } from './UserContext';
 import { truncateText } from './stringUtils';
-import { translations } from './Components/utils/translations';
 
 const AppContext = createContext();
 
@@ -23,6 +22,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   const ticketsRef = useRef(tickets);
   const [unreadMessages, setUnreadMessages] = useState(new Map()); // Оптимизированное хранение непрочитанных сообщений
   const language = localStorage.getItem('language') || 'RO';
+  const [selectTicketId, setSelectTicketId] = useState(null);
 
   useEffect(() => {
     let pingInterval;
@@ -380,57 +380,24 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       case 'message': {
         console.log("Новое сообщение из WebSocket:", message.data);
 
-        const ticketId = message.data.ticket_id;
+        const { ticket_id, message: msgText, time_sent, sender_id } = message.data;
 
-        // Делаем запрос на обновление сообщений, но не затираем старые сразу
-        getClientMessagesSingle(ticketId)
-          .then(() => {
-            console.log(`Сообщения для тикета ${ticketId} обновлены.`);
-          })
-          .catch((err) => {
-            console.error("Ошибка при обновлении сообщений с сервера:", err);
-          });
+        setMessages((prevMessages) => [...prevMessages, message.data]);
 
-        // Добавляем сообщение из WebSocket в state немедленно, чтобы оно появилось мгновенно
-        setMessages((prevMessages) => {
-          return [...prevMessages, message.data]; // Просто добавляем новое сообщение
-        });
-
-        // Проверяем, связан ли тикет с текущим пользователем
-        const ticket = ticketsRef.current.find(
-          (t) => t.client_id === message.data.client_id
+        setTickets((prevTickets) =>
+          prevTickets.map((ticket) =>
+            ticket.id === ticket_id
+              ? {
+                ...ticket,
+                last_message: msgText,
+                time_sent: time_sent,
+                unseen_count: ticket_id === selectTicketId
+                  ? 0  // Если тикет открыт, сбрасываем непрочитанные
+                  : ticket.unseen_count + (sender_id !== userId ? 1 : 0)
+              }
+              : ticket
+          )
         );
-
-        if (ticket && ticket.technician_id === userId) {
-          const messageText = truncateText(message.data.message, 40);
-
-          enqueueSnackbar(
-            '', // Текст можно оставить пустым, так как используется кастомное отображение
-            {
-              variant: 'info',
-              action: (snackbarId) => (
-                <div className="snack-bar-notification">
-                  <div
-                    className="snack-object"
-                    onClick={() => closeSnackbar(snackbarId)}
-                  >
-                    <div className="snack-icon">
-                      <FaEnvelope />
-                    </div>
-                    <div className="snack-message">
-                      <strong>Клиент {message.data.client_id}</strong>: {messageText}
-                    </div>
-                  </div>
-                  <div className="snack-close">
-                    <button onClick={() => closeSnackbar(snackbarId)}>
-                      <FaTrash />
-                    </button>
-                  </div>
-                </div>
-              ),
-            }
-          );
-        }
         break;
       }
       case 'seen': {
@@ -542,23 +509,21 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   }, [isLoggedIn]);
 
   return (
-    <AppContext.Provider
-      value={{
-        tickets,
-        setTickets,
-        ticketIds,
-        messages,
-        setMessages,
-        unreadCount,
-        markMessagesAsRead,
-        clientMessages,
-        isLoading,
-        updateTicket,
-        fetchTickets,
-        socketRef,
-        // unreadCount: unreadMessages.size, // Количество непрочитанных сообщений
-      }}
-    >
+    <AppContext.Provider value={{
+      tickets,
+      setTickets,
+      selectTicketId,  // Делаем доступным везде
+      setSelectTicketId,
+      messages,
+      setMessages,
+      unreadCount,
+      markMessagesAsRead,
+      clientMessages,
+      isLoading,
+      updateTicket,
+      fetchTickets,
+      socketRef,
+    }}>
       {children}
     </AppContext.Provider>
   );

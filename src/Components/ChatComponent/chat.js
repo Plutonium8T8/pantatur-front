@@ -39,8 +39,7 @@ import { ibanOptions } from '../../FormOptions/IbanOptions';
 const ChatComponent = ({ }) => {
     const { userId, hasRole, isLoadingRoles } = useUser();
     const [managerMessage, setManagerMessage] = useState('');
-    const { tickets, updateTicket, setTickets, messages, setMessages, markMessagesAsRead, socketRef } = useAppContext();
-    const [selectTicketId, setSelectTicketId] = useState(null);
+    const { tickets, updateTicket, setTickets, messages, setMessages, markMessagesAsRead, socketRef, selectTicketId, setSelectTicketId } = useAppContext();
     const [extraInfo, setExtraInfo] = useState({}); // Состояние для дополнительной информации каждого тикета
     const [personalInfo, setPersonalInfo] = useState({});
     const messageContainerRef = useRef(null);
@@ -231,18 +230,17 @@ const ChatComponent = ({ }) => {
     };
 
     const handleTicketClick = (ticketId) => {
-        setSelectTicketId(ticketId);
+        setSelectTicketId(ticketId);  // Теперь WebSocket знает, какой тикет открыт
 
         const selectedTicket = tickets.find((ticket) => ticket.id === ticketId);
-
         if (selectedTicket) {
             setSelectedTechnicianId(selectedTicket.technician_id || null);
         } else {
             console.warn('Тикет не найден!');
             setSelectedTechnicianId(null);
         }
+
         navigate(`/chat/${ticketId}`);
-        // Помечаем все сообщения как прочитанные (отправляем `seen`)
         markMessagesAsRead(ticketId);
     };
 
