@@ -59,9 +59,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
 
     const handleClearAllNotifications = async () => {
         try {
-            await api.notification.delete({
-                client_id: userId,
-            })
+            await api.notification.deleteAllByUserId(userId)
 
             setNotifications([]);
 
