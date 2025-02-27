@@ -2345,12 +2345,28 @@ const ChatComponent = ({ }) => {
                                 .filter((msg) => ['audio', 'video', 'image', 'file'].includes(msg.mtype) && msg.ticket_id === selectTicketId)
                                 .map((msg, index) => (
                                     <div key={index} className="media-container">
-                                        {/* Display Sent Time */}
+                                        {/* Отображение времени отправки с учетом формата "dd-MM-yyyy HH:mm:ss" */}
                                         <div className="sent-time">
-                                            {new Date(msg.time_sent).toLocaleString()}
+                                            {(() => {
+                                                const parseCustomDate = (dateStr) => {
+                                                    if (!dateStr) return "—";
+                                                    const [datePart, timePart] = dateStr.split(" ");
+                                                    const [day, month, year] = datePart.split("-").map(Number);
+                                                    const [hours, minutes, seconds] = timePart.split(":").map(Number);
+                                                    return new Date(year, month - 1, day, hours, minutes, seconds);
+                                                };
+                                                return parseCustomDate(msg.time_sent).toLocaleString("ru-RU", {
+                                                    day: "2-digit",
+                                                    month: "2-digit",
+                                                    year: "numeric",
+                                                    hour: "2-digit",
+                                                    minute: "2-digit",
+                                                    second: "2-digit",
+                                                });
+                                            })()}
                                         </div>
 
-                                        {/* Display Media */}
+                                        {/* Отображение медиафайлов */}
                                         {msg.mtype === "image" ? (
                                             <img
                                                 src={msg.message}
@@ -2386,7 +2402,6 @@ const ChatComponent = ({ }) => {
                                     </div>
                                 ))}
                         </div>
-
                     )}
                     {activeTab === 'Control calitate' && selectTicketId && (
                         <div className="extra-info-content">
