@@ -1709,7 +1709,7 @@ const ChatComponent = () => {
                             <div className="client-select-container">
                                 <select
                                     className="task-select"
-                                    value={selectedClient}
+                                    value={selectedClient || ""}
                                     onChange={(e) => setSelectedClient(e.target.value)}
                                 >
                                     <option value="" disabled>{translations["Alege client"][language]}</option>
