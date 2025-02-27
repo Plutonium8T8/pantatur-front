@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import {  useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaArrowRight, FaFile, FaPaperPlane, FaSmile } from 'react-icons/fa';
 import Select from '../SelectComponent/SelectComponent';
 import { useUser } from '../../UserContext';
@@ -1145,23 +1145,54 @@ const ChatComponent = ({ }) => {
     // }, [selectTicketId]);
 
     const sortedTickets = useMemo(() => {
-        let filtered = [...tickets]; // Используем копию массива, чтобы избежать мутаций
+        let filtered = [...tickets]; // Делаем копию массива тикетов
 
         console.log("📌 Исходные тикеты:", tickets);
-        console.log("🎯 ID тикетов из фильтра:", filteredTicketIds);
 
-        // 1️⃣ Фильтр по ID тикетов из `TicketFilterModal`
+        // 1️⃣ Функция получения времени последнего сообщения тикета
+        const getLastMessageTime = (ticket) => {
+            // Получаем все сообщения по тикету
+            const ticketMessages = messages.filter(msg => msg.ticket_id === ticket.id);
+
+            if (ticketMessages.length > 0) {
+                // Берем самое последнее сообщение
+                return Math.max(...ticketMessages.map(msg => parseCustomDate(msg.time_sent)));
+            }
+
+            // Если сообщений нет, fallback на `time_sent` или `last_interaction_date`
+            if (ticket.time_sent) return parseCustomDate(ticket.time_sent);
+            if (ticket.last_interaction_date) return parseCustomDate(ticket.last_interaction_date);
+
+            return 0; // Если ничего нет, ставим минимальное значение
+        };
+
+        // 2️⃣ Функция парсинга нестандартного формата даты (dd-MM-yyyy HH:mm:ss)
+        const parseCustomDate = (dateStr) => {
+            if (!dateStr) return 0;
+
+            const [datePart, timePart] = dateStr.split(" ");
+            const [day, month, year] = datePart.split("-").map(Number);
+            const [hours, minutes, seconds] = timePart.split(":").map(Number);
+
+            return new Date(year, month - 1, day, hours, minutes, seconds).getTime(); // timestamp
+        };
+
+        // 3️⃣ Основная сортировка: по убыванию времени последнего сообщения
+        filtered.sort((a, b) => getLastMessageTime(b) - getLastMessageTime(a));
+
+        console.log("✅ После сортировки по времени:", filtered);
+
+        // 4️⃣ Фильтр по ID тикетов из `TicketFilterModal`
         if (filteredTicketIds !== null && filteredTicketIds.length > 0) {
             filtered = filtered.filter(ticket => filteredTicketIds.includes(Number(ticket.id)));
-            console.log("🔍 После фильтрации по ID:", filtered);
         }
 
-        // 2️⃣ Фильтрация "Мои тикеты"
+        // 5️⃣ Фильтрация "Мои тикеты"
         if (showMyTickets) {
             filtered = filtered.filter(ticket => ticket.technician_id === userId);
         }
 
-        // 3️⃣ Фильтрация по поисковому запросу (ID, контакт, теги)
+        // 6️⃣ Фильтрация по поисковому запросу (ID, контакт, теги)
         if (searchQuery.trim()) {
             const lowerSearchQuery = searchQuery.toLowerCase();
             filtered = filtered.filter(ticket => {
@@ -1179,7 +1210,7 @@ const ChatComponent = ({ }) => {
             });
         }
 
-        // 4️⃣ Фильтрация по `appliedFilters`
+        // 7️⃣ Фильтрация по `appliedFilters`
         if (Object.values(appliedFilters).some(value => value)) {
             if (appliedFilters.creation_date) {
                 filtered = filtered.filter(ticket => ticket.creation_date.startsWith(appliedFilters.creation_date));
@@ -1205,25 +1236,7 @@ const ChatComponent = ({ }) => {
             }
         }
 
-        // 5️⃣ Функция для получения времени последнего сообщения тикета
-        const getLastMessageTime = (ticketId) => {
-            const ticketMessages = messages.filter(msg => msg.ticket_id === ticketId);
-            if (!ticketMessages.length) return null;
-
-            return ticketMessages.reduce((latest, current) =>
-                new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
-            ).time_sent;
-        };
-
-        // 6️⃣ Сортировка по последнему сообщению (по убыванию)
-        filtered.sort((a, b) => {
-            const lastMessageA = getLastMessageTime(a.id);
-            const lastMessageB = getLastMessageTime(b.id);
-
-            return new Date(lastMessageB) - new Date(lastMessageA);
-        });
-
-        console.log("✅ Итоговый список тикетов:", filtered);
+        console.log("✅ Итоговый список тикетов после фильтрации:", filtered);
         return filtered;
     }, [tickets, messages, filteredTicketIds, appliedFilters, showMyTickets, searchQuery, userId]);
 
