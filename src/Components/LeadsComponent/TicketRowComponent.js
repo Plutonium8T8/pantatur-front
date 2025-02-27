@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { workflowStyles } from '../utils/workflowStyles';
-import { Link } from 'react-router-dom';
 import './TicketRowComponent.css';
 
 const cleanValue = (value) => {
