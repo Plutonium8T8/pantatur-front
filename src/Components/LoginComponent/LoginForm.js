@@ -10,7 +10,7 @@ import { useSnackbar } from 'notistack';
 const setCookieToken = (token) => {
   Cookies.set('jwt', token, {
     secure: true,
-    sameSite: 'None', 
+    sameSite: 'None',
     expires: 1,
   });
 }
@@ -52,22 +52,22 @@ const LoginForm = ({ onLoginSuccess }) => {
     const request = isLogin ? api.auth.login : api.auth.register
 
     try {
-       const response = await request(data)
-       const {token, user_id, message } = response
+      const response = await request(data)
+      const { token, user_id, message } = response
 
-       setMessage(message || 'Success!');
+      setMessage(message || 'Success!');
 
-        if (isLogin) {
-          setCookieToken(token)
-          setUserId(user_id);
-          onLoginSuccess();
-        }
-       
+      if (isLogin) {
+        setCookieToken(token)
+        setUserId(user_id);
+        onLoginSuccess();
+      }
 
-    } catch (error) { 
-      enqueueSnackbar(showServerError(error), {variant: "error"})
+
+    } catch (error) {
+      enqueueSnackbar(showServerError(error), { variant: "error" })
     } finally {
-        setIsLoading(false);
+      setIsLoading(false);
     }
   };
 
