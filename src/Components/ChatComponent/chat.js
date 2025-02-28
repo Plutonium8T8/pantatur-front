@@ -113,14 +113,6 @@ const ChatComponent = ({ }) => {
     //     }
     // }, [selectTicketId, isLoading, filteredTickets]);
 
-    useEffect(() => {
-        if (selectTicketId) {
-            getClientMessagesSingle(selectTicketId)
-            fetchClientDataPersonal(selectTicketId, setPersonalInfo)
-            fetchTicketExtraInfo(selectTicketId); // Загружаем дополнительную информацию при изменении тикета
-        }
-    }, [selectTicketId]);
-
     // Получение дополнительной информации для тикета
     const fetchTicketExtraInfo = async (selectTicketId) => {
         try {
@@ -198,25 +190,25 @@ const ChatComponent = ({ }) => {
         }
     };
 
+    useEffect(() => {
+        if (!selectTicketId) return; // Если тикет не выбран — ничего не делаем
+        getClientMessagesSingle(selectTicketId);
+        fetchClientDataPersonal(selectTicketId, setPersonalInfo);
+        fetchTicketExtraInfo(selectTicketId);
+    }, [selectTicketId]);
+
+
     const handleTicketClick = async (ticketId) => {
+        if (selectTicketId === ticketId) return; // Если уже открыт этот тикет, ничего не делаем
+
         setSelectTicketId(ticketId);
-        navigate(`/chat/${ticketId}`)
-
-        const selectedTicket = tickets.find((ticket) => ticket.id === ticketId);
-        if (selectedTicket) {
-            setSelectedTechnicianId(selectedTicket.technician_id || null);
-        } else {
-            console.warn('Тикет не найден!');
-            setSelectedTechnicianId(null);
-        }
-
         navigate(`/chat/${ticketId}`);
+
+        const selectedTicket = tickets.find(ticket => ticket.id === ticketId);
+        setSelectedTechnicianId(selectedTicket ? selectedTicket.technician_id || null : null);
 
         // Не сбрасываем unseen_count вручную, ждем WebSocket-сообщение
         await markMessagesAsRead(ticketId);
-
-        // Загружаем сообщения тикета
-        await getClientMessagesSingle(ticketId);
     };
 
     const workflowOptions = [
@@ -653,7 +645,7 @@ const ChatComponent = ({ }) => {
 
             console.log('Список тикетов успешно обновлён.');
         } catch (error) {
-            enqueueSnackbar(error.message, {variant: "error"})
+            enqueueSnackbar(error.message, { variant: "error" })
             console.error('Ошибка при обновлении technician_id:', error.message);
         }
     };
@@ -683,7 +675,6 @@ const ChatComponent = ({ }) => {
         const ticketMessages = messages.filter((msg) => msg.ticket_id === selectTicketId);
 
         if (ticketMessages.length === 0) {
-            console.warn("⚠️ Нет сообщений в данном тикете.");
             return null;
         }
 
@@ -962,7 +953,7 @@ const ChatComponent = ({ }) => {
                 ticket_old: ticketOld,
                 ticket_new: ticketNew
             })
-            enqueueSnackbar("Biletele au fost combinate cu succes!", { variant: 'success'})
+            enqueueSnackbar("Biletele au fost combinate cu succes!", { variant: 'success' })
 
         } catch (error) {
             enqueueSnackbar(showServerError(error), { variant: 'error' });
@@ -1001,7 +992,7 @@ const ChatComponent = ({ }) => {
     const sortedTickets = useMemo(() => {
         let filtered = [...tickets]; // Делаем копию массива тикетов
 
-        console.log("📌 Исходные тикеты:", tickets);
+        // console.log("📌 Исходные тикеты:", tickets);
 
         // 1️⃣ Функция получения времени последнего сообщения тикета
         const getLastMessageTime = (ticket) => {
@@ -1034,7 +1025,7 @@ const ChatComponent = ({ }) => {
         // 3️⃣ Основная сортировка: по убыванию времени последнего сообщения
         filtered.sort((a, b) => getLastMessageTime(b) - getLastMessageTime(a));
 
-        console.log("✅ После сортировки по времени:", filtered);
+        // console.log("✅ После сортировки по времени:", filtered);
 
         // 4️⃣ Фильтр по ID тикетов из `TicketFilterModal`
         if (filteredTicketIds !== null && filteredTicketIds.length > 0) {
@@ -1090,7 +1081,7 @@ const ChatComponent = ({ }) => {
             }
         }
 
-        console.log("✅ Итоговый список тикетов после фильтрации:", filtered);
+        // console.log("✅ Итоговый список тикетов после фильтрации:", filtered);
         return filtered;
     }, [tickets, messages, filteredTicketIds, appliedFilters, showMyTickets, searchQuery, userId]);
 

@@ -46,9 +46,9 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
     const fetchTicketsID = async () => {
         try {
             const data = await api.tickets.list()
-           
+
             setTicketIds(data.map((ticket) => ticket.id)); // Сохраняем ticket_id
-            
+
         } catch (error) {
             console.error("Error fetching tickets:", error.message);
         }
@@ -62,7 +62,7 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
             setTasks(data);
             console.log("tasksssssss", data);
         } catch (error) {
-            enqueueSnackbar(showServerError(error), {variant: "error"})
+            enqueueSnackbar(showServerError(error), { variant: "error" })
             console.error("Error fetching tasks:", error.message);
         }
     };
@@ -91,24 +91,24 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
             fetchTasks();
             setTaskContent("");
             setTaskDate("");
-            setTaskFor(""); 
+            setTaskFor("");
         } catch (error) {
-            enqueueSnackbar(showServerError(error), {variant: "error"})
+            enqueueSnackbar(showServerError(error), { variant: "error" })
             console.error("❌ Ошибка при создании задачи:", error.message);
         }
     };
 
     const handleClearAllTasks = async () => {
         try {
-            
+
             await api.task.delete({
                 technician_id: userId,
             })
-            
+
             setTasks([]);
-            
+
         } catch (error) {
-            enqueueSnackbar(showServerError(error), {variant: "error"})
+            enqueueSnackbar(showServerError(error), { variant: "error" })
         }
     };
 
@@ -118,15 +118,15 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
                 id: id,
                 status: true,
             })
-            
+
             fetchTasks();
         } catch (error) {
-            enqueueSnackbar(showServerError(error), {variant: "error"})
+            enqueueSnackbar(showServerError(error), { variant: "error" })
         }
     };
 
     const fetchUsers = async () => {
-        
+
         try {
             const usersData = await api.users.getTechnicianList()
 
@@ -140,7 +140,7 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
             console.log("✅ Пользователи загружены:", formattedUsers);
             setUserList(formattedUsers);
         } catch (error) {
-            enqueueSnackbar(showServerError(error), {variant: "error"})
+            enqueueSnackbar(showServerError(error), { variant: "error" })
             console.error("❌ Ошибка при загрузке пользователей:", error.message);
         }
     };
