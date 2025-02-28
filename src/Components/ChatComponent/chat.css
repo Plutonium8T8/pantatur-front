@@ -1,4 +1,3 @@
-/* Основной контейнер чата */
 .chat-container {
     display: flex;
     height: 100%;
@@ -6,7 +5,6 @@
     overflow: hidden;
 }
 
-/* Левая колонка с пользователями или списком чатов */
 .users-container {
     display: flex;
     flex-direction: column;
@@ -18,7 +16,6 @@
     height: 100%;
 }
 
-/* Область чата (сообщения + отправка сообщения) */
 .chat-area {
     display: flex;
     flex-direction: column;
@@ -27,7 +24,6 @@
     background-color: #f9f9f9;
 }
 
-/* Контейнер для сообщений */
 .chat-messages {
     flex: 1;
     padding: 15px;
@@ -42,7 +38,6 @@
     border: 1px solid #ddd;
 }
 
-/* Стили для каждого сообщения */
 .message {
     display: flex;
     flex-direction: column;
@@ -60,7 +55,6 @@
 }
 
 .message .text {
-    /* max-width: 70%; */
     padding: 10px;
     border-radius: 15px;
     background-color: #e0e0e0;
@@ -101,7 +95,6 @@
     align-items: flex-start;
 }
 
-/* Left Column (Message Input) */
 .text-area-message {
     flex: 7;
     padding: 10px;
@@ -117,7 +110,6 @@
     gap: 0;
 }
 
-/* Right Column (Options) */
 .message-options {
     flex: 3;
     display: flex;
@@ -126,7 +118,6 @@
     gap: 10px;
 }
 
-/* First Row: Buttons */
 .button-row {
     display: flex;
     justify-content: space-between;
@@ -153,7 +144,6 @@
     color: #fff;
 }
 
-/* Second Row: Selector */
 .select-row {
     display: flex;
     flex-direction: column;
@@ -377,13 +367,9 @@
 .empty-chat {
     display: flex;
     align-items: center;
-    /* Centers items vertically */
     justify-content: center;
-    /* Centers items horizontally */
     height: 100%;
-    /* Ensure the container takes up the full height */
     width: 100%;
-    /* Optional, ensures full width if needed */
     font-size: 24px;
     letter-spacing: 1px;
 }
@@ -391,7 +377,6 @@
 
 .unread-count {
     border-radius: 100%;
-    /* border: 1px solid red; */
     background-color: red;
     min-width: 20px;
     height: 20px;
@@ -416,14 +401,11 @@
 .message-row {
     display: flex;
     align-items: center;
-    /* Выровнять по вертикали */
 }
 
 .menu-container {
     margin-left: 8px;
-    /* Отступ между текстом и кнопкой */
     position: relative;
-    /* Для позиционирования выпадающего меню */
 }
 
 .menu-button {
@@ -465,9 +447,6 @@
     border: 1px solid #ccc;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
-    /* width: 500px;
-    height: 500px; */
-    /* overflow: hidden; */
     transition: opacity 0.2s;
 }
 
@@ -630,16 +609,11 @@
 }
 
 .client-message-group {
-    /* display: flex; */
     flex-direction: column;
     background-color: #7fc8a6;
     padding: 10px;
     border: 1px solid #ddd;
 }
-
-/* .extra-info-content .selects-container {
-    gap: 0;
-} */
 
 .client-header {
     display: flex;
@@ -654,7 +628,6 @@
     padding: 6px 16px;
     text-transform: uppercase;
     letter-spacing: 1px;
-    /* width: fit-content; */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -680,7 +653,6 @@
 
 .input-field {
     border: 1px solid #374151;
-    /* background: #111827; */
     color: black;
     padding: 12px;
     font-size: 16px;
@@ -695,12 +667,10 @@
     background: white;
     z-index: 1000;
     padding: 10px 0px 10px 0px;
-    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
 }
 
 .users-container {
     flex: 0 0 20%;
-    /* Фиксированная ширина списка чатов */
     transition: width 0.3s ease-in-out, min-width 0.3s ease-in-out;
     min-width: 20%;
 }
@@ -711,10 +681,8 @@
     overflow: hidden;
 }
 
-/* При скрытии списка чатов чат занимает всё доступное пространство */
 .chat-area {
     flex-grow: 1;
-    /* Позволяет чату расширяться */
     display: flex;
     flex-direction: column;
     transition: width 0.3s ease-in-out;
@@ -769,23 +737,18 @@ input:checked+.slider:before {
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* Center content horizontally */
     margin-bottom: 15px;
-    /* Add spacing between messages */
 }
 
 .sent-time {
     font-size: 18px;
     margin-bottom: 5px;
     text-align: center;
-    /* Ensure text is centered */
 }
 
-/* Кнопка скрытия/показа списка чатов */
 .toggle-chat-list {
     position: absolute;
     left: calc(20% + 15px);
-    /* Начальная позиция кнопки */
     top: 50%;
     transform: translateY(-50%);
     background-color: #0f824c;
@@ -795,19 +758,16 @@ input:checked+.slider:before {
     border-radius: 100%;
     text-align: center;
     cursor: pointer;
-    /* z-index: 100; */
     font-size: 16px;
     transition: left 0.3s ease-in-out, background-color 0.2s;
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
     align-items: center;
 }
 
-/* Когда список чатов скрыт, кнопка сдвигается влево */
 .users-container.hidden+.toggle-chat-list {
     left: 10px;
 }
 
-/* Когда список чатов скрыт, чат занимает всё пространство */
 .users-container.hidden~.chat-area {
     flex-grow: 2;
 }
