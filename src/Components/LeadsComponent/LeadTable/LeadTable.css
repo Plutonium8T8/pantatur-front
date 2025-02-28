@@ -1,0 +1,55 @@
+.lead-table {
+  width: 1700px;
+  border-collapse: separate;
+  border-spacing: 0 6px;
+  font-size: 14px;
+}
+
+.lead-table th {
+  background-color: #f8f9fa;
+  color: #333;
+  font-weight: bold;
+  text-align: center;
+  padding: 12px;
+  border-bottom: 2px solid #ddd;
+}
+
+.lead-checkbox-row {
+  width: 40px;
+  text-align: center;
+}
+
+.lead-checkbox-row input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.lead-priority-row {
+  padding: 12px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.lead-row-link {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.lead-row-link:hover {
+  text-decoration: underline;
+}
+
+.lead-tags-row {
+  display: flex;
+  gap: 8px;
+}
+
+.lead-workflow-row {
+  font-weight: bold;
+  color: #17a2b8;
+  padding: 12px;
+  text-align: center;
+  vertical-align: middle;
+}

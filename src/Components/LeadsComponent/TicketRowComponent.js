@@ -2,14 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { workflowStyles } from '../utils/workflowStyles';
 import './TicketRowComponent.css';
+import { cleanValue } from "./utils"
 
-const cleanValue = (value) => {
-    if (!value || value === "{NULL}") return '—'; // Заменяем {NULL} на '—'
-    if (typeof value === 'string' && value.startsWith('{') && value.endsWith('}')) {
-        return value.slice(1, -1); // Убираем { }
-    }
-    return value;
-};
 
 const TicketRow = ({ ticket, isSelected = false, onSelect = () => { }, onEditTicket }) => {
     return (

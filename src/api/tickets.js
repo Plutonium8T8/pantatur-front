@@ -41,6 +41,12 @@ export const tickets = {
     return data;
   },
 
+  getHardList: async () => {
+    const { data } = await baseAxios.get(`/api/hard/tickets`);
+
+    return data;
+  },
+
   ticket: {
     getInfo: async (id) => {
       const { data } = await baseAxios.get(`/api/ticket-info/${id}`);
