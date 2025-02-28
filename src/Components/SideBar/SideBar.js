@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useAppContext } from '../../AppContext'; // Подключаем AppContext
+import { useAppContext } from '../../AppContext';
 import { translations } from '../utils/translations';
 import './SideBar.css';
 import LanguageToggle from './LanguageToggle'
@@ -20,7 +20,7 @@ import { api } from "../../api"
 const CustomSidebar = ({ onOpenNotifications, onOpenTasks, onOpenAccount }) => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { unreadCount } = useAppContext(); // Получаем unreadCount из AppContext
+    const { unreadCount } = useAppContext();
 
     const language = localStorage.getItem('language') || 'RO';
 
@@ -37,14 +37,14 @@ const CustomSidebar = ({ onOpenNotifications, onOpenTasks, onOpenAccount }) => {
 
     const logout = async () => {
         try {
-          await api.auth.logout();
-          clearCookies();
+            await api.auth.logout();
+            clearCookies();
         } catch (_) {
-          clearCookies();
+            clearCookies();
         }
-      };
-      
-    
+    };
+
+
 
     return (
         <div className="container-side-bar">
