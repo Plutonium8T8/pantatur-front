@@ -386,7 +386,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
               updatedUnreadMap.delete(msgId);
             }
           });
-          console.log("✅ Обновленные `unreadMessages` после `seen`:", updatedUnreadMap.size);
+          // console.log("✅ Обновленные `unreadMessages` после `seen`:", updatedUnreadMap.size);
           return updatedUnreadMap;
         });
 

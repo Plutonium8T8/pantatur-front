@@ -1485,7 +1485,7 @@ const ChatComponent = ({ }) => {
                 <div className="manager-send-message-container">
                     <textarea
                         className="text-area-message"
-                        value={managerMessage}
+                        value={managerMessage ?? ""}
                         onChange={(e) => setManagerMessage(e.target.value)}
                         placeholder={translations['Introduceți mesaj'][language]}
                         disabled={!selectTicketId}
