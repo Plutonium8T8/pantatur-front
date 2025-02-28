@@ -1,6 +1,5 @@
 import React, { createContext, useState, useEffect, useContext, useRef } from 'react';
 import { useSnackbar } from 'notistack';
-import { FaEnvelope, FaTrash } from 'react-icons/fa';
 import { useUser } from './UserContext';
 import { truncateText } from './stringUtils';
 import { api } from "./api"
@@ -19,9 +18,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [isLoading, setIsLoading] = useState(false);
   const { userId } = useUser();
-  const ticketsRef = useRef(tickets);
   const [unreadMessages, setUnreadMessages] = useState(new Map());
-  const language = localStorage.getItem('language') || 'RO';
   const [selectTicketId, setSelectTicketId] = useState(null);
 
   useEffect(() => {
@@ -380,7 +377,6 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         console.log("Пришел тикет:", message.data);
 
         const ticketId = message.data.ticket_id;
-        const clientId = message.data.client_id;
 
         if (!ticketId) {
           console.warn("Не удалось извлечь ticket_id из сообщения типа 'ticket'.");
