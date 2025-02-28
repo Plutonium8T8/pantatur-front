@@ -9,7 +9,7 @@ import { translations } from "../../utils/translations";
 import { useAppContext } from '../../../AppContext';
 import { api } from "../../../api"
 import { useSnackbar } from 'notistack';
- 
+
 const TicketModal = ({ ticket, onClose, onSave }) => {
   const modalRef = useRef(null);
   const { enqueueSnackbar } = useSnackbar();
@@ -18,7 +18,6 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
   const { setTickets } = useAppContext();
   const { userId, hasRole, isLoadingRoles } = useUser();
 
-  // Состояние для isAdmin, обновляется после загрузки ролей
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
@@ -83,7 +82,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
     try {
       const isEditing = Boolean(editedTicket?.id);
 
-      const updatedTicket = isEditing ? await api.tickets.updateById(editedTicket.id, cleanedData)  : await api.tickets.createTickets(cleanedData);
+      const updatedTicket = isEditing ? await api.tickets.updateById(editedTicket.id, cleanedData) : await api.tickets.createTickets(cleanedData);
 
       setTickets(prevTickets => isEditing
         ? prevTickets.map(ticket => (ticket.id === updatedTicket.id ? updatedTicket : ticket))
@@ -93,7 +92,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
       onClose();
     } catch (e) {
       // TODO: Make a function to extract `errors` from server
-      enqueueSnackbar("Ошибка при сохранении тикета", {variant: "error"})
+      enqueueSnackbar("Ошибка при сохранении тикета", { variant: "error" })
     }
   };
 
@@ -108,7 +107,6 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
     }
   };
 
-  // Определяем, когда Workflow должен быть disabled
   const AdminRoles = isLoadingRoles ? true : !isAdmin;
 
   return (

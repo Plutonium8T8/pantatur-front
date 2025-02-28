@@ -20,7 +20,6 @@ const CustomMultiSelect = ({ options = [], placeholder = getLanguageByKey("Selec
         };
     }, []);
 
-    // Выбор или удаление опции
     const toggleOption = (option) => {
         const newSelected = selectedValues.includes(option)
             ? selectedValues.filter((item) => item !== option)
