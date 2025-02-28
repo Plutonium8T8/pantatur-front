@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaArrowRight, FaFile, FaPaperPlane, FaSmile } from 'react-icons/fa';
 import Select from '../SelectComponent/SelectComponent';
 import { useUser } from '../../UserContext';
-import Cookies from 'js-cookie';
 import { transportOptions } from '../../FormOptions/TransportOptions';
 import { motivulRefuzuluiOptions } from '../../FormOptions/MotivulRefuzuluiOptions';
 import { countryOptions } from '../../FormOptions/CountryOptions';
@@ -19,7 +18,7 @@ import TechnicianSelect from '../../FormOptions/ResponsabilLead';
 import Input from '../InputComponent/InputComponent';
 import Workflow from '../WorkFlowComponent/WorkflowComponent';
 import "react-datepicker/dist/react-datepicker.css";
-import { useAppContext } from '../../AppContext'; // Подключение AppContext
+import { useAppContext } from '../../AppContext';
 import { useSnackbar } from 'notistack';
 import './chat.css';
 import EmojiPicker from 'emoji-picker-react';
@@ -31,7 +30,6 @@ import { SiViber } from "react-icons/si";
 import { useLocation } from 'react-router-dom';
 import TaskModal from '../SlideInComponent/TaskComponent';
 import { FaTasks } from 'react-icons/fa';
-import { workflowOptions } from '../../FormOptions/WorkFlowOption';
 import { evaluareOdihnaOptions } from '../../FormOptions/EvaluareVacantaOptions';
 import { valutaOptions } from '../../FormOptions/ValutaOptions';
 import { ibanOptions } from '../../FormOptions/IbanOptions';
@@ -41,24 +39,21 @@ import { showServerError } from "../../Components/utils/showServerError"
 const ChatComponent = ({ }) => {
     const { userId, hasRole, isLoadingRoles } = useUser();
     const [managerMessage, setManagerMessage] = useState('');
-    const { tickets, updateTicket, setTickets, messages, setMessages, markMessagesAsRead, socketRef, selectTicketId, setSelectTicketId, getClientMessagesSingle } = useAppContext();
-    const [extraInfo, setExtraInfo] = useState({}); // Состояние для дополнительной информации каждого тикета
+    const { tickets, updateTicket, setTickets, messages, setMessages, markMessagesAsRead, selectTicketId, setSelectTicketId, getClientMessagesSingle } = useAppContext();
+    const [extraInfo, setExtraInfo] = useState({});
     const [personalInfo, setPersonalInfo] = useState({});
     const messageContainerRef = useRef(null);
-    const { ticketId } = useParams(); // Получаем clientId из URL
-    const [isLoading, setIsLoading] = useState(false); // Состояние загрузки
-    const [selectedTechnicianId, setSelectedTechnicianId] = useState('');
+    const { ticketId } = useParams();
+    const [isLoading, setIsLoading] = useState(false);
     const { enqueueSnackbar } = useSnackbar();
-    const navigate = useNavigate(); // Хук для навигации
-    const [menuMessageId, setMenuMessageId] = useState(null);
-    const [editMessageId, setEditMessageId] = useState(null);
+    const navigate = useNavigate();
+    const [selectedTechnicianId, setSelectedTechnicianId] = useState('');
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [emojiPickerPosition, setEmojiPickerPosition] = useState({ top: 0, left: 0 });
-    const [selectedMessage, setSelectedMessage] = useState(null); // Выбранный шаблон из Select
+    const [selectedMessage, setSelectedMessage] = useState(null);
     const [selectedMessageId, setSelectedMessageId] = useState(null);
     const [selectedReaction, setSelectedReaction] = useState({});
     const reactionContainerRef = useRef(null);
-    const menuRefs = useRef({}); // Создаем объект для хранения ref всех меню
     const [filteredTickets, setFilteredTickets] = useState(tickets);
     const [showMyTickets, setShowMyTickets] = useState(false);
     const [selectedClient, setSelectedClient] = useState("");
@@ -70,7 +65,7 @@ const ChatComponent = ({ }) => {
     const location = useLocation();
     const [searchQuery, setSearchQuery] = useState("");
     const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
-    const [activeTab, setActiveTab] = useState("extraForm"); // По умолчанию вкладка Extra Form
+    const [activeTab, setActiveTab] = useState("extraForm");
     const [filteredTicketIds, setFilteredTicketIds] = useState(null);
     const [isAdmin, setIsAdmin] = useState(false);
 
@@ -88,16 +83,8 @@ const ChatComponent = ({ }) => {
         }
     }, [isLoadingRoles, hasRole]);
 
-    const AdminRoles = isLoadingRoles ? true : !isAdmin;
-
     const applyFilters = (filters) => {
         setAppliedFilters(filters);
-    };
-
-    const handleClientClick = (id) => {
-        setSelectedClient(id);
-        console.log("Выбран клиент:", id);
-        // Здесь можно добавить дополнительную логику, например, фильтрацию сообщений
     };
 
     useEffect(() => {
@@ -106,22 +93,12 @@ const ChatComponent = ({ }) => {
         }
     }, [ticketId, setSelectTicketId]);
 
-    // Прокручиваем к активному чату, если selectTicketId изменился и тикеты загружены
-    // useEffect(() => {
-    //     if (!isLoading && activeChatRef.current) {
-    //         activeChatRef.current.scrollIntoView({ behavior: "auto" });
-    //     }
-    // }, [selectTicketId, isLoading, filteredTickets]);
-
-    // Получение дополнительной информации для тикета
     const fetchTicketExtraInfo = async (selectTicketId) => {
         try {
             const data = await api.tickets.ticket.getInfo(selectTicketId)
-            // enqueueSnackbar('Загружено доп инфо по тикетам!', { variant: 'success' });
-            // Обновляем состояние с дополнительной информацией о тикете
             setExtraInfo((prevState) => ({
                 ...prevState,
-                [selectTicketId]: data, // Сохраняем информацию для текущего тикета
+                [selectTicketId]: data,
             }));
 
         } catch (error) {
@@ -130,7 +107,6 @@ const ChatComponent = ({ }) => {
         }
     };
 
-    // Обработчик изменения значения в селекте для выбранного тикета
     const handleSelectChangeExtra = (ticketId, field, value) => {
         setExtraInfo((prevState) => {
             const newState = {
@@ -140,21 +116,18 @@ const ChatComponent = ({ }) => {
                     [field]: value,
                 },
             };
-            // console.log("Обновленное состояние extraInfo:", newState);
             return newState;
         });
     };
 
-    // отправка данных формы в бэк
     const sendExtraInfo = async () => {
-        const token = Cookies.get('jwt'); // Получение токена из cookie
-        const ticketExtraInfo = extraInfo[selectTicketId]; // Получаем информацию для выбранного тикета
+        const ticketExtraInfo = extraInfo[selectTicketId];
 
         if (!ticketExtraInfo) {
             console.warn('Нет дополнительной информации для выбранного тикета.', ticketExtraInfo);
             return;
         }
-        setIsLoading(true); // Устанавливаем состояние загрузки в true
+        setIsLoading(true);
 
         try {
             const result = await api.tickets.ticket.create(selectTicketId, ticketExtraInfo)
@@ -165,7 +138,7 @@ const ChatComponent = ({ }) => {
             enqueueSnackbar('Ошибка при обновлении дополнительной информации', { variant: 'error' });
             console.error('Ошибка при отправке дополнительной информации:', error);
         } finally {
-            setIsLoading(false); // Отключаем индикатор загрузки
+            setIsLoading(false);
         }
     };
 
@@ -179,19 +152,8 @@ const ChatComponent = ({ }) => {
         scrollToBottom();
     }, [selectTicketId]);
 
-    const handleKeyDown = (event) => {
-        if (event.key === 'Enter' && !event.shiftKey) {
-            event.preventDefault(); // Предотвращаем переход на новую строку
-            if (editMessageId) {
-                handleSave(); // Сохраняем изменения, если редактируем сообщение
-            } else {
-                handleClick(selectTicketId); // Отправляем новое сообщение
-            }
-        }
-    };
-
     useEffect(() => {
-        if (!selectTicketId) return; // Если тикет не выбран — ничего не делаем
+        if (!selectTicketId) return;
         getClientMessagesSingle(selectTicketId);
         fetchClientDataPersonal(selectTicketId, setPersonalInfo);
         fetchTicketExtraInfo(selectTicketId);
@@ -199,7 +161,7 @@ const ChatComponent = ({ }) => {
 
 
     const handleTicketClick = async (ticketId) => {
-        if (selectTicketId === ticketId) return; // Если уже открыт этот тикет, ничего не делаем
+        if (selectTicketId === ticketId) return;
 
         setSelectTicketId(ticketId);
         navigate(`/chat/${ticketId}`);
@@ -207,7 +169,6 @@ const ChatComponent = ({ }) => {
         const selectedTicket = tickets.find(ticket => ticket.id === ticketId);
         setSelectedTechnicianId(selectedTicket ? selectedTicket.technician_id || null : null);
 
-        // Не сбрасываем unseen_count вручную, ждем WebSocket-сообщение
         await markMessagesAsRead(ticketId);
     };
 
@@ -225,20 +186,15 @@ const ChatComponent = ({ }) => {
         "Închis și nerealizat"
     ];
 
-    // Индексы этапов
     const workflowIndices = workflowOptions.reduce((acc, workflow, index) => {
         acc[workflow] = index;
         return acc;
     }, {});
 
-    // Состояния ошибок
     const [fieldErrors, setFieldErrors] = useState({});
 
-    // Получение текущего тикета
     const updatedTicket = tickets.find(ticket => ticket.id === selectTicketId) || null;
-    const currentWorkflowIndex = updatedTicket ? workflowIndices[updatedTicket.workflow] : -1;
 
-    // Обязательные поля для каждого этапа
     const requiredFields = {
         "Luat în lucru": ["sursa_lead", "promo", "marketing"],
         "Ofertă trimisă": ["tipul_serviciului", "tara", "tip_de_transport", "denumirea_excursiei_turului"],
@@ -250,43 +206,9 @@ const ChatComponent = ({ }) => {
             "numarul_cererii_de_la_operator", "rezervare_confirmata",
             "contract_arhivat", "statutul_platii", "pret_netto", "comission_companie"
         ],
-        "Realizat cu succes": ["control_admin"] // Новое обязательное поле
+        "Realizat cu succes": ["control_admin"]
     };
 
-    // Функция валидации перед изменением workflow
-    const validateFields = (workflow) => {
-        if (workflow === "Închis și nerealizat") {
-            if (!extraInfo[selectTicketId]?.motivul_refuzului) {
-                setFieldErrors(prev => ({ ...prev, motivul_refuzului: true }));
-                enqueueSnackbar(`Completați "Motivul refuzului" înainte de a face modificări!`, { variant: 'error' });
-                return false;
-            }
-            return true;
-        }
-
-        let missingFields = [];
-        const workflowIndex = workflowIndices[workflow];
-
-        for (const [step, fields] of Object.entries(requiredFields)) {
-            if (workflowIndices[step] <= workflowIndex) {
-                missingFields.push(...fields.filter(field => !extraInfo[selectTicketId]?.[field]));
-            }
-        }
-
-        if (missingFields.length) {
-            setFieldErrors(prev => ({
-                ...prev,
-                ...Object.fromEntries(missingFields.map(field => [field, true]))
-            }));
-
-            enqueueSnackbar(`Completați toate câmpurile obligatorii pentru "${workflow}" și etapele anterioare înainte de a face modificări!`, { variant: 'error' });
-            return false;
-        }
-
-        return true;
-    };
-
-    // Функция изменения workflow с проверкой
     const handleWorkflowChange = async (event) => {
         const newWorkflow = event.target.value;
 
@@ -308,7 +230,6 @@ const ChatComponent = ({ }) => {
             }
         }
 
-        // Если выбран "Închis și nerealizat", оставляем только ошибку "motivul_refuzului"
         if (newWorkflow === "Închis și nerealizat") {
             newFieldErrors = {};
             if (!extraInfo[selectTicketId]?.motivul_refuzului) {
@@ -341,7 +262,6 @@ const ChatComponent = ({ }) => {
         }
     };
 
-    // Функция сброса ошибки при вводе данных
     const handleFieldChange = (field, value) => {
         handleSelectChangeExtra(selectTicketId, field, value);
         if (value) {
@@ -349,12 +269,10 @@ const ChatComponent = ({ }) => {
         }
     };
 
-    // Сброс ошибок при смене тикета
     useEffect(() => {
         setFieldErrors({});
     }, [selectTicketId]);
 
-    // Подсветка ошибок в табах
     const getTabErrorIndicator = (tab) => {
         const tabFields = {
             extraForm: ["buget", "data_plecarii", "data_intoarcerii", "sursa_lead", "promo", "marketing"],
@@ -373,59 +291,15 @@ const ChatComponent = ({ }) => {
 
         if (pretNetto !== "" && buget !== "" && pretNetto !== undefined && buget !== undefined) {
             const newComision = parseFloat(buget) - parseFloat(pretNetto);
-            handleFieldChange("comission_companie", newComision.toFixed(2)); // Автообновление
+            handleFieldChange("comission_companie", newComision.toFixed(2));
         }
     }, [extraInfo[selectTicketId]?.pret_netto, extraInfo[selectTicketId]?.buget, selectTicketId]);
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Закрытие меню при клике вне его области
-    const handleOutsideClick = (event) => {
-        // Проверяем, есть ли клик вне любого открытого меню
-        const isOutside = Object.keys(menuRefs.current).every(
-            (key) =>
-                menuRefs.current[key] && !menuRefs.current[key].contains(event.target)
-        );
-
-        if (isOutside) {
-            setMenuMessageId(null); // Закрываем меню
-        }
-    };
-
-    useEffect(() => {
-        document.addEventListener('click', handleOutsideClick);
-        return () => {
-            document.removeEventListener('click', handleOutsideClick);
-        };
-    }, []);
-
-    const handleMenuToggle = (msgId) => {
-        setMenuMessageId(menuMessageId === msgId ? null : msgId);
-    };
-
-    const handleEdit = (msg) => {
-        setMenuMessageId(null);
-        setEditMessageId(msg.id);
-        setManagerMessage(msg.message); // Устанавливаем текст сообщения в textarea
-    };
-
-    const handleSave = () => {
-        if (managerMessage.trim() === '') {
-            alert('Сообщение не может быть пустым');
-            return;
-        }
-    };
-
-    const handleCancel = () => {
-        setEditMessageId(null);
-        setManagerMessage('');
-    };
-
-    // Обработчик клика по реакции
     const handleReactionClick = (reaction, messageId) => {
-        // Всегда обновляем реакцию
         setSelectedReaction((prev) => ({
             ...prev,
-            [messageId]: reaction, // Устанавливаем новую реакцию (заменяем старую)
+            [messageId]: reaction,
         }));
     };
 
@@ -480,39 +354,34 @@ const ChatComponent = ({ }) => {
 
     const getLastReaction = (message) => {
         if (!message.reactions) {
-            return '☺'; // Возвращаем '☺', если реакции отсутствуют
+            return '☺';
         }
 
         try {
-            // Убираем внешние фигурные скобки и разделяем строку на массив реакций
             const reactionsArray = message.reactions
-                .replace(/^{|}$/g, '') // Удаляем внешние фигурные скобки
-                .split('","') // Разделяем строки реакций
-                .map((reaction) => reaction.replace(/(^"|"$|\")/g, '').trim()); // Убираем кавычки
+                .replace(/^{|}$/g, '')
+                .split('","')
+                .map((reaction) => reaction.replace(/(^"|"$|\")/g, '').trim());
 
-            // Парсим JSON-объекты и извлекаем поле `reaction`
             const parsedReactions = reactionsArray.map((reaction) => {
                 try {
-                    // Удаляем экранированные кавычки и парсим строку
                     const normalizedReaction = reaction.replace('\"', '');
-                    const parsed = JSON.parse(normalizedReaction); // Пытаемся распарсить как JSON
-                    return parsed.reaction; // Возвращаем только поле `reaction`
+                    const parsed = JSON.parse(normalizedReaction);
+                    return parsed.reaction;
                 } catch {
-                    return reaction; // Если парсинг не удался, возвращаем оригинальную строку (эмодзи)
+                    return reaction;
                 }
             });
 
-            // Возвращаем только последнюю реакцию
             return parsedReactions.length > 0
                 ? parsedReactions[parsedReactions.length - 1]
                 : '☺';
         } catch (error) {
             console.error('Ошибка при обработке реакций:', error);
-            return '☺'; // Значение по умолчанию при ошибке
+            return '☺';
         }
     };
 
-    // Обработчик клика вне контейнера
     const handleClickOutsideReaction = (event) => {
         if (
             reactionContainerRef.current &&
@@ -522,7 +391,6 @@ const ChatComponent = ({ }) => {
         }
     };
 
-    // Привязка обработчика события к документу
     useEffect(() => {
         document.addEventListener('mousedown', handleClickOutsideReaction);
         return () => {
@@ -532,37 +400,32 @@ const ChatComponent = ({ }) => {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const handleEmojiClick = (emojiObject) => {
-        // Вставка эмодзи в сообщение
         setManagerMessage((prevMessage) => prevMessage + emojiObject.emoji);
-        console.log(emojiObject.emoji); // Логируем выбранный эмодзи
+        console.log(emojiObject.emoji);
     };
 
     const handleEmojiClickButton = (event) => {
         const rect = event.target.getBoundingClientRect();
-        const emojiPickerHeight = 450; // Предполагаемая высота эмодзи-пикера
+        const emojiPickerHeight = 450;
 
-        // Устанавливаем позицию эмодзи-пикера
         setEmojiPickerPosition({
-            top: rect.top + window.scrollY - emojiPickerHeight, // Смещаем вверх
+            top: rect.top + window.scrollY - emojiPickerHeight,
             left: rect.left + window.scrollX,
         });
 
-        // Открываем или закрываем пикер при клике на иконку
         setShowEmojiPicker((prev) => !prev);
     };
 
-    // Обработчик клика вне области эмодзи-пикера, чтобы закрыть пикер
     const handleClickOutside = (event) => {
         if (
-            !event.target.closest('.emoji-button') && // Проверяем клик по кнопке
-            !event.target.closest('.emoji-picker-popup') // Проверяем клик внутри меню эмодзи
+            !event.target.closest('.emoji-button') &&
+            !event.target.closest('.emoji-picker-popup')
         ) {
-            setShowEmojiPicker(false); // Закрываем меню только если клик был вне
+            setShowEmojiPicker(false);
         }
     };
 
 
-    // Добавляем обработчик события для клика вне пикера
     useEffect(() => {
         document.addEventListener('click', handleClickOutside);
         return () => {
@@ -570,31 +433,18 @@ const ChatComponent = ({ }) => {
         };
     }, []);
 
-
-    // Обработчик для изменения выбранного шаблона
-    const handleSelectTChange = (selectedOption) => {
-        if (selectedOption && selectedOption) {
-            setSelectedMessage(selectedOption);
-            setManagerMessage(selectedOption);
-        } else {
-            setSelectedMessage(null);
-            setManagerMessage("");
-        }
-    };
-
     const handleSelectTemplateChange = (event) => {
         const selectedKey = event.target.value;
 
         if (selectedKey) {
             setSelectedMessage(selectedKey);
-            setManagerMessage(templateOptions[selectedKey]); // Set actual message text
+            setManagerMessage(templateOptions[selectedKey]);
         } else {
             setSelectedMessage(null);
             setManagerMessage("");
         }
     };
 
-    // Обработчик выбора файла
     const handleFileSelect = async (e) => {
         const selectedFile = e.target.files[0];
         console.log('Selected file:', selectedFile ? selectedFile.name : 'No file selected');
@@ -602,7 +452,7 @@ const ChatComponent = ({ }) => {
         if (selectedFile) {
             try {
                 console.log('Uploading and sending file...');
-                await sendMessage(selectedFile); // Передаем файл напрямую
+                await sendMessage(selectedFile);
                 console.log('File uploaded and message sent!');
             } catch (error) {
                 console.error('Error processing file:', error);
@@ -618,18 +468,6 @@ const ChatComponent = ({ }) => {
         }
     };
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    const getMessageTypeLabel = (type) => {
-        const typeLabels = {
-            text: translations["Mesaj text"][language],
-            image: translations["Mesaj imagine"][language],
-            video: translations["Mesaj video"][language],
-            file: translations["Mesaj file"][language],
-            audio: translations["Mesaj audio"][language],
-        };
-
-        return typeLabels[type] || "Unknown Message";
-    };
 
     const handleTechnicianChange = async (newTechnicianId) => {
         setSelectedTechnicianId(newTechnicianId);
@@ -651,7 +489,6 @@ const ChatComponent = ({ }) => {
     };
 
 
-    // Отправка сообщения
     const uploadFile = async (file) => {
         const formData = new FormData();
         formData.append('file', file);
@@ -671,29 +508,25 @@ const ChatComponent = ({ }) => {
     const getLastActiveClient = () => {
         if (!Array.isArray(messages) || messages.length === 0) return null;
 
-        // Фильтруем сообщения только по выбранному тикету
         const ticketMessages = messages.filter((msg) => msg.ticket_id === selectTicketId);
 
         if (ticketMessages.length === 0) {
             return null;
         }
 
-        // Находим последнее сообщение по времени
         const lastMessage = ticketMessages.reduce((latest, current) =>
             new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
         );
 
-        // console.log("🕵️‍♂️ Последнее сообщение отправил клиент:", lastMessage.client_id);
         return lastMessage.client_id;
     };
 
-    // Автоустановка клиента при изменении тикета
     useEffect(() => {
         const lastClient = getLastActiveClient();
         if (lastClient) {
-            setSelectedClient(String(lastClient)); // Устанавливаем клиента в селект
+            setSelectedClient(String(lastClient));
         }
-    }, [messages, selectTicketId]); // Следим за изменением сообщений и выбранного тикета
+    }, [messages, selectTicketId]);
 
     const handleClick = () => {
         if (!selectedClient) {
@@ -705,7 +538,6 @@ const ChatComponent = ({ }) => {
             console.log("🔍 Анализируем платформу последнего сообщения...");
             console.log("📌 selectedClient:", selectedClient);
 
-            // Проверяем, загружены ли сообщения
             if (!Array.isArray(messages)) {
                 console.error("❌ Ошибка: messages не является массивом!", messages);
                 return "web";
@@ -713,10 +545,8 @@ const ChatComponent = ({ }) => {
 
             console.log("📩 Всего сообщений в системе:", messages.length);
 
-            // 🔹 Преобразуем `selectedClient` в число, если нужно
             const clientId = Number(selectedClient);
 
-            // 🔹 Фильтруем сообщения от текущего клиента
             const clientMessages = messages.filter((msg) => Number(msg.client_id) === clientId);
 
             if (!clientMessages || clientMessages.length === 0) {
@@ -726,7 +556,6 @@ const ChatComponent = ({ }) => {
 
             console.log("🔎 Найдено сообщений от клиента:", clientMessages.length);
 
-            // Находим последнее сообщение по времени
             const lastMessage = clientMessages.reduce((latest, current) =>
                 new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
             );
@@ -753,13 +582,12 @@ const ChatComponent = ({ }) => {
             const messageData = {
                 sender_id: Number(userId),
                 client_id: selectedClient,
-                platform: platform, // Динамическая платформа
+                platform: platform,
                 message: managerMessage.trim(),
                 media_type: null,
                 media_url: "",
             };
 
-            // 🔹 Если файл выбран, загружаем его
             if (selectedFile) {
                 console.log('Загрузка файла...');
                 const uploadResponse = await uploadFile(selectedFile);
@@ -769,13 +597,12 @@ const ChatComponent = ({ }) => {
                     return;
                 }
 
-                messageData.media_url = uploadResponse.url; // URL загруженного файла
-                messageData.media_type = getMediaType(selectedFile.type); // Определяем тип медиафайла
+                messageData.media_url = uploadResponse.url;
+                messageData.media_type = getMediaType(selectedFile.type);
             }
 
             console.log('Отправляемые данные:', JSON.stringify(messageData, null, 2));
 
-            // 🔹 Определяем API в зависимости от платформы
             let apiUrl = api.messages.send.create
 
             if (platform === "telegram") {
@@ -788,15 +615,12 @@ const ChatComponent = ({ }) => {
 
             setManagerMessage('');
 
-            // 🔹 Отправка сообщения
             await apiUrl(messageData)
 
             console.log(`✅ Сообщение успешно отправлено через API ${apiUrl}:`, messageData);
 
-            // 🔹 Добавляем сообщение в локальный state
             setMessages((prevMessages) => [...prevMessages, { ...messageData, seenAt: false }]);
 
-            // 🔹 Очищаем поле ввода, если файл не отправляется
             if (!selectedFile) setManagerMessage('');
         } catch (error) {
             console.error('Ошибка отправки сообщения:', error);
@@ -805,29 +629,19 @@ const ChatComponent = ({ }) => {
 
     const language = localStorage.getItem('language') || 'RO';
 
-    // Определение типа медиафайла
     const getMediaType = (mimeType) => {
         if (mimeType.startsWith('image/')) return 'image';
         if (mimeType.startsWith('video/')) return 'video';
         if (mimeType.startsWith('audio/')) return 'audio';
-        return 'file'; // По умолчанию тип "файл"
+        return 'file';
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
     useEffect(() => {
-        setFilteredTickets(tickets); // Устанавливаем все тикеты по умолчанию
-    }, [tickets]);
-
-    const updateTickets = (tickets) => {
         setFilteredTickets(tickets);
-    };
-
-    const handleTicketSelect = (ticket) => {
-        setSelectTicketId(ticket.id);
-        setSelectedTechnicianId(ticket.technician_id || null); // Если technician_id нет, передаем null
-    };
+    }, [tickets]);
 
     const handleSelectChange = (clientId, field, value) => {
         setPersonalInfo(prev => ({
@@ -865,7 +679,6 @@ const ChatComponent = ({ }) => {
             console.log("Данные успешно обновлены:", result);
             alert("Личные данные успешно сохранены!");
 
-            // Опционально обновляем состояние personalInfo после успешного сохранения
             setPersonalInfo(prev => ({
                 ...prev,
                 [selectedClient]: result
@@ -881,10 +694,9 @@ const ChatComponent = ({ }) => {
         try {
             const data = await api.users.getExtendedById(selectedClient)
 
-            // Устанавливаем полученные данные в `personalInfo`
             setPersonalInfo(prev => ({
                 ...prev,
-                [selectedClient]: { ...data } // Обновляем данные для выбранного клиента
+                [selectedClient]: { ...data }
             }));
 
         } catch (error) {
@@ -962,7 +774,7 @@ const ChatComponent = ({ }) => {
     };
 
     const handleMergeClients = async () => {
-        const oldUserId = selectedClient; // old_user_id фиксирован
+        const oldUserId = selectedClient;
         const newUserId = extraInfo[selectedClient]?.new_user_id;
 
         if (!newUserId) {
@@ -983,35 +795,23 @@ const ChatComponent = ({ }) => {
         }
     };
 
-    // useEffect(() => {
-    //     if (selectTicketId && ticketRef.current) {
-    //         ticketRef.current.scrollIntoView({ behavior: "auto", block: "center" });
-    //     }
-    // }, [selectTicketId]);
-
     const sortedTickets = useMemo(() => {
-        let filtered = [...tickets]; // Делаем копию массива тикетов
+        let filtered = [...tickets];
 
-        // console.log("📌 Исходные тикеты:", tickets);
 
-        // 1️⃣ Функция получения времени последнего сообщения тикета
         const getLastMessageTime = (ticket) => {
-            // Получаем все сообщения по тикету
             const ticketMessages = messages.filter(msg => msg.ticket_id === ticket.id);
 
             if (ticketMessages.length > 0) {
-                // Берем самое последнее сообщение
                 return Math.max(...ticketMessages.map(msg => parseCustomDate(msg.time_sent)));
             }
 
-            // Если сообщений нет, fallback на `time_sent` или `last_interaction_date`
             if (ticket.time_sent) return parseCustomDate(ticket.time_sent);
             if (ticket.last_interaction_date) return parseCustomDate(ticket.last_interaction_date);
 
-            return 0; // Если ничего нет, ставим минимальное значение
+            return 0;
         };
 
-        // 2️⃣ Функция парсинга нестандартного формата даты (dd-MM-yyyy HH:mm:ss)
         const parseCustomDate = (dateStr) => {
             if (!dateStr) return 0;
 
@@ -1022,22 +822,16 @@ const ChatComponent = ({ }) => {
             return new Date(year, month - 1, day, hours, minutes, seconds).getTime(); // timestamp
         };
 
-        // 3️⃣ Основная сортировка: по убыванию времени последнего сообщения
         filtered.sort((a, b) => getLastMessageTime(b) - getLastMessageTime(a));
 
-        // console.log("✅ После сортировки по времени:", filtered);
-
-        // 4️⃣ Фильтр по ID тикетов из `TicketFilterModal`
         if (filteredTicketIds !== null && filteredTicketIds.length > 0) {
             filtered = filtered.filter(ticket => filteredTicketIds.includes(Number(ticket.id)));
         }
 
-        // 5️⃣ Фильтрация "Мои тикеты"
         if (showMyTickets) {
             filtered = filtered.filter(ticket => ticket.technician_id === userId);
         }
 
-        // 6️⃣ Фильтрация по поисковому запросу (ID, контакт, теги)
         if (searchQuery.trim()) {
             const lowerSearchQuery = searchQuery.toLowerCase();
             filtered = filtered.filter(ticket => {
@@ -1055,7 +849,6 @@ const ChatComponent = ({ }) => {
             });
         }
 
-        // 7️⃣ Фильтрация по `appliedFilters`
         if (Object.values(appliedFilters).some(value => value)) {
             if (appliedFilters.creation_date) {
                 filtered = filtered.filter(ticket => ticket.creation_date.startsWith(appliedFilters.creation_date));
@@ -1081,25 +874,15 @@ const ChatComponent = ({ }) => {
             }
         }
 
-        // console.log("✅ Итоговый список тикетов после фильтрации:", filtered);
         return filtered;
     }, [tickets, messages, filteredTicketIds, appliedFilters, showMyTickets, searchQuery, userId]);
 
-
-    // useEffect(() => {
-    //     if (location.state?.hideChatList) {
-    //         setIsChatListVisible(false);
-    //     }
-    // }, [location.state]);
-
     useEffect(() => {
-        // 1. Проверяем, есть ли `state` в `location`
         if (location.state?.hideChatList) {
             setIsChatListVisible(false);
             return;
         }
 
-        // 2. Если нет `location.state`, пробуем взять `state` из URL
         const params = new URLSearchParams(location.search);
         const stateParam = params.get('state');
 
@@ -1116,14 +899,12 @@ const ChatComponent = ({ }) => {
     }, [location]);
 
     useEffect(() => {
-        // Пересчитываем фильтрованные тикеты, когда приходят новые сообщения
         applyFilters(appliedFilters);
-    }, [messages]); // Запускаем при обновлении сообщений
+    }, [messages]);
 
     useEffect(() => {
         if (!selectTicketId || !messages.length) return;
 
-        // Получаем сообщения текущего открытого тикета
         const unreadMessages = messages.filter(
             msg => msg.ticket_id === selectTicketId && msg.seen_by === '{}' && msg.sender_id !== userId
         );
@@ -1155,7 +936,6 @@ const ChatComponent = ({ }) => {
 
     return (
         <div className="chat-container">
-            {/* Контейнер списка чатов */}
             <div className={`users-container ${isChatListVisible ? "" : "hidden"}`}>
                 {isChatListVisible && (
                     <>
@@ -1188,13 +968,6 @@ const ChatComponent = ({ }) => {
 
                         <div className="chat-item-container">
                             {sortedTickets.map(ticket => {
-                                // Форматирование времени
-                                const formattedTime = ticket.time_sent
-                                    ? new Date(ticket.time_sent).toLocaleTimeString("ru-RU", {
-                                        hour: "2-digit",
-                                        minute: "2-digit",
-                                    }) || "—"
-                                    : "—";
 
                                 const tags = parseTags(ticket.tags);
 
@@ -1263,8 +1036,6 @@ const ChatComponent = ({ }) => {
                             isOpen={isFilterOpen}
                             onClose={() => setIsFilterOpen(false)}
                             onApplyFilter={(updatedFilters, ticketIds) => {
-                                console.log("🚀 Фильтр применен в чате:", updatedFilters);
-                                console.log("📥 Полученные ticketIds с API:", ticketIds);
 
                                 if (!ticketIds || ticketIds.length === 0) {
                                     console.log("♻️ Сброс фильтра: показываем все тикеты.");
@@ -1273,7 +1044,6 @@ const ChatComponent = ({ }) => {
                                     return;
                                 }
 
-                                // ✅ Разворачиваем `ticketIds`, если он вложенный массив
                                 const flatTicketIds = ticketIds.flat(Infinity)
                                     .map(ticket => ticket?.id || ticket)
                                     .filter(id => typeof id === "number" || !isNaN(Number(id)))
@@ -1289,7 +1059,6 @@ const ChatComponent = ({ }) => {
                 )}
             </div>
 
-            {/* Кнопка скрытия/показа списка чатов */}
             <button
                 className="toggle-chat-list"
                 onClick={() => setIsChatListVisible(prev => !prev)}
@@ -1301,10 +1070,6 @@ const ChatComponent = ({ }) => {
                 <div className="chat-messages" ref={messageContainerRef}>
                     {selectTicketId ? (
                         (() => {
-                            const selectedTicket = tickets.find(ticket => ticket.id === selectTicketId);
-                            const clientIds = selectedTicket
-                                ? selectedTicket.client_id.toString().replace(/[{}]/g, "").split(',').map(id => Number(id))
-                                : [];
 
                             const parseDate = (dateString) => {
                                 if (!dateString) return null;
@@ -1428,7 +1193,6 @@ const ChatComponent = ({ }) => {
                                                                     <div className="text">
                                                                         {renderContent()}
                                                                         <div className="message-time">
-                                                                            {/* Отображаем имя только если сообщение от клиента */}
                                                                             {msg.sender_id !== 1 && msg.sender_id !== userId && (
                                                                                 <span className="client-name">
                                                                                     {personalInfo[msg.client_id]?.name || ""} {personalInfo[msg.client_id]?.surname || ""}
@@ -1535,7 +1299,6 @@ const ChatComponent = ({ }) => {
                             >
                                 <FaFile />
                             </button>
-                            {/* Кнопка для открытия TaskModal с выбранным тикетом */}
                             <button
                                 className="action-button task-button"
                                 onClick={() => setIsTaskModalOpen(true)}
@@ -1581,7 +1344,6 @@ const ChatComponent = ({ }) => {
                                             const clientInfo = personalInfo[clientId] || {};
                                             const fullName = clientInfo.name ? `${clientInfo.name} ${clientInfo.surname || ""}`.trim() : `ID: ${clientId}`;
 
-                                            // Найти последнее сообщение этого клиента
                                             const lastMessage = messages
                                                 .filter(msg => msg.client_id === Number(clientId))
                                                 .sort((a, b) => new Date(b.time_sent) - new Date(a.time_sent))[0];
@@ -1600,7 +1362,6 @@ const ChatComponent = ({ }) => {
                         )}
                     </div>
 
-                    {/* TaskModal с передачей ID тикета */}
                     <TaskModal
                         isOpen={isTaskModalOpen}
                         onClose={() => setIsTaskModalOpen(false)}
@@ -1806,13 +1567,13 @@ const ChatComponent = ({ }) => {
                             <div className="merge-tickets">
                                 <input
                                     type="number"
-                                    value={ticketId} // ticket_old всегда равен ticketId
+                                    value={ticketId}
                                     onChange={(e) =>
                                         handleSelectChangeExtra(selectTicketId, 'ticket_id_old', e.target.value)
                                     }
                                     className="input-field"
                                     placeholder="Introduceți ID vechi"
-                                    disabled // Поле отключено, так как old_user_id фиксирован
+                                    disabled
                                 />
                                 <input
                                     type="number"
@@ -1879,10 +1640,10 @@ const ChatComponent = ({ }) => {
                                 <div className="merge-client">
                                     <input
                                         type="number"
-                                        value={selectedClient} // old_user_id фиксирован
+                                        value={selectedClient}
                                         className="input-field"
                                         placeholder="Introduceți ID vechi"
-                                        disabled // Поле отключено, так как old_user_id фиксирован
+                                        disabled
                                     />
                                     <input
                                         type="number"
@@ -2172,16 +1933,8 @@ const ChatComponent = ({ }) => {
                                     handleSelectChangeExtra(selectTicketId, 'iban', value)
                                 }
                             />
-                            {/* <Select
-                                options={paymentStatusOptions}
-                                label="Adaugă document"
-                                id="payment-select"
-                                value={extraInfo[selectTicketId]?.adauga_document || ""}
-                                onChange={(value) =>
-                                    handleSelectChangeExtra(selectTicketId, 'adauga_document', value)
-                                }
-                            /> */}
-                            {/* /<div>document list</div> */}
+
+                            {/* to do document list */}
                         </div>
                     )}
                     {activeTab === 'Media' && selectTicketId && (
@@ -2190,7 +1943,6 @@ const ChatComponent = ({ }) => {
                                 .filter((msg) => ['audio', 'video', 'image', 'file'].includes(msg.mtype) && msg.ticket_id === selectTicketId)
                                 .map((msg, index) => (
                                     <div key={index} className="media-container">
-                                        {/* Отображение времени отправки с учетом формата "dd-MM-yyyy HH:mm:ss" */}
                                         <div className="sent-time">
                                             {(() => {
                                                 const parseCustomDate = (dateStr) => {
@@ -2211,7 +1963,6 @@ const ChatComponent = ({ }) => {
                                             })()}
                                         </div>
 
-                                        {/* Отображение медиафайлов */}
                                         {msg.mtype === "image" ? (
                                             <img
                                                 src={msg.message}
