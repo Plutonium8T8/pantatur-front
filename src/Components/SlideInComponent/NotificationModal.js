@@ -28,9 +28,9 @@ const NotificationModal = ({ isOpen, onClose }) => {
             const data = await api.notification.getById(userId)
 
             setNotifications(data);
-            
+
         } catch (error) {
-            enqueueSnackbar(showServerError(error), {variant: "error"})
+            enqueueSnackbar(showServerError(error), { variant: "error" })
             console.error("Ошибка загрузки уведомлений:", error.message);
         }
     };
@@ -42,15 +42,15 @@ const NotificationModal = ({ isOpen, onClose }) => {
                 time: notificationDate,
                 description: notificationContent,
                 client_id: userId,
-                status: false, 
+                status: false,
             })
-         
+
             fetchNotifications();
             setNotificationContent("");
             setNotificationDate("");
-          
+
         } catch (error) {
-            enqueueSnackbar(showServerError(error), {variant: "error"})
+            enqueueSnackbar(showServerError(error), { variant: "error" })
             console.error("Ошибка создания уведомления:", error.message);
         }
     };
@@ -62,10 +62,10 @@ const NotificationModal = ({ isOpen, onClose }) => {
             setNotifications([]);
 
         } catch (error) {
-            enqueueSnackbar(showServerError(error), {variant: "error"})
+            enqueueSnackbar(showServerError(error), { variant: "error" })
             console.error("Ошибка удаления уведомлений:", error.message);
         }
-    };    
+    };
 
     const handleMarkAsSeen = async (id) => {
         try {
@@ -75,10 +75,10 @@ const NotificationModal = ({ isOpen, onClose }) => {
                 status: true,
             })
 
-            fetchNotifications(); 
+            fetchNotifications();
 
         } catch (error) {
-            enqueueSnackbar(showServerError(error), {variant: "error"})
+            enqueueSnackbar(showServerError(error), { variant: "error" })
             console.error("Ошибка обновления статуса:", error.message);
         }
     };
