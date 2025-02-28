@@ -15,6 +15,7 @@ import {
     FaUserSecret
 } from 'react-icons/fa';
 import { clearCookies } from "../../Components/utils/clearCookies"
+import { api } from "../../api"
 
 const CustomSidebar = ({ onOpenNotifications, onOpenTasks, onOpenAccount }) => {
     const location = useLocation();
@@ -33,6 +34,17 @@ const CustomSidebar = ({ onOpenNotifications, onOpenTasks, onOpenAccount }) => {
     const handleNavigate = (page) => {
         navigate(`/${page}`);
     };
+
+    const logout = async () => {
+        try {
+          await api.auth.logout();
+          clearCookies();
+        } catch (_) {
+          clearCookies();
+        }
+      };
+      
+    
 
     return (
         <div className="container-side-bar">
@@ -99,7 +111,7 @@ const CustomSidebar = ({ onOpenNotifications, onOpenTasks, onOpenAccount }) => {
                 </div>
             </div>
             <div className="container-log-out">
-                <div className="menu-item" onClick={clearCookies}>
+                <div className="menu-item" onClick={logout}>
                     <FaSignOutAlt size={24} />
                     <span>{translations['Log Out'][language]}</span>
                 </div>
