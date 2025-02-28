@@ -36,6 +36,7 @@ import { ibanOptions } from '../../FormOptions/IbanOptions';
 import { api } from "../../api"
 import { showServerError } from "../../Components/utils/showServerError"
 import ToggleSwitch from '../ToggleComponent/ToggleSwitch';
+
 const ChatComponent = ({ }) => {
     const { userId, hasRole, isLoadingRoles } = useUser();
     const [managerMessage, setManagerMessage] = useState('');
