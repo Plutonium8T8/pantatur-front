@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "../../UserContext";
 import "./SlideInModal.css";
-import { FaTimes, FaBell } from "react-icons/fa";
+import { FaBell } from "react-icons/fa";
 import { translations } from "../utils/translations";
 import { api } from "../../api"
 import { useSnackbar } from 'notistack';
@@ -23,7 +23,6 @@ const NotificationModal = ({ isOpen, onClose }) => {
         }
     }, [isOpen]);
 
-    // Получение списка уведомлений
     const fetchNotifications = async () => {
         try {
             const data = await api.notification.getById(userId)
@@ -36,7 +35,6 @@ const NotificationModal = ({ isOpen, onClose }) => {
         }
     };
 
-    // Создание нового уведомления (POST)
     const handleNotificationSubmit = async (e) => {
         e.preventDefault();
         try {

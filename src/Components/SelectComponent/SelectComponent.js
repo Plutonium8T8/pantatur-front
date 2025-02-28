@@ -12,7 +12,7 @@ const Select = ({
     placeholder,
     required,
     disabled,
-    hasError // Новый пропс для отображения ошибки
+    hasError
 }) => {
     const handleChange = (event) => {
         const selectedValue = event.target.value;

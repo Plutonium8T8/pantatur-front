@@ -7,29 +7,22 @@
   background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: stretch;
-  /* Stretch from top to bottom */
   z-index: 999;
-  /* Higher than the sidebar */
 }
 
 .modal-container {
   position: absolute;
-  /* Ensure it is absolutely positioned */
   top: 0;
   left: 100px;
-  /* Adjusted for the sidebar width */
   background-color: #1f2937;
   color: white;
   width: 520px;
   height: 100vh;
-  /* Full height */
   overflow-y: auto;
   box-shadow: 4px 0 12px rgba(0, 0, 0, 0.3);
   animation: slideIn 0.5s ease-in-out;
   border-radius: 0;
-  /* No border radius */
   z-index: 999;
-  /* Ensure modal content is above overlay */
 }
 
 
@@ -50,7 +43,6 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px;
-  /* Increased padding for a more spacious look */
   background-color: #0f824c;
 }
 
@@ -64,7 +56,6 @@
 
 .notification-form {
   padding: 20px;
-  /* Increased padding for form elements */
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -74,7 +65,6 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  /* Increased spacing between labels and inputs */
 }
 
 .input-group label,
@@ -89,20 +79,16 @@
   justify-content: flex-end;
   width: 100%;
   gap: 6%;
-  /* Ensure it spans the full width of the form */
 }
 
 .input-group input,
 .example-custom-input,
 .input-group textarea {
   border: 1px solid #374151;
-  /* background: #111827; */
   color: black;
   padding: 12px;
-  /* Increased padding for inputs */
   font-size: 16px;
   border-radius: 5px;
-  /* Optional for a rounded look */
   outline: none;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
@@ -159,20 +145,15 @@
   list-style: none;
   margin: 0;
   padding: 0 20px 20px;
-  /* Increased padding for better spacing */
   max-height: calc(100vh - 200px);
-  /* Adjust for header and form */
   overflow-y: auto;
 }
 
 .notification-item {
   background: #2d3748;
   padding: 15px;
-  /* Increased padding for items */
   border-radius: 5px;
-  /* Slightly rounded corners */
   margin-bottom: 15px;
-  /* More spacing between items */
   transition: background-color 0.3s;
 }
 
@@ -191,21 +172,15 @@
 .notification-content {
   display: flex;
   justify-content: space-between;
-  /* Space between the description/time and actions */
   align-items: center;
-  /* Vertically align items */
   gap: 20px;
-  /* Optional: Adjust spacing between items */
 }
 
 .action-group {
   display: flex;
   flex-direction: column;
-  /* Stack status and button vertically */
   align-items: flex-end;
-  /* Align items to the right */
   gap: 10px;
-  /* Spacing between the status and button */
 }
 
 .status {
@@ -249,7 +224,6 @@
 .time-select {
   display: flex;
   gap: 15px;
-  /* Increased spacing between dropdowns */
 }
 
 .time-select-input {
@@ -257,7 +231,6 @@
   background: #111827;
   color: white;
   padding: 12px;
-  /* Increased padding for dropdowns */
   font-size: 16px;
   border-radius: 5px;
   outline: none;
@@ -292,5 +265,3 @@
 .dropdown-list li:hover {
   background: #f0f0f0;
 }
-
-.task-select-component {}

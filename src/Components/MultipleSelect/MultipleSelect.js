@@ -29,13 +29,11 @@ const CustomMultiSelect = ({ options = [], placeholder = getLanguageByKey("Selec
         onChange(newSelected);
     };
 
-    // Удаление конкретного элемента через крестик
     const removeOption = (option) => {
         const newSelected = selectedValues.filter((item) => item !== option);
         onChange(newSelected);
     };
 
-    // Выбрать все / Отменить выбор всех
     const toggleSelectAll = () => {
         if (selectedValues.length === options.length) {
             onChange([]);
@@ -44,7 +42,6 @@ const CustomMultiSelect = ({ options = [], placeholder = getLanguageByKey("Selec
         }
     };
 
-    // Фильтрация списка по поиску
     const filteredOptions = options.filter((option) =>
         option.toLowerCase().includes(searchTerm.toLowerCase())
     );
