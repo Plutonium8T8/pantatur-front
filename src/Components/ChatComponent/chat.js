@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaArrowRight, FaFile, FaPaperPlane, FaSmile } from 'react-icons/fa';
 import Select from '../SelectComponent/SelectComponent';
 import { useUser } from '../../UserContext';
@@ -39,8 +39,7 @@ import { ibanOptions } from '../../FormOptions/IbanOptions';
 const ChatComponent = ({ }) => {
     const { userId, hasRole, isLoadingRoles } = useUser();
     const [managerMessage, setManagerMessage] = useState('');
-    const { tickets, updateTicket, setTickets, messages, setMessages, markMessagesAsRead, socketRef } = useAppContext();
-    const [selectTicketId, setSelectTicketId] = useState(null);
+    const { tickets, updateTicket, setTickets, messages, setMessages, markMessagesAsRead, socketRef, selectTicketId, setSelectTicketId, getClientMessagesSingle } = useAppContext();
     const [extraInfo, setExtraInfo] = useState({}); // Состояние для дополнительной информации каждого тикета
     const [personalInfo, setPersonalInfo] = useState({});
     const messageContainerRef = useRef(null);
@@ -114,6 +113,8 @@ const ChatComponent = ({ }) => {
 
     useEffect(() => {
         if (selectTicketId) {
+            getClientMessagesSingle(selectTicketId)
+            fetchClientDataPersonal(selectTicketId, setPersonalInfo)
             fetchTicketExtraInfo(selectTicketId); // Загружаем дополнительную информацию при изменении тикета
         }
     }, [selectTicketId]);
@@ -230,20 +231,25 @@ const ChatComponent = ({ }) => {
         }
     };
 
-    const handleTicketClick = (ticketId) => {
+    const handleTicketClick = async (ticketId) => {
         setSelectTicketId(ticketId);
+        navigate(`/chat/${ticketId}`)
 
         const selectedTicket = tickets.find((ticket) => ticket.id === ticketId);
-
         if (selectedTicket) {
             setSelectedTechnicianId(selectedTicket.technician_id || null);
         } else {
             console.warn('Тикет не найден!');
             setSelectedTechnicianId(null);
         }
-        // navigate(`/chat/${ticketId}`);
-        // Помечаем все сообщения как прочитанные (отправляем `seen`)
-        markMessagesAsRead(ticketId);
+
+        navigate(`/chat/${ticketId}`);
+
+        // Не сбрасываем unseen_count вручную, ждем WebSocket-сообщение
+        await markMessagesAsRead(ticketId);
+
+        // Загружаем сообщения тикета
+        await getClientMessagesSingle(ticketId);
     };
 
     const workflowOptions = [
@@ -856,8 +862,6 @@ const ChatComponent = ({ }) => {
 
             setManagerMessage('');
 
-            const token = Cookies.get('jwt');
-
             // 🔹 Отправка сообщения
             const response = await fetch(apiUrl, {
                 method: 'POST',
@@ -1141,23 +1145,54 @@ const ChatComponent = ({ }) => {
     // }, [selectTicketId]);
 
     const sortedTickets = useMemo(() => {
-        let filtered = [...tickets]; // Используем копию массива, чтобы избежать мутаций
+        let filtered = [...tickets]; // Делаем копию массива тикетов
 
         console.log("📌 Исходные тикеты:", tickets);
-        console.log("🎯 ID тикетов из фильтра:", filteredTicketIds);
 
-        // 1️⃣ Фильтр по ID тикетов из `TicketFilterModal`
+        // 1️⃣ Функция получения времени последнего сообщения тикета
+        const getLastMessageTime = (ticket) => {
+            // Получаем все сообщения по тикету
+            const ticketMessages = messages.filter(msg => msg.ticket_id === ticket.id);
+
+            if (ticketMessages.length > 0) {
+                // Берем самое последнее сообщение
+                return Math.max(...ticketMessages.map(msg => parseCustomDate(msg.time_sent)));
+            }
+
+            // Если сообщений нет, fallback на `time_sent` или `last_interaction_date`
+            if (ticket.time_sent) return parseCustomDate(ticket.time_sent);
+            if (ticket.last_interaction_date) return parseCustomDate(ticket.last_interaction_date);
+
+            return 0; // Если ничего нет, ставим минимальное значение
+        };
+
+        // 2️⃣ Функция парсинга нестандартного формата даты (dd-MM-yyyy HH:mm:ss)
+        const parseCustomDate = (dateStr) => {
+            if (!dateStr) return 0;
+
+            const [datePart, timePart] = dateStr.split(" ");
+            const [day, month, year] = datePart.split("-").map(Number);
+            const [hours, minutes, seconds] = timePart.split(":").map(Number);
+
+            return new Date(year, month - 1, day, hours, minutes, seconds).getTime(); // timestamp
+        };
+
+        // 3️⃣ Основная сортировка: по убыванию времени последнего сообщения
+        filtered.sort((a, b) => getLastMessageTime(b) - getLastMessageTime(a));
+
+        console.log("✅ После сортировки по времени:", filtered);
+
+        // 4️⃣ Фильтр по ID тикетов из `TicketFilterModal`
         if (filteredTicketIds !== null && filteredTicketIds.length > 0) {
             filtered = filtered.filter(ticket => filteredTicketIds.includes(Number(ticket.id)));
-            console.log("🔍 После фильтрации по ID:", filtered);
         }
 
-        // 2️⃣ Фильтрация "Мои тикеты"
+        // 5️⃣ Фильтрация "Мои тикеты"
         if (showMyTickets) {
             filtered = filtered.filter(ticket => ticket.technician_id === userId);
         }
 
-        // 3️⃣ Фильтрация по поисковому запросу (ID, контакт, теги)
+        // 6️⃣ Фильтрация по поисковому запросу (ID, контакт, теги)
         if (searchQuery.trim()) {
             const lowerSearchQuery = searchQuery.toLowerCase();
             filtered = filtered.filter(ticket => {
@@ -1175,7 +1210,7 @@ const ChatComponent = ({ }) => {
             });
         }
 
-        // 4️⃣ Фильтрация по `appliedFilters`
+        // 7️⃣ Фильтрация по `appliedFilters`
         if (Object.values(appliedFilters).some(value => value)) {
             if (appliedFilters.creation_date) {
                 filtered = filtered.filter(ticket => ticket.creation_date.startsWith(appliedFilters.creation_date));
@@ -1201,25 +1236,7 @@ const ChatComponent = ({ }) => {
             }
         }
 
-        // 5️⃣ Функция для получения времени последнего сообщения тикета
-        const getLastMessageTime = (ticketId) => {
-            const ticketMessages = messages.filter(msg => msg.ticket_id === ticketId);
-            if (!ticketMessages.length) return null;
-
-            return ticketMessages.reduce((latest, current) =>
-                new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
-            ).time_sent;
-        };
-
-        // 6️⃣ Сортировка по последнему сообщению (по убыванию)
-        filtered.sort((a, b) => {
-            const lastMessageA = getLastMessageTime(a.id);
-            const lastMessageB = getLastMessageTime(b.id);
-
-            return new Date(lastMessageB) - new Date(lastMessageA);
-        });
-
-        console.log("✅ Итоговый список тикетов:", filtered);
+        console.log("✅ Итоговый список тикетов после фильтрации:", filtered);
         return filtered;
     }, [tickets, messages, filteredTicketIds, appliedFilters, showMyTickets, searchQuery, userId]);
 
@@ -1272,6 +1289,25 @@ const ChatComponent = ({ }) => {
         }
     }, [messages, selectTicketId, markMessagesAsRead, userId]);
 
+    const formatDateTime = (dateString) => {
+        if (!dateString) return "—";
+
+        const parts = dateString.split(" ");
+        if (parts.length !== 2) return "—";
+
+        const [datePart, timePart] = parts;
+        const [day, month, year] = datePart.split("-");
+
+        if (!day || !month || !year) return "—";
+
+        const formattedDate = new Date(`${year}-${month}-${day}T${timePart}`);
+
+        return formattedDate.toLocaleTimeString("ru-RU", {
+            hour: "2-digit",
+            minute: "2-digit",
+        }) || "—";
+    };
+
     return (
         <div className="chat-container">
             {/* Контейнер списка чатов */}
@@ -1307,23 +1343,13 @@ const ChatComponent = ({ }) => {
 
                         <div className="chat-item-container">
                             {sortedTickets.map(ticket => {
-                                const ticketMessages = messages.filter(msg => msg.ticket_id === ticket.id);
-                                const unreadCounts = ticketMessages.filter(
-                                    msg => msg.seen_by != null && msg.seen_by == '{}' && msg.sender_id !== 1 && msg.sender_id !== userId
-                                ).length;
-
-                                const lastMessage = ticketMessages.length
-                                    ? ticketMessages.reduce((latest, current) =>
-                                        new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
-                                    )
-                                    : { message: "", time_sent: null };
-
-                                const formattedTime = lastMessage.time_sent
-                                    ? new Date(lastMessage.time_sent).toLocaleTimeString("ru-RU", {
+                                // Форматирование времени
+                                const formattedTime = ticket.time_sent
+                                    ? new Date(ticket.time_sent).toLocaleTimeString("ru-RU", {
                                         hour: "2-digit",
                                         minute: "2-digit",
-                                    })
-                                    : null;
+                                    }) || "—"
+                                    : "—";
 
                                 const tags = parseTags(ticket.tags);
 
@@ -1368,15 +1394,11 @@ const ChatComponent = ({ }) => {
                                             <div className="info-message">
                                                 <div className="last-message-container">
                                                     <div className="last-message-ticket">
-                                                        {lastMessage?.mtype === 'text'
-                                                            ? lastMessage.message
-                                                            : lastMessage?.mtype
-                                                                ? getMessageTypeLabel(lastMessage.mtype)
-                                                                : "No messages"}
+                                                        {ticket.last_message || "No messages"}
                                                     </div>
-                                                    <div className='chat-time'>{formattedTime || "—"}</div>
-                                                    {unreadCounts > 0 && (
-                                                        <div className="unread-count">{unreadCounts}</div>
+                                                    <div className='chat-time'>{formatDateTime(ticket.time_sent)}</div>
+                                                    {ticket.unseen_count > 0 && (
+                                                        <div className="unread-count">{ticket.unseen_count}</div>
                                                     )}
                                                 </div>
                                             </div>
@@ -1408,9 +1430,9 @@ const ChatComponent = ({ }) => {
 
                                 // ✅ Разворачиваем `ticketIds`, если он вложенный массив
                                 const flatTicketIds = ticketIds.flat(Infinity)
-                                    .map(ticket => ticket?.id || ticket) // Поддержка форматов { id: 7477 } и [7477]
-                                    .filter(id => typeof id === "number" || !isNaN(Number(id))) // Убираем некорректные значения
-                                    .map(id => Number(id)); // Приводим все `id` к числу
+                                    .map(ticket => ticket?.id || ticket)
+                                    .filter(id => typeof id === "number" || !isNaN(Number(id)))
+                                    .map(id => Number(id));
 
                                 console.log("📤 Развернутые ticketIds:", flatTicketIds);
 
@@ -1439,16 +1461,28 @@ const ChatComponent = ({ }) => {
                                 ? selectedTicket.client_id.toString().replace(/[{}]/g, "").split(',').map(id => Number(id))
                                 : [];
 
+                            const parseDate = (dateString) => {
+                                if (!dateString) return null;
+                                const parts = dateString.split(" ");
+                                if (parts.length !== 2) return null;
+
+                                const [date, time] = parts;
+                                const [day, month, year] = date.split("-");
+
+                                return new Date(`${year}-${month}-${day}T${time}`);
+                            };
+
                             const sortedMessages = messages
                                 .filter(msg => msg.ticket_id === selectTicketId)
-                                .sort((a, b) => new Date(a.time_sent) - new Date(b.time_sent));
+                                .sort((a, b) => parseDate(a.time_sent) - parseDate(b.time_sent));
+
 
                             const groupedMessages = sortedMessages.reduce((acc, msg) => {
-                                const messageDate = new Date(msg.time_sent).toLocaleDateString("ru-RU", {
+                                const messageDate = parseDate(msg.time_sent)?.toLocaleDateString("ru-RU", {
                                     year: "numeric",
                                     month: "long",
                                     day: "numeric",
-                                });
+                                }) || "—";
 
                                 if (!acc[messageDate]) acc[messageDate] = [];
                                 acc[messageDate].push(msg);
@@ -1564,10 +1598,10 @@ const ChatComponent = ({ }) => {
                                                                                 {lastReaction || "☺"}
                                                                             </div>
                                                                             <div className='time-messages'>
-                                                                                {new Date(msg.time_sent).toLocaleTimeString("ru-RU", {
+                                                                                {parseDate(msg.time_sent)?.toLocaleTimeString("ru-RU", {
                                                                                     hour: "2-digit",
                                                                                     minute: "2-digit",
-                                                                                })}
+                                                                                }) || "—"}
                                                                             </div>
                                                                         </div>
                                                                         {selectedMessageId === msg.id && (
@@ -2311,12 +2345,28 @@ const ChatComponent = ({ }) => {
                                 .filter((msg) => ['audio', 'video', 'image', 'file'].includes(msg.mtype) && msg.ticket_id === selectTicketId)
                                 .map((msg, index) => (
                                     <div key={index} className="media-container">
-                                        {/* Display Sent Time */}
+                                        {/* Отображение времени отправки с учетом формата "dd-MM-yyyy HH:mm:ss" */}
                                         <div className="sent-time">
-                                            {new Date(msg.time_sent).toLocaleString()}
+                                            {(() => {
+                                                const parseCustomDate = (dateStr) => {
+                                                    if (!dateStr) return "—";
+                                                    const [datePart, timePart] = dateStr.split(" ");
+                                                    const [day, month, year] = datePart.split("-").map(Number);
+                                                    const [hours, minutes, seconds] = timePart.split(":").map(Number);
+                                                    return new Date(year, month - 1, day, hours, minutes, seconds);
+                                                };
+                                                return parseCustomDate(msg.time_sent).toLocaleString("ru-RU", {
+                                                    day: "2-digit",
+                                                    month: "2-digit",
+                                                    year: "numeric",
+                                                    hour: "2-digit",
+                                                    minute: "2-digit",
+                                                    second: "2-digit",
+                                                });
+                                            })()}
                                         </div>
 
-                                        {/* Display Media */}
+                                        {/* Отображение медиафайлов */}
                                         {msg.mtype === "image" ? (
                                             <img
                                                 src={msg.message}
@@ -2352,7 +2402,6 @@ const ChatComponent = ({ }) => {
                                     </div>
                                 ))}
                         </div>
-
                     )}
                     {activeTab === 'Control calitate' && selectTicketId && (
                         <div className="extra-info-content">

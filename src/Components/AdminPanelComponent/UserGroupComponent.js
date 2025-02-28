@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
-import Cookies from "js-cookie";
 import "./ModalWithToggles.css";
 import { FaTrash } from "react-icons/fa";
 import { translations } from "../utils/translations";
+import { api } from "../../api"
+import { useSnackbar } from 'notistack';
+import { getLanguageByKey } from "../utils/getTranslationByKey";
 
 const UserGroupComponent = ({ onChange, userId, roles }) => {
     const language = localStorage.getItem("language") || "RO";
@@ -11,33 +13,17 @@ const UserGroupComponent = ({ onChange, userId, roles }) => {
     const [suggestions, setSuggestions] = useState([]);
     const [filteredSuggestions, setFilteredSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
+    const { enqueueSnackbar } = useSnackbar();
 
-
-    console.log('User id', userId);
-    /**
-     * Fetch user groups from the API on mount
-     */
     useEffect(() => {
         const fetchUserGroups = async () => {
             try {
-                const token = Cookies.get("jwt");
-                const response = await fetch("https://pandatur-api.com/api/user-groups", {
-                    method: "GET",
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                    },
-                    credentials: "include",
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch user groups: ${response.status}`);
-                }
-
-                const data = await response.json();
+                const data = await api.user.getGroupsList()
+            
                 setUserGroups(data); // Set user groups from API response
                 setSuggestions(data.map(group => group.name)); // Store names for suggestions
             } catch (error) {
+                enqueueSnackbar(getLanguageByKey("Eroare neașteptată, încercați mai târziu"), {variant: "error"})
                 console.error("Error fetching user groups:", error);
             }
         };
@@ -50,55 +36,25 @@ const UserGroupComponent = ({ onChange, userId, roles }) => {
      */
     const addUserGroup = async (name) => {
         try {
-            const token = Cookies.get("jwt");
-            const response = await fetch("https://pandatur-api.com/api/user-groups", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-                credentials: "include",
-                body: JSON.stringify({ name, roles }), // Default empty roles
-            });
 
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(`Failed to create user group: ${response.status}. ${error.message}`);
-            }
+            const newUserGroup = await api.user.createGroup({ name, roles })
 
-            const newUserGroup = await response.json();
             setUserGroups((prev) => [...prev, newUserGroup]); // Add new group to state
             setSuggestions([...suggestions, newUserGroup.name]);
             onChange(); // Notify parent component
         } catch (error) {
-            console.error("Error adding user group:", error);
+            enqueueSnackbar(getLanguageByKey("Eroare neașteptată, încercați mai târziu"), {variant: "error"})
         }
     };
 
-    /**
-     * Apply the roles from the selected user group to the given user ID.
-     */
     const applyUserGroupRoles = async (groupId, userId) => {
         try {
-            const token = Cookies.get("jwt");
-            const response = await fetch(`https://pandatur-api.com/api/user-groups/${groupId}/assign/${userId}`, {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-                credentials: "include",
-            });
 
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(`Failed to apply roles: ${response.status}. ${error.message}`);
-            }
+            await api.user.assignGroups(groupId, userId)
 
-            console.log(`Roles applied to user ${userId} from group ${groupId}`);
-
-            onChange(); // 🔥 Добавляем обновление ролей
+            onChange();
         } catch (error) {
+            enqueueSnackbar(getLanguageByKey("Eroare neașteptată, încercați mai târziu"), {variant: "error"})
             console.error("Error applying user group roles:", error);
         }
     };
@@ -108,24 +64,13 @@ const UserGroupComponent = ({ onChange, userId, roles }) => {
      */
     const removeUserGroup = async (groupId) => {
         try {
-            const token = Cookies.get("jwt");
-            const response = await fetch(`https://pandatur-api.com/api/user-groups/${groupId}`, {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-                credentials: "include",
-            });
 
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(`Failed to remove user group: ${response.status}. ${error.message}`);
-            }
-
+            await api.user.deleteGroups(groupId)
+           
             setUserGroups(userGroups.filter((group) => group.id !== groupId)); // Remove from UI
             onChange(userGroups.filter((group) => group.id !== groupId));
         } catch (error) {
+            enqueueSnackbar(getLanguageByKey("Eroare neașteptată, încercați mai târziu"), {variant: "error"})
             console.error("Error removing user group:", error);
         }
     };

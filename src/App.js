@@ -16,6 +16,7 @@ import Dashboard from './Components/DashboardComponent/Dashboard';
 import UserPage from './Components/UserPage/UserPage';
 import { useSnackbar } from 'notistack';
 import { NavigationProvider } from './NavigationContext';
+import { api } from "./api"
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -42,19 +43,8 @@ function App() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('https://pandatur-api.com/session', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-          Origin: 'https://plutonium8t8.github.io',
-        },
-        credentials: 'include',
-      });
+      const data = await api.auth.session()
 
-      if (!response.ok) throw new Error('Сессия истекла');
-
-      const data = await response.json();
       if (data.user_id) {
         console.log("✅ Сессия активна, user_id:", data.user_id);
         setIsLoggedIn(true);

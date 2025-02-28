@@ -1100,6 +1100,10 @@ export const translations = {
        "RO": "Nu există potriviri",
        "RU": "Нет совпадений"
     },
+    'Eroare neașteptată, încercați mai târziu': {
+        "RO": "Eroare neașteptată, încercați mai târziu",
+        "RU": "Неожиданная ошибка, попробуйте позже"
+    },
     "Alege client": {
         "RO": "Alege client",
         "RU": "Выберите клиента"

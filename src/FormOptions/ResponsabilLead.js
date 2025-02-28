@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import Cookies from 'js-cookie';
 import { translations } from '../Components/utils/translations';
+import { api } from "../api"
 
 const TechnicianSelect = ({ onTechnicianChange, selectedTechnicianId }) => {
     const [technicians, setTechnicians] = useState([]);
@@ -9,24 +9,10 @@ const TechnicianSelect = ({ onTechnicianChange, selectedTechnicianId }) => {
     const language = localStorage.getItem('language') || 'RO';
 
     const fetchTechnicians = async () => {
-        const token = Cookies.get('jwt');
         setIsLoading(true);
 
         try {
-            const response = await fetch('https://pandatur-api.com/api/users-technician', {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                    Origin: 'https://plutonium8t8.github.io',
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error(`Ошибка запроса: ${response.status} ${response.statusText}`);
-            }
-
-            const data = await response.json();
+            const data = await api.users.getTechnicianList()
 
             const formattedData = data.map((item) => ({
                 id: item.id.id,
