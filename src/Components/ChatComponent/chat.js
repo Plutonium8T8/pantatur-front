@@ -35,7 +35,7 @@ import { valutaOptions } from '../../FormOptions/ValutaOptions';
 import { ibanOptions } from '../../FormOptions/IbanOptions';
 import { api } from "../../api"
 import { showServerError } from "../../Components/utils/showServerError"
-
+import ToggleSwitch from '../ToggleComponent/ToggleSwitch';
 const ChatComponent = ({ }) => {
     const { userId, hasRole, isLoadingRoles } = useUser();
     const [managerMessage, setManagerMessage] = useState('');
@@ -102,8 +102,8 @@ const ChatComponent = ({ }) => {
             }));
 
         } catch (error) {
-            enqueueSnackbar('Ошибка при получении дополнительной информации', { variant: 'error' });
-            console.error('Ошибка при получении дополнительной информации:', error);
+            enqueueSnackbar('Error upload extra_info', { variant: 'error' });
+            console.error('Error upldoad extra_info:', error);
         }
     };
 
@@ -129,8 +129,14 @@ const ChatComponent = ({ }) => {
         }
         setIsLoading(true);
 
+        const processedExtraInfo = Object.fromEntries(
+            Object.entries(ticketExtraInfo).map(([key, value]) => [
+                key, value === false ? "false" : value
+            ])
+        );
+
         try {
-            const result = await api.tickets.ticket.create(selectTicketId, ticketExtraInfo)
+            const result = await api.tickets.ticket.create(selectTicketId, processedExtraInfo);
 
             enqueueSnackbar('Данные успешно обновлены', { variant: 'success' });
             console.log('Данные успешно отправлены:', result);
@@ -1681,29 +1687,19 @@ const ChatComponent = ({ }) => {
                                 className={`input-field ${fieldErrors.data_contractului ? "invalid-field" : ""}`}
                             />
 
-                            <div className="toggle-container">
-                                <label className="toggle-label">{translations['Contract trimis']?.[language]}</label>
-                                <label className={`switch ${fieldErrors.contract_trimis ? "invalid-toggle" : ""}`}>
-                                    <input
-                                        type="checkbox"
-                                        checked={extraInfo[selectTicketId]?.contract_trimis || false}
-                                        onChange={(e) => handleFieldChange("contract_trimis", e.target.checked)}
-                                    />
-                                    <span className="slider round"></span>
-                                </label>
-                            </div>
+                            <ToggleSwitch
+                                label={translations['Contract trimis']?.[language]}
+                                checked={extraInfo[selectTicketId]?.contract_trimis || false}
+                                onChange={(checked) => handleFieldChange("contract_trimis", checked)}
+                                className={fieldErrors.contract_trimis ? "invalid-toggle" : ""}
+                            />
 
-                            <div className="toggle-container">
-                                <label className="toggle-label">{translations['Contract semnat']?.[language]}</label>
-                                <label className={`switch ${fieldErrors.contract_semnat ? "invalid-toggle" : ""}`}>
-                                    <input
-                                        type="checkbox"
-                                        checked={extraInfo[selectTicketId]?.contract_semnat || false}
-                                        onChange={(e) => handleFieldChange("contract_semnat", e.target.checked)}
-                                    />
-                                    <span className="slider round"></span>
-                                </label>
-                            </div>
+                            <ToggleSwitch
+                                label={translations['Contract semnat']?.[language]}
+                                checked={extraInfo[selectTicketId]?.contract_semnat || false}
+                                onChange={(checked) => handleFieldChange("contract_semnat", checked)}
+                                className={fieldErrors.contract_semnat ? "invalid-toggle" : ""}
+                            />
 
                             <Input
                                 label="Operator turistic"
@@ -1725,41 +1721,26 @@ const ChatComponent = ({ }) => {
                                 id="tour-operator-input"
                             />
 
-                            <div className="toggle-container">
-                                <label className="toggle-label">{translations['Achitare efectuată']?.[language]}</label>
-                                <label className={`switch ${fieldErrors.achitare_efectuata ? "invalid-toggle" : ""}`}>
-                                    <input
-                                        type="checkbox"
-                                        checked={extraInfo[selectTicketId]?.achitare_efectuata || false}
-                                        onChange={(e) => handleFieldChange("achitare_efectuata", e.target.checked)}
-                                    />
-                                    <span className="slider round"></span>
-                                </label>
-                            </div>
+                            <ToggleSwitch
+                                label={translations['Achitare efectuată']?.[language]}
+                                checked={extraInfo[selectTicketId]?.achitare_efectuata || false}
+                                onChange={(checked) => handleFieldChange("achitare_efectuata", checked)}
+                                className={fieldErrors.achitare_efectuata ? "invalid-toggle" : ""}
+                            />
 
-                            <div className="toggle-container">
-                                <label className="toggle-label">{translations['Rezervare confirmată']?.[language]}</label>
-                                <label className={`switch ${fieldErrors.rezervare_confirmata ? "invalid-toggle" : ""}`}>
-                                    <input
-                                        type="checkbox"
-                                        checked={extraInfo[selectTicketId]?.rezervare_confirmata || false}
-                                        onChange={(e) => handleFieldChange("rezervare_confirmata", e.target.checked)}
-                                    />
-                                    <span className="slider round"></span>
-                                </label>
-                            </div>
+                            <ToggleSwitch
+                                label={translations['Rezervare confirmată']?.[language]}
+                                checked={extraInfo[selectTicketId]?.rezervare_confirmata || false}
+                                onChange={(checked) => handleFieldChange("rezervare_confirmata", checked)}
+                                className={fieldErrors.rezervare_confirmata ? "invalid-toggle" : ""}
+                            />
 
-                            <div className="toggle-container">
-                                <label className="toggle-label">{translations['Contract arhivat']?.[language]}</label>
-                                <label className={`switch ${fieldErrors.contract_arhivat ? "invalid-toggle" : ""}`}>
-                                    <input
-                                        type="checkbox"
-                                        checked={extraInfo[selectTicketId]?.contract_arhivat || false}
-                                        onChange={(e) => handleFieldChange("contract_arhivat", e.target.checked)}
-                                    />
-                                    <span className="slider round"></span>
-                                </label>
-                            </div>
+                            <ToggleSwitch
+                                label={translations["Contract arhivat"]?.[language]}
+                                checked={extraInfo[selectTicketId]?.contract_arhivat || false}
+                                onChange={(checked) => handleFieldChange("contract_arhivat", checked)}
+                                className={fieldErrors.contract_arhivat ? "invalid-toggle" : ""}
+                            />
 
                             <Select
                                 options={paymentStatusOptions}
@@ -1847,19 +1828,12 @@ const ChatComponent = ({ }) => {
                                 disabled={true}
                             />
                             {isAdmin && (
-                                <div className="toggle-container">
-                                    <label className="toggle-label">Control Admin</label>
-                                    <label className={`switch ${fieldErrors.control_admin ? "invalid-toggle" : ""}`}>
-                                        <input
-                                            type="checkbox"
-                                            checked={extraInfo[selectTicketId]?.control_admin || false}
-                                            onChange={(e) =>
-                                                handleSelectChangeExtra(selectTicketId, 'control_admin', e.target.checked)
-                                            }
-                                        />
-                                        <span className="slider round"></span>
-                                    </label>
-                                </div>
+                                <ToggleSwitch
+                                    label="Control Admin"
+                                    checked={extraInfo[selectTicketId]?.control_admin || false}
+                                    onChange={(checked) => handleSelectChangeExtra(selectTicketId, 'control_admin', checked)}
+                                    className={fieldErrors.control_admin ? "invalid-toggle" : ""}
+                                />
                             )}
                         </div>
                     )}
@@ -1934,7 +1908,7 @@ const ChatComponent = ({ }) => {
                                 }
                             />
 
-                            {/* to do document list */}
+                            {/* ToDo component list */}
                         </div>
                     )}
                     {activeTab === 'Media' && selectTicketId && (
