@@ -61,7 +61,7 @@ const ChatComponent = ({ }) => {
     const menuRefs = useRef({}); // Создаем объект для хранения ref всех меню
     const [filteredTickets, setFilteredTickets] = useState(tickets);
     const [showMyTickets, setShowMyTickets] = useState(false);
-    const [selectedClient, setSelectedClient] = useState(null);
+    const [selectedClient, setSelectedClient] = useState("");
     const fileInputRef = useRef(null);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [appliedFilters, setAppliedFilters] = useState({});
