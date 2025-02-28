@@ -6,11 +6,11 @@ import SpinnerOverlay from './SpinnerOverlayComponent';
 import WorkflowColumn from './WorkflowColumnComponent';
 import TicketModal from './TicketModal/TicketModalComponent';
 import TicketFilterModal from './TicketFilterModal';
-import TicketRow from './TicketRowComponent';
 import '../../App.css';
 import '../SnackBarComponent/SnackBarComponent.css';
 import { FaFilter, FaTable, FaColumns, FaTrash, FaEdit } from 'react-icons/fa';
 import { getLanguageByKey } from '../../Components/utils/getTranslationByKey'
+import { LeadTable } from "./LeadTable"
 
 const Leads = () => {
   const { tickets, isLoading, setTickets } = useAppContext();
@@ -151,52 +151,31 @@ const Leads = () => {
       </div>
 
       <div className="container-tickets">
-        {isTableView ? (
-          <table className="ticket-table">
-            <thead>
-              <tr>
-                <th>{getLanguageByKey("Verificare")}</th>
-                <th>ID</th>
-                <th>{getLanguageByKey("Contact")}</th>
-                <th>{getLanguageByKey("Nume")}</th>
-                <th>{getLanguageByKey("Prenume")}</th>
-                <th>{getLanguageByKey("Email")}</th>
-                <th>{getLanguageByKey("Telefon")}</th>
-                <th>{getLanguageByKey("Descriere")}</th>
-                <th>{getLanguageByKey("Tag-uri")}</th>
-                <th>{getLanguageByKey("Prioritate")}</th>
-                <th>{getLanguageByKey("Workflow")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredTickets.map((ticket) => (
-                <TicketRow
-                key={ticket.id}
-                ticket={ticket}
-                isSelected={selectedTickets.includes(ticket.id)}
-                onSelect={isTableView ? toggleSelectTicket : undefined} // Только в таблице
-                onEditTicket={setCurrentTicket}
-                />
-              ))}
-            </tbody>
-          </table>
-        ) : (
-          workflowOptions
-            .filter(workflow => selectedWorkflow.includes(workflow))
-            .map((workflow) => (
-              <WorkflowColumn
-                key={workflow}
-                workflow={workflow}
-                tickets={filteredTickets}
-                searchTerm={searchTerm}
-                onEditTicket={(ticket) => {
-                  setCurrentTicket(ticket);
-                  setIsModalOpen(true);
-                }}
-                />
-            ))
-        )}
-      </div>
+  {isTableView ? (
+    <LeadTable
+      filteredTickets={filteredTickets}
+      selectedTickets={selectedTickets}
+      setCurrentTicket={setCurrentTicket}
+      toggleSelectTicket={toggleSelectTicket}
+    />
+  ) : (
+    workflowOptions
+      .filter((workflow) => selectedWorkflow.includes(workflow))
+      .map((workflow) => (
+        <WorkflowColumn
+          key={workflow}
+          workflow={workflow}
+          tickets={filteredTickets}
+          searchTerm={searchTerm}
+          onEditTicket={(ticket) => {
+            setCurrentTicket(ticket);
+            setIsModalOpen(true);
+          }}
+        />
+      ))
+  )}
+</div>
+
       {isLoading && <SpinnerOverlay />}
       {isModalOpen && currentTicket && (
         <TicketModal
