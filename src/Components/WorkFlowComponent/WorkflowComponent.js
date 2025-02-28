@@ -46,9 +46,6 @@ export const Workflow = ({ ticket, onChange = () => { }, disabled = false }) => 
 
   return (
     <div className="container-options-component">
-      {/* <label>
-            {translations['Etapa de lucru'][language]}
-        </label> */}
       <Select
         options={workflowOptions}
         value={selectedOption || null}
