@@ -1,5 +1,5 @@
 .lead-table {
-  width: 1700px;
+  width: 100%;
   border-collapse: separate;
   border-spacing: 0 6px;
   font-size: 14px;
@@ -9,7 +9,7 @@
   background-color: #f8f9fa;
   color: #333;
   font-weight: bold;
-  text-align: center;
+  text-align: left;
   padding: 12px;
   border-bottom: 2px solid #ddd;
 }

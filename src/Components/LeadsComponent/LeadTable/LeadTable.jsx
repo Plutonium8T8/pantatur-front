@@ -9,7 +9,14 @@ import { cleanValue } from "../utils";
 import { api } from "../../../api";
 import { workflowStyles } from "../../utils/workflowStyles";
 import "./LeadTable.css";
-import { SpinnerRightBottom } from "../../SpinnerRightBottom"
+import { SpinnerRightBottom } from "../../SpinnerRightBottom";
+import { useAppContext } from "../../../AppContext";
+import { MAX_PAGE_SIZE } from "../../../app-constants";
+import { Pagination } from "../../Pagination";
+
+const getTotalPages = (items) => {
+  return Math.ceil(items / MAX_PAGE_SIZE);
+};
 
 const renderTags = (tags) => {
   const isTags = tags.some(Boolean);
@@ -30,7 +37,9 @@ const LeadTable = ({
   toggleSelectTicket,
 }) => {
   const [hardTicketsList, setHardTicketsList] = useState([]);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const { tickets } = useAppContext();
 
   const columns = [
     {
@@ -129,49 +138,60 @@ const LeadTable = ({
 
   useEffect(() => {
     const getHardTickets = async () => {
-      setLoading(true)
+      setLoading(true);
       try {
-        const hardTickets = await api.tickets.getHardList();
+        const hardTickets = await api.tickets.getHardList({ page });
 
         setHardTicketsList(hardTickets.data);
       } catch (_) {
         // TODO: Show Error
-      }finally{
-        setLoading(false)
+      } finally {
+        setLoading(false);
       }
     };
 
     getHardTickets();
-  }, []);
+  }, [page]);
 
-  if(loading){
-    return <SpinnerRightBottom/>
+  if (loading) {
+    return <SpinnerRightBottom />;
   }
 
   return (
-    <table className="lead-table">
-      <thead>
-        {table.getHeaderGroups().map((headerGroup) => (
-          <tr key={headerGroup.id}>
-            {headerGroup.headers.map((header, i) => (
-              <th key={i}>{header.column.columnDef.header}</th>
-            ))}
-          </tr>
-        ))}
-      </thead>
+    <>
+      <table className="lead-table">
+        <thead>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <tr key={headerGroup.id}>
+              {headerGroup.headers.map((header, i) => (
+                <th key={i}>{header.column.columnDef.header}</th>
+              ))}
+            </tr>
+          ))}
+        </thead>
 
-      <tbody>
-        {table.getRowModel().rows.map((row) => (
-          <tr key={row.id}>
-            {row.getVisibleCells().map((cell) => (
-              <td key={cell.id}>
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
+        <tbody>
+          {table.getRowModel().rows.map((row) => (
+            <tr key={row.id}>
+              {row.getVisibleCells().map((cell) => (
+                <td key={cell.id}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {/* FIXME: Remove inline style when the layout is fixed */}
+      <div style={{ marginBottom: 10 }}>
+        <Pagination
+          totalPages={getTotalPages(tickets.length)}
+          currentPage={page}
+          onPaginationChange={setPage}
+        />
+      </div>
+    </>
   );
 };
 

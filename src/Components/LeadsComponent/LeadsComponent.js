@@ -184,33 +184,37 @@ const Leads = () => {
         style={{
           "--leads-filter-height": `${leadsFilterHeight}px`,
         }}
-        className="dashboard-container"
+        className={`dashboard-container ${isTableView ? "leads-table" : ""}`}
       >
-        <div className="container-tickets">
+        
           {isTableView ? (
-            <LeadTable
-              filteredTickets={filteredTickets}
-              selectedTickets={selectedTickets}
-              setCurrentTicket={setCurrentTicket}
-              toggleSelectTicket={toggleSelectTicket}
-            />
+            <div className="leads-table">
+              <LeadTable
+                filteredTickets={filteredTickets}
+                selectedTickets={selectedTickets}
+                setCurrentTicket={setCurrentTicket}
+                toggleSelectTicket={toggleSelectTicket}
+              />
+            </div>
           ) : (
-            workflowOptions
-              .filter((workflow) => selectedWorkflow.includes(workflow))
-              .map((workflow) => (
-                <WorkflowColumn
-                  key={workflow}
-                  workflow={workflow}
-                  tickets={filteredTickets}
-                  searchTerm={searchTerm}
-                  onEditTicket={(ticket) => {
-                    setCurrentTicket(ticket);
-                    setIsModalOpen(true);
-                  }}
-                />
-              ))
+            <div className="container-tickets">
+              {workflowOptions
+                .filter((workflow) => selectedWorkflow.includes(workflow))
+                .map((workflow) => (
+                  <WorkflowColumn
+                    key={workflow}
+                    workflow={workflow}
+                    tickets={filteredTickets}
+                    searchTerm={searchTerm}
+                    onEditTicket={(ticket) => {
+                      setCurrentTicket(ticket);
+                      setIsModalOpen(true);
+                    }}
+                  />
+                ))}
+            </div>
           )}
-        </div>
+        
         {isLoading && <SpinnerRightBottom />}
         {isModalOpen && currentTicket && (
           <TicketModal

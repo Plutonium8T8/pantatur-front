@@ -1,3 +1,4 @@
+import queryString from "query-string";
 import { baseAxios } from "./baseAxios";
 
 export const tickets = {
@@ -41,8 +42,13 @@ export const tickets = {
     return data;
   },
 
-  getHardList: async () => {
-    const { data } = await baseAxios.get(`/api/hard/tickets`);
+  getHardList: async (params) => {
+    const url = queryString.stringifyUrl({
+      url: "/api/hard/tickets",
+      query: params,
+    });
+
+    const { data } = await baseAxios.get(url);
 
     return data;
   },
