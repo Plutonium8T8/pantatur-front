@@ -5,7 +5,7 @@ import { useUser } from "../../UserContext";
 import { api } from "../../api";
 import { showServerError } from "../utils/showServerError";
 import { useSnackbar } from "notistack";
-import { Loading } from "../Loading";
+import { LoadingOverlay } from "../LoadingOverlay";
 
 const setCookieToken = (token) => {
   Cookies.set("jwt", token, {
@@ -133,7 +133,7 @@ const LoginForm = ({ onLoginSuccess }) => {
             </button>
           </div>
 
-          {isLoading && <Loading />}
+          {isLoading && <LoadingOverlay />}
 
           {message && <p className="message">{message}</p>}
         </div>

@@ -27,31 +27,6 @@
   /* Matches parent's height */
 }
 
-.spinner-overlay {
-  position: fixed;
-  /* Чтобы спиннер был на экране независимо от родителя */
-  bottom: 20px;
-  /* Отступ от нижнего края */
-  right: 20px;
-  /* Отступ от правого края */
-  background-color: transparent;
-  /* Убираем затемнение фона */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 0;
-  z-index: 9999;
-  /* Убедитесь, что спиннер находится выше остальных элементов */
-}
-
-.spinner {
-  width: 46px;
-  height: 46px;
-  border: 4.6px solid rgba(255, 255, 255, 0.1);
-  border-top: 4.6px solid #0f824c;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
 
 .statistics-section {
   margin: 20px 0;
@@ -91,17 +66,6 @@
 .stat-label {
   font-size: 14px;
   color: #666;
-}
-
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
 }
 
 .container-search-input {

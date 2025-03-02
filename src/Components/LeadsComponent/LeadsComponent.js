@@ -2,7 +2,6 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useAppContext } from '../../AppContext';
 import { priorityOptions } from '../../FormOptions/PriorityOption';
 import { workflowOptions } from '../../FormOptions/WorkFlowOption';
-import SpinnerOverlay from './SpinnerOverlayComponent';
 import WorkflowColumn from './WorkflowColumnComponent';
 import TicketModal from './TicketModal/TicketModalComponent';
 import TicketFilterModal from './TicketFilterModal';
@@ -11,6 +10,7 @@ import '../../App.css';
 import '../SnackBarComponent/SnackBarComponent.css';
 import { FaFilter, FaTable, FaColumns, FaTrash, FaEdit } from 'react-icons/fa';
 import { getLanguageByKey } from '../../Components/utils/getTranslationByKey'
+import { SpinnerRightBottom } from "../SpinnerRightBottom"
 
 const Leads = () => {
   const { tickets, isLoading, setTickets } = useAppContext();
@@ -197,7 +197,7 @@ const Leads = () => {
             ))
         )}
       </div>
-      {isLoading && <SpinnerOverlay />}
+      {isLoading && <SpinnerRightBottom />}
       {isModalOpen && currentTicket && (
         <TicketModal
           ticket={currentTicket}

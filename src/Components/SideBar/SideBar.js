@@ -16,7 +16,7 @@ import {
 } from "react-icons/fa";
 import { clearCookies } from "../../Components/utils/clearCookies";
 import { api } from "../../api";
-import { Loading } from "../Loading";
+import { LoadingOverlay } from "../LoadingOverlay";
 
 const CustomSidebar = ({ onOpenNotifications, onOpenTasks, onOpenAccount }) => {
   const location = useLocation();
@@ -118,7 +118,7 @@ const CustomSidebar = ({ onOpenNotifications, onOpenTasks, onOpenAccount }) => {
           </div>
         </div>
       </div>
-      {loading && <Loading/>}
+      {loading && <LoadingOverlay/>}
     </>
   );
 };
