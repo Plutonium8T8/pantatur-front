@@ -1,4 +1,4 @@
-.loading-placeholder-spinner {
+.placeholder-spinner {
   position: fixed;
   bottom: 20px;
   right: 20px;
@@ -9,4 +9,5 @@
   border-radius: 0;
   z-index: 9999;
 }
+
   

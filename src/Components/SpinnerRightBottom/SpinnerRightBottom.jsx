@@ -3,7 +3,7 @@ import "./SpinnerRightBottom.css";
 
 export const SpinnerRightBottom = () => {
   return (
-    <div className="loading-placeholder-spinner">
+    <div className="placeholder-spinner">
       <Spin />
     </div>
   );
