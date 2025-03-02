@@ -5,10 +5,10 @@ import './AdminPanel.css';
 import { FaMinus, FaPlus, FaTrash } from "react-icons/fa";
 import { translations } from "../utils/translations";
 import ToggleComponent from "./ToggleComponent";
-import SpinnerOverlay from "../LeadsComponent/SpinnerOverlayComponent";
 import { api } from "../../api"
 import { useSnackbar } from 'notistack';
 import { showServerError } from "../../Components/utils/showServerError"
+import { SpinnerRightBottom } from "../SpinnerRightBottom"
 
 const ScheduleComponent = () => {
   const [schedule, setSchedule] = useState([]);
@@ -232,7 +232,7 @@ const ScheduleComponent = () => {
 
   return (
     <div className="schedule-container">
-      {isLoading && <SpinnerOverlay />} {/* Показываем спиннер во время загрузки */}
+      {isLoading && <SpinnerRightBottom />}
       <div className="header-component">{translations['Grafic de lucru'][language]}</div>
       <div className="week-navigation">
         <button onClick={goToPreviousWeek}>{translations['săptămâna'][language]} {translations['trecută'][language]}</button>
