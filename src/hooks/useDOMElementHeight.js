@@ -1,10 +1,10 @@
 import { useState, useLayoutEffect } from "react";
 
-export const useDOMElementHeight = (domElement) => {
+export const useDOMElementHeight = (refDomElement) => {
   const [height, setHeight] = useState(0);
 
   useLayoutEffect(() => {
-    setHeight(domElement.current?.offsetHeight);
+    setHeight(refDomElement.current?.offsetHeight);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
