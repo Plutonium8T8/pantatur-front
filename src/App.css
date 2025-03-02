@@ -18,13 +18,9 @@
 .page-content {
   display: flex;
   flex: 1;
-  /* Takes the remaining space in the flex container */
   overflow-y: scroll;
-  /* Keeps scrolling for content overflow */
   position: relative;
-  /* Ensures positioning for child elements */
   height: 100%;
-  /* Matches parent's height */
 }
 
 
@@ -151,15 +147,6 @@
 .search-input:focus {
   border-color: #0f824c;
   outline: none;
-}
-
-.header {
-  display: flex;
-  flex-direction: row;
-  text-align: center;
-  align-items: center;
-  gap: 16px;
-  position: fixed;
 }
 
 .container-name-header {
@@ -417,9 +404,7 @@ button {
 }
 
 .dashboard-header {
-  display: flex;
-  flex-direction: row;
-  height: 5%;
+  position: fixed;
   width: 100%;
   background-color: #dfefd9f9;
   padding-left: 0.5%;
@@ -428,10 +413,18 @@ button {
   padding-bottom: 0.3%;
 }
 
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+
 .dashboard-container {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  margin-top: var(--leads-filter-height);
 }
 
 .foto-user {
@@ -625,6 +618,7 @@ button {
 }
 
 .button-filter {
+  position: relative;
   background-color: #0f824c;
   border-radius: 4px;
   color: white;
