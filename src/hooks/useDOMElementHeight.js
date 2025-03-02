@@ -5,7 +5,7 @@ export const useDOMElementHeight = (refDomElement) => {
 
   useLayoutEffect(() => {
     if(refDomElement.current){
-      setHeight(refDomElement.current?.offsetHeight);
+      setHeight(refDomElement.current.offsetHeight);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
