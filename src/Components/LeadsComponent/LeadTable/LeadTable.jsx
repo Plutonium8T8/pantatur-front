@@ -9,7 +9,7 @@ import { cleanValue } from "../utils";
 import { api } from "../../../api";
 import { workflowStyles } from "../../utils/workflowStyles";
 import "./LeadTable.css";
-import { Loading } from "../../Loading"
+import { SpinnerRightBottom } from "../../SpinnerRightBottom"
 
 const renderTags = (tags) => {
   const isTags = tags.some(Boolean);
@@ -145,7 +145,7 @@ const LeadTable = ({
   }, []);
 
   if(loading){
-    return <Loading/>
+    return <SpinnerRightBottom/>
   }
 
   return (

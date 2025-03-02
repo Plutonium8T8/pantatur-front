@@ -18,6 +18,7 @@ import {
   RadialLinearScale,
 } from "chart.js";
 import { api } from "../../api"
+import { SpinnerRightBottom } from "../SpinnerRightBottom"
 
 ChartJS.register(
   CategoryScale,
@@ -200,7 +201,7 @@ const Dashboard = () => {
   };
 
   if (isLoading) {
-    return <div>{translations['Se încarcă...'][language]}</div>;
+    return <SpinnerRightBottom/>
   }
 
   return (
