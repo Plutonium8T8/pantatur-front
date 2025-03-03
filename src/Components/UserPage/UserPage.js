@@ -3,7 +3,6 @@ import { useUser } from "../../UserContext";
 import "./UserProfile.css";
 import { FaUser } from "react-icons/fa";
 import { translations } from "../utils/translations";
-import App from "../../App";
 import { api } from "../../api";
 import { useSnackbar } from "notistack";
 import { showServerError } from "../../Components/utils/showServerError";
@@ -15,7 +14,6 @@ const UserPage = ({ isOpen, onClose }) => {
 
   const language = localStorage.getItem("language") || "RO";
 
-  // User data states
   const [users, setUsers] = useState({
     username: "",
     email: "",
@@ -87,7 +85,6 @@ const UserPage = ({ isOpen, onClose }) => {
     }
   };
 
-  // Handlers for each user type
   const handleUsersChange = (e) => {
     const { name, value } = e.target;
     setUsers((prev) => ({ ...prev, [name]: value }));

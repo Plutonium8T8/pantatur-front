@@ -14,7 +14,6 @@ import TaskComponent from './Components/SlideInComponent/TaskComponent';
 import AdminPanel from './Components/AdminPanelComponent/AdminPanel';
 import Dashboard from './Components/DashboardComponent/Dashboard';
 import UserPage from './Components/UserPage/UserPage';
-import { useSnackbar } from 'notistack';
 import { NavigationProvider } from './NavigationContext';
 import { api } from "./api"
 import { SpinnerRightBottom } from "./Components/SpinnerRightBottom"
@@ -26,8 +25,7 @@ function App() {
   const [isTaskComponentOpen, setIsTaskComponentOpen] = useState(false);
   const [isAccountComponentOpen, setIsAccountComponentOpen] = useState(false);
 
-  const { userId, setUserId, name, setName, surname, setSurname, userRoles, hasRole, isLoadingRoles } = useUser();
-  const { enqueueSnackbar } = useSnackbar();
+  const { setUserId, setName, setSurname, userRoles, hasRole, isLoadingRoles } = useUser();
 
   const fetchSession = async () => {
     const token = Cookies.get('jwt');

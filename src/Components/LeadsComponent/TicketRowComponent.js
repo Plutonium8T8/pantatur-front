@@ -4,9 +4,9 @@ import { workflowStyles } from '../utils/workflowStyles';
 import './TicketRowComponent.css';
 
 const cleanValue = (value) => {
-    if (!value || value === "{NULL}") return '—'; // Заменяем {NULL} на '—'
+    if (!value || value === "{NULL}") return '—';
     if (typeof value === 'string' && value.startsWith('{') && value.endsWith('}')) {
-        return value.slice(1, -1); // Убираем { }
+        return value.slice(1, -1);
     }
     return value;
 };
@@ -14,7 +14,6 @@ const cleanValue = (value) => {
 const TicketRow = ({ ticket, isSelected = false, onSelect = () => { }, onEditTicket }) => {
     return (
         <tr className={`ticket-row ${isSelected ? 'selected' : ''}`}>
-            {/* Чекбокс теперь перед ID */}
             <td className="ticket-checkbox-row">
                 <input
                     type="checkbox"

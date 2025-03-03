@@ -45,7 +45,7 @@ const TagInput = ({ initialTags = [], onChange }) => {
     };
 
     const handleBlur = () => {
-        setTimeout(() => setShowSuggestions(false), 200); // Delay for click handling
+        setTimeout(() => setShowSuggestions(false), 200);
     };
 
     const handleAddTag = (tag) => {
@@ -76,7 +76,7 @@ const TagInput = ({ initialTags = [], onChange }) => {
     return (
         <div className="tag-input-container">
             <div className="tags-display">
-            {tags.length == 0 && (<div>{translations['Nici un tag selectat'][language]}</div>)}
+                {tags.length === 0 && (<div>{translations['Nici un tag selectat'][language]}</div>)}
                 {tags.map((tag) => (
                     <div key={tag} className="tag-item">
                         <div className='tag-text'>
@@ -114,7 +114,7 @@ const TagInput = ({ initialTags = [], onChange }) => {
             </div>
             <div className="button-container">
                 <button onClick={handleSaveTag} className="submit-button">
-                {translations['Adaugă tag'][language]}
+                    {translations['Adaugă tag'][language]}
                 </button>
                 <button
                     onClick={() => {

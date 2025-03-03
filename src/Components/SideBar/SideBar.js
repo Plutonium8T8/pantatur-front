@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useAppContext } from "../../AppContext";
-import { translations } from "../utils/translations";
-import "./SideBar.css";
-import LanguageToggle from "./LanguageToggle";
+import React from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useAppContext } from '../../AppContext';
+import { translations } from '../utils/translations';
+import './SideBar.css';
+import LanguageToggle from './LanguageToggle'
 import {
   FaUser,
   FaChartBar,

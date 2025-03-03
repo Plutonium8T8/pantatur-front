@@ -18,11 +18,10 @@ export const UserProvider = ({ children }) => {
 
   const [isLoadingRoles, setIsLoadingRoles] = useState(true);
 
-  // Сохранение userId в localStorage
   useEffect(() => {
     if (userId) {
       localStorage.setItem('user_id', userId);
-      fetchRoles(); // Загружаем роли при изменении userId
+      fetchRoles();
     } else {
       localStorage.removeItem('user_id');
       setUserRoles([]);
@@ -30,7 +29,6 @@ export const UserProvider = ({ children }) => {
     }
   }, [userId]);
 
-  // Сохранение name в localStorage
   useEffect(() => {
     if (name) {
       localStorage.setItem('user_name', name);
@@ -39,7 +37,6 @@ export const UserProvider = ({ children }) => {
     }
   }, [name]);
 
-  // Сохранение surname в localStorage
   useEffect(() => {
     if (surname) {
       localStorage.setItem('user_surname', surname);
@@ -48,7 +45,6 @@ export const UserProvider = ({ children }) => {
     }
   }, [surname]);
 
-  // Сохранение ролей пользователя в localStorage
   useEffect(() => {
     if (userRoles.length > 0) {
       localStorage.setItem('user_roles', JSON.stringify(userRoles));
@@ -57,7 +53,6 @@ export const UserProvider = ({ children }) => {
     }
   }, [userRoles]);
 
-  // Функция загрузки ролей пользователя
   const fetchRoles = async () => {
     setIsLoadingRoles(true);
     try {
@@ -82,7 +77,6 @@ export const UserProvider = ({ children }) => {
     }
   };
 
-  // Функция для проверки наличия роли у пользователя
   const hasRole = (role) => userRoles.includes(role);
 
   return (

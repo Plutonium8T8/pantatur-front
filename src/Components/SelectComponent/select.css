@@ -14,15 +14,10 @@
 }
 
 .invalid-field {
-    border: 2px solid red !important;
+    border: 1px solid red !important;
     background-color: #ffe6e6;
 }
 
 .invalid-field select {
     border-color: red !important;
-}
-
-.invalid-field {
-    border: 2px solid red !important;
-    background-color: #ffe6e6 !important;
 }
