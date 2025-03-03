@@ -12,9 +12,10 @@ export const Button = ({
   onClick,
   className,
   variant = "default",
+  ...props
 }) => {
   return (
-    <button className={`btn ${variants[variant]} ${className}`} onClick={onClick}>
+    <button className={`btn ${variants[variant]} ${className}`} onClick={onClick} {...props}>
       {children}
     </button>
   );
