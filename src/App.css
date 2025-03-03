@@ -167,6 +167,12 @@
   height: 100%;
 }
 
+.dashboard-container {
+  margin-top: var(--leads-filter-height);
+  padding: 0.5% 0.5% 0 0.5%;
+  height: 100%;
+}
+
 .colone-ticket {
   display: flex;
   flex-direction: column;
@@ -227,11 +233,8 @@
 }
 
 .button-add-ticket {
-  background-color: #0f824c;
   border-radius: 4px;
-  color: white;
   font-size: 18px;
-  cursor: pointer;
   width: 240px;
   height: 42px;
   transition: transform 0.1s ease;
@@ -239,7 +242,6 @@
 
 .button-add-ticket:active {
   transform: scale(0.95);
-  background-color: #2eab2e;
 }
 
 .container-select-priority-workflow {
@@ -372,13 +374,6 @@ button {
   align-items: center;
   gap: 16px;
   text-align: center;
-}
-
-
-.dashboard-container {
-  display: flex;
-  flex-direction: column;
-  margin-top: var(--leads-filter-height);
 }
 
 .foto-user {
@@ -560,11 +555,8 @@ button {
 
 .button-filter {
   position: relative;
-  background-color: #0f824c;
   border-radius: 4px;
-  color: white;
   font-size: 18px;
-  cursor: pointer;
   height: 42px;
   transition: transform 0.1s ease;
 }
@@ -577,4 +569,31 @@ button {
   height: 8px;
   background: red;
   border-radius: 50%;
+}
+
+.leads-table {
+  width: 100%;
+  padding-bottom: 0.3%;
+}
+
+/* Utility classNames */
+
+.text-center {
+  text-align: center;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.gap-8 {
+  gap: 8px;
+}
+
+.gap-4 {
+  gap: 4px;
 }

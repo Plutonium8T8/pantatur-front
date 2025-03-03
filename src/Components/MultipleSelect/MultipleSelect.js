@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./CustomMultiSelect.css";
 
-import { getLanguageByKey } from "../utils/getTranslationByKey";
+import { getLanguageByKey } from "../utils/getLanguageByKey";
 
 const CustomMultiSelect = ({ options = [], placeholder = getLanguageByKey("Select..."), onChange, selectedValues = [] }) => {
     const [searchTerm, setSearchTerm] = useState("");

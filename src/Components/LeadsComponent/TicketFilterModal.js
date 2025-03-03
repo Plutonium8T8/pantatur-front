@@ -344,7 +344,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         className={filters.data_venit_in_oficiu ? "filled-field" : ""} // ✅ Если заполнено, выделяем
                                     />
 
-                                    <label>{translations["Data plecarii"][language]}</label>
+                                    <label>{translations["Data plecării"][language]}</label>
                                     <input
                                         type="datetime-local"
                                         name="data_plecarii"
@@ -354,7 +354,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
 
                                     />
 
-                                    <label>{translations["Data intoarcerii"][language]}</label>
+                                    <label>{translations["Data întoarcerii"][language]}</label>
                                     <input
                                         type="datetime-local"
                                         name="data_intoarcerii"
@@ -522,7 +522,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         selectedValues={filters.statutul_platii}
                                     />
 
-                                    <label>{translations["Avans euro"][language]} €</label>
+                                    <label>{translations["Avans în euro"][language]} €</label>
                                     <input
                                         type="number"
                                         name="avans_euro"
@@ -570,13 +570,13 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         className={filters.achitat_client ? "filled-field" : ""} // ✅ Если заполнено, выделяем
                                     />
 
-                                    <label>{translations["Comision companie"][language]} €</label>
+                                    <label>{translations["Comisionul companiei"][language]} €</label>
                                     <input
                                         type="number"
                                         name="comission_companie"
                                         value={filters.comission_companie || ""}
                                         onChange={handleInputChange}
-                                        placeholder={translations["Comision companie"][language]}
+                                        placeholder={translations["Comisionul companiei"][language]}
                                         className={filters.comission_companie ? "filled-field" : ""} // ✅ Если заполнено, выделяем
                                     />
 

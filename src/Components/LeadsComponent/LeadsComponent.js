@@ -1,17 +1,18 @@
-import React, { useState, useMemo, useEffect, useRef, useLayoutEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
+import { SpinnerRightBottom } from "../SpinnerRightBottom";
+import { useDOMElementHeight } from "../../hooks";
 import { useAppContext } from "../../AppContext";
 import { priorityOptions } from "../../FormOptions/PriorityOption";
 import { workflowOptions } from "../../FormOptions/WorkFlowOption";
 import WorkflowColumn from "./WorkflowColumnComponent";
 import TicketModal from "./TicketModal/TicketModalComponent";
 import TicketFilterModal from "./TicketFilterModal";
-import TicketRow from "./TicketRowComponent";
 import "../../App.css";
 import "../SnackBarComponent/SnackBarComponent.css";
 import { FaFilter, FaTable, FaColumns, FaTrash, FaEdit } from "react-icons/fa";
-import { getLanguageByKey } from "../../Components/utils/getTranslationByKey";
-import { SpinnerRightBottom } from "../SpinnerRightBottom";
-import { useDOMElementHeight } from "../../hooks"
+import { getLanguageByKey } from "../../Components/utils/getLanguageByKey";
+import { LeadTable } from "./LeadTable";
+import { Button } from "../Button"
 
 const Leads = () => {
   const refLeadsFilter = useRef();
@@ -29,8 +30,7 @@ const Leads = () => {
       (wf) => wf !== "Realizat cu succes" && wf !== "Închis și nerealizat",
     ),
   );
-  const leadsFilterHeight = useDOMElementHeight(refLeadsFilter)
-
+  const leadsFilterHeight = useDOMElementHeight(refLeadsFilter);
 
   const [filters, setFilters] = useState({
     creation_date: "",
@@ -125,9 +125,9 @@ const Leads = () => {
     <>
       <div ref={refLeadsFilter} className="dashboard-header">
         <div className="header">
-          <button onClick={openCreateTicketModal} className="button-add-ticket">
+          <Button variant="primary" onClick={openCreateTicketModal} className="button-add-ticket">
             {getLanguageByKey("Adaugă lead")}
-          </button>
+          </Button>
 
           <input
             type="text"
@@ -136,13 +136,13 @@ const Leads = () => {
             placeholder={getLanguageByKey("Cauta dupa Lead, Client sau Tag")}
             className="search-input"
           />
-          <button
+          <Button
             onClick={() => setIsTableView((prev) => !prev)}
-            className="button-toggle-view"
+            className="d-flex align-items-center gap-4"
           >
             {isTableView ? <FaColumns /> : <FaTable />}
             {getLanguageByKey(isTableView ? "Coloană" : "Listă")}
-          </button>
+          </Button>
 
           <div className="ticket-counter-row">
             {getLanguageByKey("Toate tichetele")}: {tickets.length} |{" "}
@@ -150,26 +150,27 @@ const Leads = () => {
           </div>
 
           {selectedTickets.length > 0 && (
-            <button
+            <Button variant="danger"
               onClick={deleteSelectedTickets}
-              className="button-delete-row"
+              className="d-flex align-items-center gap-8"
             >
               <FaTrash /> {getLanguageByKey("Ștergere")} (
               {selectedTickets.length})
-            </button>
+            </Button>
           )}
 
           {selectedTickets.length > 0 && (
-            <button
+            <Button
+            variant="warning"
               onClick={() => editSelectedTickets()}
-              className="button-edit-row"
+              className="d-flex align-items-center gap-8"
             >
               <FaEdit /> {getLanguageByKey("Editare")} ({selectedTickets.length}
               )
-            </button>
+            </Button>
           )}
 
-          <button
+          <Button variant="primary"
             onClick={() => setIsFilterOpen(true)}
             className="button-filter"
           >
@@ -177,7 +178,7 @@ const Leads = () => {
             {Object.values(filters).some((value) =>
               Array.isArray(value) ? value.length > 0 : value,
             ) && <span className="filter-indicator"></span>}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -185,56 +186,37 @@ const Leads = () => {
         style={{
           "--leads-filter-height": `${leadsFilterHeight}px`,
         }}
-        className="dashboard-container"
+        className={`dashboard-container ${isTableView ? "leads-table" : ""}`}
       >
-        <div className="container-tickets">
+        
           {isTableView ? (
-            <table className="ticket-table">
-              <thead>
-                <tr>
-                  <th>{getLanguageByKey("Verificare")}</th>
-                  <th>ID</th>
-                  <th>{getLanguageByKey("Contact")}</th>
-                  <th>{getLanguageByKey("Nume")}</th>
-                  <th>{getLanguageByKey("Prenume")}</th>
-                  <th>{getLanguageByKey("Email")}</th>
-                  <th>{getLanguageByKey("Telefon")}</th>
-                  <th>{getLanguageByKey("Descriere")}</th>
-                  <th>{getLanguageByKey("Tag-uri")}</th>
-                  <th>{getLanguageByKey("Prioritate")}</th>
-                  <th>{getLanguageByKey("Workflow")}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredTickets.map((ticket) => (
-                  <TicketRow
-                    key={ticket.id}
-                    ticket={ticket}
-                    isSelected={selectedTickets.includes(ticket.id)}
-                    onSelect={isTableView ? toggleSelectTicket : undefined} // Только в таблице
-                    onEditTicket={setCurrentTicket}
+            <div className="leads-table">
+              <LeadTable
+                filteredTickets={filteredTickets}
+                selectedTickets={selectedTickets}
+                setCurrentTicket={setCurrentTicket}
+                toggleSelectTicket={toggleSelectTicket}
+              />
+            </div>
+          ) : (
+            <div className="container-tickets">
+              {workflowOptions
+                .filter((workflow) => selectedWorkflow.includes(workflow))
+                .map((workflow) => (
+                  <WorkflowColumn
+                    key={workflow}
+                    workflow={workflow}
+                    tickets={filteredTickets}
+                    searchTerm={searchTerm}
+                    onEditTicket={(ticket) => {
+                      setCurrentTicket(ticket);
+                      setIsModalOpen(true);
+                    }}
                   />
                 ))}
-              </tbody>
-            </table>
-          ) : (
-            workflowOptions
-              .filter((workflow) => selectedWorkflow.includes(workflow))
-              .map((workflow) => (
-                <WorkflowColumn
-                  key={workflow}
-                  workflow={workflow}
-                  tickets={filteredTickets}
-                  searchTerm={searchTerm}
-                  onEditTicket={(ticket) => {
-                    setCurrentTicket(ticket);
-                    setIsModalOpen(true);
-                  }}
-                />
-              ))
+            </div>
           )}
-        </div>
-
+        
         {isLoading && <SpinnerRightBottom />}
         {isModalOpen && currentTicket && (
           <TicketModal

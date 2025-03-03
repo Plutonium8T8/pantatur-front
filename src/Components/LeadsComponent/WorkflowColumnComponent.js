@@ -1,7 +1,7 @@
 import React from 'react';
 import TicketCard from './TicketCardComponent';
 import { workflowStyles, workflowBrightStyles } from '../utils/workflowStyles';
-import { getLanguageByKey } from "../utils/getTranslationByKey"
+import { getLanguageByKey } from "../utils/getLanguageByKey"
 
 const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket }) => {
     const parseTags = (tags) => {

@@ -1,1150 +1,1212 @@
 export const translations = {
-    'Adaugă lead': {
-        'RO': 'Adaugă lead',
-        'RU': 'Добавить лид'
-    },
-    'Interesat': {
-        'RO': 'Interesat',
-        'RU': 'Заинтересован'
-    },
-    'Apel de intrare': {
-        'RO': 'Apel de intrare',
-        'RU': 'Входящий звонок'
-    },
-    'De prelucrat': {
-        'RO': 'De prelucrat',
-        'RU': 'Обработка'
-    },
-    'Luat în lucru': {
-        'RO': 'Luat în lucru',
-        'RU': 'В работе'
-    },
-    'Ofertă trimisă': {
-        'RO': 'Ofertă trimisă',
-        'RU': 'Предложение отправлено'
-    },
-    'Aprobat cu client': {
-        'RO': 'Aprobat cu client',
-        'RU': 'Согласовано с клиентом'
-    },
-    'Contract semnat': {
-        'RO': 'Contract semnat',
-        'RU': 'Договор подписан'
-    },
-    'Plată primită': {
-        'RO': 'Plată primită',
-        'RU': 'Платеж получен'
-    },
-    'Închis și nerealizat': {
-        'RO': 'Închis și nerealizat',
-        'RU': 'Закрыто и не реализовано'
-    },
-    'Contract încheiat': {
-        'RO': 'Contract încheiat',
-        'RU': 'Договор завершён'
-    },
-    'Realizat cu succes': {
-        'RO': 'Realizat cu succes',
-        'RU': 'Успешно реализовано'
-    },
-    'Caută leaduri': {
-        'RO': 'Caută leaduri',
-        'RU': 'Искать лиды'
-    },
-    'Leaduri': {
-        'RO': 'Leaduri',
-        'RU': 'Лиды'
-    },
-    'Notificări': {
-        'RO': {
-            0: 'Notificări',
-            1: 'Notificări'
-        },
-        'RU': {
-            0: 'Уведомления',
-            1: 'Увед-я'
-        }
-    },
-    'Lead': {
-        'RO': 'Lead',
-        'RU': 'Лид'
-    },
-    'Contact': {
-        'RO': 'Contact',
-        'RU': 'Контакт'
-    },
-    'Descriere': {
-        'RO': 'Descriere',
-        'RU': 'Описание'
-    },
-    'Adaugă descriere lead': {
-        'RO': 'Adaugă descriere lead',
-        'RU': 'Добавить описание лида'
-    },
-    'joasă': {
-        'RO': 'joasă',
-        'RU': 'низкий'
-    },
-    'medie': {
-        'RO': 'medie',
-        'RU': 'средний'
-    },
-    'înaltă': {
-        'RO': 'înaltă',
-        'RU': 'высокий'
-    },
-    'critică': {
-        'RO': 'critică',
-        'RU': 'критический'
-    },
-    'Prioritate': {
-        'RO': 'Prioritate',
-        'RU': 'Приоритет'
-    },
-    'Etapa de lucru': {
-        'RO': 'Etapa de lucru',
-        'RU': 'Этап работы'
-    },
-    'Șterge': {
-        'RO': 'Șterge',
-        'RU': 'Удалить'
-    },
-    'Salvează': {
-        'RO': 'Salvează',
-        'RU': 'Сохранить'
-    },
-    'Taskuri': {
-        'RO': 'Taskuri',
-        'RU': 'Задачи'
-    },
-    'Editează': {
-        'RO': 'Editează',
-        'RU': 'Изменить'
-    },
-    'Închide': {
-        'RO': 'Închide',
-        'RU': 'Закрыть'
-    },
-    'Creează': {
-        'RO': 'Creează',
-        'RU': 'Создать'
-    },
-    'Salvează tag': {
-        'RO': 'Salvează tag',
-        'RU': 'Сохранить тэг'
-    },
-    'Adaugă tag': {
-        'RO': 'Adaugă tag',
-        'RU': 'Добавить тэг'
-    },
-    'Introduce tag': {
-        'RO': 'Introduce tag',
-        'RU': 'Введите тэг'
-    },
-    'Nici un tag selectat': {
-        'RO': 'Nici un tag selectat',
-        'RU': 'Добавить тэг'
-    },
-    'Lead nou': {
-        'RO': 'Lead nou',
-        'RU': 'Новый лид'
-    },
-    'Account': {
-        'RO': 'Account',
-        'RU': 'Аккаунт'
-    },
-    'Dashboard': {
-        'RO': 'Dashboard',
-        'RU': 'Дэшборд'
-    },
-    'Chat': {
-        'RO': 'Chat',
-        'RU': 'Чат'
-    },
-    'Admin': {
-        'RO': 'Admin',
-        'RU': 'Админ'
-    },
-    'Log Out': {
-        'RO': 'Log Out',
-        'RU': 'Выйти'
-    },
-    'Dată și oră': {
-        'RO': 'Dată și oră',
-        'RU': 'Время и дата'
-    },
-    'Adaugă notificare': {
-        'RO': 'Adaugă notificare',
-        'RU': 'Добавить увед-е'
-    },
-    'Șterge toate': {
-        'RO': 'Șterge toate',
-        'RU': 'Очистить все'
-    },
-    'Introduceți descrierea notificării': {
-        'RO': 'Introduceți descrierea notificării',
-        'RU': 'Введите описание уведомления'
-    },
-    'Nici o notificare': {
-        'RO': 'Nici o notificare',
-        'RU': 'Нет уведомлений'
-    },
-    'Nici un task': {
-        'RO': 'Nici un task',
-        'RU': 'Нет задач'
-    },
-    'Văzut': {
-        'RO': 'Văzut',
-        'RU': 'Просмотрено'
-    },
-    'Nevăzut': {
-        'RO': 'Nevăzut',
-        'RU': 'Не просмотрено'
-    },
-    'Marchează': {
-        'RO': 'Marchează',
-        'RU': 'Отметить'
-    },
-    'Alege ID lead': {
-        'RO': 'Alege ID lead',
-        'RU': 'Выберите ID лида'
-    },
-    'Încărcăm leadurile': {
-        'RO': 'Încărcăm leadurile',
-        'RU': 'Загружаем лиды'
-    },
-    'Descriere task': {
-        'RO': 'Descriere task',
-        'RU': 'Описание задачи'
-    },
-    'Adaugă task': {
-        'RO': 'Adaugă task',
-        'RU': 'Добавить задачу'
-    },
-    'Grafic de lucru': {
-        'RO': 'Grafic de lucru',
-        'RU': 'График работы'
-    },
-    'săptămâna': {
-        'RO': 'săptămâna',
-        'RU': 'неделя'
-    },
-    'trecută': {
-        'RO': 'trecută',
-        'RU': 'предыдущая'
-    },
-    'viitoare': {
-        'RO': 'viitoare',
-        'RU': 'следующая'
-    },
-    'Angajat': {
-        'RO': 'Angajat',
-        'RU': 'Сотрудник'
-    },
-    'Ore de lucru': {
-        'RO': 'Ore de lucru',
-        'RU': 'Рабочее время'
-    },
-    'Monday': {
-        'RO': 'Luni',
-        'RU': 'Понедельник'
-    },
-    'Tuesday': {
-        'RO': 'Marți',
-        'RU': 'Вторник'
-    },
-    'Wednesday': {
-        'RO': 'Miercuri',
-        'RU': 'Среда'
-    },
-    'Thursday': {
-        'RO': 'Joi',
-        'RU': 'Четверг'
-    },
-    'Friday': {
-        'RO': 'Vineri',
-        'RU': 'Пятница'
-    },
-    'Saturday': {
-        'RO': 'Sâmbătă',
-        'RU': 'Суббота'
-    },
-    'Sunday': {
-        'RO': 'Duminică',
-        'RU': 'Воскресенье'
-    },
-
-    'Gestionare utilizatori': {
-        'RO': 'Gestionare utilizatori',
-        'RU': 'Управление пользователями'
-    },
-    'Informații utilizator': {
-        'RO': 'Informații utilizator',
-        'RU': 'Информация о пользователе'
-    },
-    'username': {
-        'RO': 'nume de utilizator',
-        'RU': 'имя пользователя'
-    },
-    'email': {
-        'RO': 'email',
-        'RU': 'электронная почта'
-    },
-    'password': {
-        'RO': 'parolă',
-        'RU': 'пароль'
-    },
-    'Informații extinse': {
-        'RO': 'Informații extinse',
-        'RU': 'Расширенная информация'
-    },
-    'name': {
-        'RO': 'nume',
-        'RU': 'имя'
-    },
-    'surname': {
-        'RO': 'prenume',
-        'RU': 'фамилия'
-    },
-    'date_of_birth': {
-        'RO': 'data nașterii',
-        'RU': 'дата рождения'
-    },
-    'id_card_series': {
-        'RO': 'seria cărții de identitate',
-        'RU': 'серия удостоверения личности'
-    },
-    'id_card_number': {
-        'RO': 'numărul cărții de identitate',
-        'RU': 'номер удостоверения личности'
-    },
-    'id_card_release': {
-        'RO': 'data eliberării cărții de identitate',
-        'RU': 'дата выдачи удостоверения личности'
-    },
-    'idnp': {
-        'RO': 'IDNP',
-        'RU': 'IDNP'
-    },
-    'address': {
-        'RO': 'adresa',
-        'RU': 'адрес'
-    },
-    'phone': {
-        'RO': 'telefon',
-        'RU': 'телефон'
-    },
-    'Informații manager': {
-        'RO': 'Informații manager',
-        'RU': 'Информация менеджера'
-    },
-    'policy_number': {
-        'RO': 'număr de poliță',
-        'RU': 'номер полиса'
-    },
-    'personal_exemption_number': {
-        'RO': 'numărul de scutire personală',
-        'RU': 'номер личного освобождения'
-    },
-    'job_title': {
-        'RO': 'funcție',
-        'RU': 'должность'
-    },
-    'department': {
-        'RO': 'departament',
-        'RU': 'отдел'
-    },
-    'Nume': {
-        'RO': 'Nume',
-        'RU': 'Имя'
-    },
-    'Prenume': {
-        'RO': 'Prenume',
-        'RU': 'Фамилия'
-    },
-    'Tag': {
-        'RO': 'Tag',
-        'RU': 'Тег'
-    },
-    'My leads': {
-        'RO': 'Leadurile mele',
-        'RU': 'Мои лиды'
-    },
-    'Introduceți mesaj': {
-        'RO': 'Introduceți mesaj',
-        'RU': 'Введите сообщение'
-    },
-    'Șablon': {
-        'RO': 'Șablon',
-        'RU': 'Шаблон'
-    },
-    'Informații despre lead': {
-        'RO': 'Informații despre lead',
-        'RU': 'Информация о лиде'
-    },
-    'Date personale': {
-        'RO': 'Date personale',
-        'RU': 'Персональные данные'
-    },
-    'Informații suplimentare': {
-        'RO': 'Informații suplimentare',
-        'RU': 'Дополнительная информация'
-    },
-    'Manager responsabil': {
-        'RO': 'Manager responsabil',
-        'RU': 'Ответственный менеджер'
-    },
-    'Vânzare': {
-        'RO': 'Vânzare',
-        'RU': 'Продажа'
-    },
-    'Sursă lead': {
-        'RO': 'Sursă lead',
-        'RU': 'Источник лида'
-    },
-    'Promo': {
-        'RO': 'Promo',
-        'RU': 'Промо'
-    },
-    'Marketing': {
-        'RO': 'Marketing',
-        'RU': 'Маркетинг'
-    },
-    'Serviciu': {
-        'RO': 'Serviciu',
-        'RU': 'Услуга'
-    },
-    'Țară': {
-        'RO': 'Țară',
-        'RU': 'Страна'
-    },
-    'Transport': {
-        'RO': 'Transport',
-        'RU': 'Транспорт'
-    },
-    'Excursie': {
-        'RO': 'Excursie',
-        'RU': 'Экскурсия'
-    },
-    'Data plecarii': {
-        'RO': 'Data plecării',
-        'RU': 'Дата выезда'
-    },
-    'Data intoarcerii': {
-        'RO': 'Data întoarcerii',
-        'RU': 'Дата возвращения'
-    },
-    'Achiziție': {
-        'RO': 'Achiziție',
-        'RU': 'Покупка'
-    },
-    'Nr de contract': {
-        'RO': 'Nr de contract',
-        'RU': 'Номер контракта'
-    },
-    'Operator turistic': {
-        'RO': 'Operator turistic',
-        'RU': 'Туроператор'
-    },
-    'Nr cererii de la operator': {
-        'RO': 'Nr cererii de la operator',
-        'RU': 'Номер заявки от оператора'
-    },
-    'Preț netto (euro)': {
-        'RO': 'Preț netto (euro)',
-        'RU': 'Нетто цена (евро)'
-    },
-    'Comision companie': {
-        'RO': 'Comision companie',
-        'RU': 'Комиссия компании'
-    },
-    'Plată': {
-        'RO': 'Plată',
-        'RU': 'Оплата'
-    },
-    'Actualizare': {
-        'RO': 'Actualizare',
-        'RU': 'Обновление'
-    },
-    'Încărcăm...': {
-        'RO': 'Încărcăm...',
-        'RU': 'Загружаем...'
-    },
-    'Indicați suma în euro': {
-        'RO': 'Indicați suma în euro',
-        'RU': 'Укажите сумму в евро'
+    "Adaugă lead": {
+      RO: "Adaugă lead",
+      RU: "Добавить лид",
+    },
+    Interesat: {
+      RO: "Interesat",
+      RU: "Заинтересован",
+    },
+    "Apel de intrare": {
+      RO: "Apel de intrare",
+      RU: "Входящий звонок",
+    },
+    "De prelucrat": {
+      RO: "De prelucrat",
+      RU: "Обработка",
+    },
+    "Luat în lucru": {
+      RO: "Luat în lucru",
+      RU: "В работе",
+    },
+    "Ofertă trimisă": {
+      RO: "Ofertă trimisă",
+      RU: "Предложение отправлено",
+    },
+    "Aprobat cu client": {
+      RO: "Aprobat cu client",
+      RU: "Согласовано с клиентом",
+    },
+    "Contract semnat": {
+      RO: "Contract semnat",
+      RU: "Договор подписан",
+    },
+    "Plată primită": {
+      RO: "Plată primită",
+      RU: "Платеж получен",
+    },
+    "Închis și nerealizat": {
+      RO: "Închis și nerealizat",
+      RU: "Закрыто и не реализовано",
+    },
+    "Contract încheiat": {
+      RO: "Contract încheiat",
+      RU: "Договор завершён",
+    },
+    "Realizat cu succes": {
+      RO: "Realizat cu succes",
+      RU: "Успешно реализовано",
+    },
+    "Caută leaduri": {
+      RO: "Caută leaduri",
+      RU: "Искать лиды",
+    },
+    Leaduri: {
+      RO: "Leaduri",
+      RU: "Лиды",
+    },
+    Notificări: {
+      RO: {
+        0: "Notificări",
+        1: "Notificări",
+      },
+      RU: {
+        0: "Уведомления",
+        1: "Увед-я",
+      },
+    },
+    Lead: {
+      RO: "Lead",
+      RU: "Лид",
+    },
+    Contact: {
+      RO: "Contact",
+      RU: "Контакт",
+    },
+    Descriere: {
+      RO: "Descriere",
+      RU: "Описание",
+    },
+    "Adaugă descriere lead": {
+      RO: "Adaugă descriere lead",
+      RU: "Добавить описание лида",
+    },
+    joasă: {
+      RO: "joasă",
+      RU: "низкий",
+    },
+    medie: {
+      RO: "medie",
+      RU: "средний",
+    },
+    înaltă: {
+      RO: "înaltă",
+      RU: "высокий",
+    },
+    critică: {
+      RO: "critică",
+      RU: "критический",
+    },
+    Prioritate: {
+      RO: "Prioritate",
+      RU: "Приоритет",
+    },
+    "Etapa de lucru": {
+      RO: "Etapa de lucru",
+      RU: "Этап работы",
+    },
+    Șterge: {
+      RO: "Șterge",
+      RU: "Удалить",
+    },
+    Salvează: {
+      RO: "Salvează",
+      RU: "Сохранить",
+    },
+    Taskuri: {
+      RO: "Taskuri",
+      RU: "Задачи",
+    },
+    Editează: {
+      RO: "Editează",
+      RU: "Изменить",
+    },
+    Închide: {
+      RO: "Închide",
+      RU: "Закрыть",
+    },
+    Creează: {
+      RO: "Creează",
+      RU: "Создать",
+    },
+    "Salvează tag": {
+      RO: "Salvează tag",
+      RU: "Сохранить тэг",
+    },
+    "Adaugă tag": {
+      RO: "Adaugă tag",
+      RU: "Добавить тэг",
+    },
+    "Introduce tag": {
+      RO: "Introduce tag",
+      RU: "Введите тэг",
+    },
+    "Nici un tag selectat": {
+      RO: "Nici un tag selectat",
+      RU: "Добавить тэг",
+    },
+    "Lead nou": {
+      RO: "Lead nou",
+      RU: "Новый лид",
+    },
+    Account: {
+      RO: "Account",
+      RU: "Аккаунт",
+    },
+    Dashboard: {
+      RO: "Dashboard",
+      RU: "Дэшборд",
+    },
+    Chat: {
+      RO: "Chat",
+      RU: "Чат",
+    },
+    Admin: {
+      RO: "Admin",
+      RU: "Админ",
+    },
+    "Log Out": {
+      RO: "Log Out",
+      RU: "Выйти",
+    },
+    "Dată și oră": {
+      RO: "Dată și oră",
+      RU: "Время и дата",
+    },
+    "Adaugă notificare": {
+      RO: "Adaugă notificare",
+      RU: "Добавить увед-е",
+    },
+    "Șterge toate": {
+      RO: "Șterge toate",
+      RU: "Очистить все",
+    },
+    "Introduceți descrierea notificării": {
+      RO: "Introduceți descrierea notificării",
+      RU: "Введите описание уведомления",
+    },
+    "Nici o notificare": {
+      RO: "Nici o notificare",
+      RU: "Нет уведомлений",
+    },
+    "Nici un task": {
+      RO: "Nici un task",
+      RU: "Нет задач",
+    },
+    Văzut: {
+      RO: "Văzut",
+      RU: "Просмотрено",
+    },
+    Nevăzut: {
+      RO: "Nevăzut",
+      RU: "Не просмотрено",
+    },
+    Marchează: {
+      RO: "Marchează",
+      RU: "Отметить",
+    },
+    "Alege ID lead": {
+      RO: "Alege ID lead",
+      RU: "Выберите ID лида",
+    },
+    "Încărcăm leadurile": {
+      RO: "Încărcăm leadurile",
+      RU: "Загружаем лиды",
+    },
+    "Descriere task": {
+      RO: "Descriere task",
+      RU: "Описание задачи",
+    },
+    "Adaugă task": {
+      RO: "Adaugă task",
+      RU: "Добавить задачу",
+    },
+    "Grafic de lucru": {
+      RO: "Grafic de lucru",
+      RU: "График работы",
+    },
+    săptămâna: {
+      RO: "săptămâna",
+      RU: "неделя",
+    },
+    trecută: {
+      RO: "trecută",
+      RU: "предыдущая",
+    },
+    viitoare: {
+      RO: "viitoare",
+      RU: "следующая",
+    },
+    Angajat: {
+      RO: "Angajat",
+      RU: "Сотрудник",
+    },
+    "Ore de lucru": {
+      RO: "Ore de lucru",
+      RU: "Рабочее время",
+    },
+    Monday: {
+      RO: "Luni",
+      RU: "Понедельник",
+    },
+    Tuesday: {
+      RO: "Marți",
+      RU: "Вторник",
+    },
+    Wednesday: {
+      RO: "Miercuri",
+      RU: "Среда",
+    },
+    Thursday: {
+      RO: "Joi",
+      RU: "Четверг",
+    },
+    Friday: {
+      RO: "Vineri",
+      RU: "Пятница",
+    },
+    Saturday: {
+      RO: "Sâmbătă",
+      RU: "Суббота",
+    },
+    Sunday: {
+      RO: "Duminică",
+      RU: "Воскресенье",
+    },
+  
+    "Gestionare utilizatori": {
+      RO: "Gestionare utilizatori",
+      RU: "Управление пользователями",
+    },
+    "Informații utilizator": {
+      RO: "Informații utilizator",
+      RU: "Информация о пользователе",
+    },
+    username: {
+      RO: "nume de utilizator",
+      RU: "имя пользователя",
+    },
+    email: {
+      RO: "email",
+      RU: "электронная почта",
+    },
+    password: {
+      RO: "parolă",
+      RU: "пароль",
+    },
+    "Informații extinse": {
+      RO: "Informații extinse",
+      RU: "Расширенная информация",
+    },
+    name: {
+      RO: "nume",
+      RU: "имя",
+    },
+    surname: {
+      RO: "prenume",
+      RU: "фамилия",
+    },
+    date_of_birth: {
+      RO: "data nașterii",
+      RU: "дата рождения",
+    },
+    id_card_series: {
+      RO: "seria cărții de identitate",
+      RU: "серия удостоверения личности",
+    },
+    id_card_number: {
+      RO: "numărul cărții de identitate",
+      RU: "номер удостоверения личности",
+    },
+    id_card_release: {
+      RO: "data eliberării cărții de identitate",
+      RU: "дата выдачи удостоверения личности",
+    },
+    idnp: {
+      RO: "IDNP",
+      RU: "IDNP",
+    },
+    address: {
+      RO: "adresa",
+      RU: "адрес",
+    },
+    phone: {
+      RO: "telefon",
+      RU: "телефон",
+    },
+    "Informații manager": {
+      RO: "Informații manager",
+      RU: "Информация менеджера",
+    },
+    policy_number: {
+      RO: "număr de poliță",
+      RU: "номер полиса",
+    },
+    personal_exemption_number: {
+      RO: "numărul de scutire personală",
+      RU: "номер личного освобождения",
+    },
+    job_title: {
+      RO: "funcție",
+      RU: "должность",
+    },
+    department: {
+      RO: "departament",
+      RU: "отдел",
+    },
+    Nume: {
+      RO: "Nume",
+      RU: "Имя",
+    },
+    Prenume: {
+      RO: "Prenume",
+      RU: "Фамилия",
+    },
+    Tag: {
+      RO: "Tag",
+      RU: "Тег",
+    },
+    "My leads": {
+      RO: "Leadurile mele",
+      RU: "Мои лиды",
+    },
+    "Introduceți mesaj": {
+      RO: "Introduceți mesaj",
+      RU: "Введите сообщение",
+    },
+    Șablon: {
+      RO: "Șablon",
+      RU: "Шаблон",
+    },
+    "Informații despre lead": {
+      RO: "Informații despre lead",
+      RU: "Информация о лиде",
+    },
+    "Date personale": {
+      RO: "Date personale",
+      RU: "Персональные данные",
+    },
+    "Informații suplimentare": {
+      RO: "Informații suplimentare",
+      RU: "Дополнительная информация",
+    },
+    "Manager responsabil": {
+      RO: "Manager responsabil",
+      RU: "Ответственный менеджер",
+    },
+    Vânzare: {
+      RO: "Vânzare",
+      RU: "Продажа",
+    },
+    "Sursă lead": {
+      RO: "Sursă lead",
+      RU: "Источник лида",
+    },
+    Promo: {
+      RO: "Promo",
+      RU: "Промо",
+    },
+    Marketing: {
+      RO: "Marketing",
+      RU: "Маркетинг",
+    },
+    Serviciu: {
+      RO: "Serviciu",
+      RU: "Услуга",
+    },
+    Țară: {
+      RO: "Țară",
+      RU: "Страна",
+    },
+    Transport: {
+      RO: "Transport",
+      RU: "Транспорт",
+    },
+    Excursie: {
+      RO: "Excursie",
+      RU: "Экскурсия",
+    },
+    "Data plecării": {
+      RO: "Data plecării",
+      RU: "Дата выезда",
+    },
+    "Data întoarcerii": {
+      RO: "Data întoarcerii",
+      RU: "Дата возвращения",
+    },
+    Achiziție: {
+      RO: "Achiziție",
+      RU: "Покупка",
+    },
+    "Nr de contract": {
+      RO: "Nr de contract",
+      RU: "Номер контракта",
+    },
+    "Operator turistic": {
+      RO: "Operator turistic",
+      RU: "Туроператор",
+    },
+    "Nr cererii de la operator": {
+      RO: "Nr cererii de la operator",
+      RU: "Номер заявки от оператора",
+    },
+    "Preț netto (euro)": {
+      RO: "Preț netto (euro)",
+      RU: "Нетто цена (евро)",
+    },
+    "Comisionul companiei": {
+      RO: "Comisionul companiei",
+      RU: "Комиссия компании",
+    },
+    Plată: {
+      RO: "Plată",
+      RU: "Оплата",
+    },
+    Actualizare: {
+      RO: "Actualizare",
+      RU: "Обновление",
+    },
+    "Încărcăm...": {
+      RO: "Încărcăm...",
+      RU: "Загружаем...",
+    },
+    "Indicați suma în euro": {
+      RO: "Indicați suma în euro",
+      RU: "Укажите сумму в евро",
     },
     "Data nașterii": {
-        "RO": "Data nașterii",
-        "RU": "Дата рождения"
+      RO: "Data nașterii",
+      RU: "Дата рождения",
     },
     "Seria buletinului": {
-        "RO": "Seria buletinului",
-        "RU": "Серия удостоверения"
+      RO: "Seria buletinului",
+      RU: "Серия удостоверения",
     },
     "Numărul buletinului": {
-        "RO": "Numărul buletinului",
-        "RU": "Номер удостоверения"
+      RO: "Numărul buletinului",
+      RU: "Номер удостоверения",
     },
     "Data eliberării buletinului": {
-        "RO": "Data eliberării buletinului",
-        "RU": "Дата выдачи удостоверения"
+      RO: "Data eliberării buletinului",
+      RU: "Дата выдачи удостоверения",
     },
-    "IDNP": {
-        "RO": "IDNP",
-        "RU": "IDNP"
+    IDNP: {
+      RO: "IDNP",
+      RU: "IDNP",
     },
-    "Adresă": {
-        "RO": "Adresă",
-        "RU": "Адрес"
+    Adresă: {
+      RO: "Adresă",
+      RU: "Адрес",
     },
-    "Telefon": {
-        "RO": "Telefon",
-        "RU": "Телефон"
+    Telefon: {
+      RO: "Telefon",
+      RU: "Телефон",
     },
     "Salvați datele personale": {
-        "RO": "Salvați datele personale",
-        "RU": "Сохраните личные данные"
+      RO: "Salvați datele personale",
+      RU: "Сохраните личные данные",
     },
     "Data și ora plecării": {
-        "RO": "Data și ora plecării",
-        "RU": "Выберите дату и время отправления"
+      RO: "Data și ora plecării",
+      RU: "Выберите дату и время отправления",
     },
     "Data și ora întoarcerii": {
-        "RO": "Data și ora întoarcerii",
-        "RU": "Дата и время возвращения"
+      RO: "Data și ora întoarcerii",
+      RU: "Дата и время возвращения",
     },
     "Data contractului": {
-        "RO": "Data contractului",
-        "RU": "Дата контракта"
+      RO: "Data contractului",
+      RU: "Дата контракта",
     },
     "Select...": {
-        "RO": "Introduceți...",
-        "RU": "Введите..."
+      RO: "Introduceți...",
+      RU: "Введите...",
     },
     "Introduce un grup": {
-        "RO": "Introduce un grup",
-        "RU": "Введите группу"
+      RO: "Introduce un grup",
+      RU: "Введите группу",
     },
     "Salvează un grup": {
-        "RO": "Salvează un grup",
-        "RU": "Сохранить группу"
+      RO: "Salvează un grup",
+      RU: "Сохранить группу",
     },
     "Se încarcă...": {
-        "RO": "Se încarcă...",
-        "RU": "Загрузка..."
+      RO: "Se încarcă...",
+      RU: "Загрузка...",
     },
     "Leaduri per platformă": {
-        "RO": "Leaduri per platformă",
-        "RU": "Лиды по платформе"
+      RO: "Leaduri per platformă",
+      RU: "Лиды по платформе",
     },
     "Leaduri per zi": {
-        "RO": "Leaduri per zi",
-        "RU": "Лиды в день"
+      RO: "Leaduri per zi",
+      RU: "Лиды в день",
     },
     "Comision per lună": {
-        "RO": "Comision per lună",
-        "RU": "Комиссия за месяц"
+      RO: "Comision per lună",
+      RU: "Комиссия за месяц",
     },
     "Leaduri per lună": {
-        "RO": "Leaduri per lună",
-        "RU": "Лиды в месяц"
+      RO: "Leaduri per lună",
+      RU: "Лиды в месяц",
     },
     "Leaduri per etapă de lucru": {
-        "RO": "Leaduri per etapă de lucru",
-        "RU": "Лиды по этапу работы"
+      RO: "Leaduri per etapă de lucru",
+      RU: "Лиды по этапу работы",
     },
     "Ore mediu prelucrare etapă": {
-        "RO": "Ore mediu prelucrare etapă",
-        "RU": "Среднее время обработки этапа"
+      RO: "Ore mediu prelucrare etapă",
+      RU: "Среднее время обработки этапа",
     },
-    "January": {
-        "RO": "Ianuarie",
-        "RU": "Январь"
+    January: {
+      RO: "Ianuarie",
+      RU: "Январь",
     },
-    "February": {
-        "RO": "Februarie",
-        "RU": "Февраль"
+    February: {
+      RO: "Februarie",
+      RU: "Февраль",
     },
-    "March": {
-        "RO": "Martie",
-        "RU": "Март"
+    March: {
+      RO: "Martie",
+      RU: "Март",
     },
-    "April": {
-        "RO": "Aprilie",
-        "RU": "Апрель"
+    April: {
+      RO: "Aprilie",
+      RU: "Апрель",
     },
-    "May": {
-        "RO": "Mai",
-        "RU": "Май"
+    May: {
+      RO: "Mai",
+      RU: "Май",
     },
-    "June": {
-        "RO": "Iunie",
-        "RU": "Июнь"
+    June: {
+      RO: "Iunie",
+      RU: "Июнь",
     },
-    "July": {
-        "RO": "Iulie",
-        "RU": "Июль"
+    July: {
+      RO: "Iulie",
+      RU: "Июль",
     },
-    "August": {
-        "RO": "August",
-        "RU": "Август"
+    August: {
+      RO: "August",
+      RU: "Август",
     },
-    "September": {
-        "RO": "Septembrie",
-        "RU": "Сентябрь"
+    September: {
+      RO: "Septembrie",
+      RU: "Сентябрь",
     },
-    "October": {
-        "RO": "Octombrie",
-        "RU": "Октябрь"
+    October: {
+      RO: "Octombrie",
+      RU: "Октябрь",
     },
-    "November": {
-        "RO": "Noiembrie",
-        "RU": "Ноябрь"
+    November: {
+      RO: "Noiembrie",
+      RU: "Ноябрь",
     },
-    "December": {
-        "RO": "Decembrie",
-        "RU": "Декабрь"
+    December: {
+      RO: "Decembrie",
+      RU: "Декабрь",
     },
-    "Permisiuni": {
-        "RO": "Permisiuni",
-        "RU": "Разрешения"
+    Permisiuni: {
+      RO: "Permisiuni",
+      RU: "Разрешения",
     },
     "nici un tag": {
-        "RO": "niciun tag",
-        "RU": "никакой тег"
+      RO: "niciun tag",
+      RU: "никакой тег",
     },
     "Nici un lead": {
-        "RO": "Niciun lead",
-        "RU": "никакой лид"
+      RO: "Niciun lead",
+      RU: "никакой лид",
     },
     "Mesajele clientului": {
-        "RO": "Mesajele clientului",
-        "RU": "Сообщения клиента"
+      RO: "Mesajele clientului",
+      RU: "Сообщения клиента",
     },
     "Alege lead": {
-        "RO": "Alege lead",
-        "RU": "Выбрать лид"
+      RO: "Alege lead",
+      RU: "Выбрать лид",
     },
     "Acest browser nu suporta audio": {
-        "RO": "Acest browser nu suportă audio",
-        "RU": "Этот браузер не поддерживает аудио"
+      RO: "Acest browser nu suportă audio",
+      RU: "Этот браузер не поддерживает аудио",
     },
     "Acest browser nu suporta video": {
-        "RO": "Acest browser nu suportă video",
-        "RU": "Этот браузер не поддерживает видео"
+      RO: "Acest browser nu suportă video",
+      RU: "Этот браузер не поддерживает видео",
     },
     "Deschide file": {
-        "RO": "Deschide fișier",
-        "RU": "Открыть файл"
+      RO: "Deschide fișier",
+      RU: "Открыть файл",
     },
-    "Client": {
-        "RO": "Client",
-        "RU": "Клиент"
+    Client: {
+      RO: "Client",
+      RU: "Клиент",
     },
-    "Combina": {
-        "RO": "Combină",
-        "RU": "Объединить"
+    Combina: {
+      RO: "Combină",
+      RU: "Объединить",
     },
     "Introduceți ID lead": {
-        "RO": "Introduceți ID-ul lead-ului",
-        "RU": "Введите ID лида"
+      RO: "Introduceți ID-ul lead-ului",
+      RU: "Введите ID лида",
     },
     "Introduceți ID client": {
-        "RO": "Introduceți ID-ul clientului",
-        "RU": "Введите ID клиента"
+      RO: "Introduceți ID-ul clientului",
+      RU: "Введите ID клиента",
     },
     "Leadurile mele": {
-        "RO": "Lead-urile mele",
-        "RU": "Мои лиды"
+      RO: "Lead-urile mele",
+      RU: "Мои лиды",
     },
-    "Filtru": {
-        "RO": "Filtru",
-        "RU": "Фильтр"
+    Filtru: {
+      RO: "Filtru",
+      RU: "Фильтр",
     },
     "Cauta dupa Lead, Client sau Tag": {
-        "RO": "Caută după lead, client sau tag",
-        "RU": "Искать по лиду, клиенту или тегу"
+      RO: "Caută după lead, client sau tag",
+      RU: "Искать по лиду, клиенту или тегу",
     },
     "Filtru lead": {
-        "RO": "Filtru lead",
-        "RU": "Фильтр лидов"
+      RO: "Filtru lead",
+      RU: "Фильтр лидов",
     },
     "Data de creare": {
-        "RO": "Data de creare",
-        "RU": "Дата создания"
+      RO: "Data de creare",
+      RU: "Дата создания",
     },
     "Ultima interacțiune": {
-        "RO": "Ultima interacțiune",
-        "RU": "Последнее взаимодействие"
+      RO: "Ultima interacțiune",
+      RU: "Последнее взаимодействие",
     },
     "Toate etapele": {
-        "RO": "Toate etapele",
-        "RU": "Все этапы"
+      RO: "Toate etapele",
+      RU: "Все этапы",
     },
     "Toate prioritățile": {
-        "RO": "Toate prioritățile",
-        "RU": "Все приоритеты"
+      RO: "Toate prioritățile",
+      RU: "Все приоритеты",
     },
     "După responsabil lead": {
-        "RO": "După responsabil lead",
-        "RU": "По ответственному за лид"
+      RO: "După responsabil lead",
+      RU: "По ответственному за лид",
     },
     "Toți managerii": {
-        "RO": "Toți managerii",
-        "RU": "Все менеджеры"
+      RO: "Toți managerii",
+      RU: "Все менеджеры",
     },
     "După ID participant": {
-        "RO": "După ID participant",
-        "RU": "По ID участника"
+      RO: "După ID participant",
+      RU: "По ID участника",
     },
     "După participant": {
-        "RO": "După participant",
-        "RU": "По участнику"
+      RO: "După participant",
+      RU: "По участнику",
     },
     "Introdu tag": {
-        "RO": "Introdu tag",
-        "RU": "Введите тег"
+      RO: "Introdu tag",
+      RU: "Введите тег",
     },
-    "Platformă": {
-        "RO": "Platformă",
-        "RU": "Платформа"
+    Platformă: {
+      RO: "Platformă",
+      RU: "Платформа",
     },
     "Toate platformele": {
-        "RO": "Toate platformele",
-        "RU": "Все платформы"
+      RO: "Toate platformele",
+      RU: "Все платформы",
     },
-    "Aplică": {
-        "RO": "Aplică",
-        "RU": "Применить"
+    Aplică: {
+      RO: "Aplică",
+      RU: "Применить",
     },
     "Resetează filtre": {
-        "RO": "Resetează filtre",
-        "RU": "Сбросить фильтры"
+      RO: "Resetează filtre",
+      RU: "Сбросить фильтры",
     },
     "Mesaj audio": {
-        "RO": "Mesaj audio",
-        "RU": "Сбросить фильтры"
+      RO: "Mesaj audio",
+      RU: "Сбросить фильтры",
     },
     "Mesaj file": {
-        "RO": "Mesaj file",
-        "RU": "Сбросить фильтры"
+      RO: "Mesaj file",
+      RU: "Сбросить фильтры",
     },
     "Mesaj video": {
-        "RO": "Mesaj video",
-        "RU": "Сбросить фильтры"
+      RO: "Mesaj video",
+      RU: "Сбросить фильтры",
     },
     "Mesaj imagine": {
-        "RO": "Mesaj imagine",
-        "RU": "Сбросить фильтры"
+      RO: "Mesaj imagine",
+      RU: "Сбросить фильтры",
     },
     "Mesaj text": {
-        "RO": "Mesaj text",
-        "RU": "Сбросить фильтры"
+      RO: "Mesaj text",
+      RU: "Сбросить фильтры",
     },
-    'Sesia a expirat': {
-        'RO': 'Sesia a expirat, te rog sa accesezi din nou pagina!',
-        'RU': 'Сессия истекла, пожалуйста, зайдите на страницу заново!'
+    "Sesia a expirat": {
+      RO: "Sesia a expirat, te rog sa accesezi din nou pagina!",
+      RU: "Сессия истекла, пожалуйста, зайдите на страницу заново!",
     },
-    'WebSocket off': {
-        'RO': 'WebSocket este oprit. Te rog să reîncarci pagina!',
-        'RU': 'WebSocket отключен. Пожалуйста, перезагрузите страницу!'
+    "WebSocket off": {
+      RO: "WebSocket este oprit. Te rog să reîncarci pagina!",
+      RU: "WebSocket отключен. Пожалуйста, перезагрузите страницу!",
     },
-    'Ultima platformă': {
-        'RO': 'Ultima platformă',
-        'RU': 'Последнея платформа'
+    "Ultima platformă": {
+      RO: "Ultima platformă",
+      RU: "Последнея платформа",
     },
-    'Creat de': {
-        'RO': 'Creat de utilizatorul',
-        'RU': 'Создан пользователем'
+    "Creat de": {
+      RO: "Creat de utilizatorul",
+      RU: "Создан пользователем",
     },
-    'Pentru': {
-        'RO': 'Pentru utilizatorul',
-        'RU': 'Для пользователя'
+    Pentru: {
+      RO: "Pentru utilizatorul",
+      RU: "Для пользователя",
     },
-    'Alege utilizator': {
-        'RO': 'Alege utilizator',
-        'RU': 'Выбери пользователя'
+    "Alege utilizator": {
+      RO: "Alege utilizator",
+      RU: "Выбери пользователя",
     },
-    'Motivul refuzului': {
-        'RO': "Motivul refuzului",
-        'RU': "Причина отказа"
+    "Motivul refuzului": {
+      RO: "Motivul refuzului",
+      RU: "Причина отказа",
     },
-    'Clientul nu răspunde':
-    {
-        'RO': "Clientul nu răspunde",
-        'RU': "Клиент не отвечает"
+    "Clientul nu răspunde": {
+      RO: "Clientul nu răspunde",
+      RU: "Клиент не отвечает",
     },
-    'Prea scump': { 'RO': "Prea scump", 'RU': "Слишком дорого" },
-    'Informații de referință': { 'RO': "Informații de referință", 'RU': "Справочная информация" },
-    'Ne-a luat prea mult timp să răspundem la apeluri/mesaje': { 'RO': "Ne-a luat prea mult timp să răspundem la apeluri/mesaje", 'RU': "Мы слишком долго отвечали на звонки/сообщения" },
-    'Nevoia a dispărut': { 'RO': "Nevoia a dispărut", 'RU': "Потребность исчезла" },
-    'I-a ales pe alții': { 'RO': "I-a ales pe alții", 'RU': "Выбрали других" },
-    'Nu sunt mulțumiți de condiții': { 'RO': "Nu sunt mulțumiți de condiții", 'RU': "Не удовлетворены условиями" },
-    'Clientul nu răspunde (după 3 încercări de a suna)': { 'RO': "Clientul nu răspunde (după 3 încercări de a suna)", 'RU': "Клиент не отвечает (после 3 попыток дозвона)" },
-    'Mai scump decât concurenții': { 'RO': "Mai scump decât concurenții", 'RU': "Дороже, чем у конкурентов" },
-    'Nu am găsit un tur potrivit': { 'RO': "Nu am găsit un tur potrivit", 'RU': "Не нашли подходящий тур" },
-    'Planuri schimbate / Nu a mers / Nu a zburat nicăieri': { 'RO': "Planuri schimbate / Nu a mers / Nu a zburat nicăieri", 'RU': "Планы изменились / Не поехал / Не улетел никуда" },
-    'A citit o mulțime de recenzii negative': { 'RO': "A citit o mulțime de recenzii negative", 'RU': "Прочитал много негативных отзывов" },
-    'Turistul s-a îmbolnăvit': { 'RO': "Turistul s-a îmbolnăvit", 'RU': "Турист заболел" },
-    'Test pozitiv pentru Covid-19': { 'RO': "Test pozitiv pentru Covid-19", 'RU': "Положительный тест на Covid-19" },
-    'Client non-țintă': { 'RO': "Client non-țintă", 'RU': "Не целевой клиент" },
-    'Managerul nu cunoaște bine produsul / nu a oferit ceea ce este necesar': { 'RO': "Managerul nu cunoaște bine produsul / nu a oferit ceea ce este necesar", 'RU': "Менеджер плохо знает продукт / не предоставил необходимое" },
-    'Rezervări online': { 'RO': "Rezervări online", 'RU': "Онлайн-бронирование" },
-    'Restituire': { 'RO': "Restituire", 'RU': "Возврат" },
-    'Bani în depozit': { 'RO': "Bani în depozit", 'RU': "Деньги на депозите" },
-    'Concurs': { 'RO': "Concurs", 'RU': "Конкурс" },
-    'Concurs fotbal': { 'RO': "Concurs fotbal", 'RU': "Футбольный конкурс" },
-    'Rezultatul fuziunii tranzacțiilor': { 'RO': "Rezultatul fuziunii tranzacțiilor", 'RU': "Результат слияния транзакций" },
-    'Apel de intrare nesortat': { 'RO': "Apel de intrare nesortat", 'RU': "Несортированный входящий звонок" },
-    'Apel rece': { 'RO': "Apel rece", 'RU': "Холодный звонок" },
-    'Dublu': { 'RO': "Dublu", 'RU': "Дублирующий" },
-    'Comentarii Facebook & Instagram': { 'RO': "Comentarii Facebook & Instagram", 'RU': "Комментарии в Facebook и Instagram" },
-    'Blocare Messenger': { 'RO': "Blocare Messenger", 'RU': "Блокировка в Messenger" },
-    'RO Manager': { 'RO': "RO Manager", 'RU': "Румынский менеджер" },
-    'Departamentul de calitate': { 'RO': "Departamentul de calitate", 'RU': "Отдел качества" },
-    'Franciză': { 'RO': "Franciză", 'RU': "Франшиза" },
-    'Parteneriat': { 'RO': "Parteneriat", 'RU': "Партнерство" },
-    'Clienți corporate': { 'RO': "Clienți corporate", 'RU': "Корпоративные клиенты" },
-    'Trafic organic': { 'RO': "Trafic organic", 'RU': "Органический трафик" },
-    'Reclamații': { 'RO': "Reclamații", 'RU': "Жалобы" },
-    'Resurse umane': { 'RO': "Resurse umane", 'RU': "Кадровые ресурсы" },
-    'Alt motiv': { 'RO': "Alt motiv", 'RU': "Другая причина" },
-    'Altele': { 'RO': "Altele", 'RU': "Другие" },
-    'Evaluare odihnă':
-    {
-        'RO': "Evaluare odihnă",
-        'RU': "Оценка отдыха"
+    "Prea scump": { RO: "Prea scump", RU: "Слишком дорого" },
+    "Informații de referință": {
+      RO: "Informații de referință",
+      RU: "Справочная информация",
     },
-    'Următoarea vacanță': {
-        'RO': "Următoarea vacanță",
-        'RU': "Следующий отпуск"
+    "Ne-a luat prea mult timp să răspundem la apeluri/mesaje": {
+      RO: "Ne-a luat prea mult timp să răspundem la apeluri/mesaje",
+      RU: "Мы слишком долго отвечали на звонки/сообщения",
     },
-    'Manager': {
-        'RO': "Manager",
-        'RU': "Менеджер"
+    "Nevoia a dispărut": { RO: "Nevoia a dispărut", RU: "Потребность исчезла" },
+    "I-a ales pe alții": { RO: "I-a ales pe alții", RU: "Выбрали других" },
+    "Nu sunt mulțumiți de condiții": {
+      RO: "Nu sunt mulțumiți de condiții",
+      RU: "Не удовлетворены условиями",
     },
-    'Vacanța': {
-        'RO': "Vacanța",
-        'RU': "Отпуск"
+    "Clientul nu răspunde (după 3 încercări de a suna)": {
+      RO: "Clientul nu răspunde (după 3 încercări de a suna)",
+      RU: "Клиент не отвечает (после 3 попыток дозвона)",
     },
-    'Adaugă document': {
-        'RO': "Adaugă document",
-        'RU': "Добавить документ"
+    "Mai scump decât concurenții": {
+      RO: "Mai scump decât concurenții",
+      RU: "Дороже, чем у конкурентов",
     },
-    'F/service': {
-        'RO': "F/Serviciu",
-        'RU': "Ф/Услуга"
+    "Nu am găsit un tur potrivit": {
+      RO: "Nu am găsit un tur potrivit",
+      RU: "Не нашли подходящий тур",
     },
-    'F/factura': {
-        'RO': "F/Factură",
-        'RU': "Ф/Счет-фактура"
+    "Planuri schimbate / Nu a mers / Nu a zburat nicăieri": {
+      RO: "Planuri schimbate / Nu a mers / Nu a zburat nicăieri",
+      RU: "Планы изменились / Не поехал / Не улетел никуда",
     },
-    'F/numarul': {
-        'RO': "F/Numărul facturii",
-        'RU': "Ф/Номер счета"
+    "A citit o mulțime de recenzii negative": {
+      RO: "A citit o mulțime de recenzii negative",
+      RU: "Прочитал много негативных отзывов",
     },
-    'F/preț': {
-        'RO': "F/Preț",
-        'RU': "Ф/Цена"
+    "Turistul s-a îmbolnăvit": {
+      RO: "Turistul s-a îmbolnăvit",
+      RU: "Турист заболел",
     },
-    'F/sumă': {
-        'RO': "F/Sumă",
-        'RU': "Ф/Сумма"
+    "Test pozitiv pentru Covid-19": {
+      RO: "Test pozitiv pentru Covid-19",
+      RU: "Положительный тест на Covid-19",
     },
-    'Valuta contului': {
-        'RO': "Valuta contului",
-        'RU': "Валюта счета"
+    "Client non-țintă": { RO: "Client non-țintă", RU: "Не целевой клиент" },
+    "Managerul nu cunoaște bine produsul / nu a oferit ceea ce este necesar": {
+      RO: "Managerul nu cunoaște bine produsul / nu a oferit ceea ce este necesar",
+      RU: "Менеджер плохо знает продукт / не предоставил необходимое",
     },
-    'IBAN': {
-        'RO': "IBAN",
-        'RU': "IBAN"
+    "Rezervări online": { RO: "Rezervări online", RU: "Онлайн-бронирование" },
+    Restituire: { RO: "Restituire", RU: "Возврат" },
+    "Bani în depozit": { RO: "Bani în depozit", RU: "Деньги на депозите" },
+    Concurs: { RO: "Concurs", RU: "Конкурс" },
+    "Concurs fotbal": { RO: "Concurs fotbal", RU: "Футбольный конкурс" },
+    "Rezultatul fuziunii tranzacțiilor": {
+      RO: "Rezultatul fuziunii tranzacțiilor",
+      RU: "Результат слияния транзакций",
     },
-    'Mdl': {
-        'RO': "Mdl",
-        'RU': "Мдл"
+    "Apel de intrare nesortat": {
+      RO: "Apel de intrare nesortat",
+      RU: "Несортированный входящий звонок",
     },
-    'Eur': {
-        'RO': "Eur",
-        'RU': "Евр"
+    "Apel rece": { RO: "Apel rece", RU: "Холодный звонок" },
+    Dublu: { RO: "Dublu", RU: "Дублирующий" },
+    "Comentarii Facebook & Instagram": {
+      RO: "Comentarii Facebook & Instagram",
+      RU: "Комментарии в Facebook и Instagram",
     },
-    'Status sunet telefonic': {
-        'RO': "Status sunet telefonic",
-        'RU': "Статус телефонного звонка"
+    "Blocare Messenger": {
+      RO: "Blocare Messenger",
+      RU: "Блокировка в Messenger",
     },
-    'Data cererii de retur': {
-        'RO': "Data cererii de retur",
-        'RU': "Дата запроса на возврат"
+    "RO Manager": { RO: "RO Manager", RU: "Румынский менеджер" },
+    "Departamentul de calitate": {
+      RO: "Departamentul de calitate",
+      RU: "Отдел качества",
     },
-    'Data venit în oficiu': {
-        'RO': "Data venit în oficiu",
-        'RU': "Дата прихода в офис"
+    Franciză: { RO: "Franciză", RU: "Франшиза" },
+    Parteneriat: { RO: "Parteneriat", RU: "Партнерство" },
+    "Clienți corporate": { RO: "Clienți corporate", RU: "Корпоративные клиенты" },
+    "Trafic organic": { RO: "Trafic organic", RU: "Органический трафик" },
+    Reclamații: { RO: "Reclamații", RU: "Жалобы" },
+    "Resurse umane": { RO: "Resurse umane", RU: "Кадровые ресурсы" },
+    "Alt motiv": { RO: "Alt motiv", RU: "Другая причина" },
+    Altele: { RO: "Altele", RU: "Другие" },
+    "Evaluare odihnă": {
+      RO: "Evaluare odihnă",
+      RU: "Оценка отдыха",
     },
-    'Contract trimis': {
-        'RO': "Contract trimis",
-        'RU': "Отправленный контракт"
+    "Următoarea vacanță": {
+      RO: "Următoarea vacanță",
+      RU: "Следующий отпуск",
     },
-    'Achitare efectuată': {
-        'RO': "Achitare efectuată",
-        'RU': "Оплата произведена"
+    Manager: {
+      RO: "Manager",
+      RU: "Менеджер",
     },
-    'Rezervare confirmată': {
-        'RO': "Rezervare confirmată",
-        'RU': "Бронирование подтверждено"
+    Vacanța: {
+      RO: "Vacanța",
+      RU: "Отпуск",
     },
-    'Contract arhivat': {
-        'RO': "Contract arhivat",
-        'RU': "Архивированный контракт"
+    "Adaugă document": {
+      RO: "Adaugă document",
+      RU: "Добавить документ",
     },
-    'Avans euro': {
-        'RO': "Avans euro",
-        'RU': "Аванс в евро"
+    "F/service": {
+      RO: "F/Serviciu",
+      RU: "Ф/Услуга",
     },
-    'Data avansului': {
-        'RO': "Data avansului",
-        'RU': "Дата аванса"
+    "F/factura": {
+      RO: "F/Factură",
+      RU: "Ф/Счет-фактура",
     },
-    'Data de plată integrală': {
-        'RO': "Data de plată integrală",
-        'RU': "Дата полной оплаты"
+    "F/numarul": {
+      RO: "F/Numărul facturii",
+      RU: "Ф/Номер счета",
     },
-    'Preț NETTO': {
-        'RO': "Preț NETTO",
-        'RU': "Чистая цена (NETTO)"
+    "F/preț": {
+      RO: "F/Preț",
+      RU: "Ф/Цена",
     },
-    'Achitat client': {
-        'RO': "Achitat client",
-        'RU': "Оплачено клиентом"
+    "F/sumă": {
+      RO: "F/Sumă",
+      RU: "Ф/Сумма",
     },
-    'Restanță client': {
-        'RO': "Restanță client",
-        'RU': "Задолженность клиента"
+    "Valuta contului": {
+      RO: "Valuta contului",
+      RU: "Валюта счета",
     },
-    'Statut achitare': {
-        'RO': "Statut achitare",
-        'RU': "Статус оплаты"
+    IBAN: {
+      RO: "IBAN",
+      RU: "IBAN",
     },
-    'Contract': {
-        'RO': "Contract",
-        'RU': "Контракт"
+    Mdl: {
+      RO: "Mdl",
+      RU: "Мдл",
     },
-    'Invoice': {
-        'RO': "Factura",
-        'RU': "Счет"
+    Eur: {
+      RO: "Eur",
+      RU: "Евр",
     },
-    'Media': {
-        'RO': "Media",
-        'RU': "Медиа"
+    "Status sunet telefonic": {
+      RO: "Status sunet telefonic",
+      RU: "Статус телефонного звонка",
     },
-    'Control calitate': {
-        'RO': "Control calitate",
-        'RU': "Контроль качества"
+    "Data cererii de retur": {
+      RO: "Data cererii de retur",
+      RU: "Дата запроса на возврат",
     },
-    'Deschide în noua filă': {
-        'RO': "Deschide în noua filă",
-        'RU': "Открыть в новой вкладке"
+    "Data venit în oficiu": {
+      RO: "Data venit în oficiu",
+      RU: "Дата прихода в офис",
     },
-   "Data creare Lead": {
-        "RO": "Data creare lead",
-        "RU": "Дата создания лида"
+    "Contract trimis": {
+      RO: "Contract trimis",
+      RU: "Отправленный контракт",
+    },
+    "Achitare efectuată": {
+      RO: "Achitare efectuată",
+      RU: "Оплата произведена",
+    },
+    "Rezervare confirmată": {
+      RO: "Rezervare confirmată",
+      RU: "Бронирование подтверждено",
+    },
+    "Contract arhivat": {
+      RO: "Contract arhivat",
+      RU: "Архивированный контракт",
+    },
+    "Avans în euro": {
+      RO: "Avans în euro",
+      RU: "Аванс в евро",
+    },
+    "Data avansului": {
+      RO: "Data avansului",
+      RU: "Дата аванса",
+    },
+    "Data de plată integrală": {
+      RO: "Data de plată integrală",
+      RU: "Дата полной оплаты",
+    },
+    "Preț NETTO": {
+      RO: "Preț NETTO",
+      RU: "Чистая цена (NETTO)",
+    },
+    "Achitat client": {
+      RO: "Achitat client",
+      RU: "Оплачено клиентом",
+    },
+    "Restanță client": {
+      RO: "Restanță client",
+      RU: "Задолженность клиента",
+    },
+    "Statut achitare": {
+      RO: "Statut achitare",
+      RU: "Статус оплаты",
+    },
+    Contract: {
+      RO: "Contract",
+      RU: "Контракт",
+    },
+    Invoice: {
+      RO: "Factura",
+      RU: "Счет",
+    },
+    Media: {
+      RO: "Media",
+      RU: "Медиа",
+    },
+    "Control calitate": {
+      RO: "Control calitate",
+      RU: "Контроль качества",
+    },
+    "Deschide în noua filă": {
+      RO: "Deschide în noua filă",
+      RU: "Открыть в новой вкладке",
+    },
+    "Data creare Lead": {
+      RO: "Data creare lead",
+      RU: "Дата создания лида",
     },
     "Data ultima actualizare Lead": {
-        "RO": "Data ultima actualizare lead",
-        "RU": "Дата последнего обновления лида"
+      RO: "Data ultima actualizare lead",
+      RU: "Дата последнего обновления лида",
     },
     "Prioritate Lead": {
-        "RO": "Prioritate lead",
-        "RU": "Приоритет лида"
+      RO: "Prioritate lead",
+      RU: "Приоритет лида",
     },
     "Alege prioritatea": {
-        "RO": "Alege prioritatea",
-        "RU": "Выберите приоритет"
+      RO: "Alege prioritatea",
+      RU: "Выберите приоритет",
     },
     "Responsabil Lead": {
-        "RO": "Responsabil lead",
-        "RU": "Ответственный за лид"
+      RO: "Responsabil lead",
+      RU: "Ответственный за лид",
     },
     "Alege responsabil lead": {
-        "RO": "Alege responsabil lead",
-        "RU": "Выберите ответственного за лид"
+      RO: "Alege responsabil lead",
+      RU: "Выберите ответственного за лид",
     },
     "Tag-uri": {
-        "RO": "Tag-uri",
-        "RU": "Теги"
+      RO: "Tag-uri",
+      RU: "Теги",
     },
     "Introdu tag-uri separate prin virgule": {
-        "RO": "Introdu tag-uri separate prin virgule",
-        "RU": "Введите теги, разделенные запятыми"
+      RO: "Introdu tag-uri separate prin virgule",
+      RU: "Введите теги, разделенные запятыми",
     },
     "Sursa Lead": {
-        "RO": "Sursa lead",
-        "RU": "Источник лида"
+      RO: "Sursa lead",
+      RU: "Источник лида",
     },
     "Alege sursa lead": {
-        "RO": "Alege sursa lead",
-        "RU": "Выберите источник лида"
+      RO: "Alege sursa lead",
+      RU: "Выберите источник лида",
     },
     "Alege promo": {
-        "RO": "Alege promo",
-        "RU": "Выберите промо"
+      RO: "Alege promo",
+      RU: "Выберите промо",
     },
     "Alege marketing": {
-        "RO": "Alege marketing",
-        "RU": "Выберите маркетинг"
+      RO: "Alege marketing",
+      RU: "Выберите маркетинг",
     },
-    "Tara": {
-        "RO": "Tara",
-        "RU": "Страна"
+    Tara: {
+      RO: "Tara",
+      RU: "Страна",
     },
     "Alege tara": {
-        "RO": "Alege tara",
-        "RU": "Выберите страну"
+      RO: "Alege tara",
+      RU: "Выберите страну",
     },
     "Alege transport": {
-        "RO": "Alege transport",
-        "RU": "Выберите транспорт"
+      RO: "Alege transport",
+      RU: "Выберите транспорт",
     },
     "Nume excursie": {
-        "RO": "Nume excursie",
-        "RU": "Название экскурсии"
+      RO: "Nume excursie",
+      RU: "Название экскурсии",
     },
     "Alege excursie": {
-        "RO": "Alege excursie",
-        "RU": "Выберите экскурсию"
+      RO: "Alege excursie",
+      RU: "Выберите экскурсию",
     },
     "Data vizita in oficiu": {
-        "RO": "Data vizita in oficiu",
-        "RU": "Дата визита в офис"
+      RO: "Data vizita in oficiu",
+      RU: "Дата визита в офис",
     },
     "Alege serviciu": {
-        "RO": "Alege serviciu",
-        "RU": "Выберите услугу"
+      RO: "Alege serviciu",
+      RU: "Выберите услугу",
     },
     "Procesare achizitionarii": {
-        "RO": "Procesare achizitionarii",
-        "RU": "Обработка покупки"
+      RO: "Procesare achizitionarii",
+      RU: "Обработка покупки",
     },
     "Alege achiziție": {
-        "RO": "Alege achiziție",
-        "RU": "Выберите покупку"
+      RO: "Alege achiziție",
+      RU: "Выберите покупку",
     },
     "Selectează statutul plății": {
-        "RO": "Selectează statutul plății",
-        "RU": "Выберите статус оплаты"
+      RO: "Selectează statutul plății",
+      RU: "Выберите статус оплаты",
     },
     "Control Admin": {
-        "RO": "Control Admin",
-        "RU": "Административный контроль"
+      RO: "Control Admin",
+      RU: "Административный контроль",
     },
     "Selectează valuta contului": {
-        "RO": "Selectează valuta contului",
-        "RU": "Выберите валюту счета"
+      RO: "Selectează valuta contului",
+      RU: "Выберите валюту счета",
     },
     "Selectează IBAN": {
-        "RO": "Selectează IBAN",
-        "RU": "Выберите IBAN"
+      RO: "Selectează IBAN",
+      RU: "Выберите IBAN",
     },
     "Aplica filtru": {
-        "RO": "Aplica filtru",
-        "RU": "Применить фильтр"
+      RO: "Aplica filtru",
+      RU: "Применить фильтр",
     },
     "Reset filtru": {
-        "RO": "Reset filtru",
-        "RU": "Сбросить фильтр"
+      RO: "Reset filtru",
+      RU: "Сбросить фильтр",
     },
-    "Close": {
-        "RO": "Close",
-        "RU": "Закрыть"
+    Close: {
+      RO: "Close",
+      RU: "Закрыть",
     },
     "Platforma mesaj": {
-        "RO": "Platforma mesaj",
-        "RU": "Платформа сообщений"
+      RO: "Platforma mesaj",
+      RU: "Платформа сообщений",
     },
     "Filtru pentru mesaje (coming soon)": {
-        "RO": "Filtru pentru mesaje (coming soon)",
-        "RU": "Фильтр для сообщений (скоро)"
+      RO: "Filtru pentru mesaje (coming soon)",
+      RU: "Фильтр для сообщений (скоро)",
     },
-    "Workflow": {
-        "RO": "Workflow",
-        "RU": "Рабочий процесс"
+    Workflow: {
+      RO: "Flux de lucru",
+      RU: "Рабочий процесс",
     },
     "Alege workflow pentru afisare in sistem": {
-        "RO": "Alege workflow pentru afisare in sistem",
-        "RU": "Выберите рабочий процесс для отображения в системе"
+      RO: "Alege workflow pentru afisare in sistem",
+      RU: "Выберите рабочий процесс для отображения в системе",
     },
     "Filtru pentru Lead": {
-        "RO": "Filtru pentru Lead",
-        "RU": "Фильтр для лида"
+      RO: "Filtru pentru Lead",
+      RU: "Фильтр для лида",
     },
     "Filtru de sistem": {
-        "RO": "Filtru de sistem",
-        "RU": "Системный фильтр"
+      RO: "Filtru de sistem",
+      RU: "Системный фильтр",
     },
     "Reset filter": {
-       "RO": "Reset filter",
-       "RU": "Сбросить фильтр"
+      RO: "Reset filter",
+      RU: "Сбросить фильтр",
     },
     "Tipul serviciului": {
-       "RO": "Tipul serviciului",
-       "RU": "Тип услуги"
+      RO: "Tipul serviciului",
+      RU: "Тип услуги",
     },
     "Selectează toate": {
-        "RO": "Selectează toate",
-        "RU": "Выбрать все"
+      RO: "Selectează toate",
+      RU: "Выбрать все",
     },
-    "Căutare": {
-       "RO": "Căutare",
-       "RU": "Поиск"
+    Căutare: {
+      RO: "Căutare",
+      RU: "Поиск",
     },
     "Nu există potriviri": {
-       "RO": "Nu există potriviri",
-       "RU": "Нет совпадений"
+      RO: "Nu există potriviri",
+      RU: "Нет совпадений",
     },
-    'Eroare neașteptată, încercați mai târziu': {
-        "RO": "Eroare neașteptată, încercați mai târziu",
-        "RU": "Неожиданная ошибка, попробуйте позже"
+    "Eroare neașteptată, încercați mai târziu": {
+      RO: "Eroare neașteptată, încercați mai târziu",
+      RU: "Неожиданная ошибка, попробуйте позже",
     },
     "Alege client": {
-        "RO": "Alege client",
-        "RU": "Выберите клиента"
+      RO: "Alege client",
+      RU: "Выберите клиента",
     },
-    "Verificare": {
-        "RO": "Verificare",
-        "RU": "Проверка"
+    Verificare: {
+      RO: "Verificare",
+      RU: "Проверка",
     },
-    "Email": {
-        "RO": "Email",
-        "RU": "Проверка"
+    Email: {
+      RO: "Email",
+      RU: "Проверка",
     },
-    "Ștergere": {
-        "RO": "Ștergere",
-        "RU": "Удалить"
+    Ștergere: {
+      RO: "Ștergere",
+      RU: "Удалить",
     },
-    "Editare": {
-        "RO": "Editare",
-        "RU": "Редактировать"
+    Editare: {
+      RO: "Editare",
+      RU: "Редактировать",
     },
     "Toate tichetele": {
-        "RO": "Toate tichetele",
-        "RU": "Все билеты"
+      RO: "Toate tichetele",
+      RU: "Все билеты",
     },
-    "Filtrate": {
-        "RO": "Filtrate",
-        "RU": "Отфильтровано"
+    Filtrate: {
+      RO: "Filtrate",
+      RU: "Отфильтровано",
     },
-    "Coloană": {
-        "RO": "Coloană",
-        "RU": "Столбец"
+    Coloană: {
+      RO: "Coloană",
+      RU: "Столбец",
     },
-    "Listă": {
-        "RO": "Listă",
-        "RU": "Список"
+    Listă: {
+      RO: "Listă",
+      RU: "Список",
+    },
+    ID: {
+      RO: "ID",
+      RU: "ID",
+    },
+    Buget: {
+      RO: "Buget",
+      RU: "Бюджет",
+    },
+    Vacanță: {
+      RO: "Vacanță",
+      RU: "Отпуск",
+    },
+    "Tipul de transport": {
+      RO: "Tipul de transport",
+      RU: "Тип транспортировки",
     }
-    
-};
-
-// import { translations } from '../utils/translations';
-
-// const language = localStorage.getItem('language') || 'RO';
-
-// {translations['Adaugă lead'][language]}
+  };
+  
+  // import { translations } from '../utils/translations';
+  
+  // const language = localStorage.getItem('language') || 'RO';
+  
+  // {translations['Adaugă lead'][language]}
+  

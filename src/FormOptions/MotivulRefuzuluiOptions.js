@@ -1,4 +1,4 @@
-import { getLanguageByKey } from "../Components/utils/getTranslationByKey";
+import { getLanguageByKey } from "../Components/utils/getLanguageByKey";
 
 export const motivulRefuzuluiOptions = [
     "Clientul nu răspunde",

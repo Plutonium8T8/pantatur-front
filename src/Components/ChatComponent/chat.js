@@ -35,6 +35,7 @@ import { valutaOptions } from '../../FormOptions/ValutaOptions';
 import { ibanOptions } from '../../FormOptions/IbanOptions';
 import { api } from "../../api"
 import { showServerError } from "../../Components/utils/showServerError"
+import { Button } from "../Button"
 import ToggleSwitch from '../ToggleComponent/ToggleSwitch';
 
 const ChatComponent = ({ }) => {
@@ -967,9 +968,9 @@ const ChatComponent = ({ }) => {
                                     onInput={handleFilterInput}
                                     className="ticket-filter-input"
                                 />
-                                <button onClick={() => setIsFilterOpen(true)} className="button-filter">
+                                <Button variant="primary" onClick={() => setIsFilterOpen(true)} className="button-filter">
                                     {translations["Filtru"][language]} {Object.values(appliedFilters).some(value => value) && <span className="filter-indicator"></span>}
-                                </button>
+                                </Button>
                             </div>
                         </div>
 
