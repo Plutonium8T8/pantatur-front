@@ -24,7 +24,6 @@ import './chat.css';
 import EmojiPicker from 'emoji-picker-react';
 import ReactDOM from "react-dom";
 import { translations } from '../utils/translations';
-import TicketFilterModal from '../LeadsComponent/TicketFilterModal';
 import { FaFacebook, FaInstagram, FaWhatsapp, FaTelegram } from "react-icons/fa";
 import { SiViber } from "react-icons/si";
 import { useLocation } from 'react-router-dom';
@@ -34,7 +33,7 @@ import { evaluareOdihnaOptions } from '../../FormOptions/EvaluareVacantaOptions'
 import { valutaOptions } from '../../FormOptions/ValutaOptions';
 import { ibanOptions } from '../../FormOptions/IbanOptions';
 import { api } from "../../api"
-import { showServerError } from "../../Components/utils/showServerError"
+import { showServerError } from "../utils/showServerError"
 import ToggleSwitch from '../ToggleComponent/ToggleSwitch';
 
 const ChatComponent = ({ }) => {
@@ -59,7 +58,6 @@ const ChatComponent = ({ }) => {
     const [showMyTickets, setShowMyTickets] = useState(false);
     const [selectedClient, setSelectedClient] = useState("");
     const fileInputRef = useRef(null);
-    const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [appliedFilters, setAppliedFilters] = useState({});
     const ticketRef = useRef(null);
     const [isChatListVisible, setIsChatListVisible] = useState(true);
@@ -309,55 +307,6 @@ const ChatComponent = ({ }) => {
             [messageId]: reaction,
         }));
     };
-
-    // // Пример функции sendReaction с подтверждением от сервера
-    // const sendReaction = (messageId, senderId, reaction) => {
-    //     const language = localStorage.getItem('language') || 'RO';
-
-    //     return new Promise((resolve, reject) => {
-    //         if (socket && socket.readyState === WebSocket.OPEN) {
-    //             const payload = {
-    //                 type: 'react',
-    //                 data: {
-    //                     message_id: messageId,
-    //                     sender_id: senderId,
-    //                     reaction: { senderId, reaction },
-    //                 },
-    //             };
-
-    //             console.log('Отправка реакции на сервер:', JSON.stringify(payload, null, 2)); // Лог отправляемых данных
-
-    //             socket.send(JSON.stringify(payload));
-
-    //             // Ожидание подтверждения от сервера
-    //             socket.onmessage = (event) => {
-    //                 console.log('Получен ответ от сервера:', event.data); // Лог ответа сервера
-
-    //                 try {
-    //                     const response = JSON.parse(event.data);
-
-    //                     if (
-    //                         response.type === 'react' &&
-    //                         response.data.message_id === messageId
-    //                     ) {
-    //                         console.log('Реакция успешно обработана:', response.data); // Лог успешного результата
-    //                         resolve(response.data); // Сервер подтвердил реакцию
-    //                     } else {
-    //                         console.error('Неверный тип ответа или несоответствие ID:', response);
-    //                         reject(new Error('Неверный ответ от сервера.'));
-    //                     }
-    //                 } catch (error) {
-    //                     console.error('Ошибка при разборе ответа от сервера:', error); // Лог ошибок парсинга
-    //                     reject(new Error('Ошибка обработки ответа сервера.'));
-    //                 }
-    //             };
-    //         } else {
-    //             console.error('Ошибка: Соединение с WebSocket отсутствует.'); // Лог при отсутствии соединения
-    //             reject(new Error('Соединение с WebSocket отсутствует.'));
-    //         }
-    //     });
-    // };
-
 
     const getLastReaction = (message) => {
         if (!message.reactions) {
@@ -967,9 +916,6 @@ const ChatComponent = ({ }) => {
                                     onInput={handleFilterInput}
                                     className="ticket-filter-input"
                                 />
-                                <button onClick={() => setIsFilterOpen(true)} className="button-filter">
-                                    {translations["Filtru"][language]} {Object.values(appliedFilters).some(value => value) && <span className="filter-indicator"></span>}
-                                </button>
                             </div>
                         </div>
 
@@ -1039,29 +985,6 @@ const ChatComponent = ({ }) => {
                             </div>
                         )}
 
-                        <TicketFilterModal
-                            isOpen={isFilterOpen}
-                            onClose={() => setIsFilterOpen(false)}
-                            onApplyFilter={(updatedFilters, ticketIds) => {
-
-                                if (!ticketIds || ticketIds.length === 0) {
-                                    console.log("♻️ Сброс фильтра: показываем все тикеты.");
-                                    setAppliedFilters({});
-                                    setFilteredTicketIds(null);
-                                    return;
-                                }
-
-                                const flatTicketIds = ticketIds.flat(Infinity)
-                                    .map(ticket => ticket?.id || ticket)
-                                    .filter(id => typeof id === "number" || !isNaN(Number(id)))
-                                    .map(id => Number(id));
-
-                                console.log("📤 Развернутые ticketIds:", flatTicketIds);
-
-                                setAppliedFilters(updatedFilters);
-                                setFilteredTicketIds(flatTicketIds.length > 0 ? flatTicketIds : null);
-                            }}
-                        />
                     </>
                 )}
             </div>
