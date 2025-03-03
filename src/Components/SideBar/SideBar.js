@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../AppContext';
 import { translations } from '../utils/translations';
@@ -118,7 +118,7 @@ const CustomSidebar = ({ onOpenNotifications, onOpenTasks, onOpenAccount }) => {
           </div>
         </div>
       </div>
-      {loading && <LoadingOverlay/>}
+      {loading && <LoadingOverlay />}
     </>
   );
 };
