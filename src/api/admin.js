@@ -1,15 +1,15 @@
-import { baseAxios } from "./baseAxios";
+import { baseAxios } from "./baseAxios"
 
 export const admin = {
   user: {
     createRoles: async (body) => {
-      const { data } = await baseAxios.post("/admin/user/roles", body);
+      const { data } = await baseAxios.post("/admin/user/roles", body)
 
-      return data;
+      return data
     },
 
     deleteRoles: async (body) => {
-      await baseAxios.delete("/admin/user/roles", { data: body });
+      await baseAxios.delete("/admin/user/roles", { data: body })
     }
   }
-};
+}

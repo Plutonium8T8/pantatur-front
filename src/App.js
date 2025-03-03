@@ -1,93 +1,93 @@
-import React, { useState, useEffect } from "react";
-import "./App.css";
+import React, { useState, useEffect } from "react"
+import "./App.css"
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Navigate
-} from "react-router-dom";
-import Leads from "./Components/LeadsComponent/LeadsComponent";
-import LoginForm from "./Components/LoginComponent/LoginForm";
-import { UserProvider, useUser } from "./UserContext";
-import CustomSidebar from "./Components/SideBar/SideBar";
-import ChatComponent from "./Components/ChatComponent/chat";
-import Cookies from "js-cookie";
-import { AppProvider } from "./AppContext";
-import { SnackbarProvider } from "notistack";
-import NotificationModal from "./Components/SlideInComponent/NotificationModal";
-import TaskComponent from "./Components/SlideInComponent/TaskComponent";
-import AdminPanel from "./Components/AdminPanelComponent/AdminPanel";
-import Dashboard from "./Components/DashboardComponent/Dashboard";
-import UserPage from "./Components/UserPage/UserPage";
-import { NavigationProvider } from "./NavigationContext";
-import { api } from "./api";
-import { SpinnerRightBottom } from "./Components/SpinnerRightBottom";
+} from "react-router-dom"
+import Leads from "./Components/LeadsComponent/LeadsComponent"
+import LoginForm from "./Components/LoginComponent/LoginForm"
+import { UserProvider, useUser } from "./UserContext"
+import CustomSidebar from "./Components/SideBar/SideBar"
+import ChatComponent from "./Components/ChatComponent/chat"
+import Cookies from "js-cookie"
+import { AppProvider } from "./AppContext"
+import { SnackbarProvider } from "notistack"
+import NotificationModal from "./Components/SlideInComponent/NotificationModal"
+import TaskComponent from "./Components/SlideInComponent/TaskComponent"
+import AdminPanel from "./Components/AdminPanelComponent/AdminPanel"
+import Dashboard from "./Components/DashboardComponent/Dashboard"
+import UserPage from "./Components/UserPage/UserPage"
+import { NavigationProvider } from "./NavigationContext"
+import { api } from "./api"
+import { SpinnerRightBottom } from "./Components/SpinnerRightBottom"
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
-  const [isTaskComponentOpen, setIsTaskComponentOpen] = useState(false);
-  const [isAccountComponentOpen, setIsAccountComponentOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false)
+  const [isTaskComponentOpen, setIsTaskComponentOpen] = useState(false)
+  const [isAccountComponentOpen, setIsAccountComponentOpen] = useState(false)
 
   const { setUserId, setName, setSurname, userRoles, hasRole, isLoadingRoles } =
-    useUser();
+    useUser()
 
   const fetchSession = async () => {
-    const token = Cookies.get("jwt");
+    const token = Cookies.get("jwt")
 
     if (!token) {
-      console.log("❌ JWT отсутствует, пропускаем загрузку сессии.");
-      setIsLoggedIn(false);
-      setUserId(null);
-      setName(null);
-      setSurname(null);
-      setIsLoading(false);
-      return;
+      console.log("❌ JWT отсутствует, пропускаем загрузку сессии.")
+      setIsLoggedIn(false)
+      setUserId(null)
+      setName(null)
+      setSurname(null)
+      setIsLoading(false)
+      return
     }
-    setIsLoading(true);
+    setIsLoading(true)
 
     try {
-      const data = await api.auth.session();
+      const data = await api.auth.session()
 
       if (data.user_id) {
-        console.log("✅ Сессия активна, user_id:", data.user_id);
-        setIsLoggedIn(true);
-        setUserId(data.user_id);
-        setName(data.username || "");
-        setSurname(data.surname || "");
+        console.log("✅ Сессия активна, user_id:", data.user_id)
+        setIsLoggedIn(true)
+        setUserId(data.user_id)
+        setName(data.username || "")
+        setSurname(data.surname || "")
       } else {
-        console.log("❌ Нет user_id в ответе, выход...");
-        handleLogout();
+        console.log("❌ Нет user_id в ответе, выход...")
+        handleLogout()
       }
     } catch (error) {
-      console.log("❌ Ошибка при запросе сессии:", error.message);
-      handleLogout();
+      console.log("❌ Ошибка при запросе сессии:", error.message)
+      handleLogout()
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   useEffect(() => {
-    fetchSession();
-  }, []);
+    fetchSession()
+  }, [])
 
   const handleLogin = async () => {
-    console.log("🔄 Логин: обновляем сессию...");
-    await fetchSession();
-  };
+    console.log("🔄 Логин: обновляем сессию...")
+    await fetchSession()
+  }
 
   const handleLogout = () => {
-    console.log("❌ Выход: очищаем токен, роли и сессию...");
-    Cookies.remove("jwt");
-    setIsLoggedIn(false);
-    setUserId(null);
-    setName(null);
-    setSurname(null);
-  };
+    console.log("❌ Выход: очищаем токен, роли и сессию...")
+    Cookies.remove("jwt")
+    setIsLoggedIn(false)
+    setUserId(null)
+    setName(null)
+    setSurname(null)
+  }
 
   if (isLoading || isLoadingRoles) {
-    return <SpinnerRightBottom />;
+    return <SpinnerRightBottom />
   }
 
   const NoAccess = () => (
@@ -101,7 +101,7 @@ function App() {
     >
       <h2>No access page!</h2>
     </div>
-  );
+  )
 
   return (
     <Router basename="/">
@@ -161,7 +161,7 @@ function App() {
         </AppProvider>
       </NavigationProvider>
     </Router>
-  );
+  )
 }
 
-export default App;
+export default App

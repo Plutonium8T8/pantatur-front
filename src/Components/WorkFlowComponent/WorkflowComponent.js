@@ -1,16 +1,16 @@
-import React from "react";
-import Select from "react-select";
-import { workflowOptions as rawWorkflowOptions } from "../../FormOptions/WorkFlowOption";
-import { workflowStyles } from "../utils/workflowStyles";
-import { translations } from "../utils/translations";
+import React from "react"
+import Select from "react-select"
+import { workflowOptions as rawWorkflowOptions } from "../../FormOptions/WorkFlowOption"
+import { workflowStyles } from "../utils/workflowStyles"
+import { translations } from "../utils/translations"
 
 const workflowOptions = rawWorkflowOptions.map((workflow) => ({
   value: workflow,
   label: workflow
-}));
+}))
 
 export const Workflow = ({ ticket, onChange = () => {}, disabled = false }) => {
-  const language = localStorage.getItem("language") || "RO";
+  const language = localStorage.getItem("language") || "RO"
 
   const customStyles = {
     option: (provided, state) => ({
@@ -41,11 +41,11 @@ export const Workflow = ({ ticket, onChange = () => {}, disabled = false }) => {
       ...provided,
       color: "#000"
     })
-  };
+  }
 
   const selectedOption = workflowOptions.find(
     (option) => option.value === ticket?.workflow
-  );
+  )
 
   return (
     <div className="container-options-component">
@@ -62,7 +62,7 @@ export const Workflow = ({ ticket, onChange = () => {}, disabled = false }) => {
         isDisabled={disabled}
       />
     </div>
-  );
-};
+  )
+}
 
-export default Workflow;
+export default Workflow

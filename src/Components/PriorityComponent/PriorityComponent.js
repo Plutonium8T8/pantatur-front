@@ -1,9 +1,9 @@
-import React from "react";
-import { priorityOptions } from "../../FormOptions/PriorityOption";
-import { translations } from "../utils/translations";
+import React from "react"
+import { priorityOptions } from "../../FormOptions/PriorityOption"
+import { translations } from "../utils/translations"
 
 export const Priority = ({ ticket, onChange = () => {}, disabled = false }) => {
-  const language = localStorage.getItem("language") || "RO";
+  const language = localStorage.getItem("language") || "RO"
 
   return (
     <div className="container-options-component">
@@ -23,7 +23,7 @@ export const Priority = ({ ticket, onChange = () => {}, disabled = false }) => {
         ))}
       </select>
     </div>
-  );
-};
+  )
+}
 
-export default Priority;
+export default Priority

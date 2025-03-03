@@ -7,10 +7,10 @@
 export const truncateText = (text, maxLength = 100) => {
   if (!text || typeof text !== "string") {
     // console.warn('truncateText: Invalid input', text);
-    return "N/A";
+    return "N/A"
   }
-  return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
-};
+  return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text
+}
 
 /**
  * Parses a tag string or returns an array directly if already formatted.
@@ -19,11 +19,11 @@ export const truncateText = (text, maxLength = 100) => {
  */
 export const parseTags = (tags) => {
   if (Array.isArray(tags)) {
-    return tags; // Already an array, return as is.
+    return tags // Already an array, return as is.
   }
   if (typeof tags === "string" && tags.startsWith("{") && tags.endsWith("}")) {
-    const content = tags.slice(1, -1).trim(); // Remove braces and trim.
-    return content ? content.split(",").map((tag) => tag.trim()) : [];
+    const content = tags.slice(1, -1).trim() // Remove braces and trim.
+    return content ? content.split(",").map((tag) => tag.trim()) : []
   }
-  return []; // Return empty array for unsupported formats.
-};
+  return [] // Return empty array for unsupported formats.
+}

@@ -1,5 +1,5 @@
-import React from "react";
-import "./ToggleSwitch.css";
+import React from "react"
+import "./ToggleSwitch.css"
 
 const ToggleSwitch = ({ label, checked = false, onChange, className = "" }) => {
   return (
@@ -14,7 +14,7 @@ const ToggleSwitch = ({ label, checked = false, onChange, className = "" }) => {
         <span className="slider round"></span>
       </label>
     </div>
-  );
-};
+  )
+}
 
-export default ToggleSwitch;
+export default ToggleSwitch

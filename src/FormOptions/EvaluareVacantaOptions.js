@@ -10,4 +10,4 @@ export const evaluareOdihnaOptions = [
   "8",
   "9",
   "10"
-];
+]

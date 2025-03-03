@@ -3,4 +3,4 @@ export const transportOptions = [
   "Autocar",
   "Transport personal",
   "Fara transport"
-];
+]

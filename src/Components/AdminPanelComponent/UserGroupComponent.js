@@ -1,111 +1,111 @@
-import React, { useEffect, useState } from "react";
-import "./ModalWithToggles.css";
-import { FaTrash } from "react-icons/fa";
-import { translations } from "../utils/translations";
-import { api } from "../../api";
-import { useSnackbar } from "notistack";
-import { getLanguageByKey } from "../utils/getLanguageByKey";
+import React, { useEffect, useState } from "react"
+import "./ModalWithToggles.css"
+import { FaTrash } from "react-icons/fa"
+import { translations } from "../utils/translations"
+import { api } from "../../api"
+import { useSnackbar } from "notistack"
+import { getLanguageByKey } from "../utils/getLanguageByKey"
 
 const UserGroupComponent = ({ onChange, userId, roles }) => {
-  const language = localStorage.getItem("language") || "RO";
-  const [userGroups, setUserGroups] = useState([]);
-  const [inputValue, setInputValue] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
-  const [filteredSuggestions, setFilteredSuggestions] = useState([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const { enqueueSnackbar } = useSnackbar();
+  const language = localStorage.getItem("language") || "RO"
+  const [userGroups, setUserGroups] = useState([])
+  const [inputValue, setInputValue] = useState("")
+  const [suggestions, setSuggestions] = useState([])
+  const [filteredSuggestions, setFilteredSuggestions] = useState([])
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const { enqueueSnackbar } = useSnackbar()
 
   useEffect(() => {
     const fetchUserGroups = async () => {
       try {
-        const data = await api.user.getGroupsList();
+        const data = await api.user.getGroupsList()
 
-        setUserGroups(data); // Set user groups from API response
-        setSuggestions(data.map((group) => group.name)); // Store names for suggestions
+        setUserGroups(data) // Set user groups from API response
+        setSuggestions(data.map((group) => group.name)) // Store names for suggestions
       } catch (error) {
         enqueueSnackbar(
           getLanguageByKey("Eroare neașteptată, încercați mai târziu"),
           { variant: "error" }
-        );
-        console.error("Error fetching user groups:", error);
+        )
+        console.error("Error fetching user groups:", error)
       }
-    };
+    }
 
-    fetchUserGroups();
-  }, []);
+    fetchUserGroups()
+  }, [])
 
   /**
    * Create and add a new user group with roles.
    */
   const addUserGroup = async (name) => {
     try {
-      const newUserGroup = await api.user.createGroup({ name, roles });
+      const newUserGroup = await api.user.createGroup({ name, roles })
 
-      setUserGroups((prev) => [...prev, newUserGroup]); // Add new group to state
-      setSuggestions([...suggestions, newUserGroup.name]);
-      onChange(); // Notify parent component
+      setUserGroups((prev) => [...prev, newUserGroup]) // Add new group to state
+      setSuggestions([...suggestions, newUserGroup.name])
+      onChange() // Notify parent component
     } catch (error) {
       enqueueSnackbar(
         getLanguageByKey("Eroare neașteptată, încercați mai târziu"),
         { variant: "error" }
-      );
+      )
     }
-  };
+  }
 
   const applyUserGroupRoles = async (groupId, userId) => {
     try {
-      await api.user.assignGroups(groupId, userId);
+      await api.user.assignGroups(groupId, userId)
 
-      onChange();
+      onChange()
     } catch (error) {
       enqueueSnackbar(
         getLanguageByKey("Eroare neașteptată, încercați mai târziu"),
         { variant: "error" }
-      );
-      console.error("Error applying user group roles:", error);
+      )
+      console.error("Error applying user group roles:", error)
     }
-  };
+  }
 
   /**
    * Remove a user group from the API and UI.
    */
   const removeUserGroup = async (groupId) => {
     try {
-      await api.user.deleteGroups(groupId);
+      await api.user.deleteGroups(groupId)
 
-      setUserGroups(userGroups.filter((group) => group.id !== groupId)); // Remove from UI
-      onChange(userGroups.filter((group) => group.id !== groupId));
+      setUserGroups(userGroups.filter((group) => group.id !== groupId)) // Remove from UI
+      onChange(userGroups.filter((group) => group.id !== groupId))
     } catch (error) {
       enqueueSnackbar(
         getLanguageByKey("Eroare neașteptată, încercați mai târziu"),
         { variant: "error" }
-      );
-      console.error("Error removing user group:", error);
+      )
+      console.error("Error removing user group:", error)
     }
-  };
+  }
 
   /**
    * Handle input field changes for user group search.
    */
   const handleInputChange = (e) => {
-    const value = e.target.value;
-    setInputValue(value);
+    const value = e.target.value
+    setInputValue(value)
 
     const filtered = suggestions.filter((suggestion) =>
       suggestion.toLowerCase().includes(value.toLowerCase())
-    );
-    setFilteredSuggestions(filtered);
-    setShowSuggestions(true);
-  };
+    )
+    setFilteredSuggestions(filtered)
+    setShowSuggestions(true)
+  }
 
   const handleFocus = () => {
-    setFilteredSuggestions(suggestions);
-    setShowSuggestions(true);
-  };
+    setFilteredSuggestions(suggestions)
+    setShowSuggestions(true)
+  }
 
   const handleBlur = () => {
-    setTimeout(() => setShowSuggestions(false), 200);
-  };
+    setTimeout(() => setShowSuggestions(false), 200)
+  }
 
   return (
     <div className="userGroup-input-container">
@@ -144,7 +144,7 @@ const UserGroupComponent = ({ onChange, userId, roles }) => {
       <div className="button-container">
         <button
           onClick={() => {
-            if (inputValue.trim()) addUserGroup(inputValue);
+            if (inputValue.trim()) addUserGroup(inputValue)
           }}
           className="submit-button"
         >
@@ -152,7 +152,7 @@ const UserGroupComponent = ({ onChange, userId, roles }) => {
         </button>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default UserGroupComponent;
+export default UserGroupComponent

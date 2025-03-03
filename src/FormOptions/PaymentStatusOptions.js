@@ -1,1 +1,1 @@
-export const paymentStatusOptions = ["Part pay", "Full pay"];
+export const paymentStatusOptions = ["Part pay", "Full pay"]

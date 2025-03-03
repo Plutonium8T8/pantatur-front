@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { truncateText, parseTags } from "../../stringUtils";
-import { getPriorityColor } from "../utils/ticketUtils";
-import "./TicketCardComponent.css";
+import React, { useState } from "react"
+import { Link } from "react-router-dom"
+import { truncateText, parseTags } from "../../stringUtils"
+import { getPriorityColor } from "../utils/ticketUtils"
+import "./TicketCardComponent.css"
 
 const TicketCard = ({ ticket, onEditTicket }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const tags = parseTags(ticket.tags);
+  const [isHovered, setIsHovered] = useState(false)
+  const tags = parseTags(ticket.tags)
 
   // Удаляем `{}` из номера телефона
   const formattedPhone =
@@ -14,7 +14,7 @@ const TicketCard = ({ ticket, onEditTicket }) => {
     ticket.phone.trim() !== "" &&
     ticket.phone.replace(/[{}]/g, "").trim().toLowerCase() !== "null"
       ? ticket.phone.replace(/[{}]/g, "").trim()
-      : "Unknown number";
+      : "Unknown number"
 
   return (
     <div
@@ -86,7 +86,7 @@ const TicketCard = ({ ticket, onEditTicket }) => {
         </div>
       </Link>
     </div>
-  );
-};
+  )
+}
 
-export default TicketCard;
+export default TicketCard

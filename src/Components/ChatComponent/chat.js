@@ -1,57 +1,52 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useRef, useMemo } from "react"
+import { useParams, useNavigate } from "react-router-dom"
 import {
   FaArrowLeft,
   FaArrowRight,
   FaFile,
   FaPaperPlane,
   FaSmile
-} from "react-icons/fa";
-import Select from "../SelectComponent/SelectComponent";
-import { useUser } from "../../UserContext";
-import { transportOptions } from "../../FormOptions/TransportOptions";
-import { motivulRefuzuluiOptions } from "../../FormOptions/MotivulRefuzuluiOptions";
-import { countryOptions } from "../../FormOptions/CountryOptions";
-import { marketingOptions } from "../../FormOptions/MarketingOptions";
-import { nameExcursionOptions } from "../../FormOptions/NameExcursionOptions";
-import { paymentStatusOptions } from "../../FormOptions/PaymentStatusOptions";
-import { purchaseProcessingOptions } from "../../FormOptions/PurchaseProcessingOptions";
-import { serviceTypeOptions } from "../../FormOptions/ServiceTypeOptions";
-import { sourceOfLeadOptions } from "../../FormOptions/SourceOfLeadOptions";
-import { promoOptions } from "../../FormOptions/PromoOptions";
-import { templateOptions } from "../../FormOptions/MessageTemplate";
-import TechnicianSelect from "../../FormOptions/ResponsabilLead";
-import Input from "../InputComponent/InputComponent";
-import Workflow from "../WorkFlowComponent/WorkflowComponent";
-import "react-datepicker/dist/react-datepicker.css";
-import { useAppContext } from "../../AppContext";
-import { useSnackbar } from "notistack";
-import "./chat.css";
-import EmojiPicker from "emoji-picker-react";
-import ReactDOM from "react-dom";
-import { translations } from "../utils/translations";
-import TicketFilterModal from "../LeadsComponent/TicketFilterModal";
-import {
-  FaFacebook,
-  FaInstagram,
-  FaWhatsapp,
-  FaTelegram
-} from "react-icons/fa";
-import { SiViber } from "react-icons/si";
-import { useLocation } from "react-router-dom";
-import TaskModal from "../SlideInComponent/TaskComponent";
-import { FaTasks } from "react-icons/fa";
-import { evaluareOdihnaOptions } from "../../FormOptions/EvaluareVacantaOptions";
-import { valutaOptions } from "../../FormOptions/ValutaOptions";
-import { ibanOptions } from "../../FormOptions/IbanOptions";
-import { api } from "../../api";
-import { showServerError } from "../../Components/utils/showServerError";
-import { Button } from "../Button";
-import ToggleSwitch from "../ToggleComponent/ToggleSwitch";
+} from "react-icons/fa"
+import Select from "../SelectComponent/SelectComponent"
+import { useUser } from "../../UserContext"
+import { transportOptions } from "../../FormOptions/TransportOptions"
+import { motivulRefuzuluiOptions } from "../../FormOptions/MotivulRefuzuluiOptions"
+import { countryOptions } from "../../FormOptions/CountryOptions"
+import { marketingOptions } from "../../FormOptions/MarketingOptions"
+import { nameExcursionOptions } from "../../FormOptions/NameExcursionOptions"
+import { paymentStatusOptions } from "../../FormOptions/PaymentStatusOptions"
+import { purchaseProcessingOptions } from "../../FormOptions/PurchaseProcessingOptions"
+import { serviceTypeOptions } from "../../FormOptions/ServiceTypeOptions"
+import { sourceOfLeadOptions } from "../../FormOptions/SourceOfLeadOptions"
+import { promoOptions } from "../../FormOptions/PromoOptions"
+import { templateOptions } from "../../FormOptions/MessageTemplate"
+import TechnicianSelect from "../../FormOptions/ResponsabilLead"
+import Input from "../InputComponent/InputComponent"
+import Workflow from "../WorkFlowComponent/WorkflowComponent"
+import "react-datepicker/dist/react-datepicker.css"
+import { useAppContext } from "../../AppContext"
+import { useSnackbar } from "notistack"
+import "./chat.css"
+import EmojiPicker from "emoji-picker-react"
+import ReactDOM from "react-dom"
+import { translations } from "../utils/translations"
+import TicketFilterModal from "../LeadsComponent/TicketFilterModal"
+import { FaFacebook, FaInstagram, FaWhatsapp, FaTelegram } from "react-icons/fa"
+import { SiViber } from "react-icons/si"
+import { useLocation } from "react-router-dom"
+import TaskModal from "../SlideInComponent/TaskComponent"
+import { FaTasks } from "react-icons/fa"
+import { evaluareOdihnaOptions } from "../../FormOptions/EvaluareVacantaOptions"
+import { valutaOptions } from "../../FormOptions/ValutaOptions"
+import { ibanOptions } from "../../FormOptions/IbanOptions"
+import { api } from "../../api"
+import { showServerError } from "../../Components/utils/showServerError"
+import { Button } from "../Button"
+import ToggleSwitch from "../ToggleComponent/ToggleSwitch"
 
 const ChatComponent = ({}) => {
-  const { userId, hasRole, isLoadingRoles } = useUser();
-  const [managerMessage, setManagerMessage] = useState("");
+  const { userId, hasRole, isLoadingRoles } = useUser()
+  const [managerMessage, setManagerMessage] = useState("")
   const {
     tickets,
     updateTicket,
@@ -62,38 +57,38 @@ const ChatComponent = ({}) => {
     selectTicketId,
     setSelectTicketId,
     getClientMessagesSingle
-  } = useAppContext();
-  const [extraInfo, setExtraInfo] = useState({});
-  const [personalInfo, setPersonalInfo] = useState({});
-  const messageContainerRef = useRef(null);
-  const { ticketId } = useParams();
-  const [isLoading, setIsLoading] = useState(false);
-  const { enqueueSnackbar } = useSnackbar();
-  const navigate = useNavigate();
-  const [selectedTechnicianId, setSelectedTechnicianId] = useState("");
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  } = useAppContext()
+  const [extraInfo, setExtraInfo] = useState({})
+  const [personalInfo, setPersonalInfo] = useState({})
+  const messageContainerRef = useRef(null)
+  const { ticketId } = useParams()
+  const [isLoading, setIsLoading] = useState(false)
+  const { enqueueSnackbar } = useSnackbar()
+  const navigate = useNavigate()
+  const [selectedTechnicianId, setSelectedTechnicianId] = useState("")
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false)
   const [emojiPickerPosition, setEmojiPickerPosition] = useState({
     top: 0,
     left: 0
-  });
-  const [selectedMessage, setSelectedMessage] = useState(null);
-  const [selectedMessageId, setSelectedMessageId] = useState(null);
-  const [selectedReaction, setSelectedReaction] = useState({});
-  const reactionContainerRef = useRef(null);
-  const [filteredTickets, setFilteredTickets] = useState(tickets);
-  const [showMyTickets, setShowMyTickets] = useState(false);
-  const [selectedClient, setSelectedClient] = useState("");
-  const fileInputRef = useRef(null);
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [appliedFilters, setAppliedFilters] = useState({});
-  const ticketRef = useRef(null);
-  const [isChatListVisible, setIsChatListVisible] = useState(true);
-  const location = useLocation();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("extraForm");
-  const [filteredTicketIds, setFilteredTicketIds] = useState(null);
-  const [isAdmin, setIsAdmin] = useState(false);
+  })
+  const [selectedMessage, setSelectedMessage] = useState(null)
+  const [selectedMessageId, setSelectedMessageId] = useState(null)
+  const [selectedReaction, setSelectedReaction] = useState({})
+  const reactionContainerRef = useRef(null)
+  const [filteredTickets, setFilteredTickets] = useState(tickets)
+  const [showMyTickets, setShowMyTickets] = useState(false)
+  const [selectedClient, setSelectedClient] = useState("")
+  const fileInputRef = useRef(null)
+  const [isFilterOpen, setIsFilterOpen] = useState(false)
+  const [appliedFilters, setAppliedFilters] = useState({})
+  const ticketRef = useRef(null)
+  const [isChatListVisible, setIsChatListVisible] = useState(true)
+  const location = useLocation()
+  const [searchQuery, setSearchQuery] = useState("")
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false)
+  const [activeTab, setActiveTab] = useState("extraForm")
+  const [filteredTicketIds, setFilteredTicketIds] = useState(null)
+  const [isAdmin, setIsAdmin] = useState(false)
 
   const platformIcons = {
     facebook: <FaFacebook />,
@@ -101,36 +96,36 @@ const ChatComponent = ({}) => {
     whatsapp: <FaWhatsapp />,
     viber: <SiViber />,
     telegram: <FaTelegram />
-  };
+  }
 
   useEffect(() => {
     if (!isLoadingRoles) {
-      setIsAdmin(hasRole("ROLE_ADMIN"));
+      setIsAdmin(hasRole("ROLE_ADMIN"))
     }
-  }, [isLoadingRoles, hasRole]);
+  }, [isLoadingRoles, hasRole])
 
   const applyFilters = (filters) => {
-    setAppliedFilters(filters);
-  };
+    setAppliedFilters(filters)
+  }
 
   useEffect(() => {
     if (ticketId) {
-      setSelectTicketId(Number(ticketId));
+      setSelectTicketId(Number(ticketId))
     }
-  }, [ticketId, setSelectTicketId]);
+  }, [ticketId, setSelectTicketId])
 
   const fetchTicketExtraInfo = async (selectTicketId) => {
     try {
-      const data = await api.tickets.ticket.getInfo(selectTicketId);
+      const data = await api.tickets.ticket.getInfo(selectTicketId)
       setExtraInfo((prevState) => ({
         ...prevState,
         [selectTicketId]: data
-      }));
+      }))
     } catch (error) {
-      enqueueSnackbar("Error upload extra_info", { variant: "error" });
-      console.error("Error upldoad extra_info:", error);
+      enqueueSnackbar("Error upload extra_info", { variant: "error" })
+      console.error("Error upldoad extra_info:", error)
     }
-  };
+  }
 
   const handleSelectChangeExtra = (ticketId, field, value) => {
     setExtraInfo((prevState) => {
@@ -140,79 +135,79 @@ const ChatComponent = ({}) => {
           ...prevState[ticketId],
           [field]: value
         }
-      };
-      return newState;
-    });
-  };
+      }
+      return newState
+    })
+  }
 
   const sendExtraInfo = async () => {
-    const ticketExtraInfo = extraInfo[selectTicketId];
+    const ticketExtraInfo = extraInfo[selectTicketId]
 
     if (!ticketExtraInfo) {
       console.warn(
         "Нет дополнительной информации для выбранного тикета.",
         ticketExtraInfo
-      );
-      return;
+      )
+      return
     }
-    setIsLoading(true);
+    setIsLoading(true)
 
     const processedExtraInfo = Object.fromEntries(
       Object.entries(ticketExtraInfo).map(([key, value]) => [
         key,
         value === false ? "false" : value
       ])
-    );
+    )
 
     try {
       const result = await api.tickets.ticket.create(
         selectTicketId,
         processedExtraInfo
-      );
+      )
 
-      enqueueSnackbar("Данные успешно обновлены", { variant: "success" });
-      console.log("Данные успешно отправлены:", result);
+      enqueueSnackbar("Данные успешно обновлены", { variant: "success" })
+      console.log("Данные успешно отправлены:", result)
     } catch (error) {
       enqueueSnackbar("Ошибка при обновлении дополнительной информации", {
         variant: "error"
-      });
-      console.error("Ошибка при отправке дополнительной информации:", error);
+      })
+      console.error("Ошибка при отправке дополнительной информации:", error)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const scrollToBottom = () => {
     if (messageContainerRef.current) {
       messageContainerRef.current.scrollTop =
-        messageContainerRef.current.scrollHeight;
+        messageContainerRef.current.scrollHeight
     }
-  };
+  }
 
   useEffect(() => {
-    scrollToBottom();
-  }, [selectTicketId]);
+    scrollToBottom()
+  }, [selectTicketId])
 
   useEffect(() => {
-    if (!selectTicketId) return;
-    getClientMessagesSingle(selectTicketId);
-    fetchClientDataPersonal(selectTicketId, setPersonalInfo);
-    fetchTicketExtraInfo(selectTicketId);
-  }, [selectTicketId]);
+    if (!selectTicketId) return
+    getClientMessagesSingle(selectTicketId)
+    fetchClientDataPersonal(selectTicketId, setPersonalInfo)
+    fetchTicketExtraInfo(selectTicketId)
+  }, [selectTicketId])
 
   const handleTicketClick = async (ticketId) => {
-    if (selectTicketId === ticketId) return;
+    if (selectTicketId === ticketId) return
 
-    setSelectTicketId(ticketId);
-    navigate(`/chat/${ticketId}`);
+    setSelectTicketId(ticketId)
+    navigate(`/chat/${ticketId}`)
 
-    const selectedTicket = tickets.find((ticket) => ticket.id === ticketId);
+    const selectedTicket = tickets.find((ticket) => ticket.id === ticketId)
     setSelectedTechnicianId(
       selectedTicket ? selectedTicket.technician_id || null : null
-    );
+    )
 
-    await markMessagesAsRead(ticketId);
-  };
+    await markMessagesAsRead(ticketId)
+  }
 
   const workflowOptions = [
     "Interesat",
@@ -226,17 +221,17 @@ const ChatComponent = ({}) => {
     "Contract încheiat",
     "Realizat cu succes",
     "Închis și nerealizat"
-  ];
+  ]
 
   const workflowIndices = workflowOptions.reduce((acc, workflow, index) => {
-    acc[workflow] = index;
-    return acc;
-  }, {});
+    acc[workflow] = index
+    return acc
+  }, {})
 
-  const [fieldErrors, setFieldErrors] = useState({});
+  const [fieldErrors, setFieldErrors] = useState({})
 
   const updatedTicket =
-    tickets.find((ticket) => ticket.id === selectTicketId) || null;
+    tickets.find((ticket) => ticket.id === selectTicketId) || null
 
   const requiredFields = {
     "Luat în lucru": ["sursa_lead", "promo", "marketing"],
@@ -267,54 +262,54 @@ const ChatComponent = ({}) => {
       "comission_companie"
     ],
     "Realizat cu succes": ["control_admin"]
-  };
+  }
 
   const handleWorkflowChange = async (event) => {
-    const newWorkflow = event.target.value;
+    const newWorkflow = event.target.value
 
     if (!updatedTicket) {
       enqueueSnackbar("Eroare: Ticketul nu a fost găsit.", {
         variant: "error"
-      });
-      return;
+      })
+      return
     }
 
-    const workflowIndex = workflowIndices[newWorkflow];
-    let newFieldErrors = {};
+    const workflowIndex = workflowIndices[newWorkflow]
+    let newFieldErrors = {}
 
     for (const [step, fields] of Object.entries(requiredFields)) {
       if (workflowIndices[step] <= workflowIndex) {
         fields.forEach((field) => {
           if (!extraInfo[selectTicketId]?.[field]) {
-            newFieldErrors[field] = true;
+            newFieldErrors[field] = true
           }
-        });
+        })
       }
     }
 
     if (newWorkflow === "Închis și nerealizat") {
-      newFieldErrors = {};
+      newFieldErrors = {}
       if (!extraInfo[selectTicketId]?.motivul_refuzului) {
-        newFieldErrors.motivul_refuzului = true;
+        newFieldErrors.motivul_refuzului = true
       }
     }
 
-    setFieldErrors(newFieldErrors);
+    setFieldErrors(newFieldErrors)
 
     if (Object.keys(newFieldErrors).length > 0) {
       enqueueSnackbar(
         `Completați toate câmpurile obligatorii pentru "${newWorkflow}" și etapele anterioare înainte de a face modificări!`,
         { variant: "error" }
-      );
-      return;
+      )
+      return
     }
 
     try {
-      await updateTicket({ id: updatedTicket.id, workflow: newWorkflow });
+      await updateTicket({ id: updatedTicket.id, workflow: newWorkflow })
 
       enqueueSnackbar("Statutul tichetului a fost actualizat!", {
         variant: "success"
-      });
+      })
 
       setTickets((prevTickets) =>
         prevTickets.map((ticket) =>
@@ -322,27 +317,27 @@ const ChatComponent = ({}) => {
             ? { ...ticket, workflow: newWorkflow }
             : ticket
         )
-      );
+      )
 
-      console.log("Workflow actualizat:", newWorkflow);
+      console.log("Workflow actualizat:", newWorkflow)
     } catch (error) {
       enqueueSnackbar("Eroare: Statutul tichetului nu a fost actualizat.", {
         variant: "error"
-      });
-      console.error("Eroare la actualizarea workflow:", error.message);
+      })
+      console.error("Eroare la actualizarea workflow:", error.message)
     }
-  };
+  }
 
   const handleFieldChange = (field, value) => {
-    handleSelectChangeExtra(selectTicketId, field, value);
+    handleSelectChangeExtra(selectTicketId, field, value)
     if (value) {
-      setFieldErrors((prev) => ({ ...prev, [field]: false }));
+      setFieldErrors((prev) => ({ ...prev, [field]: false }))
     }
-  };
+  }
 
   useEffect(() => {
-    setFieldErrors({});
-  }, [selectTicketId]);
+    setFieldErrors({})
+  }, [selectTicketId])
 
   const getTabErrorIndicator = (tab) => {
     const tabFields = {
@@ -365,14 +360,14 @@ const ChatComponent = ({}) => {
       Invoice: ["statutul_platii", "pret_netto", "comission_companie"],
       Media: [],
       "Control calitate": ["motivul_refuzului"]
-    };
+    }
 
-    return tabFields[tab]?.some((field) => fieldErrors[field]) ? "🔴" : "";
-  };
+    return tabFields[tab]?.some((field) => fieldErrors[field]) ? "🔴" : ""
+  }
 
   useEffect(() => {
-    const pretNetto = extraInfo[selectTicketId]?.pret_netto;
-    const buget = extraInfo[selectTicketId]?.buget;
+    const pretNetto = extraInfo[selectTicketId]?.pret_netto
+    const buget = extraInfo[selectTicketId]?.buget
 
     if (
       pretNetto !== "" &&
@@ -380,22 +375,22 @@ const ChatComponent = ({}) => {
       pretNetto !== undefined &&
       buget !== undefined
     ) {
-      const newComision = parseFloat(buget) - parseFloat(pretNetto);
-      handleFieldChange("comission_companie", newComision.toFixed(2));
+      const newComision = parseFloat(buget) - parseFloat(pretNetto)
+      handleFieldChange("comission_companie", newComision.toFixed(2))
     }
   }, [
     extraInfo[selectTicketId]?.pret_netto,
     extraInfo[selectTicketId]?.buget,
     selectTicketId
-  ]);
+  ])
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   const handleReactionClick = (reaction, messageId) => {
     setSelectedReaction((prev) => ({
       ...prev,
       [messageId]: reaction
-    }));
-  };
+    }))
+  }
 
   // // Пример функции sendReaction с подтверждением от сервера
   // const sendReaction = (messageId, senderId, reaction) => {
@@ -447,239 +442,239 @@ const ChatComponent = ({}) => {
 
   const getLastReaction = (message) => {
     if (!message.reactions) {
-      return "☺";
+      return "☺"
     }
 
     try {
       const reactionsArray = message.reactions
         .replace(/^{|}$/g, "")
         .split('","')
-        .map((reaction) => reaction.replace(/(^"|"$|\")/g, "").trim());
+        .map((reaction) => reaction.replace(/(^"|"$|\")/g, "").trim())
 
       const parsedReactions = reactionsArray.map((reaction) => {
         try {
-          const normalizedReaction = reaction.replace('\"', "");
-          const parsed = JSON.parse(normalizedReaction);
-          return parsed.reaction;
+          const normalizedReaction = reaction.replace('\"', "")
+          const parsed = JSON.parse(normalizedReaction)
+          return parsed.reaction
         } catch {
-          return reaction;
+          return reaction
         }
-      });
+      })
 
       return parsedReactions.length > 0
         ? parsedReactions[parsedReactions.length - 1]
-        : "☺";
+        : "☺"
     } catch (error) {
-      console.error("Ошибка при обработке реакций:", error);
-      return "☺";
+      console.error("Ошибка при обработке реакций:", error)
+      return "☺"
     }
-  };
+  }
 
   const handleClickOutsideReaction = (event) => {
     if (
       reactionContainerRef.current &&
       !reactionContainerRef.current.contains(event.target)
     ) {
-      setSelectedMessageId(null); // Закрываем реакции
+      setSelectedMessageId(null) // Закрываем реакции
     }
-  };
+  }
 
   useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutsideReaction);
+    document.addEventListener("mousedown", handleClickOutsideReaction)
     return () => {
-      document.removeEventListener("mousedown", handleClickOutsideReaction);
-    };
-  }, []);
+      document.removeEventListener("mousedown", handleClickOutsideReaction)
+    }
+  }, [])
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   const handleEmojiClick = (emojiObject) => {
-    setManagerMessage((prevMessage) => prevMessage + emojiObject.emoji);
-    console.log(emojiObject.emoji);
-  };
+    setManagerMessage((prevMessage) => prevMessage + emojiObject.emoji)
+    console.log(emojiObject.emoji)
+  }
 
   const handleEmojiClickButton = (event) => {
-    const rect = event.target.getBoundingClientRect();
-    const emojiPickerHeight = 450;
+    const rect = event.target.getBoundingClientRect()
+    const emojiPickerHeight = 450
 
     setEmojiPickerPosition({
       top: rect.top + window.scrollY - emojiPickerHeight,
       left: rect.left + window.scrollX
-    });
+    })
 
-    setShowEmojiPicker((prev) => !prev);
-  };
+    setShowEmojiPicker((prev) => !prev)
+  }
 
   const handleClickOutside = (event) => {
     if (
       !event.target.closest(".emoji-button") &&
       !event.target.closest(".emoji-picker-popup")
     ) {
-      setShowEmojiPicker(false);
+      setShowEmojiPicker(false)
     }
-  };
+  }
 
   useEffect(() => {
-    document.addEventListener("click", handleClickOutside);
+    document.addEventListener("click", handleClickOutside)
     return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, []);
+      document.removeEventListener("click", handleClickOutside)
+    }
+  }, [])
 
   const handleSelectTemplateChange = (event) => {
-    const selectedKey = event.target.value;
+    const selectedKey = event.target.value
 
     if (selectedKey) {
-      setSelectedMessage(selectedKey);
-      setManagerMessage(templateOptions[selectedKey]);
+      setSelectedMessage(selectedKey)
+      setManagerMessage(templateOptions[selectedKey])
     } else {
-      setSelectedMessage(null);
-      setManagerMessage("");
+      setSelectedMessage(null)
+      setManagerMessage("")
     }
-  };
+  }
 
   const handleFileSelect = async (e) => {
-    const selectedFile = e.target.files[0];
+    const selectedFile = e.target.files[0]
     console.log(
       "Selected file:",
       selectedFile ? selectedFile.name : "No file selected"
-    );
+    )
 
     if (selectedFile) {
       try {
-        console.log("Uploading and sending file...");
-        await sendMessage(selectedFile);
-        console.log("File uploaded and message sent!");
+        console.log("Uploading and sending file...")
+        await sendMessage(selectedFile)
+        console.log("File uploaded and message sent!")
       } catch (error) {
-        console.error("Error processing file:", error);
+        console.error("Error processing file:", error)
       }
     } else {
-      console.log("No file selected.");
+      console.log("No file selected.")
     }
-  };
+  }
 
   const handleFileButtonClick = () => {
     if (fileInputRef.current) {
-      fileInputRef.current.click();
+      fileInputRef.current.click()
     }
-  };
+  }
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   const handleTechnicianChange = async (newTechnicianId) => {
-    setSelectedTechnicianId(newTechnicianId);
+    setSelectedTechnicianId(newTechnicianId)
 
     if (!selectTicketId || !newTechnicianId) {
-      console.warn("Не выбран тикет или техник.");
-      return;
+      console.warn("Не выбран тикет или техник.")
+      return
     }
 
     try {
       await api.tickets.updateById(selectTicketId, {
         technician_id: newTechnicianId
-      });
-      console.log("Тикет успешно обновлён:", updatedTicket);
+      })
+      console.log("Тикет успешно обновлён:", updatedTicket)
 
-      console.log("Список тикетов успешно обновлён.");
+      console.log("Список тикетов успешно обновлён.")
     } catch (error) {
-      enqueueSnackbar(error.message, { variant: "error" });
-      console.error("Ошибка при обновлении technician_id:", error.message);
+      enqueueSnackbar(error.message, { variant: "error" })
+      console.error("Ошибка при обновлении technician_id:", error.message)
     }
-  };
+  }
 
   const uploadFile = async (file) => {
-    const formData = new FormData();
-    formData.append("file", file);
+    const formData = new FormData()
+    formData.append("file", file)
 
-    console.log("Подготовка к загрузке файла...");
-    console.log("FormData:", formData);
+    console.log("Подготовка к загрузке файла...")
+    console.log("FormData:", formData)
 
     try {
-      const data = await api.messages.upload(formData);
+      const data = await api.messages.upload(formData)
 
-      return data;
+      return data
     } catch (error) {
-      console.error("Ошибка загрузки файла:", error);
-      throw error;
+      console.error("Ошибка загрузки файла:", error)
+      throw error
     }
-  };
+  }
   const getLastActiveClient = () => {
-    if (!Array.isArray(messages) || messages.length === 0) return null;
+    if (!Array.isArray(messages) || messages.length === 0) return null
 
     const ticketMessages = messages.filter(
       (msg) => msg.ticket_id === selectTicketId
-    );
+    )
 
     if (ticketMessages.length === 0) {
-      return null;
+      return null
     }
 
     const lastMessage = ticketMessages.reduce((latest, current) =>
       new Date(current.time_sent) > new Date(latest.time_sent)
         ? current
         : latest
-    );
+    )
 
-    return lastMessage.client_id;
-  };
+    return lastMessage.client_id
+  }
 
   useEffect(() => {
-    const lastClient = getLastActiveClient();
+    const lastClient = getLastActiveClient()
     if (lastClient) {
-      setSelectedClient(String(lastClient));
+      setSelectedClient(String(lastClient))
     }
-  }, [messages, selectTicketId]);
+  }, [messages, selectTicketId])
 
   const handleClick = () => {
     if (!selectedClient) {
-      console.error("⚠️ Ошибка: Клиент не выбран!");
-      return;
+      console.error("⚠️ Ошибка: Клиент не выбран!")
+      return
     }
 
     const analyzeLastMessagePlatform = () => {
-      console.log("🔍 Анализируем платформу последнего сообщения...");
-      console.log("📌 selectedClient:", selectedClient);
+      console.log("🔍 Анализируем платформу последнего сообщения...")
+      console.log("📌 selectedClient:", selectedClient)
 
       if (!Array.isArray(messages)) {
-        console.error("❌ Ошибка: messages не является массивом!", messages);
-        return "web";
+        console.error("❌ Ошибка: messages не является массивом!", messages)
+        return "web"
       }
 
-      console.log("📩 Всего сообщений в системе:", messages.length);
+      console.log("📩 Всего сообщений в системе:", messages.length)
 
-      const clientId = Number(selectedClient);
+      const clientId = Number(selectedClient)
 
       const clientMessages = messages.filter(
         (msg) => Number(msg.client_id) === clientId
-      );
+      )
 
       if (!clientMessages || clientMessages.length === 0) {
-        console.warn("⚠️ Нет сообщений от клиента, выбираем платформу (web)");
-        return "web";
+        console.warn("⚠️ Нет сообщений от клиента, выбираем платформу (web)")
+        return "web"
       }
 
-      console.log("🔎 Найдено сообщений от клиента:", clientMessages.length);
+      console.log("🔎 Найдено сообщений от клиента:", clientMessages.length)
 
       const lastMessage = clientMessages.reduce((latest, current) =>
         new Date(current.time_sent) > new Date(latest.time_sent)
           ? current
           : latest
-      );
+      )
 
-      console.log("🕵️‍♂️ Последнее сообщение:", lastMessage);
-      console.log("📡 Определённая платформа:", lastMessage?.platform || "web");
+      console.log("🕵️‍♂️ Последнее сообщение:", lastMessage)
+      console.log("📡 Определённая платформа:", lastMessage?.platform || "web")
 
-      return lastMessage?.platform || "web";
-    };
+      return lastMessage?.platform || "web"
+    }
 
-    const platform = analyzeLastMessagePlatform();
-    console.log(`🚀 Определённая платформа для отправки: ${platform}`);
+    const platform = analyzeLastMessagePlatform()
+    console.log(`🚀 Определённая платформа для отправки: ${platform}`)
 
-    sendMessage(null, platform);
-  };
+    sendMessage(null, platform)
+  }
 
   const sendMessage = async (selectedFile, platform) => {
     if (!managerMessage.trim() && !selectedFile) {
-      console.error("Ошибка: Отправка пустого сообщения невозможна.");
-      return;
+      console.error("Ошибка: Отправка пустого сообщения невозможна.")
+      return
     }
 
     try {
@@ -690,67 +685,67 @@ const ChatComponent = ({}) => {
         message: managerMessage.trim(),
         media_type: null,
         media_url: ""
-      };
+      }
 
       if (selectedFile) {
-        console.log("Загрузка файла...");
-        const uploadResponse = await uploadFile(selectedFile);
+        console.log("Загрузка файла...")
+        const uploadResponse = await uploadFile(selectedFile)
 
         if (!uploadResponse || !uploadResponse.url) {
-          console.error("Ошибка загрузки файла");
-          return;
+          console.error("Ошибка загрузки файла")
+          return
         }
 
-        messageData.media_url = uploadResponse.url;
-        messageData.media_type = getMediaType(selectedFile.type);
+        messageData.media_url = uploadResponse.url
+        messageData.media_type = getMediaType(selectedFile.type)
       }
 
-      console.log("Отправляемые данные:", JSON.stringify(messageData, null, 2));
+      console.log("Отправляемые данные:", JSON.stringify(messageData, null, 2))
 
-      let apiUrl = api.messages.send.create;
+      let apiUrl = api.messages.send.create
 
       if (platform === "telegram") {
-        apiUrl = api.messages.send.telegram;
+        apiUrl = api.messages.send.telegram
       } else if (platform === "viber") {
-        apiUrl = api.messages.send.viber;
+        apiUrl = api.messages.send.viber
       }
 
-      console.log(`📡 Отправка сообщения через API: ${apiUrl}`);
+      console.log(`📡 Отправка сообщения через API: ${apiUrl}`)
 
-      setManagerMessage("");
+      setManagerMessage("")
 
-      await apiUrl(messageData);
+      await apiUrl(messageData)
 
       console.log(
         `✅ Сообщение успешно отправлено через API ${apiUrl}:`,
         messageData
-      );
+      )
 
       setMessages((prevMessages) => [
         ...prevMessages,
         { ...messageData, seenAt: false }
-      ]);
+      ])
 
-      if (!selectedFile) setManagerMessage("");
+      if (!selectedFile) setManagerMessage("")
     } catch (error) {
-      console.error("Ошибка отправки сообщения:", error);
+      console.error("Ошибка отправки сообщения:", error)
     }
-  };
+  }
 
-  const language = localStorage.getItem("language") || "RO";
+  const language = localStorage.getItem("language") || "RO"
 
   const getMediaType = (mimeType) => {
-    if (mimeType.startsWith("image/")) return "image";
-    if (mimeType.startsWith("video/")) return "video";
-    if (mimeType.startsWith("audio/")) return "audio";
-    return "file";
-  };
+    if (mimeType.startsWith("image/")) return "image"
+    if (mimeType.startsWith("video/")) return "video"
+    if (mimeType.startsWith("audio/")) return "audio"
+    return "file"
+  }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   useEffect(() => {
-    setFilteredTickets(tickets);
-  }, [tickets]);
+    setFilteredTickets(tickets)
+  }, [tickets])
 
   const handleSelectChange = (clientId, field, value) => {
     setPersonalInfo((prev) => ({
@@ -759,15 +754,15 @@ const ChatComponent = ({}) => {
         ...prev[clientId],
         [field]: value
       }
-    }));
-  };
+    }))
+  }
 
   const handlePersonalDataSubmit = async (event) => {
-    event.preventDefault();
+    event.preventDefault()
 
     if (!selectedClient) {
-      alert("Выберите клиента!");
-      return;
+      alert("Выберите клиента!")
+      return
     }
 
     const payload = {
@@ -782,242 +777,240 @@ const ChatComponent = ({}) => {
       idnp: personalInfo[selectedClient]?.idnp?.trim() || "",
       address: personalInfo[selectedClient]?.address?.trim() || "",
       phone: personalInfo[selectedClient]?.phone?.trim() || ""
-    };
+    }
 
     try {
-      const result = await api.users.updateExtended(selectedClient, payload);
+      const result = await api.users.updateExtended(selectedClient, payload)
 
-      console.log("Данные успешно обновлены:", result);
-      alert("Личные данные успешно сохранены!");
+      console.log("Данные успешно обновлены:", result)
+      alert("Личные данные успешно сохранены!")
 
       setPersonalInfo((prev) => ({
         ...prev,
         [selectedClient]: result
-      }));
+      }))
     } catch (error) {
-      console.error("Ошибка при сохранении данных:", error);
-      alert("Не удалось сохранить личные данные.");
+      console.error("Ошибка при сохранении данных:", error)
+      alert("Не удалось сохранить личные данные.")
     }
-  };
+  }
 
   const fetchClientDataPersonal = async (selectedClient, setPersonalInfo) => {
     try {
-      const data = await api.users.getExtendedById(selectedClient);
+      const data = await api.users.getExtendedById(selectedClient)
 
       setPersonalInfo((prev) => ({
         ...prev,
         [selectedClient]: { ...data }
-      }));
+      }))
     } catch (error) {
-      console.error("Ошибка при получении данных клиента:", error);
+      console.error("Ошибка при получении данных клиента:", error)
     }
-  };
+  }
 
   useEffect(() => {
     if (selectedClient) {
-      fetchClientDataPersonal(selectedClient, setPersonalInfo);
+      fetchClientDataPersonal(selectedClient, setPersonalInfo)
     }
-  }, [selectedClient]);
+  }, [selectedClient])
 
   useEffect(() => {
     if (showMyTickets) {
       setFilteredTickets(
         tickets.filter((ticket) => ticket.technician_id === userId)
-      );
+      )
     } else {
-      setFilteredTickets(tickets);
+      setFilteredTickets(tickets)
     }
-  }, [tickets, showMyTickets, userId]);
+  }, [tickets, showMyTickets, userId])
 
   const handleCheckboxChange = (e) => {
-    const checked = e.target.checked;
-    setShowMyTickets(checked);
+    const checked = e.target.checked
+    setShowMyTickets(checked)
 
     if (checked) {
       setFilteredTickets(
         tickets.filter((ticket) => ticket.technician_id === userId)
-      );
+      )
     } else {
-      setFilteredTickets(tickets);
+      setFilteredTickets(tickets)
     }
-  };
+  }
 
   const handleFilterInput = (e) => {
-    setSearchQuery(e.target.value.toLowerCase());
-  };
+    setSearchQuery(e.target.value.toLowerCase())
+  }
 
   const parseTags = (tags) => {
-    if (Array.isArray(tags)) return tags;
+    if (Array.isArray(tags)) return tags
     if (typeof tags === "string") {
       if (tags.startsWith("{") && tags.endsWith("}")) {
-        const content = tags.slice(1, -1).trim();
-        return content ? content.split(",").map((tag) => tag.trim()) : [];
+        const content = tags.slice(1, -1).trim()
+        return content ? content.split(",").map((tag) => tag.trim()) : []
       }
       try {
-        return JSON.parse(tags);
+        return JSON.parse(tags)
       } catch (error) {
-        console.error("Ошибка разбора JSON:", error, tags);
-        return [];
+        console.error("Ошибка разбора JSON:", error, tags)
+        return []
       }
     }
-    return [];
-  };
+    return []
+  }
 
   const handleMergeTickets = async () => {
-    const ticketOld = ticketId;
-    const ticketNew = extraInfo[selectTicketId]?.ticket_id_new;
+    const ticketOld = ticketId
+    const ticketNew = extraInfo[selectTicketId]?.ticket_id_new
 
     if (!ticketOld || !ticketNew) {
-      alert("Introduceți ambele ID-uri!");
-      return;
+      alert("Introduceți ambele ID-uri!")
+      return
     }
 
     try {
       await api.tickets.merge({
         ticket_old: ticketOld,
         ticket_new: ticketNew
-      });
+      })
       enqueueSnackbar("Biletele au fost combinate cu succes!", {
         variant: "success"
-      });
+      })
     } catch (error) {
-      enqueueSnackbar(showServerError(error), { variant: "error" });
-      console.error("Eroare:", error);
+      enqueueSnackbar(showServerError(error), { variant: "error" })
+      console.error("Eroare:", error)
     }
-  };
+  }
 
   const handleMergeClients = async () => {
-    const oldUserId = selectedClient;
-    const newUserId = extraInfo[selectedClient]?.new_user_id;
+    const oldUserId = selectedClient
+    const newUserId = extraInfo[selectedClient]?.new_user_id
 
     if (!newUserId) {
-      alert("Introduceți ID-ul nou al utilizatorului!");
-      return;
+      alert("Introduceți ID-ul nou al utilizatorului!")
+      return
     }
 
     try {
       await api.users.clientMerge({
         old_user_id: oldUserId,
         new_user_id: newUserId
-      });
+      })
 
       enqueueSnackbar("Utilizatorii au fost combinați cu succes!", {
         variant: "success"
-      });
+      })
     } catch (error) {
       enqueueSnackbar("Eroare la combinarea utilizatorilor", {
         variant: "error"
-      });
+      })
     }
-  };
+  }
 
   const sortedTickets = useMemo(() => {
-    let filtered = [...tickets];
+    let filtered = [...tickets]
 
     const getLastMessageTime = (ticket) => {
       const ticketMessages = messages.filter(
         (msg) => msg.ticket_id === ticket.id
-      );
+      )
 
       if (ticketMessages.length > 0) {
         return Math.max(
           ...ticketMessages.map((msg) => parseCustomDate(msg.time_sent))
-        );
+        )
       }
 
-      if (ticket.time_sent) return parseCustomDate(ticket.time_sent);
+      if (ticket.time_sent) return parseCustomDate(ticket.time_sent)
       if (ticket.last_interaction_date)
-        return parseCustomDate(ticket.last_interaction_date);
+        return parseCustomDate(ticket.last_interaction_date)
 
-      return 0;
-    };
+      return 0
+    }
 
     const parseCustomDate = (dateStr) => {
-      if (!dateStr) return 0;
+      if (!dateStr) return 0
 
-      const [datePart, timePart] = dateStr.split(" ");
-      const [day, month, year] = datePart.split("-").map(Number);
-      const [hours, minutes, seconds] = timePart.split(":").map(Number);
+      const [datePart, timePart] = dateStr.split(" ")
+      const [day, month, year] = datePart.split("-").map(Number)
+      const [hours, minutes, seconds] = timePart.split(":").map(Number)
 
-      return new Date(year, month - 1, day, hours, minutes, seconds).getTime(); // timestamp
-    };
+      return new Date(year, month - 1, day, hours, minutes, seconds).getTime() // timestamp
+    }
 
-    filtered.sort((a, b) => getLastMessageTime(b) - getLastMessageTime(a));
+    filtered.sort((a, b) => getLastMessageTime(b) - getLastMessageTime(a))
 
     if (filteredTicketIds !== null && filteredTicketIds.length > 0) {
       filtered = filtered.filter((ticket) =>
         filteredTicketIds.includes(Number(ticket.id))
-      );
+      )
     }
 
     if (showMyTickets) {
-      filtered = filtered.filter((ticket) => ticket.technician_id === userId);
+      filtered = filtered.filter((ticket) => ticket.technician_id === userId)
     }
 
     if (searchQuery.trim()) {
-      const lowerSearchQuery = searchQuery.toLowerCase();
+      const lowerSearchQuery = searchQuery.toLowerCase()
       filtered = filtered.filter((ticket) => {
-        const ticketId = ticket.id.toString().toLowerCase();
-        const ticketContact = ticket.contact
-          ? ticket.contact.toLowerCase()
-          : "";
+        const ticketId = ticket.id.toString().toLowerCase()
+        const ticketContact = ticket.contact ? ticket.contact.toLowerCase() : ""
         const tags = Array.isArray(ticket.tags)
           ? ticket.tags.map((tag) => tag.toLowerCase())
           : ticket.tags
               .replace(/[{}]/g, "")
               .split(",")
-              .map((tag) => tag.trim().toLowerCase());
+              .map((tag) => tag.trim().toLowerCase())
 
         return (
           ticketId.includes(lowerSearchQuery) ||
           ticketContact.includes(lowerSearchQuery) ||
           tags.some((tag) => tag.includes(lowerSearchQuery))
-        );
-      });
+        )
+      })
     }
 
     if (Object.values(appliedFilters).some((value) => value)) {
       if (appliedFilters.creation_date) {
         filtered = filtered.filter((ticket) =>
           ticket.creation_date.startsWith(appliedFilters.creation_date)
-        );
+        )
       }
       if (appliedFilters.last_interaction_date) {
         filtered = filtered.filter((ticket) =>
           ticket.last_interaction_date.startsWith(
             appliedFilters.last_interaction_date
           )
-        );
+        )
       }
       if (appliedFilters.technician_id) {
         filtered = filtered.filter(
           (ticket) =>
             String(ticket.technician_id) === appliedFilters.technician_id
-        );
+        )
       }
       if (appliedFilters.workflow) {
         filtered = filtered.filter(
           (ticket) => ticket.workflow === appliedFilters.workflow
-        );
+        )
       }
       if (appliedFilters.priority) {
         filtered = filtered.filter(
           (ticket) => ticket.priority === appliedFilters.priority
-        );
+        )
       }
       if (appliedFilters.tags) {
         filtered = filtered.filter((ticket) => {
-          if (!ticket.tags) return false;
+          if (!ticket.tags) return false
           const ticketTags = ticket.tags
             .replace(/[{}]/g, "")
             .split(",")
-            .map((tag) => tag.trim());
-          return ticketTags.includes(appliedFilters.tags);
-        });
+            .map((tag) => tag.trim())
+          return ticketTags.includes(appliedFilters.tags)
+        })
       }
     }
 
-    return filtered;
+    return filtered
   }, [
     tickets,
     messages,
@@ -1026,71 +1019,71 @@ const ChatComponent = ({}) => {
     showMyTickets,
     searchQuery,
     userId
-  ]);
+  ])
 
   useEffect(() => {
     if (location.state?.hideChatList) {
-      setIsChatListVisible(false);
-      return;
+      setIsChatListVisible(false)
+      return
     }
 
-    const params = new URLSearchParams(location.search);
-    const stateParam = params.get("state");
+    const params = new URLSearchParams(location.search)
+    const stateParam = params.get("state")
 
     if (stateParam) {
       try {
-        const parsedState = JSON.parse(decodeURIComponent(stateParam));
+        const parsedState = JSON.parse(decodeURIComponent(stateParam))
         if (parsedState.hideChatList) {
-          setIsChatListVisible(false);
+          setIsChatListVisible(false)
         }
       } catch (error) {
-        console.error("Ошибка парсинга state:", error);
+        console.error("Ошибка парсинга state:", error)
       }
     }
-  }, [location]);
+  }, [location])
 
   useEffect(() => {
-    applyFilters(appliedFilters);
-  }, [messages]);
+    applyFilters(appliedFilters)
+  }, [messages])
 
   useEffect(() => {
-    if (!selectTicketId || !messages.length) return;
+    if (!selectTicketId || !messages.length) return
 
     const unreadMessages = messages.filter(
       (msg) =>
         msg.ticket_id === selectTicketId &&
         msg.seen_by === "{}" &&
         msg.sender_id !== userId
-    );
+    )
 
     if (unreadMessages.length > 0) {
       console.log(
         `🔵 ${unreadMessages.length} непрочитанных сообщений в тикете #${selectTicketId}, помечаем как прочитанные`
-      );
-      markMessagesAsRead(selectTicketId);
+      )
+      markMessagesAsRead(selectTicketId)
     }
-  }, [messages, selectTicketId, markMessagesAsRead, userId]);
+  }, [messages, selectTicketId, markMessagesAsRead, userId])
 
   const formatDateTime = (dateString) => {
-    if (!dateString) return "—";
+    if (!dateString) return "—"
 
-    const parts = dateString.split(" ");
-    if (parts.length !== 2) return "—";
+    const parts = dateString.split(" ")
+    if (parts.length !== 2) return "—"
 
-    const [datePart, timePart] = parts;
-    const [day, month, year] = datePart.split("-");
+    const [datePart, timePart] = parts
+    const [day, month, year] = datePart.split("-")
 
-    if (!day || !month || !year) return "—";
+    if (!day || !month || !year) return "—"
 
-    const formattedDate = new Date(`${year}-${month}-${day}T${timePart}`);
+    const formattedDate = new Date(`${year}-${month}-${day}T${timePart}`)
 
     return (
       formattedDate.toLocaleTimeString("ru-RU", {
         hour: "2-digit",
         minute: "2-digit"
       }) || "—"
-    );
-  };
+    )
+  }
 
   return (
     <div className="chat-container">
@@ -1143,7 +1136,7 @@ const ChatComponent = ({}) => {
 
             <div className="chat-item-container">
               {sortedTickets.map((ticket) => {
-                const tags = parseTags(ticket.tags);
+                const tags = parseTags(ticket.tags)
 
                 return (
                   <div
@@ -1204,7 +1197,7 @@ const ChatComponent = ({}) => {
                       </div>
                     </div>
                   </div>
-                );
+                )
               })}
             </div>
 
@@ -1219,24 +1212,24 @@ const ChatComponent = ({}) => {
               onClose={() => setIsFilterOpen(false)}
               onApplyFilter={(updatedFilters, ticketIds) => {
                 if (!ticketIds || ticketIds.length === 0) {
-                  console.log("♻️ Сброс фильтра: показываем все тикеты.");
-                  setAppliedFilters({});
-                  setFilteredTicketIds(null);
-                  return;
+                  console.log("♻️ Сброс фильтра: показываем все тикеты.")
+                  setAppliedFilters({})
+                  setFilteredTicketIds(null)
+                  return
                 }
 
                 const flatTicketIds = ticketIds
                   .flat(Infinity)
                   .map((ticket) => ticket?.id || ticket)
                   .filter((id) => typeof id === "number" || !isNaN(Number(id)))
-                  .map((id) => Number(id));
+                  .map((id) => Number(id))
 
-                console.log("📤 Развернутые ticketIds:", flatTicketIds);
+                console.log("📤 Развернутые ticketIds:", flatTicketIds)
 
-                setAppliedFilters(updatedFilters);
+                setAppliedFilters(updatedFilters)
                 setFilteredTicketIds(
                   flatTicketIds.length > 0 ? flatTicketIds : null
-                );
+                )
               }}
             />
           </>
@@ -1255,21 +1248,19 @@ const ChatComponent = ({}) => {
           {selectTicketId ? (
             (() => {
               const parseDate = (dateString) => {
-                if (!dateString) return null;
-                const parts = dateString.split(" ");
-                if (parts.length !== 2) return null;
+                if (!dateString) return null
+                const parts = dateString.split(" ")
+                if (parts.length !== 2) return null
 
-                const [date, time] = parts;
-                const [day, month, year] = date.split("-");
+                const [date, time] = parts
+                const [day, month, year] = date.split("-")
 
-                return new Date(`${year}-${month}-${day}T${time}`);
-              };
+                return new Date(`${year}-${month}-${day}T${time}`)
+              }
 
               const sortedMessages = messages
                 .filter((msg) => msg.ticket_id === selectTicketId)
-                .sort(
-                  (a, b) => parseDate(a.time_sent) - parseDate(b.time_sent)
-                );
+                .sort((a, b) => parseDate(a.time_sent) - parseDate(b.time_sent))
 
               const groupedMessages = sortedMessages.reduce((acc, msg) => {
                 const messageDate =
@@ -1277,17 +1268,17 @@ const ChatComponent = ({}) => {
                     year: "numeric",
                     month: "long",
                     day: "numeric"
-                  }) || "—";
+                  }) || "—"
 
-                if (!acc[messageDate]) acc[messageDate] = [];
-                acc[messageDate].push(msg);
-                return acc;
-              }, {});
+                if (!acc[messageDate]) acc[messageDate] = []
+                acc[messageDate].push(msg)
+                return acc
+              }, {})
 
               return Object.entries(groupedMessages).map(([date, msgs]) => {
-                let groupedByClient = [];
-                let lastClientId = null;
-                let currentGroup = [];
+                let groupedByClient = []
+                let lastClientId = null
+                let currentGroup = []
 
                 msgs.forEach((msg) => {
                   if (msg.client_id !== lastClientId) {
@@ -1295,19 +1286,19 @@ const ChatComponent = ({}) => {
                       groupedByClient.push({
                         clientId: lastClientId,
                         messages: currentGroup
-                      });
+                      })
                     }
-                    currentGroup = [];
-                    lastClientId = msg.client_id;
+                    currentGroup = []
+                    lastClientId = msg.client_id
                   }
-                  currentGroup.push(msg);
-                });
+                  currentGroup.push(msg)
+                })
 
                 if (currentGroup.length) {
                   groupedByClient.push({
                     clientId: lastClientId,
                     messages: currentGroup
-                  });
+                  })
                 }
 
                 return (
@@ -1323,7 +1314,7 @@ const ChatComponent = ({}) => {
                           {clientId}
                         </div>
                         {messages.map((msg) => {
-                          const uniqueKey = `${msg.id || msg.ticket_id}-${msg.time_sent}`;
+                          const uniqueKey = `${msg.id || msg.ticket_id}-${msg.time_sent}`
 
                           const renderContent = () => {
                             if (!msg.message) {
@@ -1331,7 +1322,7 @@ const ChatComponent = ({}) => {
                                 <div className="text-message">
                                   {translations["Mesajul lipseste"][language]}
                                 </div>
-                              );
+                              )
                             }
                             switch (msg.mtype) {
                               case "image":
@@ -1342,13 +1333,13 @@ const ChatComponent = ({}) => {
                                     className="image-preview-in-chat"
                                     onError={(e) => {
                                       e.target.src =
-                                        "https://via.placeholder.com/300?text=Ошибка+загрузки";
+                                        "https://via.placeholder.com/300?text=Ошибка+загрузки"
                                     }}
                                     onClick={() => {
-                                      window.open(msg.message, "_blank");
+                                      window.open(msg.message, "_blank")
                                     }}
                                   />
-                                );
+                                )
                               case "video":
                                 return (
                                   <video controls className="video-preview">
@@ -1362,7 +1353,7 @@ const ChatComponent = ({}) => {
                                       ][language]
                                     }
                                   </video>
-                                );
+                                )
                               case "audio":
                                 return (
                                   <audio controls className="audio-preview">
@@ -1376,7 +1367,7 @@ const ChatComponent = ({}) => {
                                       ][language]
                                     }
                                   </audio>
-                                );
+                                )
                               case "file":
                                 return (
                                   <a
@@ -1387,17 +1378,17 @@ const ChatComponent = ({}) => {
                                   >
                                     {translations["Deschide file"][language]}
                                   </a>
-                                );
+                                )
                               default:
                                 return (
                                   <div className="text-message">
                                     {msg.message}
                                   </div>
-                                );
+                                )
                             }
-                          };
+                          }
 
-                          const lastReaction = getLastReaction(msg);
+                          const lastReaction = getLastReaction(msg)
 
                           return (
                             <div
@@ -1488,13 +1479,13 @@ const ChatComponent = ({}) => {
                                 </div>
                               </div>
                             </div>
-                          );
+                          )
                         })}
                       </div>
                     ))}
                   </div>
-                );
-              });
+                )
+              })
             })()
           ) : (
             <div className="empty-chat">
@@ -1605,31 +1596,31 @@ const ChatComponent = ({}) => {
                       .client_id.replace(/[{}]/g, "")
                       .split(",")
                       .map((id) => {
-                        const clientId = id.trim();
-                        const clientInfo = personalInfo[clientId] || {};
+                        const clientId = id.trim()
+                        const clientInfo = personalInfo[clientId] || {}
                         const fullName = clientInfo.name
                           ? `${clientInfo.name} ${clientInfo.surname || ""}`.trim()
-                          : `ID: ${clientId}`;
+                          : `ID: ${clientId}`
 
                         const lastMessage = messages
                           .filter((msg) => msg.client_id === Number(clientId))
                           .sort(
                             (a, b) =>
                               new Date(b.time_sent) - new Date(a.time_sent)
-                          )[0];
+                          )[0]
 
                         const platform = lastMessage
                           ? lastMessage.platform
-                          : "unknown";
+                          : "unknown"
                         const platformName = lastMessage
                           ? platform.charAt(0).toUpperCase() + platform.slice(1)
-                          : ["Неизвестная платформа"][language];
+                          : ["Неизвестная платформа"][language]
 
                         return (
                           <option key={clientId} value={clientId}>
                             {`${fullName} (${platformName})`}
                           </option>
-                        );
+                        )
                       })}
                   </select>
                 </div>
@@ -2349,14 +2340,14 @@ const ChatComponent = ({}) => {
                     <div className="sent-time">
                       {(() => {
                         const parseCustomDate = (dateStr) => {
-                          if (!dateStr) return "—";
-                          const [datePart, timePart] = dateStr.split(" ");
+                          if (!dateStr) return "—"
+                          const [datePart, timePart] = dateStr.split(" ")
                           const [day, month, year] = datePart
                             .split("-")
-                            .map(Number);
+                            .map(Number)
                           const [hours, minutes, seconds] = timePart
                             .split(":")
-                            .map(Number);
+                            .map(Number)
                           return new Date(
                             year,
                             month - 1,
@@ -2364,8 +2355,8 @@ const ChatComponent = ({}) => {
                             hours,
                             minutes,
                             seconds
-                          );
-                        };
+                          )
+                        }
                         return parseCustomDate(msg.time_sent).toLocaleString(
                           "ru-RU",
                           {
@@ -2376,7 +2367,7 @@ const ChatComponent = ({}) => {
                             minute: "2-digit",
                             second: "2-digit"
                           }
-                        );
+                        )
                       })()}
                     </div>
 
@@ -2387,10 +2378,10 @@ const ChatComponent = ({}) => {
                         className="image-preview-in-chat"
                         onError={(e) => {
                           e.target.src =
-                            "https://via.placeholder.com/300?text=Ошибка+загрузки";
+                            "https://via.placeholder.com/300?text=Ошибка+загрузки"
                         }}
                         onClick={() => {
-                          window.open(msg.message, "_blank");
+                          window.open(msg.message, "_blank")
                         }}
                       />
                     ) : msg.mtype === "video" ? (
@@ -2497,7 +2488,7 @@ const ChatComponent = ({}) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ChatComponent;
+export default ChatComponent

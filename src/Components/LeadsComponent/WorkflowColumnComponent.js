@@ -1,40 +1,40 @@
-import React from "react";
-import TicketCard from "./TicketCardComponent";
-import { workflowStyles, workflowBrightStyles } from "../utils/workflowStyles";
-import { getLanguageByKey } from "../utils/getLanguageByKey";
+import React from "react"
+import TicketCard from "./TicketCardComponent"
+import { workflowStyles, workflowBrightStyles } from "../utils/workflowStyles"
+import { getLanguageByKey } from "../utils/getLanguageByKey"
 
 const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket }) => {
   const parseTags = (tags) => {
     if (Array.isArray(tags)) {
-      return tags;
+      return tags
     }
     if (
       typeof tags === "string" &&
       tags.startsWith("{") &&
       tags.endsWith("}")
     ) {
-      const content = tags.slice(1, -1).trim();
+      const content = tags.slice(1, -1).trim()
       if (content === "") {
-        return [];
+        return []
       }
-      return content.split(",").map((tag) => tag.trim());
+      return content.split(",").map((tag) => tag.trim())
     }
-    return [];
-  };
+    return []
+  }
 
   const priorityOrder = {
     joasă: 1,
     medie: 2,
     înaltă: 3,
     critică: 4
-  };
+  }
 
   const filteredTickets = tickets
     .filter((ticket) => ticket.workflow === workflow)
     .filter((ticket) => {
       const ticketPhone = ticket.phone
         ? ticket.phone.replace(/[{}]/g, "").trim()
-        : "";
+        : ""
 
       return (
         ticket.contact?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -44,26 +44,26 @@ const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket }) => {
         ) ||
         ticketPhone.includes(searchTerm) ||
         searchTerm.trim() === ""
-      );
+      )
     })
     .sort((a, b) => {
       const priorityDiff =
-        (priorityOrder[b.priority] || 5) - (priorityOrder[a.priority] || 5);
-      if (priorityDiff !== 0) return priorityDiff;
+        (priorityOrder[b.priority] || 5) - (priorityOrder[a.priority] || 5)
+      if (priorityDiff !== 0) return priorityDiff
 
       const dateA = a.last_interaction_date
         ? Date.parse(a.last_interaction_date)
-        : Number.POSITIVE_INFINITY;
+        : Number.POSITIVE_INFINITY
       const dateB = b.last_interaction_date
         ? Date.parse(b.last_interaction_date)
-        : Number.POSITIVE_INFINITY;
+        : Number.POSITIVE_INFINITY
 
-      if (isNaN(dateA) && isNaN(dateB)) return 0;
-      if (isNaN(dateA)) return -1;
-      if (isNaN(dateB)) return 1;
+      if (isNaN(dateA) && isNaN(dateB)) return 0
+      if (isNaN(dateA)) return -1
+      if (isNaN(dateB)) return 1
 
-      return dateB - dateA;
-    });
+      return dateB - dateA
+    })
 
   return (
     <div
@@ -105,7 +105,7 @@ const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket }) => {
         ))}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default WorkflowColumn;
+export default WorkflowColumn

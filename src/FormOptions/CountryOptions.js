@@ -31,4 +31,4 @@ export const countryOptions = [
   "Zanzibar",
   "Nu este specificat",
   "Altele"
-];
+]

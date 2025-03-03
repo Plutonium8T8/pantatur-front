@@ -1,16 +1,16 @@
-import { baseAxios } from "./baseAxios";
+import { baseAxios } from "./baseAxios"
 
 export const messages = {
   list: async () => {
-    const { data } = await baseAxios.get("/api/messages");
+    const { data } = await baseAxios.get("/api/messages")
 
-    return data;
+    return data
   },
 
   messagesTicketById: async (id) => {
-    const { data } = await baseAxios.get(`/api/messages/ticket/${id}`);
+    const { data } = await baseAxios.get(`/api/messages/ticket/${id}`)
 
-    return data;
+    return data
   },
 
   upload: async (body) => {
@@ -18,28 +18,28 @@ export const messages = {
       headers: {
         "Content-Type": "multipart/form-data"
       }
-    });
+    })
 
-    return data;
+    return data
   },
 
   send: {
     create: async (body) => {
-      const { data } = await baseAxios.post("/messages/send", body);
+      const { data } = await baseAxios.post("/messages/send", body)
 
-      return data;
+      return data
     },
 
     telegram: async (body) => {
-      const { data } = await baseAxios.post("/messages/send/telegram", body);
+      const { data } = await baseAxios.post("/messages/send/telegram", body)
 
-      return data;
+      return data
     },
 
     viber: async (body) => {
-      const { data } = await baseAxios.post("/messages/send/viber", body);
+      const { data } = await baseAxios.post("/messages/send/viber", body)
 
-      return data;
+      return data
     }
   }
-};
+}

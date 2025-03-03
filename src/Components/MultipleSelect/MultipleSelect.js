@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
-import "./CustomMultiSelect.css";
+import React, { useState, useEffect, useRef } from "react"
+import "./CustomMultiSelect.css"
 
-import { getLanguageByKey } from "../utils/getLanguageByKey";
+import { getLanguageByKey } from "../utils/getLanguageByKey"
 
 const CustomMultiSelect = ({
   options = [],
@@ -9,46 +9,46 @@ const CustomMultiSelect = ({
   onChange,
   selectedValues = []
 }) => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const [searchTerm, setSearchTerm] = useState("")
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const dropdownRef = useRef(null)
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsDropdownOpen(false);
+        setIsDropdownOpen(false)
       }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
+    }
+    document.addEventListener("mousedown", handleClickOutside)
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [])
 
   const toggleOption = (option) => {
     const newSelected = selectedValues.includes(option)
       ? selectedValues.filter((item) => item !== option)
-      : [...selectedValues, option];
+      : [...selectedValues, option]
 
-    onChange(newSelected);
-  };
+    onChange(newSelected)
+  }
 
   const removeOption = (option) => {
-    const newSelected = selectedValues.filter((item) => item !== option);
-    onChange(newSelected);
-  };
+    const newSelected = selectedValues.filter((item) => item !== option)
+    onChange(newSelected)
+  }
 
   const toggleSelectAll = () => {
     if (selectedValues.length === options.length) {
-      onChange([]);
+      onChange([])
     } else {
-      onChange(options);
+      onChange(options)
     }
-  };
+  }
 
   const filteredOptions = options.filter((option) =>
     option.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  )
 
   return (
     <div className="custom-multi-select" ref={dropdownRef}>
@@ -64,8 +64,8 @@ const CustomMultiSelect = ({
                 <span
                   className="remove-option"
                   onClick={(e) => {
-                    e.stopPropagation();
-                    removeOption(option);
+                    e.stopPropagation()
+                    removeOption(option)
                   }}
                 >
                   ✖
@@ -121,7 +121,7 @@ const CustomMultiSelect = ({
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default CustomMultiSelect;
+export default CustomMultiSelect

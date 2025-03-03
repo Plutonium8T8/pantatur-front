@@ -1,27 +1,27 @@
-import { baseAxios } from "./baseAxios";
+import { baseAxios } from "./baseAxios"
 
 export const task = {
   create: async (body) => {
-    const { data } = await baseAxios.post("/api/task", body);
+    const { data } = await baseAxios.post("/api/task", body)
 
-    return data;
+    return data
   },
 
   delete: async (body) => {
-    const { data } = await baseAxios.delete("/api/task/clear", { data: body });
+    const { data } = await baseAxios.delete("/api/task/clear", { data: body })
 
-    return data;
+    return data
   },
 
   update: async (body) => {
-    const { data } = await baseAxios.patch("/api/task", body);
+    const { data } = await baseAxios.patch("/api/task", body)
 
-    return data;
+    return data
   },
 
   getByUserId: async (id) => {
-    const { data } = await baseAxios.get(`/api/task/user/${id}`);
+    const { data } = await baseAxios.get(`/api/task/user/${id}`)
 
-    return data;
+    return data
   }
-};
+}

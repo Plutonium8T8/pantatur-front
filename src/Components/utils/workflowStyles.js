@@ -10,7 +10,7 @@ export const workflowStyles = {
   "Contract încheiat": { backgroundColor: "#cdeedd" },
   "Realizat cu succes": { backgroundColor: "#d4fcd4" },
   "Închis și nerealizat": { backgroundColor: "#ff9999" }
-};
+}
 
 export const workflowBrightStyles = {
   Interesat: { backgroundColor: "#ffff99" },
@@ -24,4 +24,4 @@ export const workflowBrightStyles = {
   "Contract încheiat": { backgroundColor: "#a8e6c1" },
   "Realizat cu succes": { backgroundColor: "#8bf58b" },
   "Închis și nerealizat": { backgroundColor: "#ff4d4d" }
-};
+}

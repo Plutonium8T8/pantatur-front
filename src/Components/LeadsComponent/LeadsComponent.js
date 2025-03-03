@@ -1,36 +1,36 @@
-import React, { useState, useMemo, useEffect, useRef } from "react";
-import { SpinnerRightBottom } from "../SpinnerRightBottom";
-import { useDOMElementHeight } from "../../hooks";
-import { useAppContext } from "../../AppContext";
-import { priorityOptions } from "../../FormOptions/PriorityOption";
-import { workflowOptions } from "../../FormOptions/WorkFlowOption";
-import WorkflowColumn from "./WorkflowColumnComponent";
-import TicketModal from "./TicketModal/TicketModalComponent";
-import TicketFilterModal from "./TicketFilterModal";
-import "../../App.css";
-import "../SnackBarComponent/SnackBarComponent.css";
-import { FaFilter, FaTable, FaColumns, FaTrash, FaEdit } from "react-icons/fa";
-import { getLanguageByKey } from "../../Components/utils/getLanguageByKey";
-import { LeadTable } from "./LeadTable";
-import { Button } from "../Button";
+import React, { useState, useMemo, useEffect, useRef } from "react"
+import { SpinnerRightBottom } from "../SpinnerRightBottom"
+import { useDOMElementHeight } from "../../hooks"
+import { useAppContext } from "../../AppContext"
+import { priorityOptions } from "../../FormOptions/PriorityOption"
+import { workflowOptions } from "../../FormOptions/WorkFlowOption"
+import WorkflowColumn from "./WorkflowColumnComponent"
+import TicketModal from "./TicketModal/TicketModalComponent"
+import TicketFilterModal from "./TicketFilterModal"
+import "../../App.css"
+import "../SnackBarComponent/SnackBarComponent.css"
+import { FaFilter, FaTable, FaColumns, FaTrash, FaEdit } from "react-icons/fa"
+import { getLanguageByKey } from "../../Components/utils/getLanguageByKey"
+import { LeadTable } from "./LeadTable"
+import { Button } from "../Button"
 
 const Leads = () => {
-  const refLeadsFilter = useRef();
+  const refLeadsFilter = useRef()
 
-  const { tickets, isLoading, setTickets } = useAppContext();
-  const [isTableView, setIsTableView] = useState(false);
-  const [filteredTicketIds, setFilteredTicketIds] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentTicket, setCurrentTicket] = useState(null);
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [selectedTickets, setSelectedTickets] = useState([]);
+  const { tickets, isLoading, setTickets } = useAppContext()
+  const [isTableView, setIsTableView] = useState(false)
+  const [filteredTicketIds, setFilteredTicketIds] = useState(null)
+  const [searchTerm, setSearchTerm] = useState("")
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [currentTicket, setCurrentTicket] = useState(null)
+  const [isFilterOpen, setIsFilterOpen] = useState(false)
+  const [selectedTickets, setSelectedTickets] = useState([])
   const [selectedWorkflow, setSelectedWorkflow] = useState(
     workflowOptions.filter(
       (wf) => wf !== "Realizat cu succes" && wf !== "Închis și nerealizat"
     )
-  );
-  const leadsFilterHeight = useDOMElementHeight(refLeadsFilter);
+  )
+  const leadsFilterHeight = useDOMElementHeight(refLeadsFilter)
 
   const [filters, setFilters] = useState({
     creation_date: "",
@@ -41,21 +41,21 @@ const Leads = () => {
     priority: [],
     tags: "",
     platform: []
-  });
+  })
 
   // **Фильтрация тикетов**
   const filteredTickets = useMemo(() => {
-    let result = tickets;
-    if (filteredTicketIds === null) return result;
-    if (filteredTicketIds.length === 0) return [];
-    result = result.filter((ticket) => filteredTicketIds.includes(ticket.id));
+    let result = tickets
+    if (filteredTicketIds === null) return result
+    if (filteredTicketIds.length === 0) return []
+    result = result.filter((ticket) => filteredTicketIds.includes(ticket.id))
     if (selectedWorkflow.length > 0) {
       result = result.filter((ticket) =>
         selectedWorkflow.includes(ticket.workflow)
-      );
+      )
     }
-    return result;
-  }, [tickets, filteredTicketIds, selectedWorkflow]);
+    return result
+  }, [tickets, filteredTicketIds, selectedWorkflow])
 
   // Выбор тикетов
   const toggleSelectTicket = (ticketId) => {
@@ -63,40 +63,40 @@ const Leads = () => {
       prev.includes(ticketId)
         ? prev.filter((id) => id !== ticketId)
         : [...prev, ticketId]
-    );
-  };
+    )
+  }
 
   // Выбор всех тикетов
   const toggleSelectAll = (e) => {
     if (e.target.checked) {
-      setSelectedTickets(filteredTickets.map((ticket) => ticket.id));
+      setSelectedTickets(filteredTickets.map((ticket) => ticket.id))
     } else {
-      setSelectedTickets([]);
+      setSelectedTickets([])
     }
-  };
+  }
 
   // Массовое удаление тикетов
   const deleteSelectedTickets = () => {
-    if (selectedTickets.length === 0) return;
+    if (selectedTickets.length === 0) return
     const newTickets = tickets.filter(
       (ticket) => !selectedTickets.includes(ticket.id)
-    );
-    setTickets(newTickets);
-    setSelectedTickets([]);
-  };
+    )
+    setTickets(newTickets)
+    setSelectedTickets([])
+  }
 
   const editSelectedTickets = () => {
-    if (selectedTickets.length === 0) return;
+    if (selectedTickets.length === 0) return
 
     // Открываем модалку редактирования с первым выделенным тикетом
     const ticketToEdit = tickets.find(
       (ticket) => ticket.id === selectedTickets[0]
-    );
+    )
     if (ticketToEdit) {
-      setCurrentTicket(ticketToEdit);
-      setIsModalOpen(true);
+      setCurrentTicket(ticketToEdit)
+      setIsModalOpen(true)
     }
-  };
+  }
 
   const openCreateTicketModal = () => {
     setCurrentTicket({
@@ -107,19 +107,19 @@ const Leads = () => {
       workflow: workflowOptions[0],
       service_reference: "",
       technician_id: 0
-    });
-    setIsModalOpen(true);
-  };
+    })
+    setIsModalOpen(true)
+  }
 
   const closeModal = () => {
-    setCurrentTicket(null);
-    setIsModalOpen(false);
-  };
+    setCurrentTicket(null)
+    setIsModalOpen(false)
+  }
 
   useEffect(() => {
-    console.log("🎯 Текущий список тикетов:", tickets);
-    console.log("🎯 Отфильтрованные ID тикетов:", filteredTicketIds);
-  }, [tickets, filteredTicketIds]);
+    console.log("🎯 Текущий список тикетов:", tickets)
+    console.log("🎯 Отфильтрованные ID тикетов:", filteredTicketIds)
+  }, [tickets, filteredTicketIds])
 
   return (
     <>
@@ -214,8 +214,8 @@ const Leads = () => {
                   tickets={filteredTickets}
                   searchTerm={searchTerm}
                   onEditTicket={(ticket) => {
-                    setCurrentTicket(ticket);
-                    setIsModalOpen(true);
+                    setCurrentTicket(ticket)
+                    setIsModalOpen(true)
                   }}
                 />
               ))}
@@ -229,15 +229,15 @@ const Leads = () => {
             onClose={closeModal}
             onSave={(updatedTicket) => {
               setTickets((prevTickets) => {
-                const isEditing = Boolean(updatedTicket.ticket_id);
+                const isEditing = Boolean(updatedTicket.ticket_id)
                 return isEditing
                   ? prevTickets.map((ticket) =>
                       ticket.id === updatedTicket.ticket_id
                         ? updatedTicket
                         : ticket
                     )
-                  : [...prevTickets, updatedTicket];
-              });
+                  : [...prevTickets, updatedTicket]
+              })
             }}
           />
         )}
@@ -248,7 +248,7 @@ const Leads = () => {
           onClose={() => setIsFilterOpen(false)}
           filteredTicketIds={filteredTicketIds} // 🔥 Передаем текущие `filteredTicketIds`
           onApplyFilter={(updatedFilters, ticketIds) => {
-            console.log("🚀 Применяем фильтр с параметрами:", updatedFilters);
+            console.log("🚀 Применяем фильтр с параметрами:", updatedFilters)
 
             setFilters({
               ...updatedFilters,
@@ -259,20 +259,20 @@ const Leads = () => {
                 : [],
               priority: updatedFilters.priority || [],
               platform: updatedFilters.platform || []
-            });
+            })
 
             setSelectedWorkflow(
               Array.isArray(updatedFilters.workflow)
                 ? updatedFilters.workflow
                 : []
-            );
+            )
 
-            setFilteredTicketIds(ticketIds !== null ? ticketIds : null);
+            setFilteredTicketIds(ticketIds !== null ? ticketIds : null)
           }}
         />
       </div>
     </>
-  );
-};
+  )
+}
 
-export default Leads;
+export default Leads

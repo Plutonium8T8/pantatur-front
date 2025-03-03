@@ -1,5 +1,5 @@
-import "./Spin.css";
+import "./Spin.css"
 
 export const Spin = () => {
-  return <div className="spin" />;
-};
+  return <div className="spin" />
+}

@@ -1,30 +1,30 @@
-import { useEffect, useState, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState, useMemo } from "react"
+import { Link } from "react-router-dom"
 import {
   useReactTable,
   getCoreRowModel,
   flexRender
-} from "@tanstack/react-table";
-import { cleanValue } from "../utils";
-import { api } from "../../../api";
-import { workflowStyles } from "../../utils/workflowStyles";
-import "./LeadTable.css";
-import { SpinnerRightBottom } from "../../SpinnerRightBottom";
-import { useAppContext } from "../../../AppContext";
-import { MAX_PAGE_SIZE } from "../../../app-constants";
-import { Pagination } from "../../Pagination";
-import { getLanguageByKey } from "../../utils/getLanguageByKey";
-import { TextEllipsis } from "../../TextEllipsis";
+} from "@tanstack/react-table"
+import { cleanValue } from "../utils"
+import { api } from "../../../api"
+import { workflowStyles } from "../../utils/workflowStyles"
+import "./LeadTable.css"
+import { SpinnerRightBottom } from "../../SpinnerRightBottom"
+import { useAppContext } from "../../../AppContext"
+import { MAX_PAGE_SIZE } from "../../../app-constants"
+import { Pagination } from "../../Pagination"
+import { getLanguageByKey } from "../../utils/getLanguageByKey"
+import { TextEllipsis } from "../../TextEllipsis"
 
-const SORT_BY = "creation_date";
-const ORDER = "ASC";
+const SORT_BY = "creation_date"
+const ORDER = "ASC"
 
 const getTotalPages = (items) => {
-  return Math.ceil(items / MAX_PAGE_SIZE);
-};
+  return Math.ceil(items / MAX_PAGE_SIZE)
+}
 
 const renderTags = (tags) => {
-  const isTags = tags.some(Boolean);
+  const isTags = tags.some(Boolean)
 
   return isTags
     ? tags.map((tag, index) => (
@@ -32,8 +32,8 @@ const renderTags = (tags) => {
           {tag.trim()}
         </span>
       ))
-    : "—";
-};
+    : "—"
+}
 
 const LeadTable = ({
   filteredTickets,
@@ -41,10 +41,10 @@ const LeadTable = ({
   setCurrentTicket,
   toggleSelectTicket
 }) => {
-  const [hardTicketsList, setHardTicketsList] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(1);
-  const { tickets } = useAppContext();
+  const [hardTicketsList, setHardTicketsList] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [page, setPage] = useState(1)
+  const { tickets } = useAppContext()
 
   const columns = useMemo(() => {
     return [
@@ -69,14 +69,14 @@ const LeadTable = ({
         header: () => <div className="text-center">ID</div>,
         accessorFn: ({ id }) => id,
         cell: ({ getValue }) => {
-          const id = getValue();
+          const id = getValue()
           return (
             <div className="text-center">
               <Link to={`/chat/${id}`} className="lead-row-link">
                 #{id}
               </Link>
             </div>
-          );
+          )
         }
       },
       {
@@ -86,7 +86,7 @@ const LeadTable = ({
         ),
         accessorFn: ({ clients }) => clients,
         cell: ({ getValue }) => {
-          const values = getValue();
+          const values = getValue()
 
           return (
             <div className="text-center">
@@ -94,7 +94,7 @@ const LeadTable = ({
                 ? values.map((item) => cleanValue(item.name)).join(", ")
                 : cleanValue()}
             </div>
-          );
+          )
         }
       },
       {
@@ -104,14 +104,14 @@ const LeadTable = ({
         ),
         accessorFn: ({ clients }) => clients,
         cell: ({ getValue }) => {
-          const values = getValue();
+          const values = getValue()
           return (
             <div className="text-center">
               {values.length
                 ? values.map((item) => cleanValue(item.surname)).join(", ")
                 : cleanValue()}
             </div>
-          );
+          )
         }
       },
       {
@@ -121,7 +121,7 @@ const LeadTable = ({
         ),
         accessorFn: ({ clients }) => clients,
         cell: ({ getValue }) => {
-          const values = getValue();
+          const values = getValue()
 
           return (
             <div className="text-center">
@@ -129,7 +129,7 @@ const LeadTable = ({
                 ? values.map((item) => cleanValue(item.email)).join(", ")
                 : cleanValue()}
             </div>
-          );
+          )
         }
       },
       {
@@ -139,7 +139,7 @@ const LeadTable = ({
         accessorKey: "phone",
         accessorFn: ({ clients }) => clients,
         cell: ({ getValue }) => {
-          const values = getValue();
+          const values = getValue()
 
           return (
             <div className="text-center">
@@ -147,7 +147,7 @@ const LeadTable = ({
                 ? values.map((item) => cleanValue(item.phone)).join(", ")
                 : cleanValue()}
             </div>
-          );
+          )
         }
       },
       {
@@ -200,7 +200,7 @@ const LeadTable = ({
                 {getValue()}
               </span>
             </div>
-          );
+          )
         }
       },
       {
@@ -368,38 +368,38 @@ const LeadTable = ({
           cleanValue(ticket_info.valuta_contului),
         cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       }
-    ];
-  }, [selectedTickets, toggleSelectTicket]);
+    ]
+  }, [selectedTickets, toggleSelectTicket])
 
   const table = useReactTable({
     data: hardTicketsList,
     columns,
     getCoreRowModel: getCoreRowModel()
-  });
+  })
 
   useEffect(() => {
     const getHardTickets = async () => {
-      setLoading(true);
+      setLoading(true)
       try {
         const hardTickets = await api.tickets.getHardList({
           page,
           sort_by: SORT_BY,
           order: ORDER
-        });
+        })
 
-        setHardTicketsList(hardTickets.data);
+        setHardTicketsList(hardTickets.data)
       } catch (_) {
         // TODO: Show server error
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    getHardTickets();
-  }, [page]);
+    getHardTickets()
+  }, [page])
 
   if (loading) {
-    return <SpinnerRightBottom />;
+    return <SpinnerRightBottom />
   }
 
   return (
@@ -442,7 +442,7 @@ const LeadTable = ({
         />
       </div>
     </>
-  );
-};
+  )
+}
 
-export default LeadTable;
+export default LeadTable

@@ -5,4 +5,4 @@ export const promoOptions = [
   "Turist recomandat",
   "White Friday",
   "Nu e specificat"
-];
+]

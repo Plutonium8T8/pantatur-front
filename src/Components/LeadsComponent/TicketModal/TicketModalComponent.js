@@ -1,34 +1,34 @@
-import React, { useState, useRef, useEffect } from "react";
-import { FaUser, FaTrash } from "react-icons/fa";
-import "./TicketModalComponent.css";
-import Priority from "../../PriorityComponent/PriorityComponent";
-import Workflow from "../../WorkFlowComponent/WorkflowComponent";
-import TagInput from "../../TagsComponent/TagComponent";
-import { useUser } from "../../../UserContext";
-import { translations } from "../../utils/translations";
-import { useAppContext } from "../../../AppContext";
-import { api } from "../../../api";
-import { useSnackbar } from "notistack";
+import React, { useState, useRef, useEffect } from "react"
+import { FaUser, FaTrash } from "react-icons/fa"
+import "./TicketModalComponent.css"
+import Priority from "../../PriorityComponent/PriorityComponent"
+import Workflow from "../../WorkFlowComponent/WorkflowComponent"
+import TagInput from "../../TagsComponent/TagComponent"
+import { useUser } from "../../../UserContext"
+import { translations } from "../../utils/translations"
+import { useAppContext } from "../../../AppContext"
+import { api } from "../../../api"
+import { useSnackbar } from "notistack"
 
 const TicketModal = ({ ticket, onClose, onSave }) => {
-  const modalRef = useRef(null);
-  const { enqueueSnackbar } = useSnackbar();
-  const language = localStorage.getItem("language") || "RO";
+  const modalRef = useRef(null)
+  const { enqueueSnackbar } = useSnackbar()
+  const language = localStorage.getItem("language") || "RO"
 
-  const { setTickets } = useAppContext();
-  const { userId, hasRole, isLoadingRoles } = useUser();
+  const { setTickets } = useAppContext()
+  const { userId, hasRole, isLoadingRoles } = useUser()
 
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false)
 
   useEffect(() => {
     if (!isLoadingRoles) {
-      setIsAdmin(hasRole("ROLE_ADMIN"));
+      setIsAdmin(hasRole("ROLE_ADMIN"))
     }
-  }, [isLoadingRoles, hasRole]);
+  }, [isLoadingRoles, hasRole])
 
   const parseTags = (tags) => {
     if (Array.isArray(tags)) {
-      return tags;
+      return tags
     }
     if (
       typeof tags === "string" &&
@@ -39,10 +39,10 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
         .slice(1, -1)
         .split(",")
         .map((tag) => tag.trim())
-        .filter((tag) => tag !== "");
+        .filter((tag) => tag !== "")
     }
-    return [];
-  };
+    return []
+  }
 
   const [editedTicket, setEditedTicket] = useState(() => ({
     contact: "",
@@ -56,16 +56,16 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
     phone: "",
     ...ticket,
     tags: parseTags(ticket?.tags)
-  }));
+  }))
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setEditedTicket((prev) => ({ ...prev, [name]: value }));
-  };
+    const { name, value } = e.target
+    setEditedTicket((prev) => ({ ...prev, [name]: value }))
+  }
 
   const handleTagsChange = (updatedTags) => {
-    setEditedTicket((prev) => ({ ...prev, tags: updatedTags }));
-  };
+    setEditedTicket((prev) => ({ ...prev, tags: updatedTags }))
+  }
 
   const handleSave = async () => {
     const ticketData = {
@@ -77,18 +77,18 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
       surname: editedTicket.surname,
       email: editedTicket.email,
       phone: editedTicket.phone
-    };
+    }
 
     const cleanedData = Object.fromEntries(
       Object.entries(ticketData).map(([key, value]) => [key, value ?? null])
-    );
+    )
 
     try {
-      const isEditing = Boolean(editedTicket?.id);
+      const isEditing = Boolean(editedTicket?.id)
 
       const updatedTicket = isEditing
         ? await api.tickets.updateById(editedTicket.id, cleanedData)
-        : await api.tickets.createTickets(cleanedData);
+        : await api.tickets.createTickets(cleanedData)
 
       setTickets((prevTickets) =>
         isEditing
@@ -96,29 +96,29 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
               ticket.id === updatedTicket.id ? updatedTicket : ticket
             )
           : [...prevTickets, updatedTicket]
-      );
+      )
 
-      onClose();
+      onClose()
     } catch (e) {
       // TODO: Make a function to extract `errors` from server
-      enqueueSnackbar("Ошибка при сохранении тикета", { variant: "error" });
+      enqueueSnackbar("Ошибка при сохранении тикета", { variant: "error" })
     }
-  };
+  }
 
   const deleteTicketById = async () => {
     try {
-      await api.tickets.deleteById(editedTicket?.id);
+      await api.tickets.deleteById(editedTicket?.id)
 
       setTickets((prevTickets) =>
         prevTickets.filter((t) => t.id !== editedTicket.id)
-      );
-      onClose();
+      )
+      onClose()
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error:", error)
     }
-  };
+  }
 
-  const AdminRoles = isLoadingRoles ? true : !isAdmin;
+  const AdminRoles = isLoadingRoles ? true : !isAdmin
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -233,7 +233,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default TicketModal;
+export default TicketModal
