@@ -639,3 +639,7 @@ button {
   width: 100%;
   padding-bottom: 0.3%;
 }
+
+.text-center {
+  text-align: center;
+}

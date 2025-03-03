@@ -10,7 +10,7 @@ import TicketFilterModal from "./TicketFilterModal";
 import "../../App.css";
 import "../SnackBarComponent/SnackBarComponent.css";
 import { FaFilter, FaTable, FaColumns, FaTrash, FaEdit } from "react-icons/fa";
-import { getLanguageByKey } from "../../Components/utils/getTranslationByKey";
+import { getLanguageByKey } from "../../Components/utils/getLanguageByKey";
 import { LeadTable } from "./LeadTable";
 
 const Leads = () => {

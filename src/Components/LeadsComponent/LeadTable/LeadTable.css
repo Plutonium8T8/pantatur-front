@@ -6,16 +6,22 @@
 }
 
 .lead-table th {
-  background-color: #f8f9fa;
   color: #333;
   font-weight: bold;
   text-align: left;
   padding: 12px;
-  border-bottom: 2px solid #ddd;
+  text-wrap: nowrap;
+  border-bottom: 1px solid #ddd;
+  border-right: 1px solid #ddd;
 }
 
+.lead-table td {
+  border-bottom: 1px solid #ddd;
+  padding-inline: 12px;
+}
+
+
 .lead-checkbox-row {
-  width: 40px;
   text-align: center;
 }
 
@@ -44,12 +50,13 @@
 .lead-tags-row {
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
-.lead-workflow-row {
+.lead-workflow-content {
   font-weight: bold;
   color: #17a2b8;
-  padding: 12px;
-  text-align: center;
-  vertical-align: middle;
+  padding: 8px;
+  border-radius: 4px;
+  text-wrap: nowrap;
 }

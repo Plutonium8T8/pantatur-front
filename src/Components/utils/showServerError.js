@@ -1,4 +1,4 @@
-import {getLanguageByKey} from "../../Components/utils/getTranslationByKey"
+import {getLanguageByKey} from "../../Components/utils/getLanguageByKey"
 
 export const showServerError = (error) => {
     const serverMessage = error?.response?.data

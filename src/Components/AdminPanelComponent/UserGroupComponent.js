@@ -4,7 +4,7 @@ import { FaTrash } from "react-icons/fa";
 import { translations } from "../utils/translations";
 import { api } from "../../api"
 import { useSnackbar } from 'notistack';
-import { getLanguageByKey } from "../utils/getTranslationByKey";
+import { getLanguageByKey } from "../utils/getLanguageByKey";
 
 const UserGroupComponent = ({ onChange, userId, roles }) => {
     const language = localStorage.getItem("language") || "RO";
