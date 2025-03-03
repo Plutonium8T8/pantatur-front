@@ -1,11 +1,11 @@
-import "./Button.css";
+import "./Button.css"
 
 const variants = {
   danger: "danger",
   warning: "warning",
   primary: "primary",
   default: "default"
-};
+}
 
 export const Button = ({
   children,
@@ -22,5 +22,5 @@ export const Button = ({
     >
       {children}
     </button>
-  );
-};
+  )
+}

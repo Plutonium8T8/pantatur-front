@@ -64,4 +64,4 @@ export const nameExcursionOptions = [
   "Citybreak",
   "Tratament",
   "Alte"
-];
+]

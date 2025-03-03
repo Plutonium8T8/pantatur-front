@@ -1,19 +1,19 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { workflowStyles } from "../utils/workflowStyles";
-import "./TicketRowComponent.css";
+import React from "react"
+import { Link } from "react-router-dom"
+import { workflowStyles } from "../utils/workflowStyles"
+import "./TicketRowComponent.css"
 
 const cleanValue = (value) => {
-  if (!value || value === "{NULL}") return "—";
+  if (!value || value === "{NULL}") return "—"
   if (
     typeof value === "string" &&
     value.startsWith("{") &&
     value.endsWith("}")
   ) {
-    return value.slice(1, -1);
+    return value.slice(1, -1)
   }
-  return value;
-};
+  return value
+}
 
 const TicketRow = ({
   ticket,
@@ -70,7 +70,7 @@ const TicketRow = ({
         {cleanValue(ticket.workflow)}
       </td>
     </tr>
-  );
-};
+  )
+}
 
-export default TicketRow;
+export default TicketRow

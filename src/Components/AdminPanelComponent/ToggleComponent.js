@@ -1,64 +1,64 @@
-import React, { useEffect, useState } from "react";
-import "./ModalWithToggles.css";
-import { FaHandshake } from "react-icons/fa";
-import UserGroupComponent from "./UserGroupComponent";
-import { translations } from "../utils/translations";
-import { api } from "../../api";
+import React, { useEffect, useState } from "react"
+import "./ModalWithToggles.css"
+import { FaHandshake } from "react-icons/fa"
+import UserGroupComponent from "./UserGroupComponent"
+import { translations } from "../utils/translations"
+import { api } from "../../api"
 
 const ToggleComponent = ({ employee }) => {
-  const [roles, setRoles] = useState([]);
-  const [error, setError] = useState(null);
-  const language = localStorage.getItem("language") || "RO";
+  const [roles, setRoles] = useState([])
+  const [error, setError] = useState(null)
+  const language = localStorage.getItem("language") || "RO"
 
   useEffect(() => {
-    fetchRoles();
-  }, []);
+    fetchRoles()
+  }, [])
 
   const fetchRoles = async () => {
     try {
-      const data = await api.users.getById(employee.id);
+      const data = await api.users.getById(employee.id)
 
-      setRoles(data.roles);
+      setRoles(data.roles)
     } catch (error) {
-      console.error("Ошибка загрузки уведомлений:", error.message);
+      console.error("Ошибка загрузки уведомлений:", error.message)
     }
-  };
+  }
 
   const sendPermissionToServer = async (role) => {
     try {
       await api.admin.user.createRoles({
         id: employee.id,
         role: "ROLE_" + role
-      });
+      })
 
-      fetchRoles();
+      fetchRoles()
     } catch (error) {
-      console.error(`Ошибка при добавлении разрешения "${role}":`, error);
+      console.error(`Ошибка при добавлении разрешения "${role}":`, error)
     }
-  };
+  }
 
   const deletePermissionToServer = async (role) => {
     try {
       await api.admin.user.deleteRoles({
         id: employee.id,
         role: "ROLE_" + role
-      });
+      })
 
-      fetchRoles();
+      fetchRoles()
     } catch (error) {
-      console.error(`Ошибка при удалении разрешения "${role}":`, error);
+      console.error(`Ошибка при удалении разрешения "${role}":`, error)
     }
-  };
+  }
 
   const handleToggleChange = (permission, isActive) => {
     if (isActive) {
-      deletePermissionToServer(permission);
+      deletePermissionToServer(permission)
     } else {
-      sendPermissionToServer(permission);
+      sendPermissionToServer(permission)
     }
-  };
+  }
 
-  const isRoleActive = (role) => roles.includes(role);
+  const isRoleActive = (role) => roles.includes(role)
 
   return (
     <div style={{ marginTop: "42px" }}>
@@ -90,7 +90,7 @@ const ToggleComponent = ({ employee }) => {
               <div className="permissions-row" key={category}>
                 <div className="permissions-category">{category}</div>
                 {["READ", "WRITE", "ADMIN"].map((action) => {
-                  const role = `${category}_${action}`;
+                  const role = `${category}_${action}`
                   return (
                     <div className="permissions-toggle" key={role}>
                       <label className="toggle-switch">
@@ -104,7 +104,7 @@ const ToggleComponent = ({ employee }) => {
                         <span className="slider"></span>
                       </label>
                     </div>
-                  );
+                  )
                 })}
               </div>
             ))}
@@ -117,7 +117,7 @@ const ToggleComponent = ({ employee }) => {
         />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ToggleComponent;
+export default ToggleComponent

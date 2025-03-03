@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { Bar, Pie, Line, PolarArea } from "react-chartjs-2";
-import GridLayout from "react-grid-layout";
-import "react-grid-layout/css/styles.css";
-import "react-resizable/css/styles.css";
-import { translations } from "../utils/translations";
+import React, { useState, useEffect, useCallback } from "react"
+import { Bar, Pie, Line, PolarArea } from "react-chartjs-2"
+import GridLayout from "react-grid-layout"
+import "react-grid-layout/css/styles.css"
+import "react-resizable/css/styles.css"
+import { translations } from "../utils/translations"
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -16,9 +16,9 @@ import {
   LineElement,
   ArcElement,
   RadialLinearScale
-} from "chart.js";
-import { api } from "../../api";
-import { SpinnerRightBottom } from "../SpinnerRightBottom";
+} from "chart.js"
+import { api } from "../../api"
+import { SpinnerRightBottom } from "../SpinnerRightBottom"
 
 ChartJS.register(
   CategoryScale,
@@ -31,7 +31,7 @@ ChartJS.register(
   LineElement,
   ArcElement,
   RadialLinearScale
-);
+)
 
 const platformColors = {
   facebook: {
@@ -51,7 +51,7 @@ const platformColors = {
     background: "rgba(0, 136, 204, 0.5)",
     border: "rgba(0, 136, 204, 1)"
   }
-};
+}
 
 const weekdaysColors = {
   Sunday: {
@@ -82,7 +82,7 @@ const weekdaysColors = {
     background: "rgba(199, 199, 199, 0.5)",
     border: "rgba(199, 199, 199, 1)"
   } // Grey
-};
+}
 
 const monthsColors = {
   January: {
@@ -133,7 +133,7 @@ const monthsColors = {
     background: "rgba(255, 159, 64, 0.5)",
     border: "rgba(255, 159, 64, 1)"
   } // Orange
-};
+}
 
 const workflowColors = {
   Interesat: {
@@ -172,54 +172,53 @@ const workflowColors = {
     background: "rgba(155, 89, 182, 0.5)",
     border: "rgba(155, 89, 182, 1)"
   } // Violet
-};
+}
 
 const normalizeToArray = (data) => {
-  return typeof data === "string" ? [] : data;
-};
+  return typeof data === "string" ? [] : data
+}
 
 const Dashboard = () => {
-  const [statistics, setStatistics] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [containerWidth, setContainerWidth] = useState(0);
-  const language = localStorage.getItem("language") || "RO";
+  const [statistics, setStatistics] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [containerWidth, setContainerWidth] = useState(0)
+  const language = localStorage.getItem("language") || "RO"
 
   const fetchStatistics = useCallback(async () => {
-    setIsLoading(true);
+    setIsLoading(true)
     try {
-      const statsData = await api.dashboard.statistics();
+      const statsData = await api.dashboard.statistics()
 
-      setStatistics(normalizeToArray(statsData[0]));
+      setStatistics(normalizeToArray(statsData[0]))
     } catch (error) {
-      console.error("Error fetching statistics:", error);
-      setStatistics([]);
+      console.error("Error fetching statistics:", error)
+      setStatistics([])
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
-    fetchStatistics();
-  }, [fetchStatistics]);
+    fetchStatistics()
+  }, [fetchStatistics])
 
   useEffect(() => {
     const updateContainerDimensions = () => {
-      const container = document.querySelector(".page-content");
+      const container = document.querySelector(".page-content")
       if (container) {
-        setContainerWidth(container.offsetWidth);
+        setContainerWidth(container.offsetWidth)
       }
-    };
-    updateContainerDimensions();
-    window.addEventListener("resize", updateContainerDimensions);
-    return () =>
-      window.removeEventListener("resize", updateContainerDimensions);
-  }, []);
+    }
+    updateContainerDimensions()
+    window.addEventListener("resize", updateContainerDimensions)
+    return () => window.removeEventListener("resize", updateContainerDimensions)
+  }, [])
 
-  let cols = 4;
+  let cols = 4
   if (containerWidth > 1400) {
-    cols = 8;
+    cols = 8
   }
-  const rowHeight = containerWidth / cols + 50;
+  const rowHeight = containerWidth / cols + 50
 
   const datasetLabels = [
     "Leaduri per platformă",
@@ -228,17 +227,17 @@ const Dashboard = () => {
     "Leaduri per lună",
     "Leaduri per etapă de lucru",
     "Ore mediu prelucrare etapă"
-  ];
+  ]
 
-  const datasetTypes = ["pie", "bar", "line", "bar", "bar", "bar"];
+  const datasetTypes = ["pie", "bar", "line", "bar", "bar", "bar"]
 
-  const datasetWidths = [2, 2, 2, 4, 4, 4];
+  const datasetWidths = [2, 2, 2, 4, 4, 4]
 
-  const datasetHeights = [2, 1, 1, 2, 2, 2];
+  const datasetHeights = [2, 1, 1, 2, 2, 2]
 
-  const positionX = [1, 3, 3, 5, 1, 5];
+  const positionX = [1, 3, 3, 5, 1, 5]
 
-  const positionY = [1, 1, 2, 1, 3, 3];
+  const positionY = [1, 1, 2, 1, 3, 3]
 
   const layout = statistics?.map((_, index) => ({
     i: `${index + 1}`,
@@ -249,7 +248,7 @@ const Dashboard = () => {
     type: datasetTypes[index],
     // label: translations[datasetLabels[index]][language] || `Chart ${index + 1}`
     label: translations[datasetLabels[index]][language] || `Chart ${index + 1}`
-  }));
+  }))
 
   // Chart type mapping
   const chartComponents = {
@@ -257,10 +256,10 @@ const Dashboard = () => {
     bar: Bar,
     line: Line,
     polar: PolarArea
-  };
+  }
 
   if (isLoading) {
-    return <SpinnerRightBottom />;
+    return <SpinnerRightBottom />
   }
 
   return (
@@ -284,11 +283,11 @@ const Dashboard = () => {
         isDraggable={true}
       >
         {statistics?.map((statArray, index) => {
-          const chartType = layout[index].type;
-          const ChartComponent = chartComponents[chartType];
-          const chartLabel = layout[index].label;
+          const chartType = layout[index].type
+          const ChartComponent = chartComponents[chartType]
+          const chartLabel = layout[index].label
 
-          let chartData = {};
+          let chartData = {}
 
           if (chartType === "pie" || chartType === "polar") {
             // Pie chart (platform-based)
@@ -311,7 +310,7 @@ const Dashboard = () => {
                   borderWidth: 1
                 }
               ]
-            };
+            }
           } else {
             chartData = {
               labels: statArray.map((stat) => {
@@ -319,12 +318,12 @@ const Dashboard = () => {
                   stat.week_period ||
                   stat.workflow ||
                   stat.month_period ||
-                  stat.month;
+                  stat.month
                 return (
                   translations[periodKey]?.[language] ||
                   periodKey ||
                   "Indisponibil"
-                );
+                )
               }),
               datasets: [
                 {
@@ -350,7 +349,7 @@ const Dashboard = () => {
                   borderWidth: 1
                 }
               ]
-            };
+            }
           }
 
           return (
@@ -371,11 +370,11 @@ const Dashboard = () => {
                 <ChartComponent data={chartData} />
               </div>
             </div>
-          );
+          )
         })}
       </GridLayout>
     </div>
-  );
-};
+  )
+}
 
-export default Dashboard;
+export default Dashboard

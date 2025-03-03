@@ -1202,7 +1202,7 @@ export const translations = {
     RO: "Tipul de transport",
     RU: "Тип транспортировки"
   }
-};
+}
 
 // import { translations } from '../utils/translations';
 

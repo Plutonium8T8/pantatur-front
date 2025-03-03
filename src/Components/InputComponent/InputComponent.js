@@ -1,6 +1,6 @@
-import React from "react";
-import "./InputComponent.css";
-import { translations } from "../utils/translations";
+import React from "react"
+import "./InputComponent.css"
+import { translations } from "../utils/translations"
 
 const Input = ({
   label,
@@ -12,7 +12,7 @@ const Input = ({
   id,
   disabled = false
 }) => {
-  const language = localStorage.getItem("language") || "RO";
+  const language = localStorage.getItem("language") || "RO"
 
   return (
     <div className="input-group">
@@ -27,7 +27,7 @@ const Input = ({
         disabled={disabled}
       />
     </div>
-  );
-};
+  )
+}
 
-export default Input;
+export default Input

@@ -50,4 +50,4 @@ export const marketingOptions = [
   "Exotica",
   "Altele",
   "Nu e specificat"
-];
+]

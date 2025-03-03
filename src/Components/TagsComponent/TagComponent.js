@@ -1,79 +1,79 @@
-import React, { useState, useEffect } from "react";
-import "./TagInput.css";
-import { FaTrash } from "react-icons/fa";
-import { translations } from "../utils/translations";
+import React, { useState, useEffect } from "react"
+import "./TagInput.css"
+import { FaTrash } from "react-icons/fa"
+import { translations } from "../utils/translations"
 
 const TagInput = ({ initialTags = [], onChange }) => {
-  const language = localStorage.getItem("language") || "RO";
+  const language = localStorage.getItem("language") || "RO"
 
   const [tags, setTags] = useState(
     Array.isArray(initialTags)
       ? initialTags.filter((tag) => tag.trim() !== "")
       : []
-  );
-  const [inputValue, setInputValue] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
+  )
+  const [inputValue, setInputValue] = useState("")
+  const [suggestions, setSuggestions] = useState([])
 
-  const [filteredSuggestions, setFilteredSuggestions] = useState([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [filteredSuggestions, setFilteredSuggestions] = useState([])
+  const [showSuggestions, setShowSuggestions] = useState(false)
 
   useEffect(() => {
-    const savedSuggestions = localStorage.getItem("tagsSuggestions");
+    const savedSuggestions = localStorage.getItem("tagsSuggestions")
     if (savedSuggestions) {
-      setSuggestions(JSON.parse(savedSuggestions));
+      setSuggestions(JSON.parse(savedSuggestions))
     } else {
-      setSuggestions([]);
+      setSuggestions([])
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
-    localStorage.setItem("tagsSuggestions", JSON.stringify(suggestions));
-  }, [suggestions]);
+    localStorage.setItem("tagsSuggestions", JSON.stringify(suggestions))
+  }, [suggestions])
 
   const handleInputChange = (e) => {
-    const value = e.target.value;
-    setInputValue(value);
+    const value = e.target.value
+    setInputValue(value)
 
     const filtered = suggestions.filter((suggestion) =>
       suggestion.toLowerCase().includes(value.toLowerCase())
-    );
-    setFilteredSuggestions(filtered);
-    setShowSuggestions(true);
-  };
+    )
+    setFilteredSuggestions(filtered)
+    setShowSuggestions(true)
+  }
 
   const handleFocus = () => {
-    setFilteredSuggestions(suggestions);
-    setShowSuggestions(true);
-  };
+    setFilteredSuggestions(suggestions)
+    setShowSuggestions(true)
+  }
 
   const handleBlur = () => {
-    setTimeout(() => setShowSuggestions(false), 200);
-  };
+    setTimeout(() => setShowSuggestions(false), 200)
+  }
 
   const handleAddTag = (tag) => {
     if (tag.trim() && !tags.includes(tag)) {
-      const updatedTags = [...tags, tag];
-      setTags(updatedTags);
-      onChange(updatedTags);
+      const updatedTags = [...tags, tag]
+      setTags(updatedTags)
+      onChange(updatedTags)
     }
-    setInputValue("");
-    setShowSuggestions(false);
-  };
+    setInputValue("")
+    setShowSuggestions(false)
+  }
 
   const handleSaveTag = () => {
     if (inputValue.trim() && !suggestions.includes(inputValue)) {
-      const updatedSuggestions = [...suggestions, inputValue];
-      setSuggestions(updatedSuggestions);
+      const updatedSuggestions = [...suggestions, inputValue]
+      setSuggestions(updatedSuggestions)
     }
-    setInputValue("");
-    setShowSuggestions(false);
-  };
+    setInputValue("")
+    setShowSuggestions(false)
+  }
 
   const handleRemoveTag = (tag) => {
-    const updatedTags = tags.filter((t) => t !== tag);
-    setTags(updatedTags);
-    onChange(updatedTags);
-  };
+    const updatedTags = tags.filter((t) => t !== tag)
+    setTags(updatedTags)
+    onChange(updatedTags)
+  }
 
   return (
     <div className="tag-input-container">
@@ -123,7 +123,7 @@ const TagInput = ({ initialTags = [], onChange }) => {
         </button>
         <button
           onClick={() => {
-            if (inputValue.trim()) handleAddTag(inputValue);
+            if (inputValue.trim()) handleAddTag(inputValue)
           }}
           className="submit-button"
         >
@@ -131,7 +131,7 @@ const TagInput = ({ initialTags = [], onChange }) => {
         </button>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default TagInput;
+export default TagInput

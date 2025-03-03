@@ -1,85 +1,85 @@
-import React, { useState, useEffect } from "react";
-import { useUser } from "../../UserContext";
-import "./SlideInModal.css";
-import { FaBell } from "react-icons/fa";
-import { translations } from "../utils/translations";
-import { api } from "../../api";
-import { useSnackbar } from "notistack";
-import { showServerError } from "../../Components/utils/showServerError";
+import React, { useState, useEffect } from "react"
+import { useUser } from "../../UserContext"
+import "./SlideInModal.css"
+import { FaBell } from "react-icons/fa"
+import { translations } from "../utils/translations"
+import { api } from "../../api"
+import { useSnackbar } from "notistack"
+import { showServerError } from "../../Components/utils/showServerError"
 
 const NotificationModal = ({ isOpen, onClose }) => {
-  const [notifications, setNotifications] = useState([]);
-  const [notificationContent, setNotificationContent] = useState("");
-  const [notificationDate, setNotificationDate] = useState("");
-  const { userId } = useUser();
-  const [error, setError] = useState(null);
-  const { enqueueSnackbar } = useSnackbar();
+  const [notifications, setNotifications] = useState([])
+  const [notificationContent, setNotificationContent] = useState("")
+  const [notificationDate, setNotificationDate] = useState("")
+  const { userId } = useUser()
+  const [error, setError] = useState(null)
+  const { enqueueSnackbar } = useSnackbar()
 
-  const language = localStorage.getItem("language") || "RO";
+  const language = localStorage.getItem("language") || "RO"
 
   useEffect(() => {
     if (isOpen) {
-      fetchNotifications();
+      fetchNotifications()
     }
-  }, [isOpen]);
+  }, [isOpen])
 
   const fetchNotifications = async () => {
     try {
-      const data = await api.notification.getById(userId);
+      const data = await api.notification.getById(userId)
 
-      setNotifications(data);
+      setNotifications(data)
     } catch (error) {
-      enqueueSnackbar(showServerError(error), { variant: "error" });
-      console.error("Ошибка загрузки уведомлений:", error.message);
+      enqueueSnackbar(showServerError(error), { variant: "error" })
+      console.error("Ошибка загрузки уведомлений:", error.message)
     }
-  };
+  }
 
   const handleNotificationSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     try {
       await api.notification.create({
         time: notificationDate,
         description: notificationContent,
         client_id: userId,
         status: false
-      });
+      })
 
-      fetchNotifications();
-      setNotificationContent("");
-      setNotificationDate("");
+      fetchNotifications()
+      setNotificationContent("")
+      setNotificationDate("")
     } catch (error) {
-      enqueueSnackbar(showServerError(error), { variant: "error" });
-      console.error("Ошибка создания уведомления:", error.message);
+      enqueueSnackbar(showServerError(error), { variant: "error" })
+      console.error("Ошибка создания уведомления:", error.message)
     }
-  };
+  }
 
   const handleClearAllNotifications = async () => {
     try {
-      await api.notification.deleteAllByUserId(userId);
+      await api.notification.deleteAllByUserId(userId)
 
-      setNotifications([]);
+      setNotifications([])
     } catch (error) {
-      enqueueSnackbar(showServerError(error), { variant: "error" });
-      console.error("Ошибка удаления уведомлений:", error.message);
+      enqueueSnackbar(showServerError(error), { variant: "error" })
+      console.error("Ошибка удаления уведомлений:", error.message)
     }
-  };
+  }
 
   const handleMarkAsSeen = async (id) => {
     try {
       await api.notification.update({
         id: id,
         status: true
-      });
+      })
 
-      fetchNotifications();
+      fetchNotifications()
     } catch (error) {
-      enqueueSnackbar(showServerError(error), { variant: "error" });
-      console.error("Ошибка обновления статуса:", error.message);
+      enqueueSnackbar(showServerError(error), { variant: "error" })
+      console.error("Ошибка обновления статуса:", error.message)
     }
-  };
+  }
 
   if (!isOpen) {
-    return null;
+    return null
   }
 
   return (
@@ -173,7 +173,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
         </ul>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default NotificationModal;
+export default NotificationModal

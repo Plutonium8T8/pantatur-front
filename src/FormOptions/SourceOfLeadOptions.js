@@ -6,4 +6,4 @@ export const sourceOfLeadOptions = [
   "Formular Facebook",
   "Certificat cadou",
   "Cold call"
-];
+]

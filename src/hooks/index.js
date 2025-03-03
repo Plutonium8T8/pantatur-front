@@ -1,1 +1,1 @@
-export * from "./useDOMElementHeight";
+export * from "./useDOMElementHeight"

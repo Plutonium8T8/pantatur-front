@@ -1,76 +1,76 @@
-import React, { useState, useEffect } from "react";
-import { useUser } from "../../UserContext";
-import "./SlideInModal.css";
-import { translations } from "../utils/translations";
-import { api } from "../../api";
-import { showServerError } from "../../Components/utils/showServerError";
-import { useSnackbar } from "notistack";
+import React, { useState, useEffect } from "react"
+import { useUser } from "../../UserContext"
+import "./SlideInModal.css"
+import { translations } from "../utils/translations"
+import { api } from "../../api"
+import { showServerError } from "../../Components/utils/showServerError"
+import { useSnackbar } from "notistack"
 
 const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
-  const [tasks, setTasks] = useState([]);
-  const [taskContent, setTaskContent] = useState("");
-  const [taskDate, setTaskDate] = useState("");
-  const [tickets, setTickets] = useState([]);
-  const [ticketId, setTicketId] = useState(null);
-  const { userId, setUserId, name, setName, surname, setSurname } = useUser();
-  const [error, setError] = useState(null);
-  const [ticketIds, setTicketIds] = useState([]);
-  const [taskFor, setTaskFor] = useState("");
-  const [userList, setUserList] = useState([]); // Данные пользователей
-  const [users, setUsers] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [searchUser, setSearchUser] = useState("");
-  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
-  const { enqueueSnackbar } = useSnackbar();
-  const language = localStorage.getItem("language") || "RO";
+  const [tasks, setTasks] = useState([])
+  const [taskContent, setTaskContent] = useState("")
+  const [taskDate, setTaskDate] = useState("")
+  const [tickets, setTickets] = useState([])
+  const [ticketId, setTicketId] = useState(null)
+  const { userId, setUserId, name, setName, surname, setSurname } = useUser()
+  const [error, setError] = useState(null)
+  const [ticketIds, setTicketIds] = useState([])
+  const [taskFor, setTaskFor] = useState("")
+  const [userList, setUserList] = useState([]) // Данные пользователей
+  const [users, setUsers] = useState([])
+  const [searchTerm, setSearchTerm] = useState("")
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [searchUser, setSearchUser] = useState("")
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false)
+  const { enqueueSnackbar } = useSnackbar()
+  const language = localStorage.getItem("language") || "RO"
 
   useEffect(() => {
     if (isOpen && userId) {
-      console.log("Modal is open. Fetching data...");
-      fetchTasks();
-      fetchTicketsID();
+      console.log("Modal is open. Fetching data...")
+      fetchTasks()
+      fetchTicketsID()
     } else {
-      console.log("Modal not open or userId missing.");
+      console.log("Modal not open or userId missing.")
     }
-  }, [isOpen, userId]);
+  }, [isOpen, userId])
 
   useEffect(() => {
     if (isOpen && selectedTicketId) {
-      setTicketId(selectedTicketId);
-      setSearchTerm(selectedTicketId.toString()); // Теперь поле обновляется
+      setTicketId(selectedTicketId)
+      setSearchTerm(selectedTicketId.toString()) // Теперь поле обновляется
     }
-  }, [isOpen, selectedTicketId]);
+  }, [isOpen, selectedTicketId])
 
   const fetchTicketsID = async () => {
     try {
-      const data = await api.tickets.list();
+      const data = await api.tickets.list()
 
-      setTicketIds(data.map((ticket) => ticket.id)); // Сохраняем ticket_id
+      setTicketIds(data.map((ticket) => ticket.id)) // Сохраняем ticket_id
     } catch (error) {
-      console.error("Error fetching tickets:", error.message);
+      console.error("Error fetching tickets:", error.message)
     }
-  };
+  }
 
   const fetchTasks = async () => {
     try {
-      const data = await api.task.getByUserId(userId);
+      const data = await api.task.getByUserId(userId)
 
-      setTasks(data);
-      console.log("tasksssssss", data);
+      setTasks(data)
+      console.log("tasksssssss", data)
     } catch (error) {
-      enqueueSnackbar(showServerError(error), { variant: "error" });
-      console.error("Error fetching tasks:", error.message);
+      enqueueSnackbar(showServerError(error), { variant: "error" })
+      console.error("Error fetching tasks:", error.message)
     }
-  };
+  }
 
   const handleTaskSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     try {
       // Проверяем, есть ли нужные данные
       if (!ticketId || !taskDate || !taskContent || !taskFor) {
-        console.error("❌ Ошибка: Все поля должны быть заполнены.");
-        return;
+        console.error("❌ Ошибка: Все поля должны быть заполнены.")
+        return
       }
 
       const taskData = {
@@ -80,100 +80,98 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
         tags: [""],
         created_by: userId, // ID текущего пользователя (кто создал задачу)
         created_for: taskFor // ID выбранного пользователя (для кого создана задача)
-      };
+      }
 
-      await api.task.create(taskData);
+      await api.task.create(taskData)
 
-      fetchTasks();
-      setTaskContent("");
-      setTaskDate("");
-      setTaskFor("");
+      fetchTasks()
+      setTaskContent("")
+      setTaskDate("")
+      setTaskFor("")
     } catch (error) {
-      enqueueSnackbar(showServerError(error), { variant: "error" });
-      console.error("❌ Ошибка при создании задачи:", error.message);
+      enqueueSnackbar(showServerError(error), { variant: "error" })
+      console.error("❌ Ошибка при создании задачи:", error.message)
     }
-  };
+  }
 
   const handleClearAllTasks = async () => {
     try {
       await api.task.delete({
         technician_id: userId
-      });
+      })
 
-      setTasks([]);
+      setTasks([])
     } catch (error) {
-      enqueueSnackbar(showServerError(error), { variant: "error" });
+      enqueueSnackbar(showServerError(error), { variant: "error" })
     }
-  };
+  }
 
   const handleMarkAsSeenTask = async (id) => {
     try {
       await api.task.update({
         id: id,
         status: true
-      });
+      })
 
-      fetchTasks();
+      fetchTasks()
     } catch (error) {
-      enqueueSnackbar(showServerError(error), { variant: "error" });
+      enqueueSnackbar(showServerError(error), { variant: "error" })
     }
-  };
+  }
 
   const fetchUsers = async () => {
     try {
-      const usersData = await api.users.getTechnicianList();
+      const usersData = await api.users.getTechnicianList()
 
       // Корректное извлечение ID, имени и фамилии
       const formattedUsers = usersData.map((user) => ({
         id: user.id.id, // ID пользователя
         name: user.id.name || "N/A", // Имя (если пусто - "N/A")
         surname: user.id.surname || "N/A" // Фамилия (если пусто - "N/A")
-      }));
+      }))
 
-      console.log("✅ Пользователи загружены:", formattedUsers);
-      setUserList(formattedUsers);
+      console.log("✅ Пользователи загружены:", formattedUsers)
+      setUserList(formattedUsers)
     } catch (error) {
-      enqueueSnackbar(showServerError(error), { variant: "error" });
-      console.error("❌ Ошибка при загрузке пользователей:", error.message);
+      enqueueSnackbar(showServerError(error), { variant: "error" })
+      console.error("❌ Ошибка при загрузке пользователей:", error.message)
     }
-  };
+  }
 
   // Запуск загрузки пользователей при монтировании компонента
   useEffect(() => {
-    fetchUsers();
-  }, [userId]);
+    fetchUsers()
+  }, [userId])
 
   if (!isOpen) {
-    return null;
+    return null
   }
 
   const handleInputChange = (e) => {
-    const inputValue = e.target.value;
-    setSearchTerm(inputValue);
-    setIsDropdownOpen(true);
+    const inputValue = e.target.value
+    setSearchTerm(inputValue)
+    setIsDropdownOpen(true)
     if (ticketIds.includes(Number(inputValue))) {
-      setTicketId(Number(inputValue));
+      setTicketId(Number(inputValue))
     }
-  };
+  }
 
   const handleSelect = (id) => {
-    setTicketId(id);
-    setSearchTerm(id);
-    setIsDropdownOpen(false);
-  };
+    setTicketId(id)
+    setSearchTerm(id)
+    setIsDropdownOpen(false)
+  }
 
   const handleUserInputChange = (e) => {
-    setSearchUser(e.target.value);
-    setIsUserDropdownOpen(true);
-  };
+    setSearchUser(e.target.value)
+    setIsUserDropdownOpen(true)
+  }
 
   const handleUserSelect = (user) => {
-    setTaskFor(Number(user.id));
-    setSearchUser(
-      `${user.id} - ${user.name || "N/A"} ${user.surname || "N/A"}`
-    );
-    setIsUserDropdownOpen(false);
-  };
+    setTaskFor(Number(user.id))
+    setSearchUser(`${user.id} - ${user.name || "N/A"} ${user.surname || "N/A"}`)
+    setIsUserDropdownOpen(false)
+  }
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -313,7 +311,7 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
               // Найти пользователя по его ID в списке userList
               const assignedUser = userList.find(
                 (user) => user.id === task.created_for
-              );
+              )
 
               return (
                 <li key={task.id} className="notification-item">
@@ -360,13 +358,13 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
                     )}
                   </div>
                 </li>
-              );
+              )
             })
           )}
         </ul>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default TaskModal;
+export default TaskModal

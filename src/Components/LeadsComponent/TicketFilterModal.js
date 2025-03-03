@@ -1,25 +1,25 @@
-import React, { useState, useEffect, useRef } from "react";
-import { priorityOptions } from "../../FormOptions/PriorityOption";
-import { workflowOptions } from "../../FormOptions/WorkFlowOption";
-import { transportOptions } from "../../FormOptions/TransportOptions";
-import { motivulRefuzuluiOptions } from "../../FormOptions/MotivulRefuzuluiOptions";
-import { countryOptions } from "../../FormOptions/CountryOptions";
-import { marketingOptions } from "../../FormOptions/MarketingOptions";
-import { nameExcursionOptions } from "../../FormOptions/NameExcursionOptions";
-import { paymentStatusOptions } from "../../FormOptions/PaymentStatusOptions";
-import { purchaseProcessingOptions } from "../../FormOptions/PurchaseProcessingOptions";
-import { serviceTypeOptions } from "../../FormOptions/ServiceTypeOptions";
-import { sourceOfLeadOptions } from "../../FormOptions/SourceOfLeadOptions";
-import { promoOptions } from "../../FormOptions/PromoOptions";
-import { evaluareOdihnaOptions } from "../../FormOptions/EvaluareVacantaOptions";
-import { valutaOptions } from "../../FormOptions/ValutaOptions";
-import { ibanOptions } from "../../FormOptions/IbanOptions";
-import CustomMultiSelect from "../MultipleSelect/MultipleSelect";
-import "./Modal.css";
-import { translations } from "../utils/translations";
-import { api } from "../../api";
+import React, { useState, useEffect, useRef } from "react"
+import { priorityOptions } from "../../FormOptions/PriorityOption"
+import { workflowOptions } from "../../FormOptions/WorkFlowOption"
+import { transportOptions } from "../../FormOptions/TransportOptions"
+import { motivulRefuzuluiOptions } from "../../FormOptions/MotivulRefuzuluiOptions"
+import { countryOptions } from "../../FormOptions/CountryOptions"
+import { marketingOptions } from "../../FormOptions/MarketingOptions"
+import { nameExcursionOptions } from "../../FormOptions/NameExcursionOptions"
+import { paymentStatusOptions } from "../../FormOptions/PaymentStatusOptions"
+import { purchaseProcessingOptions } from "../../FormOptions/PurchaseProcessingOptions"
+import { serviceTypeOptions } from "../../FormOptions/ServiceTypeOptions"
+import { sourceOfLeadOptions } from "../../FormOptions/SourceOfLeadOptions"
+import { promoOptions } from "../../FormOptions/PromoOptions"
+import { evaluareOdihnaOptions } from "../../FormOptions/EvaluareVacantaOptions"
+import { valutaOptions } from "../../FormOptions/ValutaOptions"
+import { ibanOptions } from "../../FormOptions/IbanOptions"
+import CustomMultiSelect from "../MultipleSelect/MultipleSelect"
+import "./Modal.css"
+import { translations } from "../utils/translations"
+import { api } from "../../api"
 
-const language = localStorage.getItem("language") || "RO";
+const language = localStorage.getItem("language") || "RO"
 
 const platformOptions = [
   "telegram",
@@ -28,7 +28,7 @@ const platformOptions = [
   "facebook",
   "instagram",
   "sipuni"
-];
+]
 
 const TicketFilterModal = ({
   isOpen,
@@ -36,8 +36,8 @@ const TicketFilterModal = ({
   onApplyFilter,
   filteredTicketIds
 }) => {
-  const [technicians, setTechnicians] = useState([]);
-  const modalRef = useRef(null);
+  const [technicians, setTechnicians] = useState([])
+  const modalRef = useRef(null)
 
   const filterGroups = {
     General: ["workflow"],
@@ -63,159 +63,159 @@ const TicketFilterModal = ({
       "marketing"
     ],
     Messages: ["platform"]
-  };
+  }
 
   const filterDefaults = {
     workflow: workflowOptions.filter(
       (wf) => wf !== "Realizat cu succes" && wf !== "Închis și nerealizat"
     ),
     tags: []
-  };
+  }
 
   const handleApplyFilter = async () => {
-    const { workflow, platform, tags, ...formattedFilters } = filters;
+    const { workflow, platform, tags, ...formattedFilters } = filters
 
     // ✅ Преобразуем `tags` в строку (если массив) перед отправкой
     if (Array.isArray(tags) && tags.length > 0) {
-      formattedFilters.tags = tags.join(","); // Преобразуем массив в строку с запятыми
+      formattedFilters.tags = tags.join(",") // Преобразуем массив в строку с запятыми
     }
 
     // ✅ Преобразуем `tags` в формат {Grecia}
     if (Array.isArray(tags) && tags.length > 0) {
-      formattedFilters.tags = `{${tags.join(",")}}`;
+      formattedFilters.tags = `{${tags.join(",")}}`
     } else {
-      delete formattedFilters.tags; // ❗ Если пусто, не отправляем `tags`
+      delete formattedFilters.tags // ❗ Если пусто, не отправляем `tags`
     }
 
     const hasValidFilters = Object.values(formattedFilters).some((value) =>
       Array.isArray(value) ? value.length > 0 : value
-    );
+    )
 
     if (!hasValidFilters) {
-      console.warn("⚠️ Фильтры пустые, запрос не отправляется.");
-      return;
+      console.warn("⚠️ Фильтры пустые, запрос не отправляется.")
+      return
     }
 
-    console.log("🚀 Отправляем данные в API:", formattedFilters);
+    console.log("🚀 Отправляем данные в API:", formattedFilters)
 
     try {
-      const ticketData = await api.standalone.applyFilter(formattedFilters);
-      const ticketIds = ticketData.flat().map((ticket) => ticket.id);
+      const ticketData = await api.standalone.applyFilter(formattedFilters)
+      const ticketIds = ticketData.flat().map((ticket) => ticket.id)
 
-      console.log("✅ Отфильтрованные ID тикетов:", ticketIds);
-      onApplyFilter(filters, ticketIds.length > 0 ? ticketIds : []);
-      onClose();
+      console.log("✅ Отфильтрованные ID тикетов:", ticketIds)
+      onApplyFilter(filters, ticketIds.length > 0 ? ticketIds : [])
+      onClose()
     } catch (error) {
-      console.error("❌ Ошибка при фильтрации:", error);
+      console.error("❌ Ошибка при фильтрации:", error)
     }
-  };
+  }
 
-  const tabs = Object.keys(filterGroups);
-  const [activeTab, setActiveTab] = useState(tabs[0]);
-  const [filters, setFilters] = useState(filterDefaults);
-
-  useEffect(() => {
-    console.log("✅ Модальное окно открыто, текущие фильтры:", filters);
-  }, [isOpen]);
+  const tabs = Object.keys(filterGroups)
+  const [activeTab, setActiveTab] = useState(tabs[0])
+  const [filters, setFilters] = useState(filterDefaults)
 
   useEffect(() => {
-    console.log("🔹 Фильтр workflow изменился:", filters.workflow);
-  }, [filters.workflow]);
+    console.log("✅ Модальное окно открыто, текущие фильтры:", filters)
+  }, [isOpen])
+
+  useEffect(() => {
+    console.log("🔹 Фильтр workflow изменился:", filters.workflow)
+  }, [filters.workflow])
 
   useEffect(() => {
     const fetchTechnicians = async () => {
       try {
-        const data = await api.users.getTechnicianList();
+        const data = await api.users.getTechnicianList()
 
         const formattedTechnicians = data.map((item) =>
           `${item.id.id}: ${item.id.name} ${item.id.surname}`.trim()
-        );
-        setTechnicians(formattedTechnicians);
+        )
+        setTechnicians(formattedTechnicians)
       } catch (error) {
-        console.error("Ошибка при загрузке техников:", error);
-        setTechnicians([]);
+        console.error("Ошибка при загрузке техников:", error)
+        setTechnicians([])
       }
-    };
+    }
 
-    if (isOpen) fetchTechnicians();
-  }, [isOpen]);
+    if (isOpen) fetchTechnicians()
+  }, [isOpen])
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
-        onClose();
+        onClose()
       }
-    };
+    }
 
     if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside)
     }
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isOpen, onClose]);
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [isOpen, onClose])
 
   const handleTabClick = (tab) => {
-    setActiveTab(tab);
-  };
+    setActiveTab(tab)
+  }
 
   const handleApplyLocalFilter = () => {
-    console.log("🔹 Локальное применение фильтра:", filters.workflow);
-    onApplyFilter(filters, filteredTicketIds);
-  };
+    console.log("🔹 Локальное применение фильтра:", filters.workflow)
+    onApplyFilter(filters, filteredTicketIds)
+  }
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value } = e.target
 
     setFilters((prev) => ({
       ...prev,
       [name]:
         name === "tags" ? value.split(",").map((tag) => tag.trim()) : value // ✅ Преобразуем строку в массив
-    }));
+    }))
 
     // ✅ Добавляем/удаляем класс 'filled-field'
-    const field = document.querySelector(`[name="${name}"]`);
+    const field = document.querySelector(`[name="${name}"]`)
     if (field) {
       if (value && value.length > 0) {
-        field.classList.add("filled-field");
+        field.classList.add("filled-field")
       } else {
-        field.classList.remove("filled-field");
+        field.classList.remove("filled-field")
       }
     }
-  };
+  }
 
   const handleMultiSelectChange = (name, selectedValues) => {
     setFilters((prev) => ({
       ...prev,
       [name]: selectedValues
-    }));
+    }))
 
     // ✅ Добавляем/удаляем класс 'filled-field' для мультиселектов
-    const field = document.querySelector(`[name="${name}"]`);
+    const field = document.querySelector(`[name="${name}"]`)
     if (field) {
       if (selectedValues.length > 0) {
-        field.classList.add("filled-field");
+        field.classList.add("filled-field")
       } else {
-        field.classList.remove("filled-field");
+        field.classList.remove("filled-field")
       }
     }
-  };
+  }
 
   const handleResetFilters = () => {
-    console.log("♻️ Сброс фильтров до значений по умолчанию");
+    console.log("♻️ Сброс фильтров до значений по умолчанию")
 
     const resetFilters = {
       ...filterDefaults,
       workflow: filterDefaults.workflow || []
-    };
+    }
 
-    setFilters(resetFilters);
+    setFilters(resetFilters)
 
     // ❗ Теперь `filteredTicketIds = null`, чтобы показать ВСЕ тикеты
-    onApplyFilter(resetFilters, null);
-  };
+    onApplyFilter(resetFilters, null)
+  }
 
-  if (!isOpen) return null;
+  if (!isOpen) return null
 
   return (
     <div className="modal-overlay-filter">
@@ -882,7 +882,7 @@ const TicketFilterModal = ({
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default TicketFilterModal;
+export default TicketFilterModal

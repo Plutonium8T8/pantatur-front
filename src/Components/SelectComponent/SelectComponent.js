@@ -1,6 +1,6 @@
-import React from "react";
-import "./select.css";
-import { translations } from "../utils/translations";
+import React from "react"
+import "./select.css"
+import { translations } from "../utils/translations"
 
 const Select = ({
   options,
@@ -15,11 +15,11 @@ const Select = ({
   hasError
 }) => {
   const handleChange = (event) => {
-    const selectedValue = event.target.value;
-    onChange(selectedValue);
-  };
+    const selectedValue = event.target.value
+    onChange(selectedValue)
+  }
 
-  const language = localStorage.getItem("language") || "RO";
+  const language = localStorage.getItem("language") || "RO"
 
   return (
     <div className={`input-group ${hasError ? "invalid-field" : ""}`}>
@@ -43,7 +43,7 @@ const Select = ({
         ))}
       </select>
     </div>
-  );
-};
+  )
+}
 
-export default Select;
+export default Select
