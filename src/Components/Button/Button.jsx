@@ -4,7 +4,7 @@ const variants = {
   danger: "danger",
   warning: "warning",
   primary: "primary",
-  default: "default",
+  default: "default"
 };
 
 export const Button = ({
@@ -15,7 +15,11 @@ export const Button = ({
   ...props
 }) => {
   return (
-    <button className={`btn ${variants[variant]} ${className}`} onClick={onClick} {...props}>
+    <button
+      className={`btn ${variants[variant]} ${className}`}
+      onClick={onClick}
+      {...props}
+    >
       {children}
     </button>
   );

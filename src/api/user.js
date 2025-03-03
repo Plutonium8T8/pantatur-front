@@ -15,7 +15,7 @@ export const user = {
 
   assignGroups: async (groupId, userId) => {
     const { data } = await baseAxios.patch(
-      `api/user-groups/${groupId}/assign/${userId}`,
+      `api/user-groups/${groupId}/assign/${userId}`
     );
 
     return data;
@@ -23,5 +23,5 @@ export const user = {
 
   deleteGroups: async (id) => {
     await baseAxios.delete(`api/user-groups/${id}`);
-  },
+  }
 };

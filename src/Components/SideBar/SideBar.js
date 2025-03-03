@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useAppContext } from '../../AppContext';
-import { translations } from '../utils/translations';
-import './SideBar.css';
-import LanguageToggle from './LanguageToggle'
+import React, { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useAppContext } from "../../AppContext";
+import { translations } from "../utils/translations";
+import "./SideBar.css";
+import LanguageToggle from "./LanguageToggle";
 import {
   FaUser,
   FaChartBar,
@@ -12,7 +12,7 @@ import {
   FaBell,
   FaClipboardList,
   FaSignOutAlt,
-  FaUserSecret,
+  FaUserSecret
 } from "react-icons/fa";
 import { clearCookies } from "../../Components/utils/clearCookies";
 import { api } from "../../api";
@@ -118,7 +118,7 @@ const CustomSidebar = ({ onOpenNotifications, onOpenTasks, onOpenAccount }) => {
           </div>
         </div>
       </div>
-      {loading && <LoadingOverlay/>}
+      {loading && <LoadingOverlay />}
     </>
   );
 };

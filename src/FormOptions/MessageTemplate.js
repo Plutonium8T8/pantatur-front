@@ -1,8 +1,7 @@
 // Исходные шаблоны
 export const templateOptions = {
-//
-"Notification Exs RU" : 
-`Уважаемые туристы,
+  //
+  "Notification Exs RU": `Уважаемые туристы,
 
 📅 С радостью сообщаем, что у вас запланирована экскурсия: [Название экскурсии] на дату [Дата отправления].
 
@@ -22,9 +21,8 @@ export const templateOptions = {
 Желаем вам приятного путешествия!
 
 С уважением, команда Panda Tur 🐼`,
-//
-"Notification Exs RO" : 
-`Stimați turiști,
+  //
+  "Notification Exs RO": `Stimați turiști,
 
 
 📅 Vă informăm cu drag că aveți o excursie programată: [Nume Excursie] pe data de [Data Plecarii]
@@ -53,9 +51,8 @@ Vă dorim o călătorie plăcută!
 
 
 Cu drag, echipa Panda Tur 🐼`,
-//
-"Sorting RU" : 
-`Здравствуйте.
+  //
+  "Sorting RU": `Здравствуйте.
 Меня зовут Ариадна.
 Спасибо, что выбрали Panda Tur.
 
@@ -74,9 +71,8 @@ Cu drag, echipa Panda Tur 🐼`,
 ☎️ 022-78-19-19
 069-44-04-00
 www.pandatur.md`,
-//
-"Sorting RO" : 
-`Bună  ziua.
+  //
+  "Sorting RO": `Bună  ziua.
 Ma numesc Ariadna 
 Mulțumim că ați ales Panda Tur     
 
@@ -89,18 +85,16 @@ Ne aflăm pe strada Vasile Alecsandri 121, Chisinau. Contact:
 ☎️022-78-19-19
 069-44-04-00 
 www.pandatur.md`,
-//
-"Sorting Final" : 
-`Mulțumimi pentru detaliile oferite, transmit specialistului responsabil de acestă destinație, 
+  //
+  "Sorting Final": `Mulțumimi pentru detaliile oferite, transmit specialistului responsabil de acestă destinație, 
 
 în scurt ve-ți primi recomandării din partea companiei cu descrierea completă.
 
 
 Vă rog să indicați un număr de telefon pentru discuția mai constructivă cu un specialist. 
 *(în caz de sunteți peste hotare indicații codul țării și ve-ți fi telefonati pe whatsapp sau viber.)`,
-//
-"Выдача Документов RU" : 
-`Здравствуйте, [Имя Туриста]!
+  //
+  "Выдача Документов RU": `Здравствуйте, [Имя Туриста]!
 
  Ваши документы готовы:
 
@@ -142,9 +136,8 @@ Vă rog să indicați un număr de telefon pentru discuția mai constructivă cu
 
 С уважением,
 Panda Tur! 🐼`,
-//
-"Eliberarea Actelor RO" : 
-`Bună ziua, [Nume Turist]! 
+  //
+  "Eliberarea Actelor RO": `Bună ziua, [Nume Turist]! 
 
 Actele dvs sunt gata:
 
@@ -185,9 +178,8 @@ Biletul de avion (fizic sau electronic)
 
 Cu respect,
 Panda Tur!🐼`,
-//
-"Информация За 3 Дня До Выезда" : 
-`Давайте вместе подготовимся к отпуску! 😇
+  //
+  "Информация За 3 Дня До Выезда": `Давайте вместе подготовимся к отпуску! 😇
 
 
 Детали:
@@ -213,9 +205,8 @@ Panda Tur!🐼`,
 📞(022)-781-919
 📩oferte@pandatur.md
 🌐 https://pandatur.md`,
-//
-"Informare Cu 3 Zile Inainte De Plecare" : 
-`Hai să ne pregătim împreună pentru vacanță!😇
+  //
+  "Informare Cu 3 Zile Inainte De Plecare": `Hai să ne pregătim împreună pentru vacanță!😇
 
 
 Detalii:
@@ -241,9 +232,8 @@ Check-out: [12:00] - [Data]
 📞(022)-781-919 
 📩oferte@pandatur.md 
 🌐 https://pandatur.md`,
-//
-"Подтверждение Бронирования RU" : 
-`Здравствуйте, [Имя Туриста]!
+  //
+  "Подтверждение Бронирования RU": `Здравствуйте, [Имя Туриста]!
 
 
 
@@ -256,9 +246,8 @@ Check-out: [12:00] - [Data]
 📞(022)-781-919
 📩oferte@pandatur.md
 🌐 https://pandatur.md`,
-//
-"Confirmarea Hotelului RO" : 
-`Bună ziua,    [Nume Turist] !
+  //
+  "Confirmarea Hotelului RO": `Bună ziua,    [Nume Turist] !
 
 
 
@@ -271,17 +260,15 @@ Cu 1-2 zile înainte de plecare, vă vom trimite toate actele necesare. 🥰
 📞(022)-781-919
  📩oferte@pandatur.md 
 🌐 https://pandatur.md`,
-//
-"Acord hotel de 3 stele RO" : 
-`Eu, [NUMELE PRENUMELE], 
+  //
+  "Acord hotel de 3 stele RO": `Eu, [NUMELE PRENUMELE], 
 sunt informat(ă) despre hotelul ales _________________(numele hotelului), 
 categoria acestuia . 
 
 Înțeleg și îmi asum întreaga responsabilitate pentru alegerea acestui hotel. 
 Nu voi avea pretenții către compania Panda Tur și managerii săi.`,
-//
-"Acord pentru Modificările Rezervării RO" : 
-`Acord pentru Modificările Rezervării
+  //
+  "Acord pentru Modificările Rezervării RO": `Acord pentru Modificările Rezervării
 
 
 
@@ -318,9 +305,8 @@ Prin urmare, accept varianta alternativă a hotelului nou și mă oblig să semn
 
 Data: ___________
 Semnătura:____________________`,
-//
-"Salutare 2024 RU" : 
-`Приветствую 😍
+  //
+  "Salutare 2024 RU": `Приветствую 😍
 
 Спасибо, что выбрали Panda Tur!
 
@@ -328,18 +314,16 @@ Semnătura:____________________`,
 Меня зовут _________, менеджер компании, и рад приветствовать  в приключении, которое мы готовим для вас. 
 
 Мы здесь, чтобы убедиться, что каждый момент вашего путешествия будет незабываемым.`,
-//
-"Salutare 2024 RO" : 
-`Salutare 😍
+  //
+  "Salutare 2024 RO": `Salutare 😍
  
 Mulțumim că ați ales Panda Tur!
  
 Sunt __________, managerul companiei, și mă bucur să vă urez bun venit în aventura pe care o pregătim pentru dumneavoastră. 
 
 Suntem aici pentru a ne asigura că fiecare moment al călătoriei este de neuitat.`,
-//
-"Rezervare 2024 RO" : 
-`Pentru comoditatea dvs. vă putem propune cîteva opțiuni de achitare și rezervare. Rezervarea se consideră efectuată cu succes în cazul achitării a minim 30 % din suma totală a sejurului sau excursiei.
+  //
+  "Rezervare 2024 RO": `Pentru comoditatea dvs. vă putem propune cîteva opțiuni de achitare și rezervare. Rezervarea se consideră efectuată cu succes în cazul achitării a minim 30 % din suma totală a sejurului sau excursiei.
 
 !  Achitarea se face în Roni în baza cursului BNR la data plății !
 
@@ -353,9 +337,8 @@ b) data de plecare
 c) număr de telefon
 d) orașul de plecare 
 e) numărul de persoane`,
-//
-"Bronare RO" : 
-`Pentru rezervare online, vă rugăm să ne oferiți următoarele informații:
+  //
+  "Bronare RO": `Pentru rezervare online, vă rugăm să ne oferiți următoarele informații:
 
 1. Fotografiile pașaportelor tuturor turiștilor
 
@@ -367,9 +350,8 @@ e) numărul de persoane`,
  Notă:
 Pentru a accelera procesul de rezervare, trimite-ne o confirmare de plată cu starea de finalizare cu succes.
 Vă mulțumim.`,
-//
-"Бронирование RU" : 
-`Для онлайн-бронирование, просим предоставить следующую информацию:
+  //
+  "Бронирование RU": `Для онлайн-бронирование, просим предоставить следующую информацию:
 
 1. Фотографии  паспортов всех туристов
 
@@ -380,9 +362,8 @@ Vă mulțumim.`,
 
  Примечание:
 Для ускорения процеса бронирования пришлите нам подтверждение оплаты со статусом успешного выполнения.`,
-//
-"Achitare RO" : 
-`Pentru comoditatea dvs. vă putem propune cîteva opțiuni de achitare și rezervare. 
+  //
+  "Achitare RO": `Pentru comoditatea dvs. vă putem propune cîteva opțiuni de achitare și rezervare. 
 
 Rezervarea se consideră efectuată cu succes în cazul achitării a minim 30 % din suma totală a sejurului sau excursiei.
 
@@ -400,9 +381,8 @@ Rezervarea se consideră efectuată cu succes în cazul achitării a minim 30 % 
 Atragem atenția dvs că conform regulilor companiei Panda Tur, plata integrală a turului trebuie efectuată cu cel puțin 14 zile înainte de plecare.
 
 Dacă rezervați un tur cu mai puțin de 14 zile înainte de sosire, plata se face integral.`,
-//
-"Оплата RU" : 
-`Для Вашего удобства мы можем предложить несколько вариантов оплаты и бронирования. 
+  //
+  "Оплата RU": `Для Вашего удобства мы можем предложить несколько вариантов оплаты и бронирования. 
 
 Для того чтобы сделать бронь нужно оплатить минимум 30% от полной стоимости тура.
 
@@ -419,5 +399,5 @@ Dacă rezervați un tur cu mai puțin de 14 zile înainte de sosire, plata se fa
 
 Просим учесть что по правилам компании Панда Тур, полная оплата тура должна быть осуществлена не позже 14 дней до заезда. 
 
-При бронировании тура, менее чем за 14 дней до заезда, оплата производится в полном размере.`,
+При бронировании тура, менее чем за 14 дней до заезда, оплата производится в полном размере.`
 };

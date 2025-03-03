@@ -16,8 +16,8 @@ export const messages = {
   upload: async (body) => {
     const { data } = await baseAxios.post("/api/messages/upload", body, {
       headers: {
-        "Content-Type": "multipart/form-data",
-      },
+        "Content-Type": "multipart/form-data"
+      }
     });
 
     return data;
@@ -40,6 +40,6 @@ export const messages = {
       const { data } = await baseAxios.post("/messages/send/viber", body);
 
       return data;
-    },
-  },
+    }
+  }
 };

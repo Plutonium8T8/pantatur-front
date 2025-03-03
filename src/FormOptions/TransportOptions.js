@@ -1,6 +1,6 @@
 export const transportOptions = [
-    "Avion",
-    "Autocar",
-    "Transport personal",
-    "Fara transport"
-]
+  "Avion",
+  "Autocar",
+  "Transport personal",
+  "Fara transport"
+];

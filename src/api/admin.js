@@ -10,6 +10,6 @@ export const admin = {
 
     deleteRoles: async (body) => {
       await baseAxios.delete("/admin/user/roles", { data: body });
-    },
-  },
+    }
+  }
 };

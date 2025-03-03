@@ -24,5 +24,5 @@ export const responseInterceptor = [
     }
 
     return Promise.reject(err);
-  },
+  }
 ];

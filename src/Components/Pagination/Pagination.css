@@ -6,7 +6,7 @@
 }
 
 .pagination button {
-  transition: .3s ease;
+  transition: 0.3s ease;
   color: #0f824c;
   padding: 10px;
   width: 35px;

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import {
   useReactTable,
   getCoreRowModel,
-  flexRender,
+  flexRender
 } from "@tanstack/react-table";
 import { cleanValue } from "../utils";
 import { api } from "../../../api";
@@ -39,7 +39,7 @@ const LeadTable = ({
   filteredTickets,
   selectedTickets,
   setCurrentTicket,
-  toggleSelectTicket,
+  toggleSelectTicket
 }) => {
   const [hardTicketsList, setHardTicketsList] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -62,7 +62,7 @@ const LeadTable = ({
               onChange={() => toggleSelectTicket(getValue())}
             />
           </div>
-        ),
+        )
       },
       {
         accessorKey: "id",
@@ -77,7 +77,7 @@ const LeadTable = ({
               </Link>
             </div>
           );
-        },
+        }
       },
       {
         accessorKey: "name",
@@ -95,7 +95,7 @@ const LeadTable = ({
                 : cleanValue()}
             </div>
           );
-        },
+        }
       },
       {
         accessorKey: "surname",
@@ -112,7 +112,7 @@ const LeadTable = ({
                 : cleanValue()}
             </div>
           );
-        },
+        }
       },
       {
         accessorKey: "email",
@@ -130,7 +130,7 @@ const LeadTable = ({
                 : cleanValue()}
             </div>
           );
-        },
+        }
       },
       {
         header: () => (
@@ -148,7 +148,7 @@ const LeadTable = ({
                 : cleanValue()}
             </div>
           );
-        },
+        }
       },
       {
         header: getLanguageByKey("Descriere"),
@@ -158,7 +158,7 @@ const LeadTable = ({
           <div className="limit-text" style={{ width: 200 }}>
             <TextEllipsis rows={3}>{getValue()}</TextEllipsis>
           </div>
-        ),
+        )
       },
       {
         header: getLanguageByKey("Tag-uri"),
@@ -168,7 +168,7 @@ const LeadTable = ({
           <div style={{ width: 300 }} className="lead-tags-row">
             {renderTags(getValue())}
           </div>
-        ),
+        )
       },
       {
         accessorKey: "priority",
@@ -182,7 +182,7 @@ const LeadTable = ({
           >
             {getValue()}
           </div>
-        ),
+        )
       },
       {
         header: getLanguageByKey("Workflow"),
@@ -201,7 +201,7 @@ const LeadTable = ({
               </span>
             </div>
           );
-        },
+        }
       },
       {
         accessorKey: "contact",
@@ -209,7 +209,7 @@ const LeadTable = ({
           <div className="text-center">{getLanguageByKey("Contact")}</div>
         ),
         accessorFn: ({ contact }) => contact,
-        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>,
+        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
         accessorKey: "creation_date",
@@ -223,7 +223,7 @@ const LeadTable = ({
           <div style={{ width: 150 }} className="text-center">
             {getValue()}
           </div>
-        ),
+        )
       },
       {
         accessorKey: "last_interaction_date",
@@ -237,7 +237,7 @@ const LeadTable = ({
           <div style={{ width: 150 }} className="text-center">
             {getValue()}
           </div>
-        ),
+        )
       },
       {
         accessorKey: "ticket_info.achitat_client",
@@ -247,7 +247,7 @@ const LeadTable = ({
           </div>
         ),
         accessorFn: ({ ticket_info }) => cleanValue(ticket_info.achitat_client),
-        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>,
+        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
         accessorKey: "ticket_info.avans_euro",
@@ -255,7 +255,7 @@ const LeadTable = ({
           <div className="text-center">{getLanguageByKey("Avans în euro")}</div>
         ),
         accessorFn: ({ ticket_info }) => cleanValue(ticket_info.avans_euro),
-        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>,
+        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
         accessorKey: "ticket_info.buget",
@@ -263,7 +263,7 @@ const LeadTable = ({
           <div className="text-center">{getLanguageByKey("Buget")}</div>
         ),
         accessorFn: ({ ticket_info }) => cleanValue(ticket_info.buget),
-        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>,
+        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
         accessorKey: "ticket_info.comision_companie",
@@ -274,7 +274,7 @@ const LeadTable = ({
         ),
         accessorFn: ({ ticket_info }) =>
           cleanValue(ticket_info.comision_companie),
-        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>,
+        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
         accessorKey: "ticket_info.data_avansului",
@@ -284,7 +284,7 @@ const LeadTable = ({
           </div>
         ),
         accessorFn: ({ ticket_info }) => cleanValue(ticket_info.data_avansului),
-        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>,
+        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
         accessorKey: "ticket_info.data_cererii_de_retur",
@@ -295,7 +295,7 @@ const LeadTable = ({
         ),
         accessorFn: ({ ticket_info }) =>
           cleanValue(ticket_info.data_cererii_de_retur),
-        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>,
+        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
         accessorKey: "ticket_info.data_contractului",
@@ -306,7 +306,7 @@ const LeadTable = ({
         ),
         accessorFn: ({ ticket_info }) =>
           cleanValue(ticket_info.data_contractului),
-        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>,
+        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
         accessorKey: "ticket_info.data_de_plata_integrala",
@@ -317,7 +317,7 @@ const LeadTable = ({
         ),
         accessorFn: ({ ticket_info }) =>
           cleanValue(ticket_info.data_de_plata_integrala),
-        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>,
+        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
         accessorKey: "ticket_info.data_intoarcerii",
@@ -328,7 +328,7 @@ const LeadTable = ({
         ),
         accessorFn: ({ ticket_info }) =>
           cleanValue(ticket_info.data_intoarcerii),
-        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>,
+        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
         accessorKey: "ticket_info.data_plecarii",
@@ -336,7 +336,7 @@ const LeadTable = ({
           <div className="text-center">{getLanguageByKey("Data plecării")}</div>
         ),
         accessorFn: ({ ticket_info }) => cleanValue(ticket_info.data_plecarii),
-        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>,
+        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
         accessorKey: "ticket_info.tip_de_transport",
@@ -347,7 +347,7 @@ const LeadTable = ({
         ),
         accessorFn: ({ ticket_info }) =>
           cleanValue(ticket_info.tip_de_transport),
-        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>,
+        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
         accessorKey: "ticket_info.vacanta",
@@ -355,7 +355,7 @@ const LeadTable = ({
           <div className="text-center">{getLanguageByKey("Vacanță")}</div>
         ),
         accessorFn: ({ ticket_info }) => cleanValue(ticket_info.vacanta),
-        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>,
+        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
         accessorKey: "ticket_info.valuta_contului",
@@ -366,15 +366,15 @@ const LeadTable = ({
         ),
         accessorFn: ({ ticket_info }) =>
           cleanValue(ticket_info.valuta_contului),
-        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>,
-      },
+        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
+      }
     ];
   }, [selectedTickets, toggleSelectTicket]);
 
   const table = useReactTable({
     data: hardTicketsList,
     columns,
-    getCoreRowModel: getCoreRowModel(),
+    getCoreRowModel: getCoreRowModel()
   });
 
   useEffect(() => {
@@ -384,7 +384,7 @@ const LeadTable = ({
         const hardTickets = await api.tickets.getHardList({
           page,
           sort_by: SORT_BY,
-          order: ORDER,
+          order: ORDER
         });
 
         setHardTicketsList(hardTickets.data);
@@ -412,7 +412,7 @@ const LeadTable = ({
                 <th key={i}>
                   {flexRender(
                     header.column.columnDef.header,
-                    header.getContext(),
+                    header.getContext()
                   )}
                 </th>
               ))}

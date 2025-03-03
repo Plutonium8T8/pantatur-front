@@ -1,6 +1,1 @@
-export const priorityOptions = [
-    "joasă",
-    "medie",
-    "înaltă",
-    "critică"
-]
+export const priorityOptions = ["joasă", "medie", "înaltă", "critică"];

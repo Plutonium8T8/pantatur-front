@@ -45,7 +45,7 @@ export const tickets = {
   getHardList: async (params) => {
     const url = queryString.stringifyUrl({
       url: "/api/hard/tickets",
-      query: params,
+      query: params
     });
 
     const { data } = await baseAxios.get(url);
@@ -70,6 +70,6 @@ export const tickets = {
       const { data } = await baseAxios.get(`/api/light/ticket/${id}`);
 
       return data;
-    },
-  },
+    }
+  }
 };
