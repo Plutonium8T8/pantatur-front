@@ -16,8 +16,8 @@ import { Pagination } from "../../Pagination";
 import { getLanguageByKey } from "../../utils/getLanguageByKey";
 import { TextEllipsis } from "../../TextEllipsis";
 
-const SORT_BY = "creation_date"
-const ORDER = "DESC"
+const SORT_BY = "creation_date";
+const ORDER = "ASC";
 
 const getTotalPages = (items) => {
   return Math.ceil(items / MAX_PAGE_SIZE);
@@ -84,32 +84,71 @@ const LeadTable = ({
         header: () => (
           <div className="text-center">{getLanguageByKey("Nume")}</div>
         ),
-        accessorFn: ({ name }) => cleanValue(name),
-        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>,
+        accessorFn: ({ clients }) => clients,
+        cell: ({ getValue }) => {
+          const values = getValue();
+
+          return (
+            <div className="text-center">
+              {values.length
+                ? values.map((item) => cleanValue(item.name)).join(", ")
+                : cleanValue()}
+            </div>
+          );
+        },
       },
       {
         accessorKey: "surname",
         header: () => (
           <div className="text-center">{getLanguageByKey("Prenume")}</div>
         ),
-        accessorFn: ({ surname }) => cleanValue(surname),
-        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>,
+        accessorFn: ({ clients }) => clients,
+        cell: ({ getValue }) => {
+          const values = getValue();
+          return (
+            <div className="text-center">
+              {values.length
+                ? values.map((item) => cleanValue(item.surname)).join(", ")
+                : cleanValue()}
+            </div>
+          );
+        },
       },
       {
         accessorKey: "email",
         header: () => (
           <div className="text-center">{getLanguageByKey("Email")}</div>
         ),
-        accessorFn: ({ email }) => cleanValue(email),
-        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>,
+        accessorFn: ({ clients }) => clients,
+        cell: ({ getValue }) => {
+          const values = getValue();
+
+          return (
+            <div className="text-center">
+              {values.length
+                ? values.map((item) => cleanValue(item.email)).join(", ")
+                : cleanValue()}
+            </div>
+          );
+        },
       },
       {
         header: () => (
           <div className="text-center">{getLanguageByKey("Telefon")}</div>
         ),
         accessorKey: "phone",
-        accessorFn: ({ phone }) => cleanValue(phone),
-        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>,
+        accessorFn: ({ clients }) => clients,
+        cell: ({ getValue }) => {
+          const values = getValue();
+
+          return (
+            <div className="text-center">
+              {values.length
+                ? values.map((item) => cleanValue(item.phone)).join(", ")
+                : cleanValue()}
+            </div>
+          );
+        },
       },
       {
         header: getLanguageByKey("Descriere"),
@@ -170,11 +209,7 @@ const LeadTable = ({
           <div className="text-center">{getLanguageByKey("Contact")}</div>
         ),
         accessorFn: ({ contact }) => contact,
-        cell: ({ getValue }) => (
-          <div style={{ width: 100 }} className="text-center">
-            {getValue()}
-          </div>
-        ),
+        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>,
       },
       {
         accessorKey: "creation_date",
@@ -332,7 +367,7 @@ const LeadTable = ({
         accessorFn: ({ ticket_info }) =>
           cleanValue(ticket_info.valuta_contului),
         cell: ({ getValue }) => <div className="text-center">{getValue()}</div>,
-      }
+      },
     ];
   }, [selectedTickets, toggleSelectTicket]);
 
@@ -346,7 +381,11 @@ const LeadTable = ({
     const getHardTickets = async () => {
       setLoading(true);
       try {
-        const hardTickets = await api.tickets.getHardList({ page, sort_by: SORT_BY, order: ORDER });
+        const hardTickets = await api.tickets.getHardList({
+          page,
+          sort_by: SORT_BY,
+          order: ORDER,
+        });
 
         setHardTicketsList(hardTickets.data);
       } catch (_) {
@@ -385,7 +424,7 @@ const LeadTable = ({
           {table.getRowModel().rows.map((row) => (
             <tr key={row.id}>
               {row.getVisibleCells().map((cell) => (
-                <td center key={cell.id}>
+                <td key={cell.id}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}
