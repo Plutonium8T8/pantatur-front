@@ -12,6 +12,7 @@ import "../SnackBarComponent/SnackBarComponent.css";
 import { FaFilter, FaTable, FaColumns, FaTrash, FaEdit } from "react-icons/fa";
 import { getLanguageByKey } from "../../Components/utils/getLanguageByKey";
 import { LeadTable } from "./LeadTable";
+import { Button } from "../Button"
 
 const Leads = () => {
   const refLeadsFilter = useRef();
@@ -137,7 +138,7 @@ const Leads = () => {
           />
           <button
             onClick={() => setIsTableView((prev) => !prev)}
-            className="button-toggle-view"
+            className="d-flex align-items-center gap-4"
           >
             {isTableView ? <FaColumns /> : <FaTable />}
             {getLanguageByKey(isTableView ? "Coloană" : "Listă")}
@@ -149,23 +150,24 @@ const Leads = () => {
           </div>
 
           {selectedTickets.length > 0 && (
-            <button
+            <Button variant="danger"
               onClick={deleteSelectedTickets}
-              className="button-delete-row"
+              className="d-flex align-items-center gap-8"
             >
               <FaTrash /> {getLanguageByKey("Ștergere")} (
               {selectedTickets.length})
-            </button>
+            </Button>
           )}
 
           {selectedTickets.length > 0 && (
-            <button
+            <Button
+            variant="warning"
               onClick={() => editSelectedTickets()}
-              className="button-edit-row"
+              className="d-flex align-items-center gap-8"
             >
               <FaEdit /> {getLanguageByKey("Editare")} ({selectedTickets.length}
               )
-            </button>
+            </Button>
           )}
 
           <button

@@ -640,6 +640,24 @@ button {
   padding-bottom: 0.3%;
 }
 
+/* Utility classNames */
+
 .text-center {
   text-align: center;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.gap-8 {
+  gap: 8px;
+}
+
+.gap-4 {
+  gap: 4px;
 }
