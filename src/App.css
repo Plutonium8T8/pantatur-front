@@ -261,22 +261,15 @@
 }
 
 .button-add-ticket {
-  background-color: #0f824c;
   border-radius: 4px;
-  color: white;
   font-size: 18px;
-  cursor: pointer;
   width: 240px;
   height: 42px;
   transition: transform 0.1s ease;
-  /* Плавный переход */
 }
 
 .button-add-ticket:active {
   transform: scale(0.95);
-  /* Уменьшает кнопку при нажатии */
-  background-color: #2eab2e;
-  /* Темнее цвет для эффекта */
 }
 
 /* .container-inputs-modal {
@@ -616,11 +609,8 @@ button {
 
 .button-filter {
   position: relative;
-  background-color: #0f824c;
   border-radius: 4px;
-  color: white;
   font-size: 18px;
-  cursor: pointer;
   height: 42px;
   transition: transform 0.1s ease;
 }

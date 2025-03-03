@@ -125,9 +125,9 @@ const Leads = () => {
     <>
       <div ref={refLeadsFilter} className="dashboard-header">
         <div className="header">
-          <button onClick={openCreateTicketModal} className="button-add-ticket">
+          <Button variant="primary" onClick={openCreateTicketModal} className="button-add-ticket">
             {getLanguageByKey("Adaugă lead")}
-          </button>
+          </Button>
 
           <input
             type="text"
@@ -136,13 +136,13 @@ const Leads = () => {
             placeholder={getLanguageByKey("Cauta dupa Lead, Client sau Tag")}
             className="search-input"
           />
-          <button
+          <Button
             onClick={() => setIsTableView((prev) => !prev)}
             className="d-flex align-items-center gap-4"
           >
             {isTableView ? <FaColumns /> : <FaTable />}
             {getLanguageByKey(isTableView ? "Coloană" : "Listă")}
-          </button>
+          </Button>
 
           <div className="ticket-counter-row">
             {getLanguageByKey("Toate tichetele")}: {tickets.length} |{" "}
@@ -170,7 +170,7 @@ const Leads = () => {
             </Button>
           )}
 
-          <button
+          <Button variant="primary"
             onClick={() => setIsFilterOpen(true)}
             className="button-filter"
           >
@@ -178,7 +178,7 @@ const Leads = () => {
             {Object.values(filters).some((value) =>
               Array.isArray(value) ? value.length > 0 : value,
             ) && <span className="filter-indicator"></span>}
-          </button>
+          </Button>
         </div>
       </div>
 
