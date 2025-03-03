@@ -14,7 +14,7 @@ export const Priority = ({ ticket, onChange = () => { }, disabled = false }) => 
                 onChange={onChange}
                 className="priority-select"
                 style={{ display: 'block', padding: '0.5rem' }}
-                disabled={disabled} // Добавлен пропс disabled
+                disabled={disabled}
             >
                 {priorityOptions.map(priority => (
                     <option key={priority} value={priority}>

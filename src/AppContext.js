@@ -1,6 +1,5 @@
 import React, { createContext, useState, useEffect, useContext, useRef } from 'react';
 import { useSnackbar } from 'notistack';
-import { FaEnvelope, FaTrash } from 'react-icons/fa';
 import { useUser } from './UserContext';
 import { truncateText } from './stringUtils';
 import { api } from "./api"
@@ -10,45 +9,40 @@ const AppContext = createContext();
 export const useAppContext = () => useContext(AppContext);
 
 export const AppProvider = ({ children, isLoggedIn }) => {
-  const socketRef = useRef(null); // Вместо useState
+  const socketRef = useRef(null);
   const [tickets, setTickets] = useState([]);
   const [ticketIds, setTicketIds] = useState([]);
-  const [messages, setMessages] = useState([]); // Все сообщения
-  const [clientMessages, setClientMessages] = useState([]); // Сообщения клиента из API
-  const [unreadCount, setUnreadCount] = useState(0); // Непрочитанные сообщения
+  const [messages, setMessages] = useState([]);
+  const [clientMessages, setClientMessages] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [isLoading, setIsLoading] = useState(false);
-  const { userId } = useUser(); // Получаем userId из UserContext
-  const ticketsRef = useRef(tickets);
-  const [unreadMessages, setUnreadMessages] = useState(new Map()); // Оптимизированное хранение непрочитанных сообщений
-  const language = localStorage.getItem('language') || 'RO';
+  const { userId } = useUser();
+  const [unreadMessages, setUnreadMessages] = useState(new Map());
   const [selectTicketId, setSelectTicketId] = useState(null);
 
   useEffect(() => {
     let pingInterval;
 
     if (socketRef.current) {
-      // Отправка пинга через каждые 4 минуты
       pingInterval = setInterval(() => {
         if (socketRef.current.readyState === WebSocket.OPEN) {
           const pingMessage = JSON.stringify({ type: 'ping' });
           socketRef.current.send(pingMessage);
         }
-      }, 5000); // Пинг каждые 4 минуты
+      }, 5000);
 
-      // Очистка интервала при размонтировании компонента или закрытии сокета
       return () => {
         clearInterval(pingInterval);
         if (socketRef.current) {
-          socketRef.current.onmessage = null; // Очищаем обработчик сообщений
+          socketRef.current.onmessage = null;
         }
       };
     }
 
-    return () => { }; // Очистка, если сокет не подключен
-  }, []); // useEffect без зависимости от socket, поскольку socketRef.current всегда актуален
+    return () => { };
+  }, []);
 
-  // Инициализация WebSocket и подключение к чат-румам при логине
   useEffect(() => {
     if (!isLoggedIn) {
       setTickets([]);
@@ -64,7 +58,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     }
 
     const connectToChatRooms = (ticketIds) => {
-      const socketInstance = socketRef.current; // Используем socketRef.current
+      const socketInstance = socketRef.current;
       if (!socketInstance || socketInstance.readyState !== WebSocket.OPEN) {
         console.warn('WebSocket не подключён или недоступен.');
         return;
@@ -81,7 +75,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       });
 
       socketInstance.send(socketMessage);
-      // console.log('Подключён к комнатам клиентов:', ticketIds);
+      console.log('connect to chat rooms', ticketIds);
     };
 
     if (!socketRef.current) {
@@ -104,7 +98,6 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         // alert(translations["WebSocket off"][language] || "WebSocket este oprit. Te rog să reîncarci pagina!");
         // window.location.reload();
       };
-      // socketInstance.onerror = (error) => console.error('WebSocket ошибка:', error);
     }
 
     return () => {
@@ -117,7 +110,6 @@ export const AppProvider = ({ children, isLoggedIn }) => {
 
   useEffect(() => {
     console.log("Количество непрочитанных сообщений:", unreadCount);
-    // Здесь можно выполнить любое действие при изменении unreadCount
   }, [unreadCount]);
 
 
@@ -134,10 +126,8 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   const markMessagesAsRead = (ticketId) => {
     if (!ticketId) return;
 
-    // Получаем WebSocket-соединение
     const socketInstance = socketRef.current;
 
-    // **Обновляем `messages`, чтобы пометить их как прочитанные**
     setMessages((prevMessages) =>
       prevMessages.map((msg) => {
         if (msg.ticket_id === ticketId) {
@@ -147,7 +137,6 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       })
     );
 
-    // **Обновляем `unreadMessages`, удаляя все сообщения этого тикета**
     setUnreadMessages((prevUnread) => {
       const updatedUnread = new Map(prevUnread);
       updatedUnread.forEach((msg, msgId) => {
@@ -158,14 +147,12 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       return updatedUnread;
     });
 
-    // **Обновляем `unseen_count` в `tickets`**
     setTickets((prevTickets) =>
       prevTickets.map((ticket) =>
         ticket.id === ticketId ? { ...ticket, unseen_count: 0 } : ticket
       )
     );
 
-    // **Отправляем WebSocket `seen`, только если были непрочитанные**
     if (socketInstance && socketInstance.readyState === WebSocket.OPEN) {
       const readMessageData = {
         type: 'seen',
@@ -186,8 +173,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       setIsLoading(true);
 
       const data = await api.tickets.getLightList()
-      
-      // Обрабатываем данные тикетов
+
       const processedTickets = data.map(ticket => ({
         ...ticket,
         client_ids: ticket.client_id
@@ -240,8 +226,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     try {
 
       const updatedTicket = await api.tickets.updateById(updateData.id, updateData)
-  
-      // Синхронизация тикетов через WebSocket
+
       return updatedTicket;
     } catch (error) {
       console.error('Error updating ticket:', error.message || error);
@@ -281,7 +266,6 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   //   }
   // };
 
-  // Функция для получения сообщений для конкретного client_id
   const getClientMessagesSingle = async (ticket_id) => {
     console.log("Обновление сообщений для тикета:", ticket_id);
     try {
@@ -293,7 +277,6 @@ export const AppProvider = ({ children, isLoggedIn }) => {
           console.log("Старые сообщения в state:", prevMessages);
           console.log("Пришедшие новые сообщения:", data);
 
-          // Оставляем все старые сообщения, кроме тех, что принадлежат текущему тикету
           const otherMessages = prevMessages.filter((msg) => msg.ticket_id !== ticket_id);
 
           return [...otherMessages, ...data];
@@ -301,7 +284,6 @@ export const AppProvider = ({ children, isLoggedIn }) => {
 
         console.log("Обновленный state сообщений:", data);
 
-        // **Перерасчёт `unseen_count`**
         const unseenMessages = data.filter(
           (msg) => msg.seen_by === '{}' && msg.sender_id !== userId
         );
@@ -319,7 +301,6 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     }
   };
 
-  // Обработка сообщений через WebSocket
   const handleWebSocketMessage = (message) => {
     switch (message.type) {
       case 'message': {
@@ -338,26 +319,23 @@ export const AppProvider = ({ children, isLoggedIn }) => {
                 time_sent: time_sent,
                 unseen_count:
                   ticket_id === selectTicketId
-                    ? 0  // Если тикет открыт, сбрасываем непрочитанные
+                    ? 0
                     : ticket.unseen_count + (sender_id !== userId ? 1 : 0)
               }
               : ticket
           )
         );
 
-        // Обновляем `unreadMessages`
         setUnreadMessages((prevUnread) => {
           const updatedUnread = new Map(prevUnread);
 
           if (ticket_id === selectTicketId) {
-            // Если тикет открыт, удаляем все его непрочитанные сообщения
             updatedUnread.forEach((msg, msgId) => {
               if (msg.ticket_id === ticket_id) {
                 updatedUnread.delete(msgId);
               }
             });
           } else if (sender_id !== userId) {
-            // Добавляем новое сообщение в `unreadMessages`, если оно непрочитанное
             updatedUnread.set(message.data.id, message.data);
           }
 
@@ -371,14 +349,12 @@ export const AppProvider = ({ children, isLoggedIn }) => {
 
         console.log('🔄 Получен `seen` из WebSocket:', { ticket_id, seen_at });
 
-        // **Обновляем `messages`**
         setMessages((prevMessages) => {
           return prevMessages.map((msg) =>
             msg.ticket_id === ticket_id ? { ...msg, seen_at } : msg
           );
         });
 
-        // **Удаляем непрочитанные сообщения из `unreadMessages`**
         setUnreadMessages((prevUnreadMessages) => {
           const updatedUnreadMap = new Map(prevUnreadMessages);
           updatedUnreadMap.forEach((msg, msgId) => {
@@ -386,11 +362,9 @@ export const AppProvider = ({ children, isLoggedIn }) => {
               updatedUnreadMap.delete(msgId);
             }
           });
-          console.log("✅ Обновленные `unreadMessages` после `seen`:", updatedUnreadMap.size);
           return updatedUnreadMap;
         });
 
-        // **Обновляем unseen_count у тикетов**
         setTickets((prevTickets) =>
           prevTickets.map((ticket) =>
             ticket.id === ticket_id ? { ...ticket, unseen_count: 0 } : ticket
@@ -402,30 +376,22 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       case 'ticket': {
         console.log("Пришел тикет:", message.data);
 
-        // Извлекаем client_id из сообщения
         const ticketId = message.data.ticket_id;
-        const clientId = message.data.client_id;
 
         if (!ticketId) {
           console.warn("Не удалось извлечь ticket_id из сообщения типа 'ticket'.");
           break;
         }
 
-        // Запрашиваем тикет по ticket_id
         fetchSingleTicket(ticketId);
 
-        const socketInstance = socketRef.current; // Используем socketRef.current
+        const socketInstance = socketRef.current;
         if (socketInstance && socketInstance.readyState === WebSocket.OPEN) {
           const socketMessage = JSON.stringify({
             type: 'connect',
-            data: { ticket_id: [ticketId] }, // Подключаемся только к комнате с этим client_id
+            data: { ticket_id: [ticketId] },
           });
-
           socketInstance.send(socketMessage);
-          // console.log(
-          //   `Подключено к комнате клиента с client_id=${clientId}. Отправлено сообщение:`,
-          //   socketMessage
-          // );
         } else {
           console.warn("Не удалось подключиться к комнатам. WebSocket не готов.");
           console.log(
@@ -462,24 +428,22 @@ export const AppProvider = ({ children, isLoggedIn }) => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      // getClientMessages();
       fetchTickets();
     }
   }, [isLoggedIn]);
 
   useEffect(() => {
-    // Пересчитываем `unreadCount` по `unseen_count` из тикетов
     const totalUnread = tickets.reduce((sum, ticket) => sum + ticket.unseen_count, 0);
 
     console.log(`🔄 Обновленный unreadCount: ${totalUnread}`);
     setUnreadCount(totalUnread);
-  }, [tickets, unreadMessages]); // Обновляем при изменении тикетов и непрочитанных сообщений
+  }, [tickets, unreadMessages]);
 
   return (
     <AppContext.Provider value={{
       tickets,
       setTickets,
-      selectTicketId,  // Делаем доступным везде
+      selectTicketId,
       setSelectTicketId,
       messages,
       setMessages,

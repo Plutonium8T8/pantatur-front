@@ -1,12 +1,12 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client'; // Импортируем createRoot из 'react-dom/client'
+import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
-import { UserProvider } from './UserContext'; // Импортируем UserProvider
+import { UserProvider } from './UserContext';
 
-const root = ReactDOM.createRoot(document.getElementById('root')); // Создаем корень для рендеринга
+const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <UserProvider> {/* Оборачиваем App в UserProvider */}
+  <UserProvider>
     <App />
   </UserProvider>
 );

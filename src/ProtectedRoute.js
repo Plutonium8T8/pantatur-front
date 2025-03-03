@@ -2,10 +2,10 @@ import { Navigate } from "react-router-dom";
 import { useUser } from "./UserContext"; 
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
-    const { userRoles } = useUser(); // Получаем роли пользователя
+    const { userRoles } = useUser();
 
     if (!userRoles) {
-        return <div>Загрузка...</div>; // Можно заменить на спиннер
+        return <div>Загрузка...</div>;
     }
 
     const hasAccess = allowedRoles.some(role => userRoles.includes(role));
