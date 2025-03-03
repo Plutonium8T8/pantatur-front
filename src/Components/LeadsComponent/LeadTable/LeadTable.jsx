@@ -16,6 +16,9 @@ import { Pagination } from "../../Pagination";
 import { getLanguageByKey } from "../../utils/getLanguageByKey";
 import { TextEllipsis } from "../../TextEllipsis";
 
+const SORT_BY = "creation_date"
+const ORDER = "DESC"
+
 const getTotalPages = (items) => {
   return Math.ceil(items / MAX_PAGE_SIZE);
 };
@@ -343,7 +346,7 @@ const LeadTable = ({
     const getHardTickets = async () => {
       setLoading(true);
       try {
-        const hardTickets = await api.tickets.getHardList({ page });
+        const hardTickets = await api.tickets.getHardList({ page, sort_by: SORT_BY, order: ORDER });
 
         setHardTicketsList(hardTickets.data);
       } catch (_) {
