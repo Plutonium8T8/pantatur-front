@@ -1,1 +1,1 @@
-export { default as LeadTable } from "./LeadTable"
+export { default as LeadTable } from "./LeadTable";

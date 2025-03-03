@@ -32,10 +32,7 @@ export const users = {
   },
 
   updateExtended: async (id, body) => {
-    const { data } = await baseAxios.patch(
-      `/api/users-extended/${id}`,
-      body,
-    );
+    const { data } = await baseAxios.patch(`/api/users-extended/${id}`, body);
 
     return data;
   },
@@ -50,5 +47,5 @@ export const users = {
     const { data } = await baseAxios.patch("/api/users-client/merge", body);
 
     return data;
-  },
+  }
 };

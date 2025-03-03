@@ -16,7 +16,9 @@
   /* Initially hidden */
   opacity: 0;
   transform: translateY(-20px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
 
 .suggestions-list.show {
@@ -41,7 +43,6 @@
   display: block;
   animation: slideDown 0.3s ease forwards;
 }
-
 
 .tags-display {
   display: flex;
@@ -125,7 +126,9 @@
   background-color: #fff;
   color: #111827;
   outline: none;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .tag-input:focus,

@@ -16,7 +16,7 @@ const UserPage = ({ isOpen, onClose }) => {
 
   const [users, setUsers] = useState({
     username: "",
-    email: "",
+    email: ""
   });
 
   const [usersExtended, setUsersExtended] = useState({
@@ -28,14 +28,14 @@ const UserPage = ({ isOpen, onClose }) => {
     id_card_release: "",
     idnp: "",
     address: "",
-    phone: "",
+    phone: ""
   });
 
   const [usersTechnician, setUsersTechnician] = useState({
     policy_number: "",
     personal_exemption_number: "",
     job_title: "",
-    department: "",
+    department: ""
   });
 
   useEffect(() => {
@@ -51,7 +51,7 @@ const UserPage = ({ isOpen, onClose }) => {
       setUsers((prev) => ({
         ...prev,
         username: userData.username || "",
-        email: userData.email || "",
+        email: userData.email || ""
       }));
 
       const extendedData = await api.users.getExtendedById(userId);
@@ -66,7 +66,7 @@ const UserPage = ({ isOpen, onClose }) => {
         id_card_release: extendedData.id_card_release || "",
         idnp: extendedData.idnp || "",
         address: extendedData.address || "",
-        phone: extendedData.phone || "",
+        phone: extendedData.phone || ""
       }));
 
       const technicianData = await api.users.getTechnicianById(userId);
@@ -77,7 +77,7 @@ const UserPage = ({ isOpen, onClose }) => {
         personal_exemption_number:
           technicianData.personal_exemption_number || "",
         job_title: technicianData.job_title || "",
-        department: technicianData.department || "",
+        department: technicianData.department || ""
       }));
     } catch (error) {
       enqueueSnackbar(showServerError(error), { variant: "error" });
@@ -105,7 +105,7 @@ const UserPage = ({ isOpen, onClose }) => {
     try {
       await api.users.updateUsernameAndEmail(userId, {
         email: users.email,
-        username: users.username,
+        username: users.username
       });
 
       await api.users.updateExtended(userId, {
@@ -117,14 +117,14 @@ const UserPage = ({ isOpen, onClose }) => {
         id_card_release: usersExtended.id_card_release,
         id_card_series: usersExtended.id_card_series,
         idnp: usersExtended.idnp,
-        phone: usersExtended.phone,
+        phone: usersExtended.phone
       });
 
       await api.users.updateTechnician(userId, {
         department: usersTechnician.department,
         job_title: usersTechnician.job_title,
         personal_exemption_number: usersTechnician.personal_exemption_number,
-        policy_number: usersTechnician.policy_number,
+        policy_number: usersTechnician.policy_number
       });
 
       onClose();
@@ -161,7 +161,7 @@ const UserPage = ({ isOpen, onClose }) => {
                       "email_confirmed",
                       "password_reset_token",
                       "password_reset_requested_at",
-                      "id",
+                      "id"
                     ].includes(attribute)
                 )
                 .map((key) => (
@@ -178,7 +178,10 @@ const UserPage = ({ isOpen, onClose }) => {
 
             <div className="input-group">
               <h3>{translations["Informații extinse"][language]}</h3>
-              {Object.keys(usersExtended).filter((attribute) => !["user", "photo", "id"].includes(attribute))
+              {Object.keys(usersExtended)
+                .filter(
+                  (attribute) => !["user", "photo", "id"].includes(attribute)
+                )
                 .map((key) => (
                   <input
                     key={key}

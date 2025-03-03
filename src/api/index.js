@@ -21,5 +21,5 @@ export const api = {
   dashboard,
   task,
   notification,
-  standalone,
+  standalone
 };

@@ -23,5 +23,5 @@ export const task = {
     const { data } = await baseAxios.get(`/api/task/user/${id}`);
 
     return data;
-  },
+  }
 };

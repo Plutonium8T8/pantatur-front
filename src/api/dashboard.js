@@ -5,5 +5,5 @@ export const dashboard = {
     const { data } = await baseAxios.get("/api/dashboard/statistics");
 
     return data;
-  },
+  }
 };

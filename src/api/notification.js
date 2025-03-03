@@ -10,7 +10,7 @@ export const notification = {
   deleteAllByUserId: async (id) => {
     const { data } = await baseAxios.delete("/api/notification/client", {
       data: {
-        client_id: id,
+        client_id: id
       }
     });
 
@@ -27,5 +27,5 @@ export const notification = {
     const { data } = await baseAxios.get(`/api/notification/${id}`);
 
     return data;
-  },
+  }
 };

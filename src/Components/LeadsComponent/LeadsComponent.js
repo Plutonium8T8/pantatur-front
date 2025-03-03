@@ -12,7 +12,7 @@ import "../SnackBarComponent/SnackBarComponent.css";
 import { FaFilter, FaTable, FaColumns, FaTrash, FaEdit } from "react-icons/fa";
 import { getLanguageByKey } from "../../Components/utils/getLanguageByKey";
 import { LeadTable } from "./LeadTable";
-import { Button } from "../Button"
+import { Button } from "../Button";
 
 const Leads = () => {
   const refLeadsFilter = useRef();
@@ -27,8 +27,8 @@ const Leads = () => {
   const [selectedTickets, setSelectedTickets] = useState([]);
   const [selectedWorkflow, setSelectedWorkflow] = useState(
     workflowOptions.filter(
-      (wf) => wf !== "Realizat cu succes" && wf !== "Închis și nerealizat",
-    ),
+      (wf) => wf !== "Realizat cu succes" && wf !== "Închis și nerealizat"
+    )
   );
   const leadsFilterHeight = useDOMElementHeight(refLeadsFilter);
 
@@ -40,7 +40,7 @@ const Leads = () => {
     workflow: selectedWorkflow,
     priority: [],
     tags: "",
-    platform: [],
+    platform: []
   });
 
   // **Фильтрация тикетов**
@@ -51,7 +51,7 @@ const Leads = () => {
     result = result.filter((ticket) => filteredTicketIds.includes(ticket.id));
     if (selectedWorkflow.length > 0) {
       result = result.filter((ticket) =>
-        selectedWorkflow.includes(ticket.workflow),
+        selectedWorkflow.includes(ticket.workflow)
       );
     }
     return result;
@@ -62,7 +62,7 @@ const Leads = () => {
     setSelectedTickets((prev) =>
       prev.includes(ticketId)
         ? prev.filter((id) => id !== ticketId)
-        : [...prev, ticketId],
+        : [...prev, ticketId]
     );
   };
 
@@ -79,7 +79,7 @@ const Leads = () => {
   const deleteSelectedTickets = () => {
     if (selectedTickets.length === 0) return;
     const newTickets = tickets.filter(
-      (ticket) => !selectedTickets.includes(ticket.id),
+      (ticket) => !selectedTickets.includes(ticket.id)
     );
     setTickets(newTickets);
     setSelectedTickets([]);
@@ -90,7 +90,7 @@ const Leads = () => {
 
     // Открываем модалку редактирования с первым выделенным тикетом
     const ticketToEdit = tickets.find(
-      (ticket) => ticket.id === selectedTickets[0],
+      (ticket) => ticket.id === selectedTickets[0]
     );
     if (ticketToEdit) {
       setCurrentTicket(ticketToEdit);
@@ -106,7 +106,7 @@ const Leads = () => {
       priority: priorityOptions[0],
       workflow: workflowOptions[0],
       service_reference: "",
-      technician_id: 0,
+      technician_id: 0
     });
     setIsModalOpen(true);
   };
@@ -125,7 +125,11 @@ const Leads = () => {
     <>
       <div ref={refLeadsFilter} className="dashboard-header">
         <div className="header">
-          <Button variant="primary" onClick={openCreateTicketModal} className="button-add-ticket">
+          <Button
+            variant="primary"
+            onClick={openCreateTicketModal}
+            className="button-add-ticket"
+          >
             {getLanguageByKey("Adaugă lead")}
           </Button>
 
@@ -150,7 +154,8 @@ const Leads = () => {
           </div>
 
           {selectedTickets.length > 0 && (
-            <Button variant="danger"
+            <Button
+              variant="danger"
               onClick={deleteSelectedTickets}
               className="d-flex align-items-center gap-8"
             >
@@ -161,7 +166,7 @@ const Leads = () => {
 
           {selectedTickets.length > 0 && (
             <Button
-            variant="warning"
+              variant="warning"
               onClick={() => editSelectedTickets()}
               className="d-flex align-items-center gap-8"
             >
@@ -170,13 +175,14 @@ const Leads = () => {
             </Button>
           )}
 
-          <Button variant="primary"
+          <Button
+            variant="primary"
             onClick={() => setIsFilterOpen(true)}
             className="button-filter"
           >
             <FaFilter />
             {Object.values(filters).some((value) =>
-              Array.isArray(value) ? value.length > 0 : value,
+              Array.isArray(value) ? value.length > 0 : value
             ) && <span className="filter-indicator"></span>}
           </Button>
         </div>
@@ -184,39 +190,38 @@ const Leads = () => {
 
       <div
         style={{
-          "--leads-filter-height": `${leadsFilterHeight}px`,
+          "--leads-filter-height": `${leadsFilterHeight}px`
         }}
         className={`dashboard-container ${isTableView ? "leads-table" : ""}`}
       >
-        
-          {isTableView ? (
-            <div className="leads-table">
-              <LeadTable
-                filteredTickets={filteredTickets}
-                selectedTickets={selectedTickets}
-                setCurrentTicket={setCurrentTicket}
-                toggleSelectTicket={toggleSelectTicket}
-              />
-            </div>
-          ) : (
-            <div className="container-tickets">
-              {workflowOptions
-                .filter((workflow) => selectedWorkflow.includes(workflow))
-                .map((workflow) => (
-                  <WorkflowColumn
-                    key={workflow}
-                    workflow={workflow}
-                    tickets={filteredTickets}
-                    searchTerm={searchTerm}
-                    onEditTicket={(ticket) => {
-                      setCurrentTicket(ticket);
-                      setIsModalOpen(true);
-                    }}
-                  />
-                ))}
-            </div>
-          )}
-        
+        {isTableView ? (
+          <div className="leads-table">
+            <LeadTable
+              filteredTickets={filteredTickets}
+              selectedTickets={selectedTickets}
+              setCurrentTicket={setCurrentTicket}
+              toggleSelectTicket={toggleSelectTicket}
+            />
+          </div>
+        ) : (
+          <div className="container-tickets">
+            {workflowOptions
+              .filter((workflow) => selectedWorkflow.includes(workflow))
+              .map((workflow) => (
+                <WorkflowColumn
+                  key={workflow}
+                  workflow={workflow}
+                  tickets={filteredTickets}
+                  searchTerm={searchTerm}
+                  onEditTicket={(ticket) => {
+                    setCurrentTicket(ticket);
+                    setIsModalOpen(true);
+                  }}
+                />
+              ))}
+          </div>
+        )}
+
         {isLoading && <SpinnerRightBottom />}
         {isModalOpen && currentTicket && (
           <TicketModal
@@ -229,7 +234,7 @@ const Leads = () => {
                   ? prevTickets.map((ticket) =>
                       ticket.id === updatedTicket.ticket_id
                         ? updatedTicket
-                        : ticket,
+                        : ticket
                     )
                   : [...prevTickets, updatedTicket];
               });
@@ -249,17 +254,17 @@ const Leads = () => {
               ...updatedFilters,
               technician_id: updatedFilters.technician_id
                 ? updatedFilters.technician_id.map((t) =>
-                    parseInt(t.split(":")[0]),
+                    parseInt(t.split(":")[0])
                   )
                 : [],
               priority: updatedFilters.priority || [],
-              platform: updatedFilters.platform || [],
+              platform: updatedFilters.platform || []
             });
 
             setSelectedWorkflow(
               Array.isArray(updatedFilters.workflow)
                 ? updatedFilters.workflow
-                : [],
+                : []
             );
 
             setFilteredTicketIds(ticketIds !== null ? ticketIds : null);

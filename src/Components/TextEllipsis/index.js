@@ -1,1 +1,1 @@
-export * from "./TextEllipsis"
+export * from "./TextEllipsis";

@@ -1,4 +1,1 @@
-export const purchaseProcessingOptions = [
-    "Online",
-    "La birou"
-]
+export const purchaseProcessingOptions = ["Online", "La birou"];

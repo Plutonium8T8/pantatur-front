@@ -1,8 +1,14 @@
-import React, { createContext, useState, useEffect, useContext, useRef } from 'react';
-import { useSnackbar } from 'notistack';
-import { useUser } from './UserContext';
-import { truncateText } from './stringUtils';
-import { api } from "./api"
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  useContext,
+  useRef
+} from "react";
+import { useSnackbar } from "notistack";
+import { useUser } from "./UserContext";
+import { truncateText } from "./stringUtils";
+import { api } from "./api";
 
 const AppContext = createContext();
 
@@ -27,7 +33,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     if (socketRef.current) {
       pingInterval = setInterval(() => {
         if (socketRef.current.readyState === WebSocket.OPEN) {
-          const pingMessage = JSON.stringify({ type: 'ping' });
+          const pingMessage = JSON.stringify({ type: "ping" });
           socketRef.current.send(pingMessage);
         }
       }, 5000);
@@ -40,7 +46,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       };
     }
 
-    return () => { };
+    return () => {};
   }, []);
 
   useEffect(() => {
@@ -60,30 +66,30 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     const connectToChatRooms = (ticketIds) => {
       const socketInstance = socketRef.current;
       if (!socketInstance || socketInstance.readyState !== WebSocket.OPEN) {
-        console.warn('WebSocket не подключён или недоступен.');
+        console.warn("WebSocket не подключён или недоступен.");
         return;
       }
 
       if (!ticketIds || ticketIds.length === 0) {
-        console.warn('Нет id для подключения к комнатам.');
+        console.warn("Нет id для подключения к комнатам.");
         return;
       }
 
       const socketMessage = JSON.stringify({
-        type: 'connect',
-        data: { ticket_id: ticketIds },
+        type: "connect",
+        data: { ticket_id: ticketIds }
       });
 
       socketInstance.send(socketMessage);
-      console.log('connect to chat rooms', ticketIds);
+      console.log("connect to chat rooms", ticketIds);
     };
 
     if (!socketRef.current) {
-      const socketInstance = new WebSocket('wss://pandaturws.com');
+      const socketInstance = new WebSocket("wss://pandaturws.com");
       socketRef.current = socketInstance;
 
       socketInstance.onopen = async () => {
-        console.log('WebSocket подключен');
+        console.log("WebSocket подключен");
         const tickets = await fetchTickets();
         const ticketIds = tickets.map((ticket) => ticket.id);
         connectToChatRooms(ticketIds);
@@ -112,12 +118,13 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     console.log("Количество непрочитанных сообщений:", unreadCount);
   }, [unreadCount]);
 
-
   useEffect(() => {
     const unread = messages.filter(
       (msg) =>
-        msg.seen_by != null && msg.seen_by === '{}' &&
-        msg.sender_id !== 1 && msg.sender_id !== userId
+        msg.seen_by != null &&
+        msg.seen_by === "{}" &&
+        msg.sender_id !== 1 &&
+        msg.sender_id !== userId
     );
     console.log("🔄 Обновляем `unreadCount`: ", unread.length);
     setUnreadCount(unread.length);
@@ -131,7 +138,11 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     setMessages((prevMessages) =>
       prevMessages.map((msg) => {
         if (msg.ticket_id === ticketId) {
-          return { ...msg, seen_by: JSON.stringify({ [userId]: true }), seen_at: new Date().toISOString() };
+          return {
+            ...msg,
+            seen_by: JSON.stringify({ [userId]: true }),
+            seen_at: new Date().toISOString()
+          };
         }
         return msg;
       })
@@ -155,11 +166,11 @@ export const AppProvider = ({ children, isLoggedIn }) => {
 
     if (socketInstance && socketInstance.readyState === WebSocket.OPEN) {
       const readMessageData = {
-        type: 'seen',
+        type: "seen",
         data: {
           ticket_id: ticketId,
-          sender_id: Number(userId),
-        },
+          sender_id: Number(userId)
+        }
       };
       socketInstance.send(JSON.stringify(readMessageData));
       console.log(`✅ Seen отправлен для ticket_id=${ticketId}`);
@@ -172,12 +183,15 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     try {
       setIsLoading(true);
 
-      const data = await api.tickets.getLightList()
+      const data = await api.tickets.getLightList();
 
-      const processedTickets = data.map(ticket => ({
+      const processedTickets = data.map((ticket) => ({
         ...ticket,
         client_ids: ticket.client_id
-          ? ticket.client_id.replace(/[{}]/g, "").split(',').map(id => Number(id))
+          ? ticket.client_id
+              .replace(/[{}]/g, "")
+              .split(",")
+              .map((id) => Number(id))
           : [],
         last_message: ticket.last_message || "Нет сообщений",
         time_sent: ticket.time_sent || null,
@@ -185,11 +199,11 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       }));
 
       setTickets(processedTickets);
-      setTicketIds(processedTickets.map(ticket => ticket.id));
+      setTicketIds(processedTickets.map((ticket) => ticket.id));
 
       return processedTickets;
     } catch (error) {
-      console.error('Ошибка при загрузке тикетов:', error);
+      console.error("Ошибка при загрузке тикетов:", error);
       return [];
     } finally {
       setIsLoading(false);
@@ -200,14 +214,12 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     try {
       setIsLoading(true);
 
-      const ticket = await api.tickets.getLightById(ticketId)
+      const ticket = await api.tickets.getLightById(ticketId);
 
       setTickets((prevTickets) => {
         const existingTicket = prevTickets.find((t) => t.id === ticketId);
         if (existingTicket) {
-          return prevTickets.map((t) =>
-            t.id === ticketId ? ticket : t
-          );
+          return prevTickets.map((t) => (t.id === ticketId ? ticket : t));
         } else {
           return [...prevTickets, ticket];
         }
@@ -215,7 +227,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
 
       return ticket;
     } catch (error) {
-      console.error('Ошибка при загрузке тикета:', error);
+      console.error("Ошибка при загрузке тикета:", error);
       return null;
     } finally {
       setIsLoading(false);
@@ -224,12 +236,14 @@ export const AppProvider = ({ children, isLoggedIn }) => {
 
   const updateTicket = async (updateData) => {
     try {
-
-      const updatedTicket = await api.tickets.updateById(updateData.id, updateData)
+      const updatedTicket = await api.tickets.updateById(
+        updateData.id,
+        updateData
+      );
 
       return updatedTicket;
     } catch (error) {
-      console.error('Error updating ticket:', error.message || error);
+      console.error("Error updating ticket:", error.message || error);
       throw error;
     }
   };
@@ -269,15 +283,16 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   const getClientMessagesSingle = async (ticket_id) => {
     console.log("Обновление сообщений для тикета:", ticket_id);
     try {
-
-      const data = await api.messages.messagesTicketById(ticket_id)
+      const data = await api.messages.messagesTicketById(ticket_id);
 
       if (Array.isArray(data)) {
         setMessages((prevMessages) => {
           console.log("Старые сообщения в state:", prevMessages);
           console.log("Пришедшие новые сообщения:", data);
 
-          const otherMessages = prevMessages.filter((msg) => msg.ticket_id !== ticket_id);
+          const otherMessages = prevMessages.filter(
+            (msg) => msg.ticket_id !== ticket_id
+          );
 
           return [...otherMessages, ...data];
         });
@@ -285,7 +300,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         console.log("Обновленный state сообщений:", data);
 
         const unseenMessages = data.filter(
-          (msg) => msg.seen_by === '{}' && msg.sender_id !== userId
+          (msg) => msg.seen_by === "{}" && msg.sender_id !== userId
         );
 
         setTickets((prevTickets) =>
@@ -297,16 +312,21 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         );
       }
     } catch (error) {
-      console.error('Ошибка при получении сообщений:', error.message);
+      console.error("Ошибка при получении сообщений:", error.message);
     }
   };
 
   const handleWebSocketMessage = (message) => {
     switch (message.type) {
-      case 'message': {
+      case "message": {
         console.log("Новое сообщение из WebSocket:", message.data);
 
-        const { ticket_id, message: msgText, time_sent, sender_id } = message.data;
+        const {
+          ticket_id,
+          message: msgText,
+          time_sent,
+          sender_id
+        } = message.data;
 
         setMessages((prevMessages) => [...prevMessages, message.data]);
 
@@ -314,14 +334,14 @@ export const AppProvider = ({ children, isLoggedIn }) => {
           prevTickets.map((ticket) =>
             ticket.id === ticket_id
               ? {
-                ...ticket,
-                last_message: msgText,
-                time_sent: time_sent,
-                unseen_count:
-                  ticket_id === selectTicketId
-                    ? 0
-                    : ticket.unseen_count + (sender_id !== userId ? 1 : 0)
-              }
+                  ...ticket,
+                  last_message: msgText,
+                  time_sent: time_sent,
+                  unseen_count:
+                    ticket_id === selectTicketId
+                      ? 0
+                      : ticket.unseen_count + (sender_id !== userId ? 1 : 0)
+                }
               : ticket
           )
         );
@@ -344,10 +364,10 @@ export const AppProvider = ({ children, isLoggedIn }) => {
 
         break;
       }
-      case 'seen': {
+      case "seen": {
         const { ticket_id, seen_at } = message.data;
 
-        console.log('🔄 Получен `seen` из WebSocket:', { ticket_id, seen_at });
+        console.log("🔄 Получен `seen` из WebSocket:", { ticket_id, seen_at });
 
         setMessages((prevMessages) => {
           return prevMessages.map((msg) =>
@@ -373,13 +393,15 @@ export const AppProvider = ({ children, isLoggedIn }) => {
 
         break;
       }
-      case 'ticket': {
+      case "ticket": {
         console.log("Пришел тикет:", message.data);
 
         const ticketId = message.data.ticket_id;
 
         if (!ticketId) {
-          console.warn("Не удалось извлечь ticket_id из сообщения типа 'ticket'.");
+          console.warn(
+            "Не удалось извлечь ticket_id из сообщения типа 'ticket'."
+          );
           break;
         }
 
@@ -388,41 +410,47 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         const socketInstance = socketRef.current;
         if (socketInstance && socketInstance.readyState === WebSocket.OPEN) {
           const socketMessage = JSON.stringify({
-            type: 'connect',
-            data: { ticket_id: [ticketId] },
+            type: "connect",
+            data: { ticket_id: [ticketId] }
           });
           socketInstance.send(socketMessage);
         } else {
-          console.warn("Не удалось подключиться к комнатам. WebSocket не готов.");
+          console.warn(
+            "Не удалось подключиться к комнатам. WebSocket не готов."
+          );
           console.log(
             "Состояние WebSocket:",
-            socketInstance ? socketInstance.readyState : "Нет WebSocket соединения"
+            socketInstance
+              ? socketInstance.readyState
+              : "Нет WebSocket соединения"
           );
         }
         break;
       }
-      case 'ticket_update': {
+      case "ticket_update": {
         console.log("обновление тикета :", message.data);
         const ticketId = message.data.ticket_id;
         fetchSingleTicket(ticketId);
       }
-      case 'notification': {
+      case "notification": {
         const notificationText = truncateText(
-          message.data.description || 'Уведомление с пустым текстом!',
+          message.data.description || "Уведомление с пустым текстом!",
           100
         );
-        enqueueSnackbar(notificationText, { variant: 'info' });
+        enqueueSnackbar(notificationText, { variant: "info" });
         break;
       }
-      case 'task': {
-        enqueueSnackbar(`Новое задание: ${message.data.title}`, { variant: 'warning' });
+      case "task": {
+        enqueueSnackbar(`Новое задание: ${message.data.title}`, {
+          variant: "warning"
+        });
         break;
       }
-      case 'pong':
+      case "pong":
         console.log("пришел понг");
         break;
       default:
-        console.warn('Неизвестный тип сообщения:', message.type);
+        console.warn("Неизвестный тип сообщения:", message.type);
     }
   };
 
@@ -433,29 +461,34 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   }, [isLoggedIn]);
 
   useEffect(() => {
-    const totalUnread = tickets.reduce((sum, ticket) => sum + ticket.unseen_count, 0);
+    const totalUnread = tickets.reduce(
+      (sum, ticket) => sum + ticket.unseen_count,
+      0
+    );
 
     console.log(`🔄 Обновленный unreadCount: ${totalUnread}`);
     setUnreadCount(totalUnread);
   }, [tickets, unreadMessages]);
 
   return (
-    <AppContext.Provider value={{
-      tickets,
-      setTickets,
-      selectTicketId,
-      setSelectTicketId,
-      messages,
-      setMessages,
-      unreadCount,
-      markMessagesAsRead,
-      clientMessages,
-      isLoading,
-      updateTicket,
-      fetchTickets,
-      socketRef,
-      getClientMessagesSingle
-    }}>
+    <AppContext.Provider
+      value={{
+        tickets,
+        setTickets,
+        selectTicketId,
+        setSelectTicketId,
+        messages,
+        setMessages,
+        unreadCount,
+        markMessagesAsRead,
+        clientMessages,
+        isLoading,
+        updateTicket,
+        fetchTickets,
+        socketRef,
+        getClientMessagesSingle
+      }}
+    >
       {children}
     </AppContext.Provider>
   );
