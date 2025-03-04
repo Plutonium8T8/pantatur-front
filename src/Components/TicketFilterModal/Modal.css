@@ -8,9 +8,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.modal-content-filter {
+  }
+  
+  .modal-content-filter {
     display: flex;
     background: white;
     padding: 20px;
@@ -23,134 +23,128 @@
     max-height: 700px;
     min-height: 700px;
     z-index: 10000;
-}
-
-.filter-container {
+  }
+  
+  .filter-container {
     display: flex;
     gap: 20px;
-}
-
-/* Левая колонка */
-.tabs {
+  }
+  
+  .tabs {
     display: flex;
     flex-direction: column;
     width: 250px;
     border-right: 1px solid #ddd;
     padding-right: 20px;
-}
-
-.tab {
+  }
+  
+  .tab {
     padding: 10px;
     cursor: pointer;
     border-radius: 5px;
     transition: background 0.2s;
-}
-
-.tab:hover {
+  }
+  
+  .tab:hover {
     background: #f5f5f5;
-}
-
-.active {
+  }
+  
+  .active {
     font-weight: bold;
     color: #007bff;
-}
-
-/* Правая колонка */
-.filters {
+  }
+  
+  .filters {
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 10px;
     max-height: 700px;
-    /* Можно подстроить под размер модального окна */
     overflow-y: auto;
     padding-right: 10px;
-    /* Чтобы контент не налазил на скролл */
-}
-
-.filters h3 {
+  }
+  
+  .filters h3 {
     font-size: 18px;
     margin-bottom: 10px;
-}
-
-.filters label {
+  }
+  
+  .filters label {
     font-size: 14px;
     font-weight: bold;
-}
-
-.filters input,
-.filters select {
+  }
+  
+  .filters input,
+  .filters select {
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 16px;
-}
-
-.modal-buttons {
+  }
+  
+  .modal-buttons {
     display: flex;
     justify-content: space-between;
     margin-top: 15px;
-}
-
-.apply-btn {
+  }
+  
+  .apply-btn {
     background: #007bff;
     color: white;
     padding: 10px;
     border: none;
     cursor: pointer;
     border-radius: 4px;
-}
-
-.reset-btn {
+  }
+  
+  .reset-btn {
     background: #ff9800;
     color: white;
     padding: 10px;
     border: none;
     cursor: pointer;
     border-radius: 4px;
-}
-
-.cancel-btn {
+  }
+  
+  .cancel-btn {
     background: #ccc;
     padding: 10px;
     border: none;
     cursor: pointer;
     border-radius: 4px;
-}
-
-.workflow-multi-select {
+  }
+  
+  .workflow-multi-select {
     display: flex;
     flex-direction: column;
     gap: 10px;
-}
-
-.tab {
+  }
+  
+  .tab {
     border: 1px solid #ddd;
     margin: 5px 0px;
-}
-
-.tab.active {
+  }
+  
+  .tab.active {
     background-color: palegreen;
     color: black;
-}
-
-.container-extra-group {
+  }
+  
+  .container-extra-group {
     display: flex;
     flex-direction: column;
     gap: 10px;
     border: 5px solid #ddd;
     border-radius: 8px;
     padding: 5px;
-}
-
-.slider {
+  }
+  
+  .slider {
     border: 1px solid gray;
-}
-
-.filled-field {
+  }
+  
+  .filled-field {
     border: 2px solid #4CAF50 !important;
-    /* Зеленая рамка */
     background-color: rgba(76, 175, 80, 0.1);
-    /* Легкий зеленый фон */
     transition: all 0.3s ease-in-out;
-}
+  }

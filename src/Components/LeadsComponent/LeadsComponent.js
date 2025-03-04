@@ -6,7 +6,7 @@ import { priorityOptions } from "../../FormOptions/PriorityOption";
 import { workflowOptions } from "../../FormOptions/WorkFlowOption";
 import WorkflowColumn from "./WorkflowColumnComponent";
 import TicketModal from "./TicketModal/TicketModalComponent";
-import TicketFilterModal from "./TicketFilterModal";
+import {TicketFilterModal} from "../TicketFilterModal";
 import "../../App.css";
 import "../SnackBarComponent/SnackBarComponent.css";
 import { FaFilter, FaTable, FaColumns, FaTrash, FaEdit } from "react-icons/fa";
