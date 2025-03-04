@@ -1,4 +1,1 @@
-export const valutaOptions = [
-    "Mdl",
-    "Eur",
-]
+export const valutaOptions = ["Mdl", "Eur"]

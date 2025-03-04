@@ -1,141 +1,173 @@
-import React, { useState, useEffect } from "react";
-import { startOfWeek, addDays, format } from "date-fns";
-import ModalWithToggles from "./ModalWithToggles"; // Импортируем компонент модалки
-import './AdminPanel.css';
-import { FaMinus, FaPlus, FaTrash } from "react-icons/fa";
-import { translations } from "../utils/translations";
-import ToggleComponent from "./ToggleComponent";
+import React, { useState, useEffect } from "react"
+import { startOfWeek, addDays, format } from "date-fns"
+import ModalWithToggles from "./ModalWithToggles" // Импортируем компонент модалки
+import "./AdminPanel.css"
+import { FaMinus, FaPlus, FaTrash } from "react-icons/fa"
+import { translations } from "../utils/translations"
+import ToggleComponent from "./ToggleComponent"
 import { api } from "../../api"
-import { useSnackbar } from 'notistack';
+import { useSnackbar } from "notistack"
 import { showServerError } from "../../Components/utils/showServerError"
 import { SpinnerRightBottom } from "../SpinnerRightBottom"
 
 const ScheduleComponent = () => {
-  const [schedule, setSchedule] = useState([]);
-  const [selectedEmployee, setSelectedEmployee] = useState(null);
-  const [selectedDay, setSelectedDay] = useState(null);
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
-  const [currentWeekStart, setCurrentWeekStart] = useState(startOfWeek(new Date(), { weekStartsOn: 1 }));
-  const [intervals, setIntervals] = useState([]); // Для хранения интервалов выбранного дня
-  const [isModalOpen, setIsModalOpen] = useState(false); // Состояние модалки
-  const [selectedUser, setSelectedUser] = useState(null); // Хранит выбранного пользователя
-  const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const { enqueueSnackbar } = useSnackbar();
-  const language = localStorage.getItem('language') || 'RO';
+  const [schedule, setSchedule] = useState([])
+  const [selectedEmployee, setSelectedEmployee] = useState(null)
+  const [selectedDay, setSelectedDay] = useState(null)
+  const [startTime, setStartTime] = useState("")
+  const [endTime, setEndTime] = useState("")
+  const [currentWeekStart, setCurrentWeekStart] = useState(
+    startOfWeek(new Date(), { weekStartsOn: 1 })
+  )
+  const [intervals, setIntervals] = useState([]) // Для хранения интервалов выбранного дня
+  const [isModalOpen, setIsModalOpen] = useState(false) // Состояние модалки
+  const [selectedUser, setSelectedUser] = useState(null) // Хранит выбранного пользователя
+  const [error, setError] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const { enqueueSnackbar } = useSnackbar()
+  const language = localStorage.getItem("language") || "RO"
 
   // Закрытие модалки
   const closeModal = () => {
-    setSelectedUser(null);
-    setIsModalOpen(false);
-  };
+    setSelectedUser(null)
+    setIsModalOpen(false)
+  }
 
   const handleShiftChange = (employeeIndex, dayIndex) => {
-    setSelectedEmployee(employeeIndex);
-    setSelectedDay(dayIndex);
+    setSelectedEmployee(employeeIndex)
+    setSelectedDay(dayIndex)
 
-    const currentShifts = schedule[employeeIndex].shifts[dayIndex] || [];
-    setIntervals([...currentShifts]); // Теперь intervals - это массив объектов
-  };
+    const currentShifts = schedule[employeeIndex].shifts[dayIndex] || []
+    setIntervals([...currentShifts]) // Теперь intervals - это массив объектов
+  }
 
   const removeInterval = async (index) => {
     try {
       // Получаем данные о текущем сотруднике и выбранном дне
-      const technicianId = schedule[selectedEmployee]?.id;
-      const dayOfWeek = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"][selectedDay];
+      const technicianId = schedule[selectedEmployee]?.id
+      const dayOfWeek = [
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday"
+      ][selectedDay]
 
       // Интервал, который нужно удалить
-      const intervalToDelete = intervals[index];
+      const intervalToDelete = intervals[index]
 
       await api.technicians.deleteSchedule(technicianId, dayOfWeek, {
         start: intervalToDelete.start,
         end: intervalToDelete.end,
-        timezone: "EST", // Используйте временной пояс, подходящий вашему приложению
+        timezone: "EST" // Используйте временной пояс, подходящий вашему приложению
       })
 
-      const updatedIntervals = intervals.filter((_, i) => i !== index);
-      setIntervals(updatedIntervals);
-      fetchData();
+      const updatedIntervals = intervals.filter((_, i) => i !== index)
+      setIntervals(updatedIntervals)
+      fetchData()
     } catch (error) {
-      enqueueSnackbar(showServerError(error), {variant: "error"})
+      enqueueSnackbar(showServerError(error), { variant: "error" })
     }
-  };
+  }
 
   const saveShift = () => {
-    const updatedSchedule = [...schedule];
-    updatedSchedule[selectedEmployee].shifts[selectedDay] = [...intervals];
-    setSchedule(updatedSchedule);
-    setSelectedEmployee(null);
-    setSelectedDay(null);
-    setIntervals([]);
-  };
+    const updatedSchedule = [...schedule]
+    updatedSchedule[selectedEmployee].shifts[selectedDay] = [...intervals]
+    setSchedule(updatedSchedule)
+    setSelectedEmployee(null)
+    setSelectedDay(null)
+    setIntervals([])
+  }
 
   const getWeekDays = () => {
-    return Array.from({ length: 7 }, (_, i) => addDays(currentWeekStart, i));
-  };
+    return Array.from({ length: 7 }, (_, i) => addDays(currentWeekStart, i))
+  }
 
   useEffect(() => {
-    
-    api.users.getTechnicianList()
+    api.users
+      .getTechnicianList()
       .then((response) => response.json())
       .then((data) => {
         const formattedSchedule = data.map((technician) => ({
           id: technician.id.id.id,
           name: `${technician.id.name} ${technician.id.surname}`,
-          shifts: Array(7).fill([]).map((_, index) => {
-            const day = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"][index];
-            return technician.weekly_schedule?.[day]?.map(interval => ({
-              start: interval.start,
-              end: interval.end
-            })) || [];
-          }),
-        }));
-        setSchedule(formattedSchedule);
+          shifts: Array(7)
+            .fill([])
+            .map((_, index) => {
+              const day = [
+                "monday",
+                "tuesday",
+                "wednesday",
+                "thursday",
+                "friday",
+                "saturday",
+                "sunday"
+              ][index]
+              return (
+                technician.weekly_schedule?.[day]?.map((interval) => ({
+                  start: interval.start,
+                  end: interval.end
+                })) || []
+              )
+            })
+        }))
+        setSchedule(formattedSchedule)
       })
-      .catch((error) => console.error("Ошибка загрузки данных:", error));
-  }, []);
+      .catch((error) => console.error("Ошибка загрузки данных:", error))
+  }, [])
 
   const calculateWorkedHours = (shifts) => {
-    if (!Array.isArray(shifts) || shifts.length === 0) return 0;
+    if (!Array.isArray(shifts) || shifts.length === 0) return 0
     return shifts.reduce((total, shift) => {
-      const startTime = parseTime(shift.start);
-      const endTime = parseTime(shift.end);
-      return total + (endTime - startTime);
-    }, 0);
-  };
+      const startTime = parseTime(shift.start)
+      const endTime = parseTime(shift.end)
+      return total + (endTime - startTime)
+    }, 0)
+  }
 
   const parseTime = (time) => {
-    if (!time) return 0;
-    const [hours, minutes] = time.split(":").map(Number);
-    return hours + minutes / 60;
-  };
+    if (!time) return 0
+    const [hours, minutes] = time.split(":").map(Number)
+    return hours + minutes / 60
+  }
 
   const goToNextWeek = () => {
-    setCurrentWeekStart(addDays(currentWeekStart, 7));
-  };
+    setCurrentWeekStart(addDays(currentWeekStart, 7))
+  }
 
   const goToPreviousWeek = () => {
-    setCurrentWeekStart(addDays(currentWeekStart, -7));
-  };
+    setCurrentWeekStart(addDays(currentWeekStart, -7))
+  }
 
   const fetchData = async () => {
     try {
-      setIsLoading(true); // Начало загрузки
+      setIsLoading(true) // Начало загрузки
 
-            
       const usersData = await api.users.getTechnicianList()
 
       const scheduleData = await api.technicians.getSchedules()
 
       const combinedSchedule = usersData.map((user) => {
-        const userId = user.id.id;
-        const userSchedule = scheduleData.find((schedule) => schedule.technician_id === userId);
+        const userId = user.id.id
+        const userSchedule = scheduleData.find(
+          (schedule) => schedule.technician_id === userId
+        )
 
-        const weeklySchedule = userSchedule?.weekly_schedule || {};
+        const weeklySchedule = userSchedule?.weekly_schedule || {}
 
-        const shifts = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
-          .map((day) => Array.isArray(weeklySchedule[day]) ? weeklySchedule[day] : []);
+        const shifts = [
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday",
+          "saturday",
+          "sunday"
+        ].map((day) =>
+          Array.isArray(weeklySchedule[day]) ? weeklySchedule[day] : []
+        )
 
         return {
           id: userId,
@@ -143,113 +175,149 @@ const ScheduleComponent = () => {
           email: user.id.user.email,
           username: user.id.user.username,
           roles: user.id.user.roles,
-          shifts,
-        };
-      });
+          shifts
+        }
+      })
 
-      setSchedule(combinedSchedule);
+      setSchedule(combinedSchedule)
     } catch (error) {
-      console.error("Ошибка загрузки данных:", error);
+      console.error("Ошибка загрузки данных:", error)
     } finally {
-      setIsLoading(false); // Окончание загрузки
+      setIsLoading(false) // Окончание загрузки
     }
-  };
+  }
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    fetchData()
+  }, [])
 
   const mapDayToIndex = (day) => {
-    if (!day) return -1;
-    const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
-    return days.indexOf(day.toLowerCase());
-  };
+    if (!day) return -1
+    const days = [
+      "monday",
+      "tuesday",
+      "wednesday",
+      "thursday",
+      "friday",
+      "saturday",
+      "sunday"
+    ]
+    return days.indexOf(day.toLowerCase())
+  }
 
   const formatDaySchedule = (daySchedule) => {
     if (Array.isArray(daySchedule) && daySchedule.length > 0) {
       return daySchedule
         .filter((interval) => interval.start && interval.end) // Убираем пустые интервалы
         .map((interval) => `${interval.start} - ${interval.end}`)
-        .join(", ");
+        .join(", ")
     }
-    return "-"; // Если интервалов нет, возвращаем "-"
-  };
+    return "-" // Если интервалов нет, возвращаем "-"
+  }
 
   const cutInterval = async () => {
     try {
       // Получаем данные о текущем сотруднике и выбранном дне
-      const technicianId = schedule[selectedEmployee]?.id;
-      const dayOfWeek = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"][selectedDay];
+      const technicianId = schedule[selectedEmployee]?.id
+      const dayOfWeek = [
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday"
+      ][selectedDay]
 
       // Формируем новый интервал
       const newInterval = {
         start: startTime || "", // Если поле пустое, отправляем пустую строку
         end: endTime || "", // Если поле пустое, отправляем пустую строку
-        timezone: "EST", // Указываем временную зону
-      };
+        timezone: "EST" // Указываем временную зону
+      }
 
       // Логируем данные перед отправкой
-      console.log("Отправляем данные на сервер:", newInterval);
+      console.log("Отправляем данные на сервер:", newInterval)
 
       // Отправляем POST-запрос на сервер
 
       await api.technicians.deleteSchedule(technicianId, dayOfWeek, newInterval)
 
       // Обновляем локальное состояние
-      setIntervals((prev) => [...prev, newInterval]);
-      setStartTime("");
-      setEndTime("");
-      fetchData();
+      setIntervals((prev) => [...prev, newInterval])
+      setStartTime("")
+      setEndTime("")
+      fetchData()
     } catch (error) {
-      enqueueSnackbar(showServerError(error), {variant: "error"})
+      enqueueSnackbar(showServerError(error), { variant: "error" })
     }
-  };
+  }
 
   const addInterval = async () => {
     try {
       // Получаем данные о текущем сотруднике и выбранном дне
-      const technicianId = schedule[selectedEmployee]?.id;
-      const dayOfWeek = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"][selectedDay];
+      const technicianId = schedule[selectedEmployee]?.id
+      const dayOfWeek = [
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday"
+      ][selectedDay]
 
       // Формируем новый интервал
       const newInterval = {
         start: startTime || "", // Если поле пустое, отправляем пустую строку
         end: endTime || "", // Если поле пустое, отправляем пустую строку
-        timezone: "EST", // Указываем временную зону
-      };
+        timezone: "EST" // Указываем временную зону
+      }
 
-     await api.technicians.createSchedule(technicianId, dayOfWeek, newInterval)
+      await api.technicians.createSchedule(technicianId, dayOfWeek, newInterval)
 
-      setIntervals((prev) => [...prev, newInterval]);
-      setStartTime("");
-      setEndTime("");
-      fetchData();
+      setIntervals((prev) => [...prev, newInterval])
+      setStartTime("")
+      setEndTime("")
+      fetchData()
     } catch (error) {
-      enqueueSnackbar(showServerError(error), {variant: "error"})
-
+      enqueueSnackbar(showServerError(error), { variant: "error" })
     }
-  };
+  }
 
   return (
     <div className="schedule-container">
       {isLoading && <SpinnerRightBottom />}
-      <div className="header-component">{translations['Grafic de lucru'][language]}</div>
+      <div className="header-component">
+        {translations["Grafic de lucru"][language]}
+      </div>
       <div className="week-navigation">
-        <button onClick={goToPreviousWeek}>{translations['săptămâna'][language]} {translations['trecută'][language]}</button>
+        <button onClick={goToPreviousWeek}>
+          {translations["săptămâna"][language]}{" "}
+          {translations["trecută"][language]}
+        </button>
         <span>
-          {translations['săptămâna'][language]} {format(currentWeekStart, "dd.MM.yyyy")} - {format(addDays(currentWeekStart, 6), "dd.MM.yyyy")}
+          {translations["săptămâna"][language]}{" "}
+          {format(currentWeekStart, "dd.MM.yyyy")} -{" "}
+          {format(addDays(currentWeekStart, 6), "dd.MM.yyyy")}
         </span>
-        <button onClick={goToNextWeek}>{translations['săptămâna'][language]} {translations['viitoare'][language]}</button>
+        <button onClick={goToNextWeek}>
+          {translations["săptămâna"][language]}{" "}
+          {translations["viitoare"][language]}
+        </button>
       </div>
       <div className="schedule-table-container">
         <table className="schedule-table">
           <thead>
             <tr>
-              <th>{translations['Angajat'][language]}</th>
+              <th>{translations["Angajat"][language]}</th>
               {getWeekDays().map((day, index) => (
-                <th key={index}>{translations[format(day, "EEEE")][language]}, {format(day, "dd.MM")}</th>
+                <th key={index}>
+                  {translations[format(day, "EEEE")][language]},{" "}
+                  {format(day, "dd.MM")}
+                </th>
               ))}
-              <th>{translations['Ore de lucru'][language]}</th>
+              <th>{translations["Ore de lucru"][language]}</th>
             </tr>
           </thead>
           <tbody>
@@ -257,24 +325,40 @@ const ScheduleComponent = () => {
               <tr
                 key={employeeIndex}
                 onClick={() => {
-                  setSelectedUser(employee); // Открываем модалку с данными пользователя
-                  setIsModalOpen(true);
+                  setSelectedUser(employee) // Открываем модалку с данными пользователя
+                  setIsModalOpen(true)
                 }}
               >
                 <td>
                   {employee.name} ({employee.id})
                 </td>
                 {employee.shifts.map((shift, dayIndex) => (
-                  <td key={dayIndex} className="shift-cell" onClick={(e) => {
-                    e.stopPropagation();
-                    handleShiftChange(employeeIndex, dayIndex);
-                  }}>
-                    {Array.isArray(shift) && shift.length > 0 ? shift.map((interval, i) => (
-                      <div key={i}>{interval.start} - {interval.end}</div>
-                    )) : "-"}
+                  <td
+                    key={dayIndex}
+                    className="shift-cell"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleShiftChange(employeeIndex, dayIndex)
+                    }}
+                  >
+                    {Array.isArray(shift) && shift.length > 0
+                      ? shift.map((interval, i) => (
+                          <div key={i}>
+                            {interval.start} - {interval.end}
+                          </div>
+                        ))
+                      : "-"}
                   </td>
                 ))}
-                <td>{employee.shifts.reduce((total, shifts) => total + calculateWorkedHours(shifts), 0).toFixed(2)} h.</td>
+                <td>
+                  {employee.shifts
+                    .reduce(
+                      (total, shifts) => total + calculateWorkedHours(shifts),
+                      0
+                    )
+                    .toFixed(2)}{" "}
+                  h.
+                </td>
               </tr>
             ))}
           </tbody>
@@ -284,33 +368,38 @@ const ScheduleComponent = () => {
       {isModalOpen && selectedUser && (
         <ModalWithToggles
           employee={selectedUser}
-          isOpen={isModalOpen}// Передаём выбранного пользователя
+          isOpen={isModalOpen} // Передаём выбранного пользователя
           closeModal={closeModal} // Передаём функцию закрытия
         />
       )}
 
       {selectedEmployee !== null && selectedDay !== null && (
-        <div className="modal-overlay" onClick={() => {
-          setSelectedEmployee(null);
-          setSelectedDay(null);
-          setIntervals([]);
-        }}>
-          <div
-            className="modal-container"
-            onClick={(e) => e.stopPropagation()}
-          >
+        <div
+          className="modal-overlay"
+          onClick={() => {
+            setSelectedEmployee(null)
+            setSelectedDay(null)
+            setIntervals([])
+          }}
+        >
+          <div className="modal-container" onClick={(e) => e.stopPropagation()}>
             <header className="modal-header">
               <h2>
-                {schedule[selectedEmployee].name} ({schedule[selectedEmployee].id}),{" "}
-                {translations[format(getWeekDays()[selectedDay], "EEEE")][language]} , {format(getWeekDays()[selectedDay], "dd.MM")}
-
+                {schedule[selectedEmployee].name} (
+                {schedule[selectedEmployee].id}),{" "}
+                {
+                  translations[format(getWeekDays()[selectedDay], "EEEE")][
+                    language
+                  ]
+                }{" "}
+                , {format(getWeekDays()[selectedDay], "dd.MM")}
               </h2>
             </header>
             {error && <div className="error-message">{error}</div>}
             <form
               className="notification-form"
               onSubmit={(e) => {
-                e.preventDefault(); // Предотвращаем действие по умолчанию
+                e.preventDefault() // Предотвращаем действие по умолчанию
                 // Ваш код сохранения данных
               }}
             >
@@ -324,9 +413,9 @@ const ScheduleComponent = () => {
                           type="time"
                           value={interval.start}
                           onChange={(e) => {
-                            const updatedIntervals = [...intervals];
-                            updatedIntervals[index].start = e.target.value;
-                            setIntervals(updatedIntervals);
+                            const updatedIntervals = [...intervals]
+                            updatedIntervals[index].start = e.target.value
+                            setIntervals(updatedIntervals)
                           }}
                         />
                       </label>
@@ -336,9 +425,9 @@ const ScheduleComponent = () => {
                           type="time"
                           value={interval.end}
                           onChange={(e) => {
-                            const updatedIntervals = [...intervals];
-                            updatedIntervals[index].end = e.target.value;
-                            setIntervals(updatedIntervals);
+                            const updatedIntervals = [...intervals]
+                            updatedIntervals[index].end = e.target.value
+                            setIntervals(updatedIntervals)
                           }}
                         />
                       </label>
@@ -390,18 +479,18 @@ const ScheduleComponent = () => {
                     className="submit-button"
                     onClick={saveShift}
                   >
-                    {translations['Salvează'][language]}
+                    {translations["Salvează"][language]}
                   </button>
                   <button
                     type="button" // Добавлено, чтобы избежать отправки формы
                     className="clear-button"
                     onClick={() => {
-                      setSelectedEmployee(null);
-                      setSelectedDay(null);
-                      setIntervals([]);
+                      setSelectedEmployee(null)
+                      setSelectedDay(null)
+                      setIntervals([])
                     }}
                   >
-                    {translations['Închide'][language]}
+                    {translations["Închide"][language]}
                   </button>
                 </div>
               </div>
@@ -411,8 +500,7 @@ const ScheduleComponent = () => {
         </div>
       )}
     </div>
+  )
+}
 
-  );
-};
-
-export default ScheduleComponent;
+export default ScheduleComponent

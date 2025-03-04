@@ -2,3 +2,4 @@
 /google-cloud-sdk/
 /build
 .env
+.prettierignore

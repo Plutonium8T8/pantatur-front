@@ -1,4 +1,4 @@
-import "./Pagination.css";
+import "./Pagination.css"
 
 export const Pagination = ({ totalPages, currentPage, onPaginationChange }) => {
   const listPages = Array.from({ length: totalPages }, (_, i) => (
@@ -9,7 +9,7 @@ export const Pagination = ({ totalPages, currentPage, onPaginationChange }) => {
     >
       {i + 1}
     </button>
-  ));
+  ))
 
   return (
     <div className="pagination">
@@ -29,5 +29,5 @@ export const Pagination = ({ totalPages, currentPage, onPaginationChange }) => {
         {">"}
       </button>
     </div>
-  );
-};
+  )
+}

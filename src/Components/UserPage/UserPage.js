@@ -1,23 +1,23 @@
-import React, { useState, useEffect } from "react";
-import { useUser } from "../../UserContext";
-import "./UserProfile.css";
-import { FaUser } from "react-icons/fa";
-import { translations } from "../utils/translations";
-import { api } from "../../api";
-import { useSnackbar } from "notistack";
-import { showServerError } from "../../Components/utils/showServerError";
+import React, { useState, useEffect } from "react"
+import { useUser } from "../../UserContext"
+import "./UserProfile.css"
+import { FaUser } from "react-icons/fa"
+import { translations } from "../utils/translations"
+import { api } from "../../api"
+import { useSnackbar } from "notistack"
+import { showServerError } from "../../Components/utils/showServerError"
 
 const UserPage = ({ isOpen, onClose }) => {
-  const { userId } = useUser();
-  const [error, setError] = useState(null);
-  const { enqueueSnackbar } = useSnackbar();
+  const { userId } = useUser()
+  const [error, setError] = useState(null)
+  const { enqueueSnackbar } = useSnackbar()
 
-  const language = localStorage.getItem("language") || "RO";
+  const language = localStorage.getItem("language") || "RO"
 
   const [users, setUsers] = useState({
     username: "",
-    email: "",
-  });
+    email: ""
+  })
 
   const [usersExtended, setUsersExtended] = useState({
     name: "",
@@ -28,33 +28,33 @@ const UserPage = ({ isOpen, onClose }) => {
     id_card_release: "",
     idnp: "",
     address: "",
-    phone: "",
-  });
+    phone: ""
+  })
 
   const [usersTechnician, setUsersTechnician] = useState({
     policy_number: "",
     personal_exemption_number: "",
     job_title: "",
-    department: "",
-  });
+    department: ""
+  })
 
   useEffect(() => {
     if (isOpen) {
-      fetchUserData();
+      fetchUserData()
     }
-  }, [isOpen]);
+  }, [isOpen])
 
   const fetchUserData = async () => {
     try {
-      const userData = await api.users.getById(userId);
+      const userData = await api.users.getById(userId)
 
       setUsers((prev) => ({
         ...prev,
         username: userData.username || "",
-        email: userData.email || "",
-      }));
+        email: userData.email || ""
+      }))
 
-      const extendedData = await api.users.getExtendedById(userId);
+      const extendedData = await api.users.getExtendedById(userId)
 
       setUsersExtended((prev) => ({
         ...prev,
@@ -66,10 +66,10 @@ const UserPage = ({ isOpen, onClose }) => {
         id_card_release: extendedData.id_card_release || "",
         idnp: extendedData.idnp || "",
         address: extendedData.address || "",
-        phone: extendedData.phone || "",
-      }));
+        phone: extendedData.phone || ""
+      }))
 
-      const technicianData = await api.users.getTechnicianById(userId);
+      const technicianData = await api.users.getTechnicianById(userId)
 
       setUsersTechnician((prev) => ({
         ...prev,
@@ -77,36 +77,36 @@ const UserPage = ({ isOpen, onClose }) => {
         personal_exemption_number:
           technicianData.personal_exemption_number || "",
         job_title: technicianData.job_title || "",
-        department: technicianData.department || "",
-      }));
+        department: technicianData.department || ""
+      }))
     } catch (error) {
-      enqueueSnackbar(showServerError(error), { variant: "error" });
-      console.error("Error fetching user data:", error.message);
+      enqueueSnackbar(showServerError(error), { variant: "error" })
+      console.error("Error fetching user data:", error.message)
     }
-  };
+  }
 
   const handleUsersChange = (e) => {
-    const { name, value } = e.target;
-    setUsers((prev) => ({ ...prev, [name]: value }));
-  };
+    const { name, value } = e.target
+    setUsers((prev) => ({ ...prev, [name]: value }))
+  }
 
   const handleUsersExtendedChange = (e) => {
-    const { name, value } = e.target;
-    setUsersExtended((prev) => ({ ...prev, [name]: value }));
-  };
+    const { name, value } = e.target
+    setUsersExtended((prev) => ({ ...prev, [name]: value }))
+  }
 
   const handleUsersTechnicianChange = (e) => {
-    const { name, value } = e.target;
-    setUsersTechnician((prev) => ({ ...prev, [name]: value }));
-  };
+    const { name, value } = e.target
+    setUsersTechnician((prev) => ({ ...prev, [name]: value }))
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     try {
       await api.users.updateUsernameAndEmail(userId, {
         email: users.email,
-        username: users.username,
-      });
+        username: users.username
+      })
 
       await api.users.updateExtended(userId, {
         name: usersExtended.name,
@@ -117,26 +117,26 @@ const UserPage = ({ isOpen, onClose }) => {
         id_card_release: usersExtended.id_card_release,
         id_card_series: usersExtended.id_card_series,
         idnp: usersExtended.idnp,
-        phone: usersExtended.phone,
-      });
+        phone: usersExtended.phone
+      })
 
       await api.users.updateTechnician(userId, {
         department: usersTechnician.department,
         job_title: usersTechnician.job_title,
         personal_exemption_number: usersTechnician.personal_exemption_number,
-        policy_number: usersTechnician.policy_number,
-      });
+        policy_number: usersTechnician.policy_number
+      })
 
-      onClose();
+      onClose()
     } catch (error) {
-      enqueueSnackbar(showServerError(error), { variant: "error" });
-      console.error("Error saving user data:", error.message);
-      setError("Error saving user data.");
+      enqueueSnackbar(showServerError(error), { variant: "error" })
+      console.error("Error saving user data:", error.message)
+      setError("Error saving user data.")
     }
-  };
+  }
 
   if (!isOpen) {
-    return null;
+    return null
   }
 
   return (
@@ -161,7 +161,7 @@ const UserPage = ({ isOpen, onClose }) => {
                       "email_confirmed",
                       "password_reset_token",
                       "password_reset_requested_at",
-                      "id",
+                      "id"
                     ].includes(attribute)
                 )
                 .map((key) => (
@@ -178,7 +178,10 @@ const UserPage = ({ isOpen, onClose }) => {
 
             <div className="input-group">
               <h3>{translations["Informații extinse"][language]}</h3>
-              {Object.keys(usersExtended).filter((attribute) => !["user", "photo", "id"].includes(attribute))
+              {Object.keys(usersExtended)
+                .filter(
+                  (attribute) => !["user", "photo", "id"].includes(attribute)
+                )
                 .map((key) => (
                   <input
                     key={key}
@@ -223,7 +226,7 @@ const UserPage = ({ isOpen, onClose }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default UserPage;
+export default UserPage

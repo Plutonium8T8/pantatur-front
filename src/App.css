@@ -7,7 +7,6 @@
   overflow: hidden;
 }
 
-
 .page-content {
   display: flex;
   flex: 1;
@@ -15,7 +14,6 @@
   position: relative;
   height: 100%;
 }
-
 
 .statistics-section {
   margin: 20px 0;
@@ -195,7 +193,6 @@
   background-color: #f9f9f9;
 }
 
-
 .ticket-counter-display {
   display: flex;
   gap: 10px;
@@ -222,7 +219,6 @@
 .ticket-counter-green {
   background-color: #38a169ee;
 }
-
 
 .scrollable-list {
   display: flex;

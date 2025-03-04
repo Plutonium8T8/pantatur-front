@@ -25,7 +25,6 @@
   z-index: 999;
 }
 
-
 @keyframes slideIn {
   from {
     transform: translateX(-100%);
@@ -90,7 +89,9 @@
   font-size: 16px;
   border-radius: 5px;
   outline: none;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .input-group textarea {
@@ -111,7 +112,9 @@
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
+  transition:
+    background-color 0.3s,
+    transform 0.2s;
 }
 
 .submit-button:hover {
@@ -131,7 +134,9 @@
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
+  transition:
+    background-color 0.3s,
+    transform 0.2s;
   width: 47%;
 }
 
@@ -139,7 +144,6 @@
   background-color: #882626;
   transform: scale(1.05);
 }
-
 
 .notification-list {
   list-style: none;
@@ -234,7 +238,9 @@
   font-size: 16px;
   border-radius: 5px;
   outline: none;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .time-select-input:focus {

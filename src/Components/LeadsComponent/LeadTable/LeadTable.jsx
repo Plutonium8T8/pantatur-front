@@ -1,30 +1,30 @@
-import { useEffect, useState, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState, useMemo } from "react"
+import { Link } from "react-router-dom"
 import {
   useReactTable,
   getCoreRowModel,
-  flexRender,
-} from "@tanstack/react-table";
-import { cleanValue } from "../utils";
-import { api } from "../../../api";
-import { workflowStyles } from "../../utils/workflowStyles";
-import "./LeadTable.css";
-import { SpinnerRightBottom } from "../../SpinnerRightBottom";
-import { useAppContext } from "../../../AppContext";
-import { MAX_PAGE_SIZE } from "../../../app-constants";
-import { Pagination } from "../../Pagination";
-import { getLanguageByKey } from "../../utils/getLanguageByKey";
-import { TextEllipsis } from "../../TextEllipsis";
+  flexRender
+} from "@tanstack/react-table"
+import { cleanValue } from "../utils"
+import { api } from "../../../api"
+import { workflowStyles } from "../../utils/workflowStyles"
+import "./LeadTable.css"
+import { SpinnerRightBottom } from "../../SpinnerRightBottom"
+import { useAppContext } from "../../../AppContext"
+import { MAX_PAGE_SIZE } from "../../../app-constants"
+import { Pagination } from "../../Pagination"
+import { getLanguageByKey } from "../../utils/getLanguageByKey"
+import { TextEllipsis } from "../../TextEllipsis"
 
-const SORT_BY = "creation_date";
-const ORDER = "ASC";
+const SORT_BY = "creation_date"
+const ORDER = "ASC"
 
 const getTotalPages = (items) => {
-  return Math.ceil(items / MAX_PAGE_SIZE);
-};
+  return Math.ceil(items / MAX_PAGE_SIZE)
+}
 
 const renderTags = (tags) => {
-  const isTags = tags.some(Boolean);
+  const isTags = tags.some(Boolean)
 
   return isTags
     ? tags.map((tag, index) => (
@@ -32,19 +32,19 @@ const renderTags = (tags) => {
           {tag.trim()}
         </span>
       ))
-    : "—";
-};
+    : "—"
+}
 
 const LeadTable = ({
   filteredTickets,
   selectedTickets,
   setCurrentTicket,
-  toggleSelectTicket,
+  toggleSelectTicket
 }) => {
-  const [hardTicketsList, setHardTicketsList] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(1);
-  const { tickets } = useAppContext();
+  const [hardTicketsList, setHardTicketsList] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [page, setPage] = useState(1)
+  const { tickets } = useAppContext()
 
   const columns = useMemo(() => {
     return [
@@ -62,22 +62,22 @@ const LeadTable = ({
               onChange={() => toggleSelectTicket(getValue())}
             />
           </div>
-        ),
+        )
       },
       {
         accessorKey: "id",
         header: () => <div className="text-center">ID</div>,
         accessorFn: ({ id }) => id,
         cell: ({ getValue }) => {
-          const id = getValue();
+          const id = getValue()
           return (
             <div className="text-center">
               <Link to={`/chat/${id}`} className="lead-row-link">
                 #{id}
               </Link>
             </div>
-          );
-        },
+          )
+        }
       },
       {
         accessorKey: "name",
@@ -86,7 +86,7 @@ const LeadTable = ({
         ),
         accessorFn: ({ clients }) => clients,
         cell: ({ getValue }) => {
-          const values = getValue();
+          const values = getValue()
 
           return (
             <div className="text-center">
@@ -94,8 +94,8 @@ const LeadTable = ({
                 ? values.map((item) => cleanValue(item.name)).join(", ")
                 : cleanValue()}
             </div>
-          );
-        },
+          )
+        }
       },
       {
         accessorKey: "surname",
@@ -104,15 +104,15 @@ const LeadTable = ({
         ),
         accessorFn: ({ clients }) => clients,
         cell: ({ getValue }) => {
-          const values = getValue();
+          const values = getValue()
           return (
             <div className="text-center">
               {values.length
                 ? values.map((item) => cleanValue(item.surname)).join(", ")
                 : cleanValue()}
             </div>
-          );
-        },
+          )
+        }
       },
       {
         accessorKey: "email",
@@ -121,7 +121,7 @@ const LeadTable = ({
         ),
         accessorFn: ({ clients }) => clients,
         cell: ({ getValue }) => {
-          const values = getValue();
+          const values = getValue()
 
           return (
             <div className="text-center">
@@ -129,8 +129,8 @@ const LeadTable = ({
                 ? values.map((item) => cleanValue(item.email)).join(", ")
                 : cleanValue()}
             </div>
-          );
-        },
+          )
+        }
       },
       {
         header: () => (
@@ -139,7 +139,7 @@ const LeadTable = ({
         accessorKey: "phone",
         accessorFn: ({ clients }) => clients,
         cell: ({ getValue }) => {
-          const values = getValue();
+          const values = getValue()
 
           return (
             <div className="text-center">
@@ -147,8 +147,8 @@ const LeadTable = ({
                 ? values.map((item) => cleanValue(item.phone)).join(", ")
                 : cleanValue()}
             </div>
-          );
-        },
+          )
+        }
       },
       {
         header: getLanguageByKey("Descriere"),
@@ -158,7 +158,7 @@ const LeadTable = ({
           <div className="limit-text" style={{ width: 200 }}>
             <TextEllipsis rows={3}>{getValue()}</TextEllipsis>
           </div>
-        ),
+        )
       },
       {
         header: getLanguageByKey("Tag-uri"),
@@ -168,7 +168,7 @@ const LeadTable = ({
           <div style={{ width: 300 }} className="lead-tags-row">
             {renderTags(getValue())}
           </div>
-        ),
+        )
       },
       {
         accessorKey: "priority",
@@ -182,7 +182,7 @@ const LeadTable = ({
           >
             {getValue()}
           </div>
-        ),
+        )
       },
       {
         header: getLanguageByKey("Workflow"),
@@ -200,8 +200,8 @@ const LeadTable = ({
                 {getValue()}
               </span>
             </div>
-          );
-        },
+          )
+        }
       },
       {
         accessorKey: "contact",
@@ -209,7 +209,7 @@ const LeadTable = ({
           <div className="text-center">{getLanguageByKey("Contact")}</div>
         ),
         accessorFn: ({ contact }) => contact,
-        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>,
+        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
         accessorKey: "creation_date",
@@ -223,7 +223,7 @@ const LeadTable = ({
           <div style={{ width: 150 }} className="text-center">
             {getValue()}
           </div>
-        ),
+        )
       },
       {
         accessorKey: "last_interaction_date",
@@ -237,7 +237,7 @@ const LeadTable = ({
           <div style={{ width: 150 }} className="text-center">
             {getValue()}
           </div>
-        ),
+        )
       },
       {
         accessorKey: "ticket_info.achitat_client",
@@ -247,7 +247,7 @@ const LeadTable = ({
           </div>
         ),
         accessorFn: ({ ticket_info }) => cleanValue(ticket_info.achitat_client),
-        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>,
+        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
         accessorKey: "ticket_info.avans_euro",
@@ -255,7 +255,7 @@ const LeadTable = ({
           <div className="text-center">{getLanguageByKey("Avans în euro")}</div>
         ),
         accessorFn: ({ ticket_info }) => cleanValue(ticket_info.avans_euro),
-        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>,
+        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
         accessorKey: "ticket_info.buget",
@@ -263,7 +263,7 @@ const LeadTable = ({
           <div className="text-center">{getLanguageByKey("Buget")}</div>
         ),
         accessorFn: ({ ticket_info }) => cleanValue(ticket_info.buget),
-        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>,
+        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
         accessorKey: "ticket_info.comision_companie",
@@ -274,7 +274,7 @@ const LeadTable = ({
         ),
         accessorFn: ({ ticket_info }) =>
           cleanValue(ticket_info.comision_companie),
-        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>,
+        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
         accessorKey: "ticket_info.data_avansului",
@@ -284,7 +284,7 @@ const LeadTable = ({
           </div>
         ),
         accessorFn: ({ ticket_info }) => cleanValue(ticket_info.data_avansului),
-        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>,
+        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
         accessorKey: "ticket_info.data_cererii_de_retur",
@@ -295,7 +295,7 @@ const LeadTable = ({
         ),
         accessorFn: ({ ticket_info }) =>
           cleanValue(ticket_info.data_cererii_de_retur),
-        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>,
+        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
         accessorKey: "ticket_info.data_contractului",
@@ -306,7 +306,7 @@ const LeadTable = ({
         ),
         accessorFn: ({ ticket_info }) =>
           cleanValue(ticket_info.data_contractului),
-        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>,
+        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
         accessorKey: "ticket_info.data_de_plata_integrala",
@@ -317,7 +317,7 @@ const LeadTable = ({
         ),
         accessorFn: ({ ticket_info }) =>
           cleanValue(ticket_info.data_de_plata_integrala),
-        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>,
+        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
         accessorKey: "ticket_info.data_intoarcerii",
@@ -328,7 +328,7 @@ const LeadTable = ({
         ),
         accessorFn: ({ ticket_info }) =>
           cleanValue(ticket_info.data_intoarcerii),
-        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>,
+        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
         accessorKey: "ticket_info.data_plecarii",
@@ -336,7 +336,7 @@ const LeadTable = ({
           <div className="text-center">{getLanguageByKey("Data plecării")}</div>
         ),
         accessorFn: ({ ticket_info }) => cleanValue(ticket_info.data_plecarii),
-        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>,
+        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
         accessorKey: "ticket_info.tip_de_transport",
@@ -347,7 +347,7 @@ const LeadTable = ({
         ),
         accessorFn: ({ ticket_info }) =>
           cleanValue(ticket_info.tip_de_transport),
-        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>,
+        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
         accessorKey: "ticket_info.vacanta",
@@ -355,7 +355,7 @@ const LeadTable = ({
           <div className="text-center">{getLanguageByKey("Vacanță")}</div>
         ),
         accessorFn: ({ ticket_info }) => cleanValue(ticket_info.vacanta),
-        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>,
+        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
         accessorKey: "ticket_info.valuta_contului",
@@ -366,40 +366,40 @@ const LeadTable = ({
         ),
         accessorFn: ({ ticket_info }) =>
           cleanValue(ticket_info.valuta_contului),
-        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>,
-      },
-    ];
-  }, [selectedTickets, toggleSelectTicket]);
+        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
+      }
+    ]
+  }, [selectedTickets, toggleSelectTicket])
 
   const table = useReactTable({
     data: hardTicketsList,
     columns,
-    getCoreRowModel: getCoreRowModel(),
-  });
+    getCoreRowModel: getCoreRowModel()
+  })
 
   useEffect(() => {
     const getHardTickets = async () => {
-      setLoading(true);
+      setLoading(true)
       try {
         const hardTickets = await api.tickets.getHardList({
           page,
           sort_by: SORT_BY,
-          order: ORDER,
-        });
+          order: ORDER
+        })
 
-        setHardTicketsList(hardTickets.data);
+        setHardTicketsList(hardTickets.data)
       } catch (_) {
         // TODO: Show server error
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    getHardTickets();
-  }, [page]);
+    getHardTickets()
+  }, [page])
 
   if (loading) {
-    return <SpinnerRightBottom />;
+    return <SpinnerRightBottom />
   }
 
   return (
@@ -412,7 +412,7 @@ const LeadTable = ({
                 <th key={i}>
                   {flexRender(
                     header.column.columnDef.header,
-                    header.getContext(),
+                    header.getContext()
                   )}
                 </th>
               ))}
@@ -442,7 +442,7 @@ const LeadTable = ({
         />
       </div>
     </>
-  );
-};
+  )
+}
 
-export default LeadTable;
+export default LeadTable

@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useAppContext } from '../../AppContext';
-import { translations } from '../utils/translations';
-import './SideBar.css';
-import LanguageToggle from './LanguageToggle'
+import React, { useState } from "react"
+import { useLocation, useNavigate } from "react-router-dom"
+import { useAppContext } from "../../AppContext"
+import { translations } from "../utils/translations"
+import "./SideBar.css"
+import LanguageToggle from "./LanguageToggle"
 import {
   FaUser,
   FaChartBar,
@@ -12,42 +12,42 @@ import {
   FaBell,
   FaClipboardList,
   FaSignOutAlt,
-  FaUserSecret,
-} from "react-icons/fa";
-import { clearCookies } from "../../Components/utils/clearCookies";
-import { api } from "../../api";
-import { LoadingOverlay } from "../LoadingOverlay";
+  FaUserSecret
+} from "react-icons/fa"
+import { clearCookies } from "../../Components/utils/clearCookies"
+import { api } from "../../api"
+import { LoadingOverlay } from "../LoadingOverlay"
 
 const CustomSidebar = ({ onOpenNotifications, onOpenTasks, onOpenAccount }) => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { unreadCount } = useAppContext();
-  const [loading, setLoading] = useState(false);
+  const location = useLocation()
+  const navigate = useNavigate()
+  const { unreadCount } = useAppContext()
+  const [loading, setLoading] = useState(false)
 
-  const language = localStorage.getItem("language") || "RO";
+  const language = localStorage.getItem("language") || "RO"
 
   const isActive = (page) => {
     if (page === "chat") {
-      return location.pathname.startsWith("/chat");
+      return location.pathname.startsWith("/chat")
     }
-    return location.pathname === `/${page}`;
-  };
+    return location.pathname === `/${page}`
+  }
 
   const handleNavigate = (page) => {
-    navigate(`/${page}`);
-  };
+    navigate(`/${page}`)
+  }
 
   const logout = async () => {
-    setLoading(true);
+    setLoading(true)
     try {
-      await api.auth.logout();
-      clearCookies();
+      await api.auth.logout()
+      clearCookies()
     } catch (_) {
-      clearCookies();
+      clearCookies()
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <>
@@ -118,9 +118,9 @@ const CustomSidebar = ({ onOpenNotifications, onOpenTasks, onOpenAccount }) => {
           </div>
         </div>
       </div>
-      {loading && <LoadingOverlay/>}
+      {loading && <LoadingOverlay />}
     </>
-  );
-};
+  )
+}
 
-export default CustomSidebar;
+export default CustomSidebar
