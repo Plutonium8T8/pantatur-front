@@ -317,6 +317,13 @@ const ChatExtraInfo = ({
                                 </div>
                             </>
                         )}
+                        <div>
+                            <Workflow
+                                ticket={updatedTicket}
+                                workflow={updatedTicket?.workflow}
+                                onChange={handleWorkflowChange}
+                            />
+                        </div>
                     </div>
                 </div>
             )}
@@ -325,15 +332,6 @@ const ChatExtraInfo = ({
                 {activeTab === 'extraForm' && selectTicketId && (
                     <div className="extra-info-content">
                         <div className="selects-container">
-
-                            <div>Workflow</div>
-                            <div>
-                                <Workflow
-                                    ticket={updatedTicket}
-                                    workflow={updatedTicket?.workflow}
-                                    onChange={handleWorkflowChange}
-                                />
-                            </div>
 
                             {isLoading ? (
                                 <p>Loading...</p>
