@@ -95,7 +95,7 @@ const Dashboard = () => {
 
       const statsData = await api.dashboard.statistics()
 
-      setStatistics(normalizeToArray(statsData[0])); 
+      setStatistics(normalizeToArray(statsData[0]));
     } catch (error) {
       console.error("Error fetching statistics:", error);
       setStatistics([]);
@@ -201,20 +201,20 @@ const Dashboard = () => {
   };
 
   if (isLoading) {
-    return <SpinnerRightBottom/>
+    return <SpinnerRightBottom />
   }
 
   return (
     <div
-  className="chart-container"
-  style={{
-    width: "100%",  // Ensure it stretches fully in the grid cell
-    height: "100%", // Match the height dynamically
-    justifyContent: "center",
-    alignItems: "center",
-    padding: "5px",
-  }}
->
+      className="chart-container"
+      style={{
+        width: "100%",  // Ensure it stretches fully in the grid cell
+        height: "100%", // Match the height dynamically
+        justifyContent: "center",
+        alignItems: "center",
+        padding: "5px",
+      }}
+    >
 
       <GridLayout
         className="layout"
@@ -259,23 +259,23 @@ const Dashboard = () => {
               labels: statArray.map((stat) => {
                 const periodKey = stat.week_period || stat.workflow || stat.month_period || stat.month;
                 return translations[periodKey]?.[language] || periodKey || "Indisponibil";
-              }),              
+              }),
               datasets: [
                 {
                   label: chartLabel,
                   data: statArray.map((stat) => stat.tickets_count || stat.total_commission || 0),
                   backgroundColor: statArray.map(
                     (stat) => weekdaysColors[stat.week_period]?.background ||
-                              workflowColors[stat.workflow]?.background ||
-                              workflowColors[stat.time_period]?.background ||
-                              monthsColors[stat.month_period]?.background ||
-                              "rgba(86, 244, 96, 0.69)"
+                      workflowColors[stat.workflow]?.background ||
+                      workflowColors[stat.time_period]?.background ||
+                      monthsColors[stat.month_period]?.background ||
+                      "rgba(86, 244, 96, 0.69)"
                   ),
                   borderColor: statArray.map(
                     (stat) => weekdaysColors[stat.week_period]?.border ||
-                              workflowColors[stat.workflow]?.border ||
-                              monthsColors[stat.month_period]?.border ||
-                              "rgb(3, 202, 0)"
+                      workflowColors[stat.workflow]?.border ||
+                      monthsColors[stat.month_period]?.border ||
+                      "rgb(3, 202, 0)"
                   ),
                   borderWidth: 1,
                 },
