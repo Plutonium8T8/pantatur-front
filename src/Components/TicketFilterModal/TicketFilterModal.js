@@ -122,7 +122,7 @@ export const TicketFilterModal = ({
 
   const content = {
     workflow: (
-      <div className="content">
+      <div className="tab-content-title">
         <h2>{getLanguageByKey("Filtru de sistem")}</h2>
         <WorkflowFilter
           onApplyFilter={() => onApplyFilter(filters, filteredTicketIds)}
@@ -135,7 +135,7 @@ export const TicketFilterModal = ({
     ),
 
     ticket: (
-      <div className="content leads-filters-modal">
+      <div className="tab-content-title tab-ticket-content">
         <h2>{getLanguageByKey("Filtru pentru Lead")}</h2>
 
         <div className="d-flex flex-column gap-16">
@@ -180,7 +180,7 @@ export const TicketFilterModal = ({
     ),
 
     messages: (
-      <div className="content">
+      <div className="tab-content-title">
         <h2>{getLanguageByKey("Filtru pentru mesaje (coming soon)")}</h2>
         <div className="workflow-multi-select">
           <label>{getLanguageByKey("Platforma mesaj")}</label>

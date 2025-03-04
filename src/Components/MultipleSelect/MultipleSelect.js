@@ -118,7 +118,7 @@ const CustomMultiSelect = ({
           <span className="placeholder">{placeholder}</span>
         )}
 
-        {loading && <Spin width={10} height={10} border={2} />}
+        {loading && <Spin width={10} height={10} stroke={2} />}
       </div>
 
       {isDropdownOpen && (
