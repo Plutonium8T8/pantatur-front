@@ -1,38 +1,44 @@
-import { useState, useEffect } from "react";
-import CustomMultiSelect from "../MultipleSelect/MultipleSelect";
-import { getLanguageByKey } from "../utils/getLanguageByKey";
-import { priorityOptions } from "../../FormOptions/PriorityOption";
-import { sourceOfLeadOptions } from "../../FormOptions/SourceOfLeadOptions";
-import { promoOptions } from "../../FormOptions/PromoOptions";
-import { marketingOptions } from "../../FormOptions/MarketingOptions";
-import { countryOptions } from "../../FormOptions/CountryOptions";
-import { transportOptions } from "../../FormOptions/TransportOptions";
-import { nameExcursionOptions } from "../../FormOptions/NameExcursionOptions";
-import { serviceTypeOptions } from "../../FormOptions/ServiceTypeOptions";
-import { purchaseProcessingOptions } from "../../FormOptions/PurchaseProcessingOptions";
-import { api } from "../../api";
+import { useState, useEffect } from "react"
+import CustomMultiSelect from "../MultipleSelect/MultipleSelect"
+import { getLanguageByKey } from "../utils/getLanguageByKey"
+import { priorityOptions } from "../../FormOptions/PriorityOption"
+import { sourceOfLeadOptions } from "../../FormOptions/SourceOfLeadOptions"
+import { promoOptions } from "../../FormOptions/PromoOptions"
+import { marketingOptions } from "../../FormOptions/MarketingOptions"
+import { countryOptions } from "../../FormOptions/CountryOptions"
+import { transportOptions } from "../../FormOptions/TransportOptions"
+import { nameExcursionOptions } from "../../FormOptions/NameExcursionOptions"
+import { serviceTypeOptions } from "../../FormOptions/ServiceTypeOptions"
+import { purchaseProcessingOptions } from "../../FormOptions/PurchaseProcessingOptions"
+import { api } from "../../api"
 
 export const LeadCreationDate = ({
   handleInputChange,
   filters,
-  handleMultiSelectChange,
+  handleMultiSelectChange
 }) => {
-  const [technicians, setTechnicians] = useState([]);
+  const [technicians, setTechnicians] = useState([])
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const fetchTechnicians = async () => {
       try {
-        const data = await api.users.getTechnicianList();
+        setLoading(true)
+        const data = await api.users.getTechnicianList()
 
         const formattedTechnicians = data.map((item) =>
-          `${item.id.id}: ${item.id.name} ${item.id.surname}`.trim(),
-        );
-        setTechnicians(formattedTechnicians);
-      } catch (error) {}
-    };
+          `${item.id.id}: ${item.id.name} ${item.id.surname}`.trim()
+        )
+        setLoading(false)
+        setTechnicians(formattedTechnicians)
+      } catch (error) {
+      } finally {
+        setLoading(false)
+      }
+    }
 
-    fetchTechnicians();
-  }, []);
+    fetchTechnicians()
+  }, [])
   return (
     <div className="container-extra-group">
       <label>{getLanguageByKey("Data creare Lead")}</label>
@@ -61,6 +67,7 @@ export const LeadCreationDate = ({
       <label>{getLanguageByKey("Responsabil Lead")}</label>
       <CustomMultiSelect
         options={technicians}
+        loading={loading}
         placeholder={getLanguageByKey("Alege responsabil lead")}
         onChange={(values) => handleMultiSelectChange("technician_id", values)}
         selectedValues={filters.technician_id}
@@ -193,5 +200,5 @@ export const LeadCreationDate = ({
         className={filters.data_cererii_de_retur ? "filled-field" : ""}
       />
     </div>
-  );
-};
+  )
+}

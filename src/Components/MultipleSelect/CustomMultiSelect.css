@@ -15,6 +15,7 @@
   gap: 5px;
   align-items: center;
   font-size: 16px;
+  justify-content: space-between;
 }
 
 .selected-options {
