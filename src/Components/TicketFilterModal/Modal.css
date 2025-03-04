@@ -1,5 +1,4 @@
-
-  .filter-container {
+.filter-container {
     display: flex;
     gap: 20px;
   }

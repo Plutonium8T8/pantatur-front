@@ -3,14 +3,22 @@ import { usePortal } from "../../hooks";
 import "./Modal.css";
 import { Button } from "../Button";
 
-export const Modal = ({ children, onClose, open, footer, title, width, height }) => {
+export const Modal = ({
+  children,
+  onClose,
+  open,
+  footer,
+  title,
+  width,
+  height,
+}) => {
   const modal = usePortal();
   const refModal = useRef();
 
   const actions = [
     <Button onClick={onClose}>Close</Button>,
-        <Button variant="primary">Ok</Button>
-  ]
+    <Button variant="primary">Ok</Button>,
+  ];
 
   const renderFooter = (footer) => {
     if (footer) {
@@ -45,7 +53,11 @@ export const Modal = ({ children, onClose, open, footer, title, width, height })
 
   return open
     ? modal(
-        <div ref={refModal} className="modal" style={{"--width": `${width}px`, "--height": `${height}px`}}>
+        <div
+          ref={refModal}
+          className="modal"
+          style={{ "--width": `${width}px`, "--height": `${height}px` }}
+        >
           <div className="modal-content-body">
             {title && (
               <div className="modal-title">
