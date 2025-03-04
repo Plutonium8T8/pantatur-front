@@ -37,12 +37,12 @@ const ChatExtraInfo = ({
     tickets,
 }) => {
     const [activeTab, setActiveTab] = useState("extraForm");
-    const { hasRole, isLoadingRoles } = useUser();
+    const { hasRole } = useUser();
     const [fieldErrors, setFieldErrors] = useState({});
     const [extraInfo, setExtraInfo] = useState({});
     const [selectedTechnicianId, setSelectedTechnicianId] = useState({});
-
     const isAdmin = hasRole("ROLE_ADMIN");
+
 
     useEffect(() => {
         if (selectTicketId) {

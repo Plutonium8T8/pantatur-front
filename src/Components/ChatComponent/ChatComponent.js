@@ -18,7 +18,7 @@ import { api } from "../../api"
 import ChatExtraInfo from './ChatExtraInfo';
 
 const ChatComponent = ({ }) => {
-    const { userId, hasRole, isLoadingRoles } = useUser();
+    const { userId } = useUser();
     const [managerMessage, setManagerMessage] = useState('');
     const { tickets, updateTicket, setTickets, messages, setMessages, markMessagesAsRead, selectTicketId, setSelectTicketId, getClientMessagesSingle } = useAppContext();
     const [personalInfo, setPersonalInfo] = useState({});
