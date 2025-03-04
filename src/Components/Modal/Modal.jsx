@@ -1,7 +1,8 @@
-import { useRef, useEffect } from "react";
-import { usePortal } from "../../hooks";
-import "./Modal.css";
-import { Button } from "../Button";
+import { useRef, useEffect } from "react"
+import { usePortal } from "../../hooks"
+import "./Modal.css"
+import { Button } from "../Button"
+import { getLanguageByKey } from "../utils/getLanguageByKey"
 
 export const Modal = ({
   children,
@@ -10,46 +11,46 @@ export const Modal = ({
   footer,
   title,
   width,
-  height,
+  height
 }) => {
-  const modal = usePortal();
-  const refModal = useRef();
+  const modal = usePortal()
+  const refModal = useRef()
 
   const actions = [
-    <Button onClick={onClose}>Close</Button>,
-    <Button variant="primary">Ok</Button>,
-  ];
+    <Button onClick={onClose}>{getLanguageByKey("Anuleaza")}</Button>,
+    <Button variant="primary">{getLanguageByKey("Confirma")}</Button>
+  ]
 
   const renderFooter = (footer) => {
     if (footer) {
-      return footer(actions);
+      return footer(actions)
     }
 
     if (footer === null) {
-      return null;
+      return null
     }
 
     return (
       <div className=" modal-btn-footer | d-flex gap-8 justify-content-end">
         {actions}
       </div>
-    );
-  };
+    )
+  }
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (refModal.current && refModal.current === event.target) {
-        onClose();
+        onClose()
       }
-    };
+    }
 
     if (open) {
-      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside)
     }
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [open, onClose]);
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [open, onClose])
 
   return open
     ? modal(
@@ -69,7 +70,7 @@ export const Modal = ({
 
             <div>{renderFooter(footer)}</div>
           </div>
-        </div>,
+        </div>
       )
-    : null;
-};
+    : null
+}

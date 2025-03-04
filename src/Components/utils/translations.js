@@ -1213,6 +1213,14 @@ export const translations = {
   Bilet: {
     RO: "Bilet",
     RU: "Билет"
+  },
+  Anuleaza: {
+    RO: "Anulează",
+    RU: "Отменить"
+  },
+  Confirma: {
+    RO: "Confirmă",
+    RU: "Подтвердить"
   }
 }
 

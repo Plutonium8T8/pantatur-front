@@ -605,3 +605,10 @@ button {
 .gap-16 {
   gap: 16px;
 }
+
+input {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  padding: 8px;
+}

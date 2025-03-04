@@ -4,7 +4,7 @@ import "./TicketFilterModal.css"
 import { api } from "../../api"
 import { Modal } from "../Modal"
 import { platformOptions, filterDefaults } from "./utils"
-import { Workflow } from "./Workflow"
+import { WorkflowFilter } from "./WorkflowFilter"
 import { QualityControl } from "./QualityControl"
 import { Invoice } from "./Invoice"
 import { Contact } from "./Contact"
@@ -124,7 +124,7 @@ export const TicketFilterModal = ({
     workflow: (
       <div className="content">
         <h2>{getLanguageByKey("Filtru de sistem")}</h2>
-        <Workflow
+        <WorkflowFilter
           onApplyFilter={() => onApplyFilter(filters, filteredTicketIds)}
           handleMultiSelectChange={handleMultiSelectChange}
           selectedValues={filters.workflow}

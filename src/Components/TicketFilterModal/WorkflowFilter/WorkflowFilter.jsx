@@ -1,13 +1,14 @@
-import CustomMultiSelect from "../MultipleSelect/MultipleSelect";
-import { getLanguageByKey } from "../utils/getLanguageByKey";
-import { workflowOptions } from "../../FormOptions/WorkFlowOption";
+import CustomMultiSelect from "../../MultipleSelect/MultipleSelect"
+import { getLanguageByKey } from "../../utils/getLanguageByKey"
+import { workflowOptions } from "../../../FormOptions/WorkFlowOption"
+import "./WorkflowFilter.css"
 
-export const Workflow = ({
+export const WorkflowFilter = ({
   onClose,
   handleResetFilters,
   onApplyFilter,
   handleMultiSelectChange,
-  selectedValues,
+  selectedValues
 }) => {
   return (
     <>
@@ -16,7 +17,7 @@ export const Workflow = ({
         <CustomMultiSelect
           options={workflowOptions}
           placeholder={getLanguageByKey(
-            "Alege workflow pentru afisare in sistem",
+            "Alege workflow pentru afisare in sistem"
           )}
           onChange={(values) => handleMultiSelectChange("workflow", values)}
           selectedValues={selectedValues}
@@ -35,5 +36,5 @@ export const Workflow = ({
         </button>
       </div>
     </>
-  );
-};
+  )
+}

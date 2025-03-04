@@ -1,8 +1,8 @@
 .spin {
-  width: var(--width, 46px);
-  height: var(--height, 46px);
-  border: 4.6px solid rgba(255, 255, 255, 0.1);
-  border-top: 4.6px solid #0f824c;
+  width: var(--width);
+  height: var(--height);
+  border: var(--border) solid rgba(255, 255, 255, 0.1);
+  border-top: var(--border) solid #0f824c;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
