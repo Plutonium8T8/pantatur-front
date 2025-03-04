@@ -3,6 +3,8 @@ import Input from "../InputComponent/InputComponent";
 import Select from "../SelectComponent/SelectComponent";
 import ToggleSwitch from '../ToggleComponent/ToggleSwitch';
 import ResponsabilLead from "../../FormOptions/ResponsabilLead";
+import Workflow from "../WorkFlowComponent/WorkflowComponent";
+import { useUser } from '../../UserContext';
 import { enqueueSnackbar } from "notistack";
 import { api } from "../../api";
 import { evaluareOdihnaOptions } from '../../FormOptions/EvaluareVacantaOptions';
@@ -19,8 +21,6 @@ import { serviceTypeOptions } from '../../FormOptions/ServiceTypeOptions';
 import { sourceOfLeadOptions } from '../../FormOptions/SourceOfLeadOptions';
 import { promoOptions } from '../../FormOptions/PromoOptions';
 import { translations } from "../utils/translations";
-import Workflow from "../WorkFlowComponent/WorkflowComponent";
-import { useUser } from '../../UserContext';
 
 const ChatExtraInfo = ({
     selectTicketId,
@@ -53,19 +53,12 @@ const ChatExtraInfo = ({
 
     const handleTechnicianChange = async (newTechnicianId) => {
         setSelectedTechnicianId(newTechnicianId);
-
         if (!selectTicketId || !newTechnicianId) {
-            console.warn('Не выбран тикет или техник.');
             return;
         }
-
         try {
             await api.tickets.updateById(selectTicketId, { technician_id: newTechnicianId })
-            console.log('Тикет успешно обновлён:', updatedTicket);
-
-            console.log('Список тикетов успешно обновлён.');
         } catch (error) {
-            console.error('Ошибка при обновлении technician_id:', error.message);
         }
     };
 
@@ -77,8 +70,7 @@ const ChatExtraInfo = ({
                 [ticketId]: data
             }));
         } catch (error) {
-            enqueueSnackbar("Ошибка загрузки extra_info", { variant: "error" });
-            console.error("Ошибка загрузки extra_info:", error);
+            enqueueSnackbar("Eroare de upload extra_info", { variant: "error" });
         }
     };
 
@@ -120,7 +112,6 @@ const ChatExtraInfo = ({
         event.preventDefault();
 
         if (!updatedTicket?.client_id) {
-            alert("Выберите клиента!");
             return;
         }
 
@@ -140,15 +131,14 @@ const ChatExtraInfo = ({
 
         try {
             const result = await api.users.updateExtended(clientId, payload);
-            alert("Личные данные успешно сохранены!");
+            alert("Succes!");
 
             setPersonalInfo(prev => ({
                 ...prev,
                 [clientId]: result
             }));
         } catch (error) {
-            console.error("Ошибка при сохранении данных:", error);
-            alert("Не удалось сохранить личные данные.");
+            alert("Eroare la salvare!");
         }
     };
 
@@ -312,7 +302,6 @@ const ChatExtraInfo = ({
         const ticketExtraInfo = extraInfo[selectTicketId];
 
         if (!ticketExtraInfo) {
-            console.warn('Нет дополнительной информации для выбранного тикета.', ticketExtraInfo);
             return;
         }
 
@@ -326,10 +315,8 @@ const ChatExtraInfo = ({
             const result = await api.tickets.ticket.create(selectTicketId, processedExtraInfo);
 
             enqueueSnackbar('Данные успешно обновлены', { variant: 'success' });
-            console.log('Данные успешно отправлены:', result);
         } catch (error) {
             enqueueSnackbar('Ошибка при обновлении дополнительной информации', { variant: 'error' });
-            console.error('Ошибка при отправке дополнительной информации:', error);
         } finally {
         }
     };
