@@ -20,6 +20,7 @@ import { sourceOfLeadOptions } from '../../FormOptions/SourceOfLeadOptions';
 import { promoOptions } from '../../FormOptions/PromoOptions';
 import { translations } from "../utils/translations";
 import Workflow from "../WorkFlowComponent/WorkflowComponent";
+import { useUser } from '../../UserContext';
 
 const ChatExtraInfo = ({
     selectTicketId,
@@ -28,6 +29,7 @@ const ChatExtraInfo = ({
     language = "ro",
     messages = [],
     updatedTicket,
+    updateTicket,
     isLoading,
     ticketId,
     selectedClient,
@@ -38,29 +40,14 @@ const ChatExtraInfo = ({
     const [fieldErrors, setFieldErrors] = useState({});
     const [extraInfo, setExtraInfo] = useState({});
     const [selectedTechnicianId, setSelectedTechnicianId] = useState({});
+    const [isAdmin, setIsAdmin] = useState(false);
+    const { userId, hasRole, isLoadingRoles } = useUser();
 
-    const handleWorkflowChange = async (event) => {
-        const newWorkflow = event.target.value;
-
-        if (!updatedTicket || !updatedTicket.id) {
-            console.error("❌ Ошибка: Тикет не найден!");
-            return;
+    useEffect(() => {
+        if (!isLoadingRoles) {
+            setIsAdmin(hasRole("ROLE_ADMIN"));
         }
-
-        try {
-            await api.tickets.updateById(updatedTicket.id, { workflow: newWorkflow });
-
-            setTickets(prevTickets =>
-                prevTickets.map(ticket =>
-                    ticket.id === updatedTicket.id ? { ...ticket, workflow: newWorkflow } : ticket
-                )
-            );
-
-            console.log("✅ Workflow успешно обновлен:", newWorkflow);
-        } catch (error) {
-            console.error("❌ Ошибка обновления workflow:", error);
-        }
-    };
+    }, [isLoadingRoles, hasRole]);
 
     useEffect(() => {
         if (selectTicketId) {
@@ -174,6 +161,91 @@ const ChatExtraInfo = ({
         setExtraInfo({});
     }, [selectTicketId]);
 
+    const workflowOptions = [
+        "Interesat",
+        "Apel de intrare",
+        "De prelucrat",
+        "Luat în lucru",
+        "Ofertă trimisă",
+        "Aprobat cu client",
+        "Contract semnat",
+        "Plată primită",
+        "Contract încheiat",
+        "Realizat cu succes",
+        "Închis și nerealizat"
+    ];
+
+    const workflowIndices = workflowOptions.reduce((acc, workflow, index) => {
+        acc[workflow] = index;
+        return acc;
+    }, {});
+
+    const requiredFields = {
+        "Luat în lucru": ["sursa_lead", "promo", "marketing"],
+        "Ofertă trimisă": ["tipul_serviciului", "tara", "tip_de_transport", "denumirea_excursiei_turului"],
+        "Aprobat cu client": ["procesarea_achizitionarii"],
+        "Contract semnat": ["numar_de_contract", "data_contractului", "contract_trimis", "contract_semnat"],
+        "Plată primită": ["achitare_efectuata"],
+        "Contract încheiat": [
+            "buget", "data_plecarii", "data_intoarcerii", "tour_operator",
+            "numarul_cererii_de_la_operator", "rezervare_confirmata",
+            "contract_arhivat", "statutul_platii", "pret_netto", "comission_companie"
+        ],
+        "Realizat cu succes": ["control_admin"]
+    };
+
+    const handleWorkflowChange = async (event) => {
+        const newWorkflow = event.target.value;
+
+        const workflowIndex = workflowIndices[newWorkflow];
+        let newFieldErrors = {};
+
+        for (const [step, fields] of Object.entries(requiredFields)) {
+            if (workflowIndices[step] <= workflowIndex) {
+                fields.forEach(field => {
+                    if (!extraInfo[selectTicketId]?.[field]) {
+                        newFieldErrors[field] = true;
+                    }
+                });
+            }
+        }
+
+        if (newWorkflow === "Închis și nerealizat") {
+            newFieldErrors = {};
+            if (!extraInfo[selectTicketId]?.motivul_refuzului) {
+                newFieldErrors.motivul_refuzului = true;
+            }
+        }
+
+        setFieldErrors(newFieldErrors);
+
+        if (Object.keys(newFieldErrors).length > 0) {
+            enqueueSnackbar(`Completați toate câmpurile obligatorii pentru "${newWorkflow}" și etapele anterioare înainte de a face modificări!`, { variant: 'error' });
+            return;
+        }
+
+        try {
+            await updateTicket({ id: updatedTicket.id, workflow: newWorkflow });
+
+            enqueueSnackbar('Statutul tichetului a fost actualizat!', { variant: 'success' });
+
+            setTickets(prevTickets =>
+                prevTickets.map(ticket =>
+                    ticket.id === updatedTicket.id ? { ...ticket, workflow: newWorkflow } : ticket
+                )
+            );
+
+            console.log("Workflow actualizat:", newWorkflow);
+        } catch (error) {
+            enqueueSnackbar('Eroare: Statutul tichetului nu a fost actualizat.', { variant: 'error' });
+            console.error('Eroare la actualizarea workflow:', error.message);
+        }
+    };
+
+    useEffect(() => {
+        setFieldErrors({});
+    }, [selectTicketId]);
+
     const getTabErrorIndicator = (tab) => {
         const tabFields = {
             extraForm: ["buget", "data_plecarii", "data_intoarcerii", "sursa_lead", "promo", "marketing"],
@@ -183,7 +255,7 @@ const ChatExtraInfo = ({
             "Control calitate": ["motivul_refuzului"]
         };
 
-        return tabFields[tab]?.some(field => fieldErrors[field]) ? "🔴" : "";
+        return fieldErrors && tabFields[tab]?.some(field => fieldErrors[field]) ? "🔴" : "";
     };
 
     useEffect(() => {
@@ -294,7 +366,7 @@ const ChatExtraInfo = ({
             {selectTicketId && (
                 <div className="sticky-container">
                     <div className="tabs-container">
-                        {["extraForm", "Contract", "Invoice", "Media", "Control calitate"].map((tab) => (
+                        {["extraForm", "Contract", "Media", "Control calitate"].map((tab) => (
                             <button
                                 key={tab}
                                 className={`tab-button ${activeTab === tab ? "active" : ""}`}
@@ -725,14 +797,14 @@ const ChatExtraInfo = ({
                             id="commission-input"
                             disabled={true}
                         />
-                        {/* {isAdmin && (
+                        {isAdmin && (
                             <ToggleSwitch
                                 label="Control Admin"
                                 checked={extraInfo[selectTicketId]?.control_admin || false}
                                 onChange={(checked) => handleSelectChangeExtra(selectTicketId, 'control_admin', checked)}
                                 className={fieldErrors.control_admin ? "invalid-toggle" : ""}
                             />
-                        )} */}
+                        )}
                     </div>
                 )}
                 {activeTab === 'Invoice' && selectTicketId && (
