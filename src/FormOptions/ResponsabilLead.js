@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { translations } from '../Components/utils/translations';
 import { api } from "../api"
 
-const TechnicianSelect = ({ onTechnicianChange, selectedTechnicianId }) => {
+const ResponsabilLead = ({ onTechnicianChange, selectedTechnicianId }) => {
     const [technicians, setTechnicians] = useState([]);
     const [selectedTechnician, setSelectedTechnician] = useState("");
     const [isLoading, setIsLoading] = useState(true);
@@ -68,4 +68,4 @@ const TechnicianSelect = ({ onTechnicianChange, selectedTechnicianId }) => {
     );
 };
 
-export default TechnicianSelect;
+export default ResponsabilLead;

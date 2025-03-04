@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Input from "../InputComponent/InputComponent";
 import Select from "../SelectComponent/SelectComponent";
 import ToggleSwitch from '../ToggleComponent/ToggleSwitch';
-import TechnicianSelect from "../../FormOptions/ResponsabilLead";
+import ResponsabilLead from "../../FormOptions/ResponsabilLead";
 import { enqueueSnackbar } from "notistack";
 import { api } from "../../api";
 import { evaluareOdihnaOptions } from '../../FormOptions/EvaluareVacantaOptions';
@@ -37,17 +37,12 @@ const ChatExtraInfo = ({
     tickets,
 }) => {
     const [activeTab, setActiveTab] = useState("extraForm");
+    const { hasRole, isLoadingRoles } = useUser();
     const [fieldErrors, setFieldErrors] = useState({});
     const [extraInfo, setExtraInfo] = useState({});
     const [selectedTechnicianId, setSelectedTechnicianId] = useState({});
-    const [isAdmin, setIsAdmin] = useState(false);
-    const { userId, hasRole, isLoadingRoles } = useUser();
 
-    useEffect(() => {
-        if (!isLoadingRoles) {
-            setIsAdmin(hasRole("ROLE_ADMIN"));
-        }
-    }, [isLoadingRoles, hasRole]);
+    const isAdmin = hasRole("ROLE_ADMIN");
 
     useEffect(() => {
         if (selectTicketId) {
@@ -250,7 +245,7 @@ const ChatExtraInfo = ({
         const tabFields = {
             extraForm: ["buget", "data_plecarii", "data_intoarcerii", "sursa_lead", "promo", "marketing"],
             Contract: ["numar_de_contract", "data_contractului", "contract_trimis", "contract_semnat", "tour_operator", "numarul_cererii_de_la_operator"],
-            Invoice: ["statutul_platii", "pret_netto", "comission_companie"],
+            // Invoice: ["statutul_platii", "pret_netto", "comission_companie"],
             Media: [],
             "Control calitate": ["motivul_refuzului"]
         };
@@ -366,7 +361,7 @@ const ChatExtraInfo = ({
             {selectTicketId && (
                 <div className="sticky-container">
                     <div className="tabs-container">
-                        {["extraForm", "Contract", "Media", "Control calitate"].map((tab) => (
+                        {["extraForm", "Contract", "Invoice", "Media", "Control calitate"].map((tab) => (
                             <button
                                 key={tab}
                                 className={`tab-button ${activeTab === tab ? "active" : ""}`}
@@ -408,7 +403,7 @@ const ChatExtraInfo = ({
                             {isLoading ? (
                                 <p>Loading...</p>
                             ) : (
-                                <TechnicianSelect
+                                <ResponsabilLead
                                     selectedTechnicianId={updatedTicket?.technician_id}
                                     onTechnicianChange={handleTechnicianChange}
                                 />
