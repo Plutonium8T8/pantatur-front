@@ -1,18 +1,31 @@
 import React, { useState } from "react"
 import CustomMultiSelect from "../MultipleSelect/MultipleSelect"
 import "./TicketFilterModal.css"
-import { translations } from "../utils/translations"
 import { api } from "../../api"
 import { Modal } from "../Modal"
-import { platformOptions, filterGroups, filterDefaults } from "./utils"
+import { platformOptions, filterDefaults } from "./utils"
 import { Workflow } from "./Workflow"
 import { QualityControl } from "./QualityControl"
 import { Invoice } from "./Invoice"
 import { Contact } from "./Contact"
 import { LeadCreationDate } from "./LeadCreationDate"
 import { Tab } from "../Tab"
+import { getLanguageByKey } from "../utils/getLanguageByKey"
 
-const language = localStorage.getItem("language") || "RO"
+const tabsButtons = [
+  {
+    title: getLanguageByKey("General"),
+    key: "workflow"
+  },
+  {
+    title: getLanguageByKey("Bilet"),
+    key: "ticket"
+  },
+  {
+    title: getLanguageByKey("Mesaje"),
+    key: "messages"
+  }
+]
 
 export const TicketFilterModal = ({
   isOpen,
@@ -110,7 +123,7 @@ export const TicketFilterModal = ({
   const content = {
     workflow: (
       <div className="content">
-        <h2>{translations["Filtru de sistem"][language]}</h2>
+        <h2>{getLanguageByKey("Filtru de sistem")}</h2>
         <Workflow
           onApplyFilter={() => onApplyFilter(filters, filteredTicketIds)}
           handleMultiSelectChange={handleMultiSelectChange}
@@ -123,42 +136,44 @@ export const TicketFilterModal = ({
 
     ticket: (
       <div className="content leads-filters-modal">
-        <h2>{translations["Filtru pentru Lead"][language]}</h2>
+        <h2>{getLanguageByKey("Filtru pentru Lead")}</h2>
 
-        <LeadCreationDate
-          handleInputChange={handleInputChange}
-          filters={filters}
-          handleMultiSelectChange={handleMultiSelectChange}
-        />
+        <div className="d-flex flex-column gap-16">
+          <LeadCreationDate
+            handleInputChange={handleInputChange}
+            filters={filters}
+            handleMultiSelectChange={handleMultiSelectChange}
+          />
 
-        <Contact
-          filters={filters}
-          handleInputChange={handleInputChange}
-          handleMultiSelectChange={handleMultiSelectChange}
-          onFilters={changeFilters}
-        />
+          <Contact
+            filters={filters}
+            handleInputChange={handleInputChange}
+            handleMultiSelectChange={handleMultiSelectChange}
+            onFilters={changeFilters}
+          />
 
-        <Invoice
-          handleMultiSelectChange={handleMultiSelectChange}
-          handleInputChange={handleInputChange}
-          filters={filters}
-        />
+          <Invoice
+            handleMultiSelectChange={handleMultiSelectChange}
+            handleInputChange={handleInputChange}
+            filters={filters}
+          />
 
-        <QualityControl
-          handleInputChange={handleInputChange}
-          handleMultiSelectChange={handleMultiSelectChange}
-          filters={filters}
-        />
+          <QualityControl
+            handleInputChange={handleInputChange}
+            handleMultiSelectChange={handleMultiSelectChange}
+            filters={filters}
+          />
+        </div>
 
         <div className="modal-buttons">
           <button onClick={handleApplyFilter} className="apply-btn">
-            {translations["Aplica filtru"][language]}
+            {getLanguageByKey("Aplica filtru")}
           </button>
           <button onClick={handleResetFilters} className="reset-btn">
-            {translations["Reset filtru"][language]}
+            {getLanguageByKey("Reset filtru")}
           </button>
           <button onClick={onClose} className="cancel-btn">
-            {translations["Close"][language]}
+            {getLanguageByKey("Close")}
           </button>
         </div>
       </div>
@@ -166,12 +181,12 @@ export const TicketFilterModal = ({
 
     messages: (
       <div className="content">
-        <h2>{translations["Filtru pentru mesaje (coming soon)"][language]}</h2>
+        <h2>{getLanguageByKey("Filtru pentru mesaje (coming soon)")}</h2>
         <div className="workflow-multi-select">
-          <label>{translations["Platforma mesaj"][language]}</label>
+          <label>{getLanguageByKey("Platforma mesaj")}</label>
           <CustomMultiSelect
             options={platformOptions}
-            placeholder={translations["Platforma mesaj"][language]}
+            placeholder={getLanguageByKey("Platforma mesaj")}
             onChange={(values) => handleMultiSelectChange("platform", values)}
             selectedValues={filters.platform}
           />
@@ -179,21 +194,6 @@ export const TicketFilterModal = ({
       </div>
     )
   }
-
-  const tabsButtons = [
-    {
-      title: "Workflow",
-      key: "workflow"
-    },
-    {
-      title: "Ticket",
-      key: "ticket"
-    },
-    {
-      title: "Messages",
-      key: "messages"
-    }
-  ]
 
   return (
     <Modal

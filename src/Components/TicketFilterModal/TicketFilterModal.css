@@ -122,12 +122,8 @@
   transition: all 0.3s ease-in-out;
 }
 
-.content {
-  width: 100%;
-  height: 100%;
-}
-
 .leads-filters-modal {
   height: 700px;
   overflow-y: auto;
+  width: 100%;
 }

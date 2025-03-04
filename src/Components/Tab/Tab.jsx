@@ -1,24 +1,38 @@
-import { useState } from "react";
-import "./Tab.css";
-import { Button } from "../Button";
+import { useState } from "react"
+import "./Tab.css"
+import { Button } from "../Button"
 
-export const Tab = ({ currentTab, tabs, content, direction, headerContentSpacing }) => {
-  const [activeTab, setActiveTab] = useState(currentTab || tabs[0].key);
+const flexDirection = {
+  vertical: "column",
+  horizontal: "row"
+}
 
+const tabsDirection = {
+  vertical: "row",
+  horizontal: "column"
+}
 
-  const flexDirection = {
-    vertical: "column",
-    horizontal: "row"
-  }
-
-  const tabsDirection = {
-    vertical: "row",
-    horizontal: "column"
-  }
+export const Tab = ({
+  currentTab,
+  tabs,
+  content,
+  direction,
+  headerContentSpacing
+}) => {
+  const [activeTab, setActiveTab] = useState(currentTab || tabs[0].key)
 
   return (
-    <div className="tabs-wrapper" style={{"--direction": flexDirection[direction], "--spacing": `${headerContentSpacing}px`}}>
-      <div  className="tabs-buttons" style={{"--tabs-direction": tabsDirection[direction]}}>
+    <div
+      className="tabs-wrapper"
+      style={{
+        "--direction": flexDirection[direction],
+        "--spacing": `${headerContentSpacing}px`
+      }}
+    >
+      <div
+        className="tabs-buttons"
+        style={{ "--tabs-direction": tabsDirection[direction] }}
+      >
         {tabs.map((item) => (
           <Button
             onClick={() => setActiveTab(item.key)}
@@ -29,9 +43,7 @@ export const Tab = ({ currentTab, tabs, content, direction, headerContentSpacing
           </Button>
         ))}
       </div>
-      <div className="tabs-wrapper-container">
-      {content[activeTab]}
-      </div>
+      <div className="tabs-wrapper-container">{content[activeTab]}</div>
     </div>
-  );
-};
+  )
+}
