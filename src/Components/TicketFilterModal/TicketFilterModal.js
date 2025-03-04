@@ -18,6 +18,7 @@ import CustomMultiSelect from "../MultipleSelect/MultipleSelect";
 import "./Modal.css";
 import { translations } from "../utils/translations";
 import { api } from "../../api";
+import { Modal } from "../Modal"
 
 const language = localStorage.getItem("language") || "RO";
 
@@ -70,7 +71,6 @@ export const TicketFilterModal = ({
   filteredTicketIds,
 }) => {
   const [technicians, setTechnicians] = useState([]);
-  const modalRef = useRef(null);
 
   const handleApplyFilter = async () => {
     const { workflow, platform, tags, ...formattedFilters } = filters;
@@ -127,20 +127,7 @@ export const TicketFilterModal = ({
     if (isOpen) fetchTechnicians();
   }, [isOpen]);
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (modalRef.current && !modalRef.current.contains(event.target)) {
-        onClose();
-      }
-    };
 
-    if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isOpen, onClose]);
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -197,11 +184,9 @@ export const TicketFilterModal = ({
     onApplyFilter(resetFilters, null);
   };
 
-  if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay-filter">
-      <div className="modal-content-filter" ref={modalRef}>
+    <Modal  open={isOpen} onClose={onClose} footer={null} width={1000} height={700} >
         <div className="filter-container">
           <div className="tabs">
             {tabs.map((tab) => (
@@ -255,7 +240,6 @@ export const TicketFilterModal = ({
               <>
                 <h2>{translations["Filtru pentru Lead"][language]}</h2>
                 <div
-                  style={{ border: "1px solid red" }}
                   className="container-extra-group"
                 >
                   <label>{translations["Data creare Lead"][language]}</label>
@@ -865,8 +849,8 @@ export const TicketFilterModal = ({
             )}
           </div>
         </div>
-      </div>
-    </div>
+        </Modal>
+      
   );
 };
 

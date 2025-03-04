@@ -590,6 +590,10 @@ button {
   align-items: center;
 }
 
+.justify-content-end {
+  justify-content: end;
+}
+
 .gap-8 {
   gap: 8px;
 }
