@@ -1,7 +1,6 @@
 import React, { useState } from "react"
 import CustomMultiSelect from "../MultipleSelect/MultipleSelect"
 import "./TicketFilterModal.css"
-import { api } from "../../api"
 import { Modal } from "../Modal"
 import { platformOptions, filterDefaults } from "./utils"
 import { WorkflowFilter } from "./WorkflowFilter"
@@ -32,52 +31,11 @@ export const TicketFilterModal = ({
   isOpen,
   onClose,
   onApplyFilter,
-  filteredTicketIds
+  filteredTicketIds,
+  onApplyWorkflowFilters,
+  onApplyTicketFilters
 }) => {
   const [filters, setFilters] = useState(filterDefaults)
-
-  const handleApplyFilter = async () => {
-    const { workflow, platform, tags, ...formattedFilters } = filters
-
-    if (Array.isArray(tags) && tags.length > 0) {
-      formattedFilters.tags = tags.join(",")
-    }
-
-    if (Array.isArray(tags) && tags.length > 0) {
-      formattedFilters.tags = `{${tags.join(",")}}`
-    } else {
-      delete formattedFilters.tags
-    }
-
-    const hasValidFilters = Object.values(formattedFilters).some((value) =>
-      Array.isArray(value) ? value.length > 0 : value
-    )
-
-    if (!hasValidFilters) {
-      return
-    }
-
-    try {
-      const ticketData = await api.standalone.applyFilter(formattedFilters)
-      const ticketIds = ticketData.flat().map((ticket) => ticket.id)
-
-      onApplyFilter(filters, ticketIds.length > 0 ? ticketIds : [])
-      onClose()
-    } catch (error) {
-      console.error("❌ Ошибка при фильтрации:", error)
-    }
-  }
-
-  const handleResetFilters = () => {
-    const resetFilters = {
-      ...filterDefaults,
-      workflow: filterDefaults.workflow || []
-    }
-
-    setFilters(resetFilters)
-
-    onApplyFilter(resetFilters, null)
-  }
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -127,18 +85,15 @@ export const TicketFilterModal = ({
         <div>
           <h2>{getLanguageByKey("Filtru de sistem")}</h2>
           <WorkflowFilter
-            onApplyFilter={() => onApplyFilter(filters, filteredTicketIds)}
             handleMultiSelectChange={handleMultiSelectChange}
             selectedValues={filters.workflow}
-            onClose={onClose}
-            handleResetFilters={handleResetFilters}
           />
         </div>
         <div className="d-flex gap-8 justify-content-end">
           <Button onClick={onClose}>{getLanguageByKey("Anuleaza")}</Button>
           <Button
             variant="primary"
-            onClick={() => onApplyFilter(filters, filteredTicketIds)}
+            onClick={() => onApplyWorkflowFilters(filters)}
           >
             {getLanguageByKey("Confirma")}
           </Button>
@@ -180,7 +135,10 @@ export const TicketFilterModal = ({
         </div>
         <div className="d-flex gap-8 justify-content-end">
           <Button onClick={onClose}>{getLanguageByKey("Anuleaza")}</Button>
-          <Button variant="primary" onClick={handleApplyFilter}>
+          <Button
+            variant="primary"
+            onClick={() => onApplyTicketFilters(filters)}
+          >
             {getLanguageByKey("Confirma")}
           </Button>
         </div>

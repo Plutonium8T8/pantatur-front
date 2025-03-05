@@ -13,6 +13,7 @@ import { FaFilter, FaTable, FaColumns, FaTrash, FaEdit } from "react-icons/fa"
 import { getLanguageByKey } from "../../Components/utils/getLanguageByKey"
 import { LeadTable } from "./LeadTable"
 import { Button } from "../Button"
+import { api } from "../../api"
 
 const Leads = () => {
   const refLeadsFilter = useRef()
@@ -114,6 +115,57 @@ const Leads = () => {
   const closeModal = () => {
     setCurrentTicket(null)
     setIsModalOpen(false)
+  }
+
+  const closeTicketModal = () => setIsFilterOpen(false)
+
+  const applyWorkflowFilters = (updatedFilters) => {
+    setFilters({
+      ...updatedFilters,
+      technician_id: updatedFilters.technician_id
+        ? updatedFilters.technician_id.map((t) => parseInt(t.split(":")[0]))
+        : [],
+      priority: updatedFilters.priority || [],
+      platform: updatedFilters.platform || []
+    })
+
+    setSelectedWorkflow(
+      Array.isArray(updatedFilters.workflow) ? updatedFilters.workflow : []
+    )
+
+    setFilteredTicketIds(filteredTicketIds !== null ? filteredTicketIds : null)
+  }
+
+  const handleApplyFilter = async (filters) => {
+    const { workflow, platform, tags, ...formattedFilters } = filters
+
+    if (Array.isArray(tags) && tags.length > 0) {
+      formattedFilters.tags = tags.join(",")
+    }
+
+    if (Array.isArray(tags) && tags.length > 0) {
+      formattedFilters.tags = `{${tags.join(",")}}`
+    } else {
+      delete formattedFilters.tags
+    }
+
+    const hasValidFilters = Object.values(formattedFilters).some((value) =>
+      Array.isArray(value) ? value.length > 0 : value
+    )
+
+    if (!hasValidFilters) {
+      return
+    }
+
+    try {
+      const ticketData = await api.standalone.applyFilter(formattedFilters)
+      const ticketIds = ticketData.flat().map((ticket) => ticket.id)
+
+      applyWorkflowFilters(filters, ticketIds.length > 0 ? ticketIds : [])
+      closeTicketModal()
+    } catch (error) {
+      console.error("❌ Ошибка при фильтрации:", error)
+    }
   }
 
   useEffect(() => {
@@ -245,30 +297,9 @@ const Leads = () => {
         {/* Модальное окно фильтра */}
         <TicketFilterModal
           isOpen={isFilterOpen}
-          onClose={() => setIsFilterOpen(false)}
-          filteredTicketIds={filteredTicketIds} // 🔥 Передаем текущие `filteredTicketIds`
-          onApplyFilter={(updatedFilters, ticketIds) => {
-            console.log("🚀 Применяем фильтр с параметрами:", updatedFilters)
-
-            setFilters({
-              ...updatedFilters,
-              technician_id: updatedFilters.technician_id
-                ? updatedFilters.technician_id.map((t) =>
-                    parseInt(t.split(":")[0])
-                  )
-                : [],
-              priority: updatedFilters.priority || [],
-              platform: updatedFilters.platform || []
-            })
-
-            setSelectedWorkflow(
-              Array.isArray(updatedFilters.workflow)
-                ? updatedFilters.workflow
-                : []
-            )
-
-            setFilteredTicketIds(ticketIds !== null ? ticketIds : null)
-          }}
+          onClose={closeTicketModal}
+          onApplyWorkflowFilters={applyWorkflowFilters}
+          onApplyTicketFilters={handleApplyFilter}
         />
       </div>
     </>

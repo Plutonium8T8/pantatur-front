@@ -3,12 +3,7 @@ import { getLanguageByKey } from "../../utils/getLanguageByKey"
 import { workflowOptions } from "../../../FormOptions/WorkFlowOption"
 import "./WorkflowFilter.css"
 
-export const WorkflowFilter = ({
-  onClose,
-  handleResetFilters,
-  handleMultiSelectChange,
-  selectedValues
-}) => {
+export const WorkflowFilter = ({ handleMultiSelectChange, selectedValues }) => {
   return (
     <div className="workflow-multi-select">
       <label>{getLanguageByKey("Workflow")}</label>
