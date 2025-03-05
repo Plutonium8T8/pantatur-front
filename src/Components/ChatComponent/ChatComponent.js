@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAppContext } from '../../AppContext';
 import './chat.css';
@@ -6,22 +6,22 @@ import ChatExtraInfo from './ChatExtraInfo';
 import ChatList from './ChatList';
 import ChatMessages from './ChatMessages';
 
-const ChatComponent = ({ updatedTicket, language }) => {
+const ChatComponent = ({ language }) => {
     const { tickets, updateTicket, setTickets, messages, selectTicketId } = useAppContext();
     const [personalInfo, setPersonalInfo] = useState({});
     const { ticketId } = useParams();
     const [isLoading, setIsLoading] = useState(false);
     const [selectedClient, setSelectedClient] = useState("");
-    const [isChatListVisible, setIsChatListVisible] = useState(true);
 
+    const updatedTicket = tickets.find(ticket => ticket.id === selectTicketId) || null;
 
     return (
         <div className="chat-container">
-            <ChatList
-                isChatListVisible={isChatListVisible}
-                setIsChatListVisible={setIsChatListVisible}
+            <ChatList />
+            <ChatMessages
+                selectTicketId={selectTicketId}
+                setSelectedClient={setSelectedClient}
             />
-            <ChatMessages selectTicketId={selectTicketId} />
 
             <ChatExtraInfo
                 selectedClient={selectedClient}

@@ -10,7 +10,7 @@ import { FaFacebook, FaViber, FaInstagram, FaWhatsapp, FaTelegram, FaTasks } fro
 import { translations } from '../utils/translations';
 import { templateOptions } from '../../FormOptions/MessageTemplate';
 
-const ChatMessages = ({ selectTicketId }) => {
+const ChatMessages = ({ selectTicketId, setSelectedClient }) => {
     const { userId } = useUser();
     const {
         messages,
@@ -25,7 +25,7 @@ const ChatMessages = ({ selectTicketId }) => {
     const [emojiPickerPosition, setEmojiPickerPosition] = useState({ top: 0, left: 0 });
     const [selectedMessageId, setSelectedMessageId] = useState(null);
     const [selectedReaction, setSelectedReaction] = useState({});
-    const [selectedClient, setSelectedClient] = useState("");
+    const [selectedClient] = useState("");
     const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
     const [selectedMessage, setSelectedMessage] = useState(null);
     const messageContainerRef = useRef(null);
@@ -39,6 +39,13 @@ const ChatMessages = ({ selectTicketId }) => {
         "viber": <FaViber />,
         "telegram": <FaTelegram />
     };
+
+    useEffect(() => {
+        const lastClient = getLastActiveClient();
+        if (lastClient) {
+            setSelectedClient(String(lastClient));
+        }
+    }, [messages, selectTicketId]);
 
     const hasMarkedRead = useRef(new Set());
 

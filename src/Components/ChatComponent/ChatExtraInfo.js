@@ -43,6 +43,21 @@ const ChatExtraInfo = ({
     const isAdmin = hasRole("ROLE_ADMIN");
     const language = localStorage.getItem('language') || 'RO';
 
+    console.log("ChatExtraInfo props:", {
+        selectTicketId,
+        personalInfo,
+        setPersonalInfo,
+        messages,
+        updatedTicket,
+        updateTicket,
+        isLoading,
+        ticketId,
+        selectedClient,
+        setTickets,
+        tickets
+    });
+
+
     useEffect(() => {
         if (selectTicketId) {
             fetchTicketExtraInfo(selectTicketId);
