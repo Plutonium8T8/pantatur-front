@@ -181,13 +181,13 @@ const Leads = () => {
             placeholder={getLanguageByKey("Cauta dupa Lead, Client sau Tag")}
             className="search-input"
           />
-          <Button
+          <button
             onClick={() => setIsTableView((prev) => !prev)}
             className="d-flex align-items-center gap-4"
           >
             {isTableView ? <FaColumns /> : <FaTable />}
             {getLanguageByKey(isTableView ? "Coloană" : "Listă")}
-          </Button>
+          </button>
 
           <div className="ticket-counter-row">
             {getLanguageByKey("Toate tichetele")}: {tickets.length} |{" "}
