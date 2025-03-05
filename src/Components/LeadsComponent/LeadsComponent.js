@@ -135,6 +135,7 @@ const Leads = () => {
     )
 
     setFilteredTicketIds(filteredTicketIds !== null ? filteredTicketIds : null)
+    closeTicketModal()
   }
 
   const resetTicketsFilters = () => {
