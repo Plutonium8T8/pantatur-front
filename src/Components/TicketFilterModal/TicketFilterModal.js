@@ -204,7 +204,13 @@ export const TicketFilterModal = ({
   }
 
   return (
-    <Modal footer={null} open={isOpen} width={1000} height={700}>
+    <Modal
+      footer={null}
+      open={isOpen}
+      width={1000}
+      height={700}
+      onClose={onClose}
+    >
       <Tab headerContentSpacing={24} tabs={tabsButtons} content={content} />
     </Modal>
   )
