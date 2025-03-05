@@ -11,6 +11,7 @@ import { Contact } from "./Contact"
 import { LeadCreationDate } from "./LeadCreationDate"
 import { Tab } from "../Tab"
 import { getLanguageByKey } from "../utils/getLanguageByKey"
+import { Button } from "../Button"
 
 const tabsButtons = [
   {
@@ -33,6 +34,8 @@ export const TicketFilterModal = ({
   onApplyFilter,
   filteredTicketIds
 }) => {
+  const [filters, setFilters] = useState(filterDefaults)
+
   const handleApplyFilter = async () => {
     const { workflow, platform, tags, ...formattedFilters } = filters
 
@@ -75,8 +78,6 @@ export const TicketFilterModal = ({
 
     onApplyFilter(resetFilters, null)
   }
-
-  const [filters, setFilters] = useState(filterDefaults)
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -122,59 +123,66 @@ export const TicketFilterModal = ({
 
   const content = {
     workflow: (
-      <div className="tab-content-title">
-        <h2>{getLanguageByKey("Filtru de sistem")}</h2>
-        <WorkflowFilter
-          onApplyFilter={() => onApplyFilter(filters, filteredTicketIds)}
-          handleMultiSelectChange={handleMultiSelectChange}
-          selectedValues={filters.workflow}
-          onClose={onClose}
-          handleResetFilters={handleResetFilters}
-        />
+      <div className="tab-content-title | d-flex justify-content-between flex-column gap-8">
+        <div>
+          <h2>{getLanguageByKey("Filtru de sistem")}</h2>
+          <WorkflowFilter
+            onApplyFilter={() => onApplyFilter(filters, filteredTicketIds)}
+            handleMultiSelectChange={handleMultiSelectChange}
+            selectedValues={filters.workflow}
+            onClose={onClose}
+            handleResetFilters={handleResetFilters}
+          />
+        </div>
+        <div className="d-flex gap-8 justify-content-end">
+          <Button onClick={onClose}>{getLanguageByKey("Anuleaza")}</Button>
+          <Button
+            variant="primary"
+            onClick={() => onApplyFilter(filters, filteredTicketIds)}
+          >
+            {getLanguageByKey("Confirma")}
+          </Button>
+        </div>
       </div>
     ),
 
     ticket: (
       <div className="tab-content-title tab-ticket-content">
-        <h2>{getLanguageByKey("Filtru pentru Lead")}</h2>
+        <div className="mb-16">
+          <h2>{getLanguageByKey("Filtru pentru Lead")}</h2>
 
-        <div className="d-flex flex-column gap-16">
-          <LeadCreationDate
-            handleInputChange={handleInputChange}
-            filters={filters}
-            handleMultiSelectChange={handleMultiSelectChange}
-          />
+          <div className="d-flex flex-column gap-16">
+            <LeadCreationDate
+              handleInputChange={handleInputChange}
+              filters={filters}
+              handleMultiSelectChange={handleMultiSelectChange}
+            />
 
-          <Contact
-            filters={filters}
-            handleInputChange={handleInputChange}
-            handleMultiSelectChange={handleMultiSelectChange}
-            onFilters={changeFilters}
-          />
+            <Contact
+              filters={filters}
+              handleInputChange={handleInputChange}
+              handleMultiSelectChange={handleMultiSelectChange}
+              onFilters={changeFilters}
+            />
 
-          <Invoice
-            handleMultiSelectChange={handleMultiSelectChange}
-            handleInputChange={handleInputChange}
-            filters={filters}
-          />
+            <Invoice
+              handleMultiSelectChange={handleMultiSelectChange}
+              handleInputChange={handleInputChange}
+              filters={filters}
+            />
 
-          <QualityControl
-            handleInputChange={handleInputChange}
-            handleMultiSelectChange={handleMultiSelectChange}
-            filters={filters}
-          />
+            <QualityControl
+              handleInputChange={handleInputChange}
+              handleMultiSelectChange={handleMultiSelectChange}
+              filters={filters}
+            />
+          </div>
         </div>
-
-        <div className="modal-buttons">
-          <button onClick={handleApplyFilter} className="apply-btn">
-            {getLanguageByKey("Aplica filtru")}
-          </button>
-          <button onClick={handleResetFilters} className="reset-btn">
-            {getLanguageByKey("Reset filtru")}
-          </button>
-          <button onClick={onClose} className="cancel-btn">
-            {getLanguageByKey("Close")}
-          </button>
+        <div className="d-flex gap-8 justify-content-end">
+          <Button onClick={onClose}>{getLanguageByKey("Anuleaza")}</Button>
+          <Button variant="primary" onClick={handleApplyFilter}>
+            {getLanguageByKey("Confirma")}
+          </Button>
         </div>
       </div>
     ),
@@ -196,13 +204,7 @@ export const TicketFilterModal = ({
   }
 
   return (
-    <Modal
-      open={isOpen}
-      onClose={onClose}
-      footer={null}
-      width={1000}
-      height={700}
-    >
+    <Modal footer={null} open={isOpen} width={1000} height={700}>
       <Tab headerContentSpacing={24} tabs={tabsButtons} content={content} />
     </Modal>
   )

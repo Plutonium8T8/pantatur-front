@@ -39,6 +39,10 @@
   padding: 5px;
 }
 
+.tab-content-title {
+  height: 100%;
+}
+
 .tab-content-title h2 {
   margin-block: 0 16px;
 }

@@ -11,6 +11,8 @@ import { nameExcursionOptions } from "../../FormOptions/NameExcursionOptions"
 import { serviceTypeOptions } from "../../FormOptions/ServiceTypeOptions"
 import { purchaseProcessingOptions } from "../../FormOptions/PurchaseProcessingOptions"
 import { api } from "../../api"
+import { useSnackbar } from "notistack"
+import { showServerError } from "../utils/showServerError"
 
 export const LeadCreationDate = ({
   handleInputChange,
@@ -19,6 +21,7 @@ export const LeadCreationDate = ({
 }) => {
   const [technicians, setTechnicians] = useState([])
   const [loading, setLoading] = useState(false)
+  const { enqueueSnackbar } = useSnackbar()
 
   useEffect(() => {
     const fetchTechnicians = async () => {
@@ -29,9 +32,11 @@ export const LeadCreationDate = ({
         const formattedTechnicians = data.map((item) =>
           `${item.id.id}: ${item.id.name} ${item.id.surname}`.trim()
         )
+
         setLoading(false)
         setTechnicians(formattedTechnicians)
       } catch (error) {
+        enqueueSnackbar(showServerError(error), { variant: "error" })
       } finally {
         setLoading(false)
       }
@@ -39,6 +44,7 @@ export const LeadCreationDate = ({
 
     fetchTechnicians()
   }, [])
+
   return (
     <div className="container-extra-group">
       <label>{getLanguageByKey("Data creare Lead")}</label>

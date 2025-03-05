@@ -1,16 +1,18 @@
 .tabs-wrapper {
-    display: flex;
-    flex-direction: var(--direction, row);
-    gap: var(--spacing, 0px);
+  display: flex;
+  flex-direction: var(--direction, row);
+  gap: var(--spacing);
+  /* NOTE: Modify with care—this is based on TicketFilterModal and may affect its behavior */
+  height: 100%;
 }
 
 .tabs-buttons {
-    display: flex;
-    flex-direction: var(--tabs-direction, column);
-    gap: 8px;
+  display: flex;
+  flex-direction: var(--tabs-direction, column);
+  gap: 8px;
 }
 
 .tabs-wrapper-container {
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
 }

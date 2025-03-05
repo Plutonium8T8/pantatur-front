@@ -7,6 +7,7 @@ import { getLanguageByKey } from "../utils/getLanguageByKey"
 export const Modal = ({
   children,
   onClose,
+  onConfirm,
   open,
   footer,
   title,
@@ -17,8 +18,12 @@ export const Modal = ({
   const refModal = useRef()
 
   const actions = [
-    <Button onClick={onClose}>{getLanguageByKey("Anuleaza")}</Button>,
-    <Button variant="primary">{getLanguageByKey("Confirma")}</Button>
+    <Button key="1" onClick={() => onClose?.()}>
+      {getLanguageByKey("Anuleaza")}
+    </Button>,
+    <Button key="2" onClick={onConfirm} variant="primary">
+      {getLanguageByKey("Confirma")}
+    </Button>
   ]
 
   const renderFooter = (footer) => {
@@ -40,7 +45,7 @@ export const Modal = ({
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (refModal.current && refModal.current === event.target) {
-        onClose()
+        onClose?.()
       }
     }
 
@@ -66,9 +71,11 @@ export const Modal = ({
               </div>
             )}
 
-            <div>{children}</div>
+            {children}
 
-            <div>{renderFooter(footer)}</div>
+            <div className="modal-footer-action-btns">
+              {renderFooter(footer)}
+            </div>
           </div>
         </div>
       )
