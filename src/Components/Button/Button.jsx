@@ -12,15 +12,17 @@ export const Button = ({
   onClick,
   className,
   variant = "default",
+  loading,
   ...props
 }) => {
   return (
     <button
+      disabled={loading}
       className={`btn ${variants[variant]} ${className}`}
       onClick={onClick}
       {...props}
     >
-      {children}
+      {loading ? "Loading..." : children}
     </button>
   )
 }

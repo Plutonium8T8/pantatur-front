@@ -26,6 +26,7 @@ const Leads = () => {
   const [currentTicket, setCurrentTicket] = useState(null)
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [selectedTickets, setSelectedTickets] = useState([])
+  const [loading, setLoading] = useState(false)
   const [selectedWorkflow, setSelectedWorkflow] = useState(
     workflowOptions.filter(
       (wf) => wf !== "Realizat cu succes" && wf !== "Închis și nerealizat"
@@ -158,13 +159,16 @@ const Leads = () => {
     }
 
     try {
+      setLoading(true)
       const ticketData = await api.standalone.applyFilter(formattedFilters)
       const ticketIds = ticketData.flat().map((ticket) => ticket.id)
 
       applyWorkflowFilters(filters, ticketIds.length > 0 ? ticketIds : [])
       closeTicketModal()
+      setLoading(false)
     } catch (error) {
       console.error("❌ Ошибка при фильтрации:", error)
+      setLoading(false)
     }
   }
 
@@ -296,6 +300,7 @@ const Leads = () => {
 
         {/* Модальное окно фильтра */}
         <TicketFilterModal
+          loading={loading}
           isOpen={isFilterOpen}
           onClose={closeTicketModal}
           onApplyWorkflowFilters={applyWorkflowFilters}

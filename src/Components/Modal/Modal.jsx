@@ -3,6 +3,7 @@ import { usePortal } from "../../hooks"
 import "./Modal.css"
 import { Button } from "../Button"
 import { getLanguageByKey } from "../utils/getLanguageByKey"
+import { Spin } from "../Spin"
 
 export const Modal = ({
   children,
@@ -12,7 +13,8 @@ export const Modal = ({
   footer,
   title,
   width,
-  height
+  height,
+  loading
 }) => {
   const modal = usePortal()
   const refModal = useRef()
@@ -76,6 +78,12 @@ export const Modal = ({
             <div className="modal-footer-action-btns">
               {renderFooter(footer)}
             </div>
+
+            {loading && (
+              <div className="modal-loading">
+                <Spin />
+              </div>
+            )}
           </div>
         </div>
       )

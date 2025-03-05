@@ -33,7 +33,8 @@ export const TicketFilterModal = ({
   onApplyFilter,
   filteredTicketIds,
   onApplyWorkflowFilters,
-  onApplyTicketFilters
+  onApplyTicketFilters,
+  loading
 }) => {
   const [filters, setFilters] = useState(filterDefaults)
 
@@ -92,6 +93,7 @@ export const TicketFilterModal = ({
         <div className="d-flex gap-8 justify-content-end">
           <Button onClick={onClose}>{getLanguageByKey("Anuleaza")}</Button>
           <Button
+            loading={loading}
             variant="primary"
             onClick={() => onApplyWorkflowFilters(filters)}
           >
@@ -136,6 +138,7 @@ export const TicketFilterModal = ({
         <div className="d-flex gap-8 justify-content-end">
           <Button onClick={onClose}>{getLanguageByKey("Anuleaza")}</Button>
           <Button
+            loading={loading}
             variant="primary"
             onClick={() => onApplyTicketFilters(filters)}
           >
@@ -163,6 +166,7 @@ export const TicketFilterModal = ({
 
   return (
     <Modal
+      loading={loading}
       footer={null}
       open={isOpen}
       width={1000}

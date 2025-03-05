@@ -2,6 +2,15 @@
   cursor: pointer;
 }
 
+.btn:disabled {
+  background-color: #ddd;
+}
+
+.btn:disabled:hover {
+  background-color: #ddd;
+  cursor: not-allowed;
+}
+
 .danger {
   background-color: #dc3545;
   color: white;
