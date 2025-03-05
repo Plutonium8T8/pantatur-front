@@ -46,10 +46,9 @@ const formatFilters = (filters) => {
 export const TicketFilterModal = ({
   isOpen,
   onClose,
-  onApplyFilter,
-  filteredTicketIds,
   onApplyWorkflowFilters,
   onApplyTicketFilters,
+  resetTicketsFilters,
   loading
 }) => {
   const [filters, setFilters] = useState(filterDefaults)
@@ -96,6 +95,17 @@ export const TicketFilterModal = ({
         field.classList.remove("filled-field")
       }
     }
+  }
+
+  const resetFilters = () => {
+    const resetFilters = {
+      ...filterDefaults,
+      workflow: filterDefaults.workflow || []
+    }
+
+    setFilters(resetFilters)
+
+    resetTicketsFilters()
   }
 
   const content = {
@@ -154,6 +164,9 @@ export const TicketFilterModal = ({
           </div>
         </div>
         <div className="d-flex gap-8 justify-content-end">
+          <Button onClick={resetFilters}>
+            {getLanguageByKey("Reset filter")}
+          </Button>
           <Button onClick={onClose}>{getLanguageByKey("Anuleaza")}</Button>
           <Button
             disabled={!filtersFormatted}

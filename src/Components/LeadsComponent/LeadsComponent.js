@@ -137,6 +137,10 @@ const Leads = () => {
     setFilteredTicketIds(filteredTicketIds !== null ? filteredTicketIds : null)
   }
 
+  const resetTicketsFilters = () => {
+    setFilteredTicketIds(null)
+  }
+
   const handleApplyFilter = async (formattedFilters) => {
     try {
       setLoading(true)
@@ -285,6 +289,7 @@ const Leads = () => {
           onClose={closeTicketModal}
           onApplyWorkflowFilters={applyWorkflowFilters}
           onApplyTicketFilters={handleApplyFilter}
+          resetTicketsFilters={resetTicketsFilters}
         />
       </div>
     </>
