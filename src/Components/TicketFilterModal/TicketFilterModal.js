@@ -119,6 +119,9 @@ export const TicketFilterModal = ({
           />
         </div>
         <div className="d-flex gap-8 justify-content-end">
+          <Button onClick={resetFilters}>
+            {getLanguageByKey("Reset filter")}
+          </Button>
           <Button onClick={onClose}>{getLanguageByKey("Anuleaza")}</Button>
           <Button
             loading={loading}
