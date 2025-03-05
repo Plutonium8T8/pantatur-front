@@ -15,10 +15,14 @@ export const Button = ({
   loading,
   ...props
 }) => {
+  const classNames = ["btn", variants[variant], className]
+    .filter(Boolean)
+    .join(" ")
+
   return (
     <button
       disabled={loading}
-      className={`btn ${variants[variant]} ${className}`}
+      className={classNames}
       onClick={onClick}
       {...props}
     >

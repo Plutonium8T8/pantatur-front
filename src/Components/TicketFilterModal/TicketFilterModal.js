@@ -183,7 +183,7 @@ export const TicketFilterModal = ({
     messages: (
       <div className="container-content-title">
         <h2>{getLanguageByKey("Filtru pentru mesaje (coming soon)")}</h2>
-        <div className="workflow-multi-select">
+        <div className="d-flex flex-column gap-8">
           <label>{getLanguageByKey("Platforma mesaj")}</label>
           <CustomMultiSelect
             options={platformOptions}

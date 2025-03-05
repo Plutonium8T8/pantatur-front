@@ -1,11 +1,10 @@
-import CustomMultiSelect from "../../MultipleSelect/MultipleSelect"
-import { getLanguageByKey } from "../../utils/getLanguageByKey"
-import { workflowOptions } from "../../../FormOptions/WorkFlowOption"
-import "./WorkflowFilter.css"
+import CustomMultiSelect from "../MultipleSelect/MultipleSelect"
+import { getLanguageByKey } from "../utils/getLanguageByKey"
+import { workflowOptions } from "../../FormOptions/WorkFlowOption"
 
 export const WorkflowFilter = ({ handleMultiSelectChange, selectedValues }) => {
   return (
-    <div className="workflow-multi-select">
+    <div className="d-flex flex-column gap-8">
       <label>{getLanguageByKey("Workflow")}</label>
       <CustomMultiSelect
         options={workflowOptions}
