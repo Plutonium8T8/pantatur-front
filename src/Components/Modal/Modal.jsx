@@ -20,7 +20,7 @@ export const Modal = ({
   const refModal = useRef()
 
   const actions = [
-    <Button key="1" onClick={() => onClose?.()}>
+    <Button key="1" onClick={onClose}>
       {getLanguageByKey("Anuleaza")}
     </Button>,
     <Button key="2" onClick={onConfirm} variant="primary">
