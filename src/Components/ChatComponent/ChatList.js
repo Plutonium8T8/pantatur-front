@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import { useAppContext } from '../../AppContext';
 import { translations } from '../utils/translations';
 import { useUser } from '../../UserContext';
@@ -85,9 +84,8 @@ const ChatList = ({ language }) => {
     const sortedTickets = useMemo(() => {
         let filtered = [...tickets];
 
-        // Функция для парсинга даты формата "DD-MM-YYYY HH:MM:SS"
         const parseCustomDate = (dateStr) => {
-            if (!dateStr) return 0; // Если нет даты, возвращаем 0
+            if (!dateStr) return 0;
 
             const [datePart, timePart] = dateStr.split(" ");
             if (!datePart || !timePart) return 0;
@@ -95,18 +93,16 @@ const ChatList = ({ language }) => {
             const [day, month, year] = datePart.split("-").map(Number);
             const [hours, minutes, seconds] = timePart.split(":").map(Number);
 
-            return new Date(year, month - 1, day, hours, minutes, seconds).getTime(); // Преобразуем в timestamp
+            return new Date(year, month - 1, day, hours, minutes, seconds).getTime();
         };
 
-        // Функция для получения времени последнего сообщения тикета
         const getLastMessageTime = (ticket) => {
             const lastMessageTime = parseCustomDate(ticket.time_sent);
             const lastInteractionTime = parseCustomDate(ticket.last_interaction_date);
 
-            return Math.max(lastMessageTime, lastInteractionTime); // Берем самое позднее время
+            return Math.max(lastMessageTime, lastInteractionTime);
         };
 
-        // Сортировка тикетов по последнему времени сообщения
         filtered.sort((a, b) => getLastMessageTime(b) - getLastMessageTime(a));
 
         if (filteredTicketIds !== null && filteredTicketIds.length > 0) {
@@ -261,12 +257,6 @@ const ChatList = ({ language }) => {
                     </div>
                 </>
             )}
-            <button
-                className="toggle-chat-list"
-                onClick={() => setIsChatListVisible(prev => !prev)}
-            >
-                {isChatListVisible ? <FaArrowLeft /> : <FaArrowRight />}
-            </button>
         </div>
     );
 };
