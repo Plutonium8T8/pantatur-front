@@ -18,7 +18,7 @@ const tabsButtons = [
     key: "workflow"
   },
   {
-    title: getLanguageByKey("Bilet"),
+    title: getLanguageByKey("Lead"),
     key: "ticket"
   },
   {
@@ -105,7 +105,7 @@ export const TicketFilterModal = ({
 
     setFilters(resetFilters)
 
-    resetTicketsFilters()
+    resetTicketsFilters(resetFilters)
   }
 
   const content = {

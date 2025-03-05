@@ -1210,10 +1210,6 @@ export const translations = {
     RO: "Mesaje",
     RU: "Сообщения"
   },
-  Bilet: {
-    RO: "Bilet",
-    RU: "Билет"
-  },
   Anuleaza: {
     RO: "Anulează",
     RU: "Отменить"

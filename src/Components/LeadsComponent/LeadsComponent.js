@@ -120,7 +120,7 @@ const Leads = () => {
 
   const closeTicketModal = () => setIsFilterOpen(false)
 
-  const applyWorkflowFilters = (updatedFilters) => {
+  const applyWorkflowFilters = (updatedFilters, ticketIds) => {
     setFilters({
       ...updatedFilters,
       technician_id: updatedFilters.technician_id
@@ -134,12 +134,14 @@ const Leads = () => {
       Array.isArray(updatedFilters.workflow) ? updatedFilters.workflow : []
     )
 
-    setFilteredTicketIds(filteredTicketIds !== null ? filteredTicketIds : null)
+    setFilteredTicketIds(ticketIds !== null ? ticketIds : null)
     closeTicketModal()
   }
 
-  const resetTicketsFilters = () => {
-    setFilteredTicketIds(null)
+  const resetTicketsFilters = (filtersReset) => {
+    applyWorkflowFilters(filtersReset, null)
+
+    closeTicketModal()
   }
 
   const handleApplyFilter = async (formattedFilters) => {
@@ -288,7 +290,9 @@ const Leads = () => {
           loading={loading}
           isOpen={isFilterOpen}
           onClose={closeTicketModal}
-          onApplyWorkflowFilters={applyWorkflowFilters}
+          onApplyWorkflowFilters={(filters) =>
+            applyWorkflowFilters(filters, filteredTicketIds)
+          }
           onApplyTicketFilters={handleApplyFilter}
           resetTicketsFilters={resetTicketsFilters}
         />
