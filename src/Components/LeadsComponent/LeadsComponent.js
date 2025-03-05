@@ -137,27 +137,7 @@ const Leads = () => {
     setFilteredTicketIds(filteredTicketIds !== null ? filteredTicketIds : null)
   }
 
-  const handleApplyFilter = async (filters) => {
-    const { workflow, platform, tags, ...formattedFilters } = filters
-
-    if (Array.isArray(tags) && tags.length > 0) {
-      formattedFilters.tags = tags.join(",")
-    }
-
-    if (Array.isArray(tags) && tags.length > 0) {
-      formattedFilters.tags = `{${tags.join(",")}}`
-    } else {
-      delete formattedFilters.tags
-    }
-
-    const hasValidFilters = Object.values(formattedFilters).some((value) =>
-      Array.isArray(value) ? value.length > 0 : value
-    )
-
-    if (!hasValidFilters) {
-      return
-    }
-
+  const handleApplyFilter = async (formattedFilters) => {
     try {
       setLoading(true)
       const ticketData = await api.standalone.applyFilter(formattedFilters)

@@ -27,6 +27,22 @@ const tabsButtons = [
   }
 ]
 
+const formatFilters = (filters) => {
+  const { workflow, platform, tags, ...formattedFilters } = filters
+
+  if (Array.isArray(tags) && tags.length > 0) {
+    formattedFilters.tags = `{${tags.join(",")}}`
+  } else {
+    delete formattedFilters.tags
+  }
+
+  const hasValidFilters = Object.values(formattedFilters).some((value) =>
+    Array.isArray(value) ? value.length > 0 : value
+  )
+
+  return hasValidFilters ? formattedFilters : false
+}
+
 export const TicketFilterModal = ({
   isOpen,
   onClose,
@@ -37,6 +53,8 @@ export const TicketFilterModal = ({
   loading
 }) => {
   const [filters, setFilters] = useState(filterDefaults)
+
+  const filtersFormatted = formatFilters(filters)
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -138,9 +156,10 @@ export const TicketFilterModal = ({
         <div className="d-flex gap-8 justify-content-end">
           <Button onClick={onClose}>{getLanguageByKey("Anuleaza")}</Button>
           <Button
+            disabled={!filtersFormatted}
             loading={loading}
             variant="primary"
-            onClick={() => onApplyTicketFilters(filters)}
+            onClick={() => onApplyTicketFilters(filtersFormatted)}
           >
             {getLanguageByKey("Confirma")}
           </Button>
