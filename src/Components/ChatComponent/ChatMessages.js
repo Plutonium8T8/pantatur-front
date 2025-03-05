@@ -291,7 +291,7 @@ const ChatMessages = ({ selectTicketId }) => {
             markMessagesAsRead(selectTicketId);
         }
     }, [messages, selectTicketId, markMessagesAsRead, userId]);
-    
+
     return (
         <div className="chat-area">
             <div className="chat-messages" ref={messageContainerRef}>
