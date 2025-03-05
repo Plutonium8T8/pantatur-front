@@ -32,7 +32,6 @@ const ChatMessages = ({ selectTicketId }) => {
     const fileInputRef = useRef(null);
     const reactionContainerRef = useRef(null);
     const [personalInfo, setPersonalInfo] = useState({});
-    const [markedAsRead, setMarkedAsRead] = useState(false);
     const platformIcons = {
         "facebook": <FaFacebook />,
         "instagram": <FaInstagram />,
@@ -41,12 +40,13 @@ const ChatMessages = ({ selectTicketId }) => {
         "telegram": <FaTelegram />
     };
 
-    useEffect(() => {
-        if (selectTicketId) markMessagesAsRead(selectTicketId);
-    }, [messages, selectTicketId, markMessagesAsRead]);
+    const hasMarkedRead = useRef(new Set());
 
     useEffect(() => {
-        setMarkedAsRead(false);
+        if (!selectTicketId || hasMarkedRead.current.has(selectTicketId)) return;
+
+        markMessagesAsRead(selectTicketId);
+        hasMarkedRead.current.add(selectTicketId);
     }, [selectTicketId]);
 
     useEffect(() => {
@@ -279,6 +279,19 @@ const ChatMessages = ({ selectTicketId }) => {
         }
     };
 
+    useEffect(() => {
+        if (!selectTicketId || !messages.length) return;
+
+        const unreadMessages = messages.filter(
+            msg => msg.ticket_id === selectTicketId && msg.seen_by === '{}' && msg.sender_id !== userId
+        );
+
+        if (unreadMessages.length > 0) {
+            console.log(`🔵 ${unreadMessages.length} непрочитанных сообщений в тикете #${selectTicketId}, помечаем как прочитанные`);
+            markMessagesAsRead(selectTicketId);
+        }
+    }, [messages, selectTicketId, markMessagesAsRead, userId]);
+    
     return (
         <div className="chat-area">
             <div className="chat-messages" ref={messageContainerRef}>
