@@ -31,7 +31,7 @@ export const Tab = ({
     >
       <div
         className="tabs-buttons"
-        style={{ "--tabs-direction": tabsDirection[direction] }}
+        style={{ "--tabs-direction-btns": tabsDirection[direction] }}
       >
         {tabs.map((item) => (
           <Button

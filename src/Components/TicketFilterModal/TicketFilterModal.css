@@ -1,35 +1,3 @@
-.modal-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 15px;
-}
-
-.apply-btn {
-  background: #007bff;
-  color: white;
-  padding: 10px;
-  border: none;
-  cursor: pointer;
-  border-radius: 4px;
-}
-
-.reset-btn {
-  background: #ff9800;
-  color: white;
-  padding: 10px;
-  border: none;
-  cursor: pointer;
-  border-radius: 4px;
-}
-
-.cancel-btn {
-  background: #ccc;
-  padding: 10px;
-  border: none;
-  cursor: pointer;
-  border-radius: 4px;
-}
-
 .container-extra-group {
   display: flex;
   flex-direction: column;
@@ -39,21 +7,23 @@
   padding: 5px;
 }
 
-.tab-content-title {
+.container-content-title {
   height: 100%;
 }
 
-.tab-content-title h2 {
+/* TODO: Remove when reset.css file is implemented */
+.container-content-title h2 {
   margin-block: 0 16px;
 }
 
+/* TODO: Remove when Input component is implemented */
 .filled-field {
   border: 2px solid #4caf50 !important;
   background-color: rgba(76, 175, 80, 0.1);
   transition: all 0.3s ease-in-out;
 }
 
-.tab-ticket-content {
+.container-ticket-content {
   height: 700px;
   overflow-y: auto;
   width: 100%;

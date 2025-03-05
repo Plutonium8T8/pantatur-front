@@ -8,7 +8,7 @@
 
 .tabs-buttons {
   display: flex;
-  flex-direction: var(--tabs-direction, column);
+  flex-direction: var(--tabs-direction-btns, column);
   gap: 8px;
 }
 

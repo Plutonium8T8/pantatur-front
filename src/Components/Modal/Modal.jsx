@@ -66,7 +66,7 @@ export const Modal = ({
         >
           <div className="modal-content-body">
             {title && (
-              <div className="modal-title">
+              <div className="modal-title | mb-16">
                 <h2>{title}</h2>
               </div>
             )}
