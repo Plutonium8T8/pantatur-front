@@ -26,7 +26,6 @@ const ChatExtraInfo = ({
     selectTicketId,
     personalInfo = {},
     setPersonalInfo,
-    language = "ro",
     messages = [],
     updatedTicket,
     updateTicket,
@@ -42,6 +41,7 @@ const ChatExtraInfo = ({
     const [extraInfo, setExtraInfo] = useState({});
     const [selectedTechnicianId, setSelectedTechnicianId] = useState({});
     const isAdmin = hasRole("ROLE_ADMIN");
+    const language = localStorage.getItem('language') || 'RO';
 
     useEffect(() => {
         if (selectTicketId) {
