@@ -200,7 +200,6 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
 
         setFilters(resetFilters);
 
-        // ❗ Теперь `filteredTicketIds = null`, чтобы показать ВСЕ тикеты
         onApplyFilter(resetFilters, null);
     };
 

@@ -43,13 +43,11 @@ const ChatExtraInfo = ({
     const [selectedTechnicianId, setSelectedTechnicianId] = useState({});
     const isAdmin = hasRole("ROLE_ADMIN");
 
-
     useEffect(() => {
         if (selectTicketId) {
             fetchTicketExtraInfo(selectTicketId);
         }
     }, [selectTicketId]);
-
 
     const handleTechnicianChange = async (newTechnicianId) => {
         setSelectedTechnicianId(newTechnicianId);
