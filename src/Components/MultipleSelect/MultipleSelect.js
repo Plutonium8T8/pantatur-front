@@ -92,7 +92,7 @@ const CustomMultiSelect = ({
   }
 
   return (
-    <div className="custom-multi-select" ref={dropdownRef} disabled>
+    <div className="custom-multi-select" ref={dropdownRef}>
       <div
         className="select-field-custom"
         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
