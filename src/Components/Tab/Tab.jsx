@@ -26,7 +26,7 @@ export const Tab = ({
       className="tabs-wrapper"
       style={{
         "--direction": flexDirection[direction],
-        "--spacing": `${headerContentSpacing}px`
+        "--spacing": `${headerContentSpacing || 0}px`
       }}
     >
       <div
