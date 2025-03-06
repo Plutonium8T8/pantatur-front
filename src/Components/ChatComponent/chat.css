@@ -641,8 +641,6 @@
     flex-direction: column;
     gap: 10px;
     padding: 8px 8px;
-    border: 1px solid #ddd;
-    margin-top: 10px;
     background-color: #0c6d40;
 }
 
@@ -794,7 +792,7 @@ input:checked+.slider:before {
     height: 5px;
     width: 100%;
     background-color: #0c6a3c;
-    margin: 10px 0;
+    margin: 30px 0 20px 0px;
 }
 
 .client-name {

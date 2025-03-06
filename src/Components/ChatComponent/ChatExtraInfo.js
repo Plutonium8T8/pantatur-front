@@ -569,6 +569,7 @@ const ChatExtraInfo = ({
                                     {translations?.['Salvați datele personale']?.[language]}
                                 </button>
                             </form>
+                            <div className="divider-line"></div>
                             <div className="merge-tickets">
                                 <input
                                     type="number"
@@ -593,6 +594,7 @@ const ChatExtraInfo = ({
                                     {translations?.["Combina"][language]}
                                 </button>
                             </div>
+                            <div className="divider-line"></div>
                             <div className="merge-client">
                                 <input
                                     type="number"
