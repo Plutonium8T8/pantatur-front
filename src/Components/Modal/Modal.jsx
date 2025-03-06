@@ -14,8 +14,7 @@ export const Modal = ({
   title,
   width,
   height,
-  loading,
-  loadingButton
+  loading
 }) => {
   const modal = usePortal()
   const refModal = useRef()
@@ -24,12 +23,7 @@ export const Modal = ({
     <Button key="1" onClick={onClose}>
       {getLanguageByKey("Anuleaza")}
     </Button>,
-    <Button
-      key="2"
-      onClick={onConfirm}
-      variant="primary"
-      loading={loadingButton}
-    >
+    <Button key="2" onClick={onConfirm} variant="primary">
       {getLanguageByKey("Confirma")}
     </Button>
   ]

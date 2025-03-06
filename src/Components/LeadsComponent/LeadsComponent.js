@@ -162,7 +162,7 @@ const Leads = () => {
     }
   }
 
-  const handleApplyFilter = async (formattedFilters, isExternalFilters) => {
+  const handleApplyFilter = async (formattedFilters) => {
     try {
       setLoading(true)
       const ticketData = await api.tickets.filters({
@@ -339,7 +339,7 @@ const Leads = () => {
 
         <TicketFilterModal
           loading={loading}
-          isOpen={isFilterOpen && !isTableView}
+          isOpen={isFilterOpen}
           onClose={closeTicketModal}
           onApplyWorkflowFilters={(filters) =>
             applyWorkflowFilters(formatFiltersData(filters), filteredTicketIds)
