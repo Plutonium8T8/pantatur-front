@@ -110,6 +110,8 @@ export const TicketFilterModal = ({
     }
 
     setLeadFilters(resetFilters)
+
+    resetTicketsFilters?.(resetFilters)
   }
 
   const clearSystemFilters = (isExternalFields) => {
@@ -149,11 +151,11 @@ export const TicketFilterModal = ({
     ),
 
     ticket: (
-      <div className="container-content-title container-ticket-content">
+      <div className="container-content-title">
         <div className="mb-16">
           <h2>{getLanguageByKey("Filtru pentru Lead")}</h2>
 
-          <div className="d-flex flex-column gap-16">
+          <div className="container-ticket-content | d-flex flex-column gap-16">
             <div className="container-extra-group">
               <WorkflowFilter
                 handleMultiSelectChange={handleMultiSelectChange}

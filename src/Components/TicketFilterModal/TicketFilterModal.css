@@ -24,7 +24,7 @@
 }
 
 .container-ticket-content {
-  height: 700px;
+  height: calc(700px - (34px + 40px + 20px));
   overflow-y: auto;
   width: 100%;
 }

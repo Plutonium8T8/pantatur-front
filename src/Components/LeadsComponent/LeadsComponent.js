@@ -21,6 +21,7 @@ const SORT_BY = "creation_date"
 const ORDER = "DESC"
 const HARD_TICKET = "hard"
 const LIGHT_TICKET = "light"
+const NUMBER_PAGE = 1
 
 const formatFiltersData = (filters) => {
   return {
@@ -48,13 +49,13 @@ const Leads = () => {
   const [totalLeads, setTotalLeads] = useState(0)
   const [currentPage, setCurrentPage] = useState(1)
   const [tableLeadsFilters, setTableLeadsFilters] = useState({})
+  const [loadingFilters, setLoadingFilters] = useState(false)
   const [selectedWorkflow, setSelectedWorkflow] = useState(
     workflowOptions.filter(
       (wf) => wf !== "Realizat cu succes" && wf !== "Închis și nerealizat"
     )
   )
   const leadsFilterHeight = useDOMElementHeight(refLeadsFilter)
-
   const [filters, setFilters] = useState({
     creation_date: "",
     last_interaction_date: "",
@@ -121,6 +122,38 @@ const Leads = () => {
     setIsModalOpen(true)
   }
 
+  const fetchTickets = async (
+    { page, type, sortBy = SORT_BY, order = ORDER, attributes = {} },
+    cb,
+    showModalLoading
+  ) => {
+    if (showModalLoading) {
+      setLoadingFilters(true)
+    } else {
+      setLoading(true)
+    }
+
+    try {
+      const hardTicket = await api.tickets.filters({
+        page,
+        sort_by: sortBy,
+        order: order,
+        type,
+        attributes
+      })
+
+      cb(hardTicket)
+    } catch (error) {
+      enqueueSnackbar(showServerError(error), { variant: "error" })
+    } finally {
+      if (showModalLoading) {
+        setLoadingFilters(false)
+      } else {
+        setLoading(false)
+      }
+    }
+  }
+
   const closeModal = () => {
     setCurrentTicket(null)
     setIsModalOpen(false)
@@ -139,77 +172,52 @@ const Leads = () => {
     closeTicketModal()
   }
 
-  const filtersByHardTickets = async (formattedFilters) => {
-    try {
-      setLoading(true)
-      const ticketData = await api.tickets.filters({
-        page: 1,
-        sort_by: SORT_BY,
-        order: ORDER,
-        type: HARD_TICKET,
-        attributes: formattedFilters
-      })
-
-      setHardTickets(ticketData.data)
-      setTotalLeads(ticketData.pagination.total)
-      setCurrentPage(1)
-      setTableLeadsFilters(formattedFilters)
-      closeTicketModal()
-    } catch (error) {
-      enqueueSnackbar(showServerError(error), { variant: "error" })
-    } finally {
-      setLoading(false)
-    }
+  const handleApplyFiltersHardTicket = (formattedFilters) => {
+    fetchTickets(
+      { attributes: formattedFilters, page: NUMBER_PAGE, type: HARD_TICKET },
+      ({ data, pagination }) => {
+        setHardTickets(data)
+        setTotalLeads(pagination.total)
+        setCurrentPage(1)
+        setTableLeadsFilters(formattedFilters)
+        closeTicketModal()
+      },
+      true
+    )
   }
 
-  const handleApplyFilter = async (formattedFilters) => {
-    try {
-      setLoading(true)
-      const ticketData = await api.tickets.filters({
-        page: 1,
-        sort_by: SORT_BY,
-        order: ORDER,
-        type: LIGHT_TICKET,
-        attributes: formattedFilters
-      })
-      const ticketIds = ticketData.data
+  const handleApplyFilterLightTicket = async (formattedFilters) => {
+    fetchTickets(
+      { page: NUMBER_PAGE, type: LIGHT_TICKET, attributes: formattedFilters },
+      ({ data }) => {
+        applyWorkflowFilters(formattedFilters, data.length > 0 ? data : [])
+      }
+    )
+  }
 
-      applyWorkflowFilters(
-        formattedFilters,
-        ticketIds.length > 0 ? ticketIds : []
-      )
-    } catch (error) {
-      enqueueSnackbar(showServerError(error), { variant: "error" })
-    } finally {
-      setLoading(false)
-    }
+  const handlePaginationWorkflow = async (page) => {
+    fetchTickets(
+      { page, type: HARD_TICKET, attributes: tableLeadsFilters },
+      ({ data, pagination }) => {
+        setHardTickets(data)
+        setTotalLeads(pagination.total)
+        setCurrentPage(page)
+      }
+    )
   }
 
   useEffect(() => {
-    const getHardTickets = async () => {
-      setLoading(true)
-      try {
-        const hardTickets = await api.tickets.filters({
-          page: currentPage,
-          sort_by: SORT_BY,
-          order: ORDER,
-          type: isTableView ? HARD_TICKET : LIGHT_TICKET,
-          attributes: tableLeadsFilters
-        })
-
-        setHardTickets(hardTickets.data)
-        setTotalLeads(hardTickets.pagination.total)
-      } catch (error) {
-        enqueueSnackbar(showServerError(error), { variant: "error" })
-      } finally {
-        setLoading(false)
-      }
-    }
-
     if (isTableView) {
-      getHardTickets()
+      fetchTickets(
+        { type: HARD_TICKET, page: currentPage },
+        ({ data, pagination }) => {
+          setHardTickets(data)
+          setTotalLeads(pagination.total)
+        }
+      )
     }
-  }, [currentPage, isTableView])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isTableView])
 
   return (
     <>
@@ -240,7 +248,8 @@ const Leads = () => {
 
           <div className="ticket-counter-row">
             {getLanguageByKey("Toate tichetele")}: {tickets.length} |{" "}
-            {getLanguageByKey("Filtrate")}: {filteredTickets.length}
+            {getLanguageByKey("Filtrate")}:{" "}
+            {isTableView ? totalLeads : filteredTickets.length}
           </div>
 
           {selectedTickets.length > 0 && (
@@ -293,7 +302,7 @@ const Leads = () => {
               toggleSelectTicket={toggleSelectTicket}
               filteredLeads={hardTickets}
               totalLeads={totalLeads}
-              onChangePagination={setCurrentPage}
+              onChangePagination={handlePaginationWorkflow}
               currentPage={currentPage}
               loading={loading}
             />
@@ -339,24 +348,25 @@ const Leads = () => {
 
         <TicketFilterModal
           loading={loading}
-          isOpen={isFilterOpen}
+          isOpen={isFilterOpen && !isTableView}
           onClose={closeTicketModal}
           onApplyWorkflowFilters={(filters) =>
             applyWorkflowFilters(formatFiltersData(filters), filteredTicketIds)
           }
           onApplyTicketFilters={(filters) => {
-            handleApplyFilter(formatFiltersData(filters))
+            handleApplyFilterLightTicket(formatFiltersData(filters))
           }}
         />
 
         <TicketFilterModal
-          loading={loading}
+          loading={loadingFilters}
           isOpen={isFilterOpen && isTableView}
           onClose={closeTicketModal}
           onApplyWorkflowFilters={closeTicketModal}
           onApplyTicketFilters={(filters) =>
-            filtersByHardTickets(formatFiltersData(filters))
+            handleApplyFiltersHardTicket(formatFiltersData(filters))
           }
+          resetTicketsFilters={setTableLeadsFilters}
         />
       </div>
     </>
