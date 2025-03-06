@@ -103,7 +103,7 @@ export const TicketFilterModal = ({
     }
   }
 
-  const clearFilters = (isExternalFields) => {
+  const clearFilters = () => {
     const resetFilters = {
       ...filterDefaults,
       workflow: filterDefaults.workflow || []
@@ -114,7 +114,7 @@ export const TicketFilterModal = ({
     resetTicketsFilters?.(resetFilters)
   }
 
-  const clearSystemFilters = (isExternalFields) => {
+  const clearSystemFilters = () => {
     const resetFilters = {
       ...filterDefaults,
       workflow: filterDefaults.workflow || []
