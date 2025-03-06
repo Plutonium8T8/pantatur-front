@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../AppContext';
 import { translations } from '../utils/translations';
 import { useUser } from '../../UserContext';
@@ -23,7 +23,6 @@ const ChatList = ({ language }) => {
     const [filteredTicketIds, setFilteredTicketIds] = useState(null);
 
     const navigate = useNavigate();
-    const location = useLocation();
     const ticketRef = useRef(null);
 
     useEffect(() => {
@@ -42,27 +41,6 @@ const ChatList = ({ language }) => {
         if (!selectTicketId) return;
         getClientMessagesSingle(selectTicketId);
     }, [selectTicketId]);
-
-    useEffect(() => {
-        if (location.state?.hideChatList) {
-            setIsChatListVisible(false);
-            return;
-        }
-
-        const params = new URLSearchParams(location.search);
-        const stateParam = params.get('state');
-
-        if (stateParam) {
-            try {
-                const parsedState = JSON.parse(decodeURIComponent(stateParam));
-                if (parsedState.hideChatList) {
-                    setIsChatListVisible(false);
-                }
-            } catch (error) {
-                console.error("Ошибка парсинга state:", error);
-            }
-        }
-    }, [location]);
 
     const handleCheckboxChange = (e) => {
         setShowMyTickets(e.target.checked);
