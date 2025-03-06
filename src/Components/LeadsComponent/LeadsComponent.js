@@ -14,10 +14,28 @@ import { getLanguageByKey } from "../../Components/utils/getLanguageByKey"
 import { LeadTable } from "./LeadTable"
 import { Button } from "../Button"
 import { api } from "../../api"
+import { useSnackbar } from "notistack"
+import { showServerError } from "../utils/showServerError"
+
+const SORT_BY = "creation_date"
+const ORDER = "DESC"
+const HARD_TICKET = "hard"
+const LIGHT_TICKET = "light"
+
+const formatFiltersData = (filters) => {
+  return {
+    ...filters,
+    technician_id: filters.technician_id
+      ? filters.technician_id.map((t) => parseInt(t.split(":")[0]))
+      : []
+  }
+}
 
 const Leads = () => {
   const refLeadsFilter = useRef()
+  const { enqueueSnackbar } = useSnackbar()
 
+  const [hardTickets, setHardTickets] = useState([])
   const { tickets, isLoading, setTickets } = useAppContext()
   const [isTableView, setIsTableView] = useState(false)
   const [filteredTicketIds, setFilteredTicketIds] = useState(null)
@@ -27,6 +45,9 @@ const Leads = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [selectedTickets, setSelectedTickets] = useState([])
   const [loading, setLoading] = useState(false)
+  const [totalLeads, setTotalLeads] = useState(0)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [tableLeadsFilters, setTableLeadsFilters] = useState({})
   const [selectedWorkflow, setSelectedWorkflow] = useState(
     workflowOptions.filter(
       (wf) => wf !== "Realizat cu succes" && wf !== "Închis și nerealizat"
@@ -45,7 +66,6 @@ const Leads = () => {
     platform: []
   })
 
-  // **Фильтрация тикетов**
   const filteredTickets = useMemo(() => {
     let result = tickets
     if (filteredTicketIds === null) return result
@@ -59,7 +79,6 @@ const Leads = () => {
     return result
   }, [tickets, filteredTicketIds, selectedWorkflow])
 
-  // Выбор тикетов
   const toggleSelectTicket = (ticketId) => {
     setSelectedTickets((prev) =>
       prev.includes(ticketId)
@@ -68,16 +87,6 @@ const Leads = () => {
     )
   }
 
-  // Выбор всех тикетов
-  const toggleSelectAll = (e) => {
-    if (e.target.checked) {
-      setSelectedTickets(filteredTickets.map((ticket) => ticket.id))
-    } else {
-      setSelectedTickets([])
-    }
-  }
-
-  // Массовое удаление тикетов
   const deleteSelectedTickets = () => {
     if (selectedTickets.length === 0) return
     const newTickets = tickets.filter(
@@ -90,7 +99,6 @@ const Leads = () => {
   const editSelectedTickets = () => {
     if (selectedTickets.length === 0) return
 
-    // Открываем модалку редактирования с первым выделенным тикетом
     const ticketToEdit = tickets.find(
       (ticket) => ticket.id === selectedTickets[0]
     )
@@ -121,14 +129,7 @@ const Leads = () => {
   const closeTicketModal = () => setIsFilterOpen(false)
 
   const applyWorkflowFilters = (updatedFilters, ticketIds) => {
-    setFilters({
-      ...updatedFilters,
-      technician_id: updatedFilters.technician_id
-        ? updatedFilters.technician_id.map((t) => parseInt(t.split(":")[0]))
-        : [],
-      priority: updatedFilters.priority || [],
-      platform: updatedFilters.platform || []
-    })
+    setFilters(updatedFilters)
 
     setSelectedWorkflow(
       Array.isArray(updatedFilters.workflow) ? updatedFilters.workflow : []
@@ -138,31 +139,77 @@ const Leads = () => {
     closeTicketModal()
   }
 
-  const resetTicketsFilters = (filtersReset) => {
-    applyWorkflowFilters(filtersReset, null)
-
-    closeTicketModal()
-  }
-
-  const handleApplyFilter = async (formattedFilters) => {
+  const filtersByHardTickets = async (formattedFilters) => {
     try {
       setLoading(true)
-      const ticketData = await api.standalone.applyFilter(formattedFilters)
-      const ticketIds = ticketData.flat().map((ticket) => ticket.id)
+      const ticketData = await api.tickets.filters({
+        page: 1,
+        sort_by: SORT_BY,
+        order: ORDER,
+        type: HARD_TICKET,
+        attributes: formattedFilters
+      })
 
-      applyWorkflowFilters(filters, ticketIds.length > 0 ? ticketIds : [])
+      setHardTickets(ticketData.data)
+      setTotalLeads(ticketData.pagination.total)
+      setCurrentPage(1)
+      setTableLeadsFilters(formattedFilters)
       closeTicketModal()
-      setLoading(false)
     } catch (error) {
-      console.error("❌ Ошибка при фильтрации:", error)
+      enqueueSnackbar(showServerError(error), { variant: "error" })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleApplyFilter = async (formattedFilters, isExternalFilters) => {
+    try {
+      setLoading(true)
+      const ticketData = await api.tickets.filters({
+        page: 1,
+        sort_by: SORT_BY,
+        order: ORDER,
+        type: LIGHT_TICKET,
+        attributes: formattedFilters
+      })
+      const ticketIds = ticketData.data
+
+      applyWorkflowFilters(
+        formattedFilters,
+        ticketIds.length > 0 ? ticketIds : []
+      )
+    } catch (error) {
+      enqueueSnackbar(showServerError(error), { variant: "error" })
+    } finally {
       setLoading(false)
     }
   }
 
   useEffect(() => {
-    console.log("🎯 Текущий список тикетов:", tickets)
-    console.log("🎯 Отфильтрованные ID тикетов:", filteredTicketIds)
-  }, [tickets, filteredTicketIds])
+    const getHardTickets = async () => {
+      setLoading(true)
+      try {
+        const hardTickets = await api.tickets.filters({
+          page: currentPage,
+          sort_by: SORT_BY,
+          order: ORDER,
+          type: isTableView ? HARD_TICKET : LIGHT_TICKET,
+          attributes: tableLeadsFilters
+        })
+
+        setHardTickets(hardTickets.data)
+        setTotalLeads(hardTickets.pagination.total)
+      } catch (error) {
+        enqueueSnackbar(showServerError(error), { variant: "error" })
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    if (isTableView) {
+      getHardTickets()
+    }
+  }, [currentPage, isTableView])
 
   return (
     <>
@@ -244,6 +291,11 @@ const Leads = () => {
               selectedTickets={selectedTickets}
               setCurrentTicket={setCurrentTicket}
               toggleSelectTicket={toggleSelectTicket}
+              filteredLeads={hardTickets}
+              totalLeads={totalLeads}
+              onChangePagination={setCurrentPage}
+              currentPage={currentPage}
+              loading={loading}
             />
           </div>
         ) : (
@@ -285,16 +337,26 @@ const Leads = () => {
           />
         )}
 
-        {/* Модальное окно фильтра */}
         <TicketFilterModal
           loading={loading}
-          isOpen={isFilterOpen}
+          isOpen={isFilterOpen && !isTableView}
           onClose={closeTicketModal}
           onApplyWorkflowFilters={(filters) =>
-            applyWorkflowFilters(filters, filteredTicketIds)
+            applyWorkflowFilters(formatFiltersData(filters), filteredTicketIds)
           }
-          onApplyTicketFilters={handleApplyFilter}
-          resetTicketsFilters={resetTicketsFilters}
+          onApplyTicketFilters={(filters) => {
+            handleApplyFilter(formatFiltersData(filters))
+          }}
+        />
+
+        <TicketFilterModal
+          loading={loading}
+          isOpen={isFilterOpen && isTableView}
+          onClose={closeTicketModal}
+          onApplyWorkflowFilters={closeTicketModal}
+          onApplyTicketFilters={(filters) =>
+            filtersByHardTickets(formatFiltersData(filters))
+          }
         />
       </div>
     </>

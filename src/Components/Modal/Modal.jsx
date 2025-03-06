@@ -3,7 +3,7 @@ import { usePortal } from "../../hooks"
 import "./Modal.css"
 import { Button } from "../Button"
 import { getLanguageByKey } from "../utils/getLanguageByKey"
-import { Spin } from "../Spin"
+import { SpinnerOverContent } from "../SpinnerOverContent"
 
 export const Modal = ({
   children,
@@ -14,7 +14,8 @@ export const Modal = ({
   title,
   width,
   height,
-  loading
+  loading,
+  loadingButton
 }) => {
   const modal = usePortal()
   const refModal = useRef()
@@ -23,7 +24,12 @@ export const Modal = ({
     <Button key="1" onClick={onClose}>
       {getLanguageByKey("Anuleaza")}
     </Button>,
-    <Button key="2" onClick={onConfirm} variant="primary">
+    <Button
+      key="2"
+      onClick={onConfirm}
+      variant="primary"
+      loading={loadingButton}
+    >
       {getLanguageByKey("Confirma")}
     </Button>
   ]
@@ -79,11 +85,7 @@ export const Modal = ({
               {renderFooter(footer)}
             </div>
 
-            {loading && (
-              <div className="modal-loading">
-                <Spin />
-              </div>
-            )}
+            <SpinnerOverContent loading={loading} />
           </div>
         </div>
       )

@@ -53,6 +53,12 @@ export const tickets = {
     return data
   },
 
+  filters: async (body) => {
+    const { data } = await baseAxios.post("/api/tickets/filter", body)
+
+    return data
+  },
+
   ticket: {
     getInfo: async (id) => {
       const { data } = await baseAxios.get(`/api/ticket-info/${id}`)

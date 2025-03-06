@@ -3,25 +3,13 @@
   align-items: center;
   justify-content: end;
   gap: 8px;
+
+  margin-block: 16px;
 }
 
 .pagination button {
   transition: 0.3s ease;
-  color: #0f824c;
   padding: 10px;
   width: 35px;
   height: 35px;
-}
-
-.pagination button:disabled:hover {
-  cursor: not-allowed;
-  background-color: transparent;
-}
-
-.pagination button:hover {
-  background-color: #dfefd9f9;
-}
-
-.pagination .active {
-  background-color: #dfefd9f9;
 }

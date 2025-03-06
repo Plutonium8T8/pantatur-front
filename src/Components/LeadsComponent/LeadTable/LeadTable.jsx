@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react"
+import { useMemo } from "react"
 import { Link } from "react-router-dom"
 import {
   useReactTable,
@@ -6,18 +6,14 @@ import {
   flexRender
 } from "@tanstack/react-table"
 import { cleanValue } from "../utils"
-import { api } from "../../../api"
 import { workflowStyles } from "../../utils/workflowStyles"
 import "./LeadTable.css"
 import { SpinnerRightBottom } from "../../SpinnerRightBottom"
-import { useAppContext } from "../../../AppContext"
 import { MAX_PAGE_SIZE } from "../../../app-constants"
 import { Pagination } from "../../Pagination"
 import { getLanguageByKey } from "../../utils/getLanguageByKey"
 import { TextEllipsis } from "../../TextEllipsis"
-
-const SORT_BY = "creation_date"
-const ORDER = "ASC"
+import { Empty } from "../../Empty"
 
 const getTotalPages = (items) => {
   return Math.ceil(items / MAX_PAGE_SIZE)
@@ -35,16 +31,18 @@ const renderTags = (tags) => {
     : "—"
 }
 
-const LeadTable = ({
+export const LeadTable = ({
   filteredTickets,
   selectedTickets,
   setCurrentTicket,
-  toggleSelectTicket
+  toggleSelectTicket,
+  filteredLeads,
+  totalLeads,
+  onChangePagination,
+  currentPage,
+  loading
 }) => {
-  const [hardTicketsList, setHardTicketsList] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [page, setPage] = useState(1)
-  const { tickets } = useAppContext()
+  const totalNumberPages = getTotalPages(totalLeads)
 
   const columns = useMemo(() => {
     return [
@@ -90,8 +88,8 @@ const LeadTable = ({
 
           return (
             <div className="text-center">
-              {values.length
-                ? values.map((item) => cleanValue(item.name)).join(", ")
+              {values?.length
+                ? values?.map((item) => cleanValue(item.name)).join(", ")
                 : cleanValue()}
             </div>
           )
@@ -107,8 +105,8 @@ const LeadTable = ({
           const values = getValue()
           return (
             <div className="text-center">
-              {values.length
-                ? values.map((item) => cleanValue(item.surname)).join(", ")
+              {values?.length
+                ? values?.map((item) => cleanValue(item?.surname)).join(", ")
                 : cleanValue()}
             </div>
           )
@@ -125,8 +123,8 @@ const LeadTable = ({
 
           return (
             <div className="text-center">
-              {values.length
-                ? values.map((item) => cleanValue(item.email)).join(", ")
+              {values?.length
+                ? values?.map((item) => cleanValue(item.email)).join(", ")
                 : cleanValue()}
             </div>
           )
@@ -143,8 +141,8 @@ const LeadTable = ({
 
           return (
             <div className="text-center">
-              {values.length
-                ? values.map((item) => cleanValue(item.phone)).join(", ")
+              {values?.length
+                ? values?.map((item) => cleanValue(item?.phone)).join(", ")
                 : cleanValue()}
             </div>
           )
@@ -246,7 +244,8 @@ const LeadTable = ({
             {getLanguageByKey("Achitat client")}
           </div>
         ),
-        accessorFn: ({ ticket_info }) => cleanValue(ticket_info.achitat_client),
+        accessorFn: ({ ticket_info }) =>
+          cleanValue(ticket_info?.achitat_client),
         cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
@@ -254,7 +253,7 @@ const LeadTable = ({
         header: () => (
           <div className="text-center">{getLanguageByKey("Avans în euro")}</div>
         ),
-        accessorFn: ({ ticket_info }) => cleanValue(ticket_info.avans_euro),
+        accessorFn: ({ ticket_info }) => cleanValue(ticket_info?.avans_euro),
         cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
@@ -262,7 +261,7 @@ const LeadTable = ({
         header: () => (
           <div className="text-center">{getLanguageByKey("Buget")}</div>
         ),
-        accessorFn: ({ ticket_info }) => cleanValue(ticket_info.buget),
+        accessorFn: ({ ticket_info }) => cleanValue(ticket_info?.buget),
         cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
@@ -273,7 +272,7 @@ const LeadTable = ({
           </div>
         ),
         accessorFn: ({ ticket_info }) =>
-          cleanValue(ticket_info.comision_companie),
+          cleanValue(ticket_info?.comision_companie),
         cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
@@ -283,7 +282,8 @@ const LeadTable = ({
             {getLanguageByKey("Data avansului")}
           </div>
         ),
-        accessorFn: ({ ticket_info }) => cleanValue(ticket_info.data_avansului),
+        accessorFn: ({ ticket_info }) =>
+          cleanValue(ticket_info?.data_avansului),
         cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
@@ -294,7 +294,7 @@ const LeadTable = ({
           </div>
         ),
         accessorFn: ({ ticket_info }) =>
-          cleanValue(ticket_info.data_cererii_de_retur),
+          cleanValue(ticket_info?.data_cererii_de_retur),
         cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
@@ -305,7 +305,7 @@ const LeadTable = ({
           </div>
         ),
         accessorFn: ({ ticket_info }) =>
-          cleanValue(ticket_info.data_contractului),
+          cleanValue(ticket_info?.data_contractului),
         cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
@@ -316,7 +316,7 @@ const LeadTable = ({
           </div>
         ),
         accessorFn: ({ ticket_info }) =>
-          cleanValue(ticket_info.data_de_plata_integrala),
+          cleanValue(ticket_info?.data_de_plata_integrala),
         cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
@@ -327,7 +327,7 @@ const LeadTable = ({
           </div>
         ),
         accessorFn: ({ ticket_info }) =>
-          cleanValue(ticket_info.data_intoarcerii),
+          cleanValue(ticket_info?.data_intoarcerii),
         cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
@@ -335,7 +335,7 @@ const LeadTable = ({
         header: () => (
           <div className="text-center">{getLanguageByKey("Data plecării")}</div>
         ),
-        accessorFn: ({ ticket_info }) => cleanValue(ticket_info.data_plecarii),
+        accessorFn: ({ ticket_info }) => cleanValue(ticket_info?.data_plecarii),
         cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
@@ -346,7 +346,7 @@ const LeadTable = ({
           </div>
         ),
         accessorFn: ({ ticket_info }) =>
-          cleanValue(ticket_info.tip_de_transport),
+          cleanValue(ticket_info?.tip_de_transport),
         cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
@@ -354,7 +354,7 @@ const LeadTable = ({
         header: () => (
           <div className="text-center">{getLanguageByKey("Vacanță")}</div>
         ),
-        accessorFn: ({ ticket_info }) => cleanValue(ticket_info.vacanta),
+        accessorFn: ({ ticket_info }) => cleanValue(ticket_info?.vacanta),
         cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
@@ -365,38 +365,17 @@ const LeadTable = ({
           </div>
         ),
         accessorFn: ({ ticket_info }) =>
-          cleanValue(ticket_info.valuta_contului),
+          cleanValue(ticket_info?.valuta_contului),
         cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       }
     ]
   }, [selectedTickets, toggleSelectTicket])
 
   const table = useReactTable({
-    data: hardTicketsList,
+    data: filteredLeads,
     columns,
     getCoreRowModel: getCoreRowModel()
   })
-
-  useEffect(() => {
-    const getHardTickets = async () => {
-      setLoading(true)
-      try {
-        const hardTickets = await api.tickets.getHardList({
-          page,
-          sort_by: SORT_BY,
-          order: ORDER
-        })
-
-        setHardTicketsList(hardTickets.data)
-      } catch (_) {
-        // TODO: Show server error
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    getHardTickets()
-  }, [page])
 
   if (loading) {
     return <SpinnerRightBottom />
@@ -433,16 +412,18 @@ const LeadTable = ({
         </tbody>
       </table>
 
+      {!loading && !table.getRowModel().rows.length && <Empty />}
+
       {/* FIXME: Remove inline style when the layout is fixed */}
-      <div style={{ marginBottom: 10 }}>
-        <Pagination
-          totalPages={getTotalPages(tickets.length)}
-          currentPage={page}
-          onPaginationChange={setPage}
-        />
-      </div>
+      {totalNumberPages && (
+        <div style={{ marginBottom: 10 }}>
+          <Pagination
+            totalPages={totalNumberPages}
+            currentPage={currentPage}
+            onPaginationChange={onChangePagination}
+          />
+        </div>
+      )}
     </>
   )
 }
-
-export default LeadTable
