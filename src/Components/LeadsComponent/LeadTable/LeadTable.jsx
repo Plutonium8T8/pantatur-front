@@ -1,10 +1,5 @@
 import { useMemo } from "react"
 import { Link } from "react-router-dom"
-import {
-  useReactTable,
-  getCoreRowModel,
-  flexRender
-} from "@tanstack/react-table"
 import { cleanValue } from "../utils"
 import { workflowStyles } from "../../utils/workflowStyles"
 import "./LeadTable.css"
@@ -12,7 +7,8 @@ import { SpinnerRightBottom } from "../../SpinnerRightBottom"
 import { Pagination } from "../../Pagination"
 import { getLanguageByKey } from "../../utils/getLanguageByKey"
 import { TextEllipsis } from "../../TextEllipsis"
-import { Empty } from "../../Empty"
+import { Table } from "../../Table"
+import { Checkbox } from "../../Checkbox"
 
 const renderTags = (tags) => {
   const isTags = tags.some(Boolean)
@@ -44,9 +40,8 @@ export const LeadTable = ({
         ),
         accessorFn: ({ id }) => id,
         cell: ({ getValue }) => (
-          <div className="lead-checkbox-row">
-            <input
-              type="checkbox"
+          <div className="text-center">
+            <Checkbox
               checked={selectedTickets.includes(getValue())}
               onChange={() => toggleSelectTicket(getValue())}
             />
@@ -154,7 +149,7 @@ export const LeadTable = ({
         accessorKey: "tags",
         accessorFn: ({ tags }) => tags,
         cell: ({ getValue }) => (
-          <div style={{ width: 300 }} className="lead-tags-row">
+          <div style={{ width: 300 }} className="d-flex gap-8 flex-wrap">
             {renderTags(getValue())}
           </div>
         )
@@ -165,13 +160,7 @@ export const LeadTable = ({
           <div className="text-center">{getLanguageByKey("Prioritate")}</div>
         ),
         accessorFn: ({ priority }) => priority,
-        cell: ({ getValue }) => (
-          <div
-            className={`lead-priority-row priority-${getValue()?.toLowerCase() || "default"}`}
-          >
-            {getValue()}
-          </div>
-        )
+        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
         header: getLanguageByKey("Workflow"),
@@ -199,7 +188,7 @@ export const LeadTable = ({
         ),
         accessorFn: ({ contact }) => contact,
         cell: ({ getValue }) => (
-          <div className="text-center text-nowrap">{getValue()}</div>
+          <div className="text-center white-space-nowrap">{getValue()}</div>
         )
       },
       {
@@ -364,48 +353,13 @@ export const LeadTable = ({
     ]
   }, [selectedTickets, toggleSelectTicket])
 
-  const table = useReactTable({
-    data: filteredLeads,
-    columns,
-    getCoreRowModel: getCoreRowModel()
-  })
-
   if (loading) {
     return <SpinnerRightBottom />
   }
 
   return (
     <>
-      <table className="lead-table">
-        <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header, i) => (
-                <th key={i}>
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext()
-                  )}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-
-        <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <td key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {!loading && !table.getRowModel().rows.length && <Empty />}
+      <Table columns={columns} data={filteredLeads} loading={loading} />
 
       {/* FIXME: Remove inline style when the layout is fixed */}
       {totalLeads && (

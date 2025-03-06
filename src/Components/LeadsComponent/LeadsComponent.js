@@ -186,7 +186,7 @@ const Leads = () => {
     )
   }
 
-  const handleApplyFilterLightTicket = async (formattedFilters) => {
+  const handleApplyFilterLightTicket = (formattedFilters) => {
     fetchTickets(
       { page: NUMBER_PAGE, type: LIGHT_TICKET, attributes: formattedFilters },
       ({ data }) => {
@@ -195,7 +195,7 @@ const Leads = () => {
     )
   }
 
-  const handlePaginationWorkflow = async (page) => {
+  const handlePaginationWorkflow = (page) => {
     fetchTickets(
       { page, type: HARD_TICKET, attributes: tableLeadsFilters },
       ({ data, pagination }) => {

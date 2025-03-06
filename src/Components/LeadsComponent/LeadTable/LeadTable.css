@@ -1,61 +1,8 @@
-.lead-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0 6px;
-  font-size: 14px;
-}
-
-.lead-table th {
-  color: #333;
-  font-weight: bold;
-  text-align: left;
-  padding: 12px;
-  text-wrap: nowrap;
-  border-bottom: 1px solid #ddd;
-  border-right: 1px solid #ddd;
-}
-
-.lead-table td {
-  border-bottom: 1px solid #ddd;
-  padding-inline: 12px;
-}
-
-.lead-checkbox-row {
-  text-align: center;
-}
-
-.lead-checkbox-row input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  cursor: pointer;
-}
-
-.lead-priority-row {
-  padding: 12px;
-  text-align: center;
-  vertical-align: middle;
-}
-
-.lead-row-link {
-  color: #007bff;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-.lead-row-link:hover {
-  text-decoration: underline;
-}
-
-.lead-tags-row {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
 .lead-workflow-content {
   font-weight: bold;
   color: #17a2b8;
   padding: 8px;
   border-radius: 4px;
   text-wrap: nowrap;
+  white-space: nowrap;
 }
