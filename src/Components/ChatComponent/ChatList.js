@@ -96,12 +96,7 @@ const ChatList = ({ language }) => {
             return new Date(year, month - 1, day, hours, minutes, seconds).getTime();
         };
 
-        const getLastMessageTime = (ticket) => {
-            const lastMessageTime = parseCustomDate(ticket.time_sent);
-            const lastInteractionTime = parseCustomDate(ticket.last_interaction_date);
-
-            return Math.max(lastMessageTime, lastInteractionTime);
-        };
+        const getLastMessageTime = (ticket) => parseCustomDate(ticket.time_sent);
 
         filtered.sort((a, b) => getLastMessageTime(b) - getLastMessageTime(a));
 
