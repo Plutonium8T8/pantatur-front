@@ -10,7 +10,7 @@ import { FaFacebook, FaViber, FaInstagram, FaWhatsapp, FaTelegram, FaTasks } fro
 import { translations } from '../utils/translations';
 import { templateOptions } from '../../FormOptions/MessageTemplate';
 
-const ChatMessages = ({ selectTicketId, setSelectedClient }) => {
+const ChatMessages = ({ selectTicketId, setSelectedClient, selectedClient }) => {
     const { userId } = useUser();
     const {
         messages,
@@ -25,7 +25,6 @@ const ChatMessages = ({ selectTicketId, setSelectedClient }) => {
     const [emojiPickerPosition, setEmojiPickerPosition] = useState({ top: 0, left: 0 });
     const [selectedMessageId, setSelectedMessageId] = useState(null);
     const [selectedReaction, setSelectedReaction] = useState({});
-    const [selectedClient] = useState("");
     const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
     const [selectedMessage, setSelectedMessage] = useState(null);
     const messageContainerRef = useRef(null);
