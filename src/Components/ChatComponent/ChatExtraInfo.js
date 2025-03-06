@@ -43,21 +43,6 @@ const ChatExtraInfo = ({
     const isAdmin = hasRole("ROLE_ADMIN");
     const language = localStorage.getItem('language') || 'RO';
 
-    console.log("ChatExtraInfo props:", {
-        selectTicketId,
-        personalInfo,
-        setPersonalInfo,
-        messages,
-        updatedTicket,
-        updateTicket,
-        isLoading,
-        ticketId,
-        selectedClient,
-        setTickets,
-        tickets
-    });
-
-
     useEffect(() => {
         if (selectTicketId) {
             fetchTicketExtraInfo(selectTicketId);
@@ -225,7 +210,6 @@ const ChatExtraInfo = ({
         try {
             await updateTicket({ id: updatedTicket.id, workflow: newWorkflow });
 
-            enqueueSnackbar('Statutul tichetului a fost actualizat!', { variant: 'success' });
 
             setTickets(prevTickets =>
                 prevTickets.map(ticket =>
@@ -233,10 +217,10 @@ const ChatExtraInfo = ({
                 )
             );
 
-            console.log("Workflow actualizat:", newWorkflow);
+            enqueueSnackbar('Statutul tichetului a fost actualizat!', { variant: 'success' });
+
         } catch (error) {
             enqueueSnackbar('Eroare: Statutul tichetului nu a fost actualizat.', { variant: 'error' });
-            console.error('Eroare la actualizarea workflow:', error.message);
         }
     };
 
@@ -373,16 +357,14 @@ const ChatExtraInfo = ({
                     </div>
 
                     <div className="tab-content-chat">
+
                         {isLoading ? (
                             <p>Loading...</p>
                         ) : (
-                            <>
-                                <div className="input-group">
-                                    <button onClick={sendExtraInfo} className="submit-button">
-                                        {isLoading ? ["Încărcăm..."]?.[language] ?? "Загрузка..." : ["Actualizare"]?.[language] ?? "Actualizare"}
-                                    </button>
-                                </div>
-                            </>
+                            <ResponsabilLead
+                                selectedTechnicianId={updatedTicket?.technician_id}
+                                onTechnicianChange={handleTechnicianChange}
+                            />
                         )}
                         <div>
                             <Workflow
@@ -395,19 +377,23 @@ const ChatExtraInfo = ({
                 </div>
             )}
 
+            {isLoading ? (
+                <p>Loading...</p>
+            ) : (
+                <>
+                    <div className="input-group">
+                        <button onClick={sendExtraInfo} className="submit-button">
+                            {isLoading ? ["Încărcăm..."]?.[language] ?? "Загрузка..." : ["Actualizare"]?.[language] ?? "Actualizare"}
+                        </button>
+                    </div>
+                </>
+            )}
+
             <div className="tab-content">
                 {activeTab === 'extraForm' && selectTicketId && (
                     <div className="extra-info-content">
                         <div className="selects-container">
 
-                            {isLoading ? (
-                                <p>Loading...</p>
-                            ) : (
-                                <ResponsabilLead
-                                    selectedTechnicianId={updatedTicket?.technician_id}
-                                    onTechnicianChange={handleTechnicianChange}
-                                />
-                            )}
                             <Input
                                 label="Vânzare €"
                                 type="number"
@@ -534,30 +520,6 @@ const ChatExtraInfo = ({
                                 className="input-field"
                             />
                         </div>
-                        <div className="merge-tickets">
-                            <input
-                                type="number"
-                                value={ticketId}
-                                onChange={(e) =>
-                                    handleSelectChangeExtra(selectTicketId, 'ticket_id_old', e.target.value)
-                                }
-                                className="input-field"
-                                placeholder="Introduceți ID vechi"
-                                disabled
-                            />
-                            <input
-                                type="number"
-                                value={extraInfo[selectTicketId]?.ticket_id_new || ""}
-                                onChange={(e) =>
-                                    handleSelectChangeExtra(selectTicketId, 'ticket_id_new', e.target.value)
-                                }
-                                className="input-field"
-                                placeholder={translations?.["Introduceți ID lead"]?.[language]}
-                            />
-                            <button onClick={handleMergeTickets} className="submit-button">
-                                {translations?.["Combina"][language]}
-                            </button>
-                        </div>
 
                         <div className="divider-line"></div>
                         <div className="personal-data-content">
@@ -607,6 +569,30 @@ const ChatExtraInfo = ({
                                     {translations?.['Salvați datele personale']?.[language]}
                                 </button>
                             </form>
+                            <div className="merge-tickets">
+                                <input
+                                    type="number"
+                                    value={ticketId}
+                                    onChange={(e) =>
+                                        handleSelectChangeExtra(selectTicketId, 'ticket_id_old', e.target.value)
+                                    }
+                                    className="input-field"
+                                    placeholder="Introduceți ID vechi"
+                                    disabled
+                                />
+                                <input
+                                    type="number"
+                                    value={extraInfo[selectTicketId]?.ticket_id_new || ""}
+                                    onChange={(e) =>
+                                        handleSelectChangeExtra(selectTicketId, 'ticket_id_new', e.target.value)
+                                    }
+                                    className="input-field"
+                                    placeholder={translations?.["Introduceți ID lead"]?.[language]}
+                                />
+                                <button onClick={handleMergeTickets} className="submit-button">
+                                    {translations?.["Combina"][language]}
+                                </button>
+                            </div>
                             <div className="merge-client">
                                 <input
                                     type="number"
