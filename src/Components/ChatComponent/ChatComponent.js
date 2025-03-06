@@ -18,7 +18,7 @@ const ChatComponent = () => {
     const updatedTicket = tickets.find(ticket => ticket.id === selectTicketId) || null;
 
     return (
-        <div className="chat-container">
+        <div className={`chat-container ${isChatListVisible ? "" : "chat-hidden"}`}>
             <button
                 className="toggle-chat-list-button"
                 onClick={() => setIsChatListVisible(prev => !prev)}
