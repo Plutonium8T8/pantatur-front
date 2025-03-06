@@ -9,15 +9,10 @@ import { cleanValue } from "../utils"
 import { workflowStyles } from "../../utils/workflowStyles"
 import "./LeadTable.css"
 import { SpinnerRightBottom } from "../../SpinnerRightBottom"
-// import { MAX_PAGE_SIZE } from "../../../app-constants"
 import { Pagination } from "../../Pagination"
 import { getLanguageByKey } from "../../utils/getLanguageByKey"
 import { TextEllipsis } from "../../TextEllipsis"
 import { Empty } from "../../Empty"
-
-// const getTotalPages = (items) => {
-//   return Math.ceil(items / MAX_PAGE_SIZE)
-// }
 
 const renderTags = (tags) => {
   const isTags = tags.some(Boolean)
@@ -40,8 +35,6 @@ export const LeadTable = ({
   currentPage,
   loading
 }) => {
-  // const totalNumberPages = getTotalPages(totalLeads)
-
   const columns = useMemo(() => {
     return [
       {
@@ -205,7 +198,9 @@ export const LeadTable = ({
           <div className="text-center">{getLanguageByKey("Contact")}</div>
         ),
         accessorFn: ({ contact }) => contact,
-        cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
+        cell: ({ getValue }) => (
+          <div className="text-center text-nowrap">{getValue()}</div>
+        )
       },
       {
         accessorKey: "creation_date",
