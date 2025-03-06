@@ -11,7 +11,7 @@ import { translations } from '../utils/translations';
 import { templateOptions } from '../../FormOptions/MessageTemplate';
 import { Spin } from '../Spin';
 
-const ChatMessages = ({ selectTicketId, setSelectedClient, selectedClient, isLoading }) => {
+const ChatMessages = ({ selectTicketId, setSelectedClient, isLoading, selectedClient, personalInfo, setPersonalInfo }) => {
     const { userId } = useUser();
     const {
         messages,
@@ -31,7 +31,6 @@ const ChatMessages = ({ selectTicketId, setSelectedClient, selectedClient, isLoa
     const messageContainerRef = useRef(null);
     const fileInputRef = useRef(null);
     const reactionContainerRef = useRef(null);
-    const [personalInfo, setPersonalInfo] = useState({});
 
     const platformIcons = {
         "facebook": <FaFacebook />,
@@ -300,6 +299,20 @@ const ChatMessages = ({ selectTicketId, setSelectedClient, selectedClient, isLoa
         }
     }, [messages, selectTicketId, markMessagesAsRead, userId]);
 
+    useEffect(() => {
+        const newPersonalInfo = {};
+
+        tickets.forEach(ticket => {
+            if (ticket.clients && Array.isArray(ticket.clients)) {
+                ticket.clients.forEach(client => {
+                    newPersonalInfo[client.id] = client;
+                });
+            }
+        });
+
+        setPersonalInfo(newPersonalInfo);
+    }, [tickets]);
+
     return (
         <div className="chat-area">
             <div className="chat-messages" ref={messageContainerRef}>
@@ -430,11 +443,16 @@ const ChatMessages = ({ selectTicketId, setSelectedClient, selectedClient, isLoa
                                                                     <div className="text">
                                                                         {renderContent()}
                                                                         <div className="message-time">
-                                                                            {msg.sender_id !== 1 && msg.sender_id !== userId && (
-                                                                                <span className="client-name">
-                                                                                    {personalInfo[msg.client_id]?.name || ""} {personalInfo[msg.client_id]?.surname || ""}
-                                                                                </span>
-                                                                            )}
+                                                                            {msg.sender_id !== 1 && msg.sender_id !== userId && (() => {
+                                                                                const cleanClientId = String(msg.client_id).replace(/[{}]/g, "");
+                                                                                const clientInfo = personalInfo[cleanClientId];
+
+                                                                                return (
+                                                                                    <span className="client-name">
+                                                                                        {clientInfo ? `${clientInfo.name} ${clientInfo.surname || ""}` : "Неизвестный"}
+                                                                                    </span>
+                                                                                );
+                                                                            })()}
                                                                             <div
                                                                                 className="reaction-toggle-button"
                                                                                 onClick={() =>

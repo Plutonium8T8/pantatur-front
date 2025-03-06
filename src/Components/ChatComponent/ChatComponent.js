@@ -6,7 +6,7 @@ import ChatExtraInfo from './ChatExtraInfo';
 import ChatList from './ChatList';
 import ChatMessages from './ChatMessages';
 
-const ChatComponent = ({ language }) => {
+const ChatComponent = () => {
     const { tickets, updateTicket, setTickets, messages, selectTicketId } = useAppContext();
     const [personalInfo, setPersonalInfo] = useState({});
     const { ticketId } = useParams();
@@ -18,11 +18,13 @@ const ChatComponent = ({ language }) => {
     return (
         <div className="chat-container">
             <ChatList setIsLoading={setIsLoading} />
-            
+
             <ChatMessages
                 selectTicketId={selectTicketId}
                 setSelectedClient={setSelectedClient}
                 isLoading={isLoading}
+                personalInfo={personalInfo}
+                setPersonalInfo={setPersonalInfo}
             />
 
             <ChatExtraInfo
@@ -37,7 +39,6 @@ const ChatComponent = ({ language }) => {
                 setPersonalInfo={setPersonalInfo}
                 messages={messages}
                 isLoading={isLoading}
-                language={language}
             />
         </div>
     );

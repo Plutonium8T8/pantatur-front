@@ -35,7 +35,7 @@ const ChatExtraInfo = ({
     setTickets,
     tickets,
 }) => {
-    const [activeTab, setActiveTab] = useState("extraForm");
+    const [activeTab, setActiveTab] = useState("Info");
     const { hasRole } = useUser();
     const [fieldErrors, setFieldErrors] = useState({});
     const [extraInfo, setExtraInfo] = useState({});
@@ -230,7 +230,7 @@ const ChatExtraInfo = ({
 
     const getTabErrorIndicator = (tab) => {
         const tabFields = {
-            extraForm: ["buget", "data_plecarii", "data_intoarcerii", "sursa_lead", "promo", "marketing"],
+            Info: ["buget", "data_plecarii", "data_intoarcerii", "sursa_lead", "promo", "marketing"],
             Contract: ["numar_de_contract", "data_contractului", "contract_trimis", "contract_semnat", "tour_operator", "numarul_cererii_de_la_operator"],
             // Invoice: ["statutul_platii", "pret_netto", "comission_companie"],
             Media: [],
@@ -311,9 +311,9 @@ const ChatExtraInfo = ({
         try {
             const result = await api.tickets.ticket.create(selectTicketId, processedExtraInfo);
 
-            enqueueSnackbar('Данные успешно обновлены', { variant: 'success' });
+            enqueueSnackbar('Succes!', { variant: 'success' });
         } catch (error) {
-            enqueueSnackbar('Ошибка при обновлении дополнительной информации', { variant: 'error' });
+            enqueueSnackbar('Error!', { variant: 'error' });
         } finally {
         }
     };
@@ -345,7 +345,7 @@ const ChatExtraInfo = ({
             {selectTicketId && (
                 <div className="sticky-container">
                     <div className="tabs-container">
-                        {["extraForm", "Contract", "Invoice", "Media", "Control calitate"].map((tab) => (
+                        {["Info", "Contract", "Invoice", "Media", "Control calitate"].map((tab) => (
                             <button
                                 key={tab}
                                 className={`tab-button ${activeTab === tab ? "active" : ""}`}
@@ -374,23 +374,22 @@ const ChatExtraInfo = ({
                             />
                         </div>
                     </div>
+                    {isLoading ? (
+                        <p>Loading...</p>
+                    ) : (
+                        <>
+                            <div className="input-group">
+                                <button onClick={sendExtraInfo} className="submit-button">
+                                    {isLoading ? translations['Încărcăm...'][language] : translations['Actualizare'][language]}
+                                </button>
+                            </div>
+                        </>
+                    )}
                 </div>
             )}
 
-            {isLoading ? (
-                <p>Loading...</p>
-            ) : (
-                <>
-                    <div className="input-group">
-                        <button onClick={sendExtraInfo} className="submit-button">
-                            {isLoading ? ["Încărcăm..."]?.[language] ?? "Загрузка..." : ["Actualizare"]?.[language] ?? "Actualizare"}
-                        </button>
-                    </div>
-                </>
-            )}
-
             <div className="tab-content">
-                {activeTab === 'extraForm' && selectTicketId && (
+                {activeTab === 'Info' && selectTicketId && (
                     <div className="extra-info-content">
                         <div className="selects-container">
 

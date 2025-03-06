@@ -5,7 +5,7 @@ import { translations } from '../utils/translations';
 import { useUser } from '../../UserContext';
 import { Spin } from '../Spin';
 
-const ChatList = ({ language, setIsLoading }) => {
+const ChatList = ({ setIsLoading }) => {
     const {
         tickets,
         messages,
@@ -23,6 +23,8 @@ const ChatList = ({ language, setIsLoading }) => {
 
     const navigate = useNavigate();
     const ticketRef = useRef(null);
+
+    const language = localStorage.getItem('language') || 'RO';
 
     useEffect(() => {
         setFilteredTickets(tickets);
@@ -149,10 +151,9 @@ const ChatList = ({ language, setIsLoading }) => {
         <div className={`users-container`}>
             <>
                 <div className='header-list-chat'>
-                    <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                    <div style={{ display: "flex", flexDirection: "column" }}>
                         <div className='extra-info-title'>{translations["Chat"][language]}</div>
                         <label className='label-check'>
-                            Leadurile mele
                             {translations["Leadurile mele"][language]}
                             <input
                                 type="checkbox"
