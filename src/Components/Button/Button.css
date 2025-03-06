@@ -2,6 +2,15 @@
   cursor: pointer;
 }
 
+.btn:disabled {
+  background-color: #ddd;
+}
+
+.btn:disabled:hover {
+  background-color: #ddd;
+  cursor: not-allowed;
+}
+
 .danger {
   background-color: #dc3545;
   color: white;
@@ -23,4 +32,14 @@
 
 .primary:hover {
   background-color: #2eab2e;
+}
+
+.default {
+  border: 1px solid #ddd;
+  transition: all 0.3s ease;
+}
+
+.default:hover {
+  border-color: #0f824c;
+  color: #0f824c;
 }

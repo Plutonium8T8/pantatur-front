@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react"
 import "./CustomMultiSelect.css"
+import { Spin } from "../Spin"
 
 import { getLanguageByKey } from "../utils/getLanguageByKey"
 
@@ -7,7 +8,8 @@ const CustomMultiSelect = ({
   options = [],
   placeholder = getLanguageByKey("Select..."),
   onChange,
-  selectedValues = []
+  selectedValues = [],
+  loading
 }) => {
   const [searchTerm, setSearchTerm] = useState("")
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
@@ -50,6 +52,46 @@ const CustomMultiSelect = ({
     option.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
+  // TODO: Display error messages
+  const renderSelectContent = () => {
+    if (loading) {
+      return null
+    }
+
+    if (filteredOptions.length > 0) {
+      return (
+        <>
+          <div className="option select-all" onClick={toggleSelectAll}>
+            <input
+              type="checkbox"
+              checked={selectedValues.length === options.length}
+              readOnly
+            />
+            <span>{getLanguageByKey("Selectează toate")}</span>
+          </div>
+          {filteredOptions.map((option) => (
+            <div
+              key={option}
+              className="option"
+              onClick={() => toggleOption(option)}
+            >
+              <input
+                type="checkbox"
+                checked={selectedValues.includes(option)}
+                readOnly
+              />
+              <span>{option}</span>
+            </div>
+          ))}
+        </>
+      )
+    }
+
+    return (
+      <div className="no-match">{getLanguageByKey("Nu există potriviri")}</div>
+    )
+  }
+
   return (
     <div className="custom-multi-select" ref={dropdownRef}>
       <div
@@ -76,6 +118,8 @@ const CustomMultiSelect = ({
         ) : (
           <span className="placeholder">{placeholder}</span>
         )}
+
+        {loading && <Spin width={10} height={10} stroke={2} />}
       </div>
 
       {isDropdownOpen && (
@@ -87,37 +131,7 @@ const CustomMultiSelect = ({
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <div className="options-list">
-            <div className="option select-all" onClick={toggleSelectAll}>
-              <input
-                type="checkbox"
-                checked={selectedValues.length === options.length}
-                readOnly
-              />
-              <span>{getLanguageByKey("Selectează toate")}</span>
-            </div>
-
-            {filteredOptions.length > 0 ? (
-              filteredOptions.map((option) => (
-                <div
-                  key={option}
-                  className="option"
-                  onClick={() => toggleOption(option)}
-                >
-                  <input
-                    type="checkbox"
-                    checked={selectedValues.includes(option)}
-                    readOnly
-                  />
-                  <span>{option}</span>
-                </div>
-              ))
-            ) : (
-              <div className="no-match">
-                {getLanguageByKey("Nu există potriviri")}
-              </div>
-            )}
-          </div>
+          <div className="options-list">{renderSelectContent()}</div>
         </div>
       )}
     </div>

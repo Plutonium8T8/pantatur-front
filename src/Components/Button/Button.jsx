@@ -12,15 +12,21 @@ export const Button = ({
   onClick,
   className,
   variant = "default",
+  loading,
   ...props
 }) => {
+  const classNames = ["btn", variants[variant], className]
+    .filter(Boolean)
+    .join(" ")
+
   return (
     <button
-      className={`btn ${variants[variant]} ${className}`}
+      disabled={loading}
+      className={classNames}
       onClick={onClick}
       {...props}
     >
-      {children}
+      {loading ? "Loading..." : children}
     </button>
   )
 }

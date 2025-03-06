@@ -1,33 +1,38 @@
+import {
+  MdOutlineKeyboardArrowRight,
+  MdOutlineKeyboardArrowLeft
+} from "react-icons/md"
 import "./Pagination.css"
+import { Button } from "../Button"
 
 export const Pagination = ({ totalPages, currentPage, onPaginationChange }) => {
   const listPages = Array.from({ length: totalPages }, (_, i) => (
-    <button
+    <Button
       key={i}
-      className={currentPage === i + 1 ? "active" : ""}
+      variant={currentPage === i + 1 ? "primary" : "default"}
       onClick={() => onPaginationChange(i + 1)}
     >
       {i + 1}
-    </button>
+    </Button>
   ))
 
   return (
     <div className="pagination">
-      <button
+      <Button
         disabled={currentPage === 1}
         onClick={() => onPaginationChange(currentPage - 1)}
       >
-        {"<"}
-      </button>
+        <MdOutlineKeyboardArrowLeft />
+      </Button>
 
       {listPages}
 
-      <button
+      <Button
         disabled={currentPage === totalPages}
         onClick={() => onPaginationChange(currentPage + 1)}
       >
-        {">"}
-      </button>
+        <MdOutlineKeyboardArrowRight />
+      </Button>
     </div>
   )
 }

@@ -1201,6 +1201,22 @@ export const translations = {
   "Tipul de transport": {
     RO: "Tipul de transport",
     RU: "Тип транспортировки"
+  },
+  General: {
+    RO: "General",
+    RU: "Общий"
+  },
+  Mesaje: {
+    RO: "Mesaje",
+    RU: "Сообщения"
+  },
+  Anuleaza: {
+    RO: "Anulează",
+    RU: "Отменить"
+  },
+  Confirma: {
+    RO: "Confirmă",
+    RU: "Подтвердить"
   }
 }
 

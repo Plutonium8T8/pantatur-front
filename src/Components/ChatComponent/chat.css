@@ -829,14 +829,6 @@ input:checked + .slider:before {
   font-weight: bold;
 }
 
-.toggle-container {
-  display: flex;
-  padding: 10px 0px 10px 0px;
-  margin-top: 10px;
-  justify-content: space-between;
-  align-items: center;
-}
-
 .toggle-label {
   font-size: 18px;
 }
