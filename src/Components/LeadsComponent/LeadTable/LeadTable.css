@@ -6,3 +6,13 @@
   text-wrap: nowrap;
   white-space: nowrap;
 }
+
+.row-id {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.row-id:hover {
+  text-decoration: underline;
+}

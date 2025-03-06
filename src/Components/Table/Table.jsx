@@ -46,7 +46,7 @@ export const Table = ({ data, columns, loading }) => {
         </tbody>
       </table>
 
-      {!loading && !table.getRowModel().rows.length && <Empty />}
+      {!table.getRowModel().rows.length && <Empty />}
     </>
   )
 }

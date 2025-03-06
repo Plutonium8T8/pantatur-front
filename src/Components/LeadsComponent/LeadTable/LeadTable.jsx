@@ -56,7 +56,7 @@ export const LeadTable = ({
           const id = getValue()
           return (
             <div className="text-center">
-              <Link to={`/chat/${id}`} className="lead-row-link">
+              <Link to={`/chat/${id}`} className="row-id">
                 #{id}
               </Link>
             </div>
@@ -359,7 +359,7 @@ export const LeadTable = ({
 
   return (
     <>
-      <Table columns={columns} data={filteredLeads} loading={loading} />
+      <Table columns={columns} data={filteredLeads} />
 
       {/* FIXME: Remove inline style when the layout is fixed */}
       {totalLeads && (
