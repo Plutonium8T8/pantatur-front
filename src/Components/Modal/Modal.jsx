@@ -38,7 +38,7 @@ export const Modal = ({
     }
 
     return (
-      <div className=" modal-btn-footer | d-flex gap-8 justify-content-end">
+      <div className="modal-btn-footer | d-flex gap-8 justify-content-end">
         {actions}
       </div>
     )

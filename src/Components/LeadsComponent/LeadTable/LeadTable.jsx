@@ -9,15 +9,15 @@ import { cleanValue } from "../utils"
 import { workflowStyles } from "../../utils/workflowStyles"
 import "./LeadTable.css"
 import { SpinnerRightBottom } from "../../SpinnerRightBottom"
-import { MAX_PAGE_SIZE } from "../../../app-constants"
+// import { MAX_PAGE_SIZE } from "../../../app-constants"
 import { Pagination } from "../../Pagination"
 import { getLanguageByKey } from "../../utils/getLanguageByKey"
 import { TextEllipsis } from "../../TextEllipsis"
 import { Empty } from "../../Empty"
 
-const getTotalPages = (items) => {
-  return Math.ceil(items / MAX_PAGE_SIZE)
-}
+// const getTotalPages = (items) => {
+//   return Math.ceil(items / MAX_PAGE_SIZE)
+// }
 
 const renderTags = (tags) => {
   const isTags = tags.some(Boolean)
@@ -32,9 +32,7 @@ const renderTags = (tags) => {
 }
 
 export const LeadTable = ({
-  filteredTickets,
   selectedTickets,
-  setCurrentTicket,
   toggleSelectTicket,
   filteredLeads,
   totalLeads,
@@ -42,7 +40,7 @@ export const LeadTable = ({
   currentPage,
   loading
 }) => {
-  const totalNumberPages = getTotalPages(totalLeads)
+  // const totalNumberPages = getTotalPages(totalLeads)
 
   const columns = useMemo(() => {
     return [
@@ -415,10 +413,10 @@ export const LeadTable = ({
       {!loading && !table.getRowModel().rows.length && <Empty />}
 
       {/* FIXME: Remove inline style when the layout is fixed */}
-      {totalNumberPages && (
+      {totalLeads && (
         <div style={{ marginBottom: 10 }}>
           <Pagination
-            totalPages={totalNumberPages}
+            totalPages={totalLeads}
             currentPage={currentPage}
             onPaginationChange={onChangePagination}
           />

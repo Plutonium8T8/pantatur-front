@@ -15,7 +15,7 @@ import { LeadTable } from "./LeadTable"
 import { Button } from "../Button"
 import { api } from "../../api"
 import { useSnackbar } from "notistack"
-import { showServerError } from "../utils/showServerError"
+import { showServerError, getTotalPages } from "../utils"
 
 const SORT_BY = "creation_date"
 const ORDER = "DESC"
@@ -296,12 +296,10 @@ const Leads = () => {
         {isTableView ? (
           <div className="leads-table">
             <LeadTable
-              filteredTickets={filteredTickets}
               selectedTickets={selectedTickets}
-              setCurrentTicket={setCurrentTicket}
               toggleSelectTicket={toggleSelectTicket}
               filteredLeads={hardTickets}
-              totalLeads={totalLeads}
+              totalLeads={getTotalPages(totalLeads)}
               onChangePagination={handlePaginationWorkflow}
               currentPage={currentPage}
               loading={loading}

@@ -52,6 +52,7 @@ const CustomMultiSelect = ({
     option.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
+  // TODO: Display error messages
   const renderSelectContent = () => {
     if (loading) {
       return null
