@@ -17,10 +17,12 @@ const ChatComponent = ({ language }) => {
 
     return (
         <div className="chat-container">
-            <ChatList />
+            <ChatList setIsLoading={setIsLoading} />
+            
             <ChatMessages
                 selectTicketId={selectTicketId}
                 setSelectedClient={setSelectedClient}
+                isLoading={isLoading}
             />
 
             <ChatExtraInfo

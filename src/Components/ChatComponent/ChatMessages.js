@@ -9,8 +9,9 @@ import { api } from '../../api';
 import { FaFacebook, FaViber, FaInstagram, FaWhatsapp, FaTelegram, FaTasks } from 'react-icons/fa';
 import { translations } from '../utils/translations';
 import { templateOptions } from '../../FormOptions/MessageTemplate';
+import { Spin } from '../Spin';
 
-const ChatMessages = ({ selectTicketId, setSelectedClient, selectedClient }) => {
+const ChatMessages = ({ selectTicketId, setSelectedClient, selectedClient, isLoading }) => {
     const { userId } = useUser();
     const {
         messages,
@@ -31,6 +32,7 @@ const ChatMessages = ({ selectTicketId, setSelectedClient, selectedClient }) => 
     const fileInputRef = useRef(null);
     const reactionContainerRef = useRef(null);
     const [personalInfo, setPersonalInfo] = useState({});
+
     const platformIcons = {
         "facebook": <FaFacebook />,
         "instagram": <FaInstagram />,
@@ -301,9 +303,12 @@ const ChatMessages = ({ selectTicketId, setSelectedClient, selectedClient }) => 
     return (
         <div className="chat-area">
             <div className="chat-messages" ref={messageContainerRef}>
-                {selectTicketId ? (
+                {isLoading ? (
+                    <div className="spinner-container">
+                        <Spin />
+                    </div>
+                ) : selectTicketId ? (
                     (() => {
-
                         const parseDate = (dateString) => {
                             if (!dateString) return null;
                             const parts = dateString.split(" ");
@@ -318,7 +323,6 @@ const ChatMessages = ({ selectTicketId, setSelectedClient, selectedClient }) => 
                         const sortedMessages = messages
                             .filter(msg => msg.ticket_id === selectTicketId)
                             .sort((a, b) => parseDate(a.time_sent) - parseDate(b.time_sent));
-
 
                         const groupedMessages = sortedMessages.reduce((acc, msg) => {
                             const messageDate = parseDate(msg.time_sent)?.toLocaleDateString("ru-RU", {
