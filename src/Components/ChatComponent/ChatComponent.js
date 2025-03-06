@@ -5,6 +5,7 @@ import './chat.css';
 import ChatExtraInfo from './ChatExtraInfo';
 import ChatList from './ChatList';
 import ChatMessages from './ChatMessages';
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 
 const ChatComponent = () => {
     const { tickets, updateTicket, setTickets, messages, selectTicketId } = useAppContext();
@@ -12,12 +13,20 @@ const ChatComponent = () => {
     const { ticketId } = useParams();
     const [isLoading, setIsLoading] = useState(false);
     const [selectedClient, setSelectedClient] = useState("");
+    const [isChatListVisible, setIsChatListVisible] = useState(true);
 
     const updatedTicket = tickets.find(ticket => ticket.id === selectTicketId) || null;
 
     return (
         <div className="chat-container">
-            <ChatList setIsLoading={setIsLoading} />
+            <button
+                className="toggle-chat-list-button"
+                onClick={() => setIsChatListVisible(prev => !prev)}
+            >
+                {isChatListVisible ? <FaArrowLeft /> : <FaArrowRight />}
+            </button>
+
+            {isChatListVisible && <ChatList setIsLoading={setIsLoading} />}
 
             <ChatMessages
                 selectTicketId={selectTicketId}
