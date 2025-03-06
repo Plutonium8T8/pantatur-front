@@ -3,49 +3,16 @@ import TicketCard from "./TicketCardComponent"
 import { workflowStyles, workflowBrightStyles } from "../utils/workflowStyles"
 import { getLanguageByKey } from "../utils/getLanguageByKey"
 
-const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket }) => {
-  const parseTags = (tags) => {
-    if (Array.isArray(tags)) {
-      return tags
-    }
-    if (
-      typeof tags === "string" &&
-      tags.startsWith("{") &&
-      tags.endsWith("}")
-    ) {
-      const content = tags.slice(1, -1).trim()
-      if (content === "") {
-        return []
-      }
-      return content.split(",").map((tag) => tag.trim())
-    }
-    return []
-  }
+const priorityOrder = {
+  joasă: 1,
+  medie: 2,
+  înaltă: 3,
+  critică: 4
+}
 
-  const priorityOrder = {
-    joasă: 1,
-    medie: 2,
-    înaltă: 3,
-    critică: 4
-  }
-
+const filterTickets = (workflow, tickets) => {
   const filteredTickets = tickets
     .filter((ticket) => ticket.workflow === workflow)
-    .filter((ticket) => {
-      const ticketPhone = ticket.phone
-        ? ticket.phone.replace(/[{}]/g, "").trim()
-        : ""
-
-      return (
-        ticket.contact?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        ticket.id?.toString().includes(searchTerm) ||
-        parseTags(ticket.tags).some((tag) =>
-          tag.toLowerCase().includes(searchTerm.toLowerCase())
-        ) ||
-        ticketPhone.includes(searchTerm) ||
-        searchTerm.trim() === ""
-      )
-    })
     .sort((a, b) => {
       const priorityDiff =
         (priorityOrder[b.priority] || 5) - (priorityOrder[a.priority] || 5)
@@ -64,6 +31,12 @@ const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket }) => {
 
       return dateB - dateA
     })
+
+  return filteredTickets
+}
+
+const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket }) => {
+  const filteredTickets = filterTickets(workflow, tickets)
 
   return (
     <div

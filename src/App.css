@@ -135,11 +135,6 @@
   margin-bottom: 15px;
 }
 
-.search-input:focus {
-  border-color: #0f824c;
-  outline: none;
-}
-
 .container-name-header {
   font-size: 24px;
 }
@@ -391,18 +386,7 @@ button {
 }
 
 .search-input {
-  display: flex;
   min-width: 550px;
-  padding: 10px 15px;
-  padding-left: 40px;
-  font-size: 18px;
-  border: 2px solid #ddd;
-  border-radius: 6px;
-  outline: none;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
-  color: #333;
 }
 
 .chat-modal {

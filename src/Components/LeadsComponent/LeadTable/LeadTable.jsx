@@ -362,7 +362,7 @@ export const LeadTable = ({
       <Table columns={columns} data={filteredLeads} />
 
       {/* FIXME: Remove inline style when the layout is fixed */}
-      {totalLeads && (
+      {!!totalLeads && (
         <div style={{ marginBottom: 10 }}>
           <Pagination
             totalPages={totalLeads}

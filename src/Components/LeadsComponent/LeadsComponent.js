@@ -16,6 +16,8 @@ import { Button } from "../Button"
 import { api } from "../../api"
 import { useSnackbar } from "notistack"
 import { showServerError, getTotalPages } from "../utils"
+import { Input } from "../Input"
+import { useDebounce } from "../../hooks"
 
 const SORT_BY = "creation_date"
 const ORDER = "DESC"
@@ -66,6 +68,7 @@ const Leads = () => {
     tags: "",
     platform: []
   })
+  const debouncedSearch = useDebounce(searchTerm)
 
   const filteredTickets = useMemo(() => {
     let result = tickets
@@ -127,13 +130,12 @@ const Leads = () => {
     cb,
     showModalLoading
   ) => {
-    if (showModalLoading) {
-      setLoadingFilters(true)
-    } else {
-      setLoading(true)
-    }
-
     try {
+      if (showModalLoading) {
+        setLoadingFilters(true)
+      } else {
+        setLoading(true)
+      }
       const hardTicket = await api.tickets.filters({
         page,
         sort_by: sortBy,
@@ -190,7 +192,7 @@ const Leads = () => {
     fetchTickets(
       { page: NUMBER_PAGE, type: LIGHT_TICKET, attributes: formattedFilters },
       ({ data }) => {
-        applyWorkflowFilters(formattedFilters, data.length > 0 ? data : [])
+        applyWorkflowFilters(filters, data)
       }
     )
   }
@@ -209,7 +211,10 @@ const Leads = () => {
   useEffect(() => {
     if (isTableView) {
       fetchTickets(
-        { type: HARD_TICKET, page: currentPage },
+        {
+          type: HARD_TICKET,
+          page: currentPage
+        },
         ({ data, pagination }) => {
           setHardTickets(data)
           setTotalLeads(pagination.total)
@@ -218,6 +223,28 @@ const Leads = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isTableView])
+
+  useEffect(() => {
+    fetchTickets(
+      {
+        type: isTableView ? HARD_TICKET : LIGHT_TICKET,
+        page: currentPage,
+        attributes: {
+          search: debouncedSearch
+        }
+      },
+      ({ data, pagination }) => {
+        setTotalLeads(pagination.total)
+
+        if (isTableView) {
+          setHardTickets(data)
+          return
+        }
+        applyWorkflowFilters(filters, data)
+      }
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedSearch])
 
   return (
     <>
@@ -231,12 +258,12 @@ const Leads = () => {
             {getLanguageByKey("Adaugă lead")}
           </Button>
 
-          <input
-            type="text"
+          <Input
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(value) => setSearchTerm(value)}
             placeholder={getLanguageByKey("Cauta dupa Lead, Client sau Tag")}
             className="search-input"
+            clear
           />
           <button
             onClick={() => setIsTableView((prev) => !prev)}
@@ -296,13 +323,13 @@ const Leads = () => {
         {isTableView ? (
           <div className="leads-table">
             <LeadTable
+              loading={loading}
+              currentPage={currentPage}
+              filteredLeads={hardTickets}
               selectedTickets={selectedTickets}
               toggleSelectTicket={toggleSelectTicket}
-              filteredLeads={hardTickets}
               totalLeads={getTotalPages(totalLeads)}
               onChangePagination={handlePaginationWorkflow}
-              currentPage={currentPage}
-              loading={loading}
             />
           </div>
         ) : (
@@ -314,7 +341,7 @@ const Leads = () => {
                   key={workflow}
                   workflow={workflow}
                   tickets={filteredTickets}
-                  searchTerm={searchTerm}
+                  searchTerm={debouncedSearch}
                   onEditTicket={(ticket) => {
                     setCurrentTicket(ticket)
                     setIsModalOpen(true)

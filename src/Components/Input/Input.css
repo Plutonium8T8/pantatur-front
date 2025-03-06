@@ -1,0 +1,26 @@
+.input {
+  position: relative;
+}
+
+.input input {
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 16px;
+  
+  border: 1px solid #ccc;
+  background-color: #fff;
+  color: #333;
+}
+
+.input:focus {
+  border-color: #0f824c;
+  outline: none;
+}
+
+.input .clear {
+  position: absolute;
+  top: 0;
+  right: 10px;
+  transform: translateY(50%);
+  cursor: pointer;
+}
