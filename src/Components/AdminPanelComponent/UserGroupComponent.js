@@ -5,6 +5,7 @@ import { translations } from "../utils/translations"
 import { api } from "../../api"
 import { useSnackbar } from "notistack"
 import { getLanguageByKey } from "../utils/getLanguageByKey"
+import { Input } from "../Input"
 
 const UserGroupComponent = ({ onChange, userId, roles }) => {
   const language = localStorage.getItem("language") || "RO"
@@ -131,14 +132,12 @@ const UserGroupComponent = ({ onChange, userId, roles }) => {
         ))}
       </div>
       <div className="input-group">
-        <input
-          type="text"
+        <Input
           value={inputValue}
           onChange={handleInputChange}
           onFocus={handleFocus}
           onBlur={handleBlur}
           placeholder={translations["Introduce un grup"][language]}
-          className="userGroup-input"
         />
       </div>
       <div className="button-container">

@@ -54,10 +54,6 @@
   width: 100%;
 }
 
-.userGroup-input {
-  width: 100%;
-}
-
 .input-group {
   width: 100%;
 }
@@ -65,10 +61,6 @@
 .tag-input-container .input-group,
 .userGroup-input-container .input-group {
   width: 100%;
-}
-
-.userGroup-input-container .input-group .userGroup-input {
-  width: auto;
 }
 
 .container-select-priority-workflow {
@@ -111,7 +103,6 @@
   padding-left: 6px;
 }
 
-.userGroup-input,
 .technician-select,
 .task-select,
 .ticket-filter-input,
@@ -128,7 +119,6 @@
     box-shadow 0.3s ease;
 }
 
-.userGroup-input:focus,
 .textarea-input:focus {
   border-color: #0f824c;
   box-shadow: 0 0 4px rgba(15, 130, 76, 0.5);
