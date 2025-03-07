@@ -49,10 +49,11 @@ const ChatList = ({ setIsLoading, selectTicketId, setSelectTicketId }) => {
     };
 
     const handleTicketClick = (ticketId) => {
+        console.log("🖱 Клик по тикету в списке:", ticketId);
+
         if (selectTicketId === ticketId) return;
 
         setSelectTicketId(ticketId);
-        navigate(`/chat/${ticketId}`);
     };
 
     const sortedTickets = useMemo(() => {

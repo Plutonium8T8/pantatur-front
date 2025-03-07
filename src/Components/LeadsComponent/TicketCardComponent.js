@@ -8,7 +8,6 @@ const TicketCard = ({ ticket, onEditTicket }) => {
     const [isHovered, setIsHovered] = useState(false);
     const tags = parseTags(ticket.tags);
 
-    // Удаляем `{}` из номера телефона
     const formattedPhone = ticket.phone && ticket.phone.trim() !== "" && ticket.phone.replace(/[{}]/g, "").trim().toLowerCase() !== "null"
         ? ticket.phone.replace(/[{}]/g, "").trim()
         : "Unknown number";
@@ -19,7 +18,6 @@ const TicketCard = ({ ticket, onEditTicket }) => {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
-            {/* Кнопка редактирования (показывается при наведении) */}
             {isHovered && (
                 <button className="edit-button" onClick={() => onEditTicket(ticket)}>
                     ✏️ Edit

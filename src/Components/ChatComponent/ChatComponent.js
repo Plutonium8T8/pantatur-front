@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../AppContext';
 import './chat.css';
 import ChatExtraInfo from './ChatExtraInfo';
@@ -9,24 +9,37 @@ import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import { useUser } from '../../UserContext';
 
 const ChatComponent = () => {
-    const { tickets, updateTicket, setTickets, messages, markMessagesAsRead } = useAppContext();
+    const { tickets, updateTicket, setTickets, messages, markMessagesAsRead, getClientMessagesSingle } = useAppContext();
     const { ticketId } = useParams();
+    const navigate = useNavigate();
     const { userId } = useUser();
-    const [selectTicketId, setSelectTicketId] = useState(ticketId || null);
+    const [selectTicketId, setSelectTicketId] = useState(ticketId ? Number(ticketId) : null);
     const [personalInfo, setPersonalInfo] = useState({});
     const [isLoading, setIsLoading] = useState(false);
     const [selectedClient, setSelectedClient] = useState("");
     const [isChatListVisible, setIsChatListVisible] = useState(true);
 
     useEffect(() => {
-        if (selectTicketId) {
-            const unreadMessages = messages.some(msg => msg.ticket_id === selectTicketId && msg.seen_by === '{}' && msg.sender_id !== userId);
-            if (unreadMessages) {
-                markMessagesAsRead(selectTicketId);
-            }
+        if (ticketId && Number(ticketId) !== selectTicketId) {
+            setSelectTicketId(Number(ticketId));
         }
-    }, [selectTicketId, messages]);
+    }, [ticketId]);
 
+    useEffect(() => {
+        if (!selectTicketId) return;
+
+        console.log("📩 Загрузка сообщений для тикета:", selectTicketId);
+        getClientMessagesSingle(selectTicketId);
+        markMessagesAsRead(selectTicketId);
+    }, [selectTicketId]);
+
+    const handleSelectTicket = (ticketId) => {
+        console.log("🎯 Клик по тикету:", ticketId);
+        if (selectTicketId !== ticketId) {
+            setSelectTicketId(ticketId);
+            navigate(`/chat/${ticketId}`);
+        }
+    };
 
     const updatedTicket = tickets.find(ticket => ticket.id === selectTicketId) || null;
 
@@ -43,7 +56,7 @@ const ChatComponent = () => {
                 <ChatList
                     setIsLoading={setIsLoading}
                     selectTicketId={selectTicketId}
-                    setSelectTicketId={setSelectTicketId}
+                    setSelectTicketId={handleSelectTicket}
                 />
             )}
 
@@ -60,7 +73,7 @@ const ChatComponent = () => {
                 selectedClient={selectedClient}
                 ticketId={ticketId}
                 selectTicketId={selectTicketId}
-                setSelectTicketId={setSelectTicketId}
+                setSelectTicketId={handleSelectTicket}
                 tickets={tickets}
                 updatedTicket={updatedTicket}
                 updateTicket={updateTicket}
