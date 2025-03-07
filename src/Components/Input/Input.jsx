@@ -8,12 +8,15 @@ export const Input = ({
   className,
   clear,
   type = "text",
+  isError,
   ...props
 }) => {
-  const classNames = ["input", className].filter(Boolean).join(" ")
+  const classNames = ["input", isError ? "error" : false, className]
+    .filter(Boolean)
+    .join(" ")
 
   return (
-    <div className="input">
+    <div className="input-container">
       <input
         type={type}
         value={value}

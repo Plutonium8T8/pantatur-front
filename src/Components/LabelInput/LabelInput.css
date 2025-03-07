@@ -1,0 +1,21 @@
+.input-label-error {
+  color: #dc3545;
+}
+
+.input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.currency-symbol {
+  position: absolute;
+  left: 10px;
+  color: #666;
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.currency-input {
+  padding-left: 25px;
+}

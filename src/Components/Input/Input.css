@@ -1,8 +1,8 @@
-.input {
+.input-container {
   position: relative;
 }
 
-.input input {
+.input-container .input {
   padding: 8px;
   border-radius: 4px;
   font-size: 16px;
@@ -15,6 +15,10 @@
   transition: border-color 0.3s;
 }
 
+.input-container .input.error {
+  border-color: #dc3545;
+}
+
 .input:focus {
   border-color: #0f824c;
   outline: none;
@@ -25,12 +29,13 @@
 }
 
 .input:disabled {
+  background-color: #f9f9f9;
+  border-color: #ddd;
+  color: #aaa;
   cursor: not-allowed;
-  background-color: #a7a7a7;
-  border-color: #a7a7a7;
 }
 
-.input .clear {
+.input-container .clear {
   position: absolute;
   top: 0;
   right: 10px;

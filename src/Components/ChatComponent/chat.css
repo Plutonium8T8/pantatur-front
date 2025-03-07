@@ -572,12 +572,6 @@
   height: auto;
 }
 
-.personal-data-container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
 .text-message {
   word-wrap: break-word;
   overflow-wrap: break-word;

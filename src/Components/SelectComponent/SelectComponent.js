@@ -22,7 +22,7 @@ const Select = ({
   const language = localStorage.getItem("language") || "RO"
 
   return (
-    <div className={`input-group ${hasError ? "invalid-field" : ""}`}>
+    <div className={`input-group ${hasError ? "invalid-field" : ""} mb-16`}>
       <label htmlFor={id}>{translations[label]?.[language] ?? label}</label>
       <select
         id={id}

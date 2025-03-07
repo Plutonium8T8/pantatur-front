@@ -21,7 +21,7 @@ import { sourceOfLeadOptions } from "../../FormOptions/SourceOfLeadOptions"
 import { promoOptions } from "../../FormOptions/PromoOptions"
 import { templateOptions } from "../../FormOptions/MessageTemplate"
 import TechnicianSelect from "../../FormOptions/ResponsabilLead"
-import Input from "../InputComponent/InputComponent"
+import { LabelInput } from "../LabelInput"
 import Workflow from "../WorkFlowComponent/WorkflowComponent"
 import "react-datepicker/dist/react-datepicker.css"
 import { useAppContext } from "../../AppContext"
@@ -43,7 +43,7 @@ import { api } from "../../api"
 import { showServerError } from "../../Components/utils/showServerError"
 import { Button } from "../Button"
 import ToggleSwitch from "../ToggleComponent/ToggleSwitch"
-import { Input as BaseInput } from "../Input"
+import { Input } from "../Input"
 
 const ChatComponent = ({}) => {
   const { userId, hasRole, isLoadingRoles } = useUser()
@@ -1114,7 +1114,7 @@ const ChatComponent = ({}) => {
               </div>
 
               <div className="filter-container-chat">
-                <BaseInput
+                <Input
                   type="text"
                   placeholder={
                     translations["Cauta dupa Lead, Client sau Tag"][language]
@@ -1702,12 +1702,14 @@ const ChatComponent = ({}) => {
                 {isLoading ? (
                   <p>Loading...</p>
                 ) : (
-                  <TechnicianSelect
-                    selectedTechnicianId={updatedTicket?.technician_id}
-                    onTechnicianChange={handleTechnicianChange}
-                  />
+                  <div className="mb-16">
+                    <TechnicianSelect
+                      selectedTechnicianId={updatedTicket?.technician_id}
+                      onTechnicianChange={handleTechnicianChange}
+                    />
+                  </div>
                 )}
-                <Input
+                <LabelInput
                   label="Vânzare €"
                   type="number"
                   value={extraInfo[selectTicketId]?.buget || ""}
@@ -1716,7 +1718,7 @@ const ChatComponent = ({}) => {
                   placeholder="Indicați suma în euro"
                   id="buget-input"
                 />
-                <Input
+                <LabelInput
                   label="Data venit in oficiu"
                   type="datetime-local"
                   value={extraInfo[selectTicketId]?.data_venit_in_oficiu || ""}
@@ -1746,7 +1748,7 @@ const ChatComponent = ({}) => {
                   }
                   disabled={true}
                 />
-                <Input
+                <LabelInput
                   label="Data și ora plecării"
                   type="datetime-local"
                   value={extraInfo[selectTicketId]?.data_plecarii || ""}
@@ -1756,7 +1758,7 @@ const ChatComponent = ({}) => {
                   className={`input-field ${fieldErrors.data_plecarii ? "invalid-field" : ""}`}
                 />
 
-                <Input
+                <LabelInput
                   label="Data și ora întoarcerii"
                   type="datetime-local"
                   value={extraInfo[selectTicketId]?.data_intoarcerii || ""}
@@ -1848,7 +1850,7 @@ const ChatComponent = ({}) => {
                   }
                   hasError={fieldErrors.procesarea_achizitionarii}
                 />
-                <Input
+                <LabelInput
                   label="Data cererii de retur"
                   type="datetime-local"
                   value={extraInfo[selectTicketId]?.data_cererii_de_retur || ""}
@@ -1863,7 +1865,7 @@ const ChatComponent = ({}) => {
                 />
               </div>
               <div className="merge-tickets">
-                <BaseInput
+                <Input
                   type="number"
                   value={ticketId}
                   onChange={(e) =>
@@ -1877,7 +1879,7 @@ const ChatComponent = ({}) => {
                   placeholder="Introduceți ID vechi"
                   disabled
                 />
-                <BaseInput
+                <Input
                   type="number"
                   value={extraInfo[selectTicketId]?.ticket_id_new || ""}
                   onChange={(e) =>
@@ -1903,7 +1905,7 @@ const ChatComponent = ({}) => {
                   onSubmit={handlePersonalDataSubmit}
                   className="personal-data-container"
                 >
-                  <Input
+                  <LabelInput
                     label="Nume"
                     type="text"
                     value={personalInfo[selectedClient]?.name ?? ""}
@@ -1913,7 +1915,7 @@ const ChatComponent = ({}) => {
                     className="input-field"
                     placeholder="Nume"
                   />
-                  <Input
+                  <LabelInput
                     label="Prenume"
                     type="text"
                     value={personalInfo[selectedClient]?.surname ?? ""}
@@ -1927,7 +1929,7 @@ const ChatComponent = ({}) => {
                     className="input-field"
                     placeholder="Prenume"
                   />
-                  <Input
+                  <LabelInput
                     label="Adresă"
                     type="text"
                     value={personalInfo[selectedClient]?.address ?? ""}
@@ -1941,8 +1943,7 @@ const ChatComponent = ({}) => {
                     className="input-field"
                     placeholder="Adresă"
                   />
-                  <Input
-                    style={{ border: "1px solid red" }}
+                  <LabelInput
                     label="Telefon"
                     type="tel"
                     value={personalInfo[selectedClient]?.phone ?? ""}
@@ -1956,18 +1957,22 @@ const ChatComponent = ({}) => {
                     className="input-field"
                     placeholder="Telefon"
                   />
-                  <button type="submit" className="submit-button">
+                  <button
+                    style={{ width: "100%" }}
+                    type="submit"
+                    className="submit-button"
+                  >
                     {translations["Salvați datele personale"][language]}
                   </button>
                 </form>
                 <div className="merge-client">
-                  <BaseInput
+                  <Input
                     type="number"
                     value={selectedClient}
                     placeholder="Introduceți ID vechi"
                     disabled
                   />
-                  <BaseInput
+                  <Input
                     type="number"
                     value={extraInfo[selectedClient]?.new_user_id || ""}
                     onChange={(e) =>
@@ -1993,7 +1998,7 @@ const ChatComponent = ({}) => {
           )}
           {activeTab === "Contract" && selectTicketId && (
             <div className="extra-info-content">
-              <Input
+              <LabelInput
                 label="Nr de contract"
                 type="text"
                 value={extraInfo[selectTicketId]?.numar_de_contract || ""}
@@ -2005,7 +2010,7 @@ const ChatComponent = ({}) => {
                 id="contract-number-input"
               />
 
-              <Input
+              <LabelInput
                 label="Data contractului"
                 type="date"
                 value={extraInfo[selectTicketId]?.data_contractului || ""}
@@ -2033,7 +2038,7 @@ const ChatComponent = ({}) => {
                 className={fieldErrors.contract_semnat ? "invalid-toggle" : ""}
               />
 
-              <Input
+              <LabelInput
                 label="Operator turistic"
                 type="text"
                 value={extraInfo[selectTicketId]?.tour_operator || ""}
@@ -2045,7 +2050,7 @@ const ChatComponent = ({}) => {
                 id="tour-operator-input"
               />
 
-              <Input
+              <LabelInput
                 label="Nr cererii de la operator"
                 type="text"
                 value={
@@ -2106,7 +2111,7 @@ const ChatComponent = ({}) => {
                 }
                 hasError={fieldErrors.statutul_platii}
               />
-              <Input
+              <LabelInput
                 label="Avans euro €"
                 value={extraInfo[selectTicketId]?.avans_euro || ""}
                 onChange={(e) =>
@@ -2120,7 +2125,7 @@ const ChatComponent = ({}) => {
                 placeholder="Avans euro"
                 id="price-neto-input"
               />
-              <Input
+              <LabelInput
                 label="Data avansului"
                 type="date"
                 value={extraInfo[selectTicketId]?.data_avansului || ""}
@@ -2133,7 +2138,7 @@ const ChatComponent = ({}) => {
                 }
                 className="input-field"
               />
-              <Input
+              <LabelInput
                 label="Data de plată integrală"
                 type="date"
                 value={extraInfo[selectTicketId]?.data_de_plata_integrala || ""}
@@ -2146,7 +2151,7 @@ const ChatComponent = ({}) => {
                 }
                 className="input-field"
               />
-              <Input
+              <LabelInput
                 label="Preț NETTO €"
                 value={extraInfo[selectTicketId]?.pret_netto || ""}
                 onChange={(e) =>
@@ -2156,7 +2161,7 @@ const ChatComponent = ({}) => {
                 placeholder="Preț netto (euro)"
                 id="price-neto-input"
               />
-              <Input
+              <LabelInput
                 label="Achitat client"
                 value={extraInfo[selectTicketId]?.achitat_client || ""}
                 onChange={(e) =>
@@ -2170,7 +2175,7 @@ const ChatComponent = ({}) => {
                 placeholder="Achitat client"
                 id="achitat-client"
               />
-              <Input
+              <LabelInput
                 label="Restanță client"
                 value={extraInfo[selectTicketId]?.restant_client || ""}
                 onChange={(e) =>
@@ -2185,7 +2190,7 @@ const ChatComponent = ({}) => {
                 id="price-neto-input"
                 disabled={true}
               />
-              <Input
+              <LabelInput
                 label="Comision companie €"
                 value={extraInfo[selectTicketId]?.comission_companie || ""}
                 onChange={(e) =>
@@ -2196,7 +2201,7 @@ const ChatComponent = ({}) => {
                 id="commission-input"
                 disabled={true}
               />
-              <Input
+              <LabelInput
                 label="Statut achitare"
                 value={extraInfo[selectTicketId]?.restant_client || ""}
                 onChange={(e) =>
@@ -2229,7 +2234,7 @@ const ChatComponent = ({}) => {
           )}
           {activeTab === "Invoice" && selectTicketId && (
             <div className="extra-info-content">
-              <Input
+              <LabelInput
                 label="F/service"
                 value={extraInfo[selectTicketId]?.f_serviciu || ""}
                 onChange={(e) =>
@@ -2243,7 +2248,7 @@ const ChatComponent = ({}) => {
                 placeholder="F/service"
                 id="f_serviciu"
               />
-              <Input
+              <LabelInput
                 label="F/factura"
                 value={extraInfo[selectTicketId]?.f_nr_factura || ""}
                 onChange={(e) =>
@@ -2257,7 +2262,7 @@ const ChatComponent = ({}) => {
                 placeholder="F/factura"
                 id="f_nr_factura"
               />
-              <Input
+              <LabelInput
                 label="F/numarul"
                 value={extraInfo[selectTicketId]?.f_numarul || ""}
                 onChange={(e) =>
@@ -2271,7 +2276,7 @@ const ChatComponent = ({}) => {
                 placeholder="F/numarul"
                 id="f_numarul"
               />
-              <Input
+              <LabelInput
                 label="F/preț"
                 value={extraInfo[selectTicketId]?.f_pret || ""}
                 onChange={(e) =>
@@ -2285,7 +2290,7 @@ const ChatComponent = ({}) => {
                 placeholder="F/preț"
                 id="f_pret"
               />
-              <Input
+              <LabelInput
                 label="F/sumă"
                 value={extraInfo[selectTicketId]?.f_suma || ""}
                 onChange={(e) =>
@@ -2439,7 +2444,7 @@ const ChatComponent = ({}) => {
                   )
                 }
               />
-              <Input
+              <LabelInput
                 label="Următoarea vacanță"
                 value={extraInfo[selectTicketId]?.urmatoarea_vacanta || ""}
                 onChange={(e) =>
@@ -2453,7 +2458,7 @@ const ChatComponent = ({}) => {
                 placeholder="Următoarea vacanță"
                 id="urmatoarea_vacanta"
               />
-              <Input
+              <LabelInput
                 label="Manager"
                 value={extraInfo[selectTicketId]?.manager || ""}
                 onChange={(e) =>
@@ -2467,7 +2472,7 @@ const ChatComponent = ({}) => {
                 placeholder="Manager"
                 id="manager"
               />
-              <Input
+              <LabelInput
                 label="Vacanța"
                 value={extraInfo[selectTicketId]?.vacanta || ""}
                 onChange={(e) =>

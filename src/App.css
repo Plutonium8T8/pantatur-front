@@ -617,6 +617,10 @@ input {
   margin-bottom: 24px;
 }
 
+.mb-8 {
+  margin-bottom: 8px;
+}
+
 .white-space-nowrap {
   white-space: nowrap;
 }
