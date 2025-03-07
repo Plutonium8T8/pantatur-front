@@ -9,7 +9,7 @@ import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import { useUser } from '../../UserContext';
 
 const ChatComponent = () => {
-    const { tickets, updateTicket, setTickets, messages, markMessagesAsRead, getClientMessagesSingle } = useAppContext();
+    const { tickets, updateTicket, setTickets, messages, markMessagesAsRead } = useAppContext();
     const { ticketId } = useParams();
     const navigate = useNavigate();
     const { userId } = useUser();
@@ -35,7 +35,6 @@ const ChatComponent = () => {
                 msg.sender_id !== userId
         );
 
-        // Если есть непрочитанные сообщения, вызываем markMessagesAsRead
         if (unreadMessages.length > 0) {
             console.log(`🔵 ${unreadMessages.length} непрочитанных сообщений в тикете #${selectTicketId}, помечаем как прочитанные`);
             markMessagesAsRead(selectTicketId);
