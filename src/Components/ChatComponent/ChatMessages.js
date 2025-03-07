@@ -273,19 +273,6 @@ const ChatMessages = ({
         }
     };
 
-    // useEffect(() => {
-    //     if (!selectTicketId || !messages.length) return;
-
-    //     const unreadMessages = messages.filter(
-    //         msg => msg.ticket_id === selectTicketId && msg.seen_by === '{}' && msg.sender_id !== userId
-    //     );
-
-    //     if (unreadMessages.length > 0) {
-    //         console.log(`🔵 ${unreadMessages.length} непрочитанных сообщений в тикете #${selectTicketId}, помечаем как прочитанные`);
-    //         markMessagesAsRead(selectTicketId);
-    //     }
-    // }, [messages, selectTicketId, markMessagesAsRead, userId]);
-
     useEffect(() => {
         const newPersonalInfo = {};
 
