@@ -351,7 +351,7 @@ const Leads = () => {
           </div>
         )}
 
-        {isLoading && <SpinnerRightBottom />}
+        {(isLoading || loading) && <SpinnerRightBottom />}
         {isModalOpen && currentTicket && (
           <TicketModal
             ticket={currentTicket}
