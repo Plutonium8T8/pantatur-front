@@ -29,7 +29,7 @@ const ChatList = ({ setIsLoading, selectTicketId, setSelectTicketId }) => {
 
                 container.scrollTo({
                     top: scrollTop,
-                    behavior: 'smooth'
+                    // behavior: 'smooth'
                 });
             }
         }

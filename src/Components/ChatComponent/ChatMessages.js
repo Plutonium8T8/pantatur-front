@@ -300,15 +300,13 @@ const ChatMessages = ({
         setPersonalInfo(newPersonalInfo);
     }, [tickets]);
 
-    // Проверка, находится ли пользователь внизу чата
     const handleScroll = () => {
         if (messageContainerRef.current) {
             const { scrollTop, scrollHeight, clientHeight } = messageContainerRef.current;
-            setIsUserAtBottom(scrollHeight - scrollTop <= clientHeight + 50); // небольшая погрешность
+            setIsUserAtBottom(scrollHeight - scrollTop <= clientHeight + 50);
         }
     };
 
-    // Прокрутка вниз только если пользователь внизу чата
     useEffect(() => {
         if (isUserAtBottom && messageContainerRef.current) {
             messageContainerRef.current.scrollTo({
@@ -318,7 +316,6 @@ const ChatMessages = ({
         }
     }, [messages, selectTicketId]);
 
-    // Добавляем обработчик скролла
     useEffect(() => {
         const container = messageContainerRef.current;
         if (container) {
