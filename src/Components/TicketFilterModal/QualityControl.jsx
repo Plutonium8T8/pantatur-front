@@ -1,15 +1,16 @@
-import { getLanguageByKey } from "../utils/getLanguageByKey";
-import CustomMultiSelect from "../MultipleSelect/MultipleSelect";
-import { motivulRefuzuluiOptions } from "../../FormOptions/MotivulRefuzuluiOptions";
-import { evaluareOdihnaOptions } from "../../FormOptions/EvaluareVacantaOptions";
+import { getLanguageByKey } from "../utils/getLanguageByKey"
+import CustomMultiSelect from "../MultipleSelect/MultipleSelect"
+import { motivulRefuzuluiOptions } from "../../FormOptions/MotivulRefuzuluiOptions"
+import { evaluareOdihnaOptions } from "../../FormOptions/EvaluareVacantaOptions"
+import { Input } from "../Input"
 
 export const QualityControl = ({
   handleMultiSelectChange,
   handleInputChange,
-  filters,
+  filters
 }) => {
   return (
-    <div  className="container-extra-group">
+    <div className="container-extra-group">
       <h3>{getLanguageByKey("Control calitate")}</h3>
 
       <label>{getLanguageByKey("Motivul refuzului")}</label>
@@ -31,33 +32,27 @@ export const QualityControl = ({
         selectedValues={filters.evaluare_de_odihna}
       />
       <label htmlFor="id">{getLanguageByKey("Următoarea vacanță")}</label>
-      <input
+      <Input
         id="id"
-        type="text"
         name="urmatoarea_vacanta"
         value={filters.urmatoarea_vacanta || ""}
         onChange={handleInputChange}
         placeholder={getLanguageByKey("Următoarea vacanță")}
-        className={filters.urmatoarea_vacanta ? "filled-field" : ""}
       />
       <label>{getLanguageByKey("Manager")}</label>
-      <input
-        type="text"
+      <Input
         name="manager"
         value={filters.manager || ""}
         onChange={handleInputChange}
         placeholder={getLanguageByKey("Manager")}
-        className={filters.manager ? "filled-field" : ""}
       />
       <label>{getLanguageByKey("Vacanța")}</label>
-      <input
-        type="text"
+      <Input
         name="vacanta"
         value={filters.vacanta || ""}
         onChange={handleInputChange}
         placeholder={getLanguageByKey("Vacanța")}
-        className={filters.vacanta ? "filled-field" : ""}
       />
     </div>
-  );
-};
+  )
+}

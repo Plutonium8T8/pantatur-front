@@ -22,6 +22,7 @@ import UserPage from "./Components/UserPage/UserPage"
 import { NavigationProvider } from "./NavigationContext"
 import { api } from "./api"
 import { SpinnerRightBottom } from "./Components/SpinnerRightBottom"
+import "./reset.css"
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)

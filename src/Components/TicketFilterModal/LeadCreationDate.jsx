@@ -13,6 +13,7 @@ import { purchaseProcessingOptions } from "../../FormOptions/PurchaseProcessingO
 import { api } from "../../api"
 import { useSnackbar } from "notistack"
 import { showServerError } from "../utils/showServerError"
+import { Input } from "../Input"
 
 export const LeadCreationDate = ({
   handleInputChange,
@@ -80,13 +81,11 @@ export const LeadCreationDate = ({
       />
 
       <label>{getLanguageByKey("Tag-uri")}</label>
-      <input
-        type="text"
+      <Input
         name="tags"
         value={filters.tags.length > 0 ? filters.tags.join(", ") : ""}
         onChange={handleInputChange}
         placeholder={getLanguageByKey("Introdu tag-uri separate prin virgule")}
-        className={filters.tags.length > 0 ? "filled-field" : ""}
       />
       <label>{getLanguageByKey("Sursa Lead")}</label>
       <CustomMultiSelect
@@ -168,13 +167,12 @@ export const LeadCreationDate = ({
       />
 
       <label>{getLanguageByKey("Vânzare")} €</label>
-      <input
+      <Input
         type="number"
         name="buget"
         value={filters.buget || ""}
         onChange={handleInputChange}
         placeholder={getLanguageByKey("Indicați suma în euro")}
-        className={filters.buget ? "filled-field" : ""}
       />
 
       <label>{getLanguageByKey("Tipul serviciului")}</label>

@@ -16,15 +16,8 @@
   margin-block: 0 16px;
 }
 
-/* TODO: Remove when Input component is implemented */
-.filled-field {
-  border: 2px solid #4caf50 !important;
-  background-color: rgba(76, 175, 80, 0.1);
-  transition: all 0.3s ease-in-out;
-}
-
 .container-ticket-content {
-  height: calc(700px - (34px + 40px + 20px));
+  height: calc(660px - (40px + 34px + 20px));
   overflow-y: auto;
   width: 100%;
 }

@@ -2,6 +2,7 @@ import { getLanguageByKey } from "../utils/getLanguageByKey"
 import CustomMultiSelect from "../MultipleSelect/MultipleSelect"
 import { paymentStatusOptions } from "../../FormOptions/PaymentStatusOptions"
 import ToggleComponent from "../../Components/ToggleComponent/ToggleSwitch"
+import { Input } from "../Input"
 
 export const Contact = ({
   filters,
@@ -14,13 +15,11 @@ export const Contact = ({
       <h3>{getLanguageByKey("Contract")}</h3>
 
       <label>{getLanguageByKey("Nr de contract")}</label>
-      <input
-        type="text"
+      <Input
         name="numar_de_contract"
         value={filters.numar_de_contract || ""}
         onChange={handleInputChange}
         placeholder={getLanguageByKey("Nr de contract")}
-        className={filters.numar_de_contract ? "filled-field" : ""}
       />
 
       <label>{getLanguageByKey("Data contractului")}</label>
@@ -29,7 +28,6 @@ export const Contact = ({
         name="data_contractului"
         value={filters.data_contractului || ""}
         onChange={handleInputChange}
-        className={filters.data_contractului ? "filled-field" : ""}
       />
       <ToggleComponent
         label={getLanguageByKey("Contract trimis")}
@@ -44,23 +42,19 @@ export const Contact = ({
       />
 
       <label>{getLanguageByKey("Operator turistic")}</label>
-      <input
-        type="text"
+      <Input
         name="tour_operator"
         value={filters.tour_operator || ""}
         onChange={handleInputChange}
         placeholder={getLanguageByKey("Operator turistic")}
-        className={filters.tour_operator ? "filled-field" : ""}
       />
 
       <label>{getLanguageByKey("Nr cererii de la operator")}</label>
-      <input
-        type="text"
+      <Input
         name="numarul_cererii_de_la_operator"
         value={filters.numarul_cererii_de_la_operator || ""}
         onChange={handleInputChange}
         placeholder={getLanguageByKey("Nr cererii de la operator")}
-        className={filters.numarul_cererii_de_la_operator ? "filled-field" : ""}
       />
 
       <ToggleComponent
@@ -92,13 +86,12 @@ export const Contact = ({
       />
 
       <label>{getLanguageByKey("Avans în euro")} €</label>
-      <input
+      <Input
         type="number"
         name="avans_euro"
         value={filters.avans_euro || ""}
         onChange={handleInputChange}
-        placeholder={getLanguageByKey("Plată primită")}
-        className={filters.avans_euro ? "filled-field" : ""}
+        placeholder={getLanguageByKey("Avans în euro")}
       />
 
       <label>{getLanguageByKey("Data avansului")}</label>
@@ -107,7 +100,6 @@ export const Contact = ({
         name="data_avansului"
         value={filters.data_avansului || ""}
         onChange={handleInputChange}
-        className={filters.data_avansului ? "filled-field" : ""}
       />
 
       <label>{getLanguageByKey("Data de plată integrală")}</label>
@@ -116,37 +108,33 @@ export const Contact = ({
         name="data_de_plata_integrala"
         value={filters.data_de_plata_integrala || ""}
         onChange={handleInputChange}
-        className={filters.data_de_plata_integrala ? "filled-field" : ""}
       />
 
       <label>{getLanguageByKey("Preț NETTO")} €</label>
-      <input
+      <Input
         type="number"
         name="pret_netto"
         value={filters.pret_netto || ""}
         onChange={handleInputChange}
         placeholder={getLanguageByKey("Preț NETTO")}
-        className={filters.pret_netto ? "filled-field" : ""}
       />
 
       <label>{getLanguageByKey("Achitat client")}</label>
-      <input
+      <Input
         type="number"
         name="achitat_client"
         value={filters.achitat_client || ""}
         onChange={handleInputChange}
         placeholder={getLanguageByKey("Achitat client")}
-        className={filters.achitat_client ? "filled-field" : ""}
       />
 
       <label>{getLanguageByKey("Comisionul companiei")} €</label>
-      <input
+      <Input
         type="number"
         name="comission_companie"
         value={filters.comission_companie || ""}
         onChange={handleInputChange}
         placeholder={getLanguageByKey("Comisionul companiei")}
-        className={filters.comission_companie ? "filled-field" : ""}
       />
 
       <ToggleComponent

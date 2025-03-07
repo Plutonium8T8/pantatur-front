@@ -53,15 +53,6 @@ export const TicketFilterModal = ({
       ...prev,
       [name]: formatValue(name, value)
     }))
-
-    const field = document.querySelector(`[name="${name}"]`)
-    if (field) {
-      if (value && value.length > 0) {
-        field.classList.add("filled-field")
-      } else {
-        field.classList.remove("filled-field")
-      }
-    }
   }
 
   const changeFilters = (field, value) => {
@@ -76,15 +67,6 @@ export const TicketFilterModal = ({
       ...prev,
       [name]: formatValue(name, selectedValues)
     }))
-
-    const field = document.querySelector(`[name="${name}"]`)
-    if (field) {
-      if (selectedValues.length > 0) {
-        field.classList.add("filled-field")
-      } else {
-        field.classList.remove("filled-field")
-      }
-    }
   }
 
   const handleMultiSelectChange = (name, selectedValues) => {
@@ -92,15 +74,6 @@ export const TicketFilterModal = ({
       ...prev,
       [name]: formatValue(name, selectedValues)
     }))
-
-    const field = document.querySelector(`[name="${name}"]`)
-    if (field) {
-      if (selectedValues.length > 0) {
-        field.classList.add("filled-field")
-      } else {
-        field.classList.remove("filled-field")
-      }
-    }
   }
 
   const clearFilters = () => {

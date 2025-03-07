@@ -7,6 +7,7 @@ export const Input = ({
   placeholder,
   className,
   clear,
+  type = "text",
   ...props
 }) => {
   const classNames = ["input", className].filter(Boolean).join(" ")
@@ -16,7 +17,7 @@ export const Input = ({
       <input
         type="text"
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={onChange}
         placeholder={placeholder}
         className={classNames}
         {...props}
