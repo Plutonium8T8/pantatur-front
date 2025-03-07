@@ -1,6 +1,7 @@
 import React from "react"
 import "./InputComponent.css"
 import { translations } from "../utils/translations"
+import { Input as BaseInput } from "../Input"
 
 const Input = ({
   label,
@@ -17,7 +18,7 @@ const Input = ({
   return (
     <div className="input-group">
       <label htmlFor={id}>{translations?.[label]?.[language] ?? label}</label>
-      <input
+      <BaseInput
         id={id}
         type={type}
         value={value}

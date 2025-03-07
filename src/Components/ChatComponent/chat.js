@@ -43,6 +43,7 @@ import { api } from "../../api"
 import { showServerError } from "../../Components/utils/showServerError"
 import { Button } from "../Button"
 import ToggleSwitch from "../ToggleComponent/ToggleSwitch"
+import { Input as BaseInput } from "../Input"
 
 const ChatComponent = ({}) => {
   const { userId, hasRole, isLoadingRoles } = useUser()
@@ -1113,7 +1114,7 @@ const ChatComponent = ({}) => {
               </div>
 
               <div className="filter-container-chat">
-                <input
+                <BaseInput
                   type="text"
                   placeholder={
                     translations["Cauta dupa Lead, Client sau Tag"][language]
@@ -1777,7 +1778,6 @@ const ChatComponent = ({}) => {
                 <Select
                   options={promoOptions}
                   label="Promo"
-                  id="promo-select"
                   value={extraInfo[selectTicketId]?.promo || ""}
                   onChange={(value) => handleFieldChange("promo", value)}
                   hasError={fieldErrors.promo}
@@ -1863,7 +1863,7 @@ const ChatComponent = ({}) => {
                 />
               </div>
               <div className="merge-tickets">
-                <input
+                <BaseInput
                   type="number"
                   value={ticketId}
                   onChange={(e) =>
@@ -1877,7 +1877,7 @@ const ChatComponent = ({}) => {
                   placeholder="Introduceți ID vechi"
                   disabled
                 />
-                <input
+                <BaseInput
                   type="number"
                   value={extraInfo[selectTicketId]?.ticket_id_new || ""}
                   onChange={(e) =>
@@ -1887,7 +1887,6 @@ const ChatComponent = ({}) => {
                       e.target.value
                     )
                   }
-                  className="input-field"
                   placeholder={translations["Introduceți ID lead"][language]}
                 />
                 <button onClick={handleMergeTickets} className="submit-button">
@@ -1943,6 +1942,7 @@ const ChatComponent = ({}) => {
                     placeholder="Adresă"
                   />
                   <Input
+                    style={{ border: "1px solid red" }}
                     label="Telefon"
                     type="tel"
                     value={personalInfo[selectedClient]?.phone ?? ""}
@@ -1961,14 +1961,13 @@ const ChatComponent = ({}) => {
                   </button>
                 </form>
                 <div className="merge-client">
-                  <input
+                  <BaseInput
                     type="number"
                     value={selectedClient}
-                    className="input-field"
                     placeholder="Introduceți ID vechi"
                     disabled
                   />
-                  <input
+                  <BaseInput
                     type="number"
                     value={extraInfo[selectedClient]?.new_user_id || ""}
                     onChange={(e) =>
@@ -1978,7 +1977,6 @@ const ChatComponent = ({}) => {
                         e.target.value
                       )
                     }
-                    className="input-field"
                     placeholder={
                       translations["Introduceți ID client"][language]
                     }

@@ -260,7 +260,11 @@ const Leads = () => {
 
           <Input
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value.trim())}
+            onChange={(e) => {
+              if (e) {
+                setSearchTerm(e.target.value.trim())
+              }
+            }}
             placeholder={getLanguageByKey("Cauta dupa Lead, Client sau Tag")}
             className="search-input"
             clear
