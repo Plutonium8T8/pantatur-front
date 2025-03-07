@@ -87,3 +87,4 @@ cp .env-example .env
 - [ ] DatePicker
 - [ ] TimePicker
 - [ ] Textarea
+- [ ] Password

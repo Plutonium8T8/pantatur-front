@@ -11,11 +11,23 @@
   border: 1px solid #ccc;
   background-color: #fff;
   color: #333;
+
+  transition: border-color 0.3s;
 }
 
 .input:focus {
   border-color: #0f824c;
   outline: none;
+}
+
+.input:hover {
+  border-color: #0f824c;
+}
+
+.input:disabled {
+  cursor: not-allowed;
+  background-color: #a7a7a7;
+  border-color: #a7a7a7;
 }
 
 .input .clear {

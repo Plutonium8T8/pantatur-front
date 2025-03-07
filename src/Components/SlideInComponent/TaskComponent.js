@@ -5,6 +5,7 @@ import { translations } from "../utils/translations"
 import { api } from "../../api"
 import { showServerError } from "../../Components/utils/showServerError"
 import { useSnackbar } from "notistack"
+import { Input } from "../Input"
 
 const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
   const [tasks, setTasks] = useState([])
@@ -186,14 +187,12 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
             <label htmlFor="ticket-select">
               {translations["Lead"][language]} ID
             </label>
-            <input
+            <Input
               id="ticket-select"
-              className="task-select-component"
-              type="text"
               value={searchTerm}
               onChange={handleInputChange}
-              onFocus={() => setIsDropdownOpen(true)} // Открываем список при фокусе
-              onBlur={() => setTimeout(() => setIsDropdownOpen(false), 200)} // Закрываем список после потери фокуса
+              onFocus={() => setIsDropdownOpen(true)}
+              onBlur={() => setTimeout(() => setIsDropdownOpen(false), 200)}
               placeholder={translations["Alege ID lead"][language]}
               required
             />
@@ -219,7 +218,6 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
             <input
               id="task-date"
               type="datetime-local"
-              className="task-input"
               value={taskDate}
               onChange={(e) => setTaskDate(e.target.value)}
               required
@@ -243,10 +241,8 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
             <label htmlFor="created-by">
               {translations["Creat de"][language]}
             </label>
-            <input
+            <Input
               id="created-by"
-              type="text"
-              className="task-input"
               value={`${userId} - ${name ? name : "N/A"} ${surname ? surname : "N/A"}`}
               disabled
             />
@@ -254,10 +250,8 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
 
           <div className="input-group" style={{ position: "relative" }}>
             <label htmlFor="for-user">{translations["Pentru"][language]}</label>
-            <input
+            <Input
               id="for-user"
-              className="task-select-component"
-              type="text"
               value={searchUser}
               onChange={handleUserInputChange}
               onFocus={() => setIsUserDropdownOpen(true)} // Открываем список при фокусе
