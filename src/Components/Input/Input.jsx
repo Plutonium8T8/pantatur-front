@@ -15,7 +15,7 @@ export const Input = ({
   return (
     <div className="input">
       <input
-        type="text"
+        type={type}
         value={value}
         onChange={onChange}
         placeholder={placeholder}

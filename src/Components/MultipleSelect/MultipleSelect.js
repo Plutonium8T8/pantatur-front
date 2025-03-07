@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react"
 import "./CustomMultiSelect.css"
 import { Spin } from "../Spin"
+import { Input } from "../Input"
 
 import { getLanguageByKey } from "../utils/getLanguageByKey"
 
@@ -124,9 +125,7 @@ const CustomMultiSelect = ({
 
       {isDropdownOpen && (
         <div className="dropdown">
-          <input
-            type="text"
-            className="search-input-multi"
+          <Input
             placeholder={getLanguageByKey("Căutare")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
