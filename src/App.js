@@ -20,6 +20,8 @@ import AdminPanel from "./Components/AdminPanelComponent/AdminPanel"
 import Dashboard from "./Components/DashboardComponent/Dashboard"
 import UserPage from "./Components/UserPage/UserPage"
 import { NavigationProvider } from "./NavigationContext"
+import "./App.css"
+
 import { api } from "./api"
 import { SpinnerRightBottom } from "./Components/SpinnerRightBottom"
 import "./reset.css"
