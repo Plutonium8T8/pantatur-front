@@ -6,6 +6,7 @@ import { translations } from "../utils/translations"
 import { api } from "../../api"
 import { useSnackbar } from "notistack"
 import { showServerError } from "../../Components/utils/showServerError"
+import { Input } from "../Input"
 
 const UserPage = ({ isOpen, onClose }) => {
   const { userId } = useUser()
@@ -165,9 +166,8 @@ const UserPage = ({ isOpen, onClose }) => {
                     ].includes(attribute)
                 )
                 .map((key) => (
-                  <input
+                  <Input
                     key={key}
-                    type="text"
                     name={key}
                     placeholder={translations[key]?.[language] || ""}
                     value={users[key] || ""}
@@ -183,7 +183,7 @@ const UserPage = ({ isOpen, onClose }) => {
                   (attribute) => !["user", "photo", "id"].includes(attribute)
                 )
                 .map((key) => (
-                  <input
+                  <Input
                     key={key}
                     type={
                       ["date_of_birth", "id_card_release"].includes(key)
@@ -203,9 +203,8 @@ const UserPage = ({ isOpen, onClose }) => {
               {Object.keys(usersTechnician)
                 .filter((attribute) => !["id", "salary"].includes(attribute))
                 .map((key) => (
-                  <input
+                  <Input
                     key={key}
-                    type="text"
                     name={key}
                     placeholder={translations[key]?.[language] || ""}
                     value={usersTechnician[key] || ""}
