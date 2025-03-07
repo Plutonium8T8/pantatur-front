@@ -26,12 +26,21 @@ const ChatComponent = () => {
     }, [ticketId]);
 
     useEffect(() => {
-        if (!selectTicketId) return;
+        if (!selectTicketId || !messages.length) return;
 
-        console.log("📩 Загрузка сообщений для тикета:", selectTicketId);
-        getClientMessagesSingle(selectTicketId);
-        markMessagesAsRead(selectTicketId);
-    }, [selectTicketId]);
+        const unreadMessages = messages.filter(
+            msg =>
+                msg.ticket_id === selectTicketId &&
+                msg.seen_by === '{}' &&
+                msg.sender_id !== userId
+        );
+
+        // Если есть непрочитанные сообщения, вызываем markMessagesAsRead
+        if (unreadMessages.length > 0) {
+            console.log(`🔵 ${unreadMessages.length} непрочитанных сообщений в тикете #${selectTicketId}, помечаем как прочитанные`);
+            markMessagesAsRead(selectTicketId);
+        }
+    }, [selectTicketId, messages, userId]);
 
     const handleSelectTicket = (ticketId) => {
         console.log("🎯 Клик по тикету:", ticketId);
