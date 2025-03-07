@@ -43,7 +43,6 @@ import { api } from "../../api"
 import { showServerError } from "../../Components/utils/showServerError"
 import { Button } from "../Button"
 import ToggleSwitch from "../ToggleComponent/ToggleSwitch"
-import { Input } from "../Input"
 
 const ChatComponent = ({}) => {
   const { userId, hasRole, isLoadingRoles } = useUser()
@@ -1114,7 +1113,7 @@ const ChatComponent = ({}) => {
               </div>
 
               <div className="filter-container-chat">
-                <Input
+                <LabelInput
                   type="text"
                   placeholder={
                     translations["Cauta dupa Lead, Client sau Tag"][language]
@@ -1865,7 +1864,7 @@ const ChatComponent = ({}) => {
                 />
               </div>
               <div className="merge-tickets">
-                <Input
+                <LabelInput
                   type="number"
                   value={ticketId}
                   onChange={(e) =>
@@ -1879,7 +1878,7 @@ const ChatComponent = ({}) => {
                   placeholder="Introduceți ID vechi"
                   disabled
                 />
-                <Input
+                <LabelInput
                   type="number"
                   value={extraInfo[selectTicketId]?.ticket_id_new || ""}
                   onChange={(e) =>
@@ -1966,13 +1965,13 @@ const ChatComponent = ({}) => {
                   </button>
                 </form>
                 <div className="merge-client">
-                  <Input
+                  <LabelInput
                     type="number"
                     value={selectedClient}
                     placeholder="Introduceți ID vechi"
                     disabled
                   />
-                  <Input
+                  <LabelInput
                     type="number"
                     value={extraInfo[selectedClient]?.new_user_id || ""}
                     onChange={(e) =>

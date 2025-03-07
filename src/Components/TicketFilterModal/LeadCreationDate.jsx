@@ -13,7 +13,7 @@ import { purchaseProcessingOptions } from "../../FormOptions/PurchaseProcessingO
 import { api } from "../../api"
 import { useSnackbar } from "notistack"
 import { showServerError } from "../utils/showServerError"
-import { Input } from "../Input"
+import { LabelInput } from "../LabelInput"
 
 export const LeadCreationDate = ({
   handleInputChange,
@@ -81,7 +81,7 @@ export const LeadCreationDate = ({
       />
 
       <label>{getLanguageByKey("Tag-uri")}</label>
-      <Input
+      <LabelInput
         name="tags"
         value={filters.tags.length > 0 ? filters.tags.join(", ") : ""}
         onChange={handleInputChange}
@@ -167,7 +167,7 @@ export const LeadCreationDate = ({
       />
 
       <label>{getLanguageByKey("Vânzare")} €</label>
-      <Input
+      <LabelInput
         type="number"
         name="buget"
         value={filters.buget || ""}

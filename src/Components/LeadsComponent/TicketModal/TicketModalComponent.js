@@ -9,7 +9,7 @@ import { translations } from "../../utils/translations"
 import { useAppContext } from "../../../AppContext"
 import { api } from "../../../api"
 import { useSnackbar } from "notistack"
-import { Input } from "../../Input"
+import { LabelInput } from "../../LabelInput"
 
 const TicketModal = ({ ticket, onClose, onSave }) => {
   const modalRef = useRef(null)
@@ -149,7 +149,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
           <div className="divider-line"></div>
           <div className="input-group">
             <label>{translations["name"][language]}:</label>
-            <Input
+            <LabelInput
               name="name"
               value={editedTicket.name || ""}
               onChange={handleInputChange}
@@ -159,7 +159,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
           </div>
           <div className="input-group">
             <label>{translations["surname"][language]}:</label>
-            <Input
+            <LabelInput
               name="surname"
               value={editedTicket.surname || ""}
               onChange={handleInputChange}
@@ -169,7 +169,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
           </div>
           <div className="input-group">
             <label>{translations["email"][language]}:</label>
-            <Input
+            <LabelInput
               name="email"
               value={editedTicket.email || ""}
               onChange={handleInputChange}
@@ -178,7 +178,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
           </div>
           <div className="input-group">
             <label>{translations["phone"][language]}:</label>
-            <Input
+            <LabelInput
               type="tel"
               name="phone"
               value={
@@ -193,7 +193,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
           </div>
           <div className="input-group">
             <label>{translations["Contact"][language]}:</label>
-            <Input
+            <LabelInput
               name="contact"
               value={editedTicket.contact || ""}
               onChange={handleInputChange}

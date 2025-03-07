@@ -16,7 +16,7 @@ import { Button } from "../Button"
 import { api } from "../../api"
 import { useSnackbar } from "notistack"
 import { showServerError, getTotalPages } from "../utils"
-import { Input } from "../Input"
+import { LabelInput } from "../LabelInput"
 import { useDebounce } from "../../hooks"
 
 const SORT_BY = "creation_date"
@@ -233,8 +233,8 @@ const Leads = () => {
           search: debouncedSearch
         }
       },
-      ({ data, pagination }) => {
-        setTotalLeads(pagination.total)
+      ({ data, total }) => {
+        setTotalLeads(total)
 
         if (isTableView) {
           setHardTickets(data)
@@ -258,11 +258,13 @@ const Leads = () => {
             {getLanguageByKey("Adaugă lead")}
           </Button>
 
-          <Input
+          <LabelInput
             value={searchTerm}
             onChange={(e) => {
               if (e) {
-                setSearchTerm(e.target.value.trim())
+                setSearchTerm(e.target.value)
+              } else {
+                setSearchTerm("")
               }
             }}
             placeholder={getLanguageByKey("Cauta dupa Lead, Client sau Tag")}

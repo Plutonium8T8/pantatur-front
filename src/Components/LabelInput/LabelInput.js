@@ -1,6 +1,6 @@
 import React from "react"
+import { IoMdClose } from "react-icons/io"
 import "./LabelInput.css"
-import { Input } from "../Input"
 import { getLanguageByKey } from "../utils/getLanguageByKey"
 
 export const LabelInput = ({
@@ -11,25 +11,36 @@ export const LabelInput = ({
   placeholder = "",
   id,
   disabled = false,
-  error
+  error,
+  clear,
+  className,
+  ...props
 }) => {
+  const classNames = ["input", error ? "error" : false, className]
+    .filter(Boolean)
+    .join(" ")
   return (
-    <div className="input-label | mb-16">
-      <div className="input-label">
-        {label && (
-          <div className="mb-8">
-            <label htmlFor={id}>{getLanguageByKey(label) ?? label}</label>
-          </div>
-        )}
-        <Input
-          id={id}
+    <div>
+      {label && (
+        <div className="mb-8">
+          <label htmlFor={id}>{getLanguageByKey(label) ?? label}</label>
+        </div>
+      )}
+      <div className="input-container">
+        <input
           type={type}
           value={value}
           onChange={onChange}
-          placeholder={getLanguageByKey(label) ?? placeholder}
-          disabled={disabled}
-          isError={!!error}
+          placeholder={placeholder}
+          className={classNames}
+          {...props}
         />
+
+        {clear && (
+          <div onClick={() => onChange("")} className="clear">
+            <IoMdClose />
+          </div>
+        )}
       </div>
       {error && <span className="input-label-error">{error}</span>}
     </div>
