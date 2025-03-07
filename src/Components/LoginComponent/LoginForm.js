@@ -6,6 +6,7 @@ import { api } from "../../api"
 import { showServerError } from "../utils/showServerError"
 import { useSnackbar } from "notistack"
 import { LoadingOverlay } from "../LoadingOverlay"
+import { Input } from "../Input"
 
 const setCookieToken = (token) => {
   Cookies.set("jwt", token, {
@@ -80,60 +81,61 @@ const LoginForm = ({ onLoginSuccess }) => {
       <div className="body-login-form">
         <div className="login-form">
           <h2>{isLogin ? "Login" : "Register"}</h2>
+          <div className="login-wrapper">
+            {!isLogin && (
+              <Input
+                name="username"
+                value={form.username}
+                onChange={handleInputChange}
+                placeholder="Username"
+                className="mb-24"
+                disabled={isLoading}
+              />
+            )}
 
-          {!isLogin && (
-            <input
-              name="username"
-              value={form.username}
+            <Input
+              type="email"
+              name="email"
+              value={form.email}
               onChange={handleInputChange}
-              placeholder="Username"
-              className="input-field-login"
+              placeholder="Email"
+              className="mb-24"
               disabled={isLoading}
             />
-          )}
 
-          <input
-            type="email"
-            name="email"
-            value={form.email}
-            onChange={handleInputChange}
-            placeholder="Email"
-            className="input-field-login"
-            disabled={isLoading}
-          />
-
-          <input
-            type="password"
-            name="password"
-            value={form.password}
-            onChange={handleInputChange}
-            placeholder="Password"
-            className="input-field-login"
-            disabled={isLoading}
-          />
-
-          <div className="button-container">
-            <button
-              onClick={handleSubmit}
-              className="submit-button"
-              id="login-button"
+            <Input
+              type="password"
+              name="password"
+              value={form.password}
+              onChange={handleInputChange}
+              placeholder="Password"
+              className="mb-24"
               disabled={isLoading}
-            >
-              {isLogin ? "Login" : "Register"}
-            </button>
+            />
 
-            <button
-              onClick={handleSwitch}
-              className="switch-button"
-              disabled={isLoading}
-            >
-              {isLogin ? "Register" : "Login"}
-            </button>
+            <div className="button-container">
+              <button
+                onClick={handleSubmit}
+                className="submit-button"
+                id="login-button"
+                disabled={isLoading}
+              >
+                {isLogin ? "Login" : "Register"}
+              </button>
+
+              <button
+                onClick={handleSwitch}
+                className="switch-button"
+                disabled={isLoading}
+              >
+                {isLogin ? "Register" : "Login"}
+              </button>
+            </div>
+
+            {isLoading && <LoadingOverlay />}
+
+            {message && <p className="message">{message}</p>}
           </div>
-
-          {isLoading && <LoadingOverlay />}
-
-          {message && <p className="message">{message}</p>}
         </div>
       </div>
     </div>

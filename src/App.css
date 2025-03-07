@@ -613,6 +613,10 @@ input {
   margin-bottom: 16px;
 }
 
+.mb-24 {
+  margin-bottom: 24px;
+}
+
 .white-space-nowrap {
   white-space: nowrap;
 }
