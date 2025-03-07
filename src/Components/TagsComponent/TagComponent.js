@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
-import "./TagInput.css"
 import { FaTrash } from "react-icons/fa"
 import { translations } from "../utils/translations"
+import { Input } from "../Input"
 
 const TagInput = ({ initialTags = [], onChange }) => {
   const language = localStorage.getItem("language") || "RO"
@@ -94,7 +94,7 @@ const TagInput = ({ initialTags = [], onChange }) => {
         ))}
       </div>
       <div className="input-group">
-        <input
+        <Input
           type="text"
           value={inputValue}
           onChange={handleInputChange}

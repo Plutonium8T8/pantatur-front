@@ -9,6 +9,7 @@ import { translations } from "../../utils/translations"
 import { useAppContext } from "../../../AppContext"
 import { api } from "../../../api"
 import { useSnackbar } from "notistack"
+import { Input } from "../../Input"
 
 const TicketModal = ({ ticket, onClose, onSave }) => {
   const modalRef = useRef(null)
@@ -148,8 +149,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
           <div className="divider-line"></div>
           <div className="input-group">
             <label>{translations["name"][language]}:</label>
-            <input
-              type="text"
+            <Input
               name="name"
               value={editedTicket.name || ""}
               onChange={handleInputChange}
@@ -159,8 +159,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
           </div>
           <div className="input-group">
             <label>{translations["surname"][language]}:</label>
-            <input
-              type="text"
+            <Input
               name="surname"
               value={editedTicket.surname || ""}
               onChange={handleInputChange}
@@ -170,8 +169,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
           </div>
           <div className="input-group">
             <label>{translations["email"][language]}:</label>
-            <input
-              type="email"
+            <Input
               name="email"
               value={editedTicket.email || ""}
               onChange={handleInputChange}
@@ -180,7 +178,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
           </div>
           <div className="input-group">
             <label>{translations["phone"][language]}:</label>
-            <input
+            <Input
               type="tel"
               name="phone"
               value={
@@ -195,8 +193,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
           </div>
           <div className="input-group">
             <label>{translations["Contact"][language]}:</label>
-            <input
-              type="text"
+            <Input
               name="contact"
               value={editedTicket.contact || ""}
               onChange={handleInputChange}

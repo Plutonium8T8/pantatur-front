@@ -54,7 +54,6 @@
   width: 100%;
 }
 
-.tag-input,
 .userGroup-input {
   width: 100%;
 }
@@ -68,7 +67,6 @@
   width: 100%;
 }
 
-.tag-input-container .input-group .tag-input,
 .userGroup-input-container .input-group .userGroup-input {
   width: auto;
 }
@@ -113,7 +111,6 @@
   padding-left: 6px;
 }
 
-.tag-input,
 .userGroup-input,
 .technician-select,
 .task-select,
@@ -131,7 +128,6 @@
     box-shadow 0.3s ease;
 }
 
-.tag-input:focus,
 .userGroup-input:focus,
 .textarea-input:focus {
   border-color: #0f824c;
