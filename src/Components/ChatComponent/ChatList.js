@@ -13,10 +13,27 @@ const ChatList = ({ setIsLoading, selectTicketId, setSelectTicketId }) => {
     const [filteredTickets, setFilteredTickets] = useState(tickets);
     const [filteredTicketIds, setFilteredTicketIds] = useState(null);
 
-    const navigate = useNavigate();
-    const ticketRef = useRef(null);
-
     const language = localStorage.getItem('language') || 'RO';
+    const chatListRef = useRef(null);
+
+    useEffect(() => {
+        if (chatListRef.current && selectTicketId) {
+            const container = chatListRef.current;
+            const selectedElement = container.querySelector(`[data-ticket-id="${selectTicketId}"]`);
+
+            if (selectedElement) {
+                const containerHeight = container.clientHeight;
+                const itemTop = selectedElement.offsetTop;
+                const itemHeight = selectedElement.clientHeight;
+                const scrollTop = itemTop - containerHeight / 2 + itemHeight / 2;
+
+                container.scrollTo({
+                    top: scrollTop,
+                    behavior: 'smooth'
+                });
+            }
+        }
+    }, [selectTicketId, tickets]);
 
     useEffect(() => {
         setFilteredTickets(tickets);
@@ -138,7 +155,7 @@ const ChatList = ({ setIsLoading, selectTicketId, setSelectTicketId }) => {
     };
 
     return (
-        <div className="users-container">
+        <div className="users-container" ref={chatListRef}>
             {isLoading ? (
                 <div className="spinner-container">
                     <Spin />
@@ -178,7 +195,7 @@ const ChatList = ({ setIsLoading, selectTicketId, setSelectTicketId }) => {
                                     key={ticket.id}
                                     className={`chat-item ${ticket.id === selectTicketId ? "active" : ""}`}
                                     onClick={() => handleTicketClick(ticket.id)}
-                                    ref={ticket.id === selectTicketId ? ticketRef : null}
+                                    data-ticket-id={ticket.id}
                                 >
                                     <div className="foto-description">
                                         <img className="foto-user"

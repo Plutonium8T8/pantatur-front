@@ -33,6 +33,7 @@ const ChatMessages = ({
     const messageContainerRef = useRef(null);
     const fileInputRef = useRef(null);
     const reactionContainerRef = useRef(null);
+    const [isUserAtBottom, setIsUserAtBottom] = useState(true);
 
     const platformIcons = {
         "facebook": <FaFacebook />,
@@ -298,6 +299,37 @@ const ChatMessages = ({
 
         setPersonalInfo(newPersonalInfo);
     }, [tickets]);
+
+    // Проверка, находится ли пользователь внизу чата
+    const handleScroll = () => {
+        if (messageContainerRef.current) {
+            const { scrollTop, scrollHeight, clientHeight } = messageContainerRef.current;
+            setIsUserAtBottom(scrollHeight - scrollTop <= clientHeight + 50); // небольшая погрешность
+        }
+    };
+
+    // Прокрутка вниз только если пользователь внизу чата
+    useEffect(() => {
+        if (isUserAtBottom && messageContainerRef.current) {
+            messageContainerRef.current.scrollTo({
+                top: messageContainerRef.current.scrollHeight,
+                // behavior: 'smooth',
+            });
+        }
+    }, [messages, selectTicketId]);
+
+    // Добавляем обработчик скролла
+    useEffect(() => {
+        const container = messageContainerRef.current;
+        if (container) {
+            container.addEventListener("scroll", handleScroll);
+        }
+        return () => {
+            if (container) {
+                container.removeEventListener("scroll", handleScroll);
+            }
+        };
+    }, []);
 
     return (
         <div className="chat-area">
