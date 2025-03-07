@@ -5,17 +5,8 @@ import { translations } from '../utils/translations';
 import { useUser } from '../../UserContext';
 import { Spin } from '../Spin';
 
-const ChatList = ({ setIsLoading }) => {
-    const {
-        tickets,
-        messages,
-        markMessagesAsRead,
-        selectTicketId,
-        setSelectTicketId,
-        getClientMessagesSingle,
-        isLoading
-    } = useAppContext();
-
+const ChatList = ({ setIsLoading, selectTicketId, setSelectTicketId }) => {
+    const { tickets, getClientMessagesSingle, isLoading } = useAppContext();
     const { userId } = useUser();
     const [showMyTickets, setShowMyTickets] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
@@ -44,10 +35,9 @@ const ChatList = ({ setIsLoading }) => {
 
         setIsLoading(true);
 
-        getClientMessagesSingle(selectTicketId)
-            .finally(() => {
-                setIsLoading(false);
-            });
+        getClientMessagesSingle(selectTicketId).finally(() => {
+            setIsLoading(false);
+        });
     }, [selectTicketId]);
 
     const handleCheckboxChange = (e) => {
@@ -58,13 +48,11 @@ const ChatList = ({ setIsLoading }) => {
         setSearchQuery(e.target.value.toLowerCase());
     };
 
-    const handleTicketClick = async (ticketId) => {
+    const handleTicketClick = (ticketId) => {
         if (selectTicketId === ticketId) return;
 
         setSelectTicketId(ticketId);
         navigate(`/chat/${ticketId}`);
-
-        await markMessagesAsRead(ticketId);
     };
 
     const sortedTickets = useMemo(() => {
@@ -110,7 +98,7 @@ const ChatList = ({ setIsLoading }) => {
         }
 
         return filtered;
-    }, [tickets, messages, filteredTicketIds, showMyTickets, searchQuery]);
+    }, [tickets, filteredTicketIds, showMyTickets, searchQuery]);
 
     const formatDateTime = (dateString) => {
         if (!dateString) return "—";

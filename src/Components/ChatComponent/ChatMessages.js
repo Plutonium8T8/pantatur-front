@@ -11,14 +11,16 @@ import { translations } from '../utils/translations';
 import { templateOptions } from '../../FormOptions/MessageTemplate';
 import { Spin } from '../Spin';
 
-const ChatMessages = ({ selectTicketId, setSelectedClient, isLoading, selectedClient, personalInfo, setPersonalInfo }) => {
+const ChatMessages = ({
+    selectTicketId,
+    setSelectedClient,
+    selectedClient,
+    isLoading,
+    personalInfo,
+    setPersonalInfo
+}) => {
     const { userId } = useUser();
-    const {
-        messages,
-        setMessages,
-        tickets,
-        markMessagesAsRead
-    } = useAppContext();
+    const { messages, setMessages, tickets } = useAppContext();
 
     const language = localStorage.getItem('language') || 'RO';
     const [managerMessage, setManagerMessage] = useState('');
@@ -39,22 +41,6 @@ const ChatMessages = ({ selectTicketId, setSelectedClient, isLoading, selectedCl
         "viber": <FaViber />,
         "telegram": <FaTelegram />
     };
-
-    useEffect(() => {
-        const lastClient = getLastActiveClient();
-        if (lastClient) {
-            setSelectedClient(String(lastClient));
-        }
-    }, [messages, selectTicketId]);
-
-    const hasMarkedRead = useRef(new Set());
-
-    useEffect(() => {
-        if (!selectTicketId || hasMarkedRead.current.has(selectTicketId)) return;
-
-        markMessagesAsRead(selectTicketId);
-        hasMarkedRead.current.add(selectTicketId);
-    }, [selectTicketId]);
 
     useEffect(() => {
         const lastClient = getLastActiveClient();
@@ -286,18 +272,18 @@ const ChatMessages = ({ selectTicketId, setSelectedClient, isLoading, selectedCl
         }
     };
 
-    useEffect(() => {
-        if (!selectTicketId || !messages.length) return;
+    // useEffect(() => {
+    //     if (!selectTicketId || !messages.length) return;
 
-        const unreadMessages = messages.filter(
-            msg => msg.ticket_id === selectTicketId && msg.seen_by === '{}' && msg.sender_id !== userId
-        );
+    //     const unreadMessages = messages.filter(
+    //         msg => msg.ticket_id === selectTicketId && msg.seen_by === '{}' && msg.sender_id !== userId
+    //     );
 
-        if (unreadMessages.length > 0) {
-            console.log(`🔵 ${unreadMessages.length} непрочитанных сообщений в тикете #${selectTicketId}, помечаем как прочитанные`);
-            markMessagesAsRead(selectTicketId);
-        }
-    }, [messages, selectTicketId, markMessagesAsRead, userId]);
+    //     if (unreadMessages.length > 0) {
+    //         console.log(`🔵 ${unreadMessages.length} непрочитанных сообщений в тикете #${selectTicketId}, помечаем как прочитанные`);
+    //         markMessagesAsRead(selectTicketId);
+    //     }
+    // }, [messages, selectTicketId, markMessagesAsRead, userId]);
 
     useEffect(() => {
         const newPersonalInfo = {};
@@ -501,6 +487,7 @@ const ChatMessages = ({ selectTicketId, setSelectedClient, isLoading, selectedCl
                         </div>
                     )}
             </div>
+
             <div className="manager-send-message-container">
                 <textarea
                     className="text-area-message"
