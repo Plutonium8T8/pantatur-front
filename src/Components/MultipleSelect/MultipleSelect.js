@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./CustomMultiSelect.css";
-
 import { getLanguageByKey } from "../utils/getTranslationByKey";
 
 const CustomMultiSelect = ({ options = [], placeholder = getLanguageByKey("Select..."), onChange, selectedValues = [] }) => {

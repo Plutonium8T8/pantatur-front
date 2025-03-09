@@ -3,21 +3,51 @@
     flex-direction: column;
     gap: 8px;
     align-items: flex-start;
-}
-
-.select-field {
+  }
+  
+  .select-field {
     width: 50%;
     color: black;
     font-size: 15px;
     padding: 4px;
     border-radius: 10px;
-}
-
-.invalid-field {
+  }
+  
+  .invalid-field {
     border: 1px solid red !important;
     background-color: #ffe6e6;
-}
-
-.invalid-field select {
+  }
+  
+  .invalid-field select {
     border-color: red !important;
-}
+  }
+  
+  .select-container-wrapper {
+    position: relative;
+  }
+  
+  .select-container-wrapper select {
+    cursor: pointer;
+  }
+  
+  .select-container-wrapper .select-clear {
+    opacity: 0;
+    position: absolute;
+    right: 2px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    transition: .2s ease;
+    display: flex;
+    align-items: center;
+  }
+  
+  .select-container-wrapper:hover .select-clear {
+    opacity: 1;
+  }
+  
+  .select-container-wrapper:hover select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
