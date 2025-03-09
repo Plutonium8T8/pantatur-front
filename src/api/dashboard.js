@@ -1,8 +1,8 @@
 import { baseAxios } from "./baseAxios";
 
 export const dashboard = {
-  statistics: async () => {
-    const { data } = await baseAxios.get("/api/dashboard/statistics");
+  statistics: async (body) => {
+    const { data } = await baseAxios.post("/api/dashboard/statistics", body);
 
     return data;
   },
