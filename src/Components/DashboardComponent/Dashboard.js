@@ -175,13 +175,10 @@ const workflowColors = {
   }, // Violet
 };
 
-<<<<<<< Updated upstream
-const normalizeToArray = (data) => {
-  return typeof data === "string" ? [] : data
-}
-=======
 const language = localStorage.getItem("language") || "RO";
->>>>>>> Stashed changes
+
+
+
 
 const Dashboard = () => {
   const [statistics, setStatistics] = useState([]);
@@ -206,8 +203,7 @@ const Dashboard = () => {
           return;
         }
 
-<<<<<<< Updated upstream
-      setStatistics(normalizeToArray(statsData[0]));
+      setStatistics(statsData);
     } catch (error) {
       console.error("Error fetching statistics:", error);
       setStatistics([]);
@@ -215,18 +211,8 @@ const Dashboard = () => {
       setIsLoading(false);
     }
   }, []);
-=======
-        setStatistics(statsData);
-      } catch (error) {
-        console.error("Error fetching statistics:", error);
-        setStatistics([]);
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [],
-  );
->>>>>>> Stashed changes
+
+
 
   useEffect(() => {
     fetchStatistics({ platform, metrics, workflow });
