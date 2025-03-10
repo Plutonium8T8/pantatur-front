@@ -4,15 +4,7 @@ import CustomMultiSelect from "../../MultipleSelect/MultipleSelect";
 import { workflowOptions } from "../../../FormOptions/WorkFlowOption";
 import Input from "../../InputComponent/InputComponent";
 import "./Filter.css";
-
-const metricOptions = [
-  "platform_clients",
-  "weekly_tickets",
-  "monthly_commission",
-  "monthly_tickets",
-  "workflow_distribution",
-  "workflow_resolution_time",
-];
+import {metricOptions } from "../utils"
 
 export const Filter = ({
   onSelectPlatform,
