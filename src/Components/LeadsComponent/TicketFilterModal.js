@@ -18,11 +18,9 @@ import CustomMultiSelect from "../MultipleSelect/MultipleSelect";
 import "./Modal.css";
 import { translations } from "../utils/translations";
 import { api } from "../../api"
+import { platformOptions } from "../../Components/utils/platformOptions"
 
 const language = localStorage.getItem('language') || 'RO';
-
-
-const platformOptions = ["telegram", "viber", "whatsapp", "facebook", "instagram", "sipuni"];
 
 const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }) => {
     const [technicians, setTechnicians] = useState([]);

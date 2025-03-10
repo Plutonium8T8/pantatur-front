@@ -1217,6 +1217,18 @@ export const translations = {
   Confirma: {
     RO: "Confirmă",
     RU: "Подтвердить"
+  },
+  "Selectează platforma": {
+    RO: "Selectează platforma",
+    RU: "Выберите платформу"
+  },
+  "Selectează indicatori": {
+    RO: "Selectează indicatori",
+    RU: "Выберите ,индикаторы"
+  },
+  "Selectează flux de lucru": {
+    RO: "Selectează flux de lucru",
+    RU: "Выберите рабочий процесс"
   }
 }
 

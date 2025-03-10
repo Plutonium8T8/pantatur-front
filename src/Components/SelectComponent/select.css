@@ -22,6 +22,32 @@
   border-color: red !important;
 }
 
-.input-field {
-  margin-bottom: 16px;
+.select-container-wrapper {
+  position: relative;
+}
+
+.select-container-wrapper select {
+  cursor: pointer;
+}
+
+.select-container-wrapper .select-clear {
+  opacity: 0;
+  position: absolute;
+  right: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  transition: 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+
+.select-container-wrapper:hover .select-clear {
+  opacity: 1;
+}
+
+.select-container-wrapper:hover select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
