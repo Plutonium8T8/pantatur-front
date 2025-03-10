@@ -1,8 +1,38 @@
 import React, { useState, useMemo, useEffect, useRef } from "react"
 import { SpinnerRightBottom } from "../SpinnerRightBottom"
 import { useDOMElementHeight } from "../../hooks"
-import "../../App.css";
-import "../SnackBarComponent/SnackBarComponent.css";
+import { useAppContext } from "../../AppContext"
+import { priorityOptions } from "../../FormOptions/PriorityOption"
+import { workflowOptions } from "../../FormOptions/WorkFlowOption"
+import WorkflowColumn from "./WorkflowColumnComponent"
+import TicketModal from "./TicketModal/TicketModalComponent"
+import { TicketFilterModal } from "../TicketFilterModal"
+import "../../App.css"
+import "../SnackBarComponent/SnackBarComponent.css"
+import { FaFilter, FaTable, FaColumns, FaTrash, FaEdit } from "react-icons/fa"
+import { getLanguageByKey } from "../../Components/utils/getLanguageByKey"
+import { LeadTable } from "./LeadTable"
+import { Button } from "../Button"
+import { useDebounce } from "../../hooks"
+import { showServerError, getTotalPages } from "../utils"
+import { api } from "../../api"
+import { useSnackbar } from "notistack"
+import { LabelInput } from "../LabelInput"
+
+const SORT_BY = "creation_date"
+const ORDER = "DESC"
+const HARD_TICKET = "hard"
+const LIGHT_TICKET = "light"
+const NUMBER_PAGE = 1
+
+const normalizeLadsFilters = (filters) => {
+  return {
+    ...filters,
+    technician_id: filters.technician_id
+      ? filters.technician_id.map((t) => parseInt(t.split(":")[0]))
+      : []
+  }
+}
 
 const Leads = () => {
   const refLeadsFilter = useRef()
@@ -57,17 +87,9 @@ const Leads = () => {
     setSelectedTickets((prev) =>
       prev.includes(ticketId)
         ? prev.filter((id) => id !== ticketId)
-        : [...prev, ticketId],
-    );
-  };
-
-  const toggleSelectAll = (e) => {
-    if (e.target.checked) {
-      setSelectedTickets(filteredTickets.map((ticket) => ticket.id));
-    } else {
-      setSelectedTickets([]);
-    }
-  };
+        : [...prev, ticketId]
+    )
+  }
 
   const deleteSelectedTickets = () => {
     if (selectedTickets.length === 0) return
@@ -211,14 +233,14 @@ const Leads = () => {
           search: debouncedSearch
         }
       },
-      ({ data, total }) => {
-        setTotalLeads(total)
-
+      ({ data, pagination }) => {
         if (isTableView) {
           setHardTickets(data)
+          setTotalLeads(pagination.total)
           return
         }
         applyWorkflowFilters(filters, data)
+        setTotalLeads(pagination)
       }
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -345,12 +367,6 @@ const Leads = () => {
                 const isEditing = Boolean(updatedTicket.ticket_id)
                 return isEditing
                   ? prevTickets.map((ticket) =>
-                    ticket.id === updatedTicket.ticket_id
-                      ? updatedTicket
-                      : ticket,
-                  )
-                  : [...prevTickets, updatedTicket];
-              });
                       ticket.id === updatedTicket.ticket_id
                         ? updatedTicket
                         : ticket
@@ -366,10 +382,13 @@ const Leads = () => {
           isOpen={isFilterOpen && !isTableView}
           onClose={closeTicketModal}
           onApplyWorkflowFilters={(filters) =>
-            applyWorkflowFilters(formatFiltersData(filters), filteredTicketIds)
+            applyWorkflowFilters(
+              normalizeLadsFilters(filters),
+              filteredTicketIds
+            )
           }
           onApplyTicketFilters={(filters) => {
-            handleApplyFilterLightTicket(formatFiltersData(filters))
+            handleApplyFilterLightTicket(normalizeLadsFilters(filters))
           }}
         />
 
@@ -379,7 +398,7 @@ const Leads = () => {
           onClose={closeTicketModal}
           onApplyWorkflowFilters={closeTicketModal}
           onApplyTicketFilters={(filters) =>
-            handleApplyFiltersHardTicket(formatFiltersData(filters))
+            handleApplyFiltersHardTicket(normalizeLadsFilters(filters))
           }
           resetTicketsFilters={setTableLeadsFilters}
         />
@@ -388,4 +407,4 @@ const Leads = () => {
   )
 }
 
-export default Leads;
+export default Leads
