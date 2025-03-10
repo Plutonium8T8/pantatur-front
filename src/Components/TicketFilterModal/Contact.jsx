@@ -2,7 +2,7 @@ import { getLanguageByKey } from "../utils/getLanguageByKey"
 import CustomMultiSelect from "../MultipleSelect/MultipleSelect"
 import { paymentStatusOptions } from "../../FormOptions/PaymentStatusOptions"
 import ToggleComponent from "../../Components/ToggleComponent/ToggleSwitch"
-import { LabelInput } from "../LabelInput"
+import { Input } from "../Input"
 
 export const Contact = ({
   filters,
@@ -15,7 +15,7 @@ export const Contact = ({
       <h3>{getLanguageByKey("Contract")}</h3>
 
       <label>{getLanguageByKey("Nr de contract")}</label>
-      <LabelInput
+      <Input
         name="numar_de_contract"
         value={filters.numar_de_contract || ""}
         onChange={handleInputChange}
@@ -42,7 +42,7 @@ export const Contact = ({
       />
 
       <label>{getLanguageByKey("Operator turistic")}</label>
-      <LabelInput
+      <Input
         name="tour_operator"
         value={filters.tour_operator || ""}
         onChange={handleInputChange}
@@ -50,7 +50,7 @@ export const Contact = ({
       />
 
       <label>{getLanguageByKey("Nr cererii de la operator")}</label>
-      <LabelInput
+      <Input
         name="numarul_cererii_de_la_operator"
         value={filters.numarul_cererii_de_la_operator || ""}
         onChange={handleInputChange}
@@ -86,7 +86,7 @@ export const Contact = ({
       />
 
       <label>{getLanguageByKey("Avans în euro")} €</label>
-      <LabelInput
+      <Input
         type="number"
         name="avans_euro"
         value={filters.avans_euro || ""}
@@ -111,7 +111,7 @@ export const Contact = ({
       />
 
       <label>{getLanguageByKey("Preț NETTO")} €</label>
-      <LabelInput
+      <Input
         type="number"
         name="pret_netto"
         value={filters.pret_netto || ""}
@@ -120,7 +120,7 @@ export const Contact = ({
       />
 
       <label>{getLanguageByKey("Achitat client")}</label>
-      <LabelInput
+      <Input
         type="number"
         name="achitat_client"
         value={filters.achitat_client || ""}
@@ -129,7 +129,7 @@ export const Contact = ({
       />
 
       <label>{getLanguageByKey("Comisionul companiei")} €</label>
-      <LabelInput
+      <Input
         type="number"
         name="comission_companie"
         value={filters.comission_companie || ""}

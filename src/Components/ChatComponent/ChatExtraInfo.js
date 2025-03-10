@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Input from "../InputComponent/InputComponent";
+import { Input } from "../Input/Input";
 import Select from "../SelectComponent/SelectComponent";
 import ToggleSwitch from '../ToggleComponent/ToggleSwitch';
 import ResponsabilLead from "../../FormOptions/ResponsabilLead";

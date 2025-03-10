@@ -6,7 +6,7 @@ import { api } from "../../api"
 import { showServerError } from "../utils/showServerError"
 import { useSnackbar } from "notistack"
 import { LoadingOverlay } from "../LoadingOverlay"
-import { LabelInput } from "../LabelInput"
+import { Input } from "../Input"
 
 const setCookieToken = (token) => {
   Cookies.set("jwt", token, {
@@ -83,7 +83,7 @@ const LoginForm = ({ onLoginSuccess }) => {
           <h2>{isLogin ? "Login" : "Register"}</h2>
           <div className="login-wrapper">
             {!isLogin && (
-              <LabelInput
+              <Input
                 name="username"
                 value={form.username}
                 onChange={handleInputChange}
@@ -93,7 +93,7 @@ const LoginForm = ({ onLoginSuccess }) => {
               />
             )}
 
-            <LabelInput
+            <Input
               type="email"
               name="email"
               value={form.email}
@@ -103,7 +103,7 @@ const LoginForm = ({ onLoginSuccess }) => {
               disabled={isLoading}
             />
 
-            <LabelInput
+            <Input
               type="password"
               name="password"
               value={form.password}

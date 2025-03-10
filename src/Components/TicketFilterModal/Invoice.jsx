@@ -2,7 +2,7 @@ import { getLanguageByKey } from "../utils/getLanguageByKey"
 import CustomMultiSelect from "../MultipleSelect/MultipleSelect"
 import { valutaOptions } from "../../FormOptions/ValutaOptions"
 import { ibanOptions } from "../../FormOptions/IbanOptions"
-import { LabelInput } from "../LabelInput"
+import { Input } from "../Input"
 
 export const Invoice = ({
   filters,
@@ -14,7 +14,7 @@ export const Invoice = ({
       <h2>{getLanguageByKey("Invoice")}</h2>
 
       <label>{getLanguageByKey("F/service")}</label>
-      <LabelInput
+      <Input
         name="f_serviciu"
         value={filters.f_serviciu || ""}
         onChange={handleInputChange}
@@ -22,7 +22,7 @@ export const Invoice = ({
       />
 
       <label>{getLanguageByKey("F/factura")}</label>
-      <LabelInput
+      <Input
         name="f_factura"
         value={filters.f_factura || ""}
         onChange={handleInputChange}
@@ -30,7 +30,7 @@ export const Invoice = ({
       />
 
       <label>{getLanguageByKey("F/numarul")}</label>
-      <LabelInput
+      <Input
         type="number"
         name="f_numarul"
         value={filters.f_numarul || ""}
@@ -39,7 +39,7 @@ export const Invoice = ({
       />
 
       <label>{getLanguageByKey("F/preț")}</label>
-      <LabelInput
+      <Input
         type="number"
         name="f_pret"
         value={filters.f_pret || ""}
@@ -48,7 +48,7 @@ export const Invoice = ({
       />
 
       <label>{getLanguageByKey("F/sumă")}</label>
-      <LabelInput
+      <Input
         type="number"
         name="f_suma"
         value={filters.f_suma || ""}
