@@ -55,16 +55,38 @@ const chartComponents = {
   polar: PolarArea
 }
 
+const renderChart = ({ Component, chartData, index, chartLabel }) => {
+  return (
+    <div
+      key={index}
+      style={{ width: "100%", height: "100%", alignItems: "center" }}
+    >
+      <div
+        className="chart-container"
+        style={{
+          height: "100%",
+          width: "100%"
+        }}
+      >
+        <h3 style={{ textAlign: "center", marginBottom: "10px" }}>
+          {chartLabel}
+        </h3>
+        <Component data={chartData} />
+      </div>
+    </div>
+  )
+}
+
 const metricsDashboardData = (metricsDashboard) => {
-  const metricsLayout = metricsDashboard.map((m, index) => ({
+  const metricsLayout = Object.keys(metricsDashboard).map((key, index) => ({
     i: `${index + 1}`,
     x: positionX[index] - 1,
     y: positionY[index] - 1,
     w: datasetWidths[index],
     h: datasetHeights[index],
-    type: metricsDashboardCharts[m.id].typeChart,
+    type: metricsDashboardCharts[key].typeChart,
     label:
-      translations[metricsDashboardCharts[m.id].label][language] ||
+      translations[metricsDashboardCharts[key].label][language] ||
       `Chart ${index + 1}`
   }))
 
@@ -91,21 +113,15 @@ const Dashboard = () => {
       setIsLoading(true)
       try {
         const statsData = await api.dashboard.statistics({
-          platform,
-          metrics,
-          workflow,
-          data_range: dataRange
+          ...(metrics.length && { metrics }),
+          ...(platform && { platform }),
+          ...(workflow && { workflow }),
+          ...(dataRange.start && dataRange.end && { data_range: dataRange })
         })
 
         if (statsData && typeof statsData === "object" && metrics.length) {
-          setStatistics(Object.values(statsData))
+          setMetricsDashboard(statsData)
 
-          const metricsData = Object.entries(statsData).map(([key, value]) => ({
-            id: key,
-            value
-          }))
-
-          setMetricsDashboard(metricsData)
           return
         }
 
@@ -129,6 +145,7 @@ const Dashboard = () => {
     }
 
     fetchStatistics({ platform, metrics, workflow, dataRange })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     fetchStatistics,
     platform,
@@ -163,7 +180,6 @@ const Dashboard = () => {
     w: datasetWidths[index],
     h: datasetHeights[index],
     type: datasetTypes[index],
-    // label: translations[datasetLabels[index]][language] || `Chart ${index + 1}`
     label: translations[datasetLabels[index]][language] || `Chart ${index + 1}`
   }))
 
@@ -202,35 +218,39 @@ const Dashboard = () => {
           isResizable={true}
           isDraggable={true}
         >
-          {statistics?.map((statArray, index) => {
-            const layoutItem = statisticsLayout[index]
-            if (!layoutItem) return null
+          {metricsDashboard
+            ? Object.entries(metricsDashboard).map(([key, value]) => {
+                const { typeChart, label } = metricsDashboardCharts[key]
+                const ChartComponent = chartComponents[typeChart]
+                const chartData = chartsMetadata(value, label, typeChart)
 
-            const { type: chartType, label: chartLabel } = layoutItem
-            const ChartComponent = chartComponents[chartType]
+                return renderChart({
+                  Component: ChartComponent,
+                  chartData,
+                  chartLabel: label,
+                  index: key
+                })
+              })
+            : statistics?.map((statArray, index) => {
+                const layoutItem = statisticsLayout[index]
+                if (!layoutItem) return null
 
-            const chartData = chartsMetadata(statArray, chartLabel, chartType)
+                const { type: chartType, label: chartLabel } = layoutItem
+                const ChartComponent = chartComponents[chartType]
 
-            return (
-              <div
-                key={layoutItem.i}
-                style={{ width: "100%", height: "100%", alignItems: "center" }}
-              >
-                <div
-                  className="chart-container"
-                  style={{
-                    height: "100%",
-                    width: "100%"
-                  }}
-                >
-                  <h3 style={{ textAlign: "center", marginBottom: "10px" }}>
-                    {chartLabel}
-                  </h3>
-                  <ChartComponent data={chartData} />
-                </div>
-              </div>
-            )
-          })}
+                const chartData = chartsMetadata(
+                  statArray,
+                  chartLabel,
+                  chartType
+                )
+
+                return renderChart({
+                  Component: ChartComponent,
+                  chartData,
+                  chartLabel,
+                  index
+                })
+              })}
         </GridLayout>
       )}
     </div>
