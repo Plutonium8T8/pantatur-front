@@ -26,10 +26,10 @@
 
 .chat-messages {
   flex: 1;
-  padding: 15px;
+  /* padding: 15px; */
   overflow-y: auto;
   scroll-behavior: smooth;
-  width: 97%;
+  /* width: 97%; */
   height: 100vh;
   scroll-behavior: auto;
 }
@@ -601,7 +601,7 @@
   gap: 20px;
   flex-direction: column;
   background-color: white;
-  padding: 10px;
+  padding: 0px 10px 0px 10px;
 }
 
 .client-message-group {

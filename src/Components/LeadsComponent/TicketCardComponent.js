@@ -8,7 +8,6 @@ const TicketCard = ({ ticket, onEditTicket }) => {
   const [isHovered, setIsHovered] = useState(false)
   const tags = parseTags(ticket.tags)
 
-  // Удаляем `{}` из номера телефона
   const formattedPhone =
     ticket.phone &&
     ticket.phone.trim() !== "" &&
@@ -23,9 +22,17 @@ const TicketCard = ({ ticket, onEditTicket }) => {
       onMouseLeave={() => setIsHovered(false)}
     >
       {isHovered && (
-        <button className="edit-button" onClick={() => onEditTicket(ticket)}>
-          ✏️ Edit
-        </button>
+        <div className="ticket-actions">
+          <button
+            className="action-button-ticket"
+            onClick={() => onEditTicket(ticket)}
+          >
+            Edit
+          </button>
+          <Link to={`/chat/${ticket.id}`} className="action-button-ticket">
+            Open
+          </Link>
+        </div>
       )}
 
       <Link to={`/chat/${ticket.id}`} className="ticket-link">
@@ -74,7 +81,6 @@ const TicketCard = ({ ticket, onEditTicket }) => {
                 >
                   {ticket.last_interaction_date}
                 </div>
-
                 <div className="ticket-id">#{ticket.id}</div>
               </div>
             </div>
