@@ -24,6 +24,7 @@ const TicketCard = ({ ticket, onEditTicket }) => {
                 </button>
             )}
 
+
             <Link
                 to={`/chat/${ticket.id}`}
                 className="ticket-link"
