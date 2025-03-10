@@ -6,12 +6,12 @@ import WorkflowColumn from "./WorkflowColumnComponent";
 import TicketModal from "./TicketModal/TicketModalComponent";
 import TicketFilterModal from "./TicketFilterModal";
 import TicketRow from "./TicketRowComponent";
-import "../../App.css";
-import "../SnackBarComponent/SnackBarComponent.css";
 import { FaFilter, FaTable, FaColumns, FaTrash, FaEdit } from "react-icons/fa";
 import { getLanguageByKey } from "../../Components/utils/getTranslationByKey";
 import { SpinnerRightBottom } from "../SpinnerRightBottom";
 import { useDOMElementHeight } from "../../hooks"
+import "../../App.css";
+import "../SnackBarComponent/SnackBarComponent.css";
 
 const Leads = () => {
   const refLeadsFilter = useRef();
