@@ -17,7 +17,7 @@ import { useDebounce } from "../../hooks"
 import { showServerError, getTotalPages } from "../utils"
 import { api } from "../../api"
 import { useSnackbar } from "notistack"
-import { LabelInput } from "../LabelInput"
+import { Input } from "../Input/Input"
 
 const SORT_BY = "creation_date"
 const ORDER = "DESC"
@@ -258,7 +258,7 @@ const Leads = () => {
             {getLanguageByKey("Adaugă lead")}
           </Button>
 
-          <LabelInput
+          <Input
             value={searchTerm}
             onChange={(e) => {
               if (e) {
@@ -367,10 +367,10 @@ const Leads = () => {
                 const isEditing = Boolean(updatedTicket.ticket_id)
                 return isEditing
                   ? prevTickets.map((ticket) =>
-                      ticket.id === updatedTicket.ticket_id
-                        ? updatedTicket
-                        : ticket
-                    )
+                    ticket.id === updatedTicket.ticket_id
+                      ? updatedTicket
+                      : ticket
+                  )
                   : [...prevTickets, updatedTicket]
               })
             }}

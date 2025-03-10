@@ -5,7 +5,7 @@ import { translations } from "../utils/translations"
 import { api } from "../../api"
 import { showServerError } from "../../Components/utils/showServerError"
 import { useSnackbar } from "notistack"
-import { LabelInput } from "../LabelInput"
+import { Input } from "../Input"
 
 const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
   const [tasks, setTasks] = useState([])
@@ -187,7 +187,7 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
             <label htmlFor="ticket-select">
               {translations["Lead"][language]} ID
             </label>
-            <LabelInput
+            <Input
               id="ticket-select"
               value={searchTerm}
               onChange={handleInputChange}
@@ -241,7 +241,7 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
             <label htmlFor="created-by">
               {translations["Creat de"][language]}
             </label>
-            <LabelInput
+            <Input
               id="created-by"
               value={`${userId} - ${name ? name : "N/A"} ${surname ? surname : "N/A"}`}
               disabled
@@ -250,7 +250,7 @@ const TaskModal = ({ isOpen, onClose, selectedTicketId }) => {
 
           <div className="input-group" style={{ position: "relative" }}>
             <label htmlFor="for-user">{translations["Pentru"][language]}</label>
-            <LabelInput
+            <Input
               id="for-user"
               value={searchUser}
               onChange={handleUserInputChange}

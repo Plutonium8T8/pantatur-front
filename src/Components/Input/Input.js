@@ -1,9 +1,9 @@
 import React from "react"
 import { IoMdClose } from "react-icons/io"
-import "./LabelInput.css"
+import "./Input.css"
 import { getLanguageByKey } from "../utils/getLanguageByKey"
 
-export const LabelInput = ({
+export const Input = ({
   label,
   type = "text",
   value,
