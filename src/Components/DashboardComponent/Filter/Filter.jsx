@@ -2,6 +2,7 @@ import Select from "../../SelectComponent/SelectComponent";
 import { platformOptions } from "../../../Components/utils/platformOptions";
 import CustomMultiSelect from "../../MultipleSelect/MultipleSelect";
 import { workflowOptions } from "../../../FormOptions/WorkFlowOption";
+import Input from "../../InputComponent/InputComponent";
 import "./Filter.css";
 
 const metricOptions = [
@@ -17,9 +18,11 @@ export const Filter = ({
   onSelectPlatform,
   onSelectMetrics,
   onSelectWorkflow,
+  setSelectDataRange,
   platform,
   metrics,
   workflow,
+  dataRange,
 }) => {
   return (
     <div className="dashboard-filter">
@@ -48,6 +51,20 @@ export const Filter = ({
         onChange={(workflow) => onSelectWorkflow(workflow)}
         value={workflow}
         clear
+      />
+
+      <Input
+        type="date"
+        onChange={(e) =>
+          setSelectDataRange((prev) => ({ ...prev, start: e.target.value }))
+        }
+      />
+
+      <Input
+        type="date"
+        onChange={(e) =>
+          setSelectDataRange((prev) => ({ ...prev, end: e.target.value }))
+        }
       />
     </div>
   );

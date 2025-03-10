@@ -187,15 +187,20 @@ const Dashboard = () => {
   const [platform, setPlatform] = useState();
   const [metrics, setMetrics] = useState([]);
   const [workflow, setWorkflow] = useState();
+  const [dataRange, setDataRange]=  useState({
+    start: undefined,
+    end: undefined
+  })
 
   const fetchStatistics = useCallback(
-    async ({ platform, metrics, workflow }) => {
+    async ({ platform, metrics, workflow, dataRange }) => {
       setIsLoading(true);
       try {
         const statsData = await api.dashboard.statistics({
           platform,
           metrics,
           workflow,
+          data_range: dataRange
         });
 
         if (typeof statistics === "object" && statistics !== null && metrics.length) {
@@ -215,8 +220,11 @@ const Dashboard = () => {
 
 
   useEffect(() => {
-    fetchStatistics({ platform, metrics, workflow });
-  }, [fetchStatistics, platform, metrics, workflow]);
+    if((!dataRange.start && dataRange.end) || (dataRange.start && !dataRange.end)) return
+    
+    fetchStatistics({ platform, metrics, workflow, dataRange });
+
+  }, [fetchStatistics, platform, metrics, workflow, dataRange.start, dataRange.end]);
 
   useEffect(() => {
     const updateContainerDimensions = () => {
@@ -289,6 +297,8 @@ const Dashboard = () => {
         onSelectPlatform={setPlatform}
         onSelectMetrics={setMetrics}
         onSelectWorkflow={setWorkflow}
+        setSelectDataRange={setDataRange}
+        dataRange={dataRange}
         platform={platform}
         metrics={metrics}
         workflow={workflow}
