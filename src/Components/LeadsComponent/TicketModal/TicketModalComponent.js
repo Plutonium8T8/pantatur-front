@@ -9,7 +9,7 @@ import { translations } from "../../utils/translations"
 import { useAppContext } from "../../../AppContext"
 import { api } from "../../../api"
 import { useSnackbar } from "notistack"
-import { LabelInput } from "../../LabelInput"
+import { Input } from "../../Input/Input"
 
 const TicketModal = ({ ticket, onClose, onSave }) => {
   const modalRef = useRef(null)
@@ -94,8 +94,8 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
       setTickets((prevTickets) =>
         isEditing
           ? prevTickets.map((ticket) =>
-              ticket.id === updatedTicket.id ? updatedTicket : ticket
-            )
+            ticket.id === updatedTicket.id ? updatedTicket : ticket
+          )
           : [...prevTickets, updatedTicket]
       )
 
@@ -149,7 +149,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
           <div className="divider-line"></div>
           <div className="input-group">
             <label>{translations["name"][language]}:</label>
-            <LabelInput
+            <Input
               name="name"
               value={editedTicket.name || ""}
               onChange={handleInputChange}
@@ -159,7 +159,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
           </div>
           <div className="input-group">
             <label>{translations["surname"][language]}:</label>
-            <LabelInput
+            <Input
               name="surname"
               value={editedTicket.surname || ""}
               onChange={handleInputChange}
@@ -169,7 +169,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
           </div>
           <div className="input-group">
             <label>{translations["email"][language]}:</label>
-            <LabelInput
+            <Input
               name="email"
               value={editedTicket.email || ""}
               onChange={handleInputChange}
@@ -178,7 +178,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
           </div>
           <div className="input-group">
             <label>{translations["phone"][language]}:</label>
-            <LabelInput
+            <Input
               type="tel"
               name="phone"
               value={
@@ -193,7 +193,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
           </div>
           <div className="input-group">
             <label>{translations["Contact"][language]}:</label>
-            <LabelInput
+            <Input
               name="contact"
               value={editedTicket.contact || ""}
               onChange={handleInputChange}

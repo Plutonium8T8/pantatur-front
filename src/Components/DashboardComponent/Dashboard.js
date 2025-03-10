@@ -38,56 +38,6 @@ ChartJS.register(
   RadialLinearScale
 )
 
-const platformColors = {
-  facebook: {
-    background: "rgba(16, 46, 216, 0.5)",
-    border: "rgb(39, 64, 204)"
-  },
-  viber: { background: "rgba(104, 41, 229, 0.5)", border: "rgb(142, 54, 235)" },
-  whatsapp: {
-    background: "rgba(37, 211, 102, 0.5)",
-    border: "rgba(37, 211, 102, 1)"
-  },
-  instagram: {
-    background: "rgba(255, 99, 132, 0.5)",
-    border: "rgba(255, 99, 132, 1)"
-  },
-  telegram: {
-    background: "rgba(0, 136, 204, 0.5)",
-    border: "rgba(0, 136, 204, 1)"
-  }
-}
-
-const weekdaysColors = {
-  Sunday: {
-    background: "rgba(255, 99, 132, 0.5)",
-    border: "rgba(255, 99, 132, 1)"
-  }, // Red
-  Monday: {
-    background: "rgba(54, 162, 235, 0.5)",
-    border: "rgba(54, 162, 235, 1)"
-  }, // Blue
-  Tuesday: {
-    background: "rgba(255, 206, 86, 0.5)",
-    border: "rgba(255, 206, 86, 1)"
-  }, // Yellow
-  Wednesday: {
-    background: "rgba(75, 192, 192, 0.5)",
-    border: "rgba(75, 192, 192, 1)"
-  }, // Teal
-  Thursday: {
-    background: "rgba(153, 102, 255, 0.5)",
-    border: "rgba(153, 102, 255, 1)"
-  }, // Purple
-  Friday: {
-    background: "rgba(255, 159, 64, 0.5)",
-    border: "rgba(255, 159, 64, 1)"
-  }, // Orange
-  Saturday: {
-    background: "rgba(199, 199, 199, 0.5)",
-    border: "rgba(199, 199, 199, 1)"
-  } // Grey
-}
 const metricsDashboardCharts = {
   platform_clients: {
     typeChart: "pie",
@@ -254,19 +204,11 @@ const Dashboard = () => {
     label: translations[datasetLabels[index]][language] || `Chart ${index + 1}`
   }))
 
-  // Chart type mapping
-
-  // if (isLoading) {
-  //   return <SpinnerRightBottom />
-  // }
-
   return (
     <div
       style={{
         width: "100%", // Ensure it stretches fully in the grid cell
         height: "100%", // Match the height dynamically
-        width: "100%",
-        height: "100%",
         justifyContent: "center",
         alignItems: "center",
         padding: "5px"
@@ -301,7 +243,7 @@ const Dashboard = () => {
         >
           {statistics?.map((statArray, index) => {
             const layoutItem = statisticsLayout[index]
-            if (!layoutItem) return null 
+            if (!layoutItem) return null
 
             const { type: chartType, label: chartLabel } = layoutItem
             const ChartComponent = chartComponents[chartType]

@@ -2,7 +2,7 @@ import Select from "../../SelectComponent/SelectComponent"
 import { platformOptions } from "../../../Components/utils/platformOptions"
 import CustomMultiSelect from "../../MultipleSelect/MultipleSelect"
 import { workflowOptions } from "../../../FormOptions/WorkFlowOption"
-import { LabelInput } from "../../LabelInput"
+import { Input } from "../../Input"
 import "./Filter.css"
 import { metricOptions } from "../utils"
 
@@ -45,14 +45,14 @@ export const Filter = ({
         clear
       />
 
-      <LabelInput
+      <Input
         type="date"
         onChange={(e) =>
           setSelectDataRange((prev) => ({ ...prev, start: e.target.value }))
         }
       />
 
-      <LabelInput
+      <Input
         type="date"
         onChange={(e) =>
           setSelectDataRange((prev) => ({ ...prev, end: e.target.value }))

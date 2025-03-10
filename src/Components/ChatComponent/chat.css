@@ -553,7 +553,7 @@
 }
 
 .tab-content {
-  padding: 0px 20px 20px 20px;
+  padding: 20px 20px 20px 20px;
 }
 
 .tab-content-chat {
@@ -860,7 +860,7 @@ input:checked + .slider:before {
 
 .toggle-chat-list-button {
   position: absolute;
-  left: calc(20% + 15px);
+  left: calc(19%);
   top: 50%;
   transform: translateY(-50%);
   background-color: #0f824c;

@@ -2,7 +2,7 @@ import { getLanguageByKey } from "../utils/getLanguageByKey"
 import CustomMultiSelect from "../MultipleSelect/MultipleSelect"
 import { motivulRefuzuluiOptions } from "../../FormOptions/MotivulRefuzuluiOptions"
 import { evaluareOdihnaOptions } from "../../FormOptions/EvaluareVacantaOptions"
-import { LabelInput } from "../LabelInput"
+import { Input } from "../Input"
 
 export const QualityControl = ({
   handleMultiSelectChange,
@@ -32,7 +32,7 @@ export const QualityControl = ({
         selectedValues={filters.evaluare_de_odihna}
       />
       <label htmlFor="id">{getLanguageByKey("Următoarea vacanță")}</label>
-      <LabelInput
+      <Input
         id="id"
         name="urmatoarea_vacanta"
         value={filters.urmatoarea_vacanta || ""}
@@ -40,14 +40,14 @@ export const QualityControl = ({
         placeholder={getLanguageByKey("Următoarea vacanță")}
       />
       <label>{getLanguageByKey("Manager")}</label>
-      <LabelInput
+      <Input
         name="manager"
         value={filters.manager || ""}
         onChange={handleInputChange}
         placeholder={getLanguageByKey("Manager")}
       />
       <label>{getLanguageByKey("Vacanța")}</label>
-      <LabelInput
+      <Input
         name="vacanta"
         value={filters.vacanta || ""}
         onChange={handleInputChange}
