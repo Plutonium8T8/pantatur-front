@@ -61,16 +61,14 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
     const handleApplyFilter = async () => {
         const { workflow, platform, tags, ...formattedFilters } = filters;
 
-        // ✅ Преобразуем `tags` в строку (если массив) перед отправкой
         if (Array.isArray(tags) && tags.length > 0) {
-            formattedFilters.tags = tags.join(","); // Преобразуем массив в строку с запятыми
+            formattedFilters.tags = tags.join(",");
         }
 
-        // ✅ Преобразуем `tags` в формат {Grecia}
         if (Array.isArray(tags) && tags.length > 0) {
             formattedFilters.tags = `{${tags.join(",")}}`;
         } else {
-            delete formattedFilters.tags; // ❗ Если пусто, не отправляем `tags`
+            delete formattedFilters.tags;
         }
 
         const hasValidFilters = Object.values(formattedFilters).some(value =>
@@ -114,7 +112,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
             try {
 
                 const data = await api.users.getTechnicianList()
-                
+
                 const formattedTechnicians = data.map(item => `${item.id.id}: ${item.id.name} ${item.id.surname}`.trim());
                 setTechnicians(formattedTechnicians);
             } catch (error) {
@@ -157,10 +155,9 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
 
         setFilters((prev) => ({
             ...prev,
-            [name]: name === "tags" ? value.split(",").map(tag => tag.trim()) : value, // ✅ Преобразуем строку в массив
+            [name]: name === "tags" ? value.split(",").map(tag => tag.trim()) : value,
         }));
 
-        // ✅ Добавляем/удаляем класс 'filled-field'
         const field = document.querySelector(`[name="${name}"]`);
         if (field) {
             if (value && value.length > 0) {
@@ -177,7 +174,6 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
             [name]: selectedValues,
         }));
 
-        // ✅ Добавляем/удаляем класс 'filled-field' для мультиселектов
         const field = document.querySelector(`[name="${name}"]`);
         if (field) {
             if (selectedValues.length > 0) {
@@ -249,7 +245,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         name="creation_date"
                                         value={filters.creation_date || ""}
                                         onChange={handleInputChange}
-                                        className={filters.numar_de_contract ? "filled-field" : ""} // ✅ Если заполнено, выделяем
+                                        className={filters.numar_de_contract ? "filled-field" : ""}
                                     />
                                     <label>{translations['Data ultima actualizare Lead'][language]}</label>
                                     <input
@@ -257,7 +253,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         name="last_interaction_date"
                                         value={filters.last_interaction_date || ""}
                                         onChange={handleInputChange}
-                                        className={filters.last_interaction_date ? "filled-field" : ""} // ✅ Если заполнено, выделяем
+                                        className={filters.last_interaction_date ? "filled-field" : ""}
                                     />
                                     <label>{translations['Prioritate Lead'][language]}</label>
                                     <CustomMultiSelect
@@ -278,10 +274,10 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                     <input
                                         type="text"
                                         name="tags"
-                                        value={filters.tags.length > 0 ? filters.tags.join(", ") : ""} // ✅ Проверяем, пуст ли массив
+                                        value={filters.tags.length > 0 ? filters.tags.join(", ") : ""}
                                         onChange={handleInputChange}
                                         placeholder={translations['Introdu tag-uri separate prin virgule'][language]}
-                                        className={filters.tags.length > 0 ? "filled-field" : ""} // ✅ Подсвечиваем только если есть значения
+                                        className={filters.tags.length > 0 ? "filled-field" : ""}
                                     />
                                     <label>{translations['Sursa Lead'][language]}</label>
                                     <CustomMultiSelect
@@ -338,7 +334,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         name="data_venit_in_oficiu"
                                         value={filters.data_venit_in_oficiu || ""}
                                         onChange={handleInputChange}
-                                        className={filters.data_venit_in_oficiu ? "filled-field" : ""} // ✅ Если заполнено, выделяем
+                                        className={filters.data_venit_in_oficiu ? "filled-field" : ""}
                                     />
 
                                     <label>{translations["Data plecarii"][language]}</label>
@@ -347,7 +343,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         name="data_plecarii"
                                         value={filters.data_plecarii || ""}
                                         onChange={handleInputChange}
-                                        className={filters.data_plecarii ? "filled-field" : ""} // ✅ Если заполнено, выделяем
+                                        className={filters.data_plecarii ? "filled-field" : ""}
 
                                     />
 
@@ -357,7 +353,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         name="data_intoarcerii"
                                         value={filters.data_intoarcerii || ""}
                                         onChange={handleInputChange}
-                                        className={filters.data_intoarcerii ? "filled-field" : ""} // ✅ Если заполнено, выделяем
+                                        className={filters.data_intoarcerii ? "filled-field" : ""}
 
                                     />
 
@@ -368,7 +364,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         value={filters.buget || ""}
                                         onChange={handleInputChange}
                                         placeholder={translations["Indicați suma în euro"][language]}
-                                        className={filters.buget ? "filled-field" : ""} // ✅ Если заполнено, выделяем
+                                        className={filters.buget ? "filled-field" : ""}
 
                                     />
 
@@ -394,7 +390,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         name="data_cererii_de_retur"
                                         value={filters.data_cererii_de_retur || ""}
                                         onChange={handleInputChange}
-                                        className={filters.data_cererii_de_retur ? "filled-field" : ""} // ✅ Если заполнено, выделяем
+                                        className={filters.data_cererii_de_retur ? "filled-field" : ""}
                                     />
                                 </div>
 
@@ -409,7 +405,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         value={filters.numar_de_contract || ""}
                                         onChange={handleInputChange}
                                         placeholder={translations["Nr de contract"][language]}
-                                        className={filters.numar_de_contract ? "filled-field" : ""} // ✅ Если заполнено, выделяем
+                                        className={filters.numar_de_contract ? "filled-field" : ""}
                                     />
 
                                     <label>{translations["Data contractului"][language]}</label>
@@ -418,7 +414,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         name="data_contractului"
                                         value={filters.data_contractului || ""}
                                         onChange={handleInputChange}
-                                        className={filters.data_contractului ? "filled-field" : ""} // ✅ Если заполнено, выделяем
+                                        className={filters.data_contractului ? "filled-field" : ""}
                                     />
 
                                     <div className="toggle-container">
@@ -426,9 +422,9 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         <label className="switch">
                                             <input
                                                 type="checkbox"
-                                                checked={Boolean(filters.contract_trimis)} // ✅ Преобразуем значение в Boolean, чтобы избежать ошибок
+                                                checked={Boolean(filters.contract_trimis)}
                                                 onChange={(e) =>
-                                                    setFilters((prev) => ({ ...prev, contract_trimis: e.target.checked })) // ✅ Обновляем `filters`
+                                                    setFilters((prev) => ({ ...prev, contract_trimis: e.target.checked }))
                                                 }
                                             />
                                             <span className="slider round"></span>
@@ -440,9 +436,9 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         <label className="switch">
                                             <input
                                                 type="checkbox"
-                                                checked={Boolean(filters.contract_semnat)} // ✅ Преобразуем значение в Boolean, чтобы избежать ошибок
+                                                checked={Boolean(filters.contract_semnat)}
                                                 onChange={(e) =>
-                                                    setFilters((prev) => ({ ...prev, contract_semnat: e.target.checked })) // ✅ Обновляем `filters`
+                                                    setFilters((prev) => ({ ...prev, contract_semnat: e.target.checked }))
                                                 }
                                             />
                                             <span className="slider round"></span>
@@ -456,7 +452,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         value={filters.tour_operator || ""}
                                         onChange={handleInputChange}
                                         placeholder={translations["Operator turistic"][language]}
-                                        className={filters.tour_operator ? "filled-field" : ""} // ✅ Если заполнено, выделяем
+                                        className={filters.tour_operator ? "filled-field" : ""}
                                     />
 
                                     <label>{translations["Nr cererii de la operator"][language]}</label>
@@ -466,7 +462,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         value={filters.numarul_cererii_de_la_operator || ""}
                                         onChange={handleInputChange}
                                         placeholder={translations["Nr cererii de la operator"][language]}
-                                        className={filters.numarul_cererii_de_la_operator ? "filled-field" : ""} // ✅ Если заполнено, выделяем
+                                        className={filters.numarul_cererii_de_la_operator ? "filled-field" : ""}
                                     />
 
                                     <div className="toggle-container">
@@ -474,9 +470,9 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         <label className="switch">
                                             <input
                                                 type="checkbox"
-                                                checked={Boolean(filters.achitare_efectuata)} // ✅ Преобразуем значение в Boolean, чтобы избежать ошибок
+                                                checked={Boolean(filters.achitare_efectuata)}
                                                 onChange={(e) =>
-                                                    setFilters((prev) => ({ ...prev, achitare_efectuata: e.target.checked })) // ✅ Обновляем `filters`
+                                                    setFilters((prev) => ({ ...prev, achitare_efectuata: e.target.checked }))
                                                 }
                                             />
                                             <span className="slider round"></span>
@@ -488,9 +484,9 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         <label className="switch">
                                             <input
                                                 type="checkbox"
-                                                checked={Boolean(filters.rezervare_confirmata)} // ✅ Преобразуем значение в Boolean, чтобы избежать ошибок
+                                                checked={Boolean(filters.rezervare_confirmata)}
                                                 onChange={(e) =>
-                                                    setFilters((prev) => ({ ...prev, rezervare_confirmata: e.target.checked })) // ✅ Обновляем `filters`
+                                                    setFilters((prev) => ({ ...prev, rezervare_confirmata: e.target.checked }))
                                                 }
                                             />
                                             <span className="slider round"></span>
@@ -502,9 +498,9 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         <label className="switch">
                                             <input
                                                 type="checkbox"
-                                                checked={Boolean(filters.contract_arhivat)} // ✅ Преобразуем значение в Boolean, чтобы избежать ошибок
+                                                checked={Boolean(filters.contract_arhivat)}
                                                 onChange={(e) =>
-                                                    setFilters((prev) => ({ ...prev, contract_arhivat: e.target.checked })) // ✅ Обновляем `filters`
+                                                    setFilters((prev) => ({ ...prev, contract_arhivat: e.target.checked }))
                                                 }
                                             />
                                             <span className="slider round"></span>
@@ -526,7 +522,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         value={filters.avans_euro || ""}
                                         onChange={handleInputChange}
                                         placeholder={translations["Plată primită"][language]}
-                                        className={filters.avans_euro ? "filled-field" : ""} // ✅ Если заполнено, выделяем
+                                        className={filters.avans_euro ? "filled-field" : ""}
                                     />
 
                                     <label>{translations["Data avansului"][language]}</label>
@@ -535,7 +531,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         name="data_avansului"
                                         value={filters.data_avansului || ""}
                                         onChange={handleInputChange}
-                                        className={filters.data_avansului ? "filled-field" : ""} // ✅ Если заполнено, выделяем
+                                        className={filters.data_avansului ? "filled-field" : ""}
                                     />
 
                                     <label>{translations["Data de plată integrală"][language]}</label>
@@ -544,7 +540,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         name="data_de_plata_integrala"
                                         value={filters.data_de_plata_integrala || ""}
                                         onChange={handleInputChange}
-                                        className={filters.data_de_plata_integrala ? "filled-field" : ""} // ✅ Если заполнено, выделяем
+                                        className={filters.data_de_plata_integrala ? "filled-field" : ""}
                                     />
 
                                     <label>{translations["Preț NETTO"][language]} €</label>
@@ -554,7 +550,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         value={filters.pret_netto || ""}
                                         onChange={handleInputChange}
                                         placeholder={translations["Preț NETTO"][language]}
-                                        className={filters.pret_netto ? "filled-field" : ""} // ✅ Если заполнено, выделяем
+                                        className={filters.pret_netto ? "filled-field" : ""}
                                     />
 
                                     <label>{translations["Achitat client"][language]}</label>
@@ -564,7 +560,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         value={filters.achitat_client || ""}
                                         onChange={handleInputChange}
                                         placeholder={translations["Achitat client"][language]}
-                                        className={filters.achitat_client ? "filled-field" : ""} // ✅ Если заполнено, выделяем
+                                        className={filters.achitat_client ? "filled-field" : ""}
                                     />
 
                                     <label>{translations["Comision companie"][language]} €</label>
@@ -574,7 +570,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         value={filters.comission_companie || ""}
                                         onChange={handleInputChange}
                                         placeholder={translations["Comision companie"][language]}
-                                        className={filters.comission_companie ? "filled-field" : ""} // ✅ Если заполнено, выделяем
+                                        className={filters.comission_companie ? "filled-field" : ""}
                                     />
 
                                     <div className="toggle-container">
@@ -582,9 +578,9 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         <label className="switch">
                                             <input
                                                 type="checkbox"
-                                                checked={Boolean(filters.control_admin)} // ✅ Преобразуем значение в Boolean, чтобы избежать ошибок
+                                                checked={Boolean(filters.control_admin)}
                                                 onChange={(e) =>
-                                                    setFilters((prev) => ({ ...prev, control_admin: e.target.checked })) // ✅ Обновляем `filters`
+                                                    setFilters((prev) => ({ ...prev, control_admin: e.target.checked }))
                                                 }
                                             />
                                             <span className="slider round"></span>
@@ -603,7 +599,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         value={filters.f_serviciu || ""}
                                         onChange={handleInputChange}
                                         placeholder={translations["F/service"][language]}
-                                        className={filters.f_serviciu ? "filled-field" : ""} // ✅ Если заполнено, выделяем
+                                        className={filters.f_serviciu ? "filled-field" : ""}
                                     />
 
                                     <label>{translations["F/factura"][language]}</label>
@@ -613,7 +609,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         value={filters.f_factura || ""}
                                         onChange={handleInputChange}
                                         placeholder={translations["F/factura"][language]}
-                                        className={filters.f_factura ? "filled-field" : ""} // ✅ Если заполнено, выделяем
+                                        className={filters.f_factura ? "filled-field" : ""}
                                     />
 
                                     <label>{translations["F/numarul"][language]}</label>
@@ -623,7 +619,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         value={filters.f_numarul || ""}
                                         onChange={handleInputChange}
                                         placeholder={translations["F/numarul"][language]}
-                                        className={filters.f_numarul ? "filled-field" : ""} // ✅ Если заполнено, выделяем
+                                        className={filters.f_numarul ? "filled-field" : ""}
                                     />
 
                                     <label>{translations["F/preț"][language]}</label>
@@ -633,7 +629,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         value={filters.f_pret || ""}
                                         onChange={handleInputChange}
                                         placeholder={translations["F/preț"][language]}
-                                        className={filters.f_pret ? "filled-field" : ""} // ✅ Если заполнено, выделяем
+                                        className={filters.f_pret ? "filled-field" : ""}
                                     />
 
                                     <label>{translations["F/sumă"][language]}</label>
@@ -643,7 +639,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         value={filters.f_suma || ""}
                                         onChange={handleInputChange}
                                         placeholder={translations["F/sumă"][language]}
-                                        className={filters.f_suma ? "filled-field" : ""} // ✅ Если заполнено, выделяем
+                                        className={filters.f_suma ? "filled-field" : ""}
                                     />
 
                                     <label>{translations["Valuta contului"][language]}</label>
@@ -689,7 +685,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         value={filters.urmatoarea_vacanta || ""}
                                         onChange={handleInputChange}
                                         placeholder={translations["Următoarea vacanță"][language]}
-                                        className={filters.urmatoarea_vacanta ? "filled-field" : ""} // ✅ Если заполнено, выделяем
+                                        className={filters.urmatoarea_vacanta ? "filled-field" : ""}
                                     />
                                     <label>{translations["Manager"][language]}</label>
                                     <input
@@ -698,7 +694,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         value={filters.manager || ""}
                                         onChange={handleInputChange}
                                         placeholder={translations["Manager"][language]}
-                                        className={filters.manager ? "filled-field" : ""} // ✅ Если заполнено, выделяем
+                                        className={filters.manager ? "filled-field" : ""}
                                     />
                                     <label>{translations["Vacanța"][language]}</label>
                                     <input
@@ -707,7 +703,7 @@ const TicketFilterModal = ({ isOpen, onClose, onApplyFilter, filteredTicketIds }
                                         value={filters.vacanta || ""}
                                         onChange={handleInputChange}
                                         placeholder={translations["Vacanța"][language]}
-                                        className={filters.vacanta ? "filled-field" : ""} // ✅ Если заполнено, выделяем
+                                        className={filters.vacanta ? "filled-field" : ""}
                                     />
                                 </div>
 

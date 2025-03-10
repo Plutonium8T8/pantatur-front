@@ -1,10 +1,10 @@
-import Select from "../../SelectComponent/SelectComponent";
-import { platformOptions } from "../../../Components/utils/platformOptions";
-import CustomMultiSelect from "../../MultipleSelect/MultipleSelect";
-import { workflowOptions } from "../../../FormOptions/WorkFlowOption";
-import Input from "../../InputComponent/InputComponent";
-import "./Filter.css";
-import {metricOptions } from "../utils"
+import Select from "../../SelectComponent/SelectComponent"
+import { platformOptions } from "../../../Components/utils/platformOptions"
+import CustomMultiSelect from "../../MultipleSelect/MultipleSelect"
+import { workflowOptions } from "../../../FormOptions/WorkFlowOption"
+import { LabelInput } from "../../LabelInput"
+import "./Filter.css"
+import { metricOptions } from "../utils"
 
 export const Filter = ({
   onSelectPlatform,
@@ -14,7 +14,7 @@ export const Filter = ({
   platform,
   metrics,
   workflow,
-  dataRange,
+  dataRange
 }) => {
   return (
     <div className="dashboard-filter">
@@ -45,19 +45,19 @@ export const Filter = ({
         clear
       />
 
-      <Input
+      <LabelInput
         type="date"
         onChange={(e) =>
           setSelectDataRange((prev) => ({ ...prev, start: e.target.value }))
         }
       />
 
-      <Input
+      <LabelInput
         type="date"
         onChange={(e) =>
           setSelectDataRange((prev) => ({ ...prev, end: e.target.value }))
         }
       />
     </div>
-  );
-};
+  )
+}

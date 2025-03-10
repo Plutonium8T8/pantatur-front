@@ -1,1 +1,1 @@
-export * from "./SpinnerRightBottom";
+export * from "./SpinnerRightBottom"

@@ -1,4 +1,3 @@
-/* 🏁 Основные стили таблицы */
 .ticket-table {
     width: 1700px;
     border-collapse: separate;
@@ -6,7 +5,6 @@
     font-size: 14px;
 }
 
-/* Заголовки */
 .ticket-table th {
     background-color: #f8f9fa;
     color: #333;
@@ -16,7 +14,6 @@
     border-bottom: 2px solid #ddd;
 }
 
-/* Строки */
 .ticket-row {
     background: white;
     transition: 0.2s ease-in-out;
@@ -28,12 +25,10 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
 }
 
-/* Выбранный тикет */
 .ticket-row.selected {
     background-color: #d1ecf1;
 }
 
-/* Ячейки */
 .ticket-checkbox-row,
 .ticket-id-row,
 .ticket-contact-row,
@@ -52,21 +47,18 @@
     vertical-align: middle;
 }
 
-/* Чекбокс */
 .ticket-checkbox-row input[type="checkbox"] {
     width: 16px;
     height: 16px;
     cursor: pointer;
 }
 
-/* Приоритет */
 .ticket-priority-row {
     font-weight: bold;
     padding: 5px 10px;
     border-radius: 4px;
 }
 
-/* Цвета приоритетов */
 .priority-высокий {
     background-color: #dc3545;
     color: white;
@@ -87,13 +79,11 @@
     color: black;
 }
 
-/* Workflow (Статус) */
 .ticket-workflow-row {
     font-weight: bold;
     color: #17a2b8;
 }
 
-/* Кнопка редактирования */
 .ticket-actions-row {
     text-align: center;
     background-color: black;
@@ -114,13 +104,11 @@
     background-color: #0056b3;
 }
 
-/* Контейнер для кнопки редактирования */
 .ticket-actions-row {
     text-align: center;
     padding: 10px;
 }
 
-/* Чекбокс теперь не смещает ID */
 .ticket-checkbox-row {
     width: 40px;
     text-align: center;

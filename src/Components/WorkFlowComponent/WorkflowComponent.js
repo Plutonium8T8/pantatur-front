@@ -1,48 +1,51 @@
-import React from "react";
-import Select from "react-select";
-import { workflowOptions as rawWorkflowOptions } from '../../FormOptions/WorkFlowOption';
-import { workflowStyles } from "../utils/workflowStyles";
-import { translations } from "../utils/translations";
+import React from "react"
+import Select from "react-select"
+import { workflowOptions as rawWorkflowOptions } from "../../FormOptions/WorkFlowOption"
+import { workflowStyles } from "../utils/workflowStyles"
+import { translations } from "../utils/translations"
 
 const workflowOptions = rawWorkflowOptions.map((workflow) => ({
   value: workflow,
-  label: workflow,
-}));
+  label: workflow
+}))
 
-export const Workflow = ({ ticket, onChange = () => { }, disabled = false }) => {
-  const language = localStorage.getItem('language') || 'RO';
+export const Workflow = ({ ticket, onChange = () => {}, disabled = false }) => {
+  const language = localStorage.getItem("language") || "RO"
 
   const customStyles = {
     option: (provided, state) => ({
       ...provided,
       backgroundColor: state.isFocused
-        ? workflowStyles[state.data.value]?.backgroundColor || '#f0f0f0'
-        : workflowStyles[state.data.value]?.backgroundColor || '#fff',
-      color: '#000',
-      padding: '10px',
-      cursor: disabled ? 'not-allowed' : 'pointer',
+        ? workflowStyles[state.data.value]?.backgroundColor || "#f0f0f0"
+        : workflowStyles[state.data.value]?.backgroundColor || "#fff",
+      color: "#000",
+      padding: "10px",
+      cursor: disabled ? "not-allowed" : "pointer"
     }),
     control: (provided, state) => ({
       ...provided,
-      borderColor: workflowStyles[ticket?.workflow]?.borderColor || '#ccc',
-      backgroundColor: workflowStyles[ticket?.workflow]?.backgroundColor || '#fff',
-      color: '#000',
-      boxShadow: state.isFocused ? `0 0 0 2px ${workflowStyles[ticket?.workflow]?.borderColor || '#aaa'}` : 'none',
+      borderColor: workflowStyles[ticket?.workflow]?.borderColor || "#ccc",
+      backgroundColor:
+        workflowStyles[ticket?.workflow]?.backgroundColor || "#fff",
+      color: "#000",
+      boxShadow: state.isFocused
+        ? `0 0 0 2px ${workflowStyles[ticket?.workflow]?.borderColor || "#aaa"}`
+        : "none",
       opacity: disabled ? 0.5 : 1,
-      cursor: disabled ? 'not-allowed' : 'default',
-      '&:hover': {
-        borderColor: workflowStyles[ticket?.workflow]?.borderColor || '#aaa',
-      },
+      cursor: disabled ? "not-allowed" : "default",
+      "&:hover": {
+        borderColor: workflowStyles[ticket?.workflow]?.borderColor || "#aaa"
+      }
     }),
     singleValue: (provided) => ({
       ...provided,
-      color: '#000',
-    }),
-  };
+      color: "#000"
+    })
+  }
 
   const selectedOption = workflowOptions.find(
     (option) => option.value === ticket?.workflow
-  );
+  )
 
   return (
     <div className="container-options-component">
@@ -50,7 +53,8 @@ export const Workflow = ({ ticket, onChange = () => { }, disabled = false }) => 
         options={workflowOptions}
         value={selectedOption || null}
         onChange={(selected) =>
-          !disabled && onChange({ target: { name: 'workflow', value: selected.value } })
+          !disabled &&
+          onChange({ target: { name: "workflow", value: selected.value } })
         }
         styles={customStyles}
         isSearchable={false}
@@ -58,7 +62,7 @@ export const Workflow = ({ ticket, onChange = () => { }, disabled = false }) => 
         isDisabled={disabled}
       />
     </div>
-  );
-};
+  )
+}
 
-export default Workflow;
+export default Workflow

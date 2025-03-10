@@ -1,16 +1,20 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { truncateText, parseTags } from '../../stringUtils';
-import { getPriorityColor } from '../utils/ticketUtils';
-import './TicketCardComponent.css';
+import React, { useState } from "react"
+import { Link } from "react-router-dom"
+import { truncateText, parseTags } from "../../stringUtils"
+import { getPriorityColor } from "../utils/ticketUtils"
+import "./TicketCardComponent.css"
 
 const TicketCard = ({ ticket, onEditTicket }) => {
-    const [isHovered, setIsHovered] = useState(false);
-    const tags = parseTags(ticket.tags);
+  const [isHovered, setIsHovered] = useState(false)
+  const tags = parseTags(ticket.tags)
 
-    const formattedPhone = ticket.phone && ticket.phone.trim() !== "" && ticket.phone.replace(/[{}]/g, "").trim().toLowerCase() !== "null"
-        ? ticket.phone.replace(/[{}]/g, "").trim()
-        : "Unknown number";
+  // Удаляем `{}` из номера телефона
+  const formattedPhone =
+    ticket.phone &&
+    ticket.phone.trim() !== "" &&
+    ticket.phone.replace(/[{}]/g, "").trim().toLowerCase() !== "null"
+      ? ticket.phone.replace(/[{}]/g, "").trim()
+      : "Unknown number"
 
     return (
         <div
@@ -24,9 +28,9 @@ const TicketCard = ({ ticket, onEditTicket }) => {
                 </button>
             )}
 
+
             <Link
                 to={`/chat/${ticket.id}`}
-                state={{ hideChatList: true }}
                 className="ticket-link"
             >
                 <div className="ticket">
@@ -82,4 +86,4 @@ const TicketCard = ({ ticket, onEditTicket }) => {
     );
 };
 
-export default TicketCard;
+export default TicketCard
