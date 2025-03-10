@@ -1,38 +1,8 @@
 import React, { useState, useMemo, useEffect, useRef } from "react"
 import { SpinnerRightBottom } from "../SpinnerRightBottom"
 import { useDOMElementHeight } from "../../hooks"
-import { useAppContext } from "../../AppContext"
-import { priorityOptions } from "../../FormOptions/PriorityOption"
-import { workflowOptions } from "../../FormOptions/WorkFlowOption"
-import WorkflowColumn from "./WorkflowColumnComponent"
-import TicketModal from "./TicketModal/TicketModalComponent"
-import { TicketFilterModal } from "../TicketFilterModal"
-import "../../App.css"
-import "../SnackBarComponent/SnackBarComponent.css"
-import { FaFilter, FaTable, FaColumns, FaTrash, FaEdit } from "react-icons/fa"
-import { getLanguageByKey } from "../../Components/utils/getLanguageByKey"
-import { LeadTable } from "./LeadTable"
-import { Button } from "../Button"
-import { api } from "../../api"
-import { useSnackbar } from "notistack"
-import { showServerError, getTotalPages } from "../utils"
-import { LabelInput } from "../LabelInput"
-import { useDebounce } from "../../hooks"
-
-const SORT_BY = "creation_date"
-const ORDER = "DESC"
-const HARD_TICKET = "hard"
-const LIGHT_TICKET = "light"
-const NUMBER_PAGE = 1
-
-const formatFiltersData = (filters) => {
-  return {
-    ...filters,
-    technician_id: filters.technician_id
-      ? filters.technician_id.map((t) => parseInt(t.split(":")[0]))
-      : []
-  }
-}
+import "../../App.css";
+import "../SnackBarComponent/SnackBarComponent.css";
 
 const Leads = () => {
   const refLeadsFilter = useRef()
@@ -87,9 +57,17 @@ const Leads = () => {
     setSelectedTickets((prev) =>
       prev.includes(ticketId)
         ? prev.filter((id) => id !== ticketId)
-        : [...prev, ticketId]
-    )
-  }
+        : [...prev, ticketId],
+    );
+  };
+
+  const toggleSelectAll = (e) => {
+    if (e.target.checked) {
+      setSelectedTickets(filteredTickets.map((ticket) => ticket.id));
+    } else {
+      setSelectedTickets([]);
+    }
+  };
 
   const deleteSelectedTickets = () => {
     if (selectedTickets.length === 0) return
@@ -367,6 +345,12 @@ const Leads = () => {
                 const isEditing = Boolean(updatedTicket.ticket_id)
                 return isEditing
                   ? prevTickets.map((ticket) =>
+                    ticket.id === updatedTicket.ticket_id
+                      ? updatedTicket
+                      : ticket,
+                  )
+                  : [...prevTickets, updatedTicket];
+              });
                       ticket.id === updatedTicket.ticket_id
                         ? updatedTicket
                         : ticket
@@ -404,4 +388,4 @@ const Leads = () => {
   )
 }
 
-export default Leads
+export default Leads;
