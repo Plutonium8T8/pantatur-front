@@ -136,16 +136,43 @@ const monthsColors = {
 }
 
 const workflowColors = {
-  "Interesat": { background: "rgba(54, 162, 235, 0.5)", border: "rgba(54, 162, 235, 1)" }, // Blue
-  "Aprobat cu client": { background: "rgba(75, 192, 192, 0.5)", border: "rgba(75, 192, 192, 1)" }, // Teal
-  "Contract semnat": { background: "rgba(255, 206, 86, 0.5)", border: "rgba(255, 206, 86, 1)" }, // Yellow
-  "Apel de intrare": { background: "rgba(153, 102, 255, 0.5)", border: "rgba(153, 102, 255, 1)" }, // Purple
-  "Plată primită": { background: "rgba(255, 159, 64, 0.5)", border: "rgba(255, 159, 64, 1)" }, // Orange
-  "Contract încheiat": { background: "rgba(46, 204, 113, 0.5)", border: "rgba(46, 204, 113, 1)" }, // Green
-  "De prelucrat": { background: "rgba(231, 76, 60, 0.5)", border: "rgba(231, 76, 60, 1)" }, // Red
-  "Luati în lucru": { background: "rgba(52, 152, 219, 0.5)", border: "rgba(52, 152, 219, 1)" }, // Light Blue
-  "Ofertă trimisă": { background: "rgba(155, 89, 182, 0.5)", border: "rgba(155, 89, 182, 1)" }, // Violet
-};
+  Interesat: {
+    background: "rgba(54, 162, 235, 0.5)",
+    border: "rgba(54, 162, 235, 1)"
+  }, // Blue
+  "Aprobat cu client": {
+    background: "rgba(75, 192, 192, 0.5)",
+    border: "rgba(75, 192, 192, 1)"
+  }, // Teal
+  "Contract semnat": {
+    background: "rgba(255, 206, 86, 0.5)",
+    border: "rgba(255, 206, 86, 1)"
+  }, // Yellow
+  "Apel de intrare": {
+    background: "rgba(153, 102, 255, 0.5)",
+    border: "rgba(153, 102, 255, 1)"
+  }, // Purple
+  "Plată primită": {
+    background: "rgba(255, 159, 64, 0.5)",
+    border: "rgba(255, 159, 64, 1)"
+  }, // Orange
+  "Contract încheiat": {
+    background: "rgba(46, 204, 113, 0.5)",
+    border: "rgba(46, 204, 113, 1)"
+  }, // Green
+  "De prelucrat": {
+    background: "rgba(231, 76, 60, 0.5)",
+    border: "rgba(231, 76, 60, 1)"
+  }, // Red
+  "Luati în lucru": {
+    background: "rgba(52, 152, 219, 0.5)",
+    border: "rgba(52, 152, 219, 1)"
+  }, // Light Blue
+  "Ofertă trimisă": {
+    background: "rgba(155, 89, 182, 0.5)",
+    border: "rgba(155, 89, 182, 1)"
+  } // Violet
+}
 
 const normalizeToArray = (data) => {
   return typeof data === "string" ? [] : data
@@ -162,7 +189,7 @@ const Dashboard = () => {
     try {
       const statsData = await api.dashboard.statistics()
 
-      setStatistics(normalizeToArray(statsData[0]))
+      setStatistics(normalizeToArray(statsData))
     } catch (error) {
       console.error("Error fetching statistics:", error)
       setStatistics([])
