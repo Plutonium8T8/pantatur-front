@@ -43,7 +43,6 @@ const Leads = () => {
     platform: [],
   });
 
-  // **Фильтрация тикетов**
   const filteredTickets = useMemo(() => {
     let result = tickets;
     if (filteredTicketIds === null) return result;
@@ -57,7 +56,6 @@ const Leads = () => {
     return result;
   }, [tickets, filteredTicketIds, selectedWorkflow]);
 
-  // Выбор тикетов
   const toggleSelectTicket = (ticketId) => {
     setSelectedTickets((prev) =>
       prev.includes(ticketId)
@@ -66,7 +64,6 @@ const Leads = () => {
     );
   };
 
-  // Выбор всех тикетов
   const toggleSelectAll = (e) => {
     if (e.target.checked) {
       setSelectedTickets(filteredTickets.map((ticket) => ticket.id));
@@ -75,7 +72,6 @@ const Leads = () => {
     }
   };
 
-  // Массовое удаление тикетов
   const deleteSelectedTickets = () => {
     if (selectedTickets.length === 0) return;
     const newTickets = tickets.filter(
@@ -88,7 +84,6 @@ const Leads = () => {
   const editSelectedTickets = () => {
     if (selectedTickets.length === 0) return;
 
-    // Открываем модалку редактирования с первым выделенным тикетом
     const ticketToEdit = tickets.find(
       (ticket) => ticket.id === selectedTickets[0],
     );
@@ -211,7 +206,7 @@ const Leads = () => {
                     key={ticket.id}
                     ticket={ticket}
                     isSelected={selectedTickets.includes(ticket.id)}
-                    onSelect={isTableView ? toggleSelectTicket : undefined} // Только в таблице
+                    onSelect={isTableView ? toggleSelectTicket : undefined}
                     onEditTicket={setCurrentTicket}
                   />
                 ))}
@@ -245,21 +240,20 @@ const Leads = () => {
                 const isEditing = Boolean(updatedTicket.ticket_id);
                 return isEditing
                   ? prevTickets.map((ticket) =>
-                      ticket.id === updatedTicket.ticket_id
-                        ? updatedTicket
-                        : ticket,
-                    )
+                    ticket.id === updatedTicket.ticket_id
+                      ? updatedTicket
+                      : ticket,
+                  )
                   : [...prevTickets, updatedTicket];
               });
             }}
           />
         )}
 
-        {/* Модальное окно фильтра */}
         <TicketFilterModal
           isOpen={isFilterOpen}
           onClose={() => setIsFilterOpen(false)}
-          filteredTicketIds={filteredTicketIds} // 🔥 Передаем текущие `filteredTicketIds`
+          filteredTicketIds={filteredTicketIds}
           onApplyFilter={(updatedFilters, ticketIds) => {
             console.log("🚀 Применяем фильтр с параметрами:", updatedFilters);
 
@@ -267,8 +261,8 @@ const Leads = () => {
               ...updatedFilters,
               technician_id: updatedFilters.technician_id
                 ? updatedFilters.technician_id.map((t) =>
-                    parseInt(t.split(":")[0]),
-                  )
+                  parseInt(t.split(":")[0]),
+                )
                 : [],
               priority: updatedFilters.priority || [],
               platform: updatedFilters.platform || [],

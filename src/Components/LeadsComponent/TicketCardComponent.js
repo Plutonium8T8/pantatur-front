@@ -26,7 +26,6 @@ const TicketCard = ({ ticket, onEditTicket }) => {
 
             <Link
                 to={`/chat/${ticket.id}`}
-                state={{ hideChatList: true }}
                 className="ticket-link"
             >
                 <div className="ticket">
