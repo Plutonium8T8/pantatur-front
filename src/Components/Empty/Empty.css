@@ -1,0 +1,8 @@
+.empty {
+  height: 500px;
+  color: #00000073;
+}
+
+.empty .no-data {
+  font-size: 14px;
+}

@@ -1,9 +1,9 @@
-import { baseAxios } from "./baseAxios";
+import { baseAxios } from "./baseAxios"
 
 export const dashboard = {
-  statistics: async (body) => {
-    const { data } = await baseAxios.post("/api/dashboard/statistics", body);
+  statistics: async () => {
+    const { data } = await baseAxios.get("/api/dashboard/statistics")
 
-    return data;
-  },
-};
+    return data
+  }
+}

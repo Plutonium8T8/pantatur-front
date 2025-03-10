@@ -1,9 +1,9 @@
-import { baseAxios } from "./baseAxios";
+import { baseAxios } from "./baseAxios"
 
 export const standalone = {
   applyFilter: async (body) => {
-    const { data } = await baseAxios.post("/api/apply-filter", body);
+    const { data } = await baseAxios.post("/api/apply-filter", body)
 
-    return data;
-  },
-};
+    return data
+  }
+}

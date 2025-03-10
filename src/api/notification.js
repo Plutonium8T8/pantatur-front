@@ -1,31 +1,31 @@
-import { baseAxios } from "./baseAxios";
+import { baseAxios } from "./baseAxios"
 
 export const notification = {
   create: async (body) => {
-    const { data } = await baseAxios.post("/api/notification", body);
+    const { data } = await baseAxios.post("/api/notification", body)
 
-    return data;
+    return data
   },
 
   deleteAllByUserId: async (id) => {
     const { data } = await baseAxios.delete("/api/notification/client", {
       data: {
-        client_id: id,
+        client_id: id
       }
-    });
+    })
 
-    return data;
+    return data
   },
 
   update: async (body) => {
-    const { data } = await baseAxios.patch("/api/notification", body);
+    const { data } = await baseAxios.patch("/api/notification", body)
 
-    return data;
+    return data
   },
 
   getById: async (id) => {
-    const { data } = await baseAxios.get(`/api/notification/${id}`);
+    const { data } = await baseAxios.get(`/api/notification/${id}`)
 
-    return data;
-  },
-};
+    return data
+  }
+}

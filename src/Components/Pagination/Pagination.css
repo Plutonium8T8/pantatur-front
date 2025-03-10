@@ -1,0 +1,15 @@
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  gap: 8px;
+
+  margin-block: 16px;
+}
+
+.pagination button {
+  transition: 0.3s ease;
+  padding: 10px;
+  width: 35px;
+  height: 35px;
+}

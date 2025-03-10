@@ -1,28 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react"
 
 const LanguageToggle = () => {
-    const [language, setLanguage] = useState('RO');
+  const [language, setLanguage] = useState("RO")
 
-    // Load language from localStorage when the component mounts
-    useEffect(() => {
-        const storedLanguage = localStorage.getItem('language') || 'RO';
-        setLanguage(storedLanguage);
-    }, []);
+  // Load language from localStorage when the component mounts
+  useEffect(() => {
+    const storedLanguage = localStorage.getItem("language") || "RO"
+    setLanguage(storedLanguage)
+  }, [])
 
-    // Function to toggle and store the language
-    const toggleLanguage = () => {
-        const newLanguage = language === 'RO' ? 'RU' : 'RO';
-        setLanguage(newLanguage);
-        localStorage.setItem('language', newLanguage); // Save in localStorage
+  // Function to toggle and store the language
+  const toggleLanguage = () => {
+    const newLanguage = language === "RO" ? "RU" : "RO"
+    setLanguage(newLanguage)
+    localStorage.setItem("language", newLanguage) // Save in localStorage
 
-        window.location.reload();
-    };
+    window.location.reload()
+  }
 
-    return (
-        <button className='language-toggle-button' onClick={toggleLanguage}>
-            {language === 'RO' ? '🇷🇴' : '🇷🇺'}
-        </button>
-    );
-};
+  return (
+    <button className="language-toggle-button" onClick={toggleLanguage}>
+      {language === "RO" ? "🇷🇴" : "🇷🇺"}
+    </button>
+  )
+}
 
-export default LanguageToggle;
+export default LanguageToggle
