@@ -19,11 +19,21 @@ import {
   ArcElement,
   RadialLinearScale
 } from "chart.js"
+import { enqueueSnackbar } from "notistack"
 import { api } from "../../api"
 import { SpinnerRightBottom } from "../SpinnerRightBottom"
-
 import { Filter } from "./Filter"
-import { chartsMetadata } from "./utils"
+import {
+  chartsMetadata,
+  datasetHeights,
+  datasetLabels,
+  datasetTypes,
+  datasetWidths,
+  metricsDashboardCharts,
+  positionY,
+  positionX
+} from "./utils"
+import { showServerError } from "../utils"
 
 ChartJS.register(
   CategoryScale,
@@ -37,52 +47,6 @@ ChartJS.register(
   ArcElement,
   RadialLinearScale
 )
-
-const metricsDashboardCharts = {
-  platform_clients: {
-    typeChart: "pie",
-    label: "Leaduri per platformă"
-  },
-  weekly_tickets: {
-    typeChart: "bar",
-    label: "Leaduri per zi"
-  },
-  monthly_commission: {
-    typeChart: "line",
-    label: "Comision per lună"
-  },
-  monthly_tickets: {
-    typeChart: "bar",
-    label: "Leaduri per lună"
-  },
-  workflow_distribution: {
-    typeChart: "bar",
-    label: "Leaduri per etapă de lucru"
-  },
-  workflow_resolution_time: {
-    typeChart: "bar",
-    label: "Ore mediu prelucrare etapă"
-  }
-}
-
-const datasetLabels = [
-  "Leaduri per platformă",
-  "Leaduri per zi",
-  "Comision per lună",
-  "Leaduri per lună",
-  "Leaduri per etapă de lucru",
-  "Ore mediu prelucrare etapă"
-]
-
-const datasetTypes = ["pie", "bar", "line", "bar", "bar", "bar"]
-
-const datasetWidths = [2, 2, 2, 4, 4, 4]
-
-const datasetHeights = [2, 1, 1, 2, 2, 2]
-
-const positionX = [1, 3, 3, 5, 1, 5]
-
-const positionY = [1, 1, 2, 1, 3, 3]
 
 const chartComponents = {
   pie: Pie,
@@ -113,7 +77,6 @@ const Dashboard = () => {
   const [statistics, setStatistics] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [containerWidth, setContainerWidth] = useState(0)
-  const language = localStorage.getItem("language") || "RO"
   const [platform, setPlatform] = useState()
   const [metrics, setMetrics] = useState([])
   const [workflow, setWorkflow] = useState()
@@ -148,13 +111,13 @@ const Dashboard = () => {
 
         setStatistics(statsData)
       } catch (error) {
-        console.error("Error fetching statistics:", error)
+        enqueueSnackbar(showServerError(error), { variant: "error" })
         setStatistics([])
       } finally {
         setIsLoading(false)
       }
     },
-    [setIsLoading, setStatistics, setMetricsDashboard] // Dependențele corecte
+    [setIsLoading, setStatistics, setMetricsDashboard]
   )
 
   useEffect(() => {
@@ -207,10 +170,8 @@ const Dashboard = () => {
   return (
     <div
       style={{
-        width: "100%", // Ensure it stretches fully in the grid cell
-        height: "100%", // Match the height dynamically
-        justifyContent: "center",
-        alignItems: "center",
+        width: "100%",
+        height: "100%",
         padding: "5px"
       }}
     >
