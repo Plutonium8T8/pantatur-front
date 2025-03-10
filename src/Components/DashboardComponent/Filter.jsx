@@ -1,10 +1,9 @@
-import Select from "../../SelectComponent/SelectComponent"
-import { platformOptions } from "../../../Components/utils/platformOptions"
-import CustomMultiSelect from "../../MultipleSelect/MultipleSelect"
-import { workflowOptions } from "../../../FormOptions/WorkFlowOption"
-import { Input } from "../../Input"
-import "./Filter.css"
-import { metricOptions } from "../utils"
+import Select from "../SelectComponent/SelectComponent"
+import { platformOptions } from "../utils/platformOptions"
+import CustomMultiSelect from "../MultipleSelect/MultipleSelect"
+import { workflowOptions } from "../../FormOptions/WorkFlowOption"
+import { Input } from "../Input"
+import { metricOptions } from "./utils"
 
 export const Filter = ({
   onSelectPlatform,
@@ -17,7 +16,7 @@ export const Filter = ({
   dataRange
 }) => {
   return (
-    <div className="dashboard-filter">
+    <div className="d-flex gap-8">
       <Select
         options={platformOptions}
         id="platform"
