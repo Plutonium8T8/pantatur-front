@@ -1,169 +1,55 @@
-import React, { useState, useEffect } from "react"
+import React, { useEffect, Suspense } from "react"
 import "./App.css"
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate
-} from "react-router-dom"
-import Leads from "./Components/LeadsComponent/LeadsComponent"
-import LoginForm from "./Components/LoginComponent/LoginForm"
-import { UserProvider, useUser } from "./UserContext"
-import CustomSidebar from "./Components/SideBar/SideBar"
-import ChatComponent from "./Components/ChatComponent/ChatComponent"
+import { UserProvider } from "./UserContext"
 import Cookies from "js-cookie"
 import { AppProvider } from "./AppContext"
 import { SnackbarProvider } from "notistack"
-import NotificationModal from "./Components/SlideInComponent/NotificationModal"
-import TaskComponent from "./Components/SlideInComponent/TaskComponent"
-import AdminPanel from "./Components/AdminPanelComponent/AdminPanel"
-import Dashboard from "./Components/DashboardComponent/Dashboard"
-import UserPage from "./Components/UserPage/UserPage"
-import { NavigationProvider } from "./NavigationContext"
 import "./App.css"
-
-import { api } from "./api"
-import { SpinnerRightBottom } from "./Components/SpinnerRightBottom"
 import "./reset.css"
+import { publicRoutes } from "./routes"
+import { Layout } from "./Layout"
+import { useNavigate, useLocation } from "react-router-dom"
+import { PrivateRoutes, PublicRoutes } from "./AppRoutes"
+import { Session } from "./Session"
+import { SpinnerRightBottom } from "./Components/SpinnerRightBottom"
+
+const JWT_TOKEN = Cookies.get("jwt")
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
-  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false)
-  const [isTaskComponentOpen, setIsTaskComponentOpen] = useState(false)
-  const [isAccountComponentOpen, setIsAccountComponentOpen] = useState(false)
+  const navigate = useNavigate()
+  const { pathname } = useLocation()
 
-  const { setUserId, setName, setSurname, userRoles, hasRole, isLoadingRoles } =
-    useUser()
-
-  const fetchSession = async () => {
-    const token = Cookies.get("jwt")
-
-    if (!token) {
-      console.log("❌ JWT отсутствует, пропускаем загрузку сессии.")
-      setIsLoggedIn(false)
-      setUserId(null)
-      setName(null)
-      setSurname(null)
-      setIsLoading(false)
-      return
-    }
-    setIsLoading(true)
-
-    try {
-      const data = await api.auth.session()
-
-      if (data.user_id) {
-        console.log("✅ Сессия активна, user_id:", data.user_id)
-        setIsLoggedIn(true)
-        setUserId(data.user_id)
-        setName(data.username || "")
-        setSurname(data.surname || "")
-      } else {
-        console.log("❌ Нет user_id в ответе, выход...")
-        handleLogout()
-      }
-    } catch (error) {
-      console.log("❌ Ошибка при запросе сессии:", error.message)
-      handleLogout()
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  const publicPaths = publicRoutes.filter(({ isPublic }) => isPublic)
 
   useEffect(() => {
-    fetchSession()
+    if (!JWT_TOKEN) {
+      navigate(publicPaths.includes(pathname) ? pathname : "/auth")
+    }
   }, [])
 
-  const handleLogin = async () => {
-    console.log("🔄 Логин: обновляем сессию...")
-    await fetchSession()
-  }
-
-  const handleLogout = () => {
-    console.log("❌ Выход: очищаем токен, роли и сессию...")
-    Cookies.remove("jwt")
-    setIsLoggedIn(false)
-    setUserId(null)
-    setName(null)
-    setSurname(null)
-  }
-
-  if (isLoading || isLoadingRoles) {
-    return <SpinnerRightBottom />
-  }
-
-  const NoAccess = () => (
-    <div
-      style={{
-        textAlign: "center",
-        marginTop: "50px",
-        fontSize: "18px",
-        color: "red"
-      }}
-    >
-      <h2>No access page!</h2>
-    </div>
-  )
-
   return (
-    <Router basename="/">
-      <NavigationProvider>
-        <AppProvider isLoggedIn={isLoggedIn}>
-          <SnackbarProvider
-            autoHideDuration={5000}
-            maxSnack={5}
-            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-          >
-            <UserProvider>
-              {!isLoggedIn ? (
-                <LoginForm onLoginSuccess={handleLogin} />
-              ) : (
-                <div className="app-container">
-                  <CustomSidebar
-                    onOpenNotifications={() => setIsNotificationModalOpen(true)}
-                    onOpenTasks={() => setIsTaskComponentOpen(true)}
-                    onOpenAccount={() => setIsAccountComponentOpen(true)}
-                    onLogout={handleLogout}
-                    userRoles={userRoles}
-                  />
-                  <div className="page-content">
-                    <Routes>
-                      <Route path="/dashboard" element={<Dashboard />} />
-                      <Route path="/" element={<Navigate to="/leads" />} />
-                      <Route path="/leads" element={<Leads />} />
-                      <Route
-                        path="/chat/:ticketId?"
-                        element={<ChatComponent />}
-                      />
-                      <Route
-                        path="/admin-panel"
-                        element={
-                          hasRole("ROLE_ADMIN") ? <AdminPanel /> : <NoAccess />
-                        }
-                      />
-                      <Route path="*" element={<Navigate to="/index.html" />} />
-                    </Routes>
-                  </div>
-                  <UserPage
-                    isOpen={isAccountComponentOpen}
-                    onClose={() => setIsAccountComponentOpen(false)}
-                  />
-                  <NotificationModal
-                    isOpen={isNotificationModalOpen}
-                    onClose={() => setIsNotificationModalOpen(false)}
-                  />
-                  <TaskComponent
-                    isOpen={isTaskComponentOpen}
-                    onClose={() => setIsTaskComponentOpen(false)}
-                  />
-                </div>
-              )}
-            </UserProvider>
-          </SnackbarProvider>
-        </AppProvider>
-      </NavigationProvider>
-    </Router>
+    <Suspense fallback={<SpinnerRightBottom />}>
+      <SnackbarProvider
+        autoHideDuration={5000}
+        maxSnack={5}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      >
+        <UserProvider>
+          {JWT_TOKEN ? (
+            <>
+              <Session />
+              <AppProvider>
+                <Layout>
+                  <PrivateRoutes />
+                </Layout>
+              </AppProvider>
+            </>
+          ) : (
+            <PublicRoutes />
+          )}
+        </UserProvider>
+      </SnackbarProvider>
+    </Suspense>
   )
 }
 
