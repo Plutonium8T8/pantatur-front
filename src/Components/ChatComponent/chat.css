@@ -901,8 +901,8 @@ input:checked+.slider:before {
 
 .chat-close-button {
   position: absolute;
-  top: 0px;
-  left: 5px;
+  /* top: 0px;
+  left: 5px; */
   background: #ddd;
   border: none;
   font-size: 18px;
