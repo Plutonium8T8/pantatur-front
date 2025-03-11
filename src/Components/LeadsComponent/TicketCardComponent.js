@@ -41,7 +41,7 @@ const TicketCard = ({ ticket, onEditTicket }) => {
         </div>
       )}
 
-      <Link to={`/chat/${ticket.id}`} className="ticket-link">
+      <Link className="ticket-link">
         <div className="ticket">
           <div className="tickets-descriptions">
             <div
@@ -94,8 +94,8 @@ const TicketCard = ({ ticket, onEditTicket }) => {
         </div>
       </Link>
 
-      <Modal open={isChatOpen} onClose={() => setIsChatOpen(false)} title="" width={1850} height={1000} footer={null} footerCloseButton={true}>
-        <SingleChat ticketId={ticket.id} />
+      <Modal open={isChatOpen} onClose={() => setIsChatOpen(false)} title="" width={1850} height={1000} footer={null} showCloseButton={false}>
+        <SingleChat ticketId={ticket.id} onClose={() => setIsChatOpen(false)} />
       </Modal>
     </div>
   );
