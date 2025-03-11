@@ -1,6 +1,15 @@
 .table {
   width: 100%;
   border-collapse: separate;
-  border-spacing: 0 6px;
+  border-spacing: 0 0;
   font-size: 14px;
+}
+
+table .table-tr {
+  transition: background-color 0.3s ease;
+}
+
+table tbody .table-tr:hover {
+  background-color: #fafafa;
+  cursor: pointer;
 }

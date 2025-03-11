@@ -34,19 +34,25 @@ export const Table = ({ data, columns, loading }) => {
         </thead>
 
         <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <RowCell key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </RowCell>
-              ))}
+          {table.getRowModel().rows.length ? (
+            table.getRowModel().rows.map((row) => (
+              <tr className="table-tr" key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <RowCell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </RowCell>
+                ))}
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <RowCell colSpan={columns.length}>
+                <Empty />
+              </RowCell>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
-
-      {!table.getRowModel().rows.length && <Empty />}
     </>
   )
 }

@@ -1,5 +1,9 @@
 import "./RowCell.css"
 
-export const RowCell = ({ children }) => {
-  return <td className="table-cell">{children}</td>
+export const RowCell = ({ children, ...props }) => {
+  return (
+    <td className="table-cell" {...props}>
+      {children}
+    </td>
+  )
 }
