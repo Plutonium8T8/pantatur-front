@@ -3,11 +3,10 @@ import { platformOptions } from "../utils/platformOptions"
 import CustomMultiSelect from "../MultipleSelect/MultipleSelect"
 import { workflowOptions } from "../../FormOptions/WorkFlowOption"
 import { metricOptions } from "./utils"
-import DatePicker from "react-datepicker"
-import "react-datepicker/dist/react-datepicker.css"
 import { ISO_DATE } from "../../app-constants"
 import { format } from "date-fns"
 import { getLanguageByKey } from "../utils"
+import { DatePicker } from "../DatePicker"
 
 export const Filter = ({
   onSelectPlatform,
@@ -49,9 +48,9 @@ export const Filter = ({
 
       <DatePicker
         dateFormat={ISO_DATE}
-        placeholderText={getLanguageByKey("Selectează data de start")}
-        selected={dataRange.start}
-        isClearable
+        placeholder={getLanguageByKey("Selectează data de start")}
+        value={dataRange.start}
+        clear
         onChange={(date) => {
           setSelectDataRange((prev) => ({
             ...prev,
@@ -62,9 +61,9 @@ export const Filter = ({
 
       <DatePicker
         dateFormat={ISO_DATE}
-        placeholderText={getLanguageByKey("Selectează data de sfârșit")}
-        selected={dataRange.end}
-        isClearable
+        placeholder={getLanguageByKey("Selectează data de sfârșit")}
+        value={dataRange.end}
+        clear
         onChange={(date) => {
           setSelectDataRange((prev) => ({
             ...prev,
