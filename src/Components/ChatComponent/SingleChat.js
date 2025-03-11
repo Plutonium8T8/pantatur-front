@@ -4,7 +4,7 @@ import "./chat.css";
 import ChatExtraInfo from "./ChatExtraInfo";
 import ChatList from "./ChatList";
 import ChatMessages from "./ChatMessages";
-import { FaArrowLeft, FaArrowRight, FaTimes } from "react-icons/fa";
+import { FaTimes } from "react-icons/fa";
 import { useUser } from "../../UserContext";
 
 const SingleChat = ({ ticketId, onClose }) => {
