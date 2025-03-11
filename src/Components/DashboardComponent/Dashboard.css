@@ -12,7 +12,7 @@
 }
 
 .react-grid-layout {
-  width: 100%; /* Match the parent width */
-  height: auto; /* Adjust dynamically based on grid height */
-  position: relative; /* Prevent any absolute positioning issues */
+  width: 100%;
+  height: auto;
+  position: relative;
 }
