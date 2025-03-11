@@ -1229,6 +1229,14 @@ export const translations = {
   "Selectează flux de lucru": {
     RO: "Selectează flux de lucru",
     RU: "Выберите рабочий процесс"
+  },
+  "Selectează data de start": {
+    RO: "Selectează data de start",
+    RU: "Выберите дату начала"
+  },
+  "Selectează data de sfârșit": {
+    RO: "Selectează data de sfârșit",
+    RU: "Выберите дату окончания"
   }
 }
 
