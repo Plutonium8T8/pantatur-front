@@ -1,26 +1,28 @@
-import { useMemo } from "react"
-import { Link } from "react-router-dom"
-import { cleanValue } from "../utils"
-import { workflowStyles } from "../../utils/workflowStyles"
-import "./LeadTable.css"
-import { SpinnerRightBottom } from "../../SpinnerRightBottom"
-import { Pagination } from "../../Pagination"
-import { getLanguageByKey } from "../../utils/getLanguageByKey"
-import { TextEllipsis } from "../../TextEllipsis"
-import { Table } from "../../Table"
-import { Checkbox } from "../../Checkbox"
+import { useState, useMemo } from "react";
+import { Link } from "react-router-dom";
+import { cleanValue } from "../utils";
+import { workflowStyles } from "../../utils/workflowStyles";
+import "./LeadTable.css";
+import { SpinnerRightBottom } from "../../SpinnerRightBottom";
+import { Pagination } from "../../Pagination";
+import { getLanguageByKey } from "../../utils/getLanguageByKey";
+import { TextEllipsis } from "../../TextEllipsis";
+import { Table } from "../../Table";
+import { Checkbox } from "../../Checkbox";
+import { Modal } from "../../Modal";
+import SingleChat from "../../ChatComponent/SingleChat";
 
 const renderTags = (tags) => {
-  const isTags = tags.some(Boolean)
+  const isTags = tags.some(Boolean);
 
   return isTags
     ? tags.map((tag, index) => (
-        <span key={index} className="tag">
-          {tag.trim()}
-        </span>
-      ))
-    : "—"
-}
+      <span key={index} className="tag">
+        {tag.trim()}
+      </span>
+    ))
+    : "—";
+};
 
 export const LeadTable = ({
   selectedTickets,
@@ -30,8 +32,16 @@ export const LeadTable = ({
   onChangePagination,
   currentPage,
   loading,
-  selectTicket
+  selectTicket,
 }) => {
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [selectedTicketId, setSelectedTicketId] = useState(null);
+
+  const handleOpenChat = (id) => {
+    setSelectedTicketId(id);
+    setIsChatOpen(true);
+  };
+
   const columns = useMemo(() => {
     return [
       {
@@ -47,22 +57,28 @@ export const LeadTable = ({
               onChange={() => toggleSelectTicket(getValue())}
             />
           </div>
-        )
+        ),
       },
       {
         accessorKey: "id",
         header: () => <div className="text-center">ID</div>,
         accessorFn: ({ id }) => id,
         cell: ({ getValue }) => {
-          const id = getValue()
+          const id = getValue();
           return (
             <div className="text-center">
-              <Link to={`/chat/${id}`} className="row-id">
+              <Link
+                className="row-id"
+                onClick={(e) => {
+                  e.preventDefault(); // Предотвращаем переход по ссылке
+                  handleOpenChat(id);
+                }}
+              >
                 #{id}
               </Link>
             </div>
-          )
-        }
+          );
+        },
       },
       {
         accessorKey: "name",
@@ -71,7 +87,7 @@ export const LeadTable = ({
         ),
         accessorFn: ({ clients }) => clients,
         cell: ({ getValue }) => {
-          const values = getValue()
+          const values = getValue();
 
           return (
             <div className="text-center">
@@ -79,8 +95,8 @@ export const LeadTable = ({
                 ? values?.map((item) => cleanValue(item.name)).join(", ")
                 : cleanValue()}
             </div>
-          )
-        }
+          );
+        },
       },
       {
         accessorKey: "surname",
@@ -89,7 +105,7 @@ export const LeadTable = ({
         ),
         accessorFn: ({ clients }) => clients,
         cell: ({ getValue }) => {
-          const values = getValue()
+          const values = getValue();
           return (
             <div className="text-center">
               {values?.length
@@ -361,7 +377,7 @@ export const LeadTable = ({
   }, [selectedTickets, toggleSelectTicket])
 
   if (loading) {
-    return <SpinnerRightBottom />
+    return <SpinnerRightBottom />;
   }
 
   return (
@@ -380,6 +396,20 @@ export const LeadTable = ({
           />
         </div>
       )}
+
+      <Modal
+        open={isChatOpen}
+        onClose={() => setIsChatOpen(false)}
+        title=""
+        width={1850}
+        height={1000}
+        footer={null}
+        showCloseButton={false}
+      >
+        {selectedTicketId && (
+          <SingleChat ticketId={selectedTicketId} onClose={() => setIsChatOpen(false)} />
+        )}
+      </Modal>
     </>
-  )
-}
+  );
+};
