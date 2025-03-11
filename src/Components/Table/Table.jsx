@@ -8,7 +8,7 @@ import {
 import "./Table.css"
 import { Empty } from "../Empty"
 
-export const Table = ({ data, columns, loading }) => {
+export const Table = ({ data, columns, loading, select }) => {
   const table = useReactTable({
     data,
     columns,
@@ -35,15 +35,23 @@ export const Table = ({ data, columns, loading }) => {
 
         <tbody>
           {table.getRowModel().rows.length ? (
-            table.getRowModel().rows.map((row) => (
-              <tr className="table-tr" key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <RowCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </RowCell>
-                ))}
-              </tr>
-            ))
+            table.getRowModel().rows.map((row) => {
+              return (
+                <tr
+                  className={`table-tr ${select.includes(row.original.id) ? "selected-row" : ""}`}
+                  key={row.id}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <RowCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </RowCell>
+                  ))}
+                </tr>
+              )
+            })
           ) : (
             <tr>
               <RowCell colSpan={columns.length}>

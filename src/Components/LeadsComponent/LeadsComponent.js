@@ -91,13 +91,34 @@ const Leads = () => {
     )
   }
 
-  const deleteSelectedTickets = () => {
+  const deleteTicket = async () => {
     if (selectedTickets.length === 0) return
-    const newTickets = tickets.filter(
-      (ticket) => !selectedTickets.includes(ticket.id)
+    const findTicket = tickets.find((ticket) =>
+      selectedTickets.includes(ticket.id)
     )
-    setTickets(newTickets)
-    setSelectedTickets([])
+    const newTickets = tickets.filter((ticket) => ticket.id !== findTicket.id)
+
+    try {
+      setLoading(true)
+      await api.tickets.deleteById(findTicket.id)
+      await fetchTickets(
+        {
+          type: HARD_TICKET,
+          page: currentPage,
+          attributes: tableLeadsFilters
+        },
+        ({ data, pagination }) => {
+          setHardTickets(data)
+          setTotalLeads(pagination.total || 0)
+        }
+      )
+      setTickets(newTickets)
+      setSelectedTickets([])
+    } catch (error) {
+      enqueueSnackbar(showServerError(error), { variant: "error" })
+    } finally {
+      setLoading(false)
+    }
   }
 
   const editSelectedTickets = () => {
@@ -179,7 +200,7 @@ const Leads = () => {
       { attributes: formattedFilters, page: NUMBER_PAGE, type: HARD_TICKET },
       ({ data, pagination }) => {
         setHardTickets(data)
-        setTotalLeads(pagination.total)
+        setTotalLeads(pagination.total || 0)
         setCurrentPage(1)
         setTableLeadsFilters(formattedFilters)
         closeTicketModal()
@@ -202,7 +223,7 @@ const Leads = () => {
       { page, type: HARD_TICKET, attributes: tableLeadsFilters },
       ({ data, pagination }) => {
         setHardTickets(data)
-        setTotalLeads(pagination.total)
+        setTotalLeads(pagination.total || 0)
         setCurrentPage(page)
       }
     )
@@ -217,7 +238,7 @@ const Leads = () => {
         },
         ({ data, pagination }) => {
           setHardTickets(data)
-          setTotalLeads(pagination.total)
+          setTotalLeads(pagination.total || 0)
         }
       )
     }
@@ -236,11 +257,11 @@ const Leads = () => {
       ({ data, pagination }) => {
         if (isTableView) {
           setHardTickets(data)
-          setTotalLeads(pagination.total)
+          setTotalLeads(pagination.total || 0)
           return
         }
         applyWorkflowFilters(filters, data)
-        setTotalLeads(pagination)
+        setTotalLeads(pagination || 0)
       }
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -288,7 +309,7 @@ const Leads = () => {
           {selectedTickets.length > 0 && (
             <Button
               variant="danger"
-              onClick={deleteSelectedTickets}
+              onClick={deleteTicket}
               className="d-flex align-items-center gap-8"
             >
               <FaTrash /> {getLanguageByKey("Ștergere")} (
@@ -336,6 +357,7 @@ const Leads = () => {
               toggleSelectTicket={toggleSelectTicket}
               totalLeads={getTotalPages(totalLeads)}
               onChangePagination={handlePaginationWorkflow}
+              selectTicket={selectedTickets}
             />
           </div>
         ) : (
@@ -367,10 +389,10 @@ const Leads = () => {
                 const isEditing = Boolean(updatedTicket.ticket_id)
                 return isEditing
                   ? prevTickets.map((ticket) =>
-                    ticket.id === updatedTicket.ticket_id
-                      ? updatedTicket
-                      : ticket
-                  )
+                      ticket.id === updatedTicket.ticket_id
+                        ? updatedTicket
+                        : ticket
+                    )
                   : [...prevTickets, updatedTicket]
               })
             }}

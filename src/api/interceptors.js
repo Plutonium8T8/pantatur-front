@@ -2,7 +2,11 @@ import Cookies from "js-cookie"
 import { clearCookies } from "../Components/utils/clearCookies"
 
 const STATUS_CODE = [401, 403]
-const ERROR_MESSAGES = ["Invalid JWT Token", "Invalid credentials."]
+const ERROR_MESSAGES = [
+  "Invalid JWT Token",
+  "Invalid credentials.",
+  "Session does not contain the user_id"
+]
 
 export const authInterceptor = (config) => {
   if (!config.headers) config.headers = {}
