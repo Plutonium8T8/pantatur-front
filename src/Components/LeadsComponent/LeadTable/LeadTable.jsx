@@ -29,7 +29,8 @@ export const LeadTable = ({
   totalLeads,
   onChangePagination,
   currentPage,
-  loading
+  loading,
+  selectTicket
 }) => {
   const columns = useMemo(() => {
     return [
@@ -135,7 +136,9 @@ export const LeadTable = ({
         }
       },
       {
-        header: getLanguageByKey("Descriere"),
+        header: () => (
+          <div className="text-center">{getLanguageByKey("Descriere")}</div>
+        ),
         accessorKey: "description",
         accessorFn: ({ description }) => cleanValue(description),
         cell: ({ getValue }) => (
@@ -145,7 +148,9 @@ export const LeadTable = ({
         )
       },
       {
-        header: getLanguageByKey("Tag-uri"),
+        header: () => (
+          <div className="text-center">{getLanguageByKey("Tag-uri")}</div>
+        ),
         accessorKey: "tags",
         accessorFn: ({ tags }) => tags,
         cell: ({ getValue }) => (
@@ -163,7 +168,9 @@ export const LeadTable = ({
         cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
       },
       {
-        header: getLanguageByKey("Workflow"),
+        header: () => (
+          <div className="text-center">{getLanguageByKey("Workflow")}</div>
+        ),
         accessorKey: "workflow",
         accessorFn: ({ workflow }) => workflow,
         cell: ({ getValue }) => {
@@ -359,7 +366,9 @@ export const LeadTable = ({
 
   return (
     <>
-      <Table columns={columns} data={filteredLeads} />
+      <div style={{ overflow: "auto" }}>
+        <Table columns={columns} data={filteredLeads} select={selectTicket} />
+      </div>
 
       {/* FIXME: Remove inline style when the layout is fixed */}
       {!!totalLeads && (
