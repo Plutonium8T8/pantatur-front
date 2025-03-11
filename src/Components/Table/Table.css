@@ -13,3 +13,7 @@ table tbody .table-tr:hover {
   background-color: #fafafa;
   cursor: pointer;
 }
+
+table tbody .table-tr.selected-row {
+  background-color: #fafafa;
+}

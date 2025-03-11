@@ -29,7 +29,8 @@ export const LeadTable = ({
   totalLeads,
   onChangePagination,
   currentPage,
-  loading
+  loading,
+  selectTicket
 }) => {
   const columns = useMemo(() => {
     return [
@@ -366,7 +367,7 @@ export const LeadTable = ({
   return (
     <>
       <div style={{ overflow: "auto" }}>
-        <Table columns={columns} data={filteredLeads} />
+        <Table columns={columns} data={filteredLeads} select={selectTicket} />
       </div>
 
       {/* FIXME: Remove inline style when the layout is fixed */}
