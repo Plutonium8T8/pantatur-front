@@ -94,8 +94,7 @@ const TicketCard = ({ ticket, onEditTicket }) => {
         </div>
       </Link>
 
-      {/* Модальное окно с SingleChat, передаем ticketId */}
-      <Modal open={isChatOpen} onClose={() => setIsChatOpen(false)} title="Чат" width={800} height={600}>
+      <Modal open={isChatOpen} onClose={() => setIsChatOpen(false)} title="" width={1850} height={1000} footer={null} footerCloseButton={true}>
         <SingleChat ticketId={ticket.id} />
       </Modal>
     </div>
