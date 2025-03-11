@@ -4,10 +4,10 @@ import "./chat.css";
 import ChatExtraInfo from "./ChatExtraInfo";
 import ChatList from "./ChatList";
 import ChatMessages from "./ChatMessages";
-import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import { FaArrowLeft, FaArrowRight, FaTimes } from "react-icons/fa";
 import { useUser } from "../../UserContext";
 
-const SingleChat = ({ ticketId }) => {
+const SingleChat = ({ ticketId, onClose }) => {
     const { tickets, updateTicket, setTickets, messages, markMessagesAsRead, getClientMessagesSingle } = useAppContext();
     const { userId } = useUser();
     const [selectTicketId, setSelectTicketId] = useState(ticketId ? Number(ticketId) : null);
@@ -58,9 +58,9 @@ const SingleChat = ({ ticketId }) => {
 
     return (
         <div className={`chat-container ${isChatListVisible ? "" : "chat-hidden"}`}>
-            {/* <button className="toggle-chat-list-button" onClick={() => setIsChatListVisible((prev) => !prev)}>
-                {isChatListVisible ? <FaArrowLeft /> : <FaArrowRight />}
-            </button> */}
+            <button className="chat-close-button" onClick={onClose}>
+                <FaTimes />
+            </button>
 
             {isChatListVisible && (
                 <ChatList setIsLoading={setIsLoading} selectTicketId={selectTicketId} setSelectTicketId={handleSelectTicket} />
