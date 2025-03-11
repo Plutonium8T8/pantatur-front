@@ -5,7 +5,8 @@ const STATUS_CODE = [401, 403]
 const ERROR_MESSAGES = [
   "Invalid JWT Token",
   "Invalid credentials.",
-  "Session does not contain the user_id"
+  "Session does not contain the user_id",
+  "No session found"
 ]
 
 export const authInterceptor = (config) => {

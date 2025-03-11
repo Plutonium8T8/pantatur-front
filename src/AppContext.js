@@ -14,7 +14,7 @@ const AppContext = createContext()
 
 export const useAppContext = () => useContext(AppContext)
 
-export const AppProvider = ({ children, isLoggedIn }) => {
+export const AppProvider = ({ children }) => {
   const socketRef = useRef(null)
   const [tickets, setTickets] = useState([])
   const [ticketIds, setTicketIds] = useState([])
@@ -50,19 +50,6 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   }, [])
 
   useEffect(() => {
-    if (!isLoggedIn) {
-      setTickets([])
-      setTicketIds([])
-      setMessages([])
-      setUnreadCount(0)
-      setClientMessages([])
-      if (socketRef.current) {
-        socketRef.current.close()
-        socketRef.current = null
-      }
-      return
-    }
-
     const connectToChatRooms = (ticketIds) => {
       const socketInstance = socketRef.current
       if (!socketInstance || socketInstance.readyState !== WebSocket.OPEN) {
@@ -100,10 +87,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         handleWebSocketMessage(message)
       }
 
-      socketInstance.onclose = () => {
-        // alert(translations["WebSocket off"][language] || "WebSocket este oprit. Te rog să reîncarci pagina!");
-        // window.location.reload();
-      }
+      socketInstance.onclose = () => {}
     }
 
     return () => {
@@ -112,7 +96,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
         socketRef.current = null
       }
     }
-  }, [isLoggedIn])
+  }, [])
 
   useEffect(() => {
     console.log("Количество непрочитанных сообщений:", unreadCount)
@@ -247,38 +231,6 @@ export const AppProvider = ({ children, isLoggedIn }) => {
       throw error
     }
   }
-
-  // Функция загрузки сообщений клиента
-  // const getClientMessages = async () => {
-  //   try {
-  //     const token = Cookies.get('jwt');
-  //     if (!token) {
-  //       console.warn('Нет токена. Пропускаем загрузку сообщений.');
-  //       return;
-  //     }
-
-  //     const response = await fetch('https://pandatur-api.com/api/messages', {
-  //       method: 'GET',
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //         'Content-Type': 'application/json',
-  //         Origin: 'https://plutonium8t8.github.io'
-  //       },
-  //     });
-
-  //     if (!response.ok) {
-  //       throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
-  //     }
-
-  //     const data = await response.json();
-  //     // console.log("Сообщения, загруженные из API:", data);
-
-  //     setMessages(data); // Обновляем состояние всех сообщений
-  //   } catch (error) {
-  //     enqueueSnackbar('Не удалось получить сообщения!', { variant: 'error' });
-  //     console.error('Ошибка при получении сообщений:', error.message);
-  //   }
-  // };
 
   const getClientMessagesSingle = async (ticket_id) => {
     console.log("Обновление сообщений для тикета:", ticket_id)
@@ -455,10 +407,8 @@ export const AppProvider = ({ children, isLoggedIn }) => {
   }
 
   useEffect(() => {
-    if (isLoggedIn) {
-      fetchTickets()
-    }
-  }, [isLoggedIn])
+    fetchTickets()
+  }, [])
 
   useEffect(() => {
     const totalUnread = tickets.reduce(
