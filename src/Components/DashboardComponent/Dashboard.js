@@ -79,28 +79,11 @@ const renderChart = ({ Component, chartData, index, chartLabel }) => {
   )
 }
 
-const metricsDashboardData = (metricsDashboard) => {
-  const metricsLayout = Object.keys(metricsDashboard).map((key, index) => ({
-    i: `${index + 1}`,
-    x: positionX[index] - 1,
-    y: positionY[index] - 1,
-    w: datasetWidths[index],
-    h: datasetHeights[index],
-    type: metricsDashboardCharts[key].typeChart,
-    label:
-      getLanguageByKey(metricsDashboardCharts[key].label) ||
-      `Chart ${index + 1}`
-  }))
-
-  return metricsLayout
-}
-
 const Dashboard = () => {
   const [statistics, setStatistics] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [containerWidth, setContainerWidth] = useState(0)
   const [selectedTechnicians, setSelectedTechnicians] = useState([])
-  const [metricsDashboard] = useState()
   const [dateRange, setDateRange] = useState({
     start: null,
     end: null
@@ -142,7 +125,7 @@ const Dashboard = () => {
   }
   const rowHeight = containerWidth / cols + 50
 
-  const statisticsLayout = statistics?.map((_, index) => ({
+  const statisticsLayout = Object.values(statistics).map((_, index) => ({
     i: `${index + 1}`,
     x: positionX[index] - 1,
     y: positionY[index] - 1,
@@ -171,50 +154,25 @@ const Dashboard = () => {
       ) : (
         <GridLayout
           className="dashboard-layout"
-          layout={
-            metricsDashboard
-              ? metricsDashboardData(metricsDashboard)
-              : statisticsLayout
-          }
+          layout={statisticsLayout}
           cols={cols}
           rowHeight={rowHeight}
           width={containerWidth}
           isResizable={true}
           isDraggable={true}
         >
-          {metricsDashboard
-            ? Object.entries(metricsDashboard).map(([key, value]) => {
-                const { typeChart, label } = metricsDashboardCharts[key]
-                const ChartComponent = chartComponents[typeChart]
-                const chartData = chartsMetadata(value, label, typeChart)
+          {Object.entries(statistics).map(([key, { data }]) => {
+            const { typeChart, label } = metricsDashboardCharts[key]
+            const ChartComponent = chartComponents[typeChart]
+            const chartData = chartsMetadata(data, label, typeChart)
 
-                return renderChart({
-                  Component: ChartComponent,
-                  chartData,
-                  chartLabel: label,
-                  index: key
-                })
-              })
-            : statistics?.map((statArray, index) => {
-                const layoutItem = statisticsLayout[index]
-                if (!layoutItem) return null
-
-                const { type: chartType, label: chartLabel } = layoutItem
-                const ChartComponent = chartComponents[chartType]
-
-                const chartData = chartsMetadata(
-                  statArray,
-                  chartLabel,
-                  chartType
-                )
-
-                return renderChart({
-                  Component: ChartComponent,
-                  chartData,
-                  chartLabel,
-                  index
-                })
-              })}
+            return renderChart({
+              Component: ChartComponent,
+              chartData,
+              chartLabel: label,
+              index: key
+            })
+          })}
         </GridLayout>
       )}
     </div>
