@@ -1,6 +1,7 @@
 import React from "react"
 import "./select.css"
 import { translations } from "../utils/translations"
+import { IoMdClose, IoIosArrowDown } from "react-icons/io"
 
 const Select = ({
   options,
@@ -12,7 +13,8 @@ const Select = ({
   placeholder,
   required,
   disabled,
-  hasError
+  hasError,
+  clear
 }) => {
   const handleChange = (event) => {
     const selectedValue = event.target.value
@@ -22,26 +24,42 @@ const Select = ({
   const language = localStorage.getItem("language") || "RO"
 
   return (
-    <div className={`input-group ${hasError ? "invalid-field" : ""} mb-16`}>
-      <label htmlFor={id}>{translations[label]?.[language] ?? label}</label>
-      <select
-        id={id}
-        className={`task-select ${hasError ? "invalid-field" : ""}`}
-        value={value}
-        onChange={handleChange}
-        required={required}
-        disabled={disabled}
-      >
-        <option value="">
-          {translations[placeholder]?.[language] ??
-            translations[label]?.[language]}
-        </option>
-        {options.map((option, index) => (
-          <option key={index} value={option}>
-            {translations[option]?.[language] ?? option}
+    <div className={`input-group ${hasError ? "invalid-field" : ""}`}>
+      {label && (
+        <label htmlFor={id}>{translations[label]?.[language] ?? label}</label>
+      )}
+      <div className="select-container-wrapper">
+        <select
+          id={id}
+          className={`task-select ${hasError ? "invalid-field" : ""}`}
+          value={value}
+          onChange={handleChange}
+          required={required}
+          disabled={disabled}
+        >
+          <option value="">
+            {translations[placeholder]?.[language] ??
+              translations[label]?.[language]}
           </option>
-        ))}
-      </select>
+          {options.map((option, index) => (
+            <option key={index} value={option}>
+              {translations[option]?.[language] ?? option}
+            </option>
+          ))}
+        </select>
+
+        <div className={`right-icon ${clear ? "hide-arrow-down-icon" : ""}`}>
+          <IoIosArrowDown size={16} />
+        </div>
+        {clear && (
+          <div
+            className="right-icon hide-close-icon"
+            onClick={() => onChange("")}
+          >
+            <IoMdClose size={16} />
+          </div>
+        )}
+      </div>
     </div>
   )
 }

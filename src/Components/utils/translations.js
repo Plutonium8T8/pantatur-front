@@ -1217,6 +1217,24 @@ export const translations = {
   Confirma: {
     RO: "Confirmă",
     RU: "Подтвердить"
+  },
+  "Selectează operator": {
+    RO: "Selectează operator",
+    RU: "Выберите оператора"
+  },
+  "Selectează o dată": {
+    RO: "Selectează o dată",
+    RU: "Выберите дату"
+  },
+  azi: {
+    RO: "Azi",
+    RU: "Сегодня",
+    EN: "Today"
+  },
+  ieri: {
+    RO: "Ieri",
+    RU: "Вчера",
+    EN: "Yesterday"
   }
 }
 
