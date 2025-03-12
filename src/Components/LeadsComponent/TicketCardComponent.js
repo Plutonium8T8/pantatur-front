@@ -32,16 +32,16 @@ const TicketCard = ({ ticket, onEditTicket }) => {
           >
             Edit
           </button>
-          <button
+          {/* <button
             className="action-button-ticket"
             onClick={() => setIsChatOpen(true)}
           >
             Open
-          </button>
+          </button> */}
         </div>
       )}
 
-      <Link className="ticket-link">
+      <Link to={`/leads/${ticket.id}`} className="ticket-link">
         <div className="ticket">
           <div className="tickets-descriptions">
             <div
@@ -94,7 +94,15 @@ const TicketCard = ({ ticket, onEditTicket }) => {
         </div>
       </Link>
 
-      <Modal open={isChatOpen} onClose={() => setIsChatOpen(false)} title="" width={1850} height={1000} footer={null} showCloseButton={false}>
+      <Modal
+        open={isChatOpen}
+        onClose={() => setIsChatOpen(false)}
+        title=""
+        width={1850}
+        height={1000}
+        footer={null}
+        showCloseButton={false}
+      >
         <SingleChat ticketId={ticket.id} onClose={() => setIsChatOpen(false)} />
       </Modal>
     </div>
