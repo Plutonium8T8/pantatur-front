@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { cleanValue } from "../utils";
 import { workflowStyles } from "../../utils/workflowStyles";
@@ -11,6 +11,7 @@ import { Table } from "../../Table";
 import { Checkbox } from "../../Checkbox";
 import { Modal } from "../../Modal";
 import SingleChat from "../../ChatComponent/SingleChat";
+import { useParams, useNavigate } from "react-router-dom";
 
 const renderTags = (tags) => {
   const isTags = tags.some(Boolean);
@@ -36,11 +37,16 @@ export const LeadTable = ({
 }) => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [selectedTicketId, setSelectedTicketId] = useState(null);
+  const { ticketId } = useParams();
+  const navigate = useNavigate();
 
-  const handleOpenChat = (id) => {
-    setSelectedTicketId(id);
-    setIsChatOpen(true);
-  };
+  useEffect(() => {
+    if (ticketId) {
+      setSelectedTicketId(ticketId);
+      setIsChatOpen(true);
+    }
+  }, [ticketId]);
+
 
   const columns = useMemo(() => {
     return [
@@ -67,13 +73,7 @@ export const LeadTable = ({
           const id = getValue();
           return (
             <div className="text-center">
-              <Link
-                className="row-id"
-                onClick={(e) => {
-                  e.preventDefault(); // Предотвращаем переход по ссылке
-                  handleOpenChat(id);
-                }}
-              >
+              <Link to={`/leads/${id}`} className="row-id">
                 #{id}
               </Link>
             </div>
@@ -380,6 +380,11 @@ export const LeadTable = ({
     return <SpinnerRightBottom />;
   }
 
+  const closeChatModal = () => {
+    setIsChatOpen(false);
+    navigate("/leads");
+  };
+
   return (
     <>
       <div style={{ overflow: "auto" }}>
@@ -399,16 +404,14 @@ export const LeadTable = ({
 
       <Modal
         open={isChatOpen}
-        onClose={() => setIsChatOpen(false)}
+        onClose={closeChatModal}
         title=""
         width={1850}
         height={1000}
         footer={null}
         showCloseButton={false}
       >
-        {selectedTicketId && (
-          <SingleChat ticketId={selectedTicketId} onClose={() => setIsChatOpen(false)} />
-        )}
+        {selectedTicketId && <SingleChat ticketId={selectedTicketId} onClose={closeChatModal} />}
       </Modal>
     </>
   );
