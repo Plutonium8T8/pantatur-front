@@ -3,7 +3,6 @@ import { Bar, Pie, Line, PolarArea } from "react-chartjs-2"
 import GridLayout from "react-grid-layout"
 import "react-grid-layout/css/styles.css"
 import "react-resizable/css/styles.css"
-import { translations } from "../utils/translations"
 import "react-grid-layout/css/styles.css"
 import "react-resizable/css/styles.css"
 import {
@@ -33,7 +32,7 @@ import {
   positionY,
   positionX
 } from "./utils"
-import { showServerError } from "../utils"
+import { showServerError, getLanguageByKey } from "../utils"
 import "./Dashboard.css"
 
 ChartJS.register(
@@ -89,14 +88,12 @@ const metricsDashboardData = (metricsDashboard) => {
     h: datasetHeights[index],
     type: metricsDashboardCharts[key].typeChart,
     label:
-      translations[metricsDashboardCharts[key].label][language] ||
+      getLanguageByKey(metricsDashboardCharts[key].label) ||
       `Chart ${index + 1}`
   }))
 
   return metricsLayout
 }
-
-const language = localStorage.getItem("language") || "RO"
 
 const Dashboard = () => {
   const [statistics, setStatistics] = useState([])
@@ -183,12 +180,14 @@ const Dashboard = () => {
     w: datasetWidths[index],
     h: datasetHeights[index],
     type: datasetTypes[index],
-    label: translations[datasetLabels[index]][language] || `Chart ${index + 1}`
+    label: getLanguageByKey(datasetLabels[index]) || `Chart ${index + 1}`
   }))
 
   return (
-    <div className="dashboard-container">
-      <h1 className="dashboard-title | mb-16">Dashboard</h1>
+    <div className="dashboard-container-wrapper">
+      <h1 className="dashboard-title | mb-16">
+        {getLanguageByKey("Dashboard")}
+      </h1>
       <div className="dashboard-divider" />
 
       <Filter

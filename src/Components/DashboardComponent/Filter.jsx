@@ -33,7 +33,7 @@ export const Filter = ({
         options={metricOptions}
         onChange={(metric) => onSelectMetrics(metric)}
         selectedValues={metrics}
-        placeholder="Selectează indicatori"
+        placeholder={getLanguageByKey("Selectează indicatori")}
       />
 
       <Select

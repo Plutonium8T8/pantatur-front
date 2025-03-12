@@ -1224,7 +1224,7 @@ export const translations = {
   },
   "Selectează indicatori": {
     RO: "Selectează indicatori",
-    RU: "Выберите ,индикаторы"
+    RU: "Выберите индикаторы"
   },
   "Selectează flux de lucru": {
     RO: "Selectează flux de lucru",
