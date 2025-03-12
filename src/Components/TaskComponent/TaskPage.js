@@ -6,6 +6,7 @@ import { api } from "../../api"
 import { showServerError } from "../../Components/utils/showServerError"
 import { useSnackbar } from "notistack"
 import { Input } from "../Input"
+import IconSelect from "../IconSelect/IconSelect";
 import { TypeTask } from "./OptionsTaskType"
 
 const TaskPage = ({ selectedTicketId }) => {
@@ -24,6 +25,7 @@ const TaskPage = ({ selectedTicketId }) => {
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
   const language = localStorage.getItem("language") || "RO"
+  const [selectedTask, setSelectedTask] = useState("")
 
   useEffect(() => {
     fetchTasks()
@@ -162,7 +164,14 @@ const TaskPage = ({ selectedTicketId }) => {
             placeholder={translations["Alege ID lead"][language]}
             required
           />
-
+          <IconSelect
+            options={TypeTask}
+            label="Выберите задачу"
+            id="task-select"
+            value={selectedTask}
+            onChange={setSelectedTask}
+            placeholder="Выберите задачу"
+          />
           {/* Выпадающий список */}
           {isDropdownOpen && ticketIds.length > 0 && (
             <ul className="dropdown-list">

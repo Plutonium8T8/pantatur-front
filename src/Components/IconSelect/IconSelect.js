@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import "./select.css";
+import "./IconSelect.css";
 import { translations } from "../utils/translations";
 
-const Select = ({
+const IconSelect = ({
   options,
   label,
   id,
@@ -46,4 +46,4 @@ const Select = ({
   );
 };
 
-export default Select;
+export default IconSelect;
