@@ -99,61 +99,30 @@ const Dashboard = () => {
   const [statistics, setStatistics] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [containerWidth, setContainerWidth] = useState(0)
-  const [platform, setPlatform] = useState()
-  const [metrics, setMetrics] = useState([])
-  const [workflow, setWorkflow] = useState()
-  const [dataRange, setDataRange] = useState({
-    start: undefined,
-    end: undefined
+  const [selectedTechnicians, setSelectedTechnicians] = useState([])
+  const [metricsDashboard] = useState()
+  const [dateRange, setDateRange] = useState({
+    start: null,
+    end: null
   })
-  const [metricsDashboard, setMetricsDashboard] = useState()
 
-  const fetchStatistics = useCallback(
-    async ({ platform, metrics, workflow, dataRange }) => {
-      setIsLoading(true)
-      try {
-        const statsData = await api.dashboard.statistics({
-          ...(metrics.length && { metrics }),
-          ...(platform && { platform }),
-          ...(workflow && { workflow }),
-          ...(dataRange.start && dataRange.end && { data_range: dataRange })
-        })
+  const fetchStatistics = useCallback(async () => {
+    setIsLoading(true)
+    try {
+      const statsData = await api.dashboard.statistics()
 
-        if (statsData && typeof statsData === "object" && metrics.length) {
-          setMetricsDashboard(statsData)
-
-          return
-        }
-
-        setStatistics(statsData)
-      } catch (error) {
-        enqueueSnackbar(showServerError(error), { variant: "error" })
-        setStatistics([])
-      } finally {
-        setIsLoading(false)
-      }
-    },
-    [setIsLoading, setStatistics, setMetricsDashboard]
-  )
+      setStatistics(statsData)
+    } catch (error) {
+      enqueueSnackbar(showServerError(error), { variant: "error" })
+      setStatistics([])
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
 
   useEffect(() => {
-    if (
-      (!dataRange.start && dataRange.end) ||
-      (dataRange.start && !dataRange.end)
-    ) {
-      return
-    }
-
-    fetchStatistics({ platform, metrics, workflow, dataRange })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    fetchStatistics,
-    platform,
-    metrics,
-    workflow,
-    dataRange.start,
-    dataRange.end
-  ])
+    fetchStatistics()
+  }, [fetchStatistics])
 
   useEffect(() => {
     const updateContainerDimensions = () => {
@@ -191,14 +160,10 @@ const Dashboard = () => {
       <div className="dashboard-divider" />
 
       <Filter
-        onSelectPlatform={setPlatform}
-        onSelectMetrics={setMetrics}
-        onSelectWorkflow={setWorkflow}
-        setSelectDataRange={setDataRange}
-        dataRange={dataRange}
-        platform={platform}
-        metrics={metrics}
-        workflow={workflow}
+        onSelectedTechnicians={setSelectedTechnicians}
+        onSelectDataRange={setDateRange}
+        selectedTechnicians={selectedTechnicians}
+        dateRange={dateRange}
       />
 
       {isLoading ? (

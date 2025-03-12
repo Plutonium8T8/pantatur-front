@@ -13,3 +13,15 @@
   box-shadow: 0 0 4px rgba(15, 130, 76, 0.5);
   outline: none;
 }
+
+.date-picker-wrapper .react-datepicker__input-container:focus-visible {
+  border-color: #0f824c;
+  box-shadow: 0 0 4px rgba(15, 130, 76, 0.5);
+  outline: none;
+}
+
+.date-picker-wrapper .react-datepicker-wrapper:focus-visible {
+  border-color: #0f824c;
+  box-shadow: 0 0 4px rgba(15, 130, 76, 0.5);
+  outline: none;
+}

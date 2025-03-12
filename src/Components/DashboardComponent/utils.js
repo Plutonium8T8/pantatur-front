@@ -1,14 +1,5 @@
 import { getLanguageByKey } from "../utils/getTranslationByKey"
 
-export const metricOptions = [
-  "platform_clients",
-  "weekly_tickets",
-  "monthly_commission",
-  "monthly_tickets",
-  "workflow_distribution",
-  "workflow_resolution_time"
-]
-
 export const datasetLabels = [
   "Leaduri per platformă",
   "Leaduri per zi",
@@ -248,5 +239,6 @@ export const chartsMetadata = (statArray, chartLabel, chartType) => {
       ]
     }
   }
+
   return chartData
 }

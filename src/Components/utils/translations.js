@@ -1218,25 +1218,23 @@ export const translations = {
     RO: "Confirmă",
     RU: "Подтвердить"
   },
-  "Selectează platforma": {
-    RO: "Selectează platforma",
-    RU: "Выберите платформу"
+  "Selectează operator": {
+    RO: "Selectează operator",
+    RU: "Выберите оператора"
   },
-  "Selectează indicatori": {
-    RO: "Selectează indicatori",
-    RU: "Выберите индикаторы"
+  "Selectează o dată": {
+    RO: "Selectează o dată",
+    RU: "Выберите дату"
   },
-  "Selectează flux de lucru": {
-    RO: "Selectează flux de lucru",
-    RU: "Выберите рабочий процесс"
+  azi: {
+    RO: "Azi",
+    RU: "Сегодня",
+    EN: "Today"
   },
-  "Selectează data de start": {
-    RO: "Selectează data de start",
-    RU: "Выберите дату начала"
-  },
-  "Selectează data de sfârșit": {
-    RO: "Selectează data de sfârșit",
-    RU: "Выберите дату окончания"
+  ieri: {
+    RO: "Ieri",
+    RU: "Вчера",
+    EN: "Yesterday"
   }
 }
 

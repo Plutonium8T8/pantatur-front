@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react"
+import { IoMdClose } from "react-icons/io"
 import "./CustomMultiSelect.css"
 import { Spin } from "../Spin"
 import { Input } from "../Input"
@@ -111,7 +112,7 @@ const CustomMultiSelect = ({
                     removeOption(option)
                   }}
                 >
-                  ✖
+                  <IoMdClose />
                 </span>
               </span>
             ))}
