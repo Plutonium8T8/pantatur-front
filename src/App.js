@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import "./App.css"
 import {
   BrowserRouter as Router,
@@ -15,82 +15,34 @@ import Cookies from "js-cookie"
 import { AppProvider } from "./AppContext"
 import { SnackbarProvider } from "notistack"
 import NotificationModal from "./Components/SlideInComponent/NotificationModal"
-import TaskComponent from "./Components/SlideInComponent/TaskComponent"
+import TaskComponent from "./Components/TaskComponent/TaskComponent"
 import AdminPanel from "./Components/AdminPanelComponent/AdminPanel"
 import Dashboard from "./Components/DashboardComponent/Dashboard"
 import UserPage from "./Components/UserPage/UserPage"
 import { NavigationProvider } from "./NavigationContext"
 import "./App.css"
-
-import { api } from "./api"
-import { SpinnerRightBottom } from "./Components/SpinnerRightBottom"
 import "./reset.css"
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false)
   const [isTaskComponentOpen, setIsTaskComponentOpen] = useState(false)
   const [isAccountComponentOpen, setIsAccountComponentOpen] = useState(false)
 
-  const { setUserId, setName, setSurname, userRoles, hasRole, isLoadingRoles } =
-    useUser()
+  const { setUserId, setName, setSurname, userRoles, hasRole } = useUser()
 
-  const fetchSession = async () => {
-    const token = Cookies.get("jwt")
-
-    if (!token) {
-      console.log("❌ JWT отсутствует, пропускаем загрузку сессии.")
-      setIsLoggedIn(false)
-      setUserId(null)
-      setName(null)
-      setSurname(null)
-      setIsLoading(false)
-      return
-    }
-    setIsLoading(true)
-
-    try {
-      const data = await api.auth.session()
-
-      if (data.user_id) {
-        console.log("✅ Сессия активна, user_id:", data.user_id)
-        setIsLoggedIn(true)
-        setUserId(data.user_id)
-        setName(data.username || "")
-        setSurname(data.surname || "")
-      } else {
-        console.log("❌ Нет user_id в ответе, выход...")
-        handleLogout()
-      }
-    } catch (error) {
-      console.log("❌ Ошибка при запросе сессии:", error.message)
-      handleLogout()
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    fetchSession()
-  }, [])
-
-  const handleLogin = async () => {
-    console.log("🔄 Логин: обновляем сессию...")
-    await fetchSession()
+  const handleLogin = () => {
+    console.log("🔄 Логин: устанавливаем статус авторизации...")
+    setIsLoggedIn(true)
   }
 
   const handleLogout = () => {
-    console.log("❌ Выход: очищаем токен, роли и сессию...")
+    console.log("❌ Выход: очищаем токен и сессию...")
     Cookies.remove("jwt")
     setIsLoggedIn(false)
     setUserId(null)
     setName(null)
     setSurname(null)
-  }
-
-  if (isLoading || isLoadingRoles) {
-    return <SpinnerRightBottom />
   }
 
   const NoAccess = () => (
@@ -131,11 +83,8 @@ function App() {
                     <Routes>
                       <Route path="/dashboard" element={<Dashboard />} />
                       <Route path="/" element={<Navigate to="/leads" />} />
-                      <Route path="/leads" element={<Leads />} />
-                      <Route
-                        path="/chat/:ticketId?"
-                        element={<ChatComponent />}
-                      />
+                      <Route path="/leads/:ticketId?" element={<Leads />} />
+                      <Route path="/chat/:ticketId?" element={<ChatComponent />} />
                       <Route
                         path="/admin-panel"
                         element={

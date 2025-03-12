@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FaFile, FaPaperPlane, FaSmile } from 'react-icons/fa';
 import EmojiPicker from 'emoji-picker-react';
 import ReactDOM from 'react-dom';
-import TaskModal from '../SlideInComponent/TaskComponent';
+import TaskModal from '../TaskComponent/TaskComponent';
 import { useUser } from '../../UserContext';
 import { useAppContext } from '../../AppContext';
 import { api } from '../../api';
