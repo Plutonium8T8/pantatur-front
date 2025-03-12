@@ -116,7 +116,7 @@ function App() {
             anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
           >
             <UserProvider>
-              {false ? (
+              {!isLoggedIn ? (
                 <LoginForm onLoginSuccess={handleLogin} />
               ) : (
                 <div className="app-container">
