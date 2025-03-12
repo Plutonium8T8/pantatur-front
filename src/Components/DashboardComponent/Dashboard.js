@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react"
+import { format } from "date-fns"
 import { Bar, Pie, Line, PolarArea } from "react-chartjs-2"
 import GridLayout from "react-grid-layout"
 import "react-grid-layout/css/styles.css"
@@ -34,6 +35,7 @@ import {
 } from "./utils"
 import { showServerError, getLanguageByKey } from "../utils"
 import "./Dashboard.css"
+import { ISO_DATE } from "../../app-constants"
 
 ChartJS.register(
   CategoryScale,
@@ -89,10 +91,14 @@ const Dashboard = () => {
     end: null
   })
 
-  const fetchStatistics = useCallback(async () => {
+  const fetchStatistics = useCallback(async ({ dateRange }) => {
     setIsLoading(true)
+    const { start, end } = dateRange
     try {
-      const statsData = await api.dashboard.statistics()
+      const statsData = await api.dashboard.statistics({
+        start_date: start ? format(start, ISO_DATE) : null,
+        end_date: end ? format(end, ISO_DATE) : null
+      })
 
       setStatistics(statsData)
     } catch (error) {
@@ -104,8 +110,14 @@ const Dashboard = () => {
   }, [])
 
   useEffect(() => {
-    fetchStatistics()
-  }, [fetchStatistics])
+    if (
+      (dateRange.start && dateRange.end) ||
+      (!dateRange.start && !dateRange.end)
+    ) {
+      fetchStatistics({ dateRange })
+      return
+    }
+  }, [fetchStatistics, dateRange])
 
   useEffect(() => {
     const updateContainerDimensions = () => {
