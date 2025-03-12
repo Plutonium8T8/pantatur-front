@@ -19,7 +19,7 @@ export const Filter = ({
   dataRange
 }) => {
   return (
-    <div className="d-flex gap-8">
+    <div className="d-flex gap-8 mb-16">
       <Select
         options={platformOptions}
         id="platform"

@@ -34,6 +34,7 @@ import {
   positionX
 } from "./utils"
 import { showServerError } from "../utils"
+import "./Dashboard.css"
 
 ChartJS.register(
   CategoryScale,
@@ -47,6 +48,8 @@ ChartJS.register(
   ArcElement,
   RadialLinearScale
 )
+
+const THRESHOLD = 47
 
 const chartComponents = {
   pie: Pie,
@@ -159,7 +162,7 @@ const Dashboard = () => {
     const updateContainerDimensions = () => {
       const container = document.querySelector(".page-content")
       if (container) {
-        setContainerWidth(container.offsetWidth)
+        setContainerWidth(container.offsetWidth - THRESHOLD)
       }
     }
     updateContainerDimensions()
@@ -169,7 +172,7 @@ const Dashboard = () => {
 
   let cols = 4
   if (containerWidth > 1400) {
-    cols = 8
+    cols = 6
   }
   const rowHeight = containerWidth / cols + 50
 
@@ -184,14 +187,10 @@ const Dashboard = () => {
   }))
 
   return (
-    <div
-      style={{
-        width: "100%",
-        height: "100%",
-        padding: "20px"
-      }}
-    >
-      <h1>Dashboard</h1>
+    <div className="dashboard-container">
+      <h1 className="dashboard-title | mb-16">Dashboard</h1>
+      <div className="dashboard-divider" />
+
       <Filter
         onSelectPlatform={setPlatform}
         onSelectMetrics={setMetrics}
@@ -207,7 +206,7 @@ const Dashboard = () => {
         <SpinnerRightBottom />
       ) : (
         <GridLayout
-          className="layout"
+          className="dashboard-layout"
           layout={
             metricsDashboard
               ? metricsDashboardData(metricsDashboard)
