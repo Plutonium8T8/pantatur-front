@@ -1,7 +1,7 @@
 import React from "react"
 import "./select.css"
 import { translations } from "../utils/translations"
-import { IoMdClose } from "react-icons/io"
+import { IoMdClose, IoIosArrowDown } from "react-icons/io"
 
 const Select = ({
   options,
@@ -47,8 +47,15 @@ const Select = ({
             </option>
           ))}
         </select>
+
+        <div className={`right-icon ${clear ? "hide-arrow-down-icon" : ""}`}>
+          <IoIosArrowDown size={16} />
+        </div>
         {clear && (
-          <div className="select-clear" onClick={() => onChange("")}>
+          <div
+            className="right-icon hide-close-icon"
+            onClick={() => onChange("")}
+          >
             <IoMdClose size={16} />
           </div>
         )}
