@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FaFile, FaPaperPlane, FaSmile } from 'react-icons/fa';
 import EmojiPicker from 'emoji-picker-react';
 import ReactDOM from 'react-dom';
-import TaskModal from '../TaskComponent/TaskComponent';
+import TaskModal from '../TaskComponent/TaskPage';
 import { useUser } from '../../UserContext';
 import { useAppContext } from '../../AppContext';
 import { api } from '../../api';
@@ -557,13 +557,13 @@ const ChatMessages = ({
                         >
                             <FaFile />
                         </button>
-                        <button
+                        {/* <button
                             className="action-button task-button"
                             onClick={() => setIsTaskModalOpen(true)}
                             disabled={!selectTicketId}
                         >
                             <FaTasks />
-                        </button>
+                        </button> */}
                     </div>
                     <div className="select-row">
                         <div className="input-group">
@@ -620,11 +620,11 @@ const ChatMessages = ({
                     )}
                 </div>
 
-                <TaskModal
+                {/* <TaskModal
                     isOpen={isTaskModalOpen}
                     onClose={() => setIsTaskModalOpen(false)}
                     selectedTicketId={selectTicketId}
-                />
+                /> */}
             </div>
 
         </div>

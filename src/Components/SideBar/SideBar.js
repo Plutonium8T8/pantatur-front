@@ -18,7 +18,7 @@ import { clearCookies } from "../../Components/utils/clearCookies"
 import { api } from "../../api"
 import { LoadingOverlay } from "../LoadingOverlay"
 
-const CustomSidebar = ({ onOpenNotifications, onOpenTasks, onOpenAccount }) => {
+const CustomSidebar = ({ onOpenNotifications, onOpenAccount }) => {
   const location = useLocation()
   const navigate = useNavigate()
   const { unreadCount } = useAppContext()
@@ -94,7 +94,7 @@ const CustomSidebar = ({ onOpenNotifications, onOpenTasks, onOpenAccount }) => {
             </div>
             <div
               className={`menu-item ${isActive("tasks") ? "active" : ""}`}
-              onClick={onOpenTasks}
+              onClick={() => handleNavigate("tasks")}
             >
               <FaTasks size={24} />
               <span>{translations["Taskuri"][language]}</span>

@@ -15,7 +15,7 @@ import Cookies from "js-cookie"
 import { AppProvider } from "./AppContext"
 import { SnackbarProvider } from "notistack"
 import NotificationModal from "./Components/SlideInComponent/NotificationModal"
-import TaskComponent from "./Components/TaskComponent/TaskComponent"
+import TaskPage from "./Components/TaskComponent/TaskPage"
 import AdminPanel from "./Components/AdminPanelComponent/AdminPanel"
 import Dashboard from "./Components/DashboardComponent/Dashboard"
 import UserPage from "./Components/UserPage/UserPage"
@@ -26,7 +26,6 @@ import "./reset.css"
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false)
-  const [isTaskComponentOpen, setIsTaskComponentOpen] = useState(false)
   const [isAccountComponentOpen, setIsAccountComponentOpen] = useState(false)
 
   const { setUserId, setName, setSurname, userRoles, hasRole } = useUser()
@@ -74,7 +73,6 @@ function App() {
                 <div className="app-container">
                   <CustomSidebar
                     onOpenNotifications={() => setIsNotificationModalOpen(true)}
-                    onOpenTasks={() => setIsTaskComponentOpen(true)}
                     onOpenAccount={() => setIsAccountComponentOpen(true)}
                     onLogout={handleLogout}
                     userRoles={userRoles}
@@ -85,6 +83,7 @@ function App() {
                       <Route path="/" element={<Navigate to="/leads" />} />
                       <Route path="/leads/:ticketId?" element={<Leads />} />
                       <Route path="/chat/:ticketId?" element={<ChatComponent />} />
+                      <Route path="/tasks" element={<TaskPage />} /> {/* ✅ Добавлена новая страница */}
                       <Route
                         path="/admin-panel"
                         element={
@@ -101,10 +100,6 @@ function App() {
                   <NotificationModal
                     isOpen={isNotificationModalOpen}
                     onClose={() => setIsNotificationModalOpen(false)}
-                  />
-                  <TaskComponent
-                    isOpen={isTaskComponentOpen}
-                    onClose={() => setIsTaskComponentOpen(false)}
                   />
                 </div>
               )}
