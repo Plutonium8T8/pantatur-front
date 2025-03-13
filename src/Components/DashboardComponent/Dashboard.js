@@ -54,7 +54,7 @@ const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [containerWidth, setContainerWidth] = useState(0)
   const [selectedTechnicians, setSelectedTechnicians] = useState([])
-  const [userGraphs, setUserGraphs] = useState([])
+  const [layout, setLayout] = useState([])
   const [dateRange, setDateRange] = useState({
     start: null,
     end: null
@@ -75,7 +75,7 @@ const Dashboard = () => {
       const { user_graphs, ...rest } = statsData
 
       if (user_graphs) {
-        setUserGraphs(normalizeUserGraphs(user_graphs))
+        setLayout(normalizeUserGraphs(user_graphs))
       }
 
       setStatistics(rest)
@@ -98,7 +98,7 @@ const Dashboard = () => {
   }
 
   const updateGraph = (movedGraph) => {
-    const chartId = userGraphs.find(({ i }) => i === movedGraph.i)?.i
+    const chartId = layout.find(({ i }) => i === movedGraph.i)?.i
 
     if (chartId) {
       changeGraphPosition(chartId, {
@@ -158,7 +158,7 @@ const Dashboard = () => {
       ) : (
         <GridLayout
           className="dashboard-layout"
-          layout={userGraphs}
+          layout={layout}
           cols={cols}
           rowHeight={rowHeight}
           width={containerWidth}
@@ -169,7 +169,7 @@ const Dashboard = () => {
           onResizeStop={(_, __, resizeGraph) => updateGraph(resizeGraph)}
           onDragStop={(_, __, movedGraph) => updateGraph(movedGraph)}
         >
-          {userGraphs.map((graph) => {
+          {layout.map((graph) => {
             const { typeChart, label } = metricsDashboardCharts[graph.graphName]
             const ChartComponent = chartComponents[typeChart]
 

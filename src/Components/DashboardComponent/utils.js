@@ -265,7 +265,6 @@ export const renderChart = ({ Component, chartData, index, chartLabel }) => {
       style={{ width: "100%", height: "100%", alignItems: "center" }}
     >
       <div
-        className="chart-container"
         style={{
           height: "100%",
           width: "100%"
@@ -280,7 +279,6 @@ export const renderChart = ({ Component, chartData, index, chartLabel }) => {
   )
 }
 
-// TODO: Need to check if we needd this
 export const getLastItemId = (list) => {
   const lastItem = list[list.length - 1]
   const id = lastItem?.split(":")[0]
