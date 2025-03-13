@@ -73,9 +73,7 @@ const Dashboard = () => {
           end_date: end ? format(end, ISO_DATE) : null,
           technician_id: technicianId
         },
-        {
-          user_id: userId
-        }
+        userId
       )
 
       const { user_graphs, ...charts } = statsData

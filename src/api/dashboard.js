@@ -2,7 +2,7 @@ import queryString from "query-string"
 import { baseAxios } from "./baseAxios"
 
 export const dashboard = {
-  statistics: async (params, body) => {
+  statistics: async (params, id) => {
     const url = queryString.stringifyUrl(
       {
         url: "/api/dashboard/statistics",
@@ -10,7 +10,7 @@ export const dashboard = {
       },
       { skipNull: true, skipEmptyString: true }
     )
-    const { data } = await baseAxios.post(url, body)
+    const { data } = await baseAxios.post(url, { user_id: id })
 
     return data
   },
