@@ -1,5 +1,4 @@
 import { useState } from "react"
-
 import CustomSidebar from "./Components/SideBar/SideBar"
 import UserPage from "./Components/UserPage/UserPage"
 import NotificationModal from "./Components/SlideInComponent/NotificationModal"
@@ -11,6 +10,7 @@ export const Layout = ({ children }) => {
   const [isTaskComponentOpen, setIsTaskComponentOpen] = useState(false)
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false)
   const [isAccountComponentOpen, setIsAccountComponentOpen] = useState(false)
+
   const { userRoles, setUserId, setName, setSurname } = useUser()
 
   const handleLogout = () => {
