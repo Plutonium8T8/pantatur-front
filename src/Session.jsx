@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import Cookies from "js-cookie"
 import { useUser } from "./UserContext"
 import { api } from "./api"
@@ -6,12 +6,14 @@ import { useNavigate, useLocation } from "react-router-dom"
 import { privateRoutes } from "./routes"
 import { enqueueSnackbar } from "notistack"
 import { showServerError } from "./Components/utils"
+import { LoadingOverlay } from "./Components/LoadingOverlay"
 
 const ADMIN_ROLE = "ROLE_ADMIN"
 
-export const Session = () => {
+export const Session = ({ children }) => {
   const navigate = useNavigate()
   const { pathname } = useLocation()
+  const [loading, setLoading] = useState(true)
   const { setUserId, setName, setSurname, hasRole } = useUser()
 
   const privatePath = privateRoutes(hasRole(ADMIN_ROLE)).map(({ path }) => path)
@@ -35,6 +37,8 @@ export const Session = () => {
       navigate("/auth")
       handleLogout()
       enqueueSnackbar(showServerError(error), { variant: "error" })
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -42,5 +46,5 @@ export const Session = () => {
     fetchSession()
   }, [])
 
-  return <></>
+  return <>{loading ? <LoadingOverlay /> : children}</>
 }
