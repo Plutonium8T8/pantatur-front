@@ -28,7 +28,8 @@ import {
   metricsDashboardCharts,
   normalizeUserGraphs,
   renderChart,
-  chartComponents
+  chartComponents,
+  getLastItemId
 } from "./utils"
 import { showServerError, getLanguageByKey } from "../utils"
 import "./Dashboard.css"
@@ -62,23 +63,25 @@ const Dashboard = () => {
   const { userId } = useUser()
   const { enqueueSnackbar } = useSnackbar()
 
-  const fetchStatistics = useCallback(async ({ dateRange }) => {
+  const fetchStatistics = useCallback(async ({ dateRange, technicianId }) => {
     setIsLoading(true)
     const { start, end } = dateRange
     try {
-      const statsData = await api.dashboard.statistics({
-        start_date: start ? format(start, ISO_DATE) : null,
-        end_date: end ? format(end, ISO_DATE) : null,
-        user_id: userId
-      })
+      const statsData = await api.dashboard.statistics(
+        {
+          start_date: start ? format(start, ISO_DATE) : null,
+          end_date: end ? format(end, ISO_DATE) : null,
+          technician_id: technicianId
+        },
+        {
+          user_id: userId
+        }
+      )
 
-      const { user_graphs, ...rest } = statsData
+      const { user_graphs, ...charts } = statsData
 
-      if (user_graphs) {
-        setLayout(normalizeUserGraphs(user_graphs))
-      }
-
-      setStatistics(rest)
+      setLayout(normalizeUserGraphs(user_graphs))
+      setStatistics(charts)
     } catch (error) {
       enqueueSnackbar(showServerError(error), { variant: "error" })
     } finally {
@@ -116,9 +119,10 @@ const Dashboard = () => {
     }
 
     fetchStatistics({
-      dateRange
+      dateRange,
+      technicianId: getLastItemId(selectedTechnicians)
     })
-  }, [fetchStatistics, dateRange])
+  }, [fetchStatistics, dateRange, selectedTechnicians])
 
   useEffect(() => {
     const updateContainerDimensions = () => {
@@ -170,21 +174,22 @@ const Dashboard = () => {
           onDragStop={(_, __, movedGraph) => updateGraph(movedGraph)}
         >
           {layout.map((graph) => {
-            const { typeChart, label } = metricsDashboardCharts[graph.graphName]
-            const ChartComponent = chartComponents[typeChart]
+            const { label } = metricsDashboardCharts[graph.graphName]
+            const ChartComponent = chartComponents[graph.type]
+            const graphValue = statistics[graph.graphName].data
 
-            const chartData = chartsMetadata(
-              statistics[graph.graphName].data,
-              label,
-              typeChart
-            )
+            if (graphValue?.length) {
+              const chartData = chartsMetadata(graphValue, label, graph.type)
 
-            return renderChart({
-              Component: ChartComponent,
-              chartData,
-              chartLabel: label,
-              index: graph.i
-            })
+              return renderChart({
+                Component: ChartComponent,
+                chartData,
+                chartLabel: label,
+                index: graph.i
+              })
+            }
+
+            return null
           })}
         </GridLayout>
       )}
