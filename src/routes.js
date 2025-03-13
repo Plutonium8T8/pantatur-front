@@ -32,5 +32,9 @@ export const privateRoutes = (isAllowRole) => [
   {
     path: "/admin-panel",
     component: isAllowRole ? AdminPanel : NoAccess
+  },
+  {
+    path: "/leads/:ticketId?",
+    component: Leads
   }
 ]

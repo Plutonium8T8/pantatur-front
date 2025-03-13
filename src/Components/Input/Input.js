@@ -33,6 +33,7 @@ export const Input = ({
           onChange={onChange}
           placeholder={placeholder}
           className={classNames}
+          disabled={disabled}
           {...props}
         />
 
