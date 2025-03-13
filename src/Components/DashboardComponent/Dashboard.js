@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback } from "react"
+import React, { useState, useEffect, useCallback, useMemo } from "react"
 import { format } from "date-fns"
-import { Bar, Pie, Line, PolarArea } from "react-chartjs-2"
+import { useSnackbar } from "notistack"
 import GridLayout from "react-grid-layout"
 import "react-grid-layout/css/styles.css"
 import "react-resizable/css/styles.css"
@@ -19,19 +19,17 @@ import {
   ArcElement,
   RadialLinearScale
 } from "chart.js"
-import { enqueueSnackbar } from "notistack"
+import { useUser } from "../../UserContext"
 import { api } from "../../api"
 import { SpinnerRightBottom } from "../SpinnerRightBottom"
 import { Filter } from "./Filter"
 import {
   chartsMetadata,
-  datasetHeights,
-  datasetLabels,
-  datasetTypes,
-  datasetWidths,
   metricsDashboardCharts,
-  positionY,
-  positionX
+  normalizeUserGraphs,
+  renderChart,
+  chartComponents,
+  getLastItemId
 } from "./utils"
 import { showServerError, getLanguageByKey } from "../utils"
 import "./Dashboard.css"
@@ -52,44 +50,18 @@ ChartJS.register(
 
 const THRESHOLD = 47
 
-const chartComponents = {
-  pie: Pie,
-  bar: Bar,
-  line: Line,
-  polar: PolarArea
-}
-
-const renderChart = ({ Component, chartData, index, chartLabel }) => {
-  return (
-    <div
-      key={index}
-      style={{ width: "100%", height: "100%", alignItems: "center" }}
-    >
-      <div
-        className="chart-container"
-        style={{
-          height: "100%",
-          width: "100%"
-        }}
-      >
-        <h3 style={{ textAlign: "center", marginBottom: "10px" }}>
-          {chartLabel}
-        </h3>
-        <Component data={chartData} />
-      </div>
-    </div>
-  )
-}
-
 const Dashboard = () => {
   const [statistics, setStatistics] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [containerWidth, setContainerWidth] = useState(0)
   const [selectedTechnicians, setSelectedTechnicians] = useState([])
+  const [userGraphs, setUserGraphs] = useState([])
   const [dateRange, setDateRange] = useState({
     start: null,
     end: null
   })
+  const { userId } = useUser()
+  const { enqueueSnackbar } = useSnackbar()
 
   const fetchStatistics = useCallback(async ({ dateRange }) => {
     setIsLoading(true)
@@ -97,27 +69,65 @@ const Dashboard = () => {
     try {
       const statsData = await api.dashboard.statistics({
         start_date: start ? format(start, ISO_DATE) : null,
-        end_date: end ? format(end, ISO_DATE) : null
+        end_date: end ? format(end, ISO_DATE) : null,
+        user_id: userId
       })
 
-      setStatistics(statsData)
+      const { user_graphs, ...rest } = statsData
+
+      if (user_graphs) {
+        setUserGraphs(normalizeUserGraphs(user_graphs))
+      }
+
+      setStatistics(rest)
     } catch (error) {
       enqueueSnackbar(showServerError(error), { variant: "error" })
-      setStatistics([])
     } finally {
       setIsLoading(false)
     }
   }, [])
+
+  const changeGraphPosition = async (id, graphPositions) => {
+    try {
+      await api.dashboard.updateGraphById(id, {
+        user_id: userId,
+        ...graphPositions
+      })
+    } catch (error) {
+      enqueueSnackbar(showServerError(error), { variant: "error" })
+    }
+  }
+
+  const triggerDropStop = (movedGraph) => {
+    const chartId = userGraphs.find(({ i }) => i === movedGraph.i)?.i
+
+    if (chartId) {
+      changeGraphPosition(chartId, {
+        x: movedGraph.x,
+        y: movedGraph.y,
+        w: movedGraph.w,
+        h: movedGraph.h
+      })
+    }
+  }
 
   useEffect(() => {
     if (
       (dateRange.start && dateRange.end) ||
       (!dateRange.start && !dateRange.end)
     ) {
-      fetchStatistics({ dateRange })
+      fetchStatistics({
+        dateRange,
+        technicianId: getLastItemId(selectedTechnicians)
+      })
       return
     }
-  }, [fetchStatistics, dateRange])
+
+    fetchStatistics({
+      dateRange,
+      technicianId: getLastItemId(selectedTechnicians)
+    })
+  }, [fetchStatistics, dateRange, selectedTechnicians])
 
   useEffect(() => {
     const updateContainerDimensions = () => {
@@ -131,21 +141,12 @@ const Dashboard = () => {
     return () => window.removeEventListener("resize", updateContainerDimensions)
   }, [])
 
-  let cols = 4
-  if (containerWidth > 1400) {
-    cols = 6
-  }
-  const rowHeight = containerWidth / cols + 50
+  const { cols, rowHeight } = useMemo(() => {
+    const cols = containerWidth > 1400 ? 6 : 4
+    const rowHeight = containerWidth / cols + 50
 
-  const statisticsLayout = Object.values(statistics)?.map((_, index) => ({
-    i: `${index + 1}`,
-    x: positionX[index] - 1,
-    y: positionY[index] - 1,
-    w: datasetWidths[index],
-    h: datasetHeights[index],
-    type: datasetTypes[index],
-    label: getLanguageByKey(datasetLabels[index]) || `Chart ${index + 1}`
-  }))
+    return { cols, rowHeight }
+  }, [containerWidth])
 
   return (
     <div className="dashboard-container-wrapper">
@@ -166,23 +167,31 @@ const Dashboard = () => {
       ) : (
         <GridLayout
           className="dashboard-layout"
-          layout={statisticsLayout}
+          layout={userGraphs}
           cols={cols}
           rowHeight={rowHeight}
           width={containerWidth}
           isResizable={true}
           isDraggable={true}
+          verticalCompact={false}
+          preventCollision={true}
+          onDragStop={(_, __, movedGraph) => triggerDropStop(movedGraph)}
         >
-          {Object.entries(statistics).map(([key, { data }]) => {
-            const { typeChart, label } = metricsDashboardCharts[key]
+          {userGraphs.map((graph) => {
+            const { typeChart, label } = metricsDashboardCharts[graph.graphName]
             const ChartComponent = chartComponents[typeChart]
-            const chartData = chartsMetadata(data, label, typeChart)
+
+            const chartData = chartsMetadata(
+              statistics[graph.graphName].data,
+              label,
+              typeChart
+            )
 
             return renderChart({
               Component: ChartComponent,
               chartData,
               chartLabel: label,
-              index: key
+              index: graph.i
             })
           })}
         </GridLayout>
