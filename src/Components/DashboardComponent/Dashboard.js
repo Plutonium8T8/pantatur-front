@@ -111,13 +111,7 @@ const Dashboard = () => {
   }
 
   useEffect(() => {
-    if (
-      (dateRange.start && dateRange.end) ||
-      (!dateRange.start && !dateRange.end)
-    ) {
-      fetchStatistics({
-        dateRange
-      })
+    if (!!dateRange.start !== !!dateRange.end) {
       return
     }
 
@@ -170,7 +164,7 @@ const Dashboard = () => {
           width={containerWidth}
           isResizable={true}
           isDraggable={true}
-          verticalCompact={false}
+          compactType={null}
           preventCollision={true}
           onResizeStop={(_, __, resizeGraph) => updateGraph(resizeGraph)}
           onDragStop={(_, __, movedGraph) => updateGraph(movedGraph)}
