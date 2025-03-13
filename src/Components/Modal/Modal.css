@@ -24,8 +24,8 @@
 
   width: var(--width, fit-content);
   height: var(--height, fit-content);
-  max-height: 80%;
-  max-width: 60%;
+  max-height: 100%;
+  max-width: 100%;
 
   padding: 20px;
 

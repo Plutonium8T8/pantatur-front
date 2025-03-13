@@ -1,0 +1,49 @@
+.dashboard-filter-multi-select {
+  width: 500px;
+}
+
+.dashboard-filter-time {
+  background-color: white;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.dashboard-filter-time > *:hover {
+  background-color: #ececec;
+}
+
+.dashboard-filter-time > *:not(:last-child) {
+  border-right: 1px solid #ccc;
+}
+
+.dashboard-filter-time button {
+  background-color: transparent;
+  border-radius: 0;
+  border: none;
+  color: #888;
+  font-size: 16px;
+}
+
+.dashboard-filter-time input {
+  border: none;
+}
+
+.dashboard-filter-time .react-datepicker__input-container input {
+  transition: all 0.3s ease;
+}
+
+.dashboard-filter-time .react-datepicker__input-container input:hover {
+  background-color: #ececec;
+  cursor: pointer;
+}
+
+.dashboard-filter-time
+  .react-datepicker__input-container
+  input:hover::placeholder {
+  color: #0f824c;
+}
+
+.dashboard-filter-time-active {
+  background-color: #ececec !important;
+  color: #0f824c !important;
+}
