@@ -99,10 +99,6 @@ const TaskPage = ({ selectedTicketId }) => {
       enqueueSnackbar(showServerError(error), { variant: "error" })
     }
   }
-  // Запуск загрузки пользователей при монтировании компонента
-  useEffect(() => {
-    fetchUsers()
-  }, [userId])
 
   const handleInputChange = (e) => {
     const inputValue = e.target.value
@@ -166,15 +162,14 @@ const TaskPage = ({ selectedTicketId }) => {
           />
           <IconSelect
             options={TypeTask}
-            label="Выберите задачу"
+            label="Alege tip task"
             id="task-select"
             value={selectedTask}
             onChange={setSelectedTask}
-            placeholder="Выберите задачу"
+            placeholder="Alege tip task"
           />
-          {/* Выпадающий список */}
           {isDropdownOpen && ticketIds.length > 0 && (
-            <ul className="dropdown-list">
+            <ul className="dropdown-list-task">
               {ticketIds
                 .filter((id) => id.toString().includes(searchTerm))
                 .map((id, index) => (
@@ -235,7 +230,6 @@ const TaskPage = ({ selectedTicketId }) => {
             required
           />
 
-          {/* Выпадающий список */}
           {isUserDropdownOpen && userList.length > 0 && (
             <ul className="dropdown-list">
               {userList
