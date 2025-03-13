@@ -254,7 +254,8 @@ export const normalizeUserGraphs = (graphs) => {
     x: graph.x,
     y: graph.y,
     w: graph.w,
-    h: graph.h
+    h: graph.h,
+    type: graph.graph_type
   }))
 }
 
