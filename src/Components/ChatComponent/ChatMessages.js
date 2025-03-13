@@ -198,29 +198,29 @@ const ChatMessages = ({
         }
     };
 
-    const analyzeLastMessagePlatform = () => {
-        console.log("📌 selectedClient:", selectedClient);
+    // const analyzeLastMessagePlatform = () => {
+    //     console.log("📌 selectedClient:", selectedClient);
 
-        if (!Array.isArray(messages)) {
-            return "web";
-        }
+    //     if (!Array.isArray(messages)) {
+    //         return "web";
+    //     }
 
-        const clientId = Number(selectedClient);
+    //     const clientId = Number(selectedClient);
 
-        const clientMessages = messages.filter((msg) => Number(msg.client_id) === clientId);
+    //     const clientMessages = messages.filter((msg) => Number(msg.client_id) === clientId);
 
-        if (!clientMessages || clientMessages.length === 0) {
-            return "web";
-        }
+    //     if (!clientMessages || clientMessages.length === 0) {
+    //         return "web";
+    //     }
 
-        console.log("🔎 Найдено сообщений от клиента:", clientMessages.length);
+    //     console.log("🔎 Найдено сообщений от клиента:", clientMessages.length);
 
-        const lastMessage = clientMessages.reduce((latest, current) =>
-            new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
-        );
+    //     const lastMessage = clientMessages.reduce((latest, current) =>
+    //         new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
+    //     );
 
-        return lastMessage?.platform || "web";
-    };
+    //     return lastMessage?.platform || "web";
+    // };
 
     const handleClick = () => {
         if (!selectedClient) {
@@ -347,13 +347,6 @@ const ChatMessages = ({
             setSelectedPlatform(lastPlatform || "web");
         }
     }, [selectedClient, messages]);
-
-    // const parseDate = (dateString) => {
-    //     if (!dateString) return new Date(0); // Если даты нет, ставим минимальную
-    //     const [date, time] = dateString.split(" ");
-    //     const [day, month, year] = date.split("-");
-    //     return new Date(`${year}-${month}-${day}T${time}`);
-    // };
 
     return (
         <div className="chat-area">
@@ -654,7 +647,7 @@ const ChatMessages = ({
 
                                         return uniquePlatforms.map(platform => (
                                             <option key={`${clientId}-${platform}`} value={`${clientId}-${platform}`}>
-                                                {` ${fullName} | ${platform.charAt(0).toUpperCase() + platform.slice(1)}  ID: ${clientId} `}
+                                                {` ${fullName} | ${platform.charAt(0).toUpperCase() + platform.slice(1)} | ID: ${clientId} `}
                                             </option>
                                         ));
                                     })}
