@@ -33,17 +33,15 @@ function App() {
       anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
     >
       {JWT_TOKEN ? (
-        <>
-          <UserProvider>
-            <Session>
-              <AppProvider>
-                <Layout>
-                  <PrivateRoutes />
-                </Layout>
-              </AppProvider>
-            </Session>
-          </UserProvider>
-        </>
+        <UserProvider>
+          <Session>
+            <AppProvider>
+              <Layout>
+                <PrivateRoutes />
+              </Layout>
+            </AppProvider>
+          </Session>
+        </UserProvider>
       ) : (
         <PublicRoutes />
       )}
