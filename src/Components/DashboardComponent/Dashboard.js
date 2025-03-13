@@ -28,8 +28,7 @@ import {
   metricsDashboardCharts,
   normalizeUserGraphs,
   renderChart,
-  chartComponents,
-  getLastItemId
+  chartComponents
 } from "./utils"
 import { showServerError, getLanguageByKey } from "../utils"
 import "./Dashboard.css"
@@ -117,17 +116,15 @@ const Dashboard = () => {
       (!dateRange.start && !dateRange.end)
     ) {
       fetchStatistics({
-        dateRange,
-        technicianId: getLastItemId(selectedTechnicians)
+        dateRange
       })
       return
     }
 
     fetchStatistics({
-      dateRange,
-      technicianId: getLastItemId(selectedTechnicians)
+      dateRange
     })
-  }, [fetchStatistics, dateRange, selectedTechnicians])
+  }, [fetchStatistics, dateRange])
 
   useEffect(() => {
     const updateContainerDimensions = () => {
