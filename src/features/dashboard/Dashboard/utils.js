@@ -1,4 +1,4 @@
-import { getLanguageByKey } from "../utils/getTranslationByKey"
+import { getLanguageByKey } from "../../../Components/utils"
 
 export const datasetLabels = [
   "Leaduri per platformă",

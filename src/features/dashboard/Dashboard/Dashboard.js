@@ -19,9 +19,9 @@ import {
   RadialLinearScale
 } from "chart.js"
 import { enqueueSnackbar } from "notistack"
-import { api } from "../../api"
-import { SpinnerRightBottom } from "../SpinnerRightBottom"
-import { Filter } from "./Filter"
+import { api } from "../../../api"
+import { SpinnerRightBottom } from "../../../Components/SpinnerRightBottom"
+import { Filter } from "../components/Filter"
 import {
   chartsMetadata,
   datasetHeights,
@@ -32,7 +32,7 @@ import {
   positionY,
   positionX
 } from "./utils"
-import { showServerError, getLanguageByKey } from "../utils"
+import { showServerError, getLanguageByKey } from "../../../Components/utils"
 import "./Dashboard.css"
 
 ChartJS.register(
@@ -79,7 +79,7 @@ const renderChart = ({ Component, chartData, index, chartLabel }) => {
   )
 }
 
-const Dashboard = () => {
+export const Dashboard = () => {
   const [statistics, setStatistics] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [containerWidth, setContainerWidth] = useState(0)
@@ -178,5 +178,3 @@ const Dashboard = () => {
     </div>
   )
 }
-
-export default Dashboard

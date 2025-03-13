@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react"
 import { startOfWeek, addDays, format } from "date-fns"
-import ModalWithToggles from "./ModalWithToggles" // Импортируем компонент модалки
+import ModalWithToggles from "../../Components/AdminPanelComponent/ModalWithToggles" // Импортируем компонент модалки
 import "./AdminPanel.css"
 import { FaMinus, FaPlus, FaTrash } from "react-icons/fa"
-import { translations } from "../utils/translations"
-import ToggleComponent from "./ToggleComponent"
+import { translations } from "../../Components/utils/translations"
+import ToggleComponent from "../../Components/AdminPanelComponent/ToggleComponent"
 import { api } from "../../api"
 import { useSnackbar } from "notistack"
 import { showServerError } from "../../Components/utils/showServerError"
-import { SpinnerRightBottom } from "../SpinnerRightBottom"
+import { SpinnerRightBottom } from "../../Components/SpinnerRightBottom"
 
-const ScheduleComponent = () => {
+export const AdminPanel = () => {
   const [schedule, setSchedule] = useState([])
   const [selectedEmployee, setSelectedEmployee] = useState(null)
   const [selectedDay, setSelectedDay] = useState(null)
@@ -502,5 +502,3 @@ const ScheduleComponent = () => {
     </div>
   )
 }
-
-export default ScheduleComponent

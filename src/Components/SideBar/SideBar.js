@@ -111,11 +111,9 @@ const CustomSidebar = ({ onOpenNotifications, onOpenTasks, onOpenAccount }) => {
             </div>
           </div>
         </div>
-        <div className="container-log-out">
-          <div className="menu-item" onClick={logout}>
-            <FaSignOutAlt size={24} />
-            <span>{translations["Log Out"][language]}</span>
-          </div>
+        <div className="menu-item" onClick={logout}>
+          <FaSignOutAlt size={24} />
+          <span>{translations["Log Out"][language]}</span>
         </div>
       </div>
       {loading && <LoadingOverlay />}

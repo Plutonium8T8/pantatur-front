@@ -1,26 +1,27 @@
 import React, { useState, useMemo, useEffect, useRef } from "react"
-import { useParams, useNavigate } from "react-router-dom";
-import { SpinnerRightBottom } from "../SpinnerRightBottom"
-import { useDOMElementHeight } from "../../hooks"
-import { useAppContext } from "../../AppContext"
-import { priorityOptions } from "../../FormOptions/PriorityOption"
-import { workflowOptions } from "../../FormOptions/WorkFlowOption"
-import WorkflowColumn from "./WorkflowColumnComponent"
-import TicketModal from "./TicketModal/TicketModalComponent"
-import { TicketFilterModal } from "../TicketFilterModal"
-import "../../App.css"
-import "../SnackBarComponent/SnackBarComponent.css"
+import { useParams, useNavigate } from "react-router-dom"
+import { SpinnerRightBottom } from "../../../Components/SpinnerRightBottom"
+import { useDOMElementHeight } from "../../../hooks"
+import { useAppContext } from "../../../AppContext"
+import { priorityOptions } from "../../../FormOptions/PriorityOption"
+import { workflowOptions } from "../../../FormOptions/WorkFlowOption"
+import WorkflowColumn from "../../../Components/LeadsComponent/WorkflowColumnComponent"
+import TicketModal from "../../../Components/LeadsComponent/TicketModal/TicketModalComponent"
+import { TicketFilterModal } from "../../../Components/TicketFilterModal"
+// import "../../App.css"
+import "../../../Components/SnackBarComponent/SnackBarComponent.css"
 import { FaFilter, FaTable, FaColumns, FaTrash, FaEdit } from "react-icons/fa"
-import { getLanguageByKey } from "../../Components/utils/getLanguageByKey"
-import { LeadTable } from "./LeadTable"
-import { Button } from "../Button"
-import { useDebounce } from "../../hooks"
-import { showServerError, getTotalPages } from "../utils"
-import { api } from "../../api"
+import { getLanguageByKey } from "../../../Components/utils/getLanguageByKey"
+import { LeadTable } from "../../../Components/LeadsComponent/LeadTable"
+import { Button } from "../../../Components/Button"
+import { useDebounce } from "../../../hooks"
+import { showServerError, getTotalPages } from "../../../Components/utils"
+import { api } from "../../../api"
 import { useSnackbar } from "notistack"
-import { Input } from "../Input/Input"
-import { Modal } from "../Modal";
-import SingleChat from "../ChatComponent/SingleChat";
+import { Input } from "../../../Components/Input/Input"
+import { Modal } from "../../../Components/Modal"
+import { SingleChat } from "../../chat"
+import "./Leads.css"
 
 const SORT_BY = "creation_date"
 const ORDER = "DESC"
@@ -37,10 +38,10 @@ const normalizeLadsFilters = (filters) => {
   }
 }
 
-const Leads = () => {
+export const Leads = () => {
   const refLeadsFilter = useRef()
   const { enqueueSnackbar } = useSnackbar()
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const [hardTickets, setHardTickets] = useState([])
   const { tickets, isLoading, setTickets } = useAppContext()
@@ -56,8 +57,8 @@ const Leads = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [tableLeadsFilters, setTableLeadsFilters] = useState({})
   const [loadingFilters, setLoadingFilters] = useState(false)
-  const { ticketId } = useParams(); // Получаем ticketId из URL
-  const [isChatOpen, setIsChatOpen] = useState(!!ticketId); // Если ticketId есть, сразу открываем модалку
+  const { ticketId } = useParams() // Получаем ticketId из URL
+  const [isChatOpen, setIsChatOpen] = useState(!!ticketId) // Если ticketId есть, сразу открываем модалку
   const [selectedWorkflow, setSelectedWorkflow] = useState(
     workflowOptions.filter(
       (wf) => wf !== "Realizat cu succes" && wf !== "Închis și nerealizat"
@@ -91,14 +92,14 @@ const Leads = () => {
 
   useEffect(() => {
     if (ticketId) {
-      setIsChatOpen(true);
+      setIsChatOpen(true)
     }
-  }, [ticketId]);
+  }, [ticketId])
 
   const closeChatModal = () => {
-    setIsChatOpen(false);
-    navigate("/leads"); // При закрытии убираем ticketId из URL
-  };
+    setIsChatOpen(false)
+    navigate("/leads") // При закрытии убираем ticketId из URL
+  }
 
   const toggleSelectTicket = (ticketId) => {
     setSelectedTickets((prev) =>
@@ -286,8 +287,8 @@ const Leads = () => {
 
   return (
     <>
-      <div ref={refLeadsFilter} className="dashboard-header">
-        <div className="header">
+      <div ref={refLeadsFilter} className="leads-filter-wrapper">
+        <div className="leads-filter-container">
           <Button
             variant="primary"
             onClick={openCreateTicketModal}
@@ -362,7 +363,7 @@ const Leads = () => {
         style={{
           "--leads-filter-height": `${leadsFilterHeight}px`
         }}
-        className={`dashboard-container ${isTableView ? "leads-table" : ""}`}
+        className={`leads-content ${isTableView ? "leads-content-table" : ""}`}
       >
         {isTableView ? (
           <div className="leads-table">
@@ -378,7 +379,7 @@ const Leads = () => {
             />
           </div>
         ) : (
-          <div className="container-tickets">
+          <div className="leads-content-list">
             {workflowOptions
               .filter((workflow) => selectedWorkflow.includes(workflow))
               .map((workflow) => (
@@ -406,10 +407,10 @@ const Leads = () => {
                 const isEditing = Boolean(updatedTicket.ticket_id)
                 return isEditing
                   ? prevTickets.map((ticket) =>
-                    ticket.id === updatedTicket.ticket_id
-                      ? updatedTicket
-                      : ticket
-                  )
+                      ticket.id === updatedTicket.ticket_id
+                        ? updatedTicket
+                        : ticket
+                    )
                   : [...prevTickets, updatedTicket]
               })
             }}
@@ -451,10 +452,10 @@ const Leads = () => {
         footer={null}
         showCloseButton={false}
       >
-        {ticketId && <SingleChat ticketId={ticketId} onClose={closeChatModal} />}
+        {ticketId && (
+          <SingleChat ticketId={ticketId} onClose={closeChatModal} />
+        )}
       </Modal>
     </>
   )
 }
-
-export default Leads
