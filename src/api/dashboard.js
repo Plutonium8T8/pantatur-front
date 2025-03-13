@@ -13,5 +13,11 @@ export const dashboard = {
     const { data } = await baseAxios.get(url)
 
     return data
+  },
+
+  updateGraphById: async (id, body) => {
+    const { data } = await baseAxios.patch(`/api/graph/${id}`, body)
+
+    return data
   }
 }
