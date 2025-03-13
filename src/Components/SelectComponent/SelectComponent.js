@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import "./select.css";
-import { translations } from "../utils/translations";
+import React from "react"
+import "./select.css"
+import { translations } from "../utils/translations"
+import { IoMdClose, IoIosArrowDown } from "react-icons/io"
 
 const Select = ({
   options,
@@ -11,7 +12,8 @@ const Select = ({
   placeholder,
   required,
   disabled,
-  hasError
+  hasError,
+  clear
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const language = localStorage.getItem("language") || "RO";
@@ -22,28 +24,44 @@ const Select = ({
   };
 
   return (
-    <div className={`input-group ${hasError ? "invalid-field" : ""} mb-16`}>
-      <label htmlFor={id}>{translations[label]?.[language] ?? label}</label>
-      <div className="custom-select-wrapper">
-        <div className="selected-option" onClick={() => setIsOpen(!isOpen)}>
-          <span className="task-icon">
-            {options.find((option) => option.name === value)?.icon}
-          </span>
-          <span className="task-text">{value || placeholder}</span>
-        </div>
+    <div className={`input-group ${hasError ? "invalid-field" : ""}`}>
+      {label && (
+        <label htmlFor={id}>{translations[label]?.[language] ?? label}</label>
+      )}
+      <div className="select-container-wrapper">
+        <select
+          id={id}
+          className={`task-select ${hasError ? "invalid-field" : ""}`}
+          value={value}
+          onChange={handleChange}
+          required={required}
+          disabled={disabled}
+        >
+          <option value="">
+            {translations[placeholder]?.[language] ??
+              translations[label]?.[language]}
+          </option>
+          {options.map((option, index) => (
+            <option key={index} value={option}>
+              {translations[option]?.[language] ?? option}
+            </option>
+          ))}
+        </select>
 
-        {isOpen && (
-          <ul className="custom-dropdown">
-            {options.map((option, index) => (
-              <li key={index} onClick={() => handleSelect(option.name)} className="custom-dropdown-item">
-                {option.icon} <span className="task-text">{translations[option.name]?.[language] ?? option.name}</span>
-              </li>
-            ))}
-          </ul>
+        <div className={`right-icon ${clear ? "hide-arrow-down-icon" : ""}`}>
+          <IoIosArrowDown size={16} />
+        </div>
+        {clear && (
+          <div
+            className="right-icon hide-close-icon"
+            onClick={() => onChange("")}
+          >
+            <IoMdClose size={16} />
+          </div>
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Select;
+export default Select
