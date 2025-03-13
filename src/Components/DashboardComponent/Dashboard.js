@@ -97,7 +97,7 @@ const Dashboard = () => {
     }
   }
 
-  const triggerDropStop = (movedGraph) => {
+  const updateGraph = (movedGraph) => {
     const chartId = userGraphs.find(({ i }) => i === movedGraph.i)?.i
 
     if (chartId) {
@@ -172,7 +172,8 @@ const Dashboard = () => {
           isDraggable={true}
           verticalCompact={false}
           preventCollision={true}
-          onDragStop={(_, __, movedGraph) => triggerDropStop(movedGraph)}
+          onResizeStop={(_, __, resizeGraph) => updateGraph(resizeGraph)}
+          onDragStop={(_, __, movedGraph) => updateGraph(movedGraph)}
         >
           {userGraphs.map((graph) => {
             const { typeChart, label } = metricsDashboardCharts[graph.graphName]
