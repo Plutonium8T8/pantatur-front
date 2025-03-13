@@ -18,6 +18,15 @@ export const Session = ({ children }) => {
 
   const privatePath = privateRoutes(hasRole(ADMIN_ROLE)).map(({ path }) => path)
 
+  const navigateToRightPath = (path) => {
+    // Special case: Opening a new window with the lead's ID in the format `/leads/{id}`
+    if (path.startsWith("/leads")) {
+      return path
+    }
+
+    return privatePath.includes(path) ? path : "/leads"
+  }
+
   const handleLogout = () => {
     Cookies.remove("jwt")
     setUserId(null)
@@ -32,7 +41,7 @@ export const Session = ({ children }) => {
       setUserId(data.user_id)
       setName(data.username || "")
       setSurname(data.surname || "")
-      navigate(privatePath.includes(pathname) ? pathname : "/")
+      navigate(navigateToRightPath(pathname))
     } catch (error) {
       navigate("/auth")
       handleLogout()

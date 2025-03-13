@@ -14,10 +14,6 @@ export const publicRoutes = [
 
 export const privateRoutes = (isAllowRole) => [
   {
-    path: "/",
-    component: Leads
-  },
-  {
     path: "/dashboard",
     component: Dashboard
   },

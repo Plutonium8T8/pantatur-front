@@ -63,7 +63,7 @@ const LoginForm = ({ onLoginSuccess }) => {
       if (isLogin) {
         setCookieToken(token)
         setUserId(user_id)
-        navigate("/")
+        navigate("/leads")
         window.location.reload()
       }
     } catch (error) {
