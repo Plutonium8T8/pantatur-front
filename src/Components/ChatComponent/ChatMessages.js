@@ -34,6 +34,7 @@ const ChatMessages = ({
     const fileInputRef = useRef(null);
     const reactionContainerRef = useRef(null);
     const [isUserAtBottom, setIsUserAtBottom] = useState(true);
+    const [selectedPlatform, setSelectedPlatform] = useState("web");
 
     const platformIcons = {
         "facebook": <FaFacebook />,
@@ -226,9 +227,7 @@ const ChatMessages = ({
             console.error("⚠️ Ошибка: Клиент не выбран!");
             return;
         }
-
-        const platform = analyzeLastMessagePlatform();
-        sendMessage(null, platform);
+        sendMessage(null, selectedPlatform);
     };
 
     const handleFileSelect = async (e) => {
@@ -236,10 +235,9 @@ const ChatMessages = ({
         if (!selectedFile) return;
 
         try {
-            const platform = analyzeLastMessagePlatform();
-            await sendMessage(selectedFile, platform);
+            await sendMessage(selectedFile, selectedPlatform);
         } catch (error) {
-            console.error('Ошибка обработки файла:', error);
+            console.error("Ошибка обработки файла:", error);
         }
     };
 
@@ -314,6 +312,48 @@ const ChatMessages = ({
             }
         };
     }, []);
+
+    const getClientPlatforms = () => {
+        const clientId = Number(selectedClient);
+        const clientMessages = messages.filter((msg) => Number(msg.client_id) === clientId);
+
+        if (!clientMessages || clientMessages.length === 0) {
+            return ["web"];
+        }
+
+        const uniquePlatforms = [...new Set(clientMessages.map((msg) => msg.platform))];
+        return uniquePlatforms.length > 0 ? uniquePlatforms : ["web"];
+    };
+    useEffect(() => {
+        const platforms = getClientPlatforms();
+        setSelectedPlatform(platforms[0] || "web"); // По умолчанию выбираем последнюю платформу
+    }, [selectedClient, messages]);
+
+    const getLastMessagePlatform = (clientId) => {
+        if (!Array.isArray(messages) || messages.length === 0) return "web";
+
+        const clientMessages = messages
+            .filter(msg => Number(msg.client_id) === Number(clientId) && Number(msg.sender_id) !== 1) // Исключаем оператора
+            .sort((a, b) => parseDate(b.time_sent) - parseDate(a.time_sent)); // Сортируем корректно
+
+        return clientMessages.length > 0 ? clientMessages[0].platform : "web";
+    };
+
+    // Обновляем платформу при изменении клиента
+    useEffect(() => {
+        if (selectedClient) {
+            const lastPlatform = getLastMessagePlatform(selectedClient);
+            console.log(`🔍 Последняя платформа для клиента ${selectedClient}: ${lastPlatform}`);
+            setSelectedPlatform(lastPlatform || "web");
+        }
+    }, [selectedClient, messages]);
+
+    // const parseDate = (dateString) => {
+    //     if (!dateString) return new Date(0); // Если даты нет, ставим минимальную
+    //     const [date, time] = dateString.split(" ");
+    //     const [day, month, year] = date.split("-");
+    //     return new Date(`${year}-${month}-${day}T${time}`);
+    // };
 
     return (
         <div className="chat-area">
@@ -590,8 +630,12 @@ const ChatMessages = ({
                         <div className="client-select-container">
                             <select
                                 className="task-select"
-                                value={selectedClient}
-                                onChange={(e) => setSelectedClient(e.target.value)}
+                                value={`${selectedClient}-${selectedPlatform}`}
+                                onChange={(e) => {
+                                    const [clientId, platform] = e.target.value.split("-");
+                                    setSelectedClient(clientId);
+                                    setSelectedPlatform(platform);
+                                }}
                             >
                                 <option value="" disabled>{translations["Alege client"][language]}</option>
                                 {tickets.find(ticket => ticket.id === selectTicketId).client_id
@@ -600,20 +644,19 @@ const ChatMessages = ({
                                     .map(id => {
                                         const clientId = id.trim();
                                         const clientInfo = personalInfo[clientId] || {};
-                                        const fullName = clientInfo.name ? `${clientInfo.name} ${clientInfo.surname || ""}`.trim() : `ID: ${clientId}`;
+                                        const fullName = clientInfo.name
+                                            ? `${clientInfo.name} ${clientInfo.surname || ""}`.trim()
+                                            : `ID: ${clientId}`;
 
-                                        const lastMessage = messages
-                                            .filter(msg => msg.client_id === Number(clientId))
-                                            .sort((a, b) => new Date(b.time_sent) - new Date(a.time_sent))[0];
+                                        // Получаем платформы, с которых клиент писал
+                                        const clientMessages = messages.filter(msg => msg.client_id === Number(clientId));
+                                        const uniquePlatforms = [...new Set(clientMessages.map(msg => msg.platform))];
 
-                                        const platform = lastMessage ? lastMessage.platform : "unknown";
-                                        const platformName = lastMessage ? platform.charAt(0).toUpperCase() + platform.slice(1) : ["Неизвестная платформа"][language];
-
-                                        return (
-                                            <option key={clientId} value={clientId}>
-                                                {`${fullName} (${platformName})`}
+                                        return uniquePlatforms.map(platform => (
+                                            <option key={`${clientId}-${platform}`} value={`${clientId}-${platform}`}>
+                                                {` ${fullName} | ${platform.charAt(0).toUpperCase() + platform.slice(1)}  ID: ${clientId} `}
                                             </option>
-                                        );
+                                        ));
                                     })}
                             </select>
                         </div>
