@@ -32,9 +32,9 @@ function App() {
       maxSnack={5}
       anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
     >
-      <UserProvider>
-        {JWT_TOKEN ? (
-          <>
+      {JWT_TOKEN ? (
+        <>
+          <UserProvider>
             <Session>
               <AppProvider>
                 <Layout>
@@ -42,11 +42,11 @@ function App() {
                 </Layout>
               </AppProvider>
             </Session>
-          </>
-        ) : (
-          <PublicRoutes />
-        )}
-      </UserProvider>
+          </UserProvider>
+        </>
+      ) : (
+        <PublicRoutes />
+      )}
     </SnackbarProvider>
   )
 }

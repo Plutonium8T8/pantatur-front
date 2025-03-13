@@ -22,7 +22,6 @@ const LoginForm = ({ onLoginSuccess }) => {
   const [isLogin, setIsLogin] = useState(true)
   const [message, setMessage] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  const { setUserId } = useUser()
   const { enqueueSnackbar } = useSnackbar()
   const navigate = useNavigate()
 
@@ -56,14 +55,14 @@ const LoginForm = ({ onLoginSuccess }) => {
 
     try {
       const response = await request(data)
-      const { token, user_id, message } = response
+      const { token, message } = response
 
       setMessage(message || "Success!")
 
       if (isLogin) {
         setCookieToken(token)
-        setUserId(user_id)
         navigate("/leads")
+
         window.location.reload()
       }
     } catch (error) {
