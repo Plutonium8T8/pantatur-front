@@ -86,13 +86,6 @@ const CustomSidebar = ({ onOpenNotifications, onOpenAccount }) => {
               )}
             </div>
             <div
-              className={`menu-item ${isActive("notifications") ? "active" : ""}`}
-              onClick={onOpenNotifications}
-            >
-              <FaBell size={24} />
-              <span>{translations["Notificări"][language][1]}</span>
-            </div>
-            <div
               className={`menu-item ${isActive("tasks") ? "active" : ""}`}
               onClick={() => handleNavigate("tasks")}
             >
@@ -105,6 +98,13 @@ const CustomSidebar = ({ onOpenNotifications, onOpenAccount }) => {
             >
               <FaUserSecret size={24} />
               <span>{translations["Admin"][language]}</span>
+            </div>
+            <div
+              className={`menu-item ${isActive("notifications") ? "active" : ""}`}
+              onClick={onOpenNotifications}
+            >
+              <FaBell size={24} />
+              <span>{translations["Notificări"][language][1]}</span>
             </div>
             <div className={`menu-item `}>
               <LanguageToggle />
