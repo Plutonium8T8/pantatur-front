@@ -9,19 +9,19 @@ const Select = ({
   id,
   value,
   onChange,
+  customClassName,
   placeholder,
   required,
   disabled,
   hasError,
   clear
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const language = localStorage.getItem("language") || "RO";
+  const handleChange = (event) => {
+    const selectedValue = event.target.value
+    onChange(selectedValue)
+  }
 
-  const handleSelect = (selectedValue) => {
-    onChange(selectedValue);
-    setIsOpen(false);
-  };
+  const language = localStorage.getItem("language") || "RO"
 
   return (
     <div className={`input-group ${hasError ? "invalid-field" : ""}`}>
