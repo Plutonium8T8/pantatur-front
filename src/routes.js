@@ -4,6 +4,7 @@ import ChatComponent from "./Components/ChatComponent/ChatComponent"
 import LoginForm from "./Components/LoginComponent/LoginForm"
 import AdminPanel from "./Components/AdminPanelComponent/AdminPanel"
 import { NoAccess } from "./Components/NoAccess"
+import TaskPage from "./Components/TaskComponent/TaskPage"
 
 export const publicRoutes = [
   {
@@ -32,5 +33,9 @@ export const privateRoutes = (isAllowRole) => [
   {
     path: "/leads/:ticketId?",
     component: Leads
-  }
+  },
+  {
+    path: "/tasks",
+    component: TaskPage
+  },
 ]
