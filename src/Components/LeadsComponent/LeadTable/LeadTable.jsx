@@ -102,11 +102,11 @@ export const LeadTable = ({
         ),
         accessorFn: ({ clients }) => clients,
         cell: ({ getValue }) => {
-          const values = getValue()
+          const value = getValue()
           return (
             <div className="text-center">
-              {values?.length
-                ? values?.map((item) => cleanValue(item?.surname)).join(", ")
+              {value?.length
+                ? value.map((item) => cleanValue(item?.surname)).join(", ")
                 : cleanValue()}
             </div>
           )
