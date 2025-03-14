@@ -12,16 +12,13 @@ import { Checkbox } from "../../Checkbox"
 import { Modal } from "../../Modal"
 import SingleChat from "../../ChatComponent/SingleChat"
 import { useParams, useNavigate } from "react-router-dom"
+import { Tag } from "../../Tag"
 
 const renderTags = (tags) => {
   const isTags = tags.some(Boolean)
 
   return isTags
-    ? tags.map((tag, index) => (
-        <span key={index} className="tag">
-          {tag.trim()}
-        </span>
-      ))
+    ? tags.map((tag, index) => <Tag key={index}>{tag.trim()}</Tag>)
     : "—"
 }
 
