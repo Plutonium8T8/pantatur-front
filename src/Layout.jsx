@@ -2,7 +2,7 @@ import { useState } from "react"
 import CustomSidebar from "./Components/SideBar/SideBar"
 import UserPage from "./Components/UserPage/UserPage"
 import NotificationModal from "./Components/SlideInComponent/NotificationModal"
-import TaskComponent from "./Components/SlideInComponent/TaskComponent"
+import TaskComponent from "./Components/TaskComponent/TaskPage"
 import { useUser } from "./UserContext"
 import Cookies from "js-cookie"
 
