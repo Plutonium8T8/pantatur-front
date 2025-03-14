@@ -1,7 +1,6 @@
 .chat-wrapper {
   display: flex;
   flex: 1;
-  overflow-y: scroll;
   position: relative;
   height: 100%;
 }

@@ -363,7 +363,7 @@ export const Leads = () => {
         style={{
           "--leads-filter-height": `${leadsFilterHeight}px`
         }}
-        className={`leads-content ${isTableView ? "leads-content-table" : ""}`}
+        className={`leads-content-container ${isTableView ? "leads-content-table" : ""}`}
       >
         {isTableView ? (
           <div className="leads-table">
@@ -397,7 +397,9 @@ export const Leads = () => {
           </div>
         )}
 
-        {(isLoading || loading) && <SpinnerRightBottom />}
+        {(isLoading || loading) && (
+          <div style={{ border: "1px solid red" }}></div>
+        )}
         {isModalOpen && currentTicket && (
           <TicketModal
             ticket={currentTicket}
