@@ -1,3 +1,4 @@
+import { Bar, Pie, Line, PolarArea } from "react-chartjs-2"
 import { getLanguageByKey } from "../utils/getTranslationByKey"
 
 export const datasetLabels = [
@@ -9,10 +10,6 @@ export const datasetLabels = [
   "Ore mediu prelucrare etapă"
 ]
 
-export const datasetWidths = [2, 2, 2, 4, 4, 4]
-export const datasetHeights = [2, 1, 1, 2, 2, 2]
-export const positionX = [1, 3, 3, 5, 1, 5]
-export const positionY = [1, 1, 2, 1, 3, 3]
 export const datasetTypes = ["pie", "bar", "line", "bar", "bar", "bar"]
 
 export const metricsDashboardCharts = {
@@ -183,6 +180,13 @@ const workflowColors = {
   } // Violet
 }
 
+export const chartComponents = {
+  pie: Pie,
+  bar: Bar,
+  line: Line,
+  polar: PolarArea
+}
+
 export const chartsMetadata = (statArray, chartLabel, chartType) => {
   let chartData = {}
 
@@ -241,4 +245,44 @@ export const chartsMetadata = (statArray, chartLabel, chartType) => {
   }
 
   return chartData
+}
+
+export const normalizeUserGraphs = (graphs) => {
+  return graphs.map((graph) => ({
+    graphName: graph.graph_name,
+    i: `${graph.id}`,
+    x: graph.x,
+    y: graph.y,
+    w: graph.w,
+    h: graph.h,
+    type: graph.graph_type
+  }))
+}
+
+export const renderChart = ({ Component, chartData, index, chartLabel }) => {
+  return (
+    <div
+      key={index}
+      style={{ width: "100%", height: "100%", alignItems: "center" }}
+    >
+      <div
+        style={{
+          height: "100%",
+          width: "100%"
+        }}
+      >
+        <h3 style={{ textAlign: "center", marginBottom: "10px" }}>
+          {chartLabel}
+        </h3>
+        <Component data={chartData} />
+      </div>
+    </div>
+  )
+}
+
+export const getLastItemId = (list) => {
+  const lastItem = list[list.length - 1]
+  const id = lastItem?.split(":")[0]
+
+  return id
 }

@@ -7,6 +7,7 @@ import { showServerError } from "../utils/showServerError"
 import { useSnackbar } from "notistack"
 import { LoadingOverlay } from "../LoadingOverlay"
 import { Input } from "../Input"
+import { useNavigate } from "react-router-dom"
 
 const setCookieToken = (token) => {
   Cookies.set("jwt", token, {
@@ -21,8 +22,8 @@ const LoginForm = ({ onLoginSuccess }) => {
   const [isLogin, setIsLogin] = useState(true)
   const [message, setMessage] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  const { setUserId } = useUser()
   const { enqueueSnackbar } = useSnackbar()
+  const navigate = useNavigate()
 
   const handleInputChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value })
@@ -54,14 +55,15 @@ const LoginForm = ({ onLoginSuccess }) => {
 
     try {
       const response = await request(data)
-      const { token, user_id, message } = response
+      const { token, message } = response
 
       setMessage(message || "Success!")
 
       if (isLogin) {
         setCookieToken(token)
-        setUserId(user_id)
-        onLoginSuccess()
+        navigate("/leads")
+
+        window.location.reload()
       }
     } catch (error) {
       enqueueSnackbar(showServerError(error), { variant: "error" })
