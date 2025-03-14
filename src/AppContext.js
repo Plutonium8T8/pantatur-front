@@ -379,25 +379,25 @@ export const AppProvider = ({ children }) => {
         }
         break
       }
-      case "ticket_update": {
-        console.log("обновление тикета :", message.data)
-        const ticketId = message.data.ticket_id
-        fetchSingleTicket(ticketId)
-      }
-      case "notification": {
-        const notificationText = truncateText(
-          message.data.description || "Уведомление с пустым текстом!",
-          100
-        )
-        enqueueSnackbar(notificationText, { variant: "info" })
-        break
-      }
-      case "task": {
-        enqueueSnackbar(`Новое задание: ${message.data.title}`, {
-          variant: "warning"
-        })
-        break
-      }
+      // case "ticket_update": {
+      //   console.log("обновление тикета :", message.data)
+      //   const ticketId = message.data.ticket_id
+      //   fetchSingleTicket(ticketId)
+      // }
+      // case "notification": {
+      //   const notificationText = truncateText(
+      //     message.data.description || "Уведомление с пустым текстом!",
+      //     100
+      //   )
+      //   enqueueSnackbar(notificationText, { variant: "info" })
+      //   break
+      // }
+      // case "task": {
+      //   enqueueSnackbar(`Новое задание: ${message.data.title}`, {
+      //     variant: "warning"
+      //   })
+      //   break
+      // }
       case "pong":
         console.log("пришел понг")
         break
