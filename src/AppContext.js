@@ -46,7 +46,7 @@ export const AppProvider = ({ children }) => {
       }
     }
 
-    return () => {}
+    return () => { }
   }, [])
 
   useEffect(() => {
@@ -87,7 +87,7 @@ export const AppProvider = ({ children }) => {
         handleWebSocketMessage(message)
       }
 
-      socketInstance.onclose = () => {}
+      socketInstance.onclose = () => { }
     }
 
     return () => {
@@ -173,9 +173,9 @@ export const AppProvider = ({ children }) => {
         ...ticket,
         client_ids: ticket.client_id
           ? ticket.client_id
-              .replace(/[{}]/g, "")
-              .split(",")
-              .map((id) => Number(id))
+            .replace(/[{}]/g, "")
+            .split(",")
+            .map((id) => Number(id))
           : [],
         last_message: ticket.last_message || "Нет сообщений",
         time_sent: ticket.time_sent || null,
@@ -198,7 +198,7 @@ export const AppProvider = ({ children }) => {
     try {
       setIsLoading(true)
 
-      const ticket = await api.tickets.getLightById(ticketId)
+      const ticket = await api.tickets.ticket.getLightById(ticketId)
 
       setTickets((prevTickets) => {
         const existingTicket = prevTickets.find((t) => t.id === ticketId)
@@ -286,14 +286,14 @@ export const AppProvider = ({ children }) => {
           prevTickets.map((ticket) =>
             ticket.id === ticket_id
               ? {
-                  ...ticket,
-                  last_message: msgText,
-                  time_sent: time_sent,
-                  unseen_count:
-                    ticket_id === selectTicketId
-                      ? 0
-                      : ticket.unseen_count + (sender_id !== userId ? 1 : 0)
-                }
+                ...ticket,
+                last_message: msgText,
+                time_sent: time_sent,
+                unseen_count:
+                  ticket_id === selectTicketId
+                    ? 0
+                    : ticket.unseen_count + (sender_id !== userId ? 1 : 0)
+              }
               : ticket
           )
         )
@@ -379,25 +379,25 @@ export const AppProvider = ({ children }) => {
         }
         break
       }
-      case "ticket_update": {
-        console.log("обновление тикета :", message.data)
-        const ticketId = message.data.ticket_id
-        fetchSingleTicket(ticketId)
-      }
-      case "notification": {
-        const notificationText = truncateText(
-          message.data.description || "Уведомление с пустым текстом!",
-          100
-        )
-        enqueueSnackbar(notificationText, { variant: "info" })
-        break
-      }
-      case "task": {
-        enqueueSnackbar(`Новое задание: ${message.data.title}`, {
-          variant: "warning"
-        })
-        break
-      }
+      // case "ticket_update": {
+      //   console.log("обновление тикета :", message.data)
+      //   const ticketId = message.data.ticket_id
+      //   fetchSingleTicket(ticketId)
+      // }
+      // case "notification": {
+      //   const notificationText = truncateText(
+      //     message.data.description || "Уведомление с пустым текстом!",
+      //     100
+      //   )
+      //   enqueueSnackbar(notificationText, { variant: "info" })
+      //   break
+      // }
+      // case "task": {
+      //   enqueueSnackbar(`Новое задание: ${message.data.title}`, {
+      //     variant: "warning"
+      //   })
+      //   break
+      // }
       case "pong":
         console.log("пришел понг")
         break
