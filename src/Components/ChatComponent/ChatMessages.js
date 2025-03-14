@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FaFile, FaPaperPlane, FaSmile } from 'react-icons/fa';
 import EmojiPicker from 'emoji-picker-react';
 import ReactDOM from 'react-dom';
-import TaskModal from '../SlideInComponent/TaskComponent';
+import TaskModal from '../TaskComponent/TaskPage';
 import { useUser } from '../../UserContext';
 import { useAppContext } from '../../AppContext';
 import { api } from '../../api';
@@ -34,6 +34,7 @@ const ChatMessages = ({
     const fileInputRef = useRef(null);
     const reactionContainerRef = useRef(null);
     const [isUserAtBottom, setIsUserAtBottom] = useState(true);
+    const [selectedPlatform, setSelectedPlatform] = useState("web");
 
     const platformIcons = {
         "facebook": <FaFacebook />,
@@ -43,19 +44,23 @@ const ChatMessages = ({
         "telegram": <FaTelegram />
     };
 
+    const getLastClientWhoSentMessage = () => {
+        if (!Array.isArray(messages) || messages.length === 0) return null;
+
+        const ticketMessages = messages
+            .filter(msg => msg.ticket_id === selectTicketId && Number(msg.sender_id) !== 1)
+            .sort((a, b) => parseDate(b.time_sent) - parseDate(a.time_sent));
+
+        return ticketMessages.length > 0 ? ticketMessages[0].client_id : null;
+    };
+
     useEffect(() => {
-        const lastClient = getLastActiveClient();
+        const lastClient = getLastClientWhoSentMessage();
         if (lastClient) {
+            console.log(`🔍 Последний клиент, который отправил сообщение: ${lastClient}`);
             setSelectedClient(String(lastClient));
         }
     }, [messages, selectTicketId]);
-
-    const getLastActiveClient = () => {
-        if (!Array.isArray(messages) || messages.length === 0) return null;
-        const ticketMessages = messages.filter(msg => msg.ticket_id === selectTicketId);
-        if (ticketMessages.length === 0) return null;
-        return ticketMessages[ticketMessages.length - 1]?.client_id;
-    };
 
     const parseDate = (dateString) => {
         if (!dateString) return null;
@@ -197,38 +202,12 @@ const ChatMessages = ({
         }
     };
 
-    const analyzeLastMessagePlatform = () => {
-        console.log("📌 selectedClient:", selectedClient);
-
-        if (!Array.isArray(messages)) {
-            return "web";
-        }
-
-        const clientId = Number(selectedClient);
-
-        const clientMessages = messages.filter((msg) => Number(msg.client_id) === clientId);
-
-        if (!clientMessages || clientMessages.length === 0) {
-            return "web";
-        }
-
-        console.log("🔎 Найдено сообщений от клиента:", clientMessages.length);
-
-        const lastMessage = clientMessages.reduce((latest, current) =>
-            new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
-        );
-
-        return lastMessage?.platform || "web";
-    };
-
     const handleClick = () => {
         if (!selectedClient) {
             console.error("⚠️ Ошибка: Клиент не выбран!");
             return;
         }
-
-        const platform = analyzeLastMessagePlatform();
-        sendMessage(null, platform);
+        sendMessage(null, selectedPlatform);
     };
 
     const handleFileSelect = async (e) => {
@@ -236,10 +215,9 @@ const ChatMessages = ({
         if (!selectedFile) return;
 
         try {
-            const platform = analyzeLastMessagePlatform();
-            await sendMessage(selectedFile, platform);
+            await sendMessage(selectedFile, selectedPlatform);
         } catch (error) {
-            console.error('Ошибка обработки файла:', error);
+            console.error("Ошибка обработки файла:", error);
         }
     };
 
@@ -315,193 +293,203 @@ const ChatMessages = ({
         };
     }, []);
 
+    const getClientPlatforms = () => {
+        const clientId = Number(selectedClient);
+        const clientMessages = messages.filter((msg) => Number(msg.client_id) === clientId);
+
+        if (!clientMessages || clientMessages.length === 0) {
+            return ["web"];
+        }
+
+        const uniquePlatforms = [...new Set(clientMessages.map((msg) => msg.platform))];
+        return uniquePlatforms.length > 0 ? uniquePlatforms : ["web"];
+    };
+    useEffect(() => {
+        const platforms = getClientPlatforms();
+        setSelectedPlatform(platforms[0] || "web");
+    }, [selectedClient, messages]);
+
+    const getLastMessagePlatform = (clientId) => {
+        if (!Array.isArray(messages) || messages.length === 0) return "web";
+
+        const clientMessages = messages
+            .filter(msg => Number(msg.client_id) === Number(clientId) && Number(msg.sender_id) !== 1)
+            .sort((a, b) => parseDate(b.time_sent) - parseDate(a.time_sent));
+
+        return clientMessages.length > 0 ? clientMessages[0].platform : "web";
+    };
+
+    useEffect(() => {
+        if (selectedClient) {
+            const lastPlatform = getLastMessagePlatform(selectedClient);
+            console.log(`🔍 Последняя платформа для клиента ${selectedClient}: ${lastPlatform}`);
+            setSelectedPlatform(lastPlatform || "web");
+        }
+    }, [selectedClient, messages]);
+
     return (
         <div className="chat-area">
             <div className="chat-messages" ref={messageContainerRef}>
                 {isLoading ? (
                     <div className="spinner-container">
                         <Spin />
-                    </div>)
-                    : selectTicketId ? (
-                        (() => {
-                            const parseDate = (dateString) => {
-                                if (!dateString) return null;
-                                const parts = dateString.split(" ");
-                                if (parts.length !== 2) return null;
+                    </div>
+                ) : selectTicketId ? (
+                    (() => {
+                        const parseDate = (dateString) => {
+                            if (!dateString) return null;
+                            const [date, time] = dateString.split(" ");
+                            if (!date || !time) return null;
+                            const [day, month, year] = date.split("-");
+                            return new Date(`${year}-${month}-${day}T${time}`);
+                        };
 
-                                const [date, time] = parts;
-                                const [day, month, year] = date.split("-");
+                        const sortedMessages = messages
+                            .filter(msg => msg.ticket_id === selectTicketId)
+                            .sort((a, b) => parseDate(a.time_sent) - parseDate(b.time_sent));
 
-                                return new Date(`${year}-${month}-${day}T${time}`);
-                            };
+                        const groupedMessages = [];
+                        let lastClientId = null;
 
-                            const sortedMessages = messages
-                                .filter(msg => msg.ticket_id === selectTicketId)
-                                .sort((a, b) => parseDate(a.time_sent) - parseDate(b.time_sent));
+                        sortedMessages.forEach((msg) => {
+                            const messageDate = parseDate(msg.time_sent)?.toLocaleDateString("ru-RU", {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                            }) || "—";
 
-                            const groupedMessages = sortedMessages.reduce((acc, msg) => {
-                                const messageDate = parseDate(msg.time_sent)?.toLocaleDateString("ru-RU", {
-                                    year: "numeric",
-                                    month: "long",
-                                    day: "numeric",
-                                }) || "—";
+                            const currentClientId = Array.isArray(msg.client_id) ? msg.client_id[0].toString() : msg.client_id.toString();
+                            let lastGroup = groupedMessages.length > 0 ? groupedMessages[groupedMessages.length - 1] : null;
 
-                                if (!acc[messageDate]) acc[messageDate] = [];
-                                acc[messageDate].push(msg);
-                                return acc;
-                            }, {});
+                            if (!lastGroup || lastGroup.date !== messageDate || lastClientId !== currentClientId) {
+                                lastClientId = currentClientId;
+                                groupedMessages.push({ date: messageDate, clientId: currentClientId, messages: [msg] });
+                            } else {
+                                lastGroup.messages.push(msg);
+                            }
+                        });
 
-                            return Object.entries(groupedMessages).map(([date, msgs]) => {
-                                let groupedByClient = [];
-                                let lastClientId = null;
-                                let currentGroup = [];
+                        return groupedMessages.map(({ date, clientId, messages }, index) => {
+                            const clientInfo = personalInfo[clientId] || {};
+                            const clientName = clientInfo.name ? `${clientInfo.name} ${clientInfo.surname || ""}` : `ID: ${clientId}`;
 
-                                msgs.forEach((msg) => {
-                                    if (msg.client_id !== lastClientId) {
-                                        if (currentGroup.length) {
-                                            groupedByClient.push({ clientId: lastClientId, messages: currentGroup });
-                                        }
-                                        currentGroup = [];
-                                        lastClientId = msg.client_id;
-                                    }
-                                    currentGroup.push(msg);
-                                });
+                            return (
+                                <div key={index} className='message-group-container-chat'>
+                                    <div className="message-date-separator">📆 {date}</div>
+                                    <div className="client-message-group">
+                                        <div className="client-header">👤 {translations["Mesajele clientului"][language]} #{clientId} - {clientName}</div>
+                                        {messages.map((msg, msgIndex) => {
+                                            const uniqueKey = `${msg.id || msg.ticket_id}-${msg.time_sent}-${msgIndex}`;
 
-                                if (currentGroup.length) {
-                                    groupedByClient.push({ clientId: lastClientId, messages: currentGroup });
-                                }
+                                            const renderContent = () => {
+                                                if (!msg.message) {
+                                                    return <div className="text-message">{translations["Mesajul lipseste"][language]}</div>;
+                                                }
+                                                switch (msg.mtype) {
+                                                    case "image":
+                                                        return (
+                                                            <img
+                                                                src={msg.message}
+                                                                alt="Изображение"
+                                                                className="image-preview-in-chat"
+                                                                onError={(e) => { e.target.src = "https://via.placeholder.com/300?text=Ошибка+загрузки"; }}
+                                                                onClick={() => { window.open(msg.message, "_blank"); }}
+                                                            />
+                                                        );
+                                                    case "video":
+                                                        return (
+                                                            <video controls className="video-preview">
+                                                                <source src={msg.message} type="video/mp4" />
+                                                                {translations["Acest browser nu suporta video"][language]}
+                                                            </video>
+                                                        );
+                                                    case "audio":
+                                                        return (
+                                                            <audio controls className="audio-preview">
+                                                                <source src={msg.message} type="audio/ogg" />
+                                                                {translations["Acest browser nu suporta audio"][language]}
+                                                            </audio>
+                                                        );
+                                                    case "file":
+                                                        return (
+                                                            <a href={msg.message} target="_blank" rel="noopener noreferrer" className="file-link">
+                                                                {translations["Deschide file"][language]}
+                                                            </a>
+                                                        );
+                                                    default:
+                                                        return <div className="text-message">{msg.message}</div>;
+                                                }
+                                            };
 
-                                return (
-                                    <div key={date} className='message-group-container-chat'>
-                                        <div className="message-date-separator">📆 {date}</div>
-                                        {groupedByClient.map(({ clientId, messages }, index) => (
-                                            <div key={`${clientId}-${date}-${index}`} className="client-message-group">
-                                                <div className="client-header">👤 {translations["Mesajele clientului"][language]} #{clientId}</div>
-                                                {messages.map((msg) => {
-                                                    const uniqueKey = `${msg.id || msg.ticket_id}-${msg.time_sent}`;
+                                            const lastReaction = getLastReaction(msg);
 
-                                                    const renderContent = () => {
-                                                        if (!msg.message) {
-                                                            return <div className="text-message">{translations["Mesajul lipseste"][language]}</div>;
-                                                        }
-                                                        switch (msg.mtype) {
-                                                            case "image":
-                                                                return (
-                                                                    <img
-                                                                        src={msg.message}
-                                                                        alt="Изображение"
-                                                                        className="image-preview-in-chat"
-                                                                        onError={(e) => {
-                                                                            e.target.src = "https://via.placeholder.com/300?text=Ошибка+загрузки";
-                                                                        }}
-                                                                        onClick={() => {
-                                                                            window.open(msg.message, "_blank");
-                                                                        }}
-                                                                    />
-                                                                );
-                                                            case "video":
-                                                                return (
-                                                                    <video controls className="video-preview">
-                                                                        <source src={msg.message} type="video/mp4" />
-                                                                        {translations["Acest browser nu suporta video"][language]}
-                                                                    </video>
-                                                                );
-                                                            case "audio":
-                                                                return (
-                                                                    <audio controls className="audio-preview">
-                                                                        <source src={msg.message} type="audio/ogg" />
-                                                                        {translations["Acest browser nu suporta audio"][language]}
-                                                                    </audio>
-                                                                );
-                                                            case "file":
-                                                                return (
-                                                                    <a
-                                                                        href={msg.message}
-                                                                        target="_blank"
-                                                                        rel="noopener noreferrer"
-                                                                        className="file-link"
+                                            return (
+                                                <div key={uniqueKey} className={`message ${msg.sender_id === userId || msg.sender_id === 1 ? "sent" : "received"}`}>
+                                                    <div className="message-content">
+                                                        <div className="message-row">
+                                                            <div style={{ fontSize: "30px", marginRight: "8px" }}>
+                                                                {platformIcons[msg.platform] || null}
+                                                            </div>
+
+                                                            <div className="text">
+                                                                {renderContent()}
+                                                                <div className="message-time">
+                                                                    {msg.sender_id !== 1 && msg.sender_id !== userId && (() => {
+                                                                        const cleanClientId = String(msg.client_id).replace(/[{}]/g, "");
+                                                                        const clientInfo = personalInfo[cleanClientId];
+
+                                                                        return (
+                                                                            <span className="client-name">
+                                                                                {clientInfo ? `${clientInfo.name} ${clientInfo.surname || ""}` : "Неизвестный"}
+                                                                            </span>
+                                                                        );
+                                                                    })()}
+                                                                    <div
+                                                                        className="reaction-toggle-button"
+                                                                        onClick={() =>
+                                                                            setSelectedMessageId(selectedMessageId === msg.id ? null : msg.id)
+                                                                        }
                                                                     >
-                                                                        {translations["Deschide file"][language]}
-                                                                    </a>
-                                                                );
-                                                            default:
-                                                                return <div className="text-message">{msg.message}</div>;
-                                                        }
-                                                    };
-
-                                                    const lastReaction = getLastReaction(msg);
-
-                                                    return (
-                                                        <div
-                                                            key={uniqueKey}
-                                                            className={`message ${msg.sender_id === userId || msg.sender_id === 1 ? "sent" : "received"}`}
-                                                        >
-                                                            <div className="message-content">
-                                                                <div className="message-row">
-                                                                    <div style={{ fontSize: "30px", marginRight: "8px" }}>
-                                                                        {platformIcons[msg.platform] || null}
+                                                                        {lastReaction || "☺"}
                                                                     </div>
-
-                                                                    <div className="text">
-                                                                        {renderContent()}
-                                                                        <div className="message-time">
-                                                                            {msg.sender_id !== 1 && msg.sender_id !== userId && (() => {
-                                                                                const cleanClientId = String(msg.client_id).replace(/[{}]/g, "");
-                                                                                const clientInfo = personalInfo[cleanClientId];
-
-                                                                                return (
-                                                                                    <span className="client-name">
-                                                                                        {clientInfo ? `${clientInfo.name} ${clientInfo.surname || ""}` : "Неизвестный"}
-                                                                                    </span>
-                                                                                );
-                                                                            })()}
-                                                                            <div
-                                                                                className="reaction-toggle-button"
-                                                                                onClick={() =>
-                                                                                    setSelectedMessageId(selectedMessageId === msg.id ? null : msg.id)
-                                                                                }
-                                                                            >
-                                                                                {lastReaction || "☺"}
-                                                                            </div>
-                                                                            <div className='time-messages'>
-                                                                                {parseDate(msg.time_sent)?.toLocaleTimeString("ru-RU", {
-                                                                                    hour: "2-digit",
-                                                                                    minute: "2-digit",
-                                                                                }) || "—"}
-                                                                            </div>
-                                                                        </div>
-                                                                        {selectedMessageId === msg.id && (
-                                                                            <div className="reaction-container" ref={reactionContainerRef}>
-                                                                                <div className="reaction-buttons">
-                                                                                    {["☺", "👍", "❤️", "😂", "😮", "😢", "😡"].map((reaction) => (
-                                                                                        <div
-                                                                                            key={reaction}
-                                                                                            onClick={() => handleReactionClick(reaction, msg.id)}
-                                                                                            className={selectedReaction[msg.id] === reaction ? "active" : ""}
-                                                                                        >
-                                                                                            {reaction}
-                                                                                        </div>
-                                                                                    ))}
-                                                                                </div>
-                                                                            </div>
-                                                                        )}
+                                                                    <div className='time-messages'>
+                                                                        {parseDate(msg.time_sent)?.toLocaleTimeString("ru-RU", {
+                                                                            hour: "2-digit",
+                                                                            minute: "2-digit",
+                                                                        }) || "—"}
                                                                     </div>
                                                                 </div>
+                                                                {selectedMessageId === msg.id && (
+                                                                    <div className="reaction-container" ref={reactionContainerRef}>
+                                                                        <div className="reaction-buttons">
+                                                                            {["☺", "👍", "❤️", "😂", "😮", "😢", "😡"].map((reaction) => (
+                                                                                <div
+                                                                                    key={reaction}
+                                                                                    onClick={() => handleReactionClick(reaction, msg.id)}
+                                                                                    className={selectedReaction[msg.id] === reaction ? "active" : ""}
+                                                                                >
+                                                                                    {reaction}
+                                                                                </div>
+                                                                            ))}
+                                                                        </div>
+                                                                    </div>
+                                                                )}
                                                             </div>
                                                         </div>
-                                                    );
-                                                })}
-                                            </div>
-                                        ))}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
                                     </div>
-                                );
-                            });
-                        })()
-                    ) : (
-                        <div className="empty-chat">
-                            <p>{translations["Alege lead"][language]}</p>
-                        </div>
-                    )}
+                                </div>
+                            );
+                        });
+                    })()
+                ) : (
+                    <div className="empty-chat">
+                        <p>{translations["Alege lead"][language]}</p>
+                    </div>
+                )}
             </div>
 
             <div className="manager-send-message-container">
@@ -557,13 +545,13 @@ const ChatMessages = ({
                         >
                             <FaFile />
                         </button>
-                        <button
+                        {/* <button
                             className="action-button task-button"
                             onClick={() => setIsTaskModalOpen(true)}
                             disabled={!selectTicketId}
                         >
                             <FaTasks />
-                        </button>
+                        </button> */}
                     </div>
                     <div className="select-row">
                         <div className="input-group">
@@ -590,8 +578,12 @@ const ChatMessages = ({
                         <div className="client-select-container">
                             <select
                                 className="task-select"
-                                value={selectedClient}
-                                onChange={(e) => setSelectedClient(e.target.value)}
+                                value={`${selectedClient}-${selectedPlatform}`}
+                                onChange={(e) => {
+                                    const [clientId, platform] = e.target.value.split("-");
+                                    setSelectedClient(clientId);
+                                    setSelectedPlatform(platform);
+                                }}
                             >
                                 <option value="" disabled>{translations["Alege client"][language]}</option>
                                 {tickets.find(ticket => ticket.id === selectTicketId).client_id
@@ -600,32 +592,30 @@ const ChatMessages = ({
                                     .map(id => {
                                         const clientId = id.trim();
                                         const clientInfo = personalInfo[clientId] || {};
-                                        const fullName = clientInfo.name ? `${clientInfo.name} ${clientInfo.surname || ""}`.trim() : `ID: ${clientId}`;
+                                        const fullName = clientInfo.name
+                                            ? `${clientInfo.name} ${clientInfo.surname || ""}`.trim()
+                                            : `ID: ${clientId}`;
 
-                                        const lastMessage = messages
-                                            .filter(msg => msg.client_id === Number(clientId))
-                                            .sort((a, b) => new Date(b.time_sent) - new Date(a.time_sent))[0];
+                                        const clientMessages = messages.filter(msg => msg.client_id === Number(clientId));
+                                        const uniquePlatforms = [...new Set(clientMessages.map(msg => msg.platform))];
 
-                                        const platform = lastMessage ? lastMessage.platform : "unknown";
-                                        const platformName = lastMessage ? platform.charAt(0).toUpperCase() + platform.slice(1) : ["Неизвестная платформа"][language];
-
-                                        return (
-                                            <option key={clientId} value={clientId}>
-                                                {`${fullName} (${platformName})`}
+                                        return uniquePlatforms.map(platform => (
+                                            <option key={`${clientId}-${platform}`} value={`${clientId}-${platform}`}>
+                                                {` ${fullName} | ${platform.charAt(0).toUpperCase() + platform.slice(1)} | ID: ${clientId} `}
                                             </option>
-                                        );
+                                        ));
                                     })}
                             </select>
                         </div>
                     )}
                 </div>
 
-                <TaskModal
+                {/* <TaskModal
                     isOpen={isTaskModalOpen}
                     onClose={() => setIsTaskModalOpen(false)}
                     selectedTicketId={selectTicketId}
-                />
-            </div>
+                /> */}
+                \            </div>
 
         </div>
     );
