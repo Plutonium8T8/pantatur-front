@@ -1,8 +1,5 @@
-import Dashboard from "./Components/DashboardComponent/Dashboard"
-import Leads from "./Components/LeadsComponent/LeadsComponent"
-import ChatComponent from "./Components/ChatComponent/ChatComponent"
 import LoginForm from "./Components/LoginComponent/LoginForm"
-import AdminPanel from "./Components/AdminPanelComponent/AdminPanel"
+import { AdminPanel, Chat, Leads, Dashboard } from "./features"
 import { NoAccess } from "./Components/NoAccess"
 
 export const publicRoutes = [
@@ -23,7 +20,7 @@ export const privateRoutes = (isAllowRole) => [
   },
   {
     path: "/chat/:ticketId?",
-    component: ChatComponent
+    component: Chat
   },
   {
     path: "/admin-panel",

@@ -1,0 +1,65 @@
+.leads-filter-wrapper {
+  position: fixed;
+  z-index: 999;
+  width: 100%;
+  background-color: #dfefd9f9;
+  padding-inline: 20px;
+  padding-block: 10px;
+}
+
+.leads-filter-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.button-add-ticket {
+  font-weight: bold;
+  font-size: 16px;
+  transition: transform 0.1s ease;
+}
+
+.button-add-ticket:active {
+  transform: scale(0.95);
+}
+
+.search-input {
+  min-width: 550px;
+}
+
+.button-filter {
+  position: relative;
+  border-radius: 4px;
+  font-size: 18px;
+  height: 42px;
+  transition: transform 0.1s ease;
+}
+
+.filter-indicator {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 8px;
+  height: 8px;
+  background: red;
+  border-radius: 50%;
+}
+
+.leads-content-container {
+  margin-top: var(--leads-filter-height);
+  height: calc(100% - var(--leads-filter-height));
+  padding: 20px;
+  overflow-x: scroll;
+}
+
+.leads-content-table {
+  width: 100%;
+}
+
+.leads-content-list {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  height: 100%;
+}
