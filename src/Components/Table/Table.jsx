@@ -7,9 +7,10 @@ import {
 } from "@tanstack/react-table"
 import "./Table.css"
 import { Empty } from "../Empty"
+import { Pagination } from "../Pagination"
 
-export const Table = ({ data, columns, loading, select }) => {
-  const table = useReactTable({
+export const Table = ({ data, columns, loading, select, pagination }) => {
+  const { getHeaderGroups, getRowModel } = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel()
@@ -19,7 +20,7 @@ export const Table = ({ data, columns, loading, select }) => {
     <>
       <table className="table">
         <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
+          {getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header, i) => (
                 <HeaderCell key={i}>
@@ -34,11 +35,11 @@ export const Table = ({ data, columns, loading, select }) => {
         </thead>
 
         <tbody>
-          {table.getRowModel().rows.length ? (
-            table.getRowModel().rows.map((row) => {
+          {getRowModel().rows.length ? (
+            getRowModel().rows.map((row) => {
               return (
                 <tr
-                  className={`table-tr ${select.includes(row.original.id) ? "selected-row" : ""}`}
+                  className={`table-tr ${select?.includes(row.original.id) ? "selected-row" : ""}`}
                   key={row.id}
                 >
                   {row.getVisibleCells().map((cell) => (
@@ -61,6 +62,8 @@ export const Table = ({ data, columns, loading, select }) => {
           )}
         </tbody>
       </table>
+
+      {!!pagination && <Pagination {...pagination} />}
     </>
   )
 }

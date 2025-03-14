@@ -1,2 +1,4 @@
 export const MAX_PAGE_SIZE = 100
 export const ISO_DATE = "yyyy-MM-dd"
+export const TIME_FORMAT = "HH:mm"
+export const dd_MM_yyyy = "dd.MM.yyyy"
