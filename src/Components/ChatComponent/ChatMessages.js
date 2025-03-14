@@ -44,19 +44,23 @@ const ChatMessages = ({
         "telegram": <FaTelegram />
     };
 
+    const getLastClientWhoSentMessage = () => {
+        if (!Array.isArray(messages) || messages.length === 0) return null;
+
+        const ticketMessages = messages
+            .filter(msg => msg.ticket_id === selectTicketId && Number(msg.sender_id) !== 1) // Исключаем оператора
+            .sort((a, b) => parseDate(b.time_sent) - parseDate(a.time_sent)); // Сортируем по убыванию времени
+
+        return ticketMessages.length > 0 ? ticketMessages[0].client_id : null;
+    };
+
     useEffect(() => {
-        const lastClient = getLastActiveClient();
+        const lastClient = getLastClientWhoSentMessage();
         if (lastClient) {
+            console.log(`🔍 Последний клиент, который отправил сообщение: ${lastClient}`);
             setSelectedClient(String(lastClient));
         }
     }, [messages, selectTicketId]);
-
-    const getLastActiveClient = () => {
-        if (!Array.isArray(messages) || messages.length === 0) return null;
-        const ticketMessages = messages.filter(msg => msg.ticket_id === selectTicketId);
-        if (ticketMessages.length === 0) return null;
-        return ticketMessages[ticketMessages.length - 1]?.client_id;
-    };
 
     const parseDate = (dateString) => {
         if (!dateString) return null;
