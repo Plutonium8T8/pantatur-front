@@ -94,8 +94,8 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
       setTickets((prevTickets) =>
         isEditing
           ? prevTickets.map((ticket) =>
-            ticket.id === updatedTicket.id ? updatedTicket : ticket
-          )
+              ticket.id === updatedTicket.id ? updatedTicket : ticket
+            )
           : [...prevTickets, updatedTicket]
       )
 

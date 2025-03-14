@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef } from "react"
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom"
 import { SpinnerRightBottom } from "../SpinnerRightBottom"
 import { useDOMElementHeight } from "../../hooks"
 import { useAppContext } from "../../AppContext"
@@ -19,8 +19,8 @@ import { showServerError, getTotalPages } from "../utils"
 import { api } from "../../api"
 import { useSnackbar } from "notistack"
 import { Input } from "../Input/Input"
-import { Modal } from "../Modal";
-import SingleChat from "../ChatComponent/SingleChat";
+import { Modal } from "../Modal"
+import SingleChat from "../ChatComponent/SingleChat"
 
 const SORT_BY = "creation_date"
 const ORDER = "DESC"
@@ -40,7 +40,7 @@ const normalizeLadsFilters = (filters) => {
 const Leads = () => {
   const refLeadsFilter = useRef()
   const { enqueueSnackbar } = useSnackbar()
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const [hardTickets, setHardTickets] = useState([])
   const { tickets, isLoading, setTickets } = useAppContext()
@@ -56,8 +56,8 @@ const Leads = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [tableLeadsFilters, setTableLeadsFilters] = useState({})
   const [loadingFilters, setLoadingFilters] = useState(false)
-  const { ticketId } = useParams(); // Получаем ticketId из URL
-  const [isChatOpen, setIsChatOpen] = useState(!!ticketId); // Если ticketId есть, сразу открываем модалку
+  const { ticketId } = useParams() // Получаем ticketId из URL
+  const [isChatOpen, setIsChatOpen] = useState(!!ticketId) // Если ticketId есть, сразу открываем модалку
   const [selectedWorkflow, setSelectedWorkflow] = useState(
     workflowOptions.filter(
       (wf) => wf !== "Realizat cu succes" && wf !== "Închis și nerealizat"
@@ -91,14 +91,14 @@ const Leads = () => {
 
   useEffect(() => {
     if (ticketId) {
-      setIsChatOpen(true);
+      setIsChatOpen(true)
     }
-  }, [ticketId]);
+  }, [ticketId])
 
   const closeChatModal = () => {
-    setIsChatOpen(false);
-    navigate("/leads"); // При закрытии убираем ticketId из URL
-  };
+    setIsChatOpen(false)
+    navigate("/leads") // При закрытии убираем ticketId из URL
+  }
 
   const toggleSelectTicket = (ticketId) => {
     setSelectedTickets((prev) =>
@@ -406,10 +406,10 @@ const Leads = () => {
                 const isEditing = Boolean(updatedTicket.ticket_id)
                 return isEditing
                   ? prevTickets.map((ticket) =>
-                    ticket.id === updatedTicket.ticket_id
-                      ? updatedTicket
-                      : ticket
-                  )
+                      ticket.id === updatedTicket.ticket_id
+                        ? updatedTicket
+                        : ticket
+                    )
                   : [...prevTickets, updatedTicket]
               })
             }}
@@ -451,7 +451,9 @@ const Leads = () => {
         footer={null}
         showCloseButton={false}
       >
-        {ticketId && <SingleChat ticketId={ticketId} onClose={closeChatModal} />}
+        {ticketId && (
+          <SingleChat ticketId={ticketId} onClose={closeChatModal} />
+        )}
       </Modal>
     </>
   )

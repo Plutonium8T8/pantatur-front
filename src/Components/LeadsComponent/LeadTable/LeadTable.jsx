@@ -1,29 +1,29 @@
-import { useState, useMemo, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { cleanValue } from "../utils";
-import { workflowStyles } from "../../utils/workflowStyles";
-import "./LeadTable.css";
-import { SpinnerRightBottom } from "../../SpinnerRightBottom";
-import { Pagination } from "../../Pagination";
-import { getLanguageByKey } from "../../utils/getLanguageByKey";
-import { TextEllipsis } from "../../TextEllipsis";
-import { Table } from "../../Table";
-import { Checkbox } from "../../Checkbox";
-import { Modal } from "../../Modal";
-import SingleChat from "../../ChatComponent/SingleChat";
-import { useParams, useNavigate } from "react-router-dom";
+import { useState, useMemo, useEffect } from "react"
+import { Link } from "react-router-dom"
+import { cleanValue } from "../utils"
+import { workflowStyles } from "../../utils/workflowStyles"
+import "./LeadTable.css"
+import { SpinnerRightBottom } from "../../SpinnerRightBottom"
+import { Pagination } from "../../Pagination"
+import { getLanguageByKey } from "../../utils/getLanguageByKey"
+import { TextEllipsis } from "../../TextEllipsis"
+import { Table } from "../../Table"
+import { Checkbox } from "../../Checkbox"
+import { Modal } from "../../Modal"
+import SingleChat from "../../ChatComponent/SingleChat"
+import { useParams, useNavigate } from "react-router-dom"
 
 const renderTags = (tags) => {
-  const isTags = tags.some(Boolean);
+  const isTags = tags.some(Boolean)
 
   return isTags
     ? tags.map((tag, index) => (
-      <span key={index} className="tag">
-        {tag.trim()}
-      </span>
-    ))
-    : "—";
-};
+        <span key={index} className="tag">
+          {tag.trim()}
+        </span>
+      ))
+    : "—"
+}
 
 export const LeadTable = ({
   selectedTickets,
@@ -33,20 +33,19 @@ export const LeadTable = ({
   onChangePagination,
   currentPage,
   loading,
-  selectTicket,
+  selectTicket
 }) => {
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [selectedTicketId, setSelectedTicketId] = useState(null);
-  const { ticketId } = useParams();
-  const navigate = useNavigate();
+  const [isChatOpen, setIsChatOpen] = useState(false)
+  const [selectedTicketId, setSelectedTicketId] = useState(null)
+  const { ticketId } = useParams()
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (ticketId) {
-      setSelectedTicketId(ticketId);
-      setIsChatOpen(true);
+      setSelectedTicketId(ticketId)
+      setIsChatOpen(true)
     }
-  }, [ticketId]);
-
+  }, [ticketId])
 
   const columns = useMemo(() => {
     return [
@@ -63,22 +62,22 @@ export const LeadTable = ({
               onChange={() => toggleSelectTicket(getValue())}
             />
           </div>
-        ),
+        )
       },
       {
         accessorKey: "id",
         header: () => <div className="text-center">ID</div>,
         accessorFn: ({ id }) => id,
         cell: ({ getValue }) => {
-          const id = getValue();
+          const id = getValue()
           return (
             <div className="text-center">
               <Link to={`/leads/${id}`} className="row-id">
                 #{id}
               </Link>
             </div>
-          );
-        },
+          )
+        }
       },
       {
         accessorKey: "name",
@@ -87,7 +86,7 @@ export const LeadTable = ({
         ),
         accessorFn: ({ clients }) => clients,
         cell: ({ getValue }) => {
-          const values = getValue();
+          const values = getValue()
 
           return (
             <div className="text-center">
@@ -95,8 +94,8 @@ export const LeadTable = ({
                 ? values?.map((item) => cleanValue(item.name)).join(", ")
                 : cleanValue()}
             </div>
-          );
-        },
+          )
+        }
       },
       {
         accessorKey: "surname",
@@ -105,7 +104,7 @@ export const LeadTable = ({
         ),
         accessorFn: ({ clients }) => clients,
         cell: ({ getValue }) => {
-          const values = getValue();
+          const values = getValue()
           return (
             <div className="text-center">
               {values?.length
@@ -377,13 +376,13 @@ export const LeadTable = ({
   }, [selectedTickets, toggleSelectTicket])
 
   if (loading) {
-    return <SpinnerRightBottom />;
+    return <SpinnerRightBottom />
   }
 
   const closeChatModal = () => {
-    setIsChatOpen(false);
-    navigate("/leads");
-  };
+    setIsChatOpen(false)
+    navigate("/leads")
+  }
 
   return (
     <>
@@ -411,8 +410,10 @@ export const LeadTable = ({
         footer={null}
         showCloseButton={false}
       >
-        {selectedTicketId && <SingleChat ticketId={selectedTicketId} onClose={closeChatModal} />}
+        {selectedTicketId && (
+          <SingleChat ticketId={selectedTicketId} onClose={closeChatModal} />
+        )}
       </Modal>
     </>
-  );
-};
+  )
+}
