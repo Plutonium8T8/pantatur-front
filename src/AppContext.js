@@ -214,7 +214,7 @@ export const AppProvider = ({ children, isLoggedIn }) => {
     try {
       setIsLoading(true)
 
-      const ticket = await api.tickets.ticket.getLightById(ticketId)
+      const ticket = await api.tickets.getLightById(ticketId)
 
       setTickets((prevTickets) => {
         const existingTicket = prevTickets.find((t) => t.id === ticketId)
