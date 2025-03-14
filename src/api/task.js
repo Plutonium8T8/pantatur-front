@@ -19,8 +19,8 @@ export const task = {
     return data
   },
 
-  getByUserId: async (id) => {
-    const { data } = await baseAxios.get(`/api/task/user/${id}`)
+  getAllTasks: async (id) => {
+    const { data } = await baseAxios.get(`/api/list_tasks`)
 
     return data
   }
