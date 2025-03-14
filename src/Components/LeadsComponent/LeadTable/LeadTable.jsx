@@ -1,7 +1,6 @@
 import { useState, useMemo, useEffect } from "react"
 import { Link } from "react-router-dom"
 import { cleanValue } from "../../utils"
-import { workflowStyles } from "../../utils/workflowStyles"
 import "./LeadTable.css"
 import { SpinnerRightBottom } from "../../SpinnerRightBottom"
 import { Pagination } from "../../Pagination"
@@ -13,6 +12,7 @@ import { Modal } from "../../Modal"
 import SingleChat from "../../ChatComponent/SingleChat"
 import { useParams, useNavigate } from "react-router-dom"
 import { Tag } from "../../Tag"
+import { WorkflowTag } from "../../WorkflowTag"
 
 const renderTags = (tags) => {
   const isTags = tags.some(Boolean)
@@ -189,14 +189,7 @@ export const LeadTable = ({
         cell: ({ getValue }) => {
           return (
             <div>
-              <span
-                style={
-                  workflowStyles[getValue()] || { backgroundColor: "#ddd" }
-                }
-                className="lead-workflow-content"
-              >
-                {getValue()}
-              </span>
+              <WorkflowTag type={getValue()} />
             </div>
           )
         }

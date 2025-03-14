@@ -5,10 +5,11 @@ const variants = {
   processing: "processing"
 }
 
-export const Tag = ({ children, type }) => {
+export const Tag = ({ children, type, ...props }) => {
   return (
     <span
       className={`tag-standalone tag-standalone-${variants[type] || "default"}`}
+      {...props}
     >
       {children}
     </span>

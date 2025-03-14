@@ -7,6 +7,7 @@ import { cleanValue } from "../utils"
 import { parseUserAgent } from "./utils"
 import { SpinnerRightBottom } from "../SpinnerRightBottom"
 import { Tag } from "../Tag"
+import { WorkflowTag } from "../WorkflowTag"
 
 const statusTicketTex = {
   true: getLanguageByKey("activ"),
@@ -89,7 +90,7 @@ export const Logs = () => {
           {getLanguageByKey("ID-ul tichetului")}
         </div>
       ),
-      accessorFn: ({ additional_data }) => additional_data?.ticket.id,
+      accessorFn: ({ additional_data }) => additional_data?.ticket?.id,
       cell: ({ getValue }) => (
         <div className="text-center">{cleanValue(getValue())}</div>
       )
@@ -99,10 +100,15 @@ export const Logs = () => {
       header: () => (
         <div className="text-center">{getLanguageByKey("Workflow")}</div>
       ),
-      accessorFn: ({ additional_data }) => additional_data?.data.workflow,
-      cell: ({ getValue }) => (
-        <div className="text-center">{cleanValue(getValue())}</div>
-      )
+      accessorFn: ({ additional_data }) => additional_data?.data?.workflow,
+      cell: ({ getValue }) => {
+        const value = getValue()
+        return (
+          <div className="text-center">
+            {value ? <WorkflowTag type={getValue()} /> : cleanValue()}
+          </div>
+        )
+      }
     },
     {
       accessorKey: "creation_date",
