@@ -9,11 +9,6 @@ import { SpinnerRightBottom } from "../SpinnerRightBottom"
 import { Tag } from "../Tag"
 import { WorkflowTag } from "../WorkflowTag"
 
-const statusTicketText = {
-  true: getLanguageByKey("activ"),
-  false: getLanguageByKey("inactiv")
-}
-
 export const Logs = () => {
   const [logList, setLogList] = useState([])
   const [pagination, setPagination] = useState()
@@ -148,7 +143,7 @@ export const Logs = () => {
           <div className="text-center">
             {typeof value === "boolean" ? (
               <Tag type={value ? "processing" : "warning"}>
-                {statusTicketText[value]}
+                {getLanguageByKey(value ? "activ" : "inactiv")}
               </Tag>
             ) : (
               cleanValue(value)
