@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FaFile, FaPaperPlane, FaSmile } from 'react-icons/fa';
 import EmojiPicker from 'emoji-picker-react';
 import ReactDOM from 'react-dom';
-import TaskModal from '../SlideInComponent/TaskComponent';
+import TaskModal from '../TaskComponent/TaskPage';
 import { useUser } from '../../UserContext';
 import { useAppContext } from '../../AppContext';
 import { api } from '../../api';
@@ -34,6 +34,7 @@ const ChatMessages = ({
     const fileInputRef = useRef(null);
     const reactionContainerRef = useRef(null);
     const [isUserAtBottom, setIsUserAtBottom] = useState(true);
+    const [selectedPlatform, setSelectedPlatform] = useState("web");
 
     const platformIcons = {
         "facebook": <FaFacebook />,
@@ -43,19 +44,23 @@ const ChatMessages = ({
         "telegram": <FaTelegram />
     };
 
+    const getLastClientWhoSentMessage = () => {
+        if (!Array.isArray(messages) || messages.length === 0) return null;
+
+        const ticketMessages = messages
+            .filter(msg => msg.ticket_id === selectTicketId && Number(msg.sender_id) !== 1)
+            .sort((a, b) => parseDate(b.time_sent) - parseDate(a.time_sent));
+
+        return ticketMessages.length > 0 ? ticketMessages[0].client_id : null;
+    };
+
     useEffect(() => {
-        const lastClient = getLastActiveClient();
+        const lastClient = getLastClientWhoSentMessage();
         if (lastClient) {
+            console.log(`🔍 Последний клиент, который отправил сообщение: ${lastClient}`);
             setSelectedClient(String(lastClient));
         }
     }, [messages, selectTicketId]);
-
-    const getLastActiveClient = () => {
-        if (!Array.isArray(messages) || messages.length === 0) return null;
-        const ticketMessages = messages.filter(msg => msg.ticket_id === selectTicketId);
-        if (ticketMessages.length === 0) return null;
-        return ticketMessages[ticketMessages.length - 1]?.client_id;
-    };
 
     const parseDate = (dateString) => {
         if (!dateString) return null;
@@ -197,38 +202,12 @@ const ChatMessages = ({
         }
     };
 
-    const analyzeLastMessagePlatform = () => {
-        console.log("📌 selectedClient:", selectedClient);
-
-        if (!Array.isArray(messages)) {
-            return "web";
-        }
-
-        const clientId = Number(selectedClient);
-
-        const clientMessages = messages.filter((msg) => Number(msg.client_id) === clientId);
-
-        if (!clientMessages || clientMessages.length === 0) {
-            return "web";
-        }
-
-        console.log("🔎 Найдено сообщений от клиента:", clientMessages.length);
-
-        const lastMessage = clientMessages.reduce((latest, current) =>
-            new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
-        );
-
-        return lastMessage?.platform || "web";
-    };
-
     const handleClick = () => {
         if (!selectedClient) {
             console.error("⚠️ Ошибка: Клиент не выбран!");
             return;
         }
-
-        const platform = analyzeLastMessagePlatform();
-        sendMessage(null, platform);
+        sendMessage(null, selectedPlatform);
     };
 
     const handleFileSelect = async (e) => {
@@ -236,10 +215,9 @@ const ChatMessages = ({
         if (!selectedFile) return;
 
         try {
-            const platform = analyzeLastMessagePlatform();
-            await sendMessage(selectedFile, platform);
+            await sendMessage(selectedFile, selectedPlatform);
         } catch (error) {
-            console.error('Ошибка обработки файла:', error);
+            console.error("Ошибка обработки файла:", error);
         }
     };
 
@@ -314,6 +292,40 @@ const ChatMessages = ({
             }
         };
     }, []);
+
+    const getClientPlatforms = () => {
+        const clientId = Number(selectedClient);
+        const clientMessages = messages.filter((msg) => Number(msg.client_id) === clientId);
+
+        if (!clientMessages || clientMessages.length === 0) {
+            return ["web"];
+        }
+
+        const uniquePlatforms = [...new Set(clientMessages.map((msg) => msg.platform))];
+        return uniquePlatforms.length > 0 ? uniquePlatforms : ["web"];
+    };
+    useEffect(() => {
+        const platforms = getClientPlatforms();
+        setSelectedPlatform(platforms[0] || "web");
+    }, [selectedClient, messages]);
+
+    const getLastMessagePlatform = (clientId) => {
+        if (!Array.isArray(messages) || messages.length === 0) return "web";
+
+        const clientMessages = messages
+            .filter(msg => Number(msg.client_id) === Number(clientId) && Number(msg.sender_id) !== 1)
+            .sort((a, b) => parseDate(b.time_sent) - parseDate(a.time_sent));
+
+        return clientMessages.length > 0 ? clientMessages[0].platform : "web";
+    };
+
+    useEffect(() => {
+        if (selectedClient) {
+            const lastPlatform = getLastMessagePlatform(selectedClient);
+            console.log(`🔍 Последняя платформа для клиента ${selectedClient}: ${lastPlatform}`);
+            setSelectedPlatform(lastPlatform || "web");
+        }
+    }, [selectedClient, messages]);
 
     return (
         <div className="chat-area">
@@ -557,13 +569,13 @@ const ChatMessages = ({
                         >
                             <FaFile />
                         </button>
-                        <button
+                        {/* <button
                             className="action-button task-button"
                             onClick={() => setIsTaskModalOpen(true)}
                             disabled={!selectTicketId}
                         >
                             <FaTasks />
-                        </button>
+                        </button> */}
                     </div>
                     <div className="select-row">
                         <div className="input-group">
@@ -590,8 +602,12 @@ const ChatMessages = ({
                         <div className="client-select-container">
                             <select
                                 className="task-select"
-                                value={selectedClient}
-                                onChange={(e) => setSelectedClient(e.target.value)}
+                                value={`${selectedClient}-${selectedPlatform}`}
+                                onChange={(e) => {
+                                    const [clientId, platform] = e.target.value.split("-");
+                                    setSelectedClient(clientId);
+                                    setSelectedPlatform(platform);
+                                }}
                             >
                                 <option value="" disabled>{translations["Alege client"][language]}</option>
                                 {tickets.find(ticket => ticket.id === selectTicketId).client_id
@@ -600,31 +616,29 @@ const ChatMessages = ({
                                     .map(id => {
                                         const clientId = id.trim();
                                         const clientInfo = personalInfo[clientId] || {};
-                                        const fullName = clientInfo.name ? `${clientInfo.name} ${clientInfo.surname || ""}`.trim() : `ID: ${clientId}`;
+                                        const fullName = clientInfo.name
+                                            ? `${clientInfo.name} ${clientInfo.surname || ""}`.trim()
+                                            : `ID: ${clientId}`;
 
-                                        const lastMessage = messages
-                                            .filter(msg => msg.client_id === Number(clientId))
-                                            .sort((a, b) => new Date(b.time_sent) - new Date(a.time_sent))[0];
+                                        const clientMessages = messages.filter(msg => msg.client_id === Number(clientId));
+                                        const uniquePlatforms = [...new Set(clientMessages.map(msg => msg.platform))];
 
-                                        const platform = lastMessage ? lastMessage.platform : "unknown";
-                                        const platformName = lastMessage ? platform.charAt(0).toUpperCase() + platform.slice(1) : ["Неизвестная платформа"][language];
-
-                                        return (
-                                            <option key={clientId} value={clientId}>
-                                                {`${fullName} (${platformName})`}
+                                        return uniquePlatforms.map(platform => (
+                                            <option key={`${clientId}-${platform}`} value={`${clientId}-${platform}`}>
+                                                {` ${fullName} | ${platform.charAt(0).toUpperCase() + platform.slice(1)} | ID: ${clientId} `}
                                             </option>
-                                        );
+                                        ));
                                     })}
                             </select>
                         </div>
                     )}
                 </div>
 
-                <TaskModal
+                {/* <TaskModal
                     isOpen={isTaskModalOpen}
                     onClose={() => setIsTaskModalOpen(false)}
                     selectedTicketId={selectTicketId}
-                />
+                /> */}
             </div>
 
         </div>

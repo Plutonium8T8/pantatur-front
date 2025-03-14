@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { useUser } from "../../UserContext"
-import "./SlideInModal.css"
+import "./TaskComponent.css"
 import { translations } from "../utils/translations"
 import { api } from "../../api"
 import { showServerError } from "../../Components/utils/showServerError"
