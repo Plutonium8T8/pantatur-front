@@ -17,9 +17,7 @@ import { WorkflowTag } from "../../WorkflowTag"
 const renderTags = (tags) => {
   const isTags = tags.some(Boolean)
 
-  return isTags
-    ? tags.map((tag, index) => <Tag key={index}>{tag.trim()}</Tag>)
-    : "—"
+  return isTags ? tags.map((tag, index) => <Tag key={index}>{tag}</Tag>) : "—"
 }
 
 export const LeadTable = ({
