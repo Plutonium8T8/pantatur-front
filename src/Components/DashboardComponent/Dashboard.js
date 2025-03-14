@@ -35,9 +35,6 @@ import { showServerError, getLanguageByKey } from "../utils"
 import "./Dashboard.css"
 import { ISO_DATE } from "../../app-constants"
 
-// Logs
-import { Logs } from "../Logs"
-
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -157,9 +154,6 @@ const Dashboard = () => {
         selectedTechnicians={selectedTechnicians}
         dateRange={dateRange}
       />
-
-      {/* Logs */}
-      <Logs></Logs>
 
       {isLoading ? (
         <SpinnerRightBottom />
