@@ -4,13 +4,13 @@ import { enqueueSnackbar } from "notistack"
 import { showServerError, getLanguageByKey } from "../utils"
 import { Table } from "../Table"
 import { cleanValue } from "../utils"
-import { format } from "date-fns"
-import { dd_MM_yyyy, TIME_FORMAT } from "../../app-constants"
 import { parseUserAgent } from "./utils"
 import { SpinnerRightBottom } from "../SpinnerRightBottom"
+import { Tag } from "../Tag"
 
-const formatDate = (date) => {
-  return format(date, `${dd_MM_yyyy} ${TIME_FORMAT}`)
+const statusTicketTex = {
+  true: getLanguageByKey("activ"),
+  false: getLanguageByKey("inactiv")
 }
 
 export const Logs = () => {
@@ -69,9 +69,7 @@ export const Logs = () => {
         </div>
       ),
       accessorFn: ({ timestamp }) => timestamp,
-      cell: ({ getValue }) => (
-        <div className="text-center">{formatDate(getValue())}</div>
-      )
+      cell: ({ getValue }) => <div className="text-center">{getValue()}</div>
     },
 
     {
@@ -139,13 +137,20 @@ export const Logs = () => {
           {getLanguageByKey("Statusul tichetului")}
         </div>
       ),
-      accessorFn: ({ additional_data }) => {
-        const status = additional_data?.ticket?.status
-        return status ? `${status}` : status
-      },
+      accessorFn: ({ additional_data }) => additional_data?.ticket?.status,
       cell: ({ getValue }) => {
         const value = getValue()
-        return <div className="text-center">{cleanValue(value)}</div>
+        return (
+          <div className="text-center">
+            {value ? (
+              <Tag type={value ? "processing" : "success"}>
+                {statusTicketTex[value]}
+              </Tag>
+            ) : (
+              cleanValue(value)
+            )}
+          </div>
+        )
       }
     },
     {
@@ -187,16 +192,14 @@ export const Logs = () => {
   }
 
   return (
-    <div>
-      <Table
-        columns={columns}
-        data={logList}
-        pagination={{
-          ...pagination,
-          onPaginationChange: (page) =>
-            setPagination((prev) => ({ ...prev, currentPage: page }))
-        }}
-      />
-    </div>
+    <Table
+      columns={columns}
+      data={logList}
+      pagination={{
+        ...pagination,
+        onPaginationChange: (page) =>
+          setPagination((prev) => ({ ...prev, currentPage: page }))
+      }}
+    />
   )
 }

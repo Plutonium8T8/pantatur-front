@@ -7,7 +7,6 @@ export const activity = {
       url: "/api/activity/logs",
       query: params
     })
-    console.log("🚀 ~ getLogList: ~ url:", url)
     const { data } = await baseAxios.get(url)
 
     return data

@@ -1265,6 +1265,14 @@ export const translations = {
   "ID-ul tichetului": {
     RO: "ID-ul tichetului",
     RU: "ID заявки"
+  },
+  activ: {
+    RO: "activ",
+    RU: "активный"
+  },
+  inactiv: {
+    RO: "inactiv",
+    RU: "неактивный"
   }
 }
 
