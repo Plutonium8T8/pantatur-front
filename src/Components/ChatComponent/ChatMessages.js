@@ -48,8 +48,8 @@ const ChatMessages = ({
         if (!Array.isArray(messages) || messages.length === 0) return null;
 
         const ticketMessages = messages
-            .filter(msg => msg.ticket_id === selectTicketId && Number(msg.sender_id) !== 1) // Исключаем оператора
-            .sort((a, b) => parseDate(b.time_sent) - parseDate(a.time_sent)); // Сортируем по убыванию времени
+            .filter(msg => msg.ticket_id === selectTicketId && Number(msg.sender_id) !== 1)
+            .sort((a, b) => parseDate(b.time_sent) - parseDate(a.time_sent));
 
         return ticketMessages.length > 0 ? ticketMessages[0].client_id : null;
     };
@@ -202,30 +202,6 @@ const ChatMessages = ({
         }
     };
 
-    // const analyzeLastMessagePlatform = () => {
-    //     console.log("📌 selectedClient:", selectedClient);
-
-    //     if (!Array.isArray(messages)) {
-    //         return "web";
-    //     }
-
-    //     const clientId = Number(selectedClient);
-
-    //     const clientMessages = messages.filter((msg) => Number(msg.client_id) === clientId);
-
-    //     if (!clientMessages || clientMessages.length === 0) {
-    //         return "web";
-    //     }
-
-    //     console.log("🔎 Найдено сообщений от клиента:", clientMessages.length);
-
-    //     const lastMessage = clientMessages.reduce((latest, current) =>
-    //         new Date(current.time_sent) > new Date(latest.time_sent) ? current : latest
-    //     );
-
-    //     return lastMessage?.platform || "web";
-    // };
-
     const handleClick = () => {
         if (!selectedClient) {
             console.error("⚠️ Ошибка: Клиент не выбран!");
@@ -330,20 +306,19 @@ const ChatMessages = ({
     };
     useEffect(() => {
         const platforms = getClientPlatforms();
-        setSelectedPlatform(platforms[0] || "web"); // По умолчанию выбираем последнюю платформу
+        setSelectedPlatform(platforms[0] || "web");
     }, [selectedClient, messages]);
 
     const getLastMessagePlatform = (clientId) => {
         if (!Array.isArray(messages) || messages.length === 0) return "web";
 
         const clientMessages = messages
-            .filter(msg => Number(msg.client_id) === Number(clientId) && Number(msg.sender_id) !== 1) // Исключаем оператора
-            .sort((a, b) => parseDate(b.time_sent) - parseDate(a.time_sent)); // Сортируем корректно
+            .filter(msg => Number(msg.client_id) === Number(clientId) && Number(msg.sender_id) !== 1)
+            .sort((a, b) => parseDate(b.time_sent) - parseDate(a.time_sent));
 
         return clientMessages.length > 0 ? clientMessages[0].platform : "web";
     };
 
-    // Обновляем платформу при изменении клиента
     useEffect(() => {
         if (selectedClient) {
             const lastPlatform = getLastMessagePlatform(selectedClient);
@@ -645,7 +620,6 @@ const ChatMessages = ({
                                             ? `${clientInfo.name} ${clientInfo.surname || ""}`.trim()
                                             : `ID: ${clientId}`;
 
-                                        // Получаем платформы, с которых клиент писал
                                         const clientMessages = messages.filter(msg => msg.client_id === Number(clientId));
                                         const uniquePlatforms = [...new Set(clientMessages.map(msg => msg.platform))];
 
