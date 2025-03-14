@@ -9,7 +9,7 @@ import { SpinnerRightBottom } from "../SpinnerRightBottom"
 import { Tag } from "../Tag"
 import { WorkflowTag } from "../WorkflowTag"
 
-const statusTicketTex = {
+const statusTicketText = {
   true: getLanguageByKey("activ"),
   false: getLanguageByKey("inactiv")
 }
@@ -105,7 +105,7 @@ export const Logs = () => {
         const value = getValue()
         return (
           <div className="text-center">
-            {value ? <WorkflowTag type={getValue()} /> : cleanValue()}
+            {value ? <WorkflowTag type={value} /> : cleanValue()}
           </div>
         )
       }
@@ -117,10 +117,9 @@ export const Logs = () => {
       ),
       accessorFn: ({ additional_data }) =>
         additional_data?.ticket?.creation_date,
-      cell: ({ getValue }) => {
-        const value = getValue()
-        return <div className="text-center">{cleanValue(value)}</div>
-      }
+      cell: ({ getValue }) => (
+        <div className="text-center">{cleanValue(getValue())}</div>
+      )
     },
     {
       accessorKey: "last_interaction_date",
@@ -131,10 +130,9 @@ export const Logs = () => {
       ),
       accessorFn: ({ additional_data }) =>
         additional_data?.ticket?.last_interaction_date,
-      cell: ({ getValue }) => {
-        const value = getValue()
-        return <div className="text-center">{cleanValue(value)}</div>
-      }
+      cell: ({ getValue }) => (
+        <div className="text-center">{cleanValue(getValue())}</div>
+      )
     },
     {
       accessorKey: "status",
@@ -148,9 +146,9 @@ export const Logs = () => {
         const value = getValue()
         return (
           <div className="text-center">
-            {value ? (
-              <Tag type={value ? "processing" : "success"}>
-                {statusTicketTex[value]}
+            {typeof value === "boolean" ? (
+              <Tag type={value ? "processing" : "warning"}>
+                {statusTicketText[value]}
               </Tag>
             ) : (
               cleanValue(value)
@@ -165,10 +163,9 @@ export const Logs = () => {
         <div className="text-center">{getLanguageByKey("Prioritate")}</div>
       ),
       accessorFn: ({ additional_data }) => additional_data?.ticket?.priority,
-      cell: ({ getValue }) => {
-        const value = getValue()
-        return <div className="text-center">{cleanValue(value)}</div>
-      }
+      cell: ({ getValue }) => (
+        <div className="text-center">{cleanValue(getValue())}</div>
+      )
     }
   ]
 

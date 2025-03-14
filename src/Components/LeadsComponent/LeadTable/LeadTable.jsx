@@ -67,11 +67,11 @@ export const LeadTable = ({
         header: () => <div className="text-center">ID</div>,
         accessorFn: ({ id }) => id,
         cell: ({ getValue }) => {
-          const id = getValue()
+          const value = getValue()
           return (
             <div className="text-center">
-              <Link to={`/leads/${id}`} className="row-id">
-                #{id}
+              <Link to={`/leads/${value}`} className="row-id">
+                #{value}
               </Link>
             </div>
           )
@@ -84,12 +84,12 @@ export const LeadTable = ({
         ),
         accessorFn: ({ clients }) => clients,
         cell: ({ getValue }) => {
-          const values = getValue()
+          const value = getValue()
 
           return (
             <div className="text-center">
-              {values?.length
-                ? values?.map((item) => cleanValue(item.name)).join(", ")
+              {value?.length
+                ? value.map((item) => cleanValue(item.name)).join(", ")
                 : cleanValue()}
             </div>
           )

@@ -31,22 +31,22 @@ export const workflowBrightStyles = {
 }
 
 export const getColorByWorkflowType = (type, fallbackColor) => {
-  if (fallbackColor) {
+  if (typeof fallbackColor === "string") {
     return workflowStyles[type] || fallbackColor
   }
-  return workflowStyles[type || "default"]
+  return workflowStyles[type] || workflowStyles["default"]
 }
 
 export const getBrightByWorkflowType = (type) => {
-  return workflowBrightStyles[type || "default"]
+  return workflowBrightStyles[type] || workflowBrightStyles["default"]
 }
 
 export const WorkflowTag = ({ type }) => {
   return (
     <Tag
       style={{
-        backgroundColor: workflowStyles[type || "default"],
-        borderColor: workflowBrightStyles[type],
+        backgroundColor: getColorByWorkflowType(type),
+        borderColor: getBrightByWorkflowType(type),
         color: "#17a2b8"
       }}
     >
