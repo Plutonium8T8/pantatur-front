@@ -23,6 +23,9 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTicketId }) => {
     const { enqueueSnackbar } = useSnackbar();
     const language = localStorage.getItem("language") || "RO";
     const [selectedTask, setSelectedTask] = useState("")
+    const [searchUserFrom, setSearchUserFrom] = useState("");
+    const [isUserFromDropdownOpen, setIsUserFromDropdownOpen] = useState(false);
+    const [taskFrom, setTaskFrom] = useState(""); // ID пользователя, от кого таск
 
     useEffect(() => {
         if (isOpen) {
@@ -59,8 +62,8 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTicketId }) => {
 
     const handleTaskSubmit = async (e) => {
         e.preventDefault();
-        if (!ticketId || !taskDate || !taskContent || !taskFor) {
-            enqueueSnackbar("All fields are required", { variant: "warning" });
+        if (!ticketId || !taskDate || !taskContent || !taskFor || !taskFrom || !selectedTask) {
+            enqueueSnackbar("Toate câmpurile sunt obligatorii", { variant: "warning" });
             return;
         }
 
@@ -69,8 +72,8 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTicketId }) => {
                 ticket_id: ticketId,
                 scheduled_time: taskDate,
                 description: taskContent,
-                tags: [""],
-                created_by: userId,
+                task_type: [selectedTask], // Теперь selectedTask включен в отправку
+                created_by: taskFrom, // Указано от кого таск
                 created_for: taskFor
             });
 
@@ -78,9 +81,11 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTicketId }) => {
             setTaskContent("");
             setTaskDate("");
             setTaskFor("");
+            setTaskFrom(""); // Очищаем taskFrom после создания
+            setSelectedTask("");
             onClose();
         } catch (error) {
-            enqueueSnackbar("Error creating task", { variant: "error" });
+            enqueueSnackbar("Eroare la crearea taskului", { variant: "error" });
         }
     };
 
@@ -88,12 +93,12 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTicketId }) => {
         <div className="task-modal-overlay" onClick={onClose}>
             <div className="task-modal-container" onClick={(e) => e.stopPropagation()}>
                 <header className="task-modal-header">
-                    <h2>{translations["Taskuri"][language]}</h2>
+                    <h2>{["Taskuri"]}</h2>
                 </header>
 
                 <form onSubmit={handleTaskSubmit} className="task-form">
                     <div className="task-input-group">
-                        <label>{translations["Lead"][language]} ID</label>
+                        <label>{["Lead"]} ID</label>
                         <Input
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
@@ -123,17 +128,17 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTicketId }) => {
                     </div>
 
                     <div className="task-input-group">
-                        <label>{translations["Dată și oră"][language]}</label>
+                        <label>{["Dată și oră"]}</label>
                         <input type="datetime-local" value={taskDate} onChange={(e) => setTaskDate(e.target.value)} required />
                     </div>
 
                     <div className="task-input-group">
-                        <label>{translations["Descriere task"][language]}</label>
+                        <label>{["Descriere task"]}</label>
                         <textarea value={taskContent} onChange={(e) => setTaskContent(e.target.value)} required />
                     </div>
 
                     <div className="task-input-group">
-                        <label>{translations["Pentru"][language]}</label>
+                        <label>{["Pentru"]}</label>
                         <Input
                             value={searchUser}
                             onChange={(e) => setSearchUser(e.target.value)}
@@ -153,8 +158,30 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTicketId }) => {
                             </ul>
                         )}
                     </div>
+                    <div className="task-input-group">
+                        <label>{["De la utilizatorul"]}</label>
+                        <Input
+                            value={searchUserFrom}
+                            onChange={(e) => setSearchUserFrom(e.target.value)}
+                            onFocus={() => setIsUserFromDropdownOpen(true)}
+                            onBlur={() => setTimeout(() => setIsUserFromDropdownOpen(false), 200)}
+                            required
+                        />
+                        {isUserFromDropdownOpen && (
+                            <ul className="task-dropdown-list">
+                                {userList.filter(user =>
+                                    `${user.id} ${user.name} ${user.surname}`.toLowerCase().includes(searchUserFrom.toLowerCase())
+                                ).map(user => (
+                                    <li key={user.id} onMouseDown={() => { setTaskFrom(user.id); setSearchUserFrom(`${user.id} - ${user.name} ${user.surname}`); }}>
+                                        {user.id} - {user.name} {user.surname}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
 
-                    <button type="submit" className="task-submit-button">{translations["Adaugă task"][language]}</button>
+
+                    <button type="submit" className="task-submit-button">{["Adaugă task"]}</button>
                 </form>
             </div>
         </div>

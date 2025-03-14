@@ -22,7 +22,7 @@ const IconSelect = ({
   };
 
   return (
-    <div className={`input-group ${hasError ? "invalid-field" : ""} mb-16`}>
+    <div className={`input-group-icon ${hasError ? "invalid-field" : ""} mb-16`}>
       <label htmlFor={id}>{translations[label]?.[language] ?? label}</label>
       <div className="custom-select-wrapper">
         <div className="selected-option" onClick={() => setIsOpen(!isOpen)}>

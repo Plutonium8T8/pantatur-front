@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { Table } from "../../Table";
 import { translations } from "../../utils/translations";
 
-const TaskList = ({ tasks, handleMarkAsSeenTask, userList }) => {
+const TaskList = ({ tasks, handleMarkAsSeenTask, userList = [] }) => {
     const language = localStorage.getItem("language") || "RO";
 
     const columns = useMemo(
@@ -18,6 +18,10 @@ const TaskList = ({ tasks, handleMarkAsSeenTask, userList }) => {
             {
                 header: "Creat de",
                 accessorKey: "created_by",
+                cell: ({ row }) => {
+                    const creator = userList.find(user => user.id === row.original.created_by);
+                    return creator ? `${creator.name} ${creator.surname}` : `ID: ${row.original.created_by}`;
+                },
             },
             {
                 header: "Pentru",
@@ -42,8 +46,8 @@ const TaskList = ({ tasks, handleMarkAsSeenTask, userList }) => {
                 cell: ({ row }) => (
                     <span className={row.original.status ? "seen" : "unseen"}>
                         {row.original.status
-                            ? ["Văzut"][language]
-                            : ["Nevăzut"][language]}
+                            ? translations["Văzut"][language]
+                            : translations["Nevăzut"][language]}
                     </span>
                 ),
             },
@@ -53,7 +57,7 @@ const TaskList = ({ tasks, handleMarkAsSeenTask, userList }) => {
                 cell: ({ row }) =>
                     !row.original.status && (
                         <button onClick={() => handleMarkAsSeenTask(row.original.id)}>
-                            {"Marchează"}
+                            {translations["Marchează"][language]}
                         </button>
                     ),
             },
