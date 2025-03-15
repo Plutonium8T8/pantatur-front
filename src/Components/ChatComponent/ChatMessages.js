@@ -748,7 +748,6 @@ const ChatMessages = ({
                     onClose={() => setIsTaskModalOpen(false)}
                     selectedTicketId={selectTicketId}
                 /> */}
-        \{" "}
       </div>
     </div>
   )
