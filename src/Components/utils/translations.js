@@ -1228,13 +1228,51 @@ export const translations = {
   },
   azi: {
     RO: "Azi",
-    RU: "Сегодня",
-    EN: "Today"
+    RU: "Сегодня"
   },
   ieri: {
     RO: "Ieri",
-    RU: "Вчера",
-    EN: "Yesterday"
+    RU: "Вчера"
+  },
+  "Identificator utilizator": {
+    RO: "Identificator utilizator",
+    RU: "Идентификатор пользователя"
+  },
+  "ID-ul utilizatorului": {
+    RO: "ID-ul utilizatorului",
+    RU: "ID пользователя"
+  },
+  "Tip activitate": {
+    RO: "Tip activitate",
+    RU: "Тип активности"
+  },
+  "Adresă IP": {
+    RO: "Adresă IP",
+    RU: "IP-адрес"
+  },
+  "Sistem și browser": {
+    RO: "Sistem și browser",
+    RU: "Система и браузер"
+  },
+  "Data și ora log-ului": {
+    RO: "Data și ora log-ului",
+    RU: "Дата и время журнала"
+  },
+  "Statusul tichetului": {
+    RO: "Statusul tichetului",
+    RU: "Статус заявки"
+  },
+  "ID-ul tichetului": {
+    RO: "ID-ul tichetului",
+    RU: "ID заявки"
+  },
+  activ: {
+    RO: "activ",
+    RU: "активный"
+  },
+  inactiv: {
+    RO: "inactiv",
+    RU: "неактивный"
   }
 }
 

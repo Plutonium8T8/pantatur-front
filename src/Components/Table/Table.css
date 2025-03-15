@@ -5,15 +5,15 @@
   font-size: 14px;
 }
 
-table .table-tr {
+.table .table-tr {
   transition: background-color 0.3s ease;
 }
 
-table tbody .table-tr:hover {
+.table tbody .table-tr:hover {
   background-color: #fafafa;
   cursor: pointer;
 }
 
-table tbody .table-tr.selected-row {
+.table tbody .table-tr.selected-row {
   background-color: #fafafa;
 }

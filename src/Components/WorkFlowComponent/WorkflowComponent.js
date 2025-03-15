@@ -1,8 +1,8 @@
 import React from "react"
 import Select from "react-select"
 import { workflowOptions as rawWorkflowOptions } from "../../FormOptions/WorkFlowOption"
-import { workflowStyles } from "../utils/workflowStyles"
 import { translations } from "../utils/translations"
+import { getColorByWorkflowType } from "../WorkflowTag"
 
 const workflowOptions = rawWorkflowOptions.map((workflow) => ({
   value: workflow,
@@ -16,25 +16,24 @@ export const Workflow = ({ ticket, onChange = () => {}, disabled = false }) => {
     option: (provided, state) => ({
       ...provided,
       backgroundColor: state.isFocused
-        ? workflowStyles[state.data.value]?.backgroundColor || "#f0f0f0"
-        : workflowStyles[state.data.value]?.backgroundColor || "#fff",
+        ? getColorByWorkflowType(state.data.value, "#f0f0f0")
+        : getColorByWorkflowType(state.data.value, "#fff"),
       color: "#000",
       padding: "10px",
       cursor: disabled ? "not-allowed" : "pointer"
     }),
     control: (provided, state) => ({
       ...provided,
-      borderColor: workflowStyles[ticket?.workflow]?.borderColor || "#ccc",
-      backgroundColor:
-        workflowStyles[ticket?.workflow]?.backgroundColor || "#fff",
+      borderColor: getColorByWorkflowType(ticket?.workflow, "#ccc"),
+      backgroundColor: getColorByWorkflowType(ticket?.workflow, "#fff"),
       color: "#000",
       boxShadow: state.isFocused
-        ? `0 0 0 2px ${workflowStyles[ticket?.workflow]?.borderColor || "#aaa"}`
+        ? `0 0 0 2px ${getColorByWorkflowType(ticket?.workflow, "#aaa")}`
         : "none",
       opacity: disabled ? 0.5 : 1,
       cursor: disabled ? "not-allowed" : "default",
       "&:hover": {
-        borderColor: workflowStyles[ticket?.workflow]?.borderColor || "#aaa"
+        borderColor: getColorByWorkflowType(ticket?.workflow, "#aaa")
       }
     }),
     singleValue: (provided) => ({
