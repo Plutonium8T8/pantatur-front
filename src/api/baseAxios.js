@@ -7,7 +7,7 @@ export const baseAxios = axios.create({
   headers: {
     "Content-Type": "application/json"
   }
-});
+})
 
 baseAxios.interceptors.request.use(authInterceptor)
 baseAxios.interceptors.response.use(...responseInterceptor)

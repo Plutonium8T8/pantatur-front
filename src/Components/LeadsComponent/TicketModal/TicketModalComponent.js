@@ -4,9 +4,8 @@ import "./TicketModalComponent.css"
 import Priority from "../../PriorityComponent/PriorityComponent"
 import Workflow from "../../WorkFlowComponent/WorkflowComponent"
 import TagInput from "../../TagsComponent/TagComponent"
-import { useUser } from "../../../UserContext"
 import { translations } from "../../utils/translations"
-import { useAppContext } from "../../../AppContext"
+import { useApp, useUser } from "../../../hooks"
 import { api } from "../../../api"
 import { useSnackbar } from "notistack"
 import { Input } from "../../Input/Input"
@@ -16,7 +15,7 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
   const { enqueueSnackbar } = useSnackbar()
   const language = localStorage.getItem("language") || "RO"
 
-  const { setTickets } = useAppContext()
+  const { setTickets } = useApp()
   const { userId, hasRole, isLoadingRoles } = useUser()
 
   const [isAdmin, setIsAdmin] = useState(false)
@@ -94,8 +93,8 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
       setTickets((prevTickets) =>
         isEditing
           ? prevTickets.map((ticket) =>
-            ticket.id === updatedTicket.id ? updatedTicket : ticket
-          )
+              ticket.id === updatedTicket.id ? updatedTicket : ticket
+            )
           : [...prevTickets, updatedTicket]
       )
 

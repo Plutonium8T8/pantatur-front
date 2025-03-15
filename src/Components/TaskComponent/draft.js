@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { useUser } from "../../UserContext"
+import { useUser } from "../../hooks"
 import "./TaskComponent.css"
 import { translations } from "../utils/translations"
 import { api } from "../../api"

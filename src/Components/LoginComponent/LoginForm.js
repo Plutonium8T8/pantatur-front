@@ -1,7 +1,6 @@
 import React, { useState } from "react"
 import "./LoginForm.css"
 import Cookies from "js-cookie"
-import { useUser } from "../../UserContext"
 import { api } from "../../api"
 import { showServerError } from "../utils/showServerError"
 import { useSnackbar } from "notistack"

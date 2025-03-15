@@ -37,5 +37,5 @@ export const privateRoutes = (isAllowRole) => [
   {
     path: "/tasks",
     component: TaskPage
-  },
+  }
 ]

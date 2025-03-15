@@ -1,10 +1,9 @@
 import { useState, useMemo, useEffect } from "react"
 import { Link } from "react-router-dom"
-import { cleanValue } from "../../utils"
 import "./LeadTable.css"
 import { SpinnerRightBottom } from "../../SpinnerRightBottom"
 import { Pagination } from "../../Pagination"
-import { getLanguageByKey } from "../../utils/getLanguageByKey"
+import { getLanguageByKey, cleanValue } from "../../utils"
 import { TextEllipsis } from "../../TextEllipsis"
 import { Table } from "../../Table"
 import { Checkbox } from "../../Checkbox"
@@ -16,7 +15,6 @@ import { WorkflowTag } from "../../WorkflowTag"
 
 const renderTags = (tags) => {
   const isTags = tags.some(Boolean)
-
   return isTags ? tags.map((tag, index) => <Tag key={index}>{tag}</Tag>) : "—"
 }
 
