@@ -4,7 +4,7 @@ import { AppContext } from "../contexts"
 export const useApp = () => {
   const context = useContext(AppContext)
   if (!context) {
-    throw new Error("useAppContext must be used within a UserProvider")
+    throw new Error("useApp must be used within a AppProvider")
   }
   return context
 }
