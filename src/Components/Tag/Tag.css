@@ -1,4 +1,4 @@
-.tag-standalone {
+.tag {
   border-radius: 4px;
   padding: 2px 6px;
   border-width: 1px;
@@ -6,24 +6,24 @@
   font-size: 12px;
 }
 
-.tag-standalone-default {
+.tag-default {
   background-color: #f5f5f5;
   color: #777777;
 }
 
-.tag-standalone-processing {
+.tag-processing {
   color: #1677ff;
   background: #e6f4ff;
   border-color: #91caff;
 }
 
-.tag-standalone-success {
+.tag-success {
   color: #52c41a;
   background: #f6ffed;
   border-color: #b7eb8f;
 }
 
-.tag-standalone-warning {
+.tag-warning {
   background-color: #fffbe6;
   color: #faad14;
 }

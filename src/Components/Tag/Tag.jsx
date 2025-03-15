@@ -8,10 +8,7 @@ const variants = {
 
 export const Tag = ({ children, type, ...props }) => {
   return (
-    <span
-      className={`tag-standalone tag-standalone-${variants[type] || "default"}`}
-      {...props}
-    >
+    <span className={`tag tag-${variants[type] || "default"}`} {...props}>
       {children}
     </span>
   )
