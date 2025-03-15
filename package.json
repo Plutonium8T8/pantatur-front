@@ -68,5 +68,8 @@
     "lint-staged": "^15.5.0",
     "prettier": "^3.5.3"
   },
-  "homepage": "/"
+  "homepage": "/",
+  "lint-staged": {
+    "**/*.{js,jsx,ts,tsx,json,css,scss,md}": "prettier --write"
+  }
 }
