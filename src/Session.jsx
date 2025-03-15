@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import Cookies from "js-cookie"
-import { useUser } from "./UserContext"
+import { useUser } from "./hooks"
 import { api } from "./api"
 import { useNavigate, useLocation } from "react-router-dom"
 import { privateRoutes } from "./routes"

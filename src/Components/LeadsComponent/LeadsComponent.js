@@ -1,8 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { SpinnerRightBottom } from "../SpinnerRightBottom"
-import { useDOMElementHeight } from "../../hooks"
-import { useAppContext } from "../../AppContext"
+import { useDOMElementHeight, useApp } from "../../hooks"
 import { priorityOptions } from "../../FormOptions/PriorityOption"
 import { workflowOptions } from "../../FormOptions/WorkFlowOption"
 import WorkflowColumn from "./WorkflowColumnComponent"
@@ -43,7 +42,7 @@ const Leads = () => {
   const navigate = useNavigate()
 
   const [hardTickets, setHardTickets] = useState([])
-  const { tickets, isLoading, setTickets } = useAppContext()
+  const { tickets, isLoading, setTickets } = useApp()
   const [isTableView, setIsTableView] = useState(false)
   const [filteredTicketIds, setFilteredTicketIds] = useState(null)
   const [searchTerm, setSearchTerm] = useState("")

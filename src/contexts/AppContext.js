@@ -1,18 +1,9 @@
-import React, {
-  createContext,
-  useState,
-  useEffect,
-  useContext,
-  useRef
-} from "react"
+import React, { createContext, useState, useEffect, useRef } from "react"
 import { useSnackbar } from "notistack"
-import { useUser } from "./UserContext"
-import { truncateText } from "./stringUtils"
-import { api } from "./api"
+import { useUser } from "../hooks"
+import { api } from "../api"
 
-const AppContext = createContext()
-
-export const useAppContext = () => useContext(AppContext)
+export const AppContext = createContext()
 
 export const AppProvider = ({ children }) => {
   const socketRef = useRef(null)
@@ -46,7 +37,7 @@ export const AppProvider = ({ children }) => {
       }
     }
 
-    return () => { }
+    return () => {}
   }, [])
 
   useEffect(() => {
@@ -87,7 +78,7 @@ export const AppProvider = ({ children }) => {
         handleWebSocketMessage(message)
       }
 
-      socketInstance.onclose = () => { }
+      socketInstance.onclose = () => {}
     }
 
     return () => {
@@ -173,9 +164,9 @@ export const AppProvider = ({ children }) => {
         ...ticket,
         client_ids: ticket.client_id
           ? ticket.client_id
-            .replace(/[{}]/g, "")
-            .split(",")
-            .map((id) => Number(id))
+              .replace(/[{}]/g, "")
+              .split(",")
+              .map((id) => Number(id))
           : [],
         last_message: ticket.last_message || "Нет сообщений",
         time_sent: ticket.time_sent || null,
@@ -286,14 +277,14 @@ export const AppProvider = ({ children }) => {
           prevTickets.map((ticket) =>
             ticket.id === ticket_id
               ? {
-                ...ticket,
-                last_message: msgText,
-                time_sent: time_sent,
-                unseen_count:
-                  ticket_id === selectTicketId
-                    ? 0
-                    : ticket.unseen_count + (sender_id !== userId ? 1 : 0)
-              }
+                  ...ticket,
+                  last_message: msgText,
+                  time_sent: time_sent,
+                  unseen_count:
+                    ticket_id === selectTicketId
+                      ? 0
+                      : ticket.unseen_count + (sender_id !== userId ? 1 : 0)
+                }
               : ticket
           )
         )

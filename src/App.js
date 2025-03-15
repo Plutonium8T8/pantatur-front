@@ -1,7 +1,6 @@
 import React, { useEffect } from "react"
-import { UserProvider } from "./UserContext"
+import { UserProvider, AppProvider } from "./contexts"
 import Cookies from "js-cookie"
-import { AppProvider } from "./AppContext"
 import { SnackbarProvider } from "notistack"
 import { publicRoutes } from "./routes"
 import { Layout } from "./Layout"

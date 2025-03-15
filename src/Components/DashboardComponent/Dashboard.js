@@ -19,7 +19,7 @@ import {
   ArcElement,
   RadialLinearScale
 } from "chart.js"
-import { useUser } from "../../UserContext"
+import { useUser } from "../../hooks"
 import { api } from "../../api"
 import { SpinnerRightBottom } from "../SpinnerRightBottom"
 import { Filter } from "./Filter"

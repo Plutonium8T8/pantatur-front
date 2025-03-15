@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
-import { useAppContext } from "../../AppContext"
+import { useApp } from "../../hooks"
 import { translations } from "../utils/translations"
 import "./SideBar.css"
 import LanguageToggle from "./LanguageToggle"
@@ -21,7 +21,7 @@ import { LoadingOverlay } from "../LoadingOverlay"
 const CustomSidebar = ({ onOpenNotifications, onOpenAccount }) => {
   const location = useLocation()
   const navigate = useNavigate()
-  const { unreadCount } = useAppContext()
+  const { unreadCount } = useApp()
   const [loading, setLoading] = useState(false)
 
   const language = localStorage.getItem("language") || "RO"
