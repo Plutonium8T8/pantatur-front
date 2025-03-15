@@ -168,9 +168,7 @@ export const Logs = () => {
     const getLogList = async () => {
       setLoading(true)
       try {
-        const logs = await api.activity.getLogList({
-          page: pagination?.currentPage
-        })
+        const logs = await api.activity.getLogs()
         setLogList(logs.data)
         setPagination({
           totalPages: logs.meta.totalPages,

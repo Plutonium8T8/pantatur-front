@@ -2,7 +2,7 @@ import queryString from "query-string"
 import { baseAxios } from "./baseAxios"
 
 export const activity = {
-  getLogList: async (params) => {
+  getLogs: async (params) => {
     const url = queryString.stringifyUrl({
       url: "/api/activity/logs",
       query: params

@@ -102,7 +102,7 @@ export const LeadTable = ({
           return (
             <div className="text-center">
               {value?.length
-                ? value.map((item) => cleanValue(item?.surname)).join(", ")
+                ? value.map((item) => cleanValue(item.surname)).join(", ")
                 : cleanValue()}
             </div>
           )

@@ -1,44 +1,65 @@
 import { Tag } from "./Tag"
 
-export const workflowStyles = {
-  Interesat: "#ffffcc",
-  "Apel de intrare": "#cde6fc",
-  "De prelucrat": "#ffd5d6",
-  "Luat în lucru": "#f5ffdc",
-  "Ofertă trimisă": "#ffeebb",
-  "Aprobat cu client": "#ffe5e5",
-  "Contract semnat": "#ffd5d6",
-  "Plată primită": "#fffacc",
-  "Contract încheiat": "#cdeedd",
-  "Realizat cu succes": "#d4fcd4",
-  "Închis și nerealizat": "#ff9999",
-  default: "#ddd"
-}
-
-export const workflowBrightStyles = {
-  Interesat: "#ffff99",
-  "Apel de intrare": "#a3d4fc",
-  "De prelucrat": "#ffb3b4",
-  "Luat în lucru": "#eaffb3",
-  "Ofertă trimisă": "#ffd480",
-  "Aprobat cu client": "#ffc1c1",
-  "Contract semnat": "#ffb3b4",
-  "Plată primită": "#ffea80",
-  "Contract încheiat": "#a8e6c1",
-  "Realizat cu succes": "#8bf58b",
-  "Închis și nerealizat": "#ff4d4d",
-  default: "#929292"
+const colorsWorkflow = {
+  Interesat: {
+    color: "#ffffcc",
+    bright: "#ffff99"
+  },
+  "Apel de intrare": {
+    color: "#cde6fc",
+    bright: "#a3d4fc"
+  },
+  "De prelucrat": {
+    color: "#ffd5d6",
+    bright: "#ffb3b4"
+  },
+  "Luat în lucru": {
+    color: "#f5ffdc",
+    bright: "#eaffb3"
+  },
+  "Ofertă trimisă": {
+    color: "#ffeebb",
+    bright: "#ffd480"
+  },
+  "Aprobat cu client": {
+    color: "#ffe5e5",
+    bright: "#ffc1c1"
+  },
+  "Contract semnat": {
+    color: "#ffd5d6",
+    bright: "#ffb3b4"
+  },
+  "Plată primită": {
+    color: "#fffacc",
+    bright: "#ffea80"
+  },
+  "Contract încheiat": {
+    color: "#cdeedd",
+    bright: "#a8e6c1"
+  },
+  "Realizat cu succes": {
+    color: "#d4fcd4",
+    bright: "#8bf58b"
+  },
+  "Închis și nerealizat": {
+    color: "#ff9999",
+    bright: "#ff4d4d"
+  },
+  default: {
+    color: "#ddd",
+    bright: "#929292"
+  }
 }
 
 export const getColorByWorkflowType = (type, fallbackColor) => {
   if (typeof fallbackColor === "string") {
-    return workflowStyles[type] || fallbackColor
+    return colorsWorkflow[type]?.color || fallbackColor
   }
-  return workflowStyles[type] || workflowStyles["default"]
+  return colorsWorkflow[type]?.color || colorsWorkflow["default"].color
 }
 
 export const getBrightByWorkflowType = (type) => {
-  return workflowBrightStyles[type] || workflowBrightStyles["default"]
+  return colorsWorkflow[type]?.bright || colorsWorkflow["default"].bright
 }
 
 export const WorkflowTag = ({ type }) => {
