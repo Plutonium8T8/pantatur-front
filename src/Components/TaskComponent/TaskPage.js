@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react"
-import { useUser } from "../../UserContext"
+import { useUser } from "../../hooks"
 import "./TaskComponent.css"
 import { translations } from "../utils/translations"
 import { api } from "../../api"
 import { showServerError } from "../../Components/utils/showServerError"
 import { useSnackbar } from "notistack"
 import { Input } from "../Input"
-import IconSelect from "../IconSelect/IconSelect";
+import IconSelect from "../IconSelect/IconSelect"
 import { TypeTask } from "./OptionsTaskType"
 
 const TaskPage = ({ selectedTicketId }) => {
@@ -90,11 +90,13 @@ const TaskPage = ({ selectedTicketId }) => {
   const fetchUsers = async () => {
     try {
       const usersData = await api.users.getTechnicianList()
-      setUserList(usersData.map(user => ({
-        id: user.id,
-        name: user.name || "N/A",
-        surname: user.surname || "N/A"
-      })))
+      setUserList(
+        usersData.map((user) => ({
+          id: user.id,
+          name: user.name || "N/A",
+          surname: user.surname || "N/A"
+        }))
+      )
     } catch (error) {
       enqueueSnackbar(showServerError(error), { variant: "error" })
     }
@@ -239,10 +241,7 @@ const TaskPage = ({ selectedTicketId }) => {
                     .includes(searchUser.toLowerCase())
                 )
                 .map((user) => (
-                  <li
-                    key={user.id}
-                    onMouseDown={() => handleUserSelect(user)}
-                  >
+                  <li key={user.id} onMouseDown={() => handleUserSelect(user)}>
                     {`${user.id} - ${user.name || "N/A"} ${user.surname || "N/A"}`}
                   </li>
                 ))}

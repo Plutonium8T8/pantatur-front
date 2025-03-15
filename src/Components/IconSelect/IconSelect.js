@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import "./IconSelect.css";
-import { translations } from "../utils/translations";
+import React, { useState } from "react"
+import "./IconSelect.css"
+import { translations } from "../utils/translations"
 
 const IconSelect = ({
   options,
@@ -13,13 +13,13 @@ const IconSelect = ({
   disabled,
   hasError
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const language = localStorage.getItem("language") || "RO";
+  const [isOpen, setIsOpen] = useState(false)
+  const language = localStorage.getItem("language") || "RO"
 
   const handleSelect = (selectedValue) => {
-    onChange(selectedValue);
-    setIsOpen(false);
-  };
+    onChange(selectedValue)
+    setIsOpen(false)
+  }
 
   return (
     <div className={`input-group ${hasError ? "invalid-field" : ""} mb-16`}>
@@ -35,15 +35,22 @@ const IconSelect = ({
         {isOpen && (
           <ul className="custom-dropdown">
             {options.map((option, index) => (
-              <li key={index} onClick={() => handleSelect(option.name)} className="custom-dropdown-item">
-                {option.icon} <span className="task-text">{translations[option.name]?.[language] ?? option.name}</span>
+              <li
+                key={index}
+                onClick={() => handleSelect(option.name)}
+                className="custom-dropdown-item"
+              >
+                {option.icon}{" "}
+                <span className="task-text">
+                  {translations[option.name]?.[language] ?? option.name}
+                </span>
               </li>
             ))}
           </ul>
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default IconSelect;
+export default IconSelect

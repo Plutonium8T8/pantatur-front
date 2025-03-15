@@ -1,1 +1,8 @@
-export const platformOptions = ["telegram", "viber", "whatsapp", "facebook", "instagram", "sipuni"];
+export const platformOptions = [
+  "telegram",
+  "viber",
+  "whatsapp",
+  "facebook",
+  "instagram",
+  "sipuni"
+]
