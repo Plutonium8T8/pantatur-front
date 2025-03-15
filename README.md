@@ -1,11 +1,9 @@
-## Setup file `.env`
+# 🛠️ Setup file `.env`
 
-To create and copy the .env file, run the following commands in the terminal:
+To copy the .env file, run the following command in the terminal:
 
 ```bash
-
 cp .env-example .env
-
 ```
 
 # 🎯 Managing Global Styles
@@ -28,4 +26,13 @@ Here’s an example of a Bootstrap-style utility class defined in `App.css`:
 .text-center {
   text-align: center;
 }
+```
+
+# ✨ Code Formatting
+
+Before making a commit, make sure your code is properly formatted.
+If you encounter issues with automatic formatting (autoSave), you can manually format the entire project by running:
+
+```sh
+npm run prettier
 ```
