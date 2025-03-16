@@ -15,7 +15,7 @@ function App() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
 
-  const publicPaths = publicRoutes.filter(({ isPublic }) => isPublic)
+  const publicPaths = publicRoutes.map(({ path }) => path)
 
   useEffect(() => {
     if (!JWT_TOKEN) {
