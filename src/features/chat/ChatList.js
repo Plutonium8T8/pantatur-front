@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useRef, useMemo } from "react"
-import { useNavigate } from "react-router-dom"
-import { useAppContext } from "../../AppContext"
 import { translations } from "../../Components/utils/translations"
-import { useUser } from "../../UserContext"
+import { useUser, useApp } from "../../hooks"
 import { Spin } from "../../Components/Spin"
 
 const ChatList = ({ setIsLoading, selectTicketId, setSelectTicketId }) => {
-  const { tickets, getClientMessagesSingle, isLoading } = useAppContext()
+  const { tickets, getClientMessagesSingle, isLoading } = useApp()
   const { userId } = useUser()
   const [showMyTickets, setShowMyTickets] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")

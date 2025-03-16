@@ -2,9 +2,7 @@ import React, { useState, useEffect, useRef } from "react"
 import { FaFile, FaPaperPlane, FaSmile } from "react-icons/fa"
 import EmojiPicker from "emoji-picker-react"
 import ReactDOM from "react-dom"
-import TaskModal from "../../Components/SlideInComponent/TaskComponent"
-import { useUser } from "../../UserContext"
-import { useAppContext } from "../../AppContext"
+import { useApp, useUser } from "../../hooks"
 import { api } from "../../api"
 import {
   FaFacebook,
@@ -27,7 +25,7 @@ const ChatMessages = ({
   setPersonalInfo
 }) => {
   const { userId } = useUser()
-  const { messages, setMessages, tickets } = useAppContext()
+  const { messages, setMessages, tickets } = useApp()
 
   const language = localStorage.getItem("language") || "RO"
   const [managerMessage, setManagerMessage] = useState("")
@@ -731,11 +729,11 @@ const ChatMessages = ({
             )}
         </div>
 
-        <TaskModal
+        {/* <TaskModal
           isOpen={isTaskModalOpen}
           onClose={() => setIsTaskModalOpen(false)}
           selectedTicketId={selectTicketId}
-        />
+        /> */}
       </div>
     </div>
   )

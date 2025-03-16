@@ -8,7 +8,7 @@ import { TextEllipsis } from "../../TextEllipsis"
 import { Table } from "../../Table"
 import { Checkbox } from "../../Checkbox"
 import { Modal } from "../../Modal"
-import SingleChat from "../../ChatComponent/SingleChat"
+import { SingleChat } from "../../../features"
 import { useParams, useNavigate } from "react-router-dom"
 import { Tag } from "../../Tag"
 import { WorkflowTag } from "../../WorkflowTag"
@@ -377,8 +377,9 @@ export const LeadTable = ({
         <Table columns={columns} data={filteredLeads} select={selectTicket} />
       </div>
 
+      {/* FIXME: Remove inline style when the layout is fixed */}
       {!!totalLeads && (
-        <div>
+        <div style={{ marginBottom: 10 }}>
           <Pagination
             totalPages={totalLeads}
             currentPage={currentPage}

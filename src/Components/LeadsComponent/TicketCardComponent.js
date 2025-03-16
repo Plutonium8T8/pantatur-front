@@ -4,7 +4,7 @@ import { truncateText, parseTags } from "../../stringUtils"
 import { getPriorityColor } from "../utils/ticketUtils"
 import "./TicketCardComponent.css"
 import { Modal } from "../Modal"
-import SingleChat from "../ChatComponent/SingleChat"
+import { SingleChat } from "../../features"
 import { Tag } from "../Tag"
 
 const TicketCard = ({ ticket, onEditTicket }) => {

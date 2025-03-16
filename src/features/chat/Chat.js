@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { useAppContext } from "../../AppContext"
 import "./chat.css"
 import ChatExtraInfo from "./ChatExtraInfo"
 import ChatList from "./ChatList"
 import ChatMessages from "./ChatMessages"
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa"
-import { useUser } from "../../UserContext"
+import { useUser, useApp } from "../../hooks"
 
 export const Chat = () => {
   const { tickets, updateTicket, setTickets, messages, markMessagesAsRead } =
-    useAppContext()
+    useApp()
   const { ticketId } = useParams()
   const navigate = useNavigate()
   const { userId } = useUser()
