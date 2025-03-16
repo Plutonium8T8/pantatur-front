@@ -1,7 +1,7 @@
 import React from "react"
 import TicketCard from "./TicketCardComponent"
-import { workflowStyles, workflowBrightStyles } from "../utils/workflowStyles"
 import { getLanguageByKey } from "../utils/getLanguageByKey"
+import { getColorByWorkflowType, getBrightByWorkflowType } from "../WorkflowTag"
 
 const priorityOrder = {
   joasă: 1,
@@ -42,13 +42,13 @@ const WorkflowColumn = ({ workflow, tickets, searchTerm, onEditTicket }) => {
     <div
       className="colone-ticket"
       style={{
-        backgroundColor: workflowStyles[workflow]?.backgroundColor || ""
+        backgroundColor: getColorByWorkflowType(workflow, "")
       }}
     >
       <div
         className="name-workflow"
         style={{
-          backgroundColor: workflowBrightStyles[workflow]?.backgroundColor || ""
+          backgroundColor: getBrightByWorkflowType(workflow, "")
         }}
       >
         {getLanguageByKey(workflow)}

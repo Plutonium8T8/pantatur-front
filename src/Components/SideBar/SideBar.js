@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
-import { useAppContext } from "../../AppContext"
+import { useApp } from "../../hooks"
 import { translations } from "../utils/translations"
 import "./SideBar.css"
 import LanguageToggle from "./LanguageToggle"
@@ -18,10 +18,10 @@ import { clearCookies } from "../../Components/utils/clearCookies"
 import { api } from "../../api"
 import { LoadingOverlay } from "../LoadingOverlay"
 
-const CustomSidebar = ({ onOpenNotifications, onOpenTasks, onOpenAccount }) => {
+const CustomSidebar = ({ onOpenNotifications, onOpenAccount }) => {
   const location = useLocation()
   const navigate = useNavigate()
-  const { unreadCount } = useAppContext()
+  const { unreadCount } = useApp()
   const [loading, setLoading] = useState(false)
 
   const language = localStorage.getItem("language") || "RO"
@@ -86,15 +86,8 @@ const CustomSidebar = ({ onOpenNotifications, onOpenTasks, onOpenAccount }) => {
               )}
             </div>
             <div
-              className={`menu-item ${isActive("notifications") ? "active" : ""}`}
-              onClick={onOpenNotifications}
-            >
-              <FaBell size={24} />
-              <span>{translations["Notificări"][language][1]}</span>
-            </div>
-            <div
               className={`menu-item ${isActive("tasks") ? "active" : ""}`}
-              onClick={onOpenTasks}
+              onClick={() => handleNavigate("tasks")}
             >
               <FaTasks size={24} />
               <span>{translations["Taskuri"][language]}</span>
@@ -105,6 +98,13 @@ const CustomSidebar = ({ onOpenNotifications, onOpenTasks, onOpenAccount }) => {
             >
               <FaUserSecret size={24} />
               <span>{translations["Admin"][language]}</span>
+            </div>
+            <div
+              className={`menu-item ${isActive("notifications") ? "active" : ""}`}
+              onClick={onOpenNotifications}
+            >
+              <FaBell size={24} />
+              <span>{translations["Notificări"][language][1]}</span>
             </div>
             <div className={`menu-item `}>
               <LanguageToggle />

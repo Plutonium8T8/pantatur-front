@@ -4,7 +4,8 @@ import { truncateText, parseTags } from "../../stringUtils"
 import { getPriorityColor } from "../utils/ticketUtils"
 import "./TicketCardComponent.css"
 import { Modal } from "../Modal"
-import { SingleChat } from "../../features"
+import SingleChat from "../ChatComponent/SingleChat"
+import { Tag } from "../Tag"
 
 const TicketCard = ({ ticket, onEditTicket }) => {
   const [isHovered, setIsHovered] = useState(false)
@@ -66,10 +67,8 @@ const TicketCard = ({ ticket, onEditTicket }) => {
                 </div>
                 <div className="ticket-contact">Phone: {formattedPhone}</div>
                 <div className="ticket-tags">
-                  {tags.map((tag, index) => (
-                    <span key={index} className="tag">
-                      {truncateText(tag, 15)}
-                    </span>
+                  {tags.map((tag) => (
+                    <Tag key={tag}>{truncateText(tag, 15)}</Tag>
                   ))}
                 </div>
               </div>

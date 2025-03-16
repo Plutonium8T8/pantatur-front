@@ -1,28 +1,21 @@
 import { useState, useMemo, useEffect } from "react"
 import { Link } from "react-router-dom"
-import { cleanValue } from "../utils"
-import { workflowStyles } from "../../utils/workflowStyles"
 import "./LeadTable.css"
 import { SpinnerRightBottom } from "../../SpinnerRightBottom"
 import { Pagination } from "../../Pagination"
-import { getLanguageByKey } from "../../utils/getLanguageByKey"
+import { getLanguageByKey, cleanValue } from "../../utils"
 import { TextEllipsis } from "../../TextEllipsis"
 import { Table } from "../../Table"
 import { Checkbox } from "../../Checkbox"
 import { Modal } from "../../Modal"
-import { SingleChat } from "../../../features"
+import SingleChat from "../../ChatComponent/SingleChat"
 import { useParams, useNavigate } from "react-router-dom"
+import { Tag } from "../../Tag"
+import { WorkflowTag } from "../../WorkflowTag"
 
 const renderTags = (tags) => {
   const isTags = tags.some(Boolean)
-
-  return isTags
-    ? tags.map((tag, index) => (
-        <span key={index} className="tag">
-          {tag.trim()}
-        </span>
-      ))
-    : "—"
+  return isTags ? tags.map((tag, index) => <Tag key={index}>{tag}</Tag>) : "—"
 }
 
 export const LeadTable = ({
@@ -64,16 +57,17 @@ export const LeadTable = ({
           </div>
         )
       },
+
       {
         accessorKey: "id",
         header: () => <div className="text-center">ID</div>,
         accessorFn: ({ id }) => id,
         cell: ({ getValue }) => {
-          const id = getValue()
+          const value = getValue()
           return (
             <div className="text-center">
-              <Link to={`/leads/${id}`} className="row-id">
-                #{id}
+              <Link to={`/leads/${value}`} className="row-id">
+                #{value}
               </Link>
             </div>
           )
@@ -86,12 +80,12 @@ export const LeadTable = ({
         ),
         accessorFn: ({ clients }) => clients,
         cell: ({ getValue }) => {
-          const values = getValue()
+          const value = getValue()
 
           return (
             <div className="text-center">
-              {values?.length
-                ? values?.map((item) => cleanValue(item.name)).join(", ")
+              {value?.length
+                ? value.map((item) => cleanValue(item.name)).join(", ")
                 : cleanValue()}
             </div>
           )
@@ -104,11 +98,11 @@ export const LeadTable = ({
         ),
         accessorFn: ({ clients }) => clients,
         cell: ({ getValue }) => {
-          const values = getValue()
+          const value = getValue()
           return (
             <div className="text-center">
-              {values?.length
-                ? values?.map((item) => cleanValue(item?.surname)).join(", ")
+              {value?.length
+                ? value.map((item) => cleanValue(item.surname)).join(", ")
                 : cleanValue()}
             </div>
           )
@@ -191,14 +185,7 @@ export const LeadTable = ({
         cell: ({ getValue }) => {
           return (
             <div>
-              <span
-                style={
-                  workflowStyles[getValue()] || { backgroundColor: "#ddd" }
-                }
-                className="lead-workflow-content"
-              >
-                {getValue()}
-              </span>
+              <WorkflowTag type={getValue()} />
             </div>
           )
         }

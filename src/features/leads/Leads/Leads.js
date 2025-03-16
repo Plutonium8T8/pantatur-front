@@ -1,14 +1,11 @@
 import React, { useState, useMemo, useEffect, useRef } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { SpinnerRightBottom } from "../../../Components/SpinnerRightBottom"
-import { useDOMElementHeight } from "../../../hooks"
-import { useAppContext } from "../../../AppContext"
+import { useDOMElementHeight, useApp } from "../../../hooks"
 import { priorityOptions } from "../../../FormOptions/PriorityOption"
 import { workflowOptions } from "../../../FormOptions/WorkFlowOption"
 import WorkflowColumn from "../../../Components/LeadsComponent/WorkflowColumnComponent"
 import TicketModal from "../../../Components/LeadsComponent/TicketModal/TicketModalComponent"
 import { TicketFilterModal } from "../../../Components/TicketFilterModal"
-// import "../../App.css"
 import "../../../Components/SnackBarComponent/SnackBarComponent.css"
 import { FaFilter, FaTable, FaColumns, FaTrash, FaEdit } from "react-icons/fa"
 import { getLanguageByKey } from "../../../Components/utils/getLanguageByKey"
@@ -44,7 +41,7 @@ export const Leads = () => {
   const navigate = useNavigate()
 
   const [hardTickets, setHardTickets] = useState([])
-  const { tickets, isLoading, setTickets } = useAppContext()
+  const { tickets, isLoading, setTickets } = useApp()
   const [isTableView, setIsTableView] = useState(false)
   const [filteredTicketIds, setFilteredTicketIds] = useState(null)
   const [searchTerm, setSearchTerm] = useState("")

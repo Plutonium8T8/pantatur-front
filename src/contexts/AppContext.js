@@ -1,18 +1,9 @@
-import React, {
-  createContext,
-  useState,
-  useEffect,
-  useContext,
-  useRef
-} from "react"
+import React, { createContext, useState, useEffect, useRef } from "react"
 import { useSnackbar } from "notistack"
-import { useUser } from "./UserContext"
-import { truncateText } from "./stringUtils"
-import { api } from "./api"
+import { useUser } from "../hooks"
+import { api } from "../api"
 
-const AppContext = createContext()
-
-export const useAppContext = () => useContext(AppContext)
+export const AppContext = createContext()
 
 export const AppProvider = ({ children }) => {
   const socketRef = useRef(null)
@@ -198,7 +189,7 @@ export const AppProvider = ({ children }) => {
     try {
       setIsLoading(true)
 
-      const ticket = await api.tickets.getLightById(ticketId)
+      const ticket = await api.tickets.ticket.getLightById(ticketId)
 
       setTickets((prevTickets) => {
         const existingTicket = prevTickets.find((t) => t.id === ticketId)
@@ -379,25 +370,25 @@ export const AppProvider = ({ children }) => {
         }
         break
       }
-      case "ticket_update": {
-        console.log("обновление тикета :", message.data)
-        const ticketId = message.data.ticket_id
-        fetchSingleTicket(ticketId)
-      }
-      case "notification": {
-        const notificationText = truncateText(
-          message.data.description || "Уведомление с пустым текстом!",
-          100
-        )
-        enqueueSnackbar(notificationText, { variant: "info" })
-        break
-      }
-      case "task": {
-        enqueueSnackbar(`Новое задание: ${message.data.title}`, {
-          variant: "warning"
-        })
-        break
-      }
+      // case "ticket_update": {
+      //   console.log("обновление тикета :", message.data)
+      //   const ticketId = message.data.ticket_id
+      //   fetchSingleTicket(ticketId)
+      // }
+      // case "notification": {
+      //   const notificationText = truncateText(
+      //     message.data.description || "Уведомление с пустым текстом!",
+      //     100
+      //   )
+      //   enqueueSnackbar(notificationText, { variant: "info" })
+      //   break
+      // }
+      // case "task": {
+      //   enqueueSnackbar(`Новое задание: ${message.data.title}`, {
+      //     variant: "warning"
+      //   })
+      //   break
+      // }
       case "pong":
         console.log("пришел понг")
         break

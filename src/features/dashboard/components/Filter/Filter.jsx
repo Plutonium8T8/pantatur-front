@@ -97,17 +97,14 @@ export const Filter = ({
         </Button>
         <DatePicker
           selectsRange
-          startDate={dateRange.start}
-          endDate={dateRange.end}
+          startDate={currentDate ? null : dateRange.start}
+          endDate={currentDate ? null : dateRange.end}
           dateFormat={ISO_DATE}
           placeholder={getLanguageByKey("Selectează o dată")}
           clear
           onChange={(date) => {
             const [start, end] = date
-
-            if (!start && !end) {
-              setCurrentDate()
-            }
+            setCurrentDate()
 
             onSelectDataRange({
               start,

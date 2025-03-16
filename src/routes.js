@@ -1,6 +1,7 @@
 import LoginForm from "./Components/LoginComponent/LoginForm"
 import { AdminPanel, Chat, Leads, Dashboard } from "./features"
 import { NoAccess } from "./Components/NoAccess"
+import TaskPage from "./Components/TaskComponent/TaskPage"
 
 export const publicRoutes = [
   {
@@ -29,5 +30,9 @@ export const privateRoutes = (isAllowRole) => [
   {
     path: "/leads/:ticketId?",
     component: Leads
+  },
+  {
+    path: "/tasks",
+    component: TaskPage
   }
 ]

@@ -2,13 +2,11 @@ import { useState } from "react"
 import CustomSidebar from "../../Components/SideBar/SideBar"
 import UserPage from "../../Components/UserPage/UserPage"
 import NotificationModal from "../../Components/SlideInComponent/NotificationModal"
-import TaskComponent from "../../Components/SlideInComponent/TaskComponent"
-import { useUser } from "../../UserContext"
+import { useUser } from "../../hooks"
 import Cookies from "js-cookie"
 import "./AppLayout.css"
 
 export const AppLayout = ({ children }) => {
-  const [isTaskComponentOpen, setIsTaskComponentOpen] = useState(false)
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false)
   const [isAccountComponentOpen, setIsAccountComponentOpen] = useState(false)
 
@@ -25,7 +23,6 @@ export const AppLayout = ({ children }) => {
     <div className="app-container">
       <CustomSidebar
         onOpenNotifications={() => setIsNotificationModalOpen(true)}
-        onOpenTasks={() => setIsTaskComponentOpen(true)}
         onOpenAccount={() => setIsAccountComponentOpen(true)}
         onLogout={handleLogout}
         userRoles={userRoles}
@@ -38,10 +35,6 @@ export const AppLayout = ({ children }) => {
       <NotificationModal
         isOpen={isNotificationModalOpen}
         onClose={() => setIsNotificationModalOpen(false)}
-      />
-      <TaskComponent
-        isOpen={isTaskComponentOpen}
-        onClose={() => setIsTaskComponentOpen(false)}
       />
     </div>
   )

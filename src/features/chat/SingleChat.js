@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react"
-import { useAppContext } from "../../AppContext"
+import { useApp, useUser } from "../../hooks"
 import "./chat.css"
 import ChatExtraInfo from "./ChatExtraInfo"
 import ChatList from "./ChatList"
 import ChatMessages from "./ChatMessages"
 import { FaTimes } from "react-icons/fa"
-import { useUser } from "../../UserContext"
 
 export const SingleChat = ({ ticketId, onClose }) => {
   const {
@@ -15,7 +14,7 @@ export const SingleChat = ({ ticketId, onClose }) => {
     messages,
     markMessagesAsRead,
     getClientMessagesSingle
-  } = useAppContext()
+  } = useApp()
   const { userId } = useUser()
   const [selectTicketId, setSelectTicketId] = useState(
     ticketId ? Number(ticketId) : null

@@ -166,7 +166,6 @@
 //         fetchTicketExtraInfo(selectTicketId);
 //     }, [selectTicketId]);
 
-
 //     const handleTicketClick = async (ticketId) => {
 //         if (selectTicketId === ticketId) return;
 
@@ -358,7 +357,6 @@
 //     //     });
 //     // };
 
-
 //     const getLastReaction = (message) => {
 //         if (!message.reactions) {
 //             return '☺';
@@ -432,7 +430,6 @@
 //         }
 //     };
 
-
 //     useEffect(() => {
 //         document.addEventListener('click', handleClickOutside);
 //         return () => {
@@ -494,7 +491,6 @@
 //             console.error('Ошибка при обновлении technician_id:', error.message);
 //         }
 //     };
-
 
 //     const uploadFile = async (file) => {
 //         const formData = new FormData();
@@ -645,7 +641,6 @@
 
 //     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 //     useEffect(() => {
 //         setFilteredTickets(tickets);
 //     }, [tickets]);
@@ -757,7 +752,6 @@
 //         return [];
 //     };
 
-
 //     const handleMergeTickets = async () => {
 //         const ticketOld = ticketId;
 //         const ticketNew = extraInfo[selectTicketId]?.ticket_id_new;
@@ -804,7 +798,6 @@
 
 //     const sortedTickets = useMemo(() => {
 //         let filtered = [...tickets];
-
 
 //         const getLastMessageTime = (ticket) => {
 //             const ticketMessages = messages.filter(msg => msg.ticket_id === ticket.id);
@@ -1092,7 +1085,6 @@
 //                             const sortedMessages = messages
 //                                 .filter(msg => msg.ticket_id === selectTicketId)
 //                                 .sort((a, b) => parseDate(a.time_sent) - parseDate(b.time_sent));
-
 
 //                             const groupedMessages = sortedMessages.reduce((acc, msg) => {
 //                                 const messageDate = parseDate(msg.time_sent)?.toLocaleDateString("ru-RU", {
@@ -1412,7 +1404,6 @@
 //                                 {translations["Control calitate"]?.[language]} {getTabErrorIndicator('Control calitate')}
 //                             </button>
 //                         </div>
-
 
 //                         <div className="tab-content-chat">
 //                             {activeTab && selectTicketId && isLoading ? (

@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom"
 import { privateRoutes, publicRoutes } from "./routes"
-import { useUser } from "./UserContext"
+import { useUser } from "./hooks"
 
 const ADMIN_ROLE = "ROLE_ADMIN"
 

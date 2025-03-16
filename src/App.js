@@ -1,16 +1,13 @@
 import React, { useEffect } from "react"
-import "./App.css"
-import { UserProvider } from "./UserContext"
+import { UserProvider, AppProvider } from "./contexts"
 import Cookies from "js-cookie"
-import { AppProvider } from "./AppContext"
 import { SnackbarProvider } from "notistack"
-import "./App.css"
-import "./reset.css"
 import { publicRoutes } from "./routes"
 import { AppLayout } from "./layout"
 import { useNavigate, useLocation } from "react-router-dom"
 import { PrivateRoutes, PublicRoutes } from "./AppRoutes"
 import { Session } from "./Session"
+import "./App.css"
 
 const JWT_TOKEN = Cookies.get("jwt")
 
@@ -18,7 +15,7 @@ function App() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
 
-  const publicPaths = publicRoutes.filter(({ isPublic }) => isPublic)
+  const publicPaths = publicRoutes.map(({ path }) => path)
 
   useEffect(() => {
     if (!JWT_TOKEN) {
