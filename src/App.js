@@ -3,7 +3,7 @@ import { UserProvider, AppProvider } from "./contexts"
 import Cookies from "js-cookie"
 import { SnackbarProvider } from "notistack"
 import { publicRoutes } from "./routes"
-import { Layout } from "./Layout"
+import { AppLayout } from "./layout"
 import { useNavigate, useLocation } from "react-router-dom"
 import { PrivateRoutes, PublicRoutes } from "./AppRoutes"
 import { Session } from "./Session"
@@ -33,9 +33,9 @@ function App() {
         <UserProvider>
           <Session>
             <AppProvider>
-              <Layout>
+              <AppLayout>
                 <PrivateRoutes />
-              </Layout>
+              </AppLayout>
             </AppProvider>
           </Session>
         </UserProvider>

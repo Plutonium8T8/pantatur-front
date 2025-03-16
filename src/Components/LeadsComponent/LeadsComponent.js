@@ -20,6 +20,7 @@ import { useSnackbar } from "notistack"
 import { Input } from "../Input/Input"
 import { Modal } from "../Modal"
 import SingleChat from "../ChatComponent/SingleChat"
+import { Spin } from "../Spin"
 
 const SORT_BY = "creation_date"
 const ORDER = "DESC"
@@ -27,7 +28,7 @@ const HARD_TICKET = "hard"
 const LIGHT_TICKET = "light"
 const NUMBER_PAGE = 1
 
-const normalizeLadsFilters = (filters) => {
+const normalizeLeadsFilters = (filters) => {
   return {
     ...filters,
     technician_id: filters.technician_id
@@ -363,7 +364,11 @@ const Leads = () => {
         }}
         className={`dashboard-container ${isTableView ? "leads-table" : ""}`}
       >
-        {isTableView ? (
+        {isLoading || loading ? (
+          <div className="d-flex align-items-center justify-content-center h-full">
+            <Spin />
+          </div>
+        ) : isTableView ? (
           <div className="leads-table">
             <LeadTable
               loading={loading}
@@ -394,8 +399,6 @@ const Leads = () => {
               ))}
           </div>
         )}
-
-        {(isLoading || loading) && <SpinnerRightBottom />}
         {isModalOpen && currentTicket && (
           <TicketModal
             ticket={currentTicket}
@@ -421,22 +424,21 @@ const Leads = () => {
           onClose={closeTicketModal}
           onApplyWorkflowFilters={(filters) =>
             applyWorkflowFilters(
-              normalizeLadsFilters(filters),
+              normalizeLeadsFilters(filters),
               filteredTicketIds
             )
           }
           onApplyTicketFilters={(filters) => {
-            handleApplyFilterLightTicket(normalizeLadsFilters(filters))
+            handleApplyFilterLightTicket(normalizeLeadsFilters(filters))
           }}
         />
-
         <TicketFilterModal
           loading={loadingFilters}
           isOpen={isFilterOpen && isTableView}
           onClose={closeTicketModal}
           onApplyWorkflowFilters={closeTicketModal}
           onApplyTicketFilters={(filters) =>
-            handleApplyFiltersHardTicket(normalizeLadsFilters(filters))
+            handleApplyFiltersHardTicket(normalizeLeadsFilters(filters))
           }
           resetTicketsFilters={setTableLeadsFilters}
         />
