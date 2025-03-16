@@ -11,10 +11,6 @@ export const publicRoutes = [
   {
     path: "/auth",
     component: LoginForm
-  },
-  {
-    path: "/test",
-    component: Test
   }
 ]
 
