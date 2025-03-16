@@ -5,11 +5,16 @@ import LoginForm from "./Components/LoginComponent/LoginForm"
 import AdminPanel from "./Components/AdminPanelComponent/AdminPanel"
 import { NoAccess } from "./Components/NoAccess"
 import TaskPage from "./Components/TaskComponent/TaskPage"
+import { Test } from "./Components/Test"
 
 export const publicRoutes = [
   {
     path: "/auth",
     component: LoginForm
+  },
+  {
+    path: "/test",
+    component: Test
   }
 ]
 
@@ -37,5 +42,9 @@ export const privateRoutes = (isAllowRole) => [
   {
     path: "/tasks",
     component: TaskPage
+  },
+  {
+    path: "/test",
+    component: Test
   }
 ]

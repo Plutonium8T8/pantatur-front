@@ -624,3 +624,7 @@ input {
 .white-space-nowrap {
   white-space: nowrap;
 }
+
+.pointer {
+  cursor: pointer;
+}
