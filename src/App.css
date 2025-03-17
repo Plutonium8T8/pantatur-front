@@ -537,6 +537,7 @@ button {
 .leads-table {
   width: 100%;
   padding-bottom: 0.3%;
+  overflow-y: scroll;
 }
 /* TODO: Remove me when Input component is created */
 input {

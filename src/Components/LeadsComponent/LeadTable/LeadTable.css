@@ -1,3 +1,8 @@
+.leads-table-wrapper {
+  /* TODO: Replace `67px` with pagination height */
+  margin-bottom: 67px;
+}
+
 .lead-workflow-content {
   font-weight: bold;
   color: #17a2b8;
@@ -15,4 +20,11 @@
 
 .row-id:hover {
   text-decoration: underline;
+}
+
+.pagination-leads-table {
+  position: fixed;
+  bottom: 0;
+  background-color: white;
+  width: 100%;
 }
