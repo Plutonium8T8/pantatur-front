@@ -1,3 +1,10 @@
+.leads-table {
+  width: 100%;
+  /* TODO: Replace 67px with dynamic heigh of pagination */
+  height: calc(100% - 67px);
+  overflow-y: scroll;
+}
+
 .lead-workflow-content {
   font-weight: bold;
   color: #17a2b8;
