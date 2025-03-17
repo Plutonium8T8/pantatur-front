@@ -307,16 +307,36 @@ export const AppProvider = ({ children }) => {
 
         break
       }
+      case "delete": {
+        console.log("Удаление сообщения:", message.data)
+
+        const { message_id } = message.data
+        if (!message_id) {
+          console.warn("Сообщение для удаления не содержит id.")
+          break
+        }
+
+        setMessages((prevMessages) =>
+          prevMessages.filter((msg) => msg.id !== message_id)
+        )
+
+        setUnreadMessages((prevUnread) => {
+          const updatedUnread = new Map(prevUnread)
+          updatedUnread.delete(message_id)
+          return updatedUnread
+        })
+
+        break
+      }
       case "seen": {
         const { ticket_id, seen_at } = message.data
-
         console.log("🔄 Получен `seen` из WebSocket:", { ticket_id, seen_at })
 
-        setMessages((prevMessages) => {
-          return prevMessages.map((msg) =>
+        setMessages((prevMessages) =>
+          prevMessages.map((msg) =>
             msg.ticket_id === ticket_id ? { ...msg, seen_at } : msg
           )
-        })
+        )
 
         setUnreadMessages((prevUnreadMessages) => {
           const updatedUnreadMap = new Map(prevUnreadMessages)
@@ -361,34 +381,9 @@ export const AppProvider = ({ children }) => {
           console.warn(
             "Не удалось подключиться к комнатам. WebSocket не готов."
           )
-          console.log(
-            "Состояние WebSocket:",
-            socketInstance
-              ? socketInstance.readyState
-              : "Нет WebSocket соединения"
-          )
         }
         break
       }
-      // case "ticket_update": {
-      //   console.log("обновление тикета :", message.data)
-      //   const ticketId = message.data.ticket_id
-      //   fetchSingleTicket(ticketId)
-      // }
-      // case "notification": {
-      //   const notificationText = truncateText(
-      //     message.data.description || "Уведомление с пустым текстом!",
-      //     100
-      //   )
-      //   enqueueSnackbar(notificationText, { variant: "info" })
-      //   break
-      // }
-      // case "task": {
-      //   enqueueSnackbar(`Новое задание: ${message.data.title}`, {
-      //     variant: "warning"
-      //   })
-      //   break
-      // }
       case "pong":
         console.log("пришел понг")
         break
