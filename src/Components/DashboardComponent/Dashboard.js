@@ -21,7 +21,6 @@ import {
 } from "chart.js"
 import { useUser } from "../../hooks"
 import { api } from "../../api"
-import { SpinnerRightBottom } from "../SpinnerRightBottom"
 import { Filter } from "./Filter"
 import {
   chartsMetadata,
@@ -34,6 +33,7 @@ import {
 import { showServerError, getLanguageByKey } from "../utils"
 import "./Dashboard.css"
 import { ISO_DATE } from "../../app-constants"
+import { Spin } from "../Spin"
 
 ChartJS.register(
   CategoryScale,
@@ -141,6 +141,14 @@ const Dashboard = () => {
     return { cols, rowHeight }
   }, [containerWidth])
 
+  if (isLoading) {
+    return (
+      <div className="d-flex align-items-center justify-content-center h-full">
+        <Spin />
+      </div>
+    )
+  }
+
   return (
     <div className="dashboard-container-wrapper">
       <h1 className="dashboard-title | mb-16">
@@ -155,42 +163,38 @@ const Dashboard = () => {
         dateRange={dateRange}
       />
 
-      {isLoading ? (
-        <SpinnerRightBottom />
-      ) : (
-        <GridLayout
-          className="dashboard-layout"
-          layout={layout}
-          cols={cols}
-          rowHeight={rowHeight}
-          width={containerWidth}
-          isResizable={true}
-          isDraggable={true}
-          compactType={null}
-          preventCollision={true}
-          onResizeStop={(_, __, resizeGraph) => updateGraph(resizeGraph)}
-          onDragStop={(_, __, movedGraph) => updateGraph(movedGraph)}
-        >
-          {layout.map((graph) => {
-            const { label } = metricsDashboardCharts[graph.graphName]
-            const ChartComponent = chartComponents[graph.type]
-            const graphValue = statistics[graph.graphName].data
+      <GridLayout
+        className="dashboard-layout"
+        layout={layout}
+        cols={cols}
+        rowHeight={rowHeight}
+        width={containerWidth}
+        isResizable={true}
+        isDraggable={true}
+        compactType={null}
+        preventCollision={true}
+        onResizeStop={(_, __, resizeGraph) => updateGraph(resizeGraph)}
+        onDragStop={(_, __, movedGraph) => updateGraph(movedGraph)}
+      >
+        {layout.map((graph) => {
+          const { label } = metricsDashboardCharts[graph.graphName]
+          const ChartComponent = chartComponents[graph.type]
+          const graphValue = statistics[graph.graphName].data
 
-            if (graphValue?.length) {
-              const chartData = chartsMetadata(graphValue, label, graph.type)
+          if (graphValue?.length) {
+            const chartData = chartsMetadata(graphValue, label, graph.type)
 
-              return renderChart({
-                Component: ChartComponent,
-                chartData,
-                chartLabel: label,
-                index: graph.i
-              })
-            }
+            return renderChart({
+              Component: ChartComponent,
+              chartData,
+              chartLabel: label,
+              index: graph.i
+            })
+          }
 
-            return null
-          })}
-        </GridLayout>
-      )}
+          return null
+        })}
+      </GridLayout>
     </div>
   )
 }
