@@ -379,10 +379,7 @@ export const LeadTable = ({
 
       {/* FIXME: Remove inline style when the layout is fixed */}
       {!!totalLeads && (
-        <div
-          className="d-flex justify-content-center | pagination-leads-table"
-          style={{ marginBottom: 10 }}
-        >
+        <div className="d-flex justify-content-center | pagination-leads-table">
           <Pagination
             totalPages={totalLeads}
             currentPage={currentPage}
