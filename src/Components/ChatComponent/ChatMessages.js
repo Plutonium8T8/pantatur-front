@@ -192,34 +192,24 @@ const ChatMessages = ({
     }
 
     const getLastReaction = (message) => {
-        if (!message.reactions) {
-            return "☺"
+        if (!message.reactions || message.reactions === "{}") {
+            return "☺"; // Если реакций нет, вернуть стандартный смайлик
         }
 
         try {
-            const reactionsArray = message.reactions
-                .replace(/^{|}$/g, "")
-                .split('","')
-                .map((reaction) => reaction.replace(/(^"|"$|\")/g, "").trim())
+            // Парсим JSON-объект реакций
+            const reactionsObject = JSON.parse(message.reactions);
 
-            const parsedReactions = reactionsArray.map((reaction) => {
-                try {
-                    const normalizedReaction = reaction.replace('\"', "")
-                    const parsed = JSON.parse(normalizedReaction)
-                    return parsed.reaction
-                } catch {
-                    return reaction
-                }
-            })
+            // Получаем массив всех реакций (значения объекта)
+            const reactionsArray = Object.values(reactionsObject);
 
-            return parsedReactions.length > 0
-                ? parsedReactions[parsedReactions.length - 1]
-                : "☺"
+            // Берем последнюю реакцию (если есть) или дефолтный смайлик
+            return reactionsArray.length > 0 ? reactionsArray[reactionsArray.length - 1] : "☺";
         } catch (error) {
-            console.error("Ошибка при обработке реакций:", error)
-            return "☺"
+            console.error("Ошибка при обработке реакций:", error);
+            return "☺"; // Если парсинг сломался, вернуть стандартный смайлик
         }
-    }
+    };
 
     const handleClick = () => {
         if (!selectedClient) {
