@@ -14,7 +14,7 @@ import { useSnackbar } from "notistack"
 import { Modal } from "../Modal"
 import SingleChat from "../ChatComponent/SingleChat"
 import { Spin } from "../Spin"
-import { LeadsFilter } from "./LeadsFilter"
+import { RefLeadsFilter } from "./LeadsFilter"
 import "../../App.css"
 import "../SnackBarComponent/SnackBarComponent.css"
 
@@ -282,7 +282,8 @@ const Leads = () => {
 
   return (
     <>
-      <LeadsFilter
+      <RefLeadsFilter
+        ref={refLeadsFilter}
         openCreateTicketModal={openCreateTicketModal}
         setSearchTerm={setSearchTerm}
         searchTerm={searchTerm}
