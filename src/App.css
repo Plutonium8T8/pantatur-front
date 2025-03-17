@@ -207,18 +207,6 @@
   max-height: 98vh;
 }
 
-/* .button-add-ticket {
-  border-radius: 4px;
-  font-size: 18px;
-  width: 240px;
-  height: 42px;
-  transition: transform 0.1s ease;
-}
-
-.button-add-ticket:active {
-  transform: scale(0.95);
-} */
-
 .container-select-priority-workflow {
   display: flex;
   flex-direction: column;
@@ -514,24 +502,6 @@ button {
   gap: 10px;
   padding-bottom: 20px;
 }
-
-/* .button-filter {
-  position: relative;
-  border-radius: 4px;
-  font-size: 18px;
-  height: 42px;
-  transition: transform 0.1s ease;
-} */
-
-/* .filter-indicator {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  width: 8px;
-  height: 8px;
-  background: red;
-  border-radius: 50%;
-} */
 
 /* TODO: Remove me when Input component is created */
 input {

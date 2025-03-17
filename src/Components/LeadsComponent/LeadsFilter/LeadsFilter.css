@@ -1,49 +1,35 @@
 .dashboard-header {
   position: fixed;
-  width: 100%;
+  width: calc(100% - 90px);
   background-color: #dfefd9f9;
   padding-inline: 20px;
   padding-block: 10px;
+  display: flex;
+  justify-content: space-between;
+  margin-right: 500px;
 }
 
 .header {
   display: flex;
   align-items: center;
   gap: 16px;
-  text-align: center;
-}
-
-.button-add-ticket {
-  border-radius: 4px;
-  font-size: 18px;
-  width: 240px;
-  height: 42px;
-  transition: transform 0.1s ease;
-}
-
-.button-add-ticket:active {
-  transform: scale(0.95);
 }
 
 .search-input {
-  min-width: 550px;
+  min-width: 350px;
 }
 
 .button-filter {
   position: relative;
-  border-radius: 4px;
-  font-size: 18px;
-  height: 42px;
-  transition: transform 0.1s ease;
 }
 
 .filter-indicator {
   position: absolute;
-  top: 5px;
-  right: 5px;
+  top: 4px;
+  right: 12px;
   width: 8px;
   height: 8px;
-  background: red;
+  background: #ff4d4f;
   border-radius: 50%;
 }
 
@@ -55,5 +41,4 @@
   background-color: #f8f9fa;
   border-radius: 5px;
   display: inline-block;
-  margin-left: 15px;
 }

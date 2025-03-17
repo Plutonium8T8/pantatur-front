@@ -1,7 +1,11 @@
-import { FaFilter, FaTable, FaColumns, FaTrash, FaEdit } from "react-icons/fa"
+import { FaTrash, FaEdit } from "react-icons/fa"
+import { TbLayoutKanbanFilled } from "react-icons/tb"
+import { LuFilter } from "react-icons/lu"
+import { FaList } from "react-icons/fa6"
 import { Button } from "../../Button"
 import { Input } from "../../Input"
 import { getLanguageByKey } from "../../utils"
+import { Segmented } from "../../Segmented"
 import "./LeadsFilter.css"
 
 export const LeadsFilter = ({
@@ -21,17 +25,12 @@ export const LeadsFilter = ({
 }) => {
   return (
     <div
-      style={{ border: "1px solid red" }}
       //   TODO: add ref
       //   ref={}
       className="dashboard-header"
     >
       <div className="header">
-        <Button
-          variant="primary"
-          onClick={openCreateTicketModal}
-          className="button-add-ticket"
-        >
+        <Button variant="primary" onClick={openCreateTicketModal}>
           {getLanguageByKey("Adaugă lead")}
         </Button>
 
@@ -48,13 +47,6 @@ export const LeadsFilter = ({
           className="search-input"
           clear
         />
-        <button
-          onClick={() => setIsTableView((prev) => !prev)}
-          className="d-flex align-items-center gap-4"
-        >
-          {isTableView ? <FaColumns /> : <FaTable />}
-          {getLanguageByKey(isTableView ? "Coloană" : "Listă")}
-        </button>
 
         <div className="ticket-counter-row">
           {getLanguageByKey("Toate tichetele")}: {tickets.length} |{" "}
@@ -83,16 +75,36 @@ export const LeadsFilter = ({
           </Button>
         )}
 
-        <Button
-          variant="primary"
-          onClick={() => setIsFilterOpen(true)}
-          className="button-filter"
-        >
-          <FaFilter />
+        <button onClick={() => setIsFilterOpen(true)} className="button-filter">
+          <div className="d-flex align-items-center">
+            <LuFilter />
+          </div>
           {Object.values(filters).some((value) =>
             Array.isArray(value) ? value.length > 0 : value
           ) && <span className="filter-indicator"></span>}
-        </Button>
+        </button>
+      </div>
+
+      <div className="d-flex gap-16">
+        <Segmented
+          onChange={(value) => {
+            setIsTableView((prev) => value === "kanban")
+          }}
+          options={[
+            { value: "list", label: <TbLayoutKanbanFilled /> },
+            { value: "kanban", label: <FaList /> }
+          ]}
+        />
+
+        <Segmented
+          onChange={(data) => console.log(data)}
+          options={[
+            { value: "RO", label: "RO" },
+            { value: "MD", label: "MD" },
+            { value: "Filiale", label: "Fil" },
+            { value: "Francize", label: "Francize" }
+          ]}
+        />
       </div>
     </div>
   )
