@@ -1,3 +1,7 @@
+/**
+ * DEPRECATED
+ * This table component is deprecated and will be removed
+ */
 import { HeaderCell } from "./HeaderCell"
 import { RowCell } from "./RowCell"
 import {
