@@ -384,11 +384,11 @@ export const AppProvider = ({ children }) => {
         }
         break
       }
-      case "ticket_update": {
-        console.log("обновление тикета :", message.data)
-        const ticketId = message.data.ticket_id
-        fetchSingleTicket(ticketId)
-      }
+      // case "ticket_update": {
+      //   console.log("обновление тикета :", message.data)
+      //   const ticketId = message.data.ticket_id
+      //   fetchSingleTicket(ticketId)
+      // }
       case "pong":
         console.log("пришел понг")
         break
