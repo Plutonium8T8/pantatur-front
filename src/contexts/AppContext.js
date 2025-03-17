@@ -324,15 +324,23 @@ export const AppProvider = ({ children }) => {
           )
 
           // Определяем последнее сообщение тикета после удаления
-          const lastMessage = updatedMessages
-            .filter((msg) => msg.ticket_id === ticket_id)
-            .reduce(
-              (latest, msg) =>
-                !latest || new Date(msg.time_sent) > new Date(latest.time_sent)
-                  ? msg
-                  : latest,
-              null
-            )
+          const lastMessage = messages
+            .filter((msg) => msg.ticket_id === ticket_id) // Фильтруем по ticket_id
+            .reduce((latest, msg) => {
+              // Преобразуем "13-03-2025 14:20:45" → "2025-03-13T14:20:45"
+              const [day, month, year, time] = msg.time_sent.split(/[-\s]/)
+              const msgDate = new Date(`${year}-${month}-${day}T${time}`)
+
+              if (!latest) return msg
+
+              const [latestDay, latestMonth, latestYear, latestTime] =
+                latest.time_sent.split(/[-\s]/)
+              const latestDate = new Date(
+                `${latestYear}-${latestMonth}-${latestDay}T${latestTime}`
+              )
+
+              return msgDate > latestDate ? msg : latest
+            }, null)
 
           // Обновить `last_message` и `time_sent` в `tickets`
           setTickets((prevTickets) =>
