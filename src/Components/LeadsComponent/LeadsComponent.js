@@ -286,6 +286,7 @@ const Leads = () => {
 
   return (
     <>
+      {/* TODO: Extract the filter into a separate component */}
       <div ref={refLeadsFilter} className="dashboard-header">
         <div className="header">
           <Button
