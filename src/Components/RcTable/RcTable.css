@@ -54,3 +54,10 @@
 .table tbody .rc-table-row.row-selection:hover {
   background-color: #38a169ee;
 }
+
+.table-spinner-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 500px;
+}

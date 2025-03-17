@@ -3,26 +3,42 @@ import { RcTable, HeaderCellRcTable } from "../RcTable"
 import { Checkbox } from "../Checkbox"
 
 export const Test = () => {
-  const [order, setOrder] = useState(false)
+  const [order, setOrder] = useState("ASC")
+  const [selectedRow, setSelectedRow] = useState([])
+  const [, setColumn] = useState("")
 
   const columns = [
     {
       width: 100,
       key: "checkbox",
       align: "center",
-      render: (data) => {
-        return <Checkbox checked={true} onChange={() => {}} />
+      render: (row) => {
+        return (
+          <Checkbox
+            checked={selectedRow.includes(row.id)}
+            onChange={() => {
+              setSelectedRow((prev) =>
+                prev.includes(row.id)
+                  ? prev.filter((id) => id !== row.id)
+                  : [...prev, row.id]
+              )
+            }}
+          />
+        )
       }
     },
     {
-      title: <HeaderCellRcTable title="Title" sortable asc={order} />,
+      title: <HeaderCellRcTable title="Title" order={order} />,
       dataIndex: "name",
       key: "name",
       width: 100,
       align: "center",
       onHeaderCell: () => {
         return {
-          onClick: () => setOrder((prev) => !prev)
+          onClick: () => {
+            setColumn("name")
+            setOrder((prev) => (prev === "ASC" ? "DESC" : "ASC"))
+          }
         }
       }
     },
@@ -169,7 +185,8 @@ export const Test = () => {
         columns={columns}
         data={data}
         pagination={{ position: "center" }}
-        selectedRow={[1, 4]}
+        selectedRow={selectedRow}
+        loading={false}
         bordered
       />
     </div>
