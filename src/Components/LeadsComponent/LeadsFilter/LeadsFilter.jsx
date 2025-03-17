@@ -1,7 +1,6 @@
 import { FaTrash, FaEdit } from "react-icons/fa"
 import { TbLayoutKanbanFilled } from "react-icons/tb"
 import { IoMdAdd } from "react-icons/io"
-
 import { LuFilter } from "react-icons/lu"
 import { FaList } from "react-icons/fa6"
 import { Button } from "../../Button"
@@ -33,12 +32,12 @@ export const LeadsFilter = ({
     <div
       //   TODO: add ref
       //   ref={}
-      className="dashboard-header"
+      className="leads-header-container"
     >
-      <div className="header">
+      <div className="leads-header-filter">
         <Button
           variant="primary"
-          className="add-lead"
+          className="leads-header-filter-add-lead"
           onClick={openCreateTicketModal}
         >
           <div className="d-flex align-items-center gap-8">
@@ -57,11 +56,11 @@ export const LeadsFilter = ({
             }
           }}
           placeholder={getLanguageByKey("Cauta dupa Lead, Client sau Tag")}
-          className="search-input"
+          className="leads-header-filter-search"
           clear
         />
 
-        <div className="ticket-counter-row">
+        <div className="tickets-total">
           {getTicketCount(isTableView, totalLeads, filteredTickets.length)}
         </div>
 
@@ -86,13 +85,16 @@ export const LeadsFilter = ({
           </Button>
         )}
 
-        <button onClick={() => setIsFilterOpen(true)} className="button-filter">
+        <button
+          onClick={() => setIsFilterOpen(true)}
+          className="leads-header-filter-button"
+        >
           <div className="d-flex align-items-center">
             <LuFilter />
           </div>
           {Object.values(filters).some((value) =>
             Array.isArray(value) ? value.length > 0 : value
-          ) && <span className="filter-indicator"></span>}
+          ) && <span className="leads-header-filter-button-indicator"></span>}
         </button>
       </div>
 

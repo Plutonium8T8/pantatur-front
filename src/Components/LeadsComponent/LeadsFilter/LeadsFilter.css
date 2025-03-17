@@ -1,4 +1,4 @@
-.dashboard-header {
+.leads-header-container {
   position: fixed;
   width: calc(100% - 90px);
   background-color: #dfefd9f9;
@@ -9,31 +9,45 @@
   margin-right: 500px;
 }
 
-.header {
+.leads-header-filter {
   display: flex;
   align-items: center;
   gap: 16px;
 }
 
-.search-input {
+.leads-header-filter-search {
   min-width: 350px;
 }
 
-.button-filter {
+.leads-header-filter-button {
   position: relative;
+  border: 1px solid #0f824c;
+  height: 100%;
+  transition: 0.3s ease;
+  width: 37px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
 }
 
-.filter-indicator {
+.leads-header-filter-button:hover {
+  background-color: #0f824c;
+  color: white;
+}
+
+.leads-header-filter-button-indicator {
   position: absolute;
-  top: 4px;
-  right: 12px;
+  top: 8px;
+  right: 10px;
   width: 8px;
   height: 8px;
   background: #ff4d4f;
   border-radius: 50%;
 }
 
-.ticket-counter-row {
+.tickets-total {
   font-size: 14px;
   font-weight: bold;
   color: #333;
@@ -45,7 +59,7 @@
   align-items: center;
 }
 
-.add-lead {
+.leads-header-filter-add-lead {
   height: 100%;
   font-weight: bold;
 }
