@@ -8,7 +8,7 @@ import ToggleComponent from "./ToggleComponent"
 import { api } from "../../api"
 import { useSnackbar } from "notistack"
 import { showServerError } from "../../Components/utils/showServerError"
-import { SpinnerRightBottom } from "../SpinnerRightBottom"
+import { Spin } from "../Spin"
 
 const ScheduleComponent = () => {
   const [schedule, setSchedule] = useState([])
@@ -285,12 +285,20 @@ const ScheduleComponent = () => {
     }
   }
 
+  if (isLoading) {
+    return (
+      <div className="d-flex align-items-center justify-content-center h-full">
+        <Spin />
+      </div>
+    )
+  }
+
   return (
     <div className="schedule-container">
-      {isLoading && <SpinnerRightBottom />}
       <div className="header-component">
         {translations["Grafic de lucru"][language]}
       </div>
+
       <div className="week-navigation">
         <button onClick={goToPreviousWeek}>
           {translations["săptămâna"][language]}{" "}
@@ -364,7 +372,9 @@ const ScheduleComponent = () => {
           </tbody>
         </table>
       </div>
+
       {/* Модалка с переключателями */}
+
       {isModalOpen && selectedUser && (
         <ModalWithToggles
           employee={selectedUser}

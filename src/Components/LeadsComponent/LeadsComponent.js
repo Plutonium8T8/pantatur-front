@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { SpinnerRightBottom } from "../SpinnerRightBottom"
 import { useDOMElementHeight, useApp } from "../../hooks"
 import { priorityOptions } from "../../FormOptions/PriorityOption"
 import { workflowOptions } from "../../FormOptions/WorkFlowOption"
@@ -20,6 +19,7 @@ import { useSnackbar } from "notistack"
 import { Input } from "../Input/Input"
 import { Modal } from "../Modal"
 import SingleChat from "../ChatComponent/SingleChat"
+import { Spin } from "../Spin"
 
 const SORT_BY = "creation_date"
 const ORDER = "DESC"
@@ -27,7 +27,7 @@ const HARD_TICKET = "hard"
 const LIGHT_TICKET = "light"
 const NUMBER_PAGE = 1
 
-const normalizeLadsFilters = (filters) => {
+const normalizeLeadsFilters = (filters) => {
   return {
     ...filters,
     technician_id: filters.technician_id
@@ -285,6 +285,7 @@ const Leads = () => {
 
   return (
     <>
+      {/* TODO: Extract the filter into a separate component */}
       <div ref={refLeadsFilter} className="dashboard-header">
         <div className="header">
           <Button
@@ -361,21 +362,23 @@ const Leads = () => {
         style={{
           "--leads-filter-height": `${leadsFilterHeight}px`
         }}
-        className={`dashboard-container ${isTableView ? "leads-table" : ""}`}
+        className="dashboard-container"
       >
-        {isTableView ? (
-          <div className="leads-table">
-            <LeadTable
-              loading={loading}
-              currentPage={currentPage}
-              filteredLeads={hardTickets}
-              selectedTickets={selectedTickets}
-              toggleSelectTicket={toggleSelectTicket}
-              totalLeads={getTotalPages(totalLeads)}
-              onChangePagination={handlePaginationWorkflow}
-              selectTicket={selectedTickets}
-            />
+        {isLoading || loading ? (
+          <div className="d-flex align-items-center justify-content-center h-full">
+            <Spin />
           </div>
+        ) : isTableView ? (
+          <LeadTable
+            loading={loading}
+            currentPage={currentPage}
+            filteredLeads={hardTickets}
+            selectedTickets={selectedTickets}
+            toggleSelectTicket={toggleSelectTicket}
+            totalLeads={getTotalPages(totalLeads)}
+            onChangePagination={handlePaginationWorkflow}
+            selectTicket={selectedTickets}
+          />
         ) : (
           <div className="container-tickets">
             {workflowOptions
@@ -394,8 +397,6 @@ const Leads = () => {
               ))}
           </div>
         )}
-
-        {(isLoading || loading) && <SpinnerRightBottom />}
         {isModalOpen && currentTicket && (
           <TicketModal
             ticket={currentTicket}
@@ -421,22 +422,21 @@ const Leads = () => {
           onClose={closeTicketModal}
           onApplyWorkflowFilters={(filters) =>
             applyWorkflowFilters(
-              normalizeLadsFilters(filters),
+              normalizeLeadsFilters(filters),
               filteredTicketIds
             )
           }
           onApplyTicketFilters={(filters) => {
-            handleApplyFilterLightTicket(normalizeLadsFilters(filters))
+            handleApplyFilterLightTicket(normalizeLeadsFilters(filters))
           }}
         />
-
         <TicketFilterModal
           loading={loadingFilters}
           isOpen={isFilterOpen && isTableView}
           onClose={closeTicketModal}
           onApplyWorkflowFilters={closeTicketModal}
           onApplyTicketFilters={(filters) =>
-            handleApplyFiltersHardTicket(normalizeLadsFilters(filters))
+            handleApplyFiltersHardTicket(normalizeLeadsFilters(filters))
           }
           resetTicketsFilters={setTableLeadsFilters}
         />
