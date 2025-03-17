@@ -7,7 +7,7 @@ import { Spin } from "../Spin"
 const renderSpinOrEmptyBox = (isLoading) => {
   if (isLoading) {
     return (
-      <div style={{ height: 500 }} className="table-spinner-loading">
+      <div className="table-spinner-loading">
         <Spin />
       </div>
     )
