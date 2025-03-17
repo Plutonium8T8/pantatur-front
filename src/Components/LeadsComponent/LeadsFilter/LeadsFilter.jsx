@@ -1,5 +1,7 @@
 import { FaTrash, FaEdit } from "react-icons/fa"
 import { TbLayoutKanbanFilled } from "react-icons/tb"
+import { IoMdAdd } from "react-icons/io"
+
 import { LuFilter } from "react-icons/lu"
 import { FaList } from "react-icons/fa6"
 import { Button } from "../../Button"
@@ -7,6 +9,10 @@ import { Input } from "../../Input"
 import { getLanguageByKey } from "../../utils"
 import { Segmented } from "../../Segmented"
 import "./LeadsFilter.css"
+
+const getTicketCount = (isTable, total, filtered) => {
+  return `${getLanguageByKey("Filtrate")}: ${isTable ? total : filtered}`
+}
 
 export const LeadsFilter = ({
   openCreateTicketModal,
@@ -30,8 +36,15 @@ export const LeadsFilter = ({
       className="dashboard-header"
     >
       <div className="header">
-        <Button variant="primary" onClick={openCreateTicketModal}>
-          {getLanguageByKey("Adaugă lead")}
+        <Button
+          variant="primary"
+          className="add-lead"
+          onClick={openCreateTicketModal}
+        >
+          <div className="d-flex align-items-center gap-8">
+            <IoMdAdd size={16} />
+            {getLanguageByKey("Adaugă lead")}
+          </div>
         </Button>
 
         <Input
@@ -49,9 +62,7 @@ export const LeadsFilter = ({
         />
 
         <div className="ticket-counter-row">
-          {getLanguageByKey("Toate tichetele")}: {tickets.length} |{" "}
-          {getLanguageByKey("Filtrate")}:{" "}
-          {isTableView ? totalLeads : filteredTickets.length}
+          {getTicketCount(isTableView, totalLeads, filteredTickets.length)}
         </div>
 
         {selectedTickets.length > 0 && (
