@@ -308,7 +308,7 @@ export const AppProvider = ({ children }) => {
         break
       }
       case "delete": {
-        console.log("Удаление сообщения:", message.data)
+        console.log("delete sms:", message.data)
 
         const { message_id } = message.data
         if (!message_id) {
@@ -383,6 +383,11 @@ export const AppProvider = ({ children }) => {
           )
         }
         break
+      }
+      case "ticket_update": {
+        console.log("обновление тикета :", message.data)
+        const ticketId = message.data.ticket_id
+        fetchSingleTicket(ticketId)
       }
       case "pong":
         console.log("пришел понг")
