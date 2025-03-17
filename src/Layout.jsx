@@ -2,7 +2,7 @@ import { useState } from "react"
 import CustomSidebar from "./Components/SideBar/SideBar"
 import UserPage from "./Components/UserPage/UserPage"
 import NotificationModal from "./Components/SlideInComponent/NotificationModal"
-import { useUser } from "./UserContext"
+import { useUser } from "./hooks"
 import Cookies from "js-cookie"
 
 export const Layout = ({ children }) => {

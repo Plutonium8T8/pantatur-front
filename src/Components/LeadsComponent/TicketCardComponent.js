@@ -1,22 +1,23 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { truncateText, parseTags } from "../../stringUtils";
-import { getPriorityColor } from "../utils/ticketUtils";
-import "./TicketCardComponent.css";
-import { Modal } from "../Modal";
-import SingleChat from "../ChatComponent/SingleChat";
+import React, { useState } from "react"
+import { Link } from "react-router-dom"
+import { truncateText, parseTags } from "../../stringUtils"
+import { getPriorityColor } from "../utils/ticketUtils"
+import "./TicketCardComponent.css"
+import { Modal } from "../Modal"
+import SingleChat from "../ChatComponent/SingleChat"
+import { Tag } from "../Tag"
 
 const TicketCard = ({ ticket, onEditTicket }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const tags = parseTags(ticket.tags);
+  const [isHovered, setIsHovered] = useState(false)
+  const [isChatOpen, setIsChatOpen] = useState(false)
+  const tags = parseTags(ticket.tags)
 
   const formattedPhone =
     ticket.phone &&
-      ticket.phone.trim() !== "" &&
-      ticket.phone.replace(/[{}]/g, "").trim().toLowerCase() !== "null"
+    ticket.phone.trim() !== "" &&
+    ticket.phone.replace(/[{}]/g, "").trim().toLowerCase() !== "null"
       ? ticket.phone.replace(/[{}]/g, "").trim()
-      : "Unknown number";
+      : "Unknown number"
 
   return (
     <div
@@ -66,10 +67,8 @@ const TicketCard = ({ ticket, onEditTicket }) => {
                 </div>
                 <div className="ticket-contact">Phone: {formattedPhone}</div>
                 <div className="ticket-tags">
-                  {tags.map((tag, index) => (
-                    <span key={index} className="tag">
-                      {truncateText(tag, 15)}
-                    </span>
+                  {tags.map((tag) => (
+                    <Tag key={tag}>{truncateText(tag, 15)}</Tag>
                   ))}
                 </div>
               </div>
@@ -82,7 +81,7 @@ const TicketCard = ({ ticket, onEditTicket }) => {
                       ticket.creation_date === ticket.last_interaction_date
                         ? "red"
                         : "green",
-                    textShadow: "1px 1px 2px black",
+                    textShadow: "1px 1px 2px black"
                   }}
                 >
                   {ticket.last_interaction_date}
@@ -106,7 +105,7 @@ const TicketCard = ({ ticket, onEditTicket }) => {
         <SingleChat ticketId={ticket.id} onClose={() => setIsChatOpen(false)} />
       </Modal>
     </div>
-  );
-};
+  )
+}
 
-export default TicketCard;
+export default TicketCard

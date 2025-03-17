@@ -1,7 +1,8 @@
-import React, { createContext, useContext, useState, useEffect } from "react"
+import React, { createContext, useState, useEffect } from "react"
 import Cookies from "js-cookie"
-import { api } from "./api"
-const UserContext = createContext()
+import { api } from "../api"
+
+export const UserContext = createContext()
 
 export const UserProvider = ({ children }) => {
   const [userId, setUserId] = useState(() => {
@@ -100,12 +101,4 @@ export const UserProvider = ({ children }) => {
       {children}
     </UserContext.Provider>
   )
-}
-
-export const useUser = () => {
-  const context = useContext(UserContext)
-  if (!context) {
-    throw new Error("useUser must be used within a UserProvider")
-  }
-  return context
 }

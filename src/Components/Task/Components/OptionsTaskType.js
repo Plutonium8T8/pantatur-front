@@ -1,30 +1,30 @@
 import {
-    FaRedoAlt, // 🔄 Follow-up
-    FaBriefcase, // 👜 Meeting
-    FaCommentDots, // 💬 Prelucrare
-    FaClock, // ⏰ Verificare
-    FaPhoneSlash, // 📴 Apel pierdut
-    FaPhoneAlt, // 📞 Apel de intrare
-    FaExclamationTriangle, // ⚠️ Reapel OFERTA
-    FaPhoneVolume, // 📲 Apelare
-    FaSearch, // 🔍 Cautare TUR
-    FaUserCheck, // ✅ Ver. parteneri
-    FaFileSignature, // 📜 Modificare contr
-    FaClipboardCheck, // 📋 Rezervare
-    FaFileContract, // 📄 Contract
-    FaFileAlt, // 📑 Verificare acte
-    FaFileExport, // 📂 Eliberare acte
-    FaExclamationCircle, // 🚨 Urgent
-    FaSignInAlt, // 🏨 Check-in
-    FaSignOutAlt, // 🏨 Check-out
-    FaCheckDouble, // ✅ CONTROL
-    FaMoneyBillWave, // 💰 Cont. de plata
-    FaCreditCard, // 💳 Achitare
-    FaCheckCircle, // ✔️ Ver. achitarii
-    FaUndo, // 🔄 Retur banilor
-    FaUserPlus, // 👤 New lead. Proc-g
-    FaBell // 🔔 Напомнить
-} from "react-icons/fa";
+  FaRedoAlt, // 🔄 Follow-up
+  FaBriefcase, // 👜 Meeting
+  FaCommentDots, // 💬 Prelucrare
+  FaClock, // ⏰ Verificare
+  FaPhoneSlash, // 📴 Apel pierdut
+  FaPhoneAlt, // 📞 Apel de intrare
+  FaExclamationTriangle, // ⚠️ Reapel OFERTA
+  FaPhoneVolume, // 📲 Apelare
+  FaSearch, // 🔍 Cautare TUR
+  FaUserCheck, // ✅ Ver. parteneri
+  FaFileSignature, // 📜 Modificare contr
+  FaClipboardCheck, // 📋 Rezervare
+  FaFileContract, // 📄 Contract
+  FaFileAlt, // 📑 Verificare acte
+  FaFileExport, // 📂 Eliberare acte
+  FaExclamationCircle, // 🚨 Urgent
+  FaSignInAlt, // 🏨 Check-in
+  FaSignOutAlt, // 🏨 Check-out
+  FaCheckDouble, // ✅ CONTROL
+  FaMoneyBillWave, // 💰 Cont. de plata
+  FaCreditCard, // 💳 Achitare
+  FaCheckCircle, // ✔️ Ver. achitarii
+  FaUndo, // 🔄 Retur banilor
+  FaUserPlus, // 👤 New lead. Proc-g
+  FaBell // 🔔 Напомнить
+} from "react-icons/fa"
 
 export const TypeTask = [
     { name: "Follow-up", icon: <FaRedoAlt color="#4CAF50" /> },
