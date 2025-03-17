@@ -1,0 +1,59 @@
+.dashboard-header {
+  position: fixed;
+  width: 100%;
+  background-color: #dfefd9f9;
+  padding-inline: 20px;
+  padding-block: 10px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.button-add-ticket {
+  border-radius: 4px;
+  font-size: 18px;
+  width: 240px;
+  height: 42px;
+  transition: transform 0.1s ease;
+}
+
+.button-add-ticket:active {
+  transform: scale(0.95);
+}
+
+.search-input {
+  min-width: 550px;
+}
+
+.button-filter {
+  position: relative;
+  border-radius: 4px;
+  font-size: 18px;
+  height: 42px;
+  transition: transform 0.1s ease;
+}
+
+.filter-indicator {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 8px;
+  height: 8px;
+  background: red;
+  border-radius: 50%;
+}
+
+.ticket-counter-row {
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+  padding: 5px 10px;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+  display: inline-block;
+  margin-left: 15px;
+}
