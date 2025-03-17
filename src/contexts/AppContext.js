@@ -320,12 +320,29 @@ export const AppProvider = ({ children }) => {
         break
       }
       case "delete": {
-        console.log("delete sms:", message.data)
+        console.log("🗑 Удаление сообщения:", message.data)
 
-        const { message_id, ticket_id } = message.data
+        let { message_id, ticket_id } = message.data
         if (!message_id || !ticket_id) {
-          console.warn("Сообщение для удаления не содержит id или ticket_id.")
+          console.warn(
+            "⚠ Сообщение для удаления не содержит `id` или `ticket_id`."
+          )
           break
+        }
+
+        message_id = Number(message_id)
+        ticket_id = Number(ticket_id)
+
+        // Добавляем `message_id` в локальное хранилище удаленных сообщений
+        const deletedMessages = JSON.parse(
+          localStorage.getItem("deletedMessages") || "[]"
+        )
+        if (!deletedMessages.includes(message_id)) {
+          deletedMessages.push(message_id)
+          localStorage.setItem(
+            "deletedMessages",
+            JSON.stringify(deletedMessages)
+          )
         }
 
         setMessages((prevMessages) => {
@@ -333,33 +350,34 @@ export const AppProvider = ({ children }) => {
             (msg) => msg.id !== message_id
           )
 
-          // Определяем новое последнее сообщение после удаления
-          const ticketMessages = updatedMessages.filter(
-            (msg) => msg.ticket_id === ticket_id
-          )
+          setTickets((prevTickets) => {
+            return prevTickets.map((ticket) => {
+              if (ticket.id !== ticket_id) return ticket
 
-          let newLastMessage = null
-          if (ticketMessages.length > 0) {
-            newLastMessage = ticketMessages.reduce((latest, msg) =>
-              parseCustomDate(msg.time_sent) > parseCustomDate(latest.time_sent)
-                ? msg
-                : latest
-            )
-          }
+              // Определяем новое последнее сообщение после удаления
+              const ticketMessages = updatedMessages.filter(
+                (msg) => msg.ticket_id === ticket_id
+              )
 
-          setTickets((prevTickets) =>
-            prevTickets.map((ticket) =>
-              ticket.id === ticket_id
-                ? {
-                    ...ticket,
-                    last_message: newLastMessage ? newLastMessage.message : "",
-                    time_sent: newLastMessage
-                      ? newLastMessage.time_sent
-                      : ticket.creation_date
-                  }
-                : ticket
-            )
-          )
+              let newLastMessage = null
+              if (ticketMessages.length > 0) {
+                newLastMessage = ticketMessages.reduce((latest, msg) =>
+                  parseCustomDate(msg.time_sent) >
+                  parseCustomDate(latest.time_sent)
+                    ? msg
+                    : latest
+                )
+              }
+
+              return {
+                ...ticket,
+                last_message: newLastMessage ? newLastMessage.message : "",
+                time_sent: newLastMessage
+                  ? newLastMessage.time_sent
+                  : ticket.creation_date
+              }
+            })
+          })
 
           return updatedMessages
         })
