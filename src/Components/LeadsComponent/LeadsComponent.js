@@ -362,25 +362,23 @@ const Leads = () => {
         style={{
           "--leads-filter-height": `${leadsFilterHeight}px`
         }}
-        className={`dashboard-container ${isTableView ? "leads-table" : ""}`}
+        className="dashboard-container"
       >
         {isLoading || loading ? (
           <div className="d-flex align-items-center justify-content-center h-full">
             <Spin />
           </div>
         ) : isTableView ? (
-          <div className="leads-table">
-            <LeadTable
-              loading={loading}
-              currentPage={currentPage}
-              filteredLeads={hardTickets}
-              selectedTickets={selectedTickets}
-              toggleSelectTicket={toggleSelectTicket}
-              totalLeads={getTotalPages(totalLeads)}
-              onChangePagination={handlePaginationWorkflow}
-              selectTicket={selectedTickets}
-            />
-          </div>
+          <LeadTable
+            loading={loading}
+            currentPage={currentPage}
+            filteredLeads={hardTickets}
+            selectedTickets={selectedTickets}
+            toggleSelectTicket={toggleSelectTicket}
+            totalLeads={getTotalPages(totalLeads)}
+            onChangePagination={handlePaginationWorkflow}
+            selectTicket={selectedTickets}
+          />
         ) : (
           <div className="container-tickets">
             {workflowOptions

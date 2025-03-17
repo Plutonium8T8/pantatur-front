@@ -336,7 +336,6 @@ button {
 
 .dashboard-header {
   position: fixed;
-  z-index: 990;
   width: 100%;
   background-color: #dfefd9f9;
   padding-inline: 20px;
@@ -534,11 +533,6 @@ button {
   border-radius: 50%;
 }
 
-.leads-table {
-  width: 100%;
-  padding-bottom: 0.3%;
-  overflow-y: scroll;
-}
 /* TODO: Remove me when Input component is created */
 input {
   border: 1px solid #ccc;

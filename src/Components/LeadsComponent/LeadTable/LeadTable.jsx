@@ -373,11 +373,10 @@ export const LeadTable = ({
 
   return (
     <>
-      <div className="leads-table-wrapper" style={{ overflow: "auto" }}>
+      <div className="leads-table">
         <Table columns={columns} data={filteredLeads} select={selectTicket} />
       </div>
 
-      {/* FIXME: Remove inline style when the layout is fixed */}
       {!!totalLeads && (
         <div className="d-flex justify-content-center | pagination-leads-table">
           <Pagination
