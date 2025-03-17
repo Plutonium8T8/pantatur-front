@@ -132,8 +132,8 @@
 .button-edit:hover {
   background-color: #e0a800;
 }
-
-.ticket-counter-row {
+/* This class name is confusing is used in twe places */
+/* .ticket-counter-row {
   font-size: 14px;
   font-weight: bold;
   color: #333;
@@ -142,7 +142,7 @@
   border-radius: 5px;
   display: inline-block;
   margin-left: 15px;
-}
+} */
 
 .button-delete-row {
   display: flex;

@@ -207,7 +207,7 @@
   max-height: 98vh;
 }
 
-.button-add-ticket {
+/* .button-add-ticket {
   border-radius: 4px;
   font-size: 18px;
   width: 240px;
@@ -217,7 +217,7 @@
 
 .button-add-ticket:active {
   transform: scale(0.95);
-}
+} */
 
 .container-select-priority-workflow {
   display: flex;
@@ -334,20 +334,20 @@ button {
   padding: 4px;
 }
 
-.dashboard-header {
+/* .dashboard-header {
   position: fixed;
   width: 100%;
   background-color: #dfefd9f9;
   padding-inline: 20px;
   padding-block: 10px;
-}
+} */
 
-.header {
+/* .header {
   display: flex;
   align-items: center;
   gap: 16px;
   text-align: center;
-}
+} */
 
 .foto-user {
   width: 50px;
@@ -367,9 +367,9 @@ button {
   flex-direction: row;
 }
 
-.search-input {
+/* .search-input {
   min-width: 550px;
-}
+} */
 
 .chat-modal {
   position: fixed;
@@ -515,15 +515,15 @@ button {
   padding-bottom: 20px;
 }
 
-.button-filter {
+/* .button-filter {
   position: relative;
   border-radius: 4px;
   font-size: 18px;
   height: 42px;
   transition: transform 0.1s ease;
-}
+} */
 
-.filter-indicator {
+/* .filter-indicator {
   position: absolute;
   top: 5px;
   right: 5px;
@@ -531,7 +531,7 @@ button {
   height: 8px;
   background: red;
   border-radius: 50%;
-}
+} */
 
 /* TODO: Remove me when Input component is created */
 input {

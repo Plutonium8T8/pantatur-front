@@ -6,20 +6,17 @@ import { workflowOptions } from "../../FormOptions/WorkFlowOption"
 import WorkflowColumn from "./WorkflowColumnComponent"
 import TicketModal from "./TicketModal/TicketModalComponent"
 import { TicketFilterModal } from "../TicketFilterModal"
-import "../../App.css"
-import "../SnackBarComponent/SnackBarComponent.css"
-import { FaFilter, FaTable, FaColumns, FaTrash, FaEdit } from "react-icons/fa"
-import { getLanguageByKey } from "../../Components/utils/getLanguageByKey"
 import { LeadTable } from "./LeadTable"
-import { Button } from "../Button"
 import { useDebounce } from "../../hooks"
 import { showServerError, getTotalPages } from "../utils"
 import { api } from "../../api"
 import { useSnackbar } from "notistack"
-import { Input } from "../Input/Input"
 import { Modal } from "../Modal"
 import SingleChat from "../ChatComponent/SingleChat"
 import { Spin } from "../Spin"
+import { LeadsFilter } from "./LeadsFilter"
+import "../../App.css"
+import "../SnackBarComponent/SnackBarComponent.css"
 
 const SORT_BY = "creation_date"
 const ORDER = "DESC"
@@ -285,8 +282,26 @@ const Leads = () => {
 
   return (
     <>
-      {/* TODO: Extract the filter into a separate component */}
-      <div ref={refLeadsFilter} className="dashboard-header">
+      <LeadsFilter
+        openCreateTicketModal={openCreateTicketModal}
+        setSearchTerm={setSearchTerm}
+        searchTerm={searchTerm}
+        setIsTableView={setIsTableView}
+        isTableView={isTableView}
+        tickets={tickets}
+        totalLeads={totalLeads}
+        selectedTickets={selectedTickets}
+        editSelectedTickets={editSelectedTickets}
+        setIsFilterOpen={setIsFilterOpen}
+        deleteTicket={deleteTicket}
+        filters={filters}
+        filteredTickets={filteredTickets}
+      />
+      {/* <div
+        style={{ border: "1px solid red" }}
+        ref={refLeadsFilter}
+        className="dashboard-header"
+      >
         <div className="header">
           <Button
             variant="primary"
@@ -356,7 +371,7 @@ const Leads = () => {
             ) && <span className="filter-indicator"></span>}
           </Button>
         </div>
-      </div>
+      </div> */}
 
       <div
         style={{
