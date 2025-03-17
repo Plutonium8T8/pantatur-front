@@ -428,7 +428,7 @@ const ChatMessages = ({
                         {clientId} - {clientName}
                       </div>
                       {messages.map((msg, msgIndex) => {
-                        const uniqueKey = `${msg.id || msg.ticket_id}-${msg.time_sent}-${msgIndex}`
+                        const uniqueKey = msg.id
 
                         const renderContent = () => {
                           if (!msg.message) {

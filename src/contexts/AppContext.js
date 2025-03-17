@@ -308,17 +308,49 @@ export const AppProvider = ({ children }) => {
         break
       }
       case "delete": {
-        console.log("delete sms:", message.data)
+        console.log("🗑 Удаление сообщения:", message.data)
 
-        const { message_id } = message.data
-        if (!message_id) {
-          console.warn("Сообщение для удаления не содержит id.")
+        const { message_id, ticket_id } = message.data
+        if (!message_id || !ticket_id) {
+          console.warn(
+            "⚠️ Ошибка удаления: отсутствует message_id или ticket_id."
+          )
           break
         }
 
-        setMessages((prevMessages) =>
-          prevMessages.filter((msg) => msg.id !== message_id)
-        )
+        setMessages((prevMessages) => {
+          const updatedMessages = prevMessages.filter(
+            (msg) => msg.id !== message_id
+          )
+
+          // Определяем последнее сообщение тикета после удаления
+          const lastMessage = updatedMessages
+            .filter((msg) => msg.ticket_id === ticket_id)
+            .reduce(
+              (latest, msg) =>
+                !latest || new Date(msg.time_sent) > new Date(latest.time_sent)
+                  ? msg
+                  : latest,
+              null
+            )
+
+          // Обновить `last_message` и `time_sent` в `tickets`
+          setTickets((prevTickets) =>
+            prevTickets.map((ticket) =>
+              ticket.id === ticket_id
+                ? {
+                    ...ticket,
+                    last_message: lastMessage
+                      ? lastMessage.message
+                      : "No messages",
+                    time_sent: lastMessage ? lastMessage.time_sent : null
+                  }
+                : ticket
+            )
+          )
+
+          return updatedMessages
+        })
 
         setUnreadMessages((prevUnread) => {
           const updatedUnread = new Map(prevUnread)
