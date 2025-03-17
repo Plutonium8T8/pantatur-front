@@ -308,57 +308,17 @@ export const AppProvider = ({ children }) => {
         break
       }
       case "delete": {
-        console.log("🗑 Удаление сообщения:", message.data)
+        console.log("delete sms:", message.data)
 
-        const { message_id, ticket_id } = message.data
-        if (!message_id || !ticket_id) {
-          console.warn(
-            "⚠️ Ошибка удаления: отсутствует message_id или ticket_id."
-          )
+        const { message_id } = message.data
+        if (!message_id) {
+          console.warn("Сообщение для удаления не содержит id.")
           break
         }
 
-        setMessages((prevMessages) => {
-          const updatedMessages = prevMessages.filter(
-            (msg) => msg.id !== message_id
-          )
-
-          // Определяем последнее сообщение тикета после удаления
-          const lastMessage = messages
-            .filter((msg) => msg.ticket_id === ticket_id) // Фильтруем по ticket_id
-            .reduce((latest, msg) => {
-              // Преобразуем "13-03-2025 14:20:45" → "2025-03-13T14:20:45"
-              const [day, month, year, time] = msg.time_sent.split(/[-\s]/)
-              const msgDate = new Date(`${year}-${month}-${day}T${time}`)
-
-              if (!latest) return msg
-
-              const [latestDay, latestMonth, latestYear, latestTime] =
-                latest.time_sent.split(/[-\s]/)
-              const latestDate = new Date(
-                `${latestYear}-${latestMonth}-${latestDay}T${latestTime}`
-              )
-
-              return msgDate > latestDate ? msg : latest
-            }, null)
-
-          // Обновить `last_message` и `time_sent` в `tickets`
-          setTickets((prevTickets) =>
-            prevTickets.map((ticket) =>
-              ticket.id === ticket_id
-                ? {
-                    ...ticket,
-                    last_message: lastMessage
-                      ? lastMessage.message
-                      : "No messages",
-                    time_sent: lastMessage ? lastMessage.time_sent : null
-                  }
-                : ticket
-            )
-          )
-
-          return updatedMessages
-        })
+        setMessages((prevMessages) =>
+          prevMessages.filter((msg) => msg.id !== message_id)
+        )
 
         setUnreadMessages((prevUnread) => {
           const updatedUnread = new Map(prevUnread)
