@@ -603,6 +603,10 @@ input {
   white-space: nowrap;
 }
 
+.pointer {
+  cursor: pointer;
+}
+
 .h-full {
   height: 100%;
 }
