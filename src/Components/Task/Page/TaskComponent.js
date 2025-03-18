@@ -3,6 +3,7 @@ import TaskModal from "../Components/TaskModal/TaskModal"
 import TaskList from "../Components/TaskList/TaskList"
 import { api } from "../../../api"
 import { Input } from "../../Input"
+import { translations } from "../../utils/translations"
 import "./TaskComponent.css"
 
 const TaskComponent = () => {
@@ -10,6 +11,7 @@ const TaskComponent = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedTask, setSelectedTask] = useState(null)
   const [searchQuery, setSearchQuery] = useState("")
+  const language = localStorage.getItem("language") || "RO"
 
   const fetchTasks = async () => {
     const data = await api.task.getAllTasks()
@@ -37,17 +39,19 @@ const TaskComponent = () => {
   return (
     <div className="task-container">
       <div className="task-header">
-        <div className="name-header">Tasks ({filteredTasks.length})</div>
+        <div className="name-header">
+          {translations["Tasks"][language]} ({filteredTasks.length})
+        </div>
         <div className="task-actions">
           <Input
             type="text"
-            placeholder="Cautare"
+            placeholder={translations["Cautare"][language]}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="task-search-input"
           />
           <button className="task-add-button" onClick={openNewTask}>
-            + New Task
+            + {translations["New Task"][language]}
           </button>
         </div>
       </div>

@@ -1273,6 +1273,18 @@ export const translations = {
   inactiv: {
     RO: "inactiv",
     RU: "неактивный"
+  },
+  Tasks: {
+    RO: "Task-uri",
+    RU: "Задачи"
+  },
+  "New Task": {
+    RO: "Task nou",
+    RU: "Новая задача"
+  },
+  Cautare: {
+    RO: "Căutare",
+    RU: "Поиск"
   }
 }
 
