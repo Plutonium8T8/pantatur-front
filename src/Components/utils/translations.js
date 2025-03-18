@@ -1350,6 +1350,10 @@ export const translations = {
     RO: "Pentru",
     RU: "Для"
   },
+  "Selectează utilizator": {
+    RO: "Selectează utilizator",
+    RU: "Выберите пользователя"
+  },
   "De la utilizatorul": {
     RO: "De la utilizatorul",
     RU: "От пользователя"

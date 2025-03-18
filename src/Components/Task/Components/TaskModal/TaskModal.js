@@ -169,12 +169,16 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
         onClick={(e) => e.stopPropagation()}
       >
         <header className="task-modal-header">
-          <h2>{selectedTask ? "Editare Task" : "Creare Task"}</h2>
+          <h2>
+            {selectedTask
+              ? translations["Editare Task"][language]
+              : translations["Creare Task"][language]}
+          </h2>
         </header>
 
         <form onSubmit={handleTaskSubmit} className="task-form">
           <div className="task-input-group">
-            <label>Lead ID</label>
+            <label>{translations["Lead ID"][language]}</label>
             <Input
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -203,47 +207,51 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
 
           <IconSelect
             options={TypeTask}
-            label="Alege tip task"
+            label={translations["Alege tip task"][language]}
             id="task-select"
             value={task.taskType}
             onChange={(value) => {
               const taskName = value.split(" ")[1] || value
               setTask((prev) => ({ ...prev, taskType: taskName }))
             }}
-            placeholder="Alege tip task"
+            placeholder={translations["Alege tip task"][language]}
           />
 
           <div className="task-input-group">
-            <label>Prioritate</label>
+            <label>{translations["Prioritate"][language]}</label>
             <select
               name="priority"
               value={task.priority}
               onChange={handleInputChange}
               required
             >
-              <option value="Low">Low</option>
-              <option value="Medium">Medium</option>
-              <option value="High">High</option>
+              <option value="Low">{translations["Low"][language]}</option>
+              <option value="Medium">{translations["Medium"][language]}</option>
+              <option value="High">{translations["High"][language]}</option>
             </select>
           </div>
 
           <div className="task-input-group">
-            <label>Status</label>
+            <label>{translations["Status"][language]}</label>
             <select
               name="status_task"
               value={task.status_task}
               onChange={handleInputChange}
               required
             >
-              <option value="To Do">To Do</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Done">Done</option>
-              <option value="Overdue">Overdue</option>
+              <option value="To Do">{translations["To Do"][language]}</option>
+              <option value="In Progress">
+                {translations["In Progress"][language]}
+              </option>
+              <option value="Done">{translations["Done"][language]}</option>
+              <option value="Overdue">
+                {translations["Overdue"][language]}
+              </option>
             </select>
           </div>
 
           <div className="task-input-group">
-            <label>Dată și oră</label>
+            <label>{translations["Dată și oră"][language]}</label>
             <input
               type="datetime-local"
               name="scheduledTime"
@@ -254,7 +262,7 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
           </div>
 
           <div className="task-input-group">
-            <label>Descriere task</label>
+            <label>{translations["Descriere task"][language]}</label>
             <textarea
               name="description"
               value={task.description}
@@ -264,14 +272,16 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
           </div>
 
           <div className="task-input-group">
-            <label>Pentru</label>
+            <label>{translations["Pentru"][language]}</label>
             <select
               name="createdFor"
               value={task.createdFor}
               onChange={handleInputChange}
               required
             >
-              <option value="">Selectează utilizator</option>
+              <option value="">
+                {translations["Selectează utilizator"][language]}
+              </option>
               {userList.map((user) => (
                 <option key={user.id} value={user.id}>
                   {user.name} {user.surname}
@@ -281,14 +291,16 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
           </div>
 
           <div className="task-input-group">
-            <label>De la utilizatorul</label>
+            <label>{translations["De la utilizatorul"][language]}</label>
             <select
               name="createdBy"
               value={task.createdBy}
               onChange={handleInputChange}
               required
             >
-              <option value="">Selectează utilizator</option>
+              <option value="">
+                {translations["Selectează utilizator"][language]}
+              </option>
               {userList.map((user) => (
                 <option key={user.id} value={user.id}>
                   {user.name} {user.surname}
@@ -304,17 +316,17 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
               disabled={loading}
             >
               {loading
-                ? "Se încarcă..."
+                ? translations["Se încarcă..."][language]
                 : selectedTask
-                  ? "Editare task"
-                  : "Adaugă task"}
+                  ? translations["Editare Task"][language]
+                  : translations["Adaugă task"][language]}
             </button>
             <button
               type="button"
               className="task-cancel-button"
               onClick={onClose}
             >
-              Anulare
+              {translations["Anulare"][language]}
             </button>
           </div>
         </form>
