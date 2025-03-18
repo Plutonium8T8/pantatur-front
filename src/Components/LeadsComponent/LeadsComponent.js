@@ -373,6 +373,7 @@ const Leads = () => {
           resetTicketsFilters={setHardTicketFilters}
         />
       </div>
+
       <Modal
         open={isChatOpen}
         onClose={closeChatModal}

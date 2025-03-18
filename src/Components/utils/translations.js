@@ -1275,16 +1275,20 @@ export const translations = {
     RU: "Всe"
   },
   Fil: {
-    RO: "Fil.",
-    RU: "Фил."
-  },
-  Francize: {
-    RO: "Francize",
-    RU: "Франшизы"
+    RO: "FIL.",
+    RU: "ФИЛ."
   },
   Leads: {
     RO: "Lead-uri",
     RU: "Лиды"
+  },
+  Categorie: {
+    RO: "Categorie",
+    RU: "Категория"
+  },
+  Fra: {
+    RO: "FRA.",
+    RU: "ФРА."
   }
 }
 
