@@ -9,6 +9,7 @@ import { useApp, useUser } from "../../../hooks"
 import { api } from "../../../api"
 import { useSnackbar } from "notistack"
 import { Input } from "../../Input/Input"
+import { Segmented } from "../../Segmented"
 
 const TicketModal = ({ ticket, onClose, onSave }) => {
   const modalRef = useRef(null)
@@ -145,6 +146,19 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
               disabled={AdminRoles}
             />
           </div>
+          <div className="divider-line"></div>
+          <Segmented
+            onChange={(group) => {}}
+            options={[
+              { value: "RO", label: "RO" },
+              { value: "MD", label: "MD" },
+              { value: "Filiale", label: translations["Fil"][language] },
+              {
+                value: "Francize",
+                label: translations["Fra"][language].toUpperCase()
+              }
+            ]}
+          />
           <div className="divider-line"></div>
           <div className="input-group">
             <label>{translations["name"][language]}:</label>
