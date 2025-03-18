@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react"
-import { useUser } from "../../../../hooks"
 import { useSnackbar } from "notistack"
 import { api } from "../../../../api"
 import { Input } from "../../../Input"
 import IconSelect from "../../../IconSelect/IconSelect"
 import { TypeTask } from "../OptionsTaskType/OptionsTaskType"
+
 import "./TaskModal.css"
 
 const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTicketId }) => {
-  const { userId } = useUser()
   const { enqueueSnackbar } = useSnackbar()
 
   const [task, setTask] = useState({
@@ -17,7 +16,8 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTicketId }) => {
     description: "",
     taskType: "",
     createdBy: "",
-    createdFor: ""
+    createdFor: "",
+    priority: "Medium"
   })
 
   const [ticketIds, setTicketIds] = useState([])
@@ -76,7 +76,8 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTicketId }) => {
       !task.description ||
       !task.createdBy ||
       !task.createdFor ||
-      !task.taskType
+      !task.taskType ||
+      !task.priority
     ) {
       enqueueSnackbar("Toate câmpurile sunt obligatorii", {
         variant: "warning"
@@ -90,9 +91,10 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTicketId }) => {
         ticket_id: task.ticketId,
         scheduled_time: task.scheduledTime,
         description: task.description,
-        task_type: task.taskType, // Теперь это строка
+        task_type: task.taskType,
         created_by: task.createdBy,
-        created_for: task.createdFor
+        created_for: task.createdFor,
+        priority: task.priority
       })
 
       fetchTasks()
@@ -102,7 +104,8 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTicketId }) => {
         description: "",
         taskType: "",
         createdBy: "",
-        createdFor: ""
+        createdFor: "",
+        priority: "Medium"
       })
       onClose()
     } catch (error) {
@@ -123,7 +126,6 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTicketId }) => {
         </header>
 
         <form onSubmit={handleTaskSubmit} className="task-form">
-          {/* Выбор тикета */}
           <div className="task-input-group">
             <label>Lead ID</label>
             <Input
@@ -152,20 +154,32 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTicketId }) => {
             )}
           </div>
 
-          {/* Тип задачи */}
           <IconSelect
             options={TypeTask}
             label="Alege tip task"
             id="task-select"
             value={task.taskType}
             onChange={(value) => {
-              const taskName = value.split(" ")[1] || value // Убираем иконку (если она есть)
+              const taskName = value.split(" ")[1] || value
               setTask((prev) => ({ ...prev, taskType: taskName }))
             }}
             placeholder="Alege tip task"
           />
 
-          {/* Дата и время */}
+          <div className="task-input-group">
+            <label>Prioritate</label>
+            <select
+              name="priority"
+              value={task.priority}
+              onChange={handleInputChange}
+              required
+            >
+              <option value="Low">Low</option>
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
+            </select>
+          </div>
+
           <div className="task-input-group">
             <label>Dată și oră</label>
             <input
@@ -177,7 +191,6 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTicketId }) => {
             />
           </div>
 
-          {/* Описание */}
           <div className="task-input-group">
             <label>Descriere task</label>
             <textarea
@@ -188,7 +201,6 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTicketId }) => {
             />
           </div>
 
-          {/* Кому задача */}
           <div className="task-input-group">
             <label>Pentru</label>
             <select
@@ -206,7 +218,6 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTicketId }) => {
             </select>
           </div>
 
-          {/* От кого задача (как "Pentru") */}
           <div className="task-input-group">
             <label>De la utilizatorul</label>
             <select

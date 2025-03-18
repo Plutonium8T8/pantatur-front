@@ -4,6 +4,7 @@ import { Checkbox } from "../../../Checkbox"
 import { translations } from "../../../utils/translations"
 import "./TaskList.css"
 import { TypeTask } from "../OptionsTaskType/OptionsTaskType"
+import { Button } from "../../../Button"
 
 const TaskList = ({
   tasks,
@@ -83,7 +84,9 @@ const TaskList = ({
         width: 150,
         align: "center",
         render: (_, row) => {
-          const creator = userList.find((user) => user.id === row.created_by)
+          const creator = userList.find(
+            (user) => String(user.id) === String(row.created_by)
+          )
           return creator
             ? `${creator.name} ${creator.surname}`
             : `ID: ${row.created_by}`
@@ -97,7 +100,7 @@ const TaskList = ({
         align: "center",
         render: (_, row) => {
           const assignedUser = userList.find(
-            (user) => user.id === row.created_for
+            (user) => String(user.id) === String(row.created_for)
           )
           return assignedUser
             ? `${assignedUser.name} ${assignedUser.surname}`
@@ -147,9 +150,12 @@ const TaskList = ({
         align: "center",
         render: (_, row) =>
           !row.status && (
-            <button onClick={() => handleMarkAsSeenTask(row.id)}>
+            <Button
+              onClick={() => handleMarkAsSeenTask(row.id)}
+              variant="primary"
+            >
               {translations["Marchează"][language]}
-            </button>
+            </Button>
           )
       }
     ],
