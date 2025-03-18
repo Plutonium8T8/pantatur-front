@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { RcTable, HeaderCellRcTable } from "../../../RcTable"
 import { Checkbox } from "../../../Checkbox"
 import { translations } from "../../../utils/translations"
@@ -66,6 +66,23 @@ const TaskList = ({
       })
     }
   }
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        openMenuId &&
+        !event.target.closest(".dropdown-menu") && // Если клик не внутри меню
+        !event.target.closest(".action-button-task") // И не на кнопку открытия меню
+      ) {
+        setOpenMenuId(null) // Закрываем меню
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [openMenuId])
 
   const columns = useMemo(
     () => [
