@@ -21,12 +21,12 @@ const TaskComponent = () => {
   }, [])
 
   const openNewTask = () => {
-    setSelectedTask(null) // Очищаем выбранную задачу при создании новой
+    setSelectedTask(null)
     setIsModalOpen(true)
   }
 
   const openEditTask = (task) => {
-    setSelectedTask(task) // Устанавливаем задачу для редактирования
+    setSelectedTask(task)
     setIsModalOpen(true)
   }
 
@@ -52,13 +52,17 @@ const TaskComponent = () => {
         </div>
       </div>
       <div className="task-list-container">
-        <TaskList tasks={filteredTasks} openEditTask={openEditTask} />
+        <TaskList
+          tasks={filteredTasks}
+          openEditTask={openEditTask}
+          fetchTasks={fetchTasks}
+        />
       </div>
       <TaskModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         fetchTasks={fetchTasks}
-        selectedTask={selectedTask} // Передаем задачу в модалку
+        selectedTask={selectedTask}
       />
     </div>
   )

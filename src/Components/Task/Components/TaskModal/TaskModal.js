@@ -47,7 +47,7 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
       if (selectedTask) {
         setTask({
           ticketId: selectedTask.ticket_id,
-          scheduledTime: formatDateTime(selectedTask.scheduled_time), // ✅ Преобразуем дату
+          scheduledTime: formatDateTime(selectedTask.scheduled_time),
           description: selectedTask.description,
           taskType: selectedTask.task_type,
           createdBy: selectedTask.created_by,
@@ -128,13 +128,13 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
 
         for (const key in task) {
           if (task[key] !== selectedTask[key]) {
-            updatedFields[key] = task[key] // Отправляем только измененные поля
+            updatedFields[key] = task[key]
           }
         }
 
         await api.task.update({
-          id: selectedTask.id, // ID задачи
-          ...updatedFields // Только измененные поля
+          id: selectedTask.id,
+          ...updatedFields
         })
         enqueueSnackbar("Task actualizat cu succes!", { variant: "success" })
       } else {

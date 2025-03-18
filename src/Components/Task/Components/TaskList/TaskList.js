@@ -5,6 +5,8 @@ import { translations } from "../../../utils/translations"
 import "./TaskList.css"
 import { TypeTask } from "../OptionsTaskType/OptionsTaskType"
 import { Button } from "../../../Button"
+import { useSnackbar } from "notistack"
+import { api } from "../../../../api"
 import {
   IoEllipsisHorizontal,
   IoCheckmarkCircle,
@@ -18,13 +20,15 @@ const TaskList = ({
   handleMarkAsSeenTask,
   userList = [],
   loading = false,
-  openEditTask
+  openEditTask,
+  fetchTasks
 }) => {
   const language = localStorage.getItem("language") || "RO"
   const [order, setOrder] = useState("ASC")
   const [selectedRow, setSelectedRow] = useState([])
   const [, setColumn] = useState("")
   const [openMenuId, setOpenMenuId] = useState(null)
+  const { enqueueSnackbar } = useSnackbar()
 
   const priorityColors = {
     Low: "#4CAF50",
@@ -34,6 +38,18 @@ const TaskList = ({
 
   const toggleMenu = (id) => {
     setOpenMenuId(openMenuId === id ? null : id)
+  }
+
+  const handleDeleteTask = async (taskId) => {
+    if (!window.confirm("Sigur doriți să ștergeți acest task?")) return
+
+    try {
+      await api.task.delete({ id: taskId })
+      enqueueSnackbar("Task șters cu succes!", { variant: "success" })
+      fetchTasks()
+    } catch (error) {
+      enqueueSnackbar("Eroare la ștergerea taskului", { variant: "error" })
+    }
   }
 
   const columns = useMemo(
@@ -228,7 +244,7 @@ const TaskList = ({
                 </div>
                 <div
                   className="dropdown-item delete"
-                  onClick={() => console.log("Ștergeți", row.id)}
+                  onClick={() => handleDeleteTask(row.id)}
                 >
                   <IoTrash size={18} />
                   <span>Ștergeți</span>

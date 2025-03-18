@@ -7,8 +7,14 @@ export const task = {
     return data
   },
 
-  delete: async (body) => {
+  deleteAll: async (body) => {
     const { data } = await baseAxios.delete("/api/task/clear", { data: body })
+
+    return data
+  },
+
+  delete: async (body) => {
+    const { data } = await baseAxios.delete("/api/task", { data: body })
 
     return data
   },
