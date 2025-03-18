@@ -8,6 +8,7 @@ import "./TaskComponent.css"
 const TaskComponent = () => {
   const [tasks, setTasks] = useState([])
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedTask, setSelectedTask] = useState(null)
   const [searchQuery, setSearchQuery] = useState("")
 
   const fetchTasks = async () => {
@@ -18,6 +19,16 @@ const TaskComponent = () => {
   useEffect(() => {
     fetchTasks()
   }, [])
+
+  const openNewTask = () => {
+    setSelectedTask(null) // Очищаем выбранную задачу при создании новой
+    setIsModalOpen(true)
+  }
+
+  const openEditTask = (task) => {
+    setSelectedTask(task) // Устанавливаем задачу для редактирования
+    setIsModalOpen(true)
+  }
 
   const filteredTasks = tasks.filter((task) =>
     task.task_type.toLowerCase().includes(searchQuery.toLowerCase())
@@ -35,21 +46,19 @@ const TaskComponent = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="task-search-input"
           />
-          <button
-            className="task-add-button"
-            onClick={() => setIsModalOpen(true)}
-          >
+          <button className="task-add-button" onClick={openNewTask}>
             + New Task
           </button>
         </div>
       </div>
       <div className="task-list-container">
-        <TaskList tasks={filteredTasks} />
+        <TaskList tasks={filteredTasks} openEditTask={openEditTask} />
       </div>
       <TaskModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         fetchTasks={fetchTasks}
+        selectedTask={selectedTask} // Передаем задачу в модалку
       />
     </div>
   )

@@ -6,18 +6,18 @@ import IconSelect from "../../../IconSelect/IconSelect"
 import { TypeTask } from "../OptionsTaskType/OptionsTaskType"
 import "./TaskModal.css"
 
-const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTicketId }) => {
+const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
   const { enqueueSnackbar } = useSnackbar()
 
   const [task, setTask] = useState({
-    ticketId: null,
+    ticketId: "",
     scheduledTime: "",
     description: "",
     taskType: "",
     createdBy: "",
     createdFor: "",
     priority: "Medium",
-    status: "To Do"
+    status_task: "To Do"
   })
 
   const [ticketIds, setTicketIds] = useState([])
@@ -26,16 +26,51 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTicketId }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [loading, setLoading] = useState(false)
 
+  const formatDateTime = (dateString) => {
+    if (!dateString) return ""
+
+    const regex = /^(\d{2})-(\d{2})-(\d{4}) (\d{2}):(\d{2}):(\d{2})$/
+    const match = dateString.match(regex)
+
+    if (!match) return ""
+
+    const [, day, month, year, hours, minutes] = match
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`
+  }
+
   useEffect(() => {
     if (isOpen) {
       fetchTickets()
       fetchUsers()
-      if (selectedTicketId) {
-        setTask((prev) => ({ ...prev, ticketId: selectedTicketId }))
-        setSearchTerm(selectedTicketId.toString())
+
+      if (selectedTask) {
+        setTask({
+          ticketId: selectedTask.ticket_id,
+          scheduledTime: formatDateTime(selectedTask.scheduled_time), // ✅ Преобразуем дату
+          description: selectedTask.description,
+          taskType: selectedTask.task_type,
+          createdBy: selectedTask.created_by,
+          createdFor: selectedTask.created_for,
+          priority: selectedTask.priority,
+          status_task: selectedTask.status_task
+        })
+        setSearchTerm(selectedTask.ticket_id.toString())
+      } else {
+        setTask({
+          ticketId: "",
+          scheduledTime: "",
+          description: "",
+          taskType: "",
+          createdBy: "",
+          createdFor: "",
+          priority: "Medium",
+          status_task: "To Do"
+        })
+        setSearchTerm("")
       }
     }
-  }, [isOpen, selectedTicketId])
+  }, [isOpen, selectedTask])
 
   const fetchTickets = async () => {
     try {
@@ -78,7 +113,7 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTicketId }) => {
       !task.createdFor ||
       !task.taskType ||
       !task.priority ||
-      !task.status
+      !task.status_task
     ) {
       enqueueSnackbar("Toate câmpurile sunt obligatorii", {
         variant: "warning"
@@ -88,31 +123,38 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTicketId }) => {
 
     setLoading(true)
     try {
-      await api.task.create({
-        ticket_id: task.ticketId,
-        scheduled_time: task.scheduledTime,
-        description: task.description,
-        task_type: task.taskType,
-        created_by: task.createdBy,
-        created_for: task.createdFor,
-        priority: task.priority,
-        status: task.status
-      })
+      if (selectedTask) {
+        const updatedFields = { id: selectedTask.id }
+
+        for (const key in task) {
+          if (task[key] !== selectedTask[key]) {
+            updatedFields[key] = task[key] // Отправляем только измененные поля
+          }
+        }
+
+        await api.task.update({
+          id: selectedTask.id, // ID задачи
+          ...updatedFields // Только измененные поля
+        })
+        enqueueSnackbar("Task actualizat cu succes!", { variant: "success" })
+      } else {
+        await api.task.create({
+          ticket_id: task.ticketId,
+          scheduled_time: task.scheduledTime,
+          description: task.description,
+          task_type: task.taskType,
+          created_by: task.createdBy,
+          created_for: task.createdFor,
+          priority: task.priority,
+          status_task: task.status_task
+        })
+        enqueueSnackbar("Task adăugat cu succes!", { variant: "success" })
+      }
 
       fetchTasks()
-      setTask({
-        ticketId: null,
-        scheduledTime: "",
-        description: "",
-        taskType: "",
-        createdBy: "",
-        createdFor: "",
-        priority: "Medium",
-        status: "To Do"
-      })
       onClose()
     } catch (error) {
-      enqueueSnackbar("Eroare la crearea taskului", { variant: "error" })
+      enqueueSnackbar("Eroare la salvarea taskului", { variant: "error" })
     } finally {
       setLoading(false)
     }
@@ -125,7 +167,7 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTicketId }) => {
         onClick={(e) => e.stopPropagation()}
       >
         <header className="task-modal-header">
-          <h2>Taskuri</h2>
+          <h2>{selectedTask ? "Editare Task" : "Creare Task"}</h2>
         </header>
 
         <form onSubmit={handleTaskSubmit} className="task-form">
@@ -186,8 +228,8 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTicketId }) => {
           <div className="task-input-group">
             <label>Status</label>
             <select
-              name="status"
-              value={task.status}
+              name="status_task"
+              value={task.status_task}
               onChange={handleInputChange}
               required
             >

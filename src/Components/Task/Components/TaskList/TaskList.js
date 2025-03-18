@@ -10,15 +10,15 @@ import {
   IoCheckmarkCircle,
   IoTrash,
   IoDuplicate,
-  IoPencil,
-  IoTime
+  IoPencil
 } from "react-icons/io5"
 
 const TaskList = ({
   tasks,
   handleMarkAsSeenTask,
   userList = [],
-  loading = false
+  loading = false,
+  openEditTask
 }) => {
   const language = localStorage.getItem("language") || "RO"
   const [order, setOrder] = useState("ASC")
@@ -27,9 +27,9 @@ const TaskList = ({
   const [openMenuId, setOpenMenuId] = useState(null)
 
   const priorityColors = {
-    Low: "#4CAF50", // Зеленый
-    Medium: "#FF9800", // Оранжевый
-    High: "#F44336" // Красный
+    Low: "#4CAF50",
+    Medium: "#FF9800",
+    High: "#F44336"
   }
 
   const toggleMenu = (id) => {
@@ -116,6 +116,13 @@ const TaskList = ({
         )
       },
       {
+        title: "Status TASK",
+        dataIndex: "status_task",
+        key: "status_task",
+        width: 120,
+        align: "center"
+      },
+      {
         title: "Creat de",
         dataIndex: "created_by",
         key: "created_by",
@@ -190,7 +197,7 @@ const TaskList = ({
           <div className="action-menu">
             <Button
               variant="default"
-              className="action-button"
+              className="action-button-task"
               onClick={() => toggleMenu(row.id)}
             >
               <IoEllipsisHorizontal size={18} />
@@ -207,7 +214,7 @@ const TaskList = ({
                 </div>
                 <div
                   className="dropdown-item edit"
-                  onClick={() => console.log("Modificați", row.id)}
+                  onClick={() => openEditTask(row)}
                 >
                   <IoPencil size={18} />
                   <span>Modificați</span>
