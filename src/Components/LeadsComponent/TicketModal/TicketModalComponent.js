@@ -131,7 +131,8 @@ const TicketModal = ({
 
   const deleteTicketById = async () => {
     try {
-      await api.tickets.deleteById(editedTicket?.id)
+      await api.tickets.deleteById([editedTicket?.id])
+      fetchTickets()
 
       setTickets((prevTickets) =>
         prevTickets.filter((t) => t.id !== editedTicket.id)
