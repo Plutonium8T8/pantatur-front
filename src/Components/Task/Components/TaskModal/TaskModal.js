@@ -4,7 +4,6 @@ import { api } from "../../../../api"
 import { Input } from "../../../Input"
 import IconSelect from "../../../IconSelect/IconSelect"
 import { TypeTask } from "../OptionsTaskType/OptionsTaskType"
-
 import "./TaskModal.css"
 
 const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTicketId }) => {
@@ -17,7 +16,8 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTicketId }) => {
     taskType: "",
     createdBy: "",
     createdFor: "",
-    priority: "Medium"
+    priority: "Medium",
+    status: "To Do"
   })
 
   const [ticketIds, setTicketIds] = useState([])
@@ -77,7 +77,8 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTicketId }) => {
       !task.createdBy ||
       !task.createdFor ||
       !task.taskType ||
-      !task.priority
+      !task.priority ||
+      !task.status
     ) {
       enqueueSnackbar("Toate câmpurile sunt obligatorii", {
         variant: "warning"
@@ -94,7 +95,8 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTicketId }) => {
         task_type: task.taskType,
         created_by: task.createdBy,
         created_for: task.createdFor,
-        priority: task.priority
+        priority: task.priority,
+        status: task.status
       })
 
       fetchTasks()
@@ -105,7 +107,8 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTicketId }) => {
         taskType: "",
         createdBy: "",
         createdFor: "",
-        priority: "Medium"
+        priority: "Medium",
+        status: "To Do"
       })
       onClose()
     } catch (error) {
@@ -177,6 +180,21 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTicketId }) => {
               <option value="Low">Low</option>
               <option value="Medium">Medium</option>
               <option value="High">High</option>
+            </select>
+          </div>
+
+          <div className="task-input-group">
+            <label>Status</label>
+            <select
+              name="status"
+              value={task.status}
+              onChange={handleInputChange}
+              required
+            >
+              <option value="To Do">To Do</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Done">Done</option>
+              <option value="Overdue">Overdue</option>
             </select>
           </div>
 

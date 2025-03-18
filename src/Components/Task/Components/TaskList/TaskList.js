@@ -5,6 +5,14 @@ import { translations } from "../../../utils/translations"
 import "./TaskList.css"
 import { TypeTask } from "../OptionsTaskType/OptionsTaskType"
 import { Button } from "../../../Button"
+import {
+  IoEllipsisHorizontal,
+  IoCheckmarkCircle,
+  IoTrash,
+  IoDuplicate,
+  IoPencil,
+  IoTime
+} from "react-icons/io5"
 
 const TaskList = ({
   tasks,
@@ -16,6 +24,17 @@ const TaskList = ({
   const [order, setOrder] = useState("ASC")
   const [selectedRow, setSelectedRow] = useState([])
   const [, setColumn] = useState("")
+  const [openMenuId, setOpenMenuId] = useState(null)
+
+  const priorityColors = {
+    Low: "#4CAF50", // Зеленый
+    Medium: "#FF9800", // Оранжевый
+    High: "#F44336" // Красный
+  }
+
+  const toggleMenu = (id) => {
+    setOpenMenuId(openMenuId === id ? null : id)
+  }
 
   const columns = useMemo(
     () => [
@@ -76,6 +95,25 @@ const TaskList = ({
             </div>
           )
         }
+      },
+      {
+        title: "Prioritate",
+        dataIndex: "priority",
+        key: "priority",
+        width: 120,
+        align: "center",
+        render: (priority) => (
+          <span
+            style={{
+              backgroundColor: priorityColors[priority] || "#ccc",
+              color: "#fff",
+              padding: "4px 8px",
+              borderRadius: "4px"
+            }}
+          >
+            {priority}
+          </span>
+        )
       },
       {
         title: "Creat de",
@@ -148,18 +186,53 @@ const TaskList = ({
         key: "action",
         width: 150,
         align: "center",
-        render: (_, row) =>
-          !row.status && (
+        render: (_, row) => (
+          <div className="action-menu">
             <Button
-              onClick={() => handleMarkAsSeenTask(row.id)}
-              variant="primary"
+              variant="default"
+              className="action-button"
+              onClick={() => toggleMenu(row.id)}
             >
-              {translations["Marchează"][language]}
+              <IoEllipsisHorizontal size={18} />
             </Button>
-          )
+
+            {openMenuId === row.id && (
+              <div className="dropdown-menu">
+                <div
+                  className="dropdown-item complete"
+                  onClick={() => console.log("Finalizați", row.id)}
+                >
+                  <IoCheckmarkCircle size={18} />
+                  <span>Finalizați</span>
+                </div>
+                <div
+                  className="dropdown-item edit"
+                  onClick={() => console.log("Modificați", row.id)}
+                >
+                  <IoPencil size={18} />
+                  <span>Modificați</span>
+                </div>
+                <div
+                  className="dropdown-item duplicate"
+                  onClick={() => console.log("Dublicate", row.id)}
+                >
+                  <IoDuplicate size={18} />
+                  <span>Duplicate</span>
+                </div>
+                <div
+                  className="dropdown-item delete"
+                  onClick={() => console.log("Ștergeți", row.id)}
+                >
+                  <IoTrash size={18} />
+                  <span>Ștergeți</span>
+                </div>
+              </div>
+            )}
+          </div>
+        )
       }
     ],
-    [language, userList, handleMarkAsSeenTask, order, selectedRow]
+    [language, userList, handleMarkAsSeenTask, order, selectedRow, openMenuId]
   )
 
   return (
