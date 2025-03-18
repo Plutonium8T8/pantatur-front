@@ -97,10 +97,6 @@ export const translations = {
     RO: "critică",
     RU: "критический"
   },
-  Prioritate: {
-    RO: "Prioritate",
-    RU: "Приоритет"
-  },
   "Etapa de lucru": {
     RO: "Etapa de lucru",
     RU: "Этап работы"
@@ -169,10 +165,6 @@ export const translations = {
     RO: "Log Out",
     RU: "Выйти"
   },
-  "Dată și oră": {
-    RO: "Dată și oră",
-    RU: "Время и дата"
-  },
   "Adaugă notificare": {
     RO: "Adaugă notificare",
     RU: "Добавить увед-е"
@@ -212,14 +204,6 @@ export const translations = {
   "Încărcăm leadurile": {
     RO: "Încărcăm leadurile",
     RU: "Загружаем лиды"
-  },
-  "Descriere task": {
-    RO: "Descriere task",
-    RU: "Описание задачи"
-  },
-  "Adaugă task": {
-    RO: "Adaugă task",
-    RU: "Добавить задачу"
   },
   "Grafic de lucru": {
     RO: "Grafic de lucru",
@@ -757,10 +741,6 @@ export const translations = {
   "Creat de": {
     RO: "Creat de utilizatorul",
     RU: "Создан пользователем"
-  },
-  Pentru: {
-    RO: "Pentru utilizatorul",
-    RU: "Для пользователя"
   },
   "Alege utilizator": {
     RO: "Alege utilizator",
@@ -1358,10 +1338,6 @@ export const translations = {
     RO: "De la utilizatorul",
     RU: "От пользователя"
   },
-  "Se încarcă...": {
-    RO: "Se încarcă...",
-    RU: "Загрузка..."
-  },
   "Adaugă task": {
     RO: "Adaugă task",
     RU: "Добавить задачу"
@@ -1369,6 +1345,39 @@ export const translations = {
   Anulare: {
     RO: "Anulare",
     RU: "Отмена"
+  },
+  Finalizați: {
+    RO: "Finalizați",
+    RU: "Завершить"
+  },
+
+  Acțiune: {
+    RO: "Acțiune",
+    RU: "Действие"
+  },
+  Modificați: {
+    RO: "Modificați",
+    RU: "Редактировать"
+  },
+  Ștergeți: {
+    RO: "Ștergeți",
+    RU: "Удалить"
+  },
+  "Task pentru Ticket-ul": {
+    RO: "Task pentru Ticket-ul",
+    RU: "Задача для тикета"
+  },
+  "Tipul Taskului": {
+    RO: "Tipul Taskului",
+    RU: "Тип задачи"
+  },
+  "Etapa Task": {
+    RO: "Etapa Task",
+    RU: "Этап задачи"
+  },
+  Data: {
+    RO: "Data",
+    RU: "Дата"
   }
 }
 

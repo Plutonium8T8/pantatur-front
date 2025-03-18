@@ -104,7 +104,12 @@ const TaskList = ({
         )
       },
       {
-        title: <HeaderCellRcTable title="ID" order={order} />,
+        title: (
+          <HeaderCellRcTable
+            title={translations["ID"][language]}
+            order={order}
+          />
+        ),
         dataIndex: "id",
         key: "id",
         width: 80,
@@ -118,7 +123,10 @@ const TaskList = ({
       },
       {
         title: (
-          <HeaderCellRcTable title="Task pentru Ticket-ul" order={order} />
+          <HeaderCellRcTable
+            title={translations["Task pentru Ticket-ul"][language]}
+            order={order}
+          />
         ),
         dataIndex: "ticket_id",
         key: "ticket_id",
@@ -132,7 +140,7 @@ const TaskList = ({
         })
       },
       {
-        title: "Tipul Taskului",
+        title: translations["Tipul Taskului"][language],
         dataIndex: "task_type",
         key: "task_type",
         width: 180,
@@ -147,7 +155,7 @@ const TaskList = ({
         }
       },
       {
-        title: "Prioritate",
+        title: translations["Prioritate"][language],
         dataIndex: "priority",
         key: "priority",
         width: 120,
@@ -166,14 +174,14 @@ const TaskList = ({
         )
       },
       {
-        title: "Etapa Task",
+        title: translations["Etapa Task"][language],
         dataIndex: "status_task",
         key: "status_task",
         width: 120,
         align: "center"
       },
       {
-        title: "Creat de",
+        title: translations["Creat de"][language],
         dataIndex: "created_by",
         key: "created_by",
         width: 150,
@@ -188,7 +196,7 @@ const TaskList = ({
         }
       },
       {
-        title: "Pentru",
+        title: translations["Pentru"][language],
         dataIndex: "created_for",
         key: "created_for",
         width: 150,
@@ -203,14 +211,14 @@ const TaskList = ({
         }
       },
       {
-        title: "Descriere",
+        title: translations["Descriere"][language],
         dataIndex: "description",
         key: "description",
         width: 200,
         align: "center"
       },
       {
-        title: "Data",
+        title: translations["Data"][language],
         dataIndex: "scheduled_time",
         key: "scheduled_time",
         width: 180,
@@ -224,7 +232,7 @@ const TaskList = ({
         }
       },
       {
-        title: "Status",
+        title: translations["Status"][language],
         dataIndex: "status",
         key: "status",
         width: 120,
@@ -238,7 +246,7 @@ const TaskList = ({
         )
       },
       {
-        title: "Acțiune",
+        title: translations["Acțiune"][language],
         dataIndex: "action",
         key: "action",
         width: 150,
@@ -263,7 +271,7 @@ const TaskList = ({
                   }}
                 >
                   <IoCheckmarkCircle size={18} />
-                  <span>Finalizați</span>
+                  <span>{translations["Finalizați"][language]}</span>
                 </div>
                 <div
                   className="dropdown-item edit"
@@ -273,7 +281,7 @@ const TaskList = ({
                   }}
                 >
                   <IoPencil size={18} />
-                  <span>Modificați</span>
+                  <span>{translations["Modificați"][language]}</span>
                 </div>
                 <div
                   className="dropdown-item delete"
@@ -283,7 +291,7 @@ const TaskList = ({
                   }}
                 >
                   <IoTrash size={18} />
-                  <span>Ștergeți</span>
+                  <span>{translations["Ștergeți"][language]}</span>
                 </div>
               </div>
             )}
