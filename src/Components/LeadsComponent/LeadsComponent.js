@@ -99,7 +99,6 @@ const Leads = () => {
   }
 
   const deleteTicket = async () => {
-    if (selectedTickets.length === 0) return
     const findTicket = tickets.find((ticket) =>
       selectedTickets.includes(ticket.id)
     )
@@ -119,6 +118,7 @@ const Leads = () => {
           setTotalLeads(pagination.total || 0)
         }
       )
+
       setTickets(newTickets)
       setSelectedTickets([])
     } catch (error) {
@@ -129,8 +129,6 @@ const Leads = () => {
   }
 
   const editSelectedTickets = () => {
-    if (selectedTickets.length === 0) return
-
     const ticketToEdit = tickets.find(
       (ticket) => ticket.id === selectedTickets[0]
     )
