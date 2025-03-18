@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect, useRef } from "react"
 import { RcTable, HeaderCellRcTable } from "../../../RcTable"
 import { Checkbox } from "../../../Checkbox"
 import { translations } from "../../../utils/translations"
@@ -28,6 +28,7 @@ const TaskList = ({
   const [, setColumn] = useState("")
   const [openMenuId, setOpenMenuId] = useState(null)
   const { enqueueSnackbar } = useSnackbar()
+  const menuRef = useRef(null)
 
   const priorityColors = {
     Low: "#4CAF50",
@@ -66,6 +67,18 @@ const TaskList = ({
       })
     }
   }
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setOpenMenuId(null)
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [])
 
   const columns = useMemo(
     () => [
@@ -227,7 +240,7 @@ const TaskList = ({
         width: 150,
         align: "center",
         render: (_, row) => (
-          <div className="action-menu">
+          <div className="action-menu" ref={menuRef}>
             <Button
               variant="default"
               className="action-button-task"
@@ -274,7 +287,9 @@ const TaskList = ({
         )
       }
     ],
-    [language, userList, handleMarkAsSeenTask, order, selectedRow, openMenuId]
+    [openMenuId][
+      (language, userList, handleMarkAsSeenTask, order, selectedRow, openMenuId)
+    ]
   )
 
   return (
