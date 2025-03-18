@@ -10,6 +10,7 @@ import { api } from "../../../api"
 import { useSnackbar } from "notistack"
 import { Input } from "../../Input/Input"
 import { Segmented } from "../../Segmented"
+import { showServerError } from "../../utils"
 
 const language = localStorage.getItem("language") || "RO"
 
@@ -27,10 +28,29 @@ const getDisabledStatus = (value, selectedGroupTitle) => {
   return selectedGroupTitle ? value !== selectedGroupTitle : false
 }
 
-const TicketModal = ({ ticket, onClose, onSave, selectedGroupTitle }) => {
+const parseTags = (tags) => {
+  if (Array.isArray(tags)) {
+    return tags
+  }
+  if (typeof tags === "string" && tags.startsWith("{") && tags.endsWith("}")) {
+    return tags
+      .slice(1, -1)
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter((tag) => tag !== "")
+  }
+  return []
+}
+
+const TicketModal = ({
+  ticket,
+  onClose,
+  onSave,
+  selectedGroupTitle,
+  fetchTickets
+}) => {
   const modalRef = useRef(null)
   const { enqueueSnackbar } = useSnackbar()
-
   const { setTickets } = useApp()
   const { userId, hasRole, isLoadingRoles } = useUser()
 
@@ -41,24 +61,6 @@ const TicketModal = ({ ticket, onClose, onSave, selectedGroupTitle }) => {
       setIsAdmin(hasRole("ROLE_ADMIN"))
     }
   }, [isLoadingRoles, hasRole])
-
-  const parseTags = (tags) => {
-    if (Array.isArray(tags)) {
-      return tags
-    }
-    if (
-      typeof tags === "string" &&
-      tags.startsWith("{") &&
-      tags.endsWith("}")
-    ) {
-      return tags
-        .slice(1, -1)
-        .split(",")
-        .map((tag) => tag.trim())
-        .filter((tag) => tag !== "")
-    }
-    return []
-  }
 
   const [editedTicket, setEditedTicket] = useState(() => ({
     contact: "",
@@ -111,6 +113,8 @@ const TicketModal = ({ ticket, onClose, onSave, selectedGroupTitle }) => {
         ? await api.tickets.updateById(editedTicket.id, cleanedData)
         : await api.tickets.createTickets(cleanedData)
 
+      fetchTickets()
+
       setTickets((prevTickets) =>
         isEditing
           ? prevTickets.map((ticket) =>
@@ -120,9 +124,8 @@ const TicketModal = ({ ticket, onClose, onSave, selectedGroupTitle }) => {
       )
 
       onClose()
-    } catch (e) {
-      // TODO: Make a function to extract `errors` from server
-      enqueueSnackbar("Ошибка при сохранении тикета", { variant: "error" })
+    } catch (error) {
+      enqueueSnackbar(showServerError(error), { variant: "error" })
     }
   }
 
@@ -135,7 +138,7 @@ const TicketModal = ({ ticket, onClose, onSave, selectedGroupTitle }) => {
       )
       onClose()
     } catch (error) {
-      console.error("Error:", error)
+      enqueueSnackbar(showServerError(error), { variant: "error" })
     }
   }
 
