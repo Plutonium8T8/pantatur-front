@@ -11,10 +11,25 @@ import { useSnackbar } from "notistack"
 import { Input } from "../../Input/Input"
 import { Segmented } from "../../Segmented"
 
-const TicketModal = ({ ticket, onClose, onSave }) => {
+const language = localStorage.getItem("language") || "RO"
+
+const groupTitleOptions = [
+  { value: "RO", label: "RO" },
+  { value: "MD", label: "MD" },
+  { value: "Filiale", label: translations["FIL"][language] },
+  {
+    value: "Francize",
+    label: translations["FRA"][language]
+  }
+]
+
+const getDisabledStatus = (value, selectedGroupTitle) => {
+  return selectedGroupTitle ? value !== selectedGroupTitle : false
+}
+
+const TicketModal = ({ ticket, onClose, onSave, selectedGroupTitle }) => {
   const modalRef = useRef(null)
   const { enqueueSnackbar } = useSnackbar()
-  const language = localStorage.getItem("language") || "RO"
 
   const { setTickets } = useApp()
   const { userId, hasRole, isLoadingRoles } = useUser()
@@ -48,7 +63,6 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
   const [editedTicket, setEditedTicket] = useState(() => ({
     contact: "",
     description: "",
-    tags: [],
     priority: "",
     workflow: "",
     name: "",
@@ -68,6 +82,11 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
     setEditedTicket((prev) => ({ ...prev, tags: updatedTags }))
   }
 
+  const updateOptionsGroup = groupTitleOptions.map((item) => ({
+    ...item,
+    disabled: getDisabledStatus(item.value, selectedGroupTitle)
+  }))
+
   const handleSave = async () => {
     const ticketData = {
       ...editedTicket,
@@ -77,7 +96,8 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
       name: editedTicket.name,
       surname: editedTicket.surname,
       email: editedTicket.email,
-      phone: editedTicket.phone
+      phone: editedTicket.phone,
+      ...(selectedGroupTitle && { group_title: selectedGroupTitle })
     }
 
     const cleanedData = Object.fromEntries(
@@ -148,16 +168,11 @@ const TicketModal = ({ ticket, onClose, onSave }) => {
           </div>
           <div className="divider-line"></div>
           <Segmented
-            onChange={(group) => {}}
-            options={[
-              { value: "RO", label: "RO" },
-              { value: "MD", label: "MD" },
-              { value: "Filiale", label: translations["Fil"][language] },
-              {
-                value: "Francize",
-                label: translations["Fra"][language].toUpperCase()
-              }
-            ]}
+            defaultValue={selectedGroupTitle}
+            onChange={(group) =>
+              setEditedTicket((prev) => ({ ...prev, group_title: group }))
+            }
+            options={updateOptionsGroup}
           />
           <div className="divider-line"></div>
           <div className="input-group">

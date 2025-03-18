@@ -21,6 +21,11 @@
   width: 100%;
 }
 
+.segmented .segmented-option.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
 .segmented .segmented-option:hover {
   background-color: #ccc;
 }

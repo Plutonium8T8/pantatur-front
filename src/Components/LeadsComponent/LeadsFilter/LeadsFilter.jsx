@@ -115,8 +115,8 @@ export const RefLeadsFilter = forwardRef(
               { value: "", label: getLanguageByKey("Toate") },
               { value: "RO", label: "RO" },
               { value: "MD", label: "MD" },
-              { value: "Filiale", label: getLanguageByKey("Fil") },
-              { value: "Francize", label: getLanguageByKey("Fra") }
+              { value: "Filiale", label: getLanguageByKey("FIL") },
+              { value: "Francize", label: getLanguageByKey("FRA") }
             ]}
           />
         </div>

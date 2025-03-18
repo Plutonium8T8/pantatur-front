@@ -1,8 +1,8 @@
 import { useState } from "react"
 import "./Segmented.css"
 
-export const Segmented = ({ options, onChange }) => {
-  const [selected, setSelected] = useState(options[0].value)
+export const Segmented = ({ options, onChange, defaultValue }) => {
+  const [selected, setSelected] = useState(defaultValue || options[0].value)
 
   return (
     <div className="segmented">
@@ -13,7 +13,7 @@ export const Segmented = ({ options, onChange }) => {
             onChange?.(option.value)
             setSelected(option.value)
           }}
-          className={`segmented-option ${option.value === selected ? "active" : ""}`}
+          className={`segmented-option ${option.value === selected ? "active" : ""} ${option.disabled ? "disabled" : ""}`}
         >
           {option.label}
         </div>

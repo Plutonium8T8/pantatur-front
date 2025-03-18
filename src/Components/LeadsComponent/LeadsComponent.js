@@ -331,6 +331,7 @@ const Leads = () => {
         )}
         {isModalOpen && currentTicket && (
           <TicketModal
+            selectedGroupTitle={groupTitle}
             ticket={currentTicket}
             onClose={closeModal}
             onSave={(updatedTicket) => {
