@@ -295,13 +295,26 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
             </select>
           </div>
 
-          <button
-            type="submit"
-            className="task-submit-button"
-            disabled={loading}
-          >
-            {loading ? "Se încarcă..." : "Adaugă task"}
-          </button>
+          <div className="group-button-form">
+            <button
+              type="submit"
+              className="task-submit-button"
+              disabled={loading}
+            >
+              {loading
+                ? "Se încarcă..."
+                : selectedTask
+                  ? "Editare task"
+                  : "Adaugă task"}
+            </button>
+            <button
+              type="button"
+              className="task-cancel-button"
+              onClick={onClose}
+            >
+              Anulare
+            </button>
+          </div>
         </form>
       </div>
     </div>

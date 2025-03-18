@@ -25,7 +25,7 @@
   justify-content: space-between;
   align-items: center;
   padding-bottom: 10px;
-  border-bottom: 1px solid #ddd;
+  /* border-bottom: 1px solid #ddd; */
 }
 
 .task-modal-header h2 {
@@ -97,4 +97,43 @@
 
 .task-dropdown-list li:hover {
   background: #f0f0f0;
+}
+
+.group-button-form {
+  display: flex;
+  justify-content: flex-end;
+  /* Выравниваем кнопки справа */
+  gap: 10px;
+  /* Отступ между кнопками */
+  margin-top: 15px;
+}
+
+.task-submit-button,
+.task-cancel-button {
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border: none;
+}
+
+.task-submit-button {
+  background-color: #007bff;
+  /* Синий */
+  color: white;
+}
+
+.task-submit-button:hover {
+  background-color: #0056b3;
+}
+
+.task-cancel-button {
+  background-color: #ccc;
+  color: #333;
+}
+
+.task-cancel-button:hover {
+  background-color: #bbb;
 }

@@ -11,7 +11,6 @@ import {
   IoEllipsisHorizontal,
   IoCheckmarkCircle,
   IoTrash,
-  IoDuplicate,
   IoPencil
 } from "react-icons/io5"
 
@@ -101,7 +100,9 @@ const TaskList = ({
         })
       },
       {
-        title: <HeaderCellRcTable title="Task pentru ticket" order={order} />,
+        title: (
+          <HeaderCellRcTable title="Task pentru Ticket-ul" order={order} />
+        ),
         dataIndex: "ticket_id",
         key: "ticket_id",
         width: 120,
@@ -114,7 +115,7 @@ const TaskList = ({
         })
       },
       {
-        title: "Tip Task",
+        title: "Tipul Taskului",
         dataIndex: "task_type",
         key: "task_type",
         width: 180,
@@ -148,7 +149,7 @@ const TaskList = ({
         )
       },
       {
-        title: "Status TASK",
+        title: "Etapa Task",
         dataIndex: "status_task",
         key: "status_task",
         width: 120,
@@ -239,21 +240,30 @@ const TaskList = ({
               <div className="dropdown-menu">
                 <div
                   className="dropdown-item complete"
-                  onClick={() => handleMarkTaskAsComplete(row.id)}
+                  onClick={() => {
+                    handleMarkTaskAsComplete(row.id)
+                    setOpenMenuId(null)
+                  }}
                 >
                   <IoCheckmarkCircle size={18} />
                   <span>Finalizați</span>
                 </div>
                 <div
                   className="dropdown-item edit"
-                  onClick={() => openEditTask(row)}
+                  onClick={() => {
+                    openEditTask(row)
+                    setOpenMenuId(null)
+                  }}
                 >
                   <IoPencil size={18} />
                   <span>Modificați</span>
                 </div>
                 <div
                   className="dropdown-item delete"
-                  onClick={() => handleDeleteTask(row.id)}
+                  onClick={() => {
+                    handleDeleteTask(row.id)
+                    setOpenMenuId(null)
+                  }}
                 >
                   <IoTrash size={18} />
                   <span>Ștergeți</span>
