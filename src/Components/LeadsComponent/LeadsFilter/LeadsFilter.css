@@ -18,6 +18,12 @@
   border: none;
   background-color: #f8f9fa;
   border-radius: 6px;
+  transition: 0.2s ease;
+}
+
+.leads-header-filter-button.active {
+  background-color: #0f824c;
+  color: white;
 }
 
 .leads-header-filter-button:hover {
@@ -27,8 +33,8 @@
 
 .leads-header-filter-button-indicator {
   position: absolute;
-  top: 9px;
-  right: 10px;
+  top: 2px;
+  right: 2px;
   width: 8px;
   height: 8px;
   background: #ff4d4f;

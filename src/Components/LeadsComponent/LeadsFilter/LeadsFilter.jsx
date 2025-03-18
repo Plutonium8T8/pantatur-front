@@ -10,10 +10,6 @@ import { getLanguageByKey } from "../../utils"
 import { Segmented } from "../../Segmented"
 import "./LeadsFilter.css"
 
-const getTicketCount = (total) => {
-  return `${getLanguageByKey("Filtrate")}: ${total}`
-}
-
 export const RefLeadsFilter = forwardRef(
   (
     {
@@ -27,7 +23,8 @@ export const RefLeadsFilter = forwardRef(
       deleteTicket,
       setGroupTitle,
       hasSelectedLightListers,
-      totalTicketsFiltered
+      totalTicketsFiltered,
+      isFilterOpen
     },
     ref
   ) => {
@@ -63,7 +60,7 @@ export const RefLeadsFilter = forwardRef(
           />
 
           <div className="d-flex align-items-center | tickets-total">
-            {getTicketCount(totalTicketsFiltered)}
+            {`${getLanguageByKey("Leads")}: ${totalTicketsFiltered}`}
           </div>
 
           {selectedTickets.length > 0 && (
@@ -90,10 +87,10 @@ export const RefLeadsFilter = forwardRef(
 
           <button
             onClick={() => setIsFilterOpen(true)}
-            className="d-flex align-items-center justify-content-center | leads-header-filter-button"
+            className={`d-flex align-items-center justify-content-center | leads-header-filter-button ${isFilterOpen ? "active" : ""}`}
           >
             <div className="d-flex align-items-center">
-              <LuFilter />
+              <LuFilter size={16} />
             </div>
             {hasSelectedLightListers && (
               <span className="leads-header-filter-button-indicator" />

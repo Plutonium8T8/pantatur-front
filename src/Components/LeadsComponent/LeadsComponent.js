@@ -54,7 +54,7 @@ const Leads = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [selectedTickets, setSelectedTickets] = useState([])
   const [loading, setLoading] = useState(false)
-  const [totalLeads, setTotalLeads] = useState(0)
+  const [totalLeads, setTotalLeads] = useState()
   const [currentPage, setCurrentPage] = useState(1)
   const [loadingFilters, setLoadingFilters] = useState(false)
   const [isChatOpen, setIsChatOpen] = useState(!!ticketId)
@@ -227,8 +227,9 @@ const Leads = () => {
   const handleApplyFilterLightTicket = (formattedFilters) => {
     fetchTickets(
       { page: NUMBER_PAGE, type: LIGHT_TICKET, attributes: formattedFilters },
-      ({ data }) => {
+      ({ data, total }) => {
         applyWorkflowFilters(formattedFilters, data)
+        setTotalLeads(total)
       }
     )
   }
@@ -255,14 +256,15 @@ const Leads = () => {
         },
         ...(groupTitle && { group_title: groupTitle })
       },
-      ({ data, pagination }) => {
+      (response) => {
+        const { data, ...rest } = response
         if (isTableView) {
           setHardTickets(data)
-          setTotalLeads(pagination.total || 0)
+          setTotalLeads(rest.pagination.total || 0)
           return
         }
         setFilteredTicketIds(data ?? null)
-        setTotalLeads(pagination || 0)
+        setTotalLeads(rest.total || 0)
       }
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -284,7 +286,8 @@ const Leads = () => {
           (value) => (Array.isArray(value) ? value.length > 0 : value)
         )}
         setGroupTitle={setGroupTitle}
-        totalTicketsFiltered={100}
+        totalTicketsFiltered={totalLeads ?? tickets.length}
+        isFilterOpen={isFilterOpen}
       />
 
       <div
