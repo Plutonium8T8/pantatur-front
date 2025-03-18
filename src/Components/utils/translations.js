@@ -1274,9 +1274,9 @@ export const translations = {
     RO: "Toate",
     RU: "Всe"
   },
-  Fil: {
-    RO: "FIL.",
-    RU: "ФИЛ."
+  FIL: {
+    RO: "FIL",
+    RU: "ФИЛ"
   },
   Leads: {
     RO: "Lead-uri",
@@ -1286,9 +1286,9 @@ export const translations = {
     RO: "Categorie",
     RU: "Категория"
   },
-  Fra: {
-    RO: "FRA.",
-    RU: "ФРА."
+  FRA: {
+    RO: "FRA",
+    RU: "ФРА"
   }
 }
 
