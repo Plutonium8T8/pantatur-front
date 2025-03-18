@@ -4,15 +4,6 @@
   background-color: #dfefd9f9;
   padding-inline: 20px;
   padding-block: 10px;
-  display: flex;
-  justify-content: space-between;
-  margin-right: 500px;
-}
-
-.leads-header-filter {
-  display: flex;
-  align-items: center;
-  gap: 16px;
 }
 
 .leads-header-filter-search {
@@ -21,25 +12,22 @@
 
 .leads-header-filter-button {
   position: relative;
-  border: 1px solid #0f824c;
   height: 100%;
-  transition: 0.3s ease;
   width: 37px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   padding: 0;
   border: none;
+  background-color: #f8f9fa;
+  border-radius: 6px;
 }
 
 .leads-header-filter-button:hover {
-  background-color: #0f824c;
-  color: white;
+  background-color: #f8f9fa;
+  border-radius: 6px;
 }
 
 .leads-header-filter-button-indicator {
   position: absolute;
-  top: 8px;
+  top: 9px;
   right: 10px;
   width: 8px;
   height: 8px;
@@ -55,8 +43,6 @@
   padding-inline: 10px;
   background-color: #f8f9fa;
   border-radius: 6px;
-  display: flex;
-  align-items: center;
 }
 
 .leads-header-filter-add-lead {

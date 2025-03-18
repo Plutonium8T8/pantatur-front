@@ -1273,6 +1273,18 @@ export const translations = {
   inactiv: {
     RO: "inactiv",
     RU: "неактивный"
+  },
+  Toate: {
+    RO: "Toate",
+    RU: "Всe"
+  },
+  Fil: {
+    RO: "Fil.",
+    RU: "Фил."
+  },
+  Francize: {
+    RO: "Francize",
+    RU: "Франшизы"
   }
 }
 

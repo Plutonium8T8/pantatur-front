@@ -33,13 +33,19 @@ const normalizeLeadsFilters = (filters) => {
   }
 }
 
+const filteredWorkflows = workflowOptions.filter(
+  (wf) => wf !== "Realizat cu succes" && wf !== "Închis și nerealizat"
+)
+
 const Leads = () => {
   const refLeadsFilter = useRef()
   const { enqueueSnackbar } = useSnackbar()
   const navigate = useNavigate()
+  const leadsFilterHeight = useDOMElementHeight(refLeadsFilter)
+  const { tickets, isLoading, setTickets } = useApp()
+  const { ticketId } = useParams()
 
   const [hardTickets, setHardTickets] = useState([])
-  const { tickets, isLoading, setTickets } = useApp()
   const [isTableView, setIsTableView] = useState(false)
   const [filteredTicketIds, setFilteredTicketIds] = useState(null)
   const [searchTerm, setSearchTerm] = useState("")
@@ -50,26 +56,14 @@ const Leads = () => {
   const [loading, setLoading] = useState(false)
   const [totalLeads, setTotalLeads] = useState(0)
   const [currentPage, setCurrentPage] = useState(1)
-  const [tableLeadsFilters, setTableLeadsFilters] = useState({})
   const [loadingFilters, setLoadingFilters] = useState(false)
-  const { ticketId } = useParams() // Получаем ticketId из URL
-  const [isChatOpen, setIsChatOpen] = useState(!!ticketId) // Если ticketId есть, сразу открываем модалку
-  const [selectedWorkflow, setSelectedWorkflow] = useState(
-    workflowOptions.filter(
-      (wf) => wf !== "Realizat cu succes" && wf !== "Închis și nerealizat"
-    )
-  )
-  const leadsFilterHeight = useDOMElementHeight(refLeadsFilter)
-  const [filters, setFilters] = useState({
-    creation_date: "",
-    last_interaction_date: "",
-    technician_id: [],
-    sender_id: "",
-    workflow: selectedWorkflow,
-    priority: [],
-    tags: "",
-    platform: []
-  })
+  const [isChatOpen, setIsChatOpen] = useState(!!ticketId)
+  const [groupTitle, setGroupTitle] = useState("")
+  const [selectedWorkflow, setSelectedWorkflow] = useState(filteredWorkflows)
+
+  const [hardTicketFilters, setHardTicketFilters] = useState({})
+  const [lightTicketFilters, setLightTicketFilters] = useState({})
+
   const debouncedSearch = useDebounce(searchTerm)
 
   const filteredTickets = useMemo(() => {
@@ -118,7 +112,7 @@ const Leads = () => {
         {
           type: HARD_TICKET,
           page: currentPage,
-          attributes: tableLeadsFilters
+          attributes: hardTicketFilters
         },
         ({ data, pagination }) => {
           setHardTickets(data)
@@ -160,7 +154,14 @@ const Leads = () => {
   }
 
   const fetchTickets = async (
-    { page, type, sortBy = SORT_BY, order = ORDER, attributes = {} },
+    {
+      page,
+      type,
+      sortBy = SORT_BY,
+      order = ORDER,
+      attributes = {},
+      group_title
+    },
     cb,
     showModalLoading
   ) => {
@@ -175,7 +176,8 @@ const Leads = () => {
         sort_by: sortBy,
         order: order,
         type,
-        attributes
+        attributes,
+        group_title
       })
 
       cb(hardTicket)
@@ -198,13 +200,13 @@ const Leads = () => {
   const closeTicketModal = () => setIsFilterOpen(false)
 
   const applyWorkflowFilters = (updatedFilters, ticketIds) => {
-    setFilters(updatedFilters)
+    setLightTicketFilters(updatedFilters)
 
     setSelectedWorkflow(
       Array.isArray(updatedFilters.workflow) ? updatedFilters.workflow : []
     )
 
-    setFilteredTicketIds(ticketIds !== null ? ticketIds : null)
+    setFilteredTicketIds(ticketIds ?? null)
     closeTicketModal()
   }
 
@@ -215,7 +217,7 @@ const Leads = () => {
         setHardTickets(data)
         setTotalLeads(pagination.total || 0)
         setCurrentPage(1)
-        setTableLeadsFilters(formattedFilters)
+        setHardTicketFilters(formattedFilters)
         closeTicketModal()
       },
       true
@@ -226,14 +228,14 @@ const Leads = () => {
     fetchTickets(
       { page: NUMBER_PAGE, type: LIGHT_TICKET, attributes: formattedFilters },
       ({ data }) => {
-        applyWorkflowFilters(filters, data)
+        applyWorkflowFilters(formattedFilters, data)
       }
     )
   }
 
   const handlePaginationWorkflow = (page) => {
     fetchTickets(
-      { page, type: HARD_TICKET, attributes: tableLeadsFilters },
+      { page, type: HARD_TICKET, attributes: hardTicketFilters },
       ({ data, pagination }) => {
         setHardTickets(data)
         setTotalLeads(pagination.total || 0)
@@ -243,29 +245,15 @@ const Leads = () => {
   }
 
   useEffect(() => {
-    if (isTableView) {
-      fetchTickets(
-        {
-          type: HARD_TICKET,
-          page: currentPage
-        },
-        ({ data, pagination }) => {
-          setHardTickets(data)
-          setTotalLeads(pagination.total || 0)
-        }
-      )
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isTableView])
-
-  useEffect(() => {
     fetchTickets(
       {
         type: isTableView ? HARD_TICKET : LIGHT_TICKET,
         page: currentPage,
         attributes: {
-          search: debouncedSearch
-        }
+          ...(debouncedSearch && { search: debouncedSearch }),
+          ...(isTableView ? hardTicketFilters : lightTicketFilters)
+        },
+        ...(groupTitle && { group_title: groupTitle })
       },
       ({ data, pagination }) => {
         if (isTableView) {
@@ -273,12 +261,12 @@ const Leads = () => {
           setTotalLeads(pagination.total || 0)
           return
         }
-        applyWorkflowFilters(filters, data)
+        setFilteredTicketIds(data ?? null)
         setTotalLeads(pagination || 0)
       }
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedSearch])
+  }, [debouncedSearch, groupTitle, isTableView])
 
   return (
     <>
@@ -288,15 +276,15 @@ const Leads = () => {
         setSearchTerm={setSearchTerm}
         searchTerm={searchTerm}
         setIsTableView={setIsTableView}
-        isTableView={isTableView}
-        tickets={tickets}
-        totalLeads={totalLeads}
         selectedTickets={selectedTickets}
         editSelectedTickets={editSelectedTickets}
         setIsFilterOpen={setIsFilterOpen}
         deleteTicket={deleteTicket}
-        filters={filters}
-        filteredTickets={filteredTickets}
+        hasSelectedLightListers={Object.values(lightTicketFilters).some(
+          (value) => (Array.isArray(value) ? value.length > 0 : value)
+        )}
+        setGroupTitle={setGroupTitle}
+        totalTicketsFiltered={100}
       />
 
       <div
@@ -379,7 +367,7 @@ const Leads = () => {
           onApplyTicketFilters={(filters) =>
             handleApplyFiltersHardTicket(normalizeLeadsFilters(filters))
           }
-          resetTicketsFilters={setTableLeadsFilters}
+          resetTicketsFilters={setHardTicketFilters}
         />
       </div>
       <Modal

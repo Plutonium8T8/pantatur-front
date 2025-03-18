@@ -10,8 +10,8 @@ import { getLanguageByKey } from "../../utils"
 import { Segmented } from "../../Segmented"
 import "./LeadsFilter.css"
 
-const getTicketCount = (isTable, total, filtered) => {
-  return `${getLanguageByKey("Filtrate")}: ${isTable ? total : filtered}`
+const getTicketCount = (total) => {
+  return `${getLanguageByKey("Filtrate")}: ${total}`
 }
 
 export const RefLeadsFilter = forwardRef(
@@ -21,21 +21,22 @@ export const RefLeadsFilter = forwardRef(
       searchTerm,
       setSearchTerm,
       setIsTableView,
-      isTableView,
-      tickets,
-      totalLeads,
       selectedTickets,
       editSelectedTickets,
       setIsFilterOpen,
       deleteTicket,
-      filters,
-      filteredTickets
+      setGroupTitle,
+      hasSelectedLightListers,
+      totalTicketsFiltered
     },
     ref
   ) => {
     return (
-      <div ref={ref} className="leads-header-container">
-        <div className="leads-header-filter">
+      <div
+        ref={ref}
+        className="d-flex justify-content-between | leads-header-container"
+      >
+        <div className="d-flex align-items-center gap-16">
           <Button
             variant="primary"
             className="leads-header-filter-add-lead"
@@ -61,8 +62,8 @@ export const RefLeadsFilter = forwardRef(
             clear
           />
 
-          <div className="tickets-total">
-            {getTicketCount(isTableView, totalLeads, filteredTickets.length)}
+          <div className="d-flex align-items-center | tickets-total">
+            {getTicketCount(totalTicketsFiltered)}
           </div>
 
           {selectedTickets.length > 0 && (
@@ -89,14 +90,14 @@ export const RefLeadsFilter = forwardRef(
 
           <button
             onClick={() => setIsFilterOpen(true)}
-            className="leads-header-filter-button"
+            className="d-flex align-items-center justify-content-center | leads-header-filter-button"
           >
             <div className="d-flex align-items-center">
               <LuFilter />
             </div>
-            {Object.values(filters).some((value) =>
-              Array.isArray(value) ? value.length > 0 : value
-            ) && <span className="leads-header-filter-button-indicator"></span>}
+            {hasSelectedLightListers && (
+              <span className="leads-header-filter-button-indicator" />
+            )}
           </button>
         </div>
 
@@ -112,12 +113,13 @@ export const RefLeadsFilter = forwardRef(
           />
 
           <Segmented
-            onChange={(data) => console.log(data)}
+            onChange={(group) => setGroupTitle(group)}
             options={[
+              { value: "", label: getLanguageByKey("Toate") },
               { value: "RO", label: "RO" },
               { value: "MD", label: "MD" },
-              { value: "Filiale", label: "Fil" },
-              { value: "Francize", label: "Francize" }
+              { value: "Filiale", label: getLanguageByKey("Fil") },
+              { value: "Francize", label: getLanguageByKey("Francize") }
             ]}
           />
         </div>
