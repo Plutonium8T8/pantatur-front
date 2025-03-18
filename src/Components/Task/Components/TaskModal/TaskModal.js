@@ -4,6 +4,7 @@ import { api } from "../../../../api"
 import { Input } from "../../../Input"
 import IconSelect from "../../../IconSelect/IconSelect"
 import { TypeTask } from "../OptionsTaskType/OptionsTaskType"
+import { translations } from "../../../utils/translations"
 import "./TaskModal.css"
 
 const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
@@ -25,6 +26,7 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
   const [searchTerm, setSearchTerm] = useState("")
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  const language = localStorage.getItem("language") || "RO"
 
   const formatDateTime = (dateString) => {
     if (!dateString) return ""

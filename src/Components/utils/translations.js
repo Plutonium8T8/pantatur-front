@@ -1285,6 +1285,86 @@ export const translations = {
   Cautare: {
     RO: "Căutare",
     RU: "Поиск"
+  },
+  "Editare Task": {
+    RO: "Editare Task",
+    RU: "Редактирование задачи"
+  },
+  "Creare Task": {
+    RO: "Creare Task",
+    RU: "Создание задачи"
+  },
+  "Lead ID": {
+    RO: "Lead ID",
+    RU: "ID лида"
+  },
+  "Alege tip task": {
+    RO: "Alege tip task",
+    RU: "Выберите тип задачи"
+  },
+  Prioritate: {
+    RO: "Prioritate",
+    RU: "Приоритет"
+  },
+  Low: {
+    RO: "Scăzut",
+    RU: "Низкий"
+  },
+  Medium: {
+    RO: "Mediu",
+    RU: "Средний"
+  },
+  High: {
+    RO: "Ridicat",
+    RU: "Высокий"
+  },
+  Status: {
+    RO: "Status",
+    RU: "Статус"
+  },
+  "To Do": {
+    RO: "De făcut",
+    RU: "К выполнению"
+  },
+  "In Progress": {
+    RO: "În progres",
+    RU: "В процессе"
+  },
+  Done: {
+    RO: "Finalizat",
+    RU: "Готово"
+  },
+  Overdue: {
+    RO: "Întârziat",
+    RU: "Просрочено"
+  },
+  "Dată și oră": {
+    RO: "Dată și oră",
+    RU: "Дата и время"
+  },
+  "Descriere task": {
+    RO: "Descriere task",
+    RU: "Описание задачи"
+  },
+  Pentru: {
+    RO: "Pentru",
+    RU: "Для"
+  },
+  "De la utilizatorul": {
+    RO: "De la utilizatorul",
+    RU: "От пользователя"
+  },
+  "Se încarcă...": {
+    RO: "Se încarcă...",
+    RU: "Загрузка..."
+  },
+  "Adaugă task": {
+    RO: "Adaugă task",
+    RU: "Добавить задачу"
+  },
+  Anulare: {
+    RO: "Anulare",
+    RU: "Отмена"
   }
 }
 
