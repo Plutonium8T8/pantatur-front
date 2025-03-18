@@ -52,6 +52,22 @@ const TaskList = ({
     }
   }
 
+  const handleMarkTaskAsComplete = async (taskId) => {
+    try {
+      await api.task.update({
+        id: taskId,
+        status: true
+      })
+
+      enqueueSnackbar("Task marcat ca finalizat!", { variant: "success" })
+      fetchTasks()
+    } catch (error) {
+      enqueueSnackbar("Eroare la actualizarea statusului taskului", {
+        variant: "error"
+      })
+    }
+  }
+
   const columns = useMemo(
     () => [
       {
@@ -223,7 +239,7 @@ const TaskList = ({
               <div className="dropdown-menu">
                 <div
                   className="dropdown-item complete"
-                  onClick={() => console.log("Finalizați", row.id)}
+                  onClick={() => handleMarkTaskAsComplete(row.id)}
                 >
                   <IoCheckmarkCircle size={18} />
                   <span>Finalizați</span>
@@ -234,13 +250,6 @@ const TaskList = ({
                 >
                   <IoPencil size={18} />
                   <span>Modificați</span>
-                </div>
-                <div
-                  className="dropdown-item duplicate"
-                  onClick={() => console.log("Dublicate", row.id)}
-                >
-                  <IoDuplicate size={18} />
-                  <span>Duplicate</span>
                 </div>
                 <div
                   className="dropdown-item delete"
