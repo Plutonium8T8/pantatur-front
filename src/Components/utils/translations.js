@@ -51,10 +51,6 @@ export const translations = {
     RO: "Caută leaduri",
     RU: "Искать лиды"
   },
-  Leaduri: {
-    RO: "Leaduri",
-    RU: "Лиды"
-  },
   Notificări: {
     RO: {
       0: "Notificări",
@@ -1273,6 +1269,22 @@ export const translations = {
   inactiv: {
     RO: "inactiv",
     RU: "неактивный"
+  },
+  Toate: {
+    RO: "Toate",
+    RU: "Всe"
+  },
+  Fil: {
+    RO: "Fil.",
+    RU: "Фил."
+  },
+  Francize: {
+    RO: "Francize",
+    RU: "Франшизы"
+  },
+  Leads: {
+    RO: "Lead-uri",
+    RU: "Лиды"
   }
 }
 
