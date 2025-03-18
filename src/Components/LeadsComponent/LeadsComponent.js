@@ -106,7 +106,7 @@ const Leads = () => {
 
     try {
       setLoading(true)
-      await api.tickets.deleteById(findTicket.id)
+      await api.tickets.deleteById(selectedTickets)
       await fetchTickets(
         {
           type: HARD_TICKET,
