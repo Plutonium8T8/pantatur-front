@@ -245,7 +245,7 @@ const Leads = () => {
     )
   }
 
-  useEffect(() => {
+  const fetchTicketList = () => {
     fetchTickets(
       {
         type: isTableView ? HARD_TICKET : LIGHT_TICKET,
@@ -267,6 +267,10 @@ const Leads = () => {
         setTotalLeads(rest.total || 0)
       }
     )
+  }
+
+  useEffect(() => {
+    fetchTicketList()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearch, groupTitle, isTableView])
 
@@ -331,6 +335,7 @@ const Leads = () => {
         )}
         {isModalOpen && currentTicket && (
           <TicketModal
+            fetchTickets={fetchTicketList}
             selectedGroupTitle={groupTitle}
             ticket={currentTicket}
             onClose={closeModal}
