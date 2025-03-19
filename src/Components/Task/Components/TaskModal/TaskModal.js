@@ -30,47 +30,60 @@ const TaskModal = ({
 
   const [ticketIds, setTicketIds] = useState([])
   const [userList, setUserList] = useState([])
-  const [searchTerm, setSearchTerm] = useState("")
   const [loading, setLoading] = useState(false)
   const language = localStorage.getItem("language") || "RO"
 
   useEffect(() => {
-    if (isOpen) {
-      fetchTickets()
-      fetchUsers()
+    if (!isOpen) return
 
-      if (selectedTask) {
-        setTask({
-          ticketId: selectedTask.ticket_id,
-          scheduledTime: selectedTask.scheduled_time,
-          description: selectedTask.description,
-          taskType: selectedTask.task_type,
-          createdBy: selectedTask.created_by,
-          createdFor: selectedTask.created_for,
-          priority: selectedTask.priority,
-          status_task: selectedTask.status_task
-        })
-        setSearchTerm(selectedTask.ticket_id.toString())
-      } else {
-        setTask({
-          ticketId: defaultTicketId || "",
-          scheduledTime: "",
-          description: "",
-          taskType: "",
-          createdBy: defaultCreatedBy || "",
-          createdFor: "",
-          priority: "Medium",
-          status_task: "To Do"
-        })
-        setSearchTerm(defaultTicketId ? defaultTicketId.toString() : "")
-      }
+    fetchTickets()
+    fetchUsers()
+
+    if (selectedTask) {
+      // Если редактируем таск – загружаем его данные
+      setTask({
+        ticketId: selectedTask.ticket_id,
+        scheduledTime: selectedTask.scheduled_time || "",
+        description: selectedTask.description || "",
+        taskType: selectedTask.task_type || "",
+        createdBy: selectedTask.created_by,
+        createdFor: selectedTask.created_for || "",
+        priority: selectedTask.priority || "Medium",
+        status_task: selectedTask.status_task || "To Do"
+      })
+    } else {
+      // Если создаем новый таск – сбрасываем все поля
+      setTask({
+        ticketId: defaultTicketId || "",
+        scheduledTime: "",
+        description: "",
+        taskType: "",
+        createdBy: defaultCreatedBy || "",
+        createdFor: "",
+        priority: "Medium",
+        status_task: "To Do"
+      })
     }
-  }, [isOpen, selectedTask, defaultTicketId, defaultCreatedBy])
+  }, [isOpen])
+
+  const handleClose = () => {
+    setTask({
+      ticketId: "",
+      scheduledTime: "",
+      description: "",
+      taskType: "",
+      createdBy: "",
+      createdFor: "",
+      priority: "Medium",
+      status_task: "To Do"
+    })
+    onClose()
+  }
 
   const fetchTickets = async () => {
     try {
       const data = await api.tickets.list()
-      setTicketIds(data.map((ticket) => ticket.id.toString())) // Преобразуем ID в строки для Mantine Select
+      setTicketIds(data.map((ticket) => ticket.id.toString()))
     } catch (error) {
       enqueueSnackbar("Eroare la încărcarea tichetelor", { variant: "error" })
     }
@@ -152,7 +165,7 @@ const TaskModal = ({
   return (
     <Modal
       opened={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
       title={
         selectedTask
           ? translations["Editare Task"][language]
@@ -165,8 +178,10 @@ const TaskModal = ({
         <MantineSelect
           label={translations["Lead ID"][language]}
           data={ticketIds}
-          value={task.ticketId}
-          onChange={(value) => setTask({ ...task, ticketId: value })}
+          value={task.ticketId ? task.ticketId.toString() : ""}
+          onChange={(value) =>
+            setTask((prev) => ({ ...prev, ticketId: value }))
+          }
           searchable
           placeholder={translations["Lead ID"][language]}
           required
@@ -246,8 +261,10 @@ const TaskModal = ({
         <MantineSelect
           label={translations["De la utilizatorul"][language]}
           data={userList}
-          value={task.createdBy}
-          onChange={(value) => setTask({ ...task, createdBy: value })}
+          value={task.createdBy ? task.createdBy.toString() : ""}
+          onChange={(value) =>
+            setTask((prev) => ({ ...prev, createdBy: value }))
+          }
           required
           searchable
           mt="md"
