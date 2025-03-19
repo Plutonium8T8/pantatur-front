@@ -10,7 +10,8 @@ import {
   FaViber,
   FaInstagram,
   FaWhatsapp,
-  FaTelegram
+  FaTelegram,
+  FaTasks
 } from "react-icons/fa"
 import { translations } from "../utils/translations"
 import { templateOptions } from "../../FormOptions/MessageTemplate"
@@ -63,7 +64,8 @@ const ChatMessages = ({
 
     return ticketMessages.length > 0 ? ticketMessages[0].client_id : null
   }
-
+  console.log("userIduserIduserIduserIduserId", userId)
+  console.log("id ticket pentru task!!!!", selectTicketId)
   useEffect(() => {
     const lastClient = getLastClientWhoSentMessage()
     if (lastClient) {
@@ -643,7 +645,9 @@ const ChatMessages = ({
               className="action-button task-button"
               onClick={() => setIsTaskModalOpen(true)}
               disabled={!selectTicketId}
-            ></button>
+            >
+              <FaTasks />
+            </button>
           </div>
           <div className="select-row">
             <div className="input-group">
@@ -718,7 +722,8 @@ const ChatMessages = ({
         <TaskModal
           isOpen={isTaskModalOpen}
           onClose={() => setIsTaskModalOpen(false)}
-          selectedTicketId={selectTicketId}
+          defaultTicketId={selectTicketId}
+          defaultCreatedBy={userId}
         />
       </div>
     </div>

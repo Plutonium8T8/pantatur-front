@@ -7,7 +7,14 @@ import IconSelect from "../../../IconSelect/IconSelect"
 import { TypeTask } from "../OptionsTaskType/OptionsTaskType"
 import { translations } from "../../../utils/translations"
 
-const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
+const TaskModal = ({
+  isOpen,
+  onClose,
+  fetchTasks,
+  selectedTask,
+  defaultTicketId,
+  defaultCreatedBy
+}) => {
   const { enqueueSnackbar } = useSnackbar()
 
   const [task, setTask] = useState({
@@ -46,19 +53,19 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
         setSearchTerm(selectedTask.ticket_id.toString())
       } else {
         setTask({
-          ticketId: "",
+          ticketId: defaultTicketId || "",
           scheduledTime: "",
           description: "",
           taskType: "",
-          createdBy: "",
+          createdBy: defaultCreatedBy || "",
           createdFor: "",
           priority: "Medium",
           status_task: "To Do"
         })
-        setSearchTerm("")
+        setSearchTerm(defaultTicketId ? defaultTicketId.toString() : "")
       }
     }
-  }, [isOpen, selectedTask])
+  }, [isOpen, selectedTask, defaultTicketId, defaultCreatedBy])
 
   const fetchTickets = async () => {
     try {
@@ -165,6 +172,7 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
           required
           clearable
           mb="md"
+          disabled={!!defaultTicketId}
         />
 
         <IconSelect
@@ -184,6 +192,7 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
           value={task.priority}
           onChange={(value) => setTask({ ...task, priority: value })}
           required
+          searchable
           mt="md"
         />
 
@@ -193,6 +202,7 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
           value={task.status_task}
           onChange={(value) => setTask({ ...task, status_task: value })}
           required
+          searchable
           mt="md"
         />
 
@@ -207,6 +217,7 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
           }}
           required
           clearable
+          searchable
           mt="md"
         />
 
@@ -228,6 +239,7 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
           value={task.createdFor}
           onChange={(value) => setTask({ ...task, createdFor: value })}
           required
+          searchable
           mt="md"
         />
 
@@ -237,7 +249,9 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
           value={task.createdBy}
           onChange={(value) => setTask({ ...task, createdBy: value })}
           required
+          searchable
           mt="md"
+          disabled={!!defaultCreatedBy}
         />
 
         <Button type="submit" loading={loading} mt="md">
