@@ -1,7 +1,6 @@
 import React from "react"
 import { Select as MantineSelect } from "@mantine/core"
 import { translations } from "../utils/translations"
-import { IoMdClose } from "react-icons/io"
 
 const Select = ({
   options,
@@ -9,7 +8,6 @@ const Select = ({
   id,
   value,
   onChange,
-  customClassName,
   placeholder,
   required,
   disabled,
@@ -19,35 +17,34 @@ const Select = ({
   const language = localStorage.getItem("language") || "RO"
 
   return (
-    <div className={`input-group ${hasError ? "invalid-field" : ""}`}>
+    <div className="input-group">
       {label && (
         <label htmlFor={id}>{translations[label]?.[language] ?? label}</label>
       )}
-      <div className="select-container-wrapper">
-        <MantineSelect
-          id={id}
-          className={`task-select ${hasError ? "invalid-field" : ""}`}
-          value={value}
-          onChange={onChange}
-          data={options.map((option) => ({
-            value: option,
-            label: translations[option]?.[language] ?? option
-          }))}
-          required={required}
-          disabled={disabled}
-          placeholder={
-            translations[placeholder]?.[language] ??
-            translations[label]?.[language]
-          }
-          rightSection={
-            clear ? (
-              <IoMdClose size={16} onClick={() => onChange("")} />
-            ) : undefined
-          }
-          error={hasError}
-          searchable
-        />
-      </div>
+
+      <MantineSelect
+        id={id}
+        value={value}
+        onChange={onChange}
+        data={options.map((option) => ({
+          value: option,
+          label: translations[option]?.[language] ?? option
+        }))}
+        required={required}
+        disabled={disabled}
+        placeholder={
+          translations[placeholder]?.[language] ??
+          translations[label]?.[language] ??
+          placeholder
+        }
+        clearable={clear}
+        error={
+          hasError
+            ? (translations["error_field"]?.[language] ?? "Ошибка в выборе")
+            : undefined
+        }
+        searchable
+      />
     </div>
   )
 }

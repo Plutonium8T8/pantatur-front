@@ -1394,6 +1394,10 @@ export const translations = {
   FRA: {
     RO: "FRA",
     RU: "ФРА"
+  },
+  error_field: {
+    RO: "Completati randul",
+    RU: "Заполните поле"
   }
 }
 
