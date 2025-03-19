@@ -18,6 +18,8 @@ import { RefLeadsFilter } from "./LeadsFilter"
 import "../../App.css"
 import "../SnackBarComponent/SnackBarComponent.css"
 
+import { EditBulkLeadsModal } from "./components"
+
 const SORT_BY = "creation_date"
 const ORDER = "DESC"
 const HARD_TICKET = "hard"
@@ -331,26 +333,12 @@ const Leads = () => {
               ))}
           </div>
         )}
-        {isModalOpen && currentTicket && (
-          <TicketModal
-            fetchTickets={fetchTicketList}
-            selectedGroupTitle={groupTitle}
-            ticket={currentTicket}
-            onClose={closeModal}
-            onSave={(updatedTicket) => {
-              setTickets((prevTickets) => {
-                const isEditing = Boolean(updatedTicket.ticket_id)
-                return isEditing
-                  ? prevTickets.map((ticket) =>
-                      ticket.id === updatedTicket.ticket_id
-                        ? updatedTicket
-                        : ticket
-                    )
-                  : [...prevTickets, updatedTicket]
-              })
-            }}
-          />
-        )}
+
+        <EditBulkLeadsModal
+          open={isModalOpen && currentTicket}
+          onClose={closeModal}
+          selectedTickets={selectedTickets}
+        />
 
         <TicketFilterModal
           loading={loading}

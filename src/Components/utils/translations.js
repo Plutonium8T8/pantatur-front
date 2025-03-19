@@ -1289,6 +1289,30 @@ export const translations = {
   FRA: {
     RO: "FRA",
     RU: "ФРА"
+  },
+  "Selectează flux de lucru": {
+    RO: "Selectează flux de lucru",
+    RU: "Выберите рабочий процесс"
+  },
+  "Selectează prioritate": {
+    RO: "Selectează prioritate",
+    RU: "Выберите приоритет"
+  },
+  "Selectează contact": {
+    RO: "Selectează contact",
+    RU: "Выберите контекст"
+  },
+  Status: {
+    RO: "Status",
+    RU: "Статус"
+  },
+  Tehnician: {
+    RO: "Tehnician",
+    RU: "Техник"
+  },
+  "Selectează tehnician": {
+    RO: "Selectează tehnician",
+    RU: "Выберите техника"
   }
 }
 
