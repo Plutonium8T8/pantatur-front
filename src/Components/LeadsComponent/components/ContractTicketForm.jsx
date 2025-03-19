@@ -4,19 +4,44 @@ import { useForm } from "@mantine/form"
 import { getLanguageByKey } from "../../utils"
 import { LabelSwitch } from "../../LabelSwitch"
 import { paymentStatusOptions } from "../../../FormOptions"
+import { DD_MM_YYYY } from "../../../app-constants"
+import dayjs from "dayjs"
+import { DATE_TIME_FORMAT } from "../../../app-constants"
+
+const formatDate = (date) => {
+  return dayjs(date).format(DATE_TIME_FORMAT)
+}
 
 export const ContractTicketForm = ({ onClose, onSubmit, loading }) => {
   const form = useForm({
-    mode: "uncontrolled"
+    mode: "uncontrolled",
+
+    transformValues: ({
+      data_contractului,
+      data_avansului,
+      data_de_plata_integrala,
+      ...rest
+    }) => {
+      const formattedData = {
+        ...(data_contractului && {
+          data_contractului: formatDate(data_contractului)
+        }),
+        ...(data_avansului && { data_avansului: formatDate(data_avansului) }),
+        ...(data_de_plata_integrala && {
+          data_de_plata_integrala: formatDate(data_de_plata_integrala)
+        })
+      }
+
+      return { ...formattedData, ...rest }
+    }
   })
 
-  const submit = (e) => {
-    e.preventDefault()
-
-    onSubmit(form.getValues())
-  }
   return (
-    <form onSubmit={submit}>
+    <form
+      onSubmit={form.onSubmit((values) => {
+        onSubmit(values, () => form.reset())
+      })}
+    >
       <TextInput
         mt="md"
         label={getLanguageByKey("Nr de contract")}
@@ -25,11 +50,36 @@ export const ContractTicketForm = ({ onClose, onSubmit, loading }) => {
         {...form.getInputProps("numar_de_contract")}
       />
       <DatePickerInput
+        minDate={new Date()}
+        valueFormat={DD_MM_YYYY}
+        clearable
         mt="md"
         label={getLanguageByKey("Data contractului")}
         placeholder={getLanguageByKey("Data contractului")}
         key={form.key("data_contractului")}
         {...form.getInputProps("data_contractului")}
+      />
+
+      <DatePickerInput
+        minDate={new Date()}
+        valueFormat={DD_MM_YYYY}
+        clearable
+        mt="md"
+        label={getLanguageByKey("Data avansului")}
+        placeholder={getLanguageByKey("Data avansului")}
+        key={form.key("data_avansului")}
+        {...form.getInputProps("data_avansului")}
+      />
+
+      <DatePickerInput
+        minDate={new Date()}
+        valueFormat={DD_MM_YYYY}
+        clearable
+        mt="md"
+        label={getLanguageByKey("Data de plată integrală")}
+        placeholder={getLanguageByKey("Data de plată integrală")}
+        key={form.key("data_de_plata_integrala")}
+        {...form.getInputProps("data_de_plata_integrala")}
       />
 
       <LabelSwitch
@@ -63,6 +113,7 @@ export const ContractTicketForm = ({ onClose, onSubmit, loading }) => {
       />
 
       <LabelSwitch
+        mt="md"
         label={getLanguageByKey("Achitare efectuată")}
         key={form.key("achitare_efectuata")}
         {...form.getInputProps("achitare_efectuata")}
@@ -88,8 +139,8 @@ export const ContractTicketForm = ({ onClose, onSubmit, loading }) => {
         placeholder={getLanguageByKey("Plată primită")}
         data={paymentStatusOptions}
         clearable
-        key={form.key("priority")}
-        {...form.getInputProps("priority")}
+        key={form.key("statutul_platii")}
+        {...form.getInputProps("statutul_platii")}
       />
 
       <NumberInput
@@ -99,21 +150,6 @@ export const ContractTicketForm = ({ onClose, onSubmit, loading }) => {
         placeholder={`${getLanguageByKey("Avans euro")} €`}
         key={form.key("avans_euro")}
         {...form.getInputProps("avans_euro")}
-      />
-      <DatePickerInput
-        mt="md"
-        label={getLanguageByKey("Data avansului")}
-        placeholder={getLanguageByKey("Data avansului")}
-        key={form.key("data_avansului")}
-        {...form.getInputProps("data_avansului")}
-      />
-
-      <DatePickerInput
-        mt="md"
-        label={getLanguageByKey("Data de plată integrală")}
-        placeholder={getLanguageByKey("Data de plată integrală")}
-        key={form.key("data_de_plata_integrala")}
-        {...form.getInputProps("data_de_plata_integrala")}
       />
 
       <NumberInput
@@ -140,8 +176,6 @@ export const ContractTicketForm = ({ onClose, onSubmit, loading }) => {
         mt="md"
         label={getLanguageByKey("Restanță client")}
         placeholder={getLanguageByKey("Restanță client")}
-        key={form.key("achitat_client")}
-        {...form.getInputProps("achitat_client")}
       />
       <NumberInput
         disabled
@@ -149,8 +183,6 @@ export const ContractTicketForm = ({ onClose, onSubmit, loading }) => {
         mt="md"
         label={`${getLanguageByKey("Comision companie")} €`}
         placeholder={`${getLanguageByKey("Comision companie")} €`}
-        key={form.key("achitat_client")}
-        {...form.getInputProps("achitat_client")}
       />
 
       <TextInput
@@ -158,8 +190,6 @@ export const ContractTicketForm = ({ onClose, onSubmit, loading }) => {
         mt="md"
         label={getLanguageByKey("Statut achitare")}
         placeholder={getLanguageByKey("Statut achitare")}
-        key={form.key("tour_operator")}
-        {...form.getInputProps("tour_operator")}
       />
 
       <LabelSwitch

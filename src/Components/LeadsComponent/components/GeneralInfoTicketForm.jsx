@@ -3,9 +3,7 @@ import {
   TextInput,
   Textarea,
   Button,
-  Switch,
   Flex,
-  Text,
   SegmentedControl
 } from "@mantine/core"
 import { useForm } from "@mantine/form"
@@ -23,13 +21,15 @@ export const GeneralInfoTicketForm = ({ onSubmit, onClose, loading }) => {
     mode: "uncontrolled"
   })
 
-  const submit = (e) => {
-    e.preventDefault()
-
-    onSubmit(form.getValues())
+  const close = () => {
+    form.reset()
+    onClose()
   }
+
   return (
-    <form onSubmit={submit}>
+    <form
+      onSubmit={form.onSubmit((values) => onSubmit(values, () => form.reset()))}
+    >
       <Select
         label={getLanguageByKey("Workflow")}
         placeholder={getLanguageByKey("Selectează flux de lucru")}
@@ -86,21 +86,18 @@ export const GeneralInfoTicketForm = ({ onSubmit, onClose, loading }) => {
         {...form.getInputProps("technician_id")}
       />
 
-      <Flex mt="md" align="center" justify="space-between">
-        <Text>{getLanguageByKey("Status")}</Text>
-        <Switch key={form.key("status")} {...form.getInputProps("status")} />
-      </Flex>
-
       <Textarea
         mt="md"
         label={getLanguageByKey("Descriere")}
         placeholder={getLanguageByKey("Descriere")}
+        minRows={4}
+        autosize
         key={form.key("description")}
         {...form.getInputProps("description")}
       />
 
       <Flex justify="end" gap="md" mt="md">
-        <Button variant="default" onClick={() => onClose()}>
+        <Button variant="default" onClick={close}>
           {getLanguageByKey("Închide")}
         </Button>
         <Button loading={loading} type="submit">

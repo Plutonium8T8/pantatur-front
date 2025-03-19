@@ -1,7 +1,8 @@
-import { Select, TextInput, Button, Flex } from "@mantine/core"
+import { Select, Button, Flex, NumberInput } from "@mantine/core"
 import { DatePickerInput } from "@mantine/dates"
 import { useForm } from "@mantine/form"
 import { getLanguageByKey } from "../../utils"
+import { DD_MM_YYYY } from "../../../app-constants"
 import {
   sourceOfLeadOptions,
   promoOptions,
@@ -12,19 +13,47 @@ import {
   nameExcursionOptions,
   purchaseProcessingOptions
 } from "../../../FormOptions"
+import dayjs from "dayjs"
+import { DATE_TIME_FORMAT } from "../../../app-constants"
+
+const formatDate = (date) => {
+  return dayjs(date).format(DATE_TIME_FORMAT)
+}
 
 export const TicketInfoForm = ({ onClose, onSubmit, loading }) => {
   const form = useForm({
-    mode: "uncontrolled"
+    mode: "uncontrolled",
+
+    transformValues: ({
+      data_venit_in_oficiu,
+      data_plecarii,
+      data_intoarcerii,
+      data_cererii_de_retur,
+      ...rest
+    }) => {
+      const formattedData = {
+        ...(data_venit_in_oficiu && {
+          data_venit_in_oficiu: formatDate(data_venit_in_oficiu)
+        }),
+        ...(data_plecarii && { data_plecarii: formatDate(data_plecarii) }),
+        ...(data_intoarcerii && {
+          data_intoarcerii: formatDate(data_intoarcerii)
+        }),
+        ...(data_cererii_de_retur && {
+          data_cererii_de_retur: formatDate(data_cererii_de_retur)
+        })
+      }
+
+      return { ...formattedData, ...rest }
+    }
   })
+
   return (
     <form
-      onSubmit={(e) => {
-        e.preventDefault()
-        onSubmit(form.getValues())
-      }}
+      onSubmit={form.onSubmit((values) => onSubmit(values, () => form.reset()))}
     >
-      <TextInput
+      <NumberInput
+        hideControls
         label={`${getLanguageByKey("Vânzare")} €`}
         placeholder={getLanguageByKey("Indicați suma în euro")}
         key={form.key("buget")}
@@ -32,6 +61,9 @@ export const TicketInfoForm = ({ onClose, onSubmit, loading }) => {
       />
 
       <DatePickerInput
+        minDate={new Date()}
+        valueFormat={DD_MM_YYYY}
+        clearable
         mt="md"
         label={getLanguageByKey("Data venit in oficiu")}
         placeholder={getLanguageByKey("Selectează data venirii în oficiu")}
@@ -40,6 +72,9 @@ export const TicketInfoForm = ({ onClose, onSubmit, loading }) => {
       />
 
       <DatePickerInput
+        minDate={new Date()}
+        clearable
+        valueFormat={DD_MM_YYYY}
         mt="md"
         label={getLanguageByKey("Data și ora plecării")}
         placeholder={getLanguageByKey("Data și ora plecării")}
@@ -47,6 +82,9 @@ export const TicketInfoForm = ({ onClose, onSubmit, loading }) => {
         {...form.getInputProps("data_plecarii")}
       />
       <DatePickerInput
+        minDate={new Date()}
+        clearable
+        valueFormat={DD_MM_YYYY}
         mt="md"
         label={getLanguageByKey("Data și ora întoarcerii")}
         placeholder={getLanguageByKey("Data și ora întoarcerii")}
@@ -55,6 +93,9 @@ export const TicketInfoForm = ({ onClose, onSubmit, loading }) => {
       />
 
       <DatePickerInput
+        minDate={new Date()}
+        clearable
+        valueFormat={DD_MM_YYYY}
         mt="md"
         label={getLanguageByKey("Data cererii de retur")}
         placeholder={getLanguageByKey("Data cererii de retur")}
@@ -69,8 +110,6 @@ export const TicketInfoForm = ({ onClose, onSubmit, loading }) => {
         placeholder={getLanguageByKey("Status sunet telefonic")}
         data={[]}
         clearable
-        key={form.key("priority")}
-        {...form.getInputProps("priority")}
       />
 
       <Select

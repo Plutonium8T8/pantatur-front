@@ -435,7 +435,7 @@ export const translations = {
     RU: "Покупка"
   },
   "Nr de contract": {
-    RO: "Nr de contract",
+    RO: "Nr. de contract",
     RU: "Номер контракта"
   },
   "Operator turistic": {
@@ -443,7 +443,7 @@ export const translations = {
     RU: "Туроператор"
   },
   "Nr cererii de la operator": {
-    RO: "Nr cererii de la operator",
+    RO: "Nr. cererii de la operator",
     RU: "Номер заявки от оператора"
   },
   "Preț netto (euro)": {
