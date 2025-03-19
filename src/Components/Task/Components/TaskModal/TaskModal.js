@@ -211,8 +211,10 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
             id="task-select"
             value={task.taskType}
             onChange={(value) => {
-              const taskName = value.split(" ")[1] || value
-              setTask((prev) => ({ ...prev, taskType: taskName }))
+              const selectedTask = TypeTask.find((task) => task.name === value)
+              if (selectedTask) {
+                setTask((prev) => ({ ...prev, taskType: selectedTask.name }))
+              }
             }}
             placeholder={translations["Alege tip task"][language]}
           />

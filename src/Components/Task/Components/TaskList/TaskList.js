@@ -71,10 +71,10 @@ const TaskList = ({
     const handleClickOutside = (event) => {
       if (
         openMenuId &&
-        !event.target.closest(".dropdown-menu") && // Если клик не внутри меню
-        !event.target.closest(".action-button-task") // И не на кнопку открытия меню
+        !event.target.closest(".dropdown-menu") &&
+        !event.target.closest(".action-button-task")
       ) {
-        setOpenMenuId(null) // Закрываем меню
+        setOpenMenuId(null)
       }
     }
 
