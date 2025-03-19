@@ -4,7 +4,6 @@ import { useDOMElementHeight, useApp } from "../../hooks"
 import { priorityOptions } from "../../FormOptions/PriorityOption"
 import { workflowOptions } from "../../FormOptions/WorkFlowOption"
 import WorkflowColumn from "./WorkflowColumnComponent"
-import TicketModal from "./TicketModal/TicketModalComponent"
 import { TicketFilterModal } from "../TicketFilterModal"
 import { LeadTable } from "./LeadTable"
 import { useDebounce } from "../../hooks"
@@ -192,9 +191,13 @@ const Leads = () => {
     }
   }
 
-  const closeModal = () => {
+  const closeModal = (resetSelectedTickets) => {
     setCurrentTicket(null)
     setIsModalOpen(false)
+
+    if (resetSelectedTickets) {
+      setSelectedTickets([])
+    }
   }
 
   const closeTicketModal = () => setIsFilterOpen(false)

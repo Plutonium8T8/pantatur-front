@@ -1313,6 +1313,26 @@ export const translations = {
   "Selectează tehnician": {
     RO: "Selectează tehnician",
     RU: "Выберите техника"
+  },
+  "Datele au fost actualizate cu success": {
+    RO: "Datele au fost actualizate cu success",
+    RU: "Данные были успешно обновлены"
+  },
+  "Editarea tichetelor în grup": {
+    RO: "Editarea tichetelor în grup",
+    RU: "Групповое редактирование тикетов"
+  },
+  Trimite: {
+    RO: "Trimite",
+    RU: "Отправить"
+  },
+  "Informații generale": {
+    RO: "Informații generale",
+    RU: "Общая информация"
+  },
+  "Informații despre tichet": {
+    RO: "Informații despre tichet",
+    RU: "Информация о тикете"
   }
 }
 
