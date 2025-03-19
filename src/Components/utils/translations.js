@@ -51,6 +51,10 @@ export const translations = {
     RO: "Caută leaduri",
     RU: "Искать лиды"
   },
+  Leaduri: {
+    RO: "Leaduri",
+    RU: "Лиды"
+  },
   Notificări: {
     RO: {
       0: "Notificări",

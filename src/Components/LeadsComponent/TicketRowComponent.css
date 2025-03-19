@@ -133,6 +133,17 @@
   background-color: #e0a800;
 }
 
+.ticket-counter-row {
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+  padding: 5px 10px;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+  display: inline-block;
+  margin-left: 15px;
+}
+
 .button-delete-row {
   display: flex;
   background-color: #dc3545;

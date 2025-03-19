@@ -6,7 +6,6 @@ export const showServerError = (error) => {
   return (
     serverMessage?.message ||
     serverMessage?.error ||
-    serverMessage?.detail ||
     getLanguageByKey("Eroare neașteptată, încercați mai târziu")
   )
 }

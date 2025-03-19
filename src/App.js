@@ -8,8 +8,6 @@ import { useNavigate, useLocation } from "react-router-dom"
 import { PrivateRoutes, PublicRoutes } from "./AppRoutes"
 import { Session } from "./Session"
 import "./App.css"
-import { MantineProvider } from "./MantineProvider"
-import "@mantine/core/styles.css"
 
 const JWT_TOKEN = Cookies.get("jwt")
 
@@ -26,27 +24,25 @@ function App() {
   }, [])
 
   return (
-    <MantineProvider>
-      <SnackbarProvider
-        autoHideDuration={5000}
-        maxSnack={5}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-      >
-        {JWT_TOKEN ? (
-          <UserProvider>
-            <Session>
-              <AppProvider>
-                <AppLayout>
-                  <PrivateRoutes />
-                </AppLayout>
-              </AppProvider>
-            </Session>
-          </UserProvider>
-        ) : (
-          <PublicRoutes />
-        )}
-      </SnackbarProvider>
-    </MantineProvider>
+    <SnackbarProvider
+      autoHideDuration={5000}
+      maxSnack={5}
+      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+    >
+      {JWT_TOKEN ? (
+        <UserProvider>
+          <Session>
+            <AppProvider>
+              <AppLayout>
+                <PrivateRoutes />
+              </AppLayout>
+            </AppProvider>
+          </Session>
+        </UserProvider>
+      ) : (
+        <PublicRoutes />
+      )}
+    </SnackbarProvider>
   )
 }
 
