@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react"
-import { Modal, Button, Select as MantineSelect } from "@mantine/core"
+import { Modal, Textarea, Button, Select as MantineSelect } from "@mantine/core"
+import { DateTimePicker } from "@mantine/dates"
 import { useSnackbar } from "notistack"
 import { api } from "../../../../api"
-import { Input } from "../../../Input"
 import IconSelect from "../../../IconSelect/IconSelect"
 import { TypeTask } from "../OptionsTaskType/OptionsTaskType"
 import { translations } from "../../../utils/translations"
@@ -130,6 +130,17 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
       setLoading(false)
     }
   }
+  const parseDate = (dateString) => {
+    if (!dateString) return null
+
+    const regex = /^(\d{2})-(\d{2})-(\d{4}) (\d{2}):(\d{2}):(\d{2})$/
+    const match = dateString.match(regex)
+
+    if (!match) return null
+
+    const [, day, month, year, hours, minutes, seconds] = match
+    return new Date(`${year}-${month}-${day}T${hours}:${minutes}:${seconds}`)
+  }
 
   return (
     <Modal
@@ -153,6 +164,7 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
           placeholder={translations["Lead ID"][language]}
           required
           clearable
+          mb="md"
         />
 
         <IconSelect
@@ -172,6 +184,7 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
           value={task.priority}
           onChange={(value) => setTask({ ...task, priority: value })}
           required
+          mt="md"
         />
 
         <MantineSelect
@@ -180,24 +193,33 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
           value={task.status_task}
           onChange={(value) => setTask({ ...task, status_task: value })}
           required
+          mt="md"
         />
 
-        <Input
-          type="datetime-local"
+        <DateTimePicker
           label={translations["Dată și oră"][language]}
-          name="scheduledTime"
-          value={task.scheduledTime}
-          onChange={(e) => setTask({ ...task, scheduledTime: e.target.value })}
+          value={parseDate(task.scheduledTime)}
+          onChange={(value) => {
+            setTask({
+              ...task,
+              scheduledTime: value ? value.toISOString() : ""
+            })
+          }}
           required
+          clearable
+          mt="md"
         />
 
-        <Input
-          type="textarea"
+        <Textarea
           label={translations["Descriere task"][language]}
           name="description"
           value={task.description}
           onChange={(e) => setTask({ ...task, description: e.target.value })}
           required
+          autosize
+          minRows={3}
+          maxRows={6}
+          mt="md"
         />
 
         <MantineSelect
@@ -206,6 +228,7 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
           value={task.createdFor}
           onChange={(value) => setTask({ ...task, createdFor: value })}
           required
+          mt="md"
         />
 
         <MantineSelect
@@ -214,14 +237,15 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
           value={task.createdBy}
           onChange={(value) => setTask({ ...task, createdBy: value })}
           required
+          mt="md"
         />
 
-        <Button type="submit" loading={loading}>
+        <Button type="submit" loading={loading} mt="md">
           {selectedTask
             ? translations["Editare Task"][language]
             : translations["Adaugă task"][language]}
         </Button>
-        <Button variant="outline" onClick={onClose}>
+        <Button variant="outline" onClick={onClose} mt="md" ml="md">
           {translations["Anulare"][language]}
         </Button>
       </form>
