@@ -73,7 +73,7 @@ const CustomSidebar = ({ onOpenNotifications, onOpenAccount }) => {
               onClick={() => handleNavigate("leads")}
             >
               <FaClipboardList size={24} />
-              <span>{translations["Leaduri"][language]}</span>
+              <span>{translations["Leads"][language]}</span>
             </div>
             <div
               className={`menu-item ${isActive("chat") ? "active" : ""}`}

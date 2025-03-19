@@ -27,7 +27,11 @@ export const tickets = {
   },
 
   deleteById: async (id) => {
-    await baseAxios.delete(`/api/tickets/${id}`)
+    await baseAxios.delete(`/api/tickets`, {
+      data: {
+        id
+      }
+    })
   },
 
   merge: async (body) => {
