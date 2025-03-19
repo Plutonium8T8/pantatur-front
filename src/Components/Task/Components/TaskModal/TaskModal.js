@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react"
+import { Modal, Button, Select as MantineSelect } from "@mantine/core"
 import { useSnackbar } from "notistack"
 import { api } from "../../../../api"
 import { Input } from "../../../Input"
 import IconSelect from "../../../IconSelect/IconSelect"
 import { TypeTask } from "../OptionsTaskType/OptionsTaskType"
 import { translations } from "../../../utils/translations"
-import "./TaskModal.css"
 
 const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
   const { enqueueSnackbar } = useSnackbar()
@@ -24,22 +24,8 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
   const [ticketIds, setTicketIds] = useState([])
   const [userList, setUserList] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const language = localStorage.getItem("language") || "RO"
-
-  const formatDateTime = (dateString) => {
-    if (!dateString) return ""
-
-    const regex = /^(\d{2})-(\d{2})-(\d{4}) (\d{2}):(\d{2}):(\d{2})$/
-    const match = dateString.match(regex)
-
-    if (!match) return ""
-
-    const [, day, month, year, hours, minutes] = match
-
-    return `${year}-${month}-${day}T${hours}:${minutes}`
-  }
 
   useEffect(() => {
     if (isOpen) {
@@ -49,7 +35,7 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
       if (selectedTask) {
         setTask({
           ticketId: selectedTask.ticket_id,
-          scheduledTime: formatDateTime(selectedTask.scheduled_time),
+          scheduledTime: selectedTask.scheduled_time,
           description: selectedTask.description,
           taskType: selectedTask.task_type,
           createdBy: selectedTask.created_by,
@@ -77,7 +63,7 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
   const fetchTickets = async () => {
     try {
       const data = await api.tickets.list()
-      setTicketIds(data.map((ticket) => ticket.id))
+      setTicketIds(data.map((ticket) => ticket.id.toString())) // Преобразуем ID в строки для Mantine Select
     } catch (error) {
       enqueueSnackbar("Eroare la încărcarea tichetelor", { variant: "error" })
     }
@@ -88,9 +74,8 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
       const usersData = await api.users.getTechnicianList()
       setUserList(
         usersData.map((user) => ({
-          id: user.id.id,
-          name: user.id.name || "N/A",
-          surname: user.id.surname || "N/A"
+          value: user.id.id.toString(),
+          label: `${user.id.name || "N/A"} ${user.id.surname || "N/A"}`
         }))
       )
     } catch (error) {
@@ -98,11 +83,6 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
         variant: "error"
       })
     }
-  }
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target
-    setTask((prev) => ({ ...prev, [name]: value }))
   }
 
   const handleTaskSubmit = async (e) => {
@@ -126,18 +106,7 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
     setLoading(true)
     try {
       if (selectedTask) {
-        const updatedFields = { id: selectedTask.id }
-
-        for (const key in task) {
-          if (task[key] !== selectedTask[key]) {
-            updatedFields[key] = task[key]
-          }
-        }
-
-        await api.task.update({
-          id: selectedTask.id,
-          ...updatedFields
-        })
+        await api.task.update({ id: selectedTask.id, ...task })
         enqueueSnackbar("Task actualizat cu succes!", { variant: "success" })
       } else {
         await api.task.create({
@@ -162,179 +131,102 @@ const TaskModal = ({ isOpen, onClose, fetchTasks, selectedTask }) => {
     }
   }
 
-  return isOpen ? (
-    <div className="task-modal-overlay" onClick={onClose}>
-      <div
-        className="task-modal-container"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <header className="task-modal-header">
-          <h2>
-            {selectedTask
-              ? translations["Editare Task"][language]
-              : translations["Creare Task"][language]}
-          </h2>
-        </header>
+  return (
+    <Modal
+      opened={isOpen}
+      onClose={onClose}
+      title={
+        selectedTask
+          ? translations["Editare Task"][language]
+          : translations["Creare Task"][language]
+      }
+      centered
+      size="xl"
+    >
+      <form onSubmit={handleTaskSubmit} className="task-form">
+        <MantineSelect
+          label={translations["Lead ID"][language]}
+          data={ticketIds}
+          value={task.ticketId}
+          onChange={(value) => setTask({ ...task, ticketId: value })}
+          searchable
+          placeholder={translations["Lead ID"][language]}
+          required
+          clearable
+        />
 
-        <form onSubmit={handleTaskSubmit} className="task-form">
-          <div className="task-input-group">
-            <label>{translations["Lead ID"][language]}</label>
-            <Input
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onFocus={() => setIsDropdownOpen(true)}
-              onBlur={() => setTimeout(() => setIsDropdownOpen(false), 200)}
-              required
-            />
-            {isDropdownOpen && (
-              <ul className="task-dropdown-list">
-                {ticketIds
-                  .filter((id) => id.toString().includes(searchTerm))
-                  .map((id) => (
-                    <li
-                      key={id}
-                      onMouseDown={() => {
-                        setTask({ ...task, ticketId: id })
-                        setSearchTerm(id)
-                      }}
-                    >
-                      {id}
-                    </li>
-                  ))}
-              </ul>
-            )}
-          </div>
+        <IconSelect
+          options={TypeTask}
+          label="Alege tip task"
+          id="task-select"
+          value={task.taskType}
+          onChange={(value) =>
+            setTask((prev) => ({ ...prev, taskType: value }))
+          }
+          placeholder="Alege tip task"
+        />
 
-          <IconSelect
-            options={TypeTask}
-            label={translations["Alege tip task"][language]}
-            id="task-select"
-            value={task.taskType}
-            onChange={(value) => {
-              const selectedTask = TypeTask.find((task) => task.name === value)
-              if (selectedTask) {
-                setTask((prev) => ({ ...prev, taskType: selectedTask.name }))
-              }
-            }}
-            placeholder={translations["Alege tip task"][language]}
-          />
+        <MantineSelect
+          label={translations["Prioritate"][language]}
+          data={["Low", "Medium", "High"]}
+          value={task.priority}
+          onChange={(value) => setTask({ ...task, priority: value })}
+          required
+        />
 
-          <div className="task-input-group">
-            <label>{translations["Prioritate"][language]}</label>
-            <select
-              name="priority"
-              value={task.priority}
-              onChange={handleInputChange}
-              required
-            >
-              <option value="Low">{translations["Low"][language]}</option>
-              <option value="Medium">{translations["Medium"][language]}</option>
-              <option value="High">{translations["High"][language]}</option>
-            </select>
-          </div>
+        <MantineSelect
+          label={translations["Status"][language]}
+          data={["To Do", "In Progress", "Done", "Overdue"]}
+          value={task.status_task}
+          onChange={(value) => setTask({ ...task, status_task: value })}
+          required
+        />
 
-          <div className="task-input-group">
-            <label>{translations["Status"][language]}</label>
-            <select
-              name="status_task"
-              value={task.status_task}
-              onChange={handleInputChange}
-              required
-            >
-              <option value="To Do">{translations["To Do"][language]}</option>
-              <option value="In Progress">
-                {translations["In Progress"][language]}
-              </option>
-              <option value="Done">{translations["Done"][language]}</option>
-              <option value="Overdue">
-                {translations["Overdue"][language]}
-              </option>
-            </select>
-          </div>
+        <Input
+          type="datetime-local"
+          label={translations["Dată și oră"][language]}
+          name="scheduledTime"
+          value={task.scheduledTime}
+          onChange={(e) => setTask({ ...task, scheduledTime: e.target.value })}
+          required
+        />
 
-          <div className="task-input-group">
-            <label>{translations["Dată și oră"][language]}</label>
-            <input
-              type="datetime-local"
-              name="scheduledTime"
-              value={task.scheduledTime}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
+        <Input
+          type="textarea"
+          label={translations["Descriere task"][language]}
+          name="description"
+          value={task.description}
+          onChange={(e) => setTask({ ...task, description: e.target.value })}
+          required
+        />
 
-          <div className="task-input-group">
-            <label>{translations["Descriere task"][language]}</label>
-            <textarea
-              name="description"
-              value={task.description}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
+        <MantineSelect
+          label={translations["Pentru"][language]}
+          data={userList}
+          value={task.createdFor}
+          onChange={(value) => setTask({ ...task, createdFor: value })}
+          required
+        />
 
-          <div className="task-input-group">
-            <label>{translations["Pentru"][language]}</label>
-            <select
-              name="createdFor"
-              value={task.createdFor}
-              onChange={handleInputChange}
-              required
-            >
-              <option value="">
-                {translations["Selectează utilizator"][language]}
-              </option>
-              {userList.map((user) => (
-                <option key={user.id} value={user.id}>
-                  {user.name} {user.surname}
-                </option>
-              ))}
-            </select>
-          </div>
+        <MantineSelect
+          label={translations["De la utilizatorul"][language]}
+          data={userList}
+          value={task.createdBy}
+          onChange={(value) => setTask({ ...task, createdBy: value })}
+          required
+        />
 
-          <div className="task-input-group">
-            <label>{translations["De la utilizatorul"][language]}</label>
-            <select
-              name="createdBy"
-              value={task.createdBy}
-              onChange={handleInputChange}
-              required
-            >
-              <option value="">
-                {translations["Selectează utilizator"][language]}
-              </option>
-              {userList.map((user) => (
-                <option key={user.id} value={user.id}>
-                  {user.name} {user.surname}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="group-button-form">
-            <button
-              type="submit"
-              className="task-submit-button"
-              disabled={loading}
-            >
-              {loading
-                ? translations["Se încarcă..."][language]
-                : selectedTask
-                  ? translations["Editare Task"][language]
-                  : translations["Adaugă task"][language]}
-            </button>
-            <button
-              type="button"
-              className="task-cancel-button"
-              onClick={onClose}
-            >
-              {translations["Anulare"][language]}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  ) : null
+        <Button type="submit" loading={loading}>
+          {selectedTask
+            ? translations["Editare Task"][language]
+            : translations["Adaugă task"][language]}
+        </Button>
+        <Button variant="outline" onClick={onClose}>
+          {translations["Anulare"][language]}
+        </Button>
+      </form>
+    </Modal>
+  )
 }
 
 export default TaskModal
