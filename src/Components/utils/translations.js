@@ -1374,6 +1374,26 @@ export const translations = {
   Data: {
     RO: "Data",
     RU: "Дата"
+  },
+  Toate: {
+    RO: "Toate",
+    RU: "Всe"
+  },
+  FIL: {
+    RO: "FIL",
+    RU: "ФИЛ"
+  },
+  Leads: {
+    RO: "Lead-uri",
+    RU: "Лиды"
+  },
+  Categorie: {
+    RO: "Categorie",
+    RU: "Категория"
+  },
+  FRA: {
+    RO: "FRA",
+    RU: "ФРА"
   }
 }
 
