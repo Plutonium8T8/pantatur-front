@@ -4,7 +4,11 @@ import { useState } from "react"
 import { getLanguageByKey, showServerError } from "../../utils"
 
 import { api } from "../../../api"
-import { TicketInfoForm, GeneralInfoTicketForm } from "../components"
+import {
+  TicketInfoForm,
+  GeneralInfoTicketForm,
+  ContractTicketForm
+} from "../components"
 export const EditBulkLeadsModal = ({ open, onClose, selectedTickets }) => {
   const { enqueueSnackbar } = useSnackbar()
 
@@ -71,7 +75,11 @@ export const EditBulkLeadsModal = ({ open, onClose, selectedTickets }) => {
           />
         </Tabs.Panel>
         <Tabs.Panel value="contact" pt="xs">
-          Contact
+          <ContractTicketForm
+            onClose={onClose}
+            onSubmit={submit}
+            loading={loading}
+          />
         </Tabs.Panel>
         <Tabs.Panel value="invoice" pt="xs">
           Invoice

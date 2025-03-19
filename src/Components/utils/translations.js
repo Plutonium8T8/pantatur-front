@@ -1341,6 +1341,14 @@ export const translations = {
   "Selectează data venirii în oficiu": {
     RO: "Selectează data venirii în oficiu",
     RU: "Выберите дату прихода в офис"
+  },
+  "Avans euro": {
+    RO: "Avans euro",
+    RU: "Аванс в евро"
+  },
+  "Comision companie": {
+    RO: "Comision companie",
+    RU: "Комиссия компании"
   }
 }
 
