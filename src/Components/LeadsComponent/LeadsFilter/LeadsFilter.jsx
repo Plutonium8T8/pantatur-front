@@ -4,11 +4,10 @@ import { TbLayoutKanbanFilled } from "react-icons/tb"
 import { IoMdAdd } from "react-icons/io"
 import { LuFilter } from "react-icons/lu"
 import { FaList } from "react-icons/fa6"
-import { Button } from "../../Button"
-import { Input } from "../../Input"
 import { getLanguageByKey } from "../../utils"
-import { Segmented } from "../../Segmented"
 import "./LeadsFilter.css"
+import { Button, Indicator, Input, SegmentedControl, Flex } from "@mantine/core"
+import { IoMdClose } from "react-icons/io"
 
 export const RefLeadsFilter = forwardRef(
   (
@@ -29,89 +28,83 @@ export const RefLeadsFilter = forwardRef(
     ref
   ) => {
     return (
-      <div
+      <Flex
         ref={ref}
-        className="d-flex justify-content-between | leads-header-container"
+        justify="space-between"
+        align="center"
+        className="leads-header-container"
       >
-        <div className="d-flex align-items-center gap-16">
+        <Flex align="center" gap="md">
           <Button
-            variant="primary"
-            className="leads-header-filter-add-lead"
+            variant="filled"
             onClick={openCreateTicketModal}
+            leftSection={<IoMdAdd size={16} />}
           >
-            <div className="d-flex align-items-center gap-8">
-              <IoMdAdd size={16} />
-              {getLanguageByKey("Adaugă lead")}
-            </div>
+            {getLanguageByKey("Adaugă lead")}
           </Button>
 
           <Input
             value={searchTerm}
-            onChange={(e) => {
-              if (e) {
-                setSearchTerm(e.target.value)
-              } else {
-                setSearchTerm("")
-              }
-            }}
+            onChange={(e) => setSearchTerm(e.target.value)}
             placeholder={getLanguageByKey("Cauta dupa Lead, Client sau Tag")}
             className="leads-header-filter-search"
-            clear
+            rightSectionPointerEvents="all"
+            rightSection={
+              <IoMdClose
+                onClick={() => setSearchTerm("")}
+                style={{
+                  display: searchTerm ? undefined : "none",
+                  cursor: "pointer"
+                }}
+              />
+            }
           />
 
-          <div className="d-flex align-items-center | tickets-total">
+          <Button variant="default">
             {`${getLanguageByKey("Leads")}: ${totalTicketsFiltered}`}
-          </div>
+          </Button>
 
           {selectedTickets.length > 0 && (
             <Button
               variant="danger"
+              leftSection={<FaTrash size={16} />}
               onClick={deleteTicket}
-              className="d-flex align-items-center gap-8"
             >
-              <FaTrash /> {getLanguageByKey("Ștergere")} (
-              {selectedTickets.length})
+              {getLanguageByKey("Ștergere")} ({selectedTickets.length})
             </Button>
           )}
 
           {selectedTickets.length > 0 && (
             <Button
               variant="warning"
+              leftSection={<FaEdit size={16} />}
               onClick={() => editSelectedTickets()}
-              className="d-flex align-items-center gap-8"
             >
-              <FaEdit /> {getLanguageByKey("Editare")} ({selectedTickets.length}
-              )
+              {getLanguageByKey("Editare")} ({selectedTickets.length})
             </Button>
           )}
 
-          <button
-            onClick={() => setIsFilterOpen(true)}
-            className={`d-flex align-items-center justify-content-center | leads-header-filter-button ${isFilterOpen ? "active" : ""}`}
-          >
-            <div className="d-flex align-items-center">
+          <Indicator disabled={hasSelectedLightListers} color="red">
+            <Button onClick={() => setIsFilterOpen(true)} variant="default">
               <LuFilter size={16} />
-            </div>
-            {hasSelectedLightListers && (
-              <span className="leads-header-filter-button-indicator" />
-            )}
-          </button>
-        </div>
+            </Button>
+          </Indicator>
+        </Flex>
 
-        <div className="d-flex gap-16">
-          <Segmented
+        <Flex gap="md">
+          <SegmentedControl
             onChange={(value) => {
               setIsTableView((prev) => value === "kanban")
             }}
-            options={[
+            data={[
               { value: "list", label: <TbLayoutKanbanFilled /> },
               { value: "kanban", label: <FaList /> }
             ]}
           />
 
-          <Segmented
+          <SegmentedControl
             onChange={(group) => setGroupTitle(group)}
-            options={[
+            data={[
               { value: "", label: getLanguageByKey("Toate") },
               { value: "RO", label: "RO" },
               { value: "MD", label: "MD" },
@@ -119,8 +112,8 @@ export const RefLeadsFilter = forwardRef(
               { value: "Francize", label: getLanguageByKey("FRA") }
             ]}
           />
-        </div>
-      </div>
+        </Flex>
+      </Flex>
     )
   }
 )
