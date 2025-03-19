@@ -1,7 +1,7 @@
 import React from "react"
-import "./select.css"
+import { Select as MantineSelect } from "@mantine/core"
 import { translations } from "../utils/translations"
-import { IoMdClose, IoIosArrowDown } from "react-icons/io"
+import { IoMdClose } from "react-icons/io"
 
 const Select = ({
   options,
@@ -16,11 +16,6 @@ const Select = ({
   hasError,
   clear
 }) => {
-  const handleChange = (event) => {
-    const selectedValue = event.target.value
-    onChange(selectedValue)
-  }
-
   const language = localStorage.getItem("language") || "RO"
 
   return (
@@ -29,36 +24,29 @@ const Select = ({
         <label htmlFor={id}>{translations[label]?.[language] ?? label}</label>
       )}
       <div className="select-container-wrapper">
-        <select
+        <MantineSelect
           id={id}
           className={`task-select ${hasError ? "invalid-field" : ""}`}
           value={value}
-          onChange={handleChange}
+          onChange={onChange}
+          data={options.map((option) => ({
+            value: option,
+            label: translations[option]?.[language] ?? option
+          }))}
           required={required}
           disabled={disabled}
-        >
-          <option value="">
-            {translations[placeholder]?.[language] ??
-              translations[label]?.[language]}
-          </option>
-          {options.map((option, index) => (
-            <option key={index} value={option}>
-              {translations[option]?.[language] ?? option}
-            </option>
-          ))}
-        </select>
-
-        <div className={`right-icon ${clear ? "hide-arrow-down-icon" : ""}`}>
-          <IoIosArrowDown size={16} />
-        </div>
-        {clear && (
-          <div
-            className="right-icon hide-close-icon"
-            onClick={() => onChange("")}
-          >
-            <IoMdClose size={16} />
-          </div>
-        )}
+          placeholder={
+            translations[placeholder]?.[language] ??
+            translations[label]?.[language]
+          }
+          rightSection={
+            clear ? (
+              <IoMdClose size={16} onClick={() => onChange("")} />
+            ) : undefined
+          }
+          error={hasError}
+          searchable
+        />
       </div>
     </div>
   )
