@@ -21,7 +21,7 @@ import {
 } from "../../../FormOptions"
 import { useGetTechniciansList } from "../../../hooks"
 import { api } from "../../../api"
-
+import { TicketInfoForm } from "../components"
 export const EditBulkLeadsModal = ({ open, onClose, selectedTickets }) => {
   const { enqueueSnackbar } = useSnackbar()
   const form = useForm({
@@ -31,14 +31,12 @@ export const EditBulkLeadsModal = ({ open, onClose, selectedTickets }) => {
 
   const [loading, setLoading] = useState(false)
 
-  const submit = async (e) => {
-    e.preventDefault()
-
+  const submit = async (values) => {
     setLoading(true)
     try {
       await api.tickets.updateById({
         id: selectedTickets,
-        ...form.getValues()
+        ...values
       })
       onClose(true)
       enqueueSnackbar(
@@ -166,7 +164,11 @@ export const EditBulkLeadsModal = ({ open, onClose, selectedTickets }) => {
         </Tabs.Panel>
 
         <Tabs.Panel value="ticket_info" pt="xs">
-          Info
+          <TicketInfoForm
+            onClose={onClose}
+            onSubmit={submit}
+            loading={loading}
+          />
         </Tabs.Panel>
         <Tabs.Panel value="contact" pt="xs">
           Contact

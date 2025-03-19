@@ -10,6 +10,7 @@ import { Session } from "./Session"
 import "./App.css"
 import { MantineProvider } from "./MantineProvider"
 import "@mantine/core/styles.css"
+import "@mantine/dates/styles.css"
 
 const JWT_TOKEN = Cookies.get("jwt")
 

@@ -1333,6 +1333,14 @@ export const translations = {
   "Informații despre tichet": {
     RO: "Informații despre tichet",
     RU: "Информация о тикете"
+  },
+  "Data venit in oficiu": {
+    RO: "Data venit in oficiu",
+    RU: "Дата прихода в офис"
+  },
+  "Selectează data venirii în oficiu": {
+    RO: "Selectează data venirii în oficiu",
+    RU: "Выберите дату прихода в офис"
   }
 }
 
