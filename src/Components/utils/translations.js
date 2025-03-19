@@ -971,7 +971,7 @@ export const translations = {
     RU: "Контракт"
   },
   Invoice: {
-    RO: "Factura",
+    RO: "Invoice",
     RU: "Счет"
   },
   Media: {

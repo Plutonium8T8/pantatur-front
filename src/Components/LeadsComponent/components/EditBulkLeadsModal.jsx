@@ -2,7 +2,6 @@ import { Modal, Tabs, Text } from "@mantine/core"
 import { useSnackbar } from "notistack"
 import { useState } from "react"
 import { getLanguageByKey, showServerError } from "../../utils"
-
 import { api } from "../../../api"
 import {
   TicketInfoForm,
@@ -56,7 +55,6 @@ export const EditBulkLeadsModal = ({ open, onClose, selectedTickets }) => {
             {getLanguageByKey("Informații despre tichet")}
           </Tabs.Tab>
           <Tabs.Tab value="contact">{getLanguageByKey("Contact")}</Tabs.Tab>
-          <Tabs.Tab value="invoice">{getLanguageByKey("Invoice")}</Tabs.Tab>
         </Tabs.List>
 
         <Tabs.Panel value="general_info" pt="xs">
@@ -80,9 +78,6 @@ export const EditBulkLeadsModal = ({ open, onClose, selectedTickets }) => {
             onSubmit={submit}
             loading={loading}
           />
-        </Tabs.Panel>
-        <Tabs.Panel value="invoice" pt="xs">
-          Invoice
         </Tabs.Panel>
       </Tabs>
     </Modal>
