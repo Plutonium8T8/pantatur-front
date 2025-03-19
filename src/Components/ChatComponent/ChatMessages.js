@@ -82,23 +82,6 @@ const ChatMessages = ({
     return new Date(`${year}-${month}-${day}T${time}`)
   }
 
-  const sortedMessages = messages
-    .filter((msg) => msg.ticket_id === selectTicketId)
-    .sort((a, b) => parseDate(a.time_sent) - parseDate(b.time_sent))
-
-  const groupedMessages = sortedMessages.reduce((acc, msg) => {
-    const messageDate =
-      parseDate(msg.time_sent)?.toLocaleDateString("ru-RU", {
-        year: "numeric",
-        month: "long",
-        day: "numeric"
-      }) || "—"
-
-    if (!acc[messageDate]) acc[messageDate] = []
-    acc[messageDate].push(msg)
-    return acc
-  }, {})
-
   const handleReactionClick = (reaction, messageId) => {
     setSelectedReaction((prev) => ({ ...prev, [messageId]: reaction }))
   }
