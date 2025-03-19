@@ -238,10 +238,10 @@ const TaskList = ({
         width: 120,
         align: "center",
         render: (status) => (
-          <span className={status ? "seen" : "unseen"}>
+          <span className={status ? "inactiv" : "activ"}>
             {status
-              ? translations["Văzut"][language]
-              : translations["Nevăzut"][language]}
+              ? translations["inactiv"][language]
+              : translations["activ"][language]}
           </span>
         )
       },
