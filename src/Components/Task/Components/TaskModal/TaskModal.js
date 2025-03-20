@@ -150,6 +150,7 @@ const TaskModal = ({
       setLoading(false)
     }
   }
+
   const parseDate = (dateString) => {
     if (!dateString) return null
 
@@ -182,7 +183,7 @@ const TaskModal = ({
           onChange={(value) =>
             setTask((prev) => ({ ...prev, ticketId: value }))
           }
-          searchable={true}
+          searchable
           placeholder={translations["Lead ID"][language]}
           required
           clearable
@@ -207,7 +208,7 @@ const TaskModal = ({
           value={task.priority}
           onChange={(value) => setTask({ ...task, priority: value })}
           required
-          searchable={true}
+          searchable
           mt="md"
         />
 
@@ -217,22 +218,37 @@ const TaskModal = ({
           value={task.status_task}
           onChange={(value) => setTask({ ...task, status_task: value })}
           required
-          searchable={true}
+          searchable
           mt="md"
         />
 
         <DateTimePicker
-          label={translations["Dată și oră"][language]}
+          label={translations["Deadline"][language]}
           value={parseDate(task.scheduledTime)}
-          onChange={(value) => {
-            setTask({
-              ...task,
-              scheduledTime: value ? value.toISOString() : ""
-            })
-          }}
+          onChange={(value) =>
+            setTask((prev) => ({
+              ...prev,
+              scheduledTime:
+                value instanceof Date && !isNaN(value)
+                  ? `${value.getDate().toString().padStart(2, "0")}-${(
+                      value.getMonth() + 1
+                    )
+                      .toString()
+                      .padStart(2, "0")}-${value.getFullYear()} ${value
+                      .getHours()
+                      .toString()
+                      .padStart(2, "0")}:${value
+                      .getMinutes()
+                      .toString()
+                      .padStart(2, "0")}:${value
+                      .getSeconds()
+                      .toString()
+                      .padStart(2, "0")}`
+                  : ""
+            }))
+          }
           required
           clearable
-          searchable={true}
           mt="md"
         />
 
@@ -254,7 +270,7 @@ const TaskModal = ({
           value={task.createdFor}
           onChange={(value) => setTask({ ...task, createdFor: value })}
           required
-          searchable={true}
+          searchable
           mt="md"
         />
 
@@ -266,7 +282,7 @@ const TaskModal = ({
             setTask((prev) => ({ ...prev, createdBy: value }))
           }
           required
-          searchable={true}
+          searchable
           mt="md"
           disabled={!!defaultCreatedBy}
         />

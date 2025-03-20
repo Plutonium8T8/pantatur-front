@@ -23,15 +23,13 @@ const IconSelect = ({
         id={id}
         data={options.map((option) => ({
           value: option.name,
-          label: translations[option.name]?.[language] ?? option.name,
-          icon: option.icon
+          label: translations[option.name]?.[language] ?? option.name
         }))}
         value={value}
         onChange={onChange}
         placeholder={translations[placeholder]?.[language] ?? placeholder}
         required={required}
         disabled={disabled}
-        itemComponent={CustomItem}
         searchable
         clearable
         error={
@@ -43,15 +41,5 @@ const IconSelect = ({
     </div>
   )
 }
-
-const CustomItem = ({ label, icon, ...others }) => (
-  <div
-    {...others}
-    style={{ display: "flex", alignItems: "center", gap: "8px" }}
-  >
-    <span>{icon}</span>
-    <span>{label}</span>
-  </div>
-)
 
 export default IconSelect
