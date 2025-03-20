@@ -144,3 +144,6 @@
   font-weight: bold;
   text-align: center;
 }
+.rc-table-content {
+  height: 850px;
+}

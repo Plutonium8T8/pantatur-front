@@ -28,6 +28,7 @@ const TaskModal = ({
     status_task: "To Do"
   })
 
+  const [scheduledTime, setScheduledTime] = useState(null)
   const [ticketIds, setTicketIds] = useState([])
   const [userList, setUserList] = useState([])
   const [loading, setLoading] = useState(false)
@@ -40,31 +41,33 @@ const TaskModal = ({
     fetchUsers()
 
     if (selectedTask) {
-      // Если редактируем таск – загружаем его данные
       setTask({
-        ticketId: selectedTask.ticket_id,
+        ticketId: selectedTask.ticket_id.toString(),
         scheduledTime: selectedTask.scheduled_time || "",
         description: selectedTask.description || "",
         taskType: selectedTask.task_type || "",
-        createdBy: selectedTask.created_by,
-        createdFor: selectedTask.created_for || "",
+        createdBy: selectedTask.created_by.toString(),
+        createdFor: selectedTask.created_for?.toString() || "",
         priority: selectedTask.priority || "Medium",
         status_task: selectedTask.status_task || "To Do"
       })
+
+      setScheduledTime(parseDate(selectedTask.scheduled_time))
     } else {
-      // Если создаем новый таск – сбрасываем все поля
       setTask({
-        ticketId: defaultTicketId || "",
+        ticketId: defaultTicketId?.toString() || "",
         scheduledTime: "",
         description: "",
         taskType: "",
-        createdBy: defaultCreatedBy || "",
+        createdBy: defaultCreatedBy?.toString() || "",
         createdFor: "",
         priority: "Medium",
         status_task: "To Do"
       })
+
+      setScheduledTime(null)
     }
-  }, [isOpen])
+  }, [isOpen, selectedTask])
 
   const handleClose = () => {
     setTask({
@@ -77,6 +80,7 @@ const TaskModal = ({
       priority: "Medium",
       status_task: "To Do"
     })
+    setScheduledTime(null)
     onClose()
   }
 
@@ -109,7 +113,7 @@ const TaskModal = ({
     e.preventDefault()
     if (
       !task.ticketId ||
-      !task.scheduledTime ||
+      !scheduledTime ||
       !task.description ||
       !task.createdBy ||
       !task.createdFor ||
@@ -125,27 +129,29 @@ const TaskModal = ({
 
     setLoading(true)
     try {
+      const updatedTask = {
+        ticket_id: task.ticketId,
+        scheduled_time: formatDate(scheduledTime),
+        description: task.description,
+        task_type: task.taskType,
+        created_by: task.createdBy,
+        created_for: task.createdFor,
+        priority: task.priority,
+        status_task: task.status_task
+      }
+
       if (selectedTask) {
-        await api.task.update({ id: selectedTask.id, ...task })
-        enqueueSnackbar("Task actualizat cu succes!", { variant: "success" })
+        await api.task.update({ id: selectedTask.id, ...updatedTask })
+        enqueueSnackbar("Задача успешно обновлена!", { variant: "success" })
       } else {
-        await api.task.create({
-          ticket_id: task.ticketId,
-          scheduled_time: task.scheduledTime,
-          description: task.description,
-          task_type: task.taskType,
-          created_by: task.createdBy,
-          created_for: task.createdFor,
-          priority: task.priority,
-          status_task: task.status_task
-        })
-        enqueueSnackbar("Task adăugat cu succes!", { variant: "success" })
+        await api.task.create(updatedTask)
+        enqueueSnackbar("Задача успешно создана!", { variant: "success" })
       }
 
       fetchTasks()
-      onClose()
+      handleClose()
     } catch (error) {
-      enqueueSnackbar("Eroare la salvarea taskului", { variant: "error" })
+      enqueueSnackbar("Ошибка при сохранении задачи", { variant: "error" })
     } finally {
       setLoading(false)
     }
@@ -161,6 +167,22 @@ const TaskModal = ({
 
     const [, day, month, year, hours, minutes, seconds] = match
     return new Date(`${year}-${month}-${day}T${hours}:${minutes}:${seconds}`)
+  }
+
+  const formatDate = (date) => {
+    if (!(date instanceof Date) || isNaN(date)) return ""
+
+    return `${date.getDate().toString().padStart(2, "0")}-${(
+      date.getMonth() + 1
+    )
+      .toString()
+      .padStart(2, "0")}-${date.getFullYear()} ${date
+      .getHours()
+      .toString()
+      .padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}:${date
+      .getSeconds()
+      .toString()
+      .padStart(2, "0")}`
   }
 
   return (
@@ -179,7 +201,7 @@ const TaskModal = ({
         <MantineSelect
           label={translations["Lead ID"][language]}
           data={ticketIds}
-          value={task.ticketId ? task.ticketId.toString() : ""}
+          value={task.ticketId}
           onChange={(value) =>
             setTask((prev) => ({ ...prev, ticketId: value }))
           }
@@ -224,29 +246,8 @@ const TaskModal = ({
 
         <DateTimePicker
           label={translations["Deadline"][language]}
-          value={parseDate(task.scheduledTime)}
-          onChange={(value) =>
-            setTask((prev) => ({
-              ...prev,
-              scheduledTime:
-                value instanceof Date && !isNaN(value)
-                  ? `${value.getDate().toString().padStart(2, "0")}-${(
-                      value.getMonth() + 1
-                    )
-                      .toString()
-                      .padStart(2, "0")}-${value.getFullYear()} ${value
-                      .getHours()
-                      .toString()
-                      .padStart(2, "0")}:${value
-                      .getMinutes()
-                      .toString()
-                      .padStart(2, "0")}:${value
-                      .getSeconds()
-                      .toString()
-                      .padStart(2, "0")}`
-                  : ""
-            }))
-          }
+          value={scheduledTime}
+          onChange={setScheduledTime}
           required
           clearable
           mt="md"
