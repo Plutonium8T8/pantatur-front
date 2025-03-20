@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react"
-import TaskList from "../Components/TaskList/TaskList"
 import TaskModal from "../Components/TaskModal/TaskModal"
+import TaskList from "../Components/TaskList/TaskList"
 import { api } from "../../../api"
 import { Input } from "../../Input"
 import { translations } from "../../utils/translations"
 import "./TaskComponent.css"
 
-const TaskComponent = ({ selectTicketId, userId }) => {
+const TaskComponent = ({ selectTicketId, updateTaskCount, userId }) => {
   const [tasks, setTasks] = useState([])
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedTask, setSelectedTask] = useState(null)
@@ -15,10 +15,14 @@ const TaskComponent = ({ selectTicketId, userId }) => {
 
   const fetchTasks = async () => {
     try {
-      let data = selectTicketId
-        ? await api.task.getTaskByTicket(selectTicketId)
-        : await api.task.getAllTasks()
+      let data
+      if (selectTicketId) {
+        data = await api.task.getTaskByTicket(selectTicketId)
+      } else {
+        data = await api.task.getAllTasks()
+      }
       setTasks(data)
+      updateTaskCount() // Обновляем счетчик задач
     } catch (error) {
       console.error("Ошибка загрузки задач:", error)
     }
@@ -65,7 +69,7 @@ const TaskComponent = ({ selectTicketId, userId }) => {
         <TaskList
           tasks={filteredTasks}
           openEditTask={openEditTask}
-          fetchTasks={fetchTasks}
+          fetchTasks={fetchTasks} // Передаем обновленную функцию
         />
       </div>
       <TaskModal

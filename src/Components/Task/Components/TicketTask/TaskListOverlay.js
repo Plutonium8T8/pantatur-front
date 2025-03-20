@@ -6,7 +6,7 @@ import { api } from "../../../../api"
 
 const TaskListOverlay = ({ ticketId, userId }) => {
   const [opened, setOpened] = useState(false)
-  const [taskCount, setTaskCount] = useState(null) // Счетчик задач
+  const [taskCount, setTaskCount] = useState(null)
 
   // Функция загрузки количества задач для тикета
   const fetchTaskCount = async () => {
@@ -44,7 +44,11 @@ const TaskListOverlay = ({ ticketId, userId }) => {
         padding="md"
         size="lg"
       >
-        <TaskComponent selectTicketId={ticketId} userId={userId} />
+        <TaskComponent
+          selectTicketId={ticketId}
+          userId={userId}
+          updateTaskCount={fetchTaskCount} // Передаем функцию обновления
+        />
       </Drawer>
     </>
   )
