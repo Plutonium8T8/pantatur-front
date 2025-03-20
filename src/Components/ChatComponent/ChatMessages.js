@@ -45,6 +45,7 @@ const ChatMessages = ({
   const [isUserAtBottom, setIsUserAtBottom] = useState(true)
   const [selectedPlatform, setSelectedPlatform] = useState("web")
   const [tasks, setTasks] = useState([])
+  const [listTask, setListTask] = useState([])
 
   const platformIcons = {
     facebook: <FaFacebook />,
@@ -338,9 +339,19 @@ const ChatMessages = ({
     setTasks(data)
   }
 
+  const fetchTaskForTicket = async () => {
+    if (!selectTicketId) return
+    try {
+      const data = await api.task.getTaskByTicket(selectTicketId)
+      setListTask(data)
+    } catch (error) {
+      console.error("Ошибка загрузки задач по тикету:", error)
+    }
+  }
+
   useEffect(() => {
-    fetchTasks()
-  }, [])
+    fetchTaskForTicket()
+  }, [selectTicketId])
 
   return (
     <div className="chat-area">

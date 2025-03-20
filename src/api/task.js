@@ -29,5 +29,11 @@ export const task = {
     const { data } = await baseAxios.get(`/api/list_tasks`)
 
     return data
+  },
+
+  getTaskByTicket: async (id) => {
+    const { data } = await baseAxios.get(`/api/task/ticket/${id}`)
+
+    return data
   }
 }
