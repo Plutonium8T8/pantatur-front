@@ -278,7 +278,7 @@ const Leads = () => {
         searchTerm={searchTerm}
         setIsTableView={setIsTableView}
         selectedTickets={selectedTickets}
-        editSelectedTickets={() => setIsModalOpen(true)}
+        onOpenModal={() => setIsModalOpen(true)}
         setIsFilterOpen={setIsFilterOpen}
         deleteTicket={deleteTicket}
         hasSelectedLightListers={Object.values(lightTicketFilters).some(

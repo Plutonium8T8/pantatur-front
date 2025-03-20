@@ -17,7 +17,7 @@ export const RefLeadsFilter = forwardRef(
       setSearchTerm,
       setIsTableView,
       selectedTickets,
-      editSelectedTickets,
+      onOpenModal,
       setIsFilterOpen,
       deleteTicket,
       setGroupTitle,
@@ -78,7 +78,7 @@ export const RefLeadsFilter = forwardRef(
             <Button
               variant="warning"
               leftSection={<FaEdit size={16} />}
-              onClick={() => editSelectedTickets()}
+              onClick={onOpenModal}
             >
               {getLanguageByKey("Editare")} ({selectedTickets.length})
             </Button>
