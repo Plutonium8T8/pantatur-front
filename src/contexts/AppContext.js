@@ -211,10 +211,10 @@ export const AppProvider = ({ children }) => {
 
   const updateTicket = async (updateData) => {
     try {
-      const updatedTicket = await api.tickets.updateById(
-        updateData.id,
-        updateData
-      )
+      const updatedTicket = await api.tickets.updateById({
+        id: [updateData.id],
+        ...updateData
+      })
 
       return updatedTicket
     } catch (error) {

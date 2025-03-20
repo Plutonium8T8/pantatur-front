@@ -37,7 +37,7 @@ export const GeneralInfoTicketForm = ({ onSubmit, onClose, loading, data }) => {
   useEffect(() => {
     if (data) {
       form.setValues({
-        technician_id: `${data?.technician_id}`,
+        technician_id: data?.technician_id,
         tags: parseTags(data?.tags),
         workflow: data?.workflow,
         priority: data?.priority,
@@ -102,8 +102,8 @@ export const GeneralInfoTicketForm = ({ onSubmit, onClose, loading, data }) => {
         mt="md"
         label={getLanguageByKey("Tehnician")}
         placeholder={getLanguageByKey("Selectează tehnician")}
-        data={technicians}
         clearable
+        data={technicians}
         key={form.key("technician_id")}
         {...form.getInputProps("technician_id")}
       />
