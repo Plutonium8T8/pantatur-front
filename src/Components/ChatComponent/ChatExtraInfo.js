@@ -55,7 +55,8 @@ const ChatExtraInfo = ({
       return
     }
     try {
-      await api.tickets.updateById(selectTicketId, {
+      await api.tickets.updateById({
+        id: [selectTicketId],
         technician_id: newTechnicianId
       })
     } catch (error) {}

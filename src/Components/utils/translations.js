@@ -435,7 +435,7 @@ export const translations = {
     RU: "Покупка"
   },
   "Nr de contract": {
-    RO: "Nr de contract",
+    RO: "Nr. de contract",
     RU: "Номер контракта"
   },
   "Operator turistic": {
@@ -443,7 +443,7 @@ export const translations = {
     RU: "Туроператор"
   },
   "Nr cererii de la operator": {
-    RO: "Nr cererii de la operator",
+    RO: "Nr. cererii de la operator",
     RU: "Номер заявки от оператора"
   },
   "Preț netto (euro)": {
@@ -971,7 +971,7 @@ export const translations = {
     RU: "Контракт"
   },
   Invoice: {
-    RO: "Factura",
+    RO: "Invoice",
     RU: "Счет"
   },
   Media: {
@@ -1289,6 +1289,66 @@ export const translations = {
   FRA: {
     RO: "FRA",
     RU: "ФРА"
+  },
+  "Selectează flux de lucru": {
+    RO: "Selectează flux de lucru",
+    RU: "Выберите рабочий процесс"
+  },
+  "Selectează prioritate": {
+    RO: "Selectează prioritate",
+    RU: "Выберите приоритет"
+  },
+  "Selectează contact": {
+    RO: "Selectează contact",
+    RU: "Выберите контекст"
+  },
+  Status: {
+    RO: "Status",
+    RU: "Статус"
+  },
+  Tehnician: {
+    RO: "Tehnician",
+    RU: "Техник"
+  },
+  "Selectează tehnician": {
+    RO: "Selectează tehnician",
+    RU: "Выберите техника"
+  },
+  "Datele au fost actualizate cu success": {
+    RO: "Datele au fost actualizate cu success",
+    RU: "Данные были успешно обновлены"
+  },
+  "Editarea tichetelor în grup": {
+    RO: "Editarea tichetelor în grup",
+    RU: "Групповое редактирование тикетов"
+  },
+  Trimite: {
+    RO: "Trimite",
+    RU: "Отправить"
+  },
+  "Informații generale": {
+    RO: "Informații generale",
+    RU: "Общая информация"
+  },
+  "Informații despre tichet": {
+    RO: "Informații despre tichet",
+    RU: "Информация о тикете"
+  },
+  "Data venit in oficiu": {
+    RO: "Data venit in oficiu",
+    RU: "Дата прихода в офис"
+  },
+  "Selectează data venirii în oficiu": {
+    RO: "Selectează data venirii în oficiu",
+    RU: "Выберите дату прихода в офис"
+  },
+  "Avans euro": {
+    RO: "Avans euro",
+    RU: "Аванс в евро"
+  },
+  "Comision companie": {
+    RO: "Comision companie",
+    RU: "Комиссия компании"
   }
 }
 

@@ -10,6 +10,12 @@ import { Session } from "./Session"
 import "./App.css"
 import { MantineProvider } from "./MantineProvider"
 import "@mantine/core/styles.css"
+import "@mantine/dates/styles.css"
+// FIXME: Server sends date in an unsupported format (DD-MM-YYYY HH:mm:ss)
+import customParseFormat from "dayjs/plugin/customParseFormat"
+import dayjs from "dayjs"
+
+dayjs.extend(customParseFormat)
 
 const JWT_TOKEN = Cookies.get("jwt")
 

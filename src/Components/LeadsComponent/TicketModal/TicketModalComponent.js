@@ -110,7 +110,10 @@ const TicketModal = ({
       const isEditing = Boolean(editedTicket?.id)
 
       const updatedTicket = isEditing
-        ? await api.tickets.updateById(editedTicket.id, cleanedData)
+        ? await api.tickets.updateById({
+            id: [editedTicket.id],
+            ...cleanedData
+          })
         : await api.tickets.createTickets(cleanedData)
 
       fetchTickets()
