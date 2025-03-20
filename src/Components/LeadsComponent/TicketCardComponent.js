@@ -7,6 +7,9 @@ import { Modal } from "../Modal"
 import SingleChat from "../ChatComponent/SingleChat"
 import { Tag } from "../Tag"
 
+const DEFAULT_PHOTO =
+  "https://storage.googleapis.com/pandatur_bucket/utils/icon-5359554_640.webp"
+
 const TicketCard = ({ ticket, onEditTicket }) => {
   const [isHovered, setIsHovered] = useState(false)
   const [isChatOpen, setIsChatOpen] = useState(false)
@@ -53,9 +56,7 @@ const TicketCard = ({ ticket, onEditTicket }) => {
               <div className="ticket-column">
                 <div className="ticket-photo">
                   <img
-                    src={
-                      "https://storage.googleapis.com/pandatur_bucket/utils/icon-5359554_640.webp"
-                    }
+                    src={ticket?.photo_url ? ticket.photo_url : DEFAULT_PHOTO}
                     alt="User"
                     className="ticket-photo-image"
                   />
