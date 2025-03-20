@@ -11,7 +11,6 @@ import {
 } from "@tanstack/react-table"
 import "./Table.css"
 import { Empty } from "../Empty"
-import { Pagination } from "../Pagination"
 
 export const Table = ({ data, columns, loading, select, pagination }) => {
   const { getHeaderGroups, getRowModel } = useReactTable({
@@ -21,55 +20,51 @@ export const Table = ({ data, columns, loading, select, pagination }) => {
   })
 
   return (
-    <div>
-      <div style={{ overflowX: "scroll" }}>
-        <table className="table">
-          <thead>
-            {getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header, i) => (
-                  <HeaderCell key={i}>
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )}
-                  </HeaderCell>
-                ))}
-              </tr>
-            ))}
-          </thead>
+    <div style={{ overflowX: "scroll" }}>
+      <table className="table">
+        <thead>
+          {getHeaderGroups().map((headerGroup) => (
+            <tr key={headerGroup.id}>
+              {headerGroup.headers.map((header, i) => (
+                <HeaderCell key={i}>
+                  {flexRender(
+                    header.column.columnDef.header,
+                    header.getContext()
+                  )}
+                </HeaderCell>
+              ))}
+            </tr>
+          ))}
+        </thead>
 
-          <tbody>
-            {getRowModel().rows.length ? (
-              getRowModel().rows.map((row) => {
-                return (
-                  <tr
-                    className={`table-tr ${select?.includes(row.original.id) ? "selected-row" : ""}`}
-                    key={row.id}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <RowCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </RowCell>
-                    ))}
-                  </tr>
-                )
-              })
-            ) : (
-              <tr>
-                <RowCell colSpan={columns.length}>
-                  <Empty />
-                </RowCell>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {!!pagination && <Pagination {...pagination} />}
+        <tbody>
+          {getRowModel().rows.length ? (
+            getRowModel().rows.map((row) => {
+              return (
+                <tr
+                  className={`table-tr ${select?.includes(row.original.id) ? "selected-row" : ""}`}
+                  key={row.id}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <RowCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </RowCell>
+                  ))}
+                </tr>
+              )
+            })
+          ) : (
+            <tr>
+              <RowCell colSpan={columns.length}>
+                <Empty />
+              </RowCell>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
   )
 }
