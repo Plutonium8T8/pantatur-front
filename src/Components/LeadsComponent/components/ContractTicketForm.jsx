@@ -4,9 +4,8 @@ import { useForm } from "@mantine/form"
 import { getLanguageByKey } from "../../utils"
 import { LabelSwitch } from "../../LabelSwitch"
 import { paymentStatusOptions } from "../../../FormOptions"
-import { DD_MM_YYYY } from "../../../app-constants"
 import dayjs from "dayjs"
-import { DATE_TIME_FORMAT } from "../../../app-constants"
+import { DATE_TIME_FORMAT, DD_MM_YYYY } from "../../../app-constants"
 
 const formatDate = (date) => {
   return dayjs(date).format(DATE_TIME_FORMAT)

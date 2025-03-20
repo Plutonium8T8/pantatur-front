@@ -8,7 +8,12 @@ import {
   GeneralInfoTicketForm,
   ContractTicketForm
 } from "../components"
-export const EditBulkLeadsModal = ({ open, onClose, selectedTickets }) => {
+export const EditBulkLeadsModal = ({
+  open,
+  onClose,
+  selectedTickets,
+  fetchLeads
+}) => {
   const { enqueueSnackbar } = useSnackbar()
 
   const [loading, setLoading] = useState(false)
@@ -31,6 +36,7 @@ export const EditBulkLeadsModal = ({ open, onClose, selectedTickets }) => {
           variant: "success"
         }
       )
+      await fetchLeads()
     } catch (error) {
       enqueueSnackbar(showServerError(error), { variant: "error" })
     } finally {

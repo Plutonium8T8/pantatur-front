@@ -14,6 +14,7 @@ import { Modal } from "../Modal"
 import SingleChat from "../ChatComponent/SingleChat"
 import { Spin } from "../Spin"
 import { RefLeadsFilter } from "./LeadsFilter"
+import TicketModal from "./TicketModal/TicketModalComponent"
 import "../../App.css"
 import "../SnackBarComponent/SnackBarComponent.css"
 
@@ -61,7 +62,7 @@ const Leads = () => {
   const [isChatOpen, setIsChatOpen] = useState(!!ticketId)
   const [groupTitle, setGroupTitle] = useState("")
   const [selectedWorkflow, setSelectedWorkflow] = useState(filteredWorkflows)
-
+  const [isOpenAddLeadModal, setIsOpenAddLeadModal] = useState(false)
   const [hardTicketFilters, setHardTicketFilters] = useState({})
   const [lightTicketFilters, setLightTicketFilters] = useState({})
 
@@ -149,7 +150,7 @@ const Leads = () => {
       service_reference: "",
       technician_id: 0
     })
-    setIsModalOpen(true)
+    setIsOpenAddLeadModal(true)
   }
 
   const fetchTickets = async (
@@ -341,7 +342,29 @@ const Leads = () => {
           open={isModalOpen && currentTicket}
           onClose={closeModal}
           selectedTickets={selectedTickets}
+          fetchLeads={fetchTicketList}
         />
+
+        {isOpenAddLeadModal && (
+          <TicketModal
+            fetchTickets={fetchTicketList}
+            selectedGroupTitle={groupTitle}
+            ticket={currentTicket}
+            onClose={() => setIsOpenAddLeadModal(false)}
+            onSave={(updatedTicket) => {
+              setTickets((prevTickets) => {
+                const isEditing = Boolean(updatedTicket.ticket_id)
+                return isEditing
+                  ? prevTickets.map((ticket) =>
+                      ticket.id === updatedTicket.ticket_id
+                        ? updatedTicket
+                        : ticket
+                    )
+                  : [...prevTickets, updatedTicket]
+              })
+            }}
+          />
+        )}
 
         <TicketFilterModal
           loading={loading}

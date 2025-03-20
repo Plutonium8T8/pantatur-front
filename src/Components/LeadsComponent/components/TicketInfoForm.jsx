@@ -2,7 +2,6 @@ import { Select, Button, Flex, NumberInput } from "@mantine/core"
 import { DatePickerInput } from "@mantine/dates"
 import { useForm } from "@mantine/form"
 import { getLanguageByKey } from "../../utils"
-import { DD_MM_YYYY } from "../../../app-constants"
 import {
   sourceOfLeadOptions,
   promoOptions,
@@ -14,7 +13,7 @@ import {
   purchaseProcessingOptions
 } from "../../../FormOptions"
 import dayjs from "dayjs"
-import { DATE_TIME_FORMAT } from "../../../app-constants"
+import { DATE_TIME_FORMAT, DD_MM_YYYY } from "../../../app-constants"
 
 const formatDate = (date) => {
   return dayjs(date).format(DATE_TIME_FORMAT)

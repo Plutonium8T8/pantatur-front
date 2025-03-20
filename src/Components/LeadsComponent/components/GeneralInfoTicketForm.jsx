@@ -4,7 +4,8 @@ import {
   Textarea,
   Button,
   Flex,
-  SegmentedControl
+  SegmentedControl,
+  TagsInput
 } from "@mantine/core"
 import { useForm } from "@mantine/form"
 import {
@@ -57,7 +58,7 @@ export const GeneralInfoTicketForm = ({ onSubmit, onClose, loading }) => {
         {...form.getInputProps("contact")}
       />
 
-      <TextInput
+      <TagsInput
         mt="md"
         label={getLanguageByKey("Tag-uri")}
         placeholder={getLanguageByKey("Introdu tag-uri separate prin virgule")}
