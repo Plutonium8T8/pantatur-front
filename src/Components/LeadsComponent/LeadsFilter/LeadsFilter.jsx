@@ -6,7 +6,13 @@ import { LuFilter } from "react-icons/lu"
 import { FaList } from "react-icons/fa6"
 import { getLanguageByKey } from "../../utils"
 import "./LeadsFilter.css"
-import { Button, Indicator, Input, SegmentedControl, Flex } from "@mantine/core"
+import {
+  Button,
+  ActionIcon,
+  Input,
+  SegmentedControl,
+  Flex
+} from "@mantine/core"
 import { IoMdClose } from "react-icons/io"
 
 export const RefLeadsFilter = forwardRef(
@@ -21,7 +27,6 @@ export const RefLeadsFilter = forwardRef(
       setIsFilterOpen,
       deleteTicket,
       setGroupTitle,
-      hasSelectedLightListers,
       totalTicketsFiltered,
       isFilterOpen
     },
@@ -84,11 +89,13 @@ export const RefLeadsFilter = forwardRef(
             </Button>
           )}
 
-          <Indicator disabled={hasSelectedLightListers} color="red">
-            <Button onClick={() => setIsFilterOpen(true)} variant="default">
-              <LuFilter size={16} />
-            </Button>
-          </Indicator>
+          <ActionIcon
+            size="36"
+            onClick={() => setIsFilterOpen(true)}
+            variant={isFilterOpen ? "filled" : "outline"}
+          >
+            <LuFilter size={16} />
+          </ActionIcon>
         </Flex>
 
         <Flex gap="md">

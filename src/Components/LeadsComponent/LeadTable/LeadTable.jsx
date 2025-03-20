@@ -12,6 +12,7 @@ import SingleChat from "../../ChatComponent/SingleChat"
 import { useParams, useNavigate } from "react-router-dom"
 import { Tag } from "../../Tag"
 import { WorkflowTag } from "../../WorkflowTag"
+import { Flex } from "@mantine/core"
 
 const renderTags = (tags) => {
   const isTags = tags.some(Boolean)
@@ -378,13 +379,13 @@ export const LeadTable = ({
       </div>
 
       {!!totalLeads && (
-        <div className="d-flex justify-content-center | pagination-leads-table">
+        <Flex p="20" justify="center">
           <Pagination
             totalPages={totalLeads}
             currentPage={currentPage}
             onPaginationChange={onChangePagination}
           />
-        </div>
+        </Flex>
       )}
 
       <Modal

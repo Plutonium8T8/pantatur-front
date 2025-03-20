@@ -281,9 +281,6 @@ const Leads = () => {
         onOpenModal={() => setIsModalOpen(true)}
         setIsFilterOpen={setIsFilterOpen}
         deleteTicket={deleteTicket}
-        hasSelectedLightListers={Object.values(lightTicketFilters).some(
-          (value) => (Array.isArray(value) ? value.length > 0 : value)
-        )}
         setGroupTitle={setGroupTitle}
         totalTicketsFiltered={totalLeads ?? tickets.length}
         isFilterOpen={isFilterOpen}
