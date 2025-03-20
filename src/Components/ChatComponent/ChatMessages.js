@@ -4,14 +4,13 @@ import EmojiPicker from "emoji-picker-react"
 import ReactDOM from "react-dom"
 import { useApp, useUser } from "../../hooks"
 import { api } from "../../api"
-import TaskModal from "../Task/Components/TaskModal/TaskModal"
+import TaskListOverlay from "../Task/Components/TicketTask/TaskListOverlay"
 import {
   FaFacebook,
   FaViber,
   FaInstagram,
   FaWhatsapp,
-  FaTelegram,
-  FaTasks
+  FaTelegram
 } from "react-icons/fa"
 import { translations } from "../utils/translations"
 import { templateOptions } from "../../FormOptions/MessageTemplate"
@@ -338,20 +337,9 @@ const ChatMessages = ({
     const data = await api.task.getAllTasks()
     setTasks(data)
   }
-
-  const fetchTaskForTicket = async () => {
-    if (!selectTicketId) return
-    try {
-      const data = await api.task.getTaskByTicket(selectTicketId)
-      setListTask(data)
-    } catch (error) {
-      console.error("Ошибка загрузки задач по тикету:", error)
-    }
+  const openEditTask = (task) => {
+    console.log("Редактирование задачи:", task)
   }
-
-  useEffect(() => {
-    fetchTaskForTicket()
-  }, [selectTicketId])
 
   return (
     <div className="chat-area">
@@ -606,7 +594,15 @@ const ChatMessages = ({
           </div>
         )}
       </div>
-
+      {selectTicketId && (
+        <TaskListOverlay
+          tasks={listTask}
+          fetchTasks={fetchTasks}
+          ticketId={selectTicketId}
+          userId={userId}
+          openEditTask={openEditTask} // <-- Добавляем передачу функции
+        />
+      )}
       <div className="manager-send-message-container">
         <textarea
           className="text-area-message"
@@ -661,13 +657,6 @@ const ChatMessages = ({
               onClick={handleFileButtonClick}
             >
               <FaFile />
-            </button>
-            <button
-              className="action-button task-button"
-              onClick={() => setIsTaskModalOpen(true)}
-              disabled={!selectTicketId}
-            >
-              <FaTasks />
             </button>
           </div>
           <div className="select-row">
@@ -740,13 +729,13 @@ const ChatMessages = ({
               </div>
             )}
         </div>
-        <TaskModal
+        {/* <TaskModal
           isOpen={isTaskModalOpen}
           onClose={() => setIsTaskModalOpen(false)}
           defaultTicketId={selectTicketId}
           defaultCreatedBy={userId}
           fetchTasks={fetchTasks}
-        />
+        /> */}
       </div>
     </div>
   )

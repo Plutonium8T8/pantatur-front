@@ -6,21 +6,34 @@ import { Input } from "../../Input"
 import { translations } from "../../utils/translations"
 import "./TaskComponent.css"
 
-const TaskComponent = () => {
+const TaskComponent = ({ selectTicketId }) => {
   const [tasks, setTasks] = useState([])
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedTask, setSelectedTask] = useState(null)
   const [searchQuery, setSearchQuery] = useState("")
   const language = localStorage.getItem("language") || "RO"
 
+  // Функция загрузки задач (объявляем до useEffect)
   const fetchTasks = async () => {
-    const data = await api.task.getAllTasks()
-    setTasks(data)
+    try {
+      let data
+      if (selectTicketId) {
+        console.log(`🔍 Загружаем задачи для тикета ${selectTicketId}`)
+        data = await api.task.getTaskByTicket(selectTicketId)
+      } else {
+        console.log("📋 Загружаем все задачи...")
+        data = await api.task.getAllTasks()
+      }
+      setTasks(data)
+    } catch (error) {
+      console.error("Ошибка загрузки задач:", error)
+    }
   }
 
+  // Загружаем задачи при изменении selectTicketId
   useEffect(() => {
     fetchTasks()
-  }, [])
+  }, [selectTicketId])
 
   const openNewTask = () => {
     setSelectedTask(null)
@@ -32,6 +45,7 @@ const TaskComponent = () => {
     setIsModalOpen(true)
   }
 
+  // Фильтрация задач по поисковому запросу
   const filteredTasks = tasks.filter((task) =>
     task.task_type.toLowerCase().includes(searchQuery.toLowerCase())
   )
@@ -59,13 +73,13 @@ const TaskComponent = () => {
         <TaskList
           tasks={filteredTasks}
           openEditTask={openEditTask}
-          fetchTasks={fetchTasks}
+          fetchTasks={fetchTasks} // ✅ Передаем исправленный fetchTasks
         />
       </div>
       <TaskModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        fetchTasks={fetchTasks}
+        fetchTasks={fetchTasks} // ✅ Передаем исправленный fetchTasks
         selectedTask={selectedTask}
       />
     </div>
