@@ -1371,9 +1371,9 @@ export const translations = {
     RO: "Etapa Task",
     RU: "Этап задачи"
   },
-  Data: {
-    RO: "Data",
-    RU: "Дата"
+  Deadline: {
+    RO: "Deadline",
+    RU: "Дедлайн"
   },
   Toate: {
     RO: "Toate",

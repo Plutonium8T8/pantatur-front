@@ -182,7 +182,7 @@ const TaskModal = ({
           onChange={(value) =>
             setTask((prev) => ({ ...prev, ticketId: value }))
           }
-          searchable
+          searchable={true}
           placeholder={translations["Lead ID"][language]}
           required
           clearable
@@ -207,7 +207,7 @@ const TaskModal = ({
           value={task.priority}
           onChange={(value) => setTask({ ...task, priority: value })}
           required
-          searchable
+          searchable={true}
           mt="md"
         />
 
@@ -217,7 +217,7 @@ const TaskModal = ({
           value={task.status_task}
           onChange={(value) => setTask({ ...task, status_task: value })}
           required
-          searchable
+          searchable={true}
           mt="md"
         />
 
@@ -232,7 +232,7 @@ const TaskModal = ({
           }}
           required
           clearable
-          searchable
+          searchable={true}
           mt="md"
         />
 
@@ -254,7 +254,7 @@ const TaskModal = ({
           value={task.createdFor}
           onChange={(value) => setTask({ ...task, createdFor: value })}
           required
-          searchable
+          searchable={true}
           mt="md"
         />
 
@@ -266,7 +266,7 @@ const TaskModal = ({
             setTask((prev) => ({ ...prev, createdBy: value }))
           }
           required
-          searchable
+          searchable={true}
           mt="md"
           disabled={!!defaultCreatedBy}
         />

@@ -218,7 +218,7 @@ const TaskList = ({
         align: "center"
       },
       {
-        title: translations["Data"][language],
+        title: translations["Deadline"][language],
         dataIndex: "scheduled_time",
         key: "scheduled_time",
         width: 180,
