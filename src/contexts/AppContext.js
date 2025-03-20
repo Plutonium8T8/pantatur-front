@@ -37,7 +37,7 @@ export const AppProvider = ({ children }) => {
       }
     }
 
-    return () => { }
+    return () => {}
   }, [])
 
   useEffect(() => {
@@ -78,7 +78,7 @@ export const AppProvider = ({ children }) => {
         handleWebSocketMessage(message)
       }
 
-      socketInstance.onclose = () => { }
+      socketInstance.onclose = () => {}
     }
 
     return () => {
@@ -158,15 +158,13 @@ export const AppProvider = ({ children }) => {
     try {
       setIsLoading(true)
 
-      const data = await api.tickets.getLightList()
+      const response = await api.tickets.getLightList()
+      const data = response.tickets || []
 
       const processedTickets = data.map((ticket) => ({
         ...ticket,
-        client_ids: ticket.client_id
-          ? ticket.client_id
-            .replace(/[{}]/g, "")
-            .split(",")
-            .map((id) => Number(id))
+        client_ids: ticket.clients
+          ? ticket.clients.map((client) => client.id)
           : [],
         last_message: ticket.last_message || "Nu sunt mesaje",
         time_sent: ticket.time_sent || null,
@@ -277,14 +275,14 @@ export const AppProvider = ({ children }) => {
           prevTickets.map((ticket) =>
             ticket.id === ticket_id
               ? {
-                ...ticket,
-                last_message: msgText,
-                time_sent: time_sent,
-                unseen_count:
-                  ticket_id === selectTicketId
-                    ? 0
-                    : ticket.unseen_count + (sender_id !== userId ? 1 : 0)
-              }
+                  ...ticket,
+                  last_message: msgText,
+                  time_sent: time_sent,
+                  unseen_count:
+                    ticket_id === selectTicketId
+                      ? 0
+                      : ticket.unseen_count + (sender_id !== userId ? 1 : 0)
+                }
               : ticket
           )
         )
@@ -342,9 +340,7 @@ export const AppProvider = ({ children }) => {
         const ticketId = message.data.ticket_id
 
         if (!ticketId) {
-          console.warn(
-            "nu pot scoate ticket id din 'ticket'."
-          )
+          console.warn("nu pot scoate ticket id din 'ticket'.")
           break
         }
 
@@ -358,9 +354,7 @@ export const AppProvider = ({ children }) => {
           })
           socketInstance.send(socketMessage)
         } else {
-          console.warn(
-            "eroor conect chat-room, WebSocket off."
-          )
+          console.warn("eroor conect chat-room, WebSocket off.")
           console.log(
             "Stare WebSocket:",
             socketInstance
