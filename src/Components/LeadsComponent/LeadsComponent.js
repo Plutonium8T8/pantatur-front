@@ -7,7 +7,7 @@ import WorkflowColumn from "./WorkflowColumnComponent"
 import { TicketFilterModal } from "../TicketFilterModal"
 import { LeadTable } from "./LeadTable"
 import { useDebounce } from "../../hooks"
-import { showServerError, getTotalPages } from "../utils"
+import { showServerError, getTotalPages, getLanguageByKey } from "../utils"
 import { api } from "../../api"
 import { useSnackbar } from "notistack"
 import { Modal } from "../Modal"
@@ -15,10 +15,11 @@ import SingleChat from "../ChatComponent/SingleChat"
 import { Spin } from "../Spin"
 import { RefLeadsFilter } from "./LeadsFilter"
 import TicketModal from "./TicketModal/TicketModalComponent"
+import { Modal as MantineModal, Text } from "@mantine/core"
 import "../../App.css"
 import "../SnackBarComponent/SnackBarComponent.css"
 
-import { EditBulkLeadsModal } from "./components"
+import { EditBulkOrSingleLeadTabs } from "./components"
 
 const SORT_BY = "creation_date"
 const ORDER = "DESC"
@@ -127,16 +128,6 @@ const Leads = () => {
       enqueueSnackbar(showServerError(error), { variant: "error" })
     } finally {
       setLoading(false)
-    }
-  }
-
-  const editSelectedTickets = () => {
-    const ticketToEdit = tickets.find(
-      (ticket) => ticket.id === selectedTickets[0]
-    )
-    if (ticketToEdit) {
-      setCurrentTicket(ticketToEdit)
-      setIsModalOpen(true)
     }
   }
 
@@ -287,7 +278,7 @@ const Leads = () => {
         searchTerm={searchTerm}
         setIsTableView={setIsTableView}
         selectedTickets={selectedTickets}
-        editSelectedTickets={editSelectedTickets}
+        editSelectedTickets={() => setIsModalOpen(true)}
         setIsFilterOpen={setIsFilterOpen}
         deleteTicket={deleteTicket}
         hasSelectedLightListers={Object.values(lightTicketFilters).some(
@@ -338,12 +329,28 @@ const Leads = () => {
           </div>
         )}
 
-        <EditBulkLeadsModal
-          open={isModalOpen && currentTicket}
-          onClose={closeModal}
-          selectedTickets={selectedTickets}
-          fetchLeads={fetchTicketList}
-        />
+        <MantineModal
+          centered
+          opened={isModalOpen}
+          onClose={() => closeModal()}
+          size="lg"
+          title={
+            <Text size="xl" fw="bold">
+              {getLanguageByKey("Editarea tichetelor în grup")}
+            </Text>
+          }
+        >
+          <EditBulkOrSingleLeadTabs
+            onClose={closeModal}
+            selectedTickets={selectedTickets}
+            fetchLeads={fetchTicketList}
+            id={
+              selectedTickets.length === 1
+                ? selectedTickets[0]
+                : currentTicket?.id
+            }
+          />
+        </MantineModal>
 
         {isOpenAddLeadModal && (
           <TicketModal

@@ -1,6 +1,7 @@
 import { TextInput, Select, NumberInput, Flex, Button } from "@mantine/core"
 import { DatePickerInput } from "@mantine/dates"
 import { useForm } from "@mantine/form"
+import { useEffect } from "react"
 import { getLanguageByKey } from "../../utils"
 import { LabelSwitch } from "../../LabelSwitch"
 import { paymentStatusOptions } from "../../../FormOptions"
@@ -11,7 +12,7 @@ const formatDate = (date) => {
   return dayjs(date).format(DATE_TIME_FORMAT)
 }
 
-export const ContractTicketForm = ({ onClose, onSubmit, loading }) => {
+export const ContractTicketForm = ({ onClose, onSubmit, loading, data }) => {
   const form = useForm({
     mode: "uncontrolled",
 
@@ -34,6 +35,12 @@ export const ContractTicketForm = ({ onClose, onSubmit, loading }) => {
       return { ...formattedData, ...rest }
     }
   })
+
+  useEffect(() => {
+    if (data) {
+      form.setValues(data)
+    }
+  }, [data])
 
   return (
     <form
@@ -194,8 +201,8 @@ export const ContractTicketForm = ({ onClose, onSubmit, loading }) => {
       <LabelSwitch
         mt="md"
         label={getLanguageByKey("Control Admin")}
-        key={form.key("control_admin")}
-        {...form.getInputProps("control_admin")}
+        key={form.key("control")}
+        {...form.getInputProps("control")}
       />
 
       <Flex justify="end" gap="md" mt="md">

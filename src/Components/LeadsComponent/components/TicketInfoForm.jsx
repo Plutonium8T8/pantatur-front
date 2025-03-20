@@ -1,6 +1,7 @@
 import { Select, Button, Flex, NumberInput } from "@mantine/core"
 import { DatePickerInput } from "@mantine/dates"
 import { useForm } from "@mantine/form"
+import { useEffect } from "react"
 import { getLanguageByKey } from "../../utils"
 import {
   sourceOfLeadOptions,
@@ -19,7 +20,7 @@ const formatDate = (date) => {
   return dayjs(date).format(DATE_TIME_FORMAT)
 }
 
-export const TicketInfoForm = ({ onClose, onSubmit, loading }) => {
+export const TicketInfoForm = ({ onClose, onSubmit, loading, data }) => {
   const form = useForm({
     mode: "uncontrolled",
 
@@ -46,6 +47,12 @@ export const TicketInfoForm = ({ onClose, onSubmit, loading }) => {
       return { ...formattedData, ...rest }
     }
   })
+
+  useEffect(() => {
+    if (data) {
+      form.setValues(data)
+    }
+  }, [data])
 
   return (
     <form

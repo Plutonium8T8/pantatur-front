@@ -8,6 +8,7 @@ import {
   TagsInput
 } from "@mantine/core"
 import { useForm } from "@mantine/form"
+import { useEffect } from "react"
 import {
   workflowOptions,
   priorityOptions,
@@ -15,17 +16,33 @@ import {
 } from "../../../FormOptions"
 import { getLanguageByKey } from "../../utils"
 import { useGetTechniciansList } from "../../../hooks"
+import { parseTags } from "../../../stringUtils"
 
-export const GeneralInfoTicketForm = ({ onSubmit, onClose, loading }) => {
+export const GeneralInfoTicketForm = ({ onSubmit, onClose, loading, data }) => {
   const { technicians } = useGetTechniciansList()
   const form = useForm({
-    mode: "uncontrolled"
+    mode: "uncontrolled",
+
+    transformValues: ({ tag, ...rest }) => ({
+      ...(tag?.length && tag),
+      ...rest
+    })
   })
 
   const close = () => {
     form.reset()
     onClose()
   }
+
+  useEffect(() => {
+    if (data) {
+      const { tags, ...rest } = data
+      form.setValues({
+        tags: parseTags(data?.tags),
+        ...rest
+      })
+    }
+  }, [data])
 
   return (
     <form
@@ -62,8 +79,8 @@ export const GeneralInfoTicketForm = ({ onSubmit, onClose, loading }) => {
         mt="md"
         label={getLanguageByKey("Tag-uri")}
         placeholder={getLanguageByKey("Introdu tag-uri separate prin virgule")}
-        key={form.key("tag")}
-        {...form.getInputProps("tag")}
+        key={form.key("tags")}
+        {...form.getInputProps("tags")}
       />
 
       <SegmentedControl
