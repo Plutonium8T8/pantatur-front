@@ -19,7 +19,7 @@ import {
   ArcElement,
   RadialLinearScale
 } from "chart.js"
-import { Flex } from "@mantine/core"
+import { Flex, Title as MantineTitle, Box } from "@mantine/core"
 import { useUser } from "../../hooks"
 import { api } from "../../api"
 import { Filter } from "./Filter"
@@ -142,9 +142,9 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-container-wrapper">
-      <h1 className="dashboard-title | mb-16">
-        {getLanguageByKey("Dashboard")}
-      </h1>
+      <Box mb="16">
+        <MantineTitle order={2}>{getLanguageByKey("Dashboard")}</MantineTitle>
+      </Box>
       <div className="dashboard-divider" />
 
       <Filter

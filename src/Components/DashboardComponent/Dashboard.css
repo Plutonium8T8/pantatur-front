@@ -22,10 +22,6 @@
   position: relative;
 }
 
-.dashboard-title {
-  margin-top: 0;
-}
-
 .dashboard-divider {
   height: 1px;
   background-color: #ccc;

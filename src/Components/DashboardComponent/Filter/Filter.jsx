@@ -4,6 +4,7 @@ import { Select, Button } from "@mantine/core"
 import { DatePickerInput } from "@mantine/dates"
 import { DD_MM_YYYY } from "../../../app-constants"
 import { useGetTechniciansList } from "../../../hooks"
+import dayjs from "dayjs"
 
 const getStartEndDateRange = (date) => {
   const startOfDay = new Date(date)
@@ -48,7 +49,12 @@ export const Filter = ({
 
       <div className="d-flex">
         <Button
-          variant="default"
+          variant={
+            dayjs(dateRange[0]).isSame(dayjs(), "day") &&
+            dayjs(dateRange[1]).isSame(dayjs(), "day")
+              ? "filled"
+              : "default"
+          }
           onClick={() => {
             onSelectDataRange(getStartEndDateRange(new Date()))
           }}
@@ -56,7 +62,12 @@ export const Filter = ({
           {getLanguageByKey("azi")}
         </Button>
         <Button
-          variant="default"
+          variant={
+            dayjs(dateRange[0]).isSame(dayjs().subtract(1, "day"), "day") &&
+            dayjs(dateRange[1]).isSame(dayjs().subtract(1, "day"), "day")
+              ? "filled"
+              : "default"
+          }
           onClick={() => {
             onSelectDataRange(getYesterdayDate())
           }}
