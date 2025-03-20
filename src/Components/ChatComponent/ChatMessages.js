@@ -45,6 +45,7 @@ const ChatMessages = ({
   const [selectedPlatform, setSelectedPlatform] = useState("web")
   const [tasks, setTasks] = useState([])
   const [listTask, setListTask] = useState([])
+  const [selectedTask, setSelectedTask] = useState(null)
 
   const platformIcons = {
     facebook: <FaFacebook />,
@@ -337,8 +338,11 @@ const ChatMessages = ({
     const data = await api.task.getAllTasks()
     setTasks(data)
   }
+
   const openEditTask = (task) => {
     console.log("Редактирование задачи:", task)
+    setSelectedTask(task) // ✅ Записываем задачу
+    setIsTaskModalOpen(true) // ✅ Открываем модалку
   }
 
   return (

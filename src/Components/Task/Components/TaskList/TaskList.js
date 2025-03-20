@@ -276,6 +276,7 @@ const TaskList = ({
                 <div
                   className="dropdown-item edit"
                   onClick={() => {
+                    console.log("🔍 Редактирование задачи, передаем:", row)
                     openEditTask(row)
                     setOpenMenuId(null)
                   }}

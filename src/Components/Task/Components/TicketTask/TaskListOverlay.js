@@ -72,6 +72,7 @@ const TaskListOverlay = ({ ticketId, userId, openEditTask }) => {
           defaultTicketId={ticketId}
           defaultCreatedBy={userId} // <-- Передаем userId
           fetchTasks={fetchTasks}
+          openEditTask={openEditTask}
         />
       </Drawer>
     </>
