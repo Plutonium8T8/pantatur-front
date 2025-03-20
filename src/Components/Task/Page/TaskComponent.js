@@ -1,36 +1,29 @@
 import React, { useState, useEffect } from "react"
-import TaskModal from "../Components/TaskModal/TaskModal"
 import TaskList from "../Components/TaskList/TaskList"
+import TaskModal from "../Components/TaskModal/TaskModal"
 import { api } from "../../../api"
 import { Input } from "../../Input"
 import { translations } from "../../utils/translations"
 import "./TaskComponent.css"
 
-const TaskComponent = ({ selectTicketId }) => {
+const TaskComponent = ({ selectTicketId, userId }) => {
   const [tasks, setTasks] = useState([])
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedTask, setSelectedTask] = useState(null)
   const [searchQuery, setSearchQuery] = useState("")
   const language = localStorage.getItem("language") || "RO"
 
-  // Функция загрузки задач (объявляем до useEffect)
   const fetchTasks = async () => {
     try {
-      let data
-      if (selectTicketId) {
-        console.log(`🔍 Загружаем задачи для тикета ${selectTicketId}`)
-        data = await api.task.getTaskByTicket(selectTicketId)
-      } else {
-        console.log("📋 Загружаем все задачи...")
-        data = await api.task.getAllTasks()
-      }
+      let data = selectTicketId
+        ? await api.task.getTaskByTicket(selectTicketId)
+        : await api.task.getAllTasks()
       setTasks(data)
     } catch (error) {
       console.error("Ошибка загрузки задач:", error)
     }
   }
 
-  // Загружаем задачи при изменении selectTicketId
   useEffect(() => {
     fetchTasks()
   }, [selectTicketId])
@@ -45,7 +38,6 @@ const TaskComponent = ({ selectTicketId }) => {
     setIsModalOpen(true)
   }
 
-  // Фильтрация задач по поисковому запросу
   const filteredTasks = tasks.filter((task) =>
     task.task_type.toLowerCase().includes(searchQuery.toLowerCase())
   )
@@ -73,14 +65,16 @@ const TaskComponent = ({ selectTicketId }) => {
         <TaskList
           tasks={filteredTasks}
           openEditTask={openEditTask}
-          fetchTasks={fetchTasks} // ✅ Передаем исправленный fetchTasks
+          fetchTasks={fetchTasks}
         />
       </div>
       <TaskModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        fetchTasks={fetchTasks} // ✅ Передаем исправленный fetchTasks
+        fetchTasks={fetchTasks}
         selectedTask={selectedTask}
+        defaultTicketId={selectTicketId}
+        defaultCreatedBy={userId}
       />
     </div>
   )

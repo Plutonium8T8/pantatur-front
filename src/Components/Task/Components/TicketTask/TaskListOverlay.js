@@ -1,46 +1,40 @@
 import { useState, useEffect } from "react"
 import { Drawer, Button } from "@mantine/core"
-import TaskList from "../TaskList/TaskList"
-import TaskModal from "../TaskModal/TaskModal"
+import TaskComponent from "../../Page/TaskComponent"
 import { translations } from "../../../utils/translations"
 import { api } from "../../../../api"
 
-const TaskListOverlay = ({ ticketId, userId, openEditTask }) => {
+const TaskListOverlay = ({ ticketId, userId }) => {
   const [opened, setOpened] = useState(false)
-  const [taskModalOpen, setTaskModalOpen] = useState(false)
-  const [tasks, setTasks] = useState([])
-  const language = localStorage.getItem("language") || "RO"
+  const [taskCount, setTaskCount] = useState(null) // Счетчик задач
 
-  const fetchTasks = async () => {
+  // Функция загрузки количества задач для тикета
+  const fetchTaskCount = async () => {
     try {
-      let data
       if (ticketId) {
-        console.log(`🔍 Загружаем задачи для тикета ${ticketId}`)
-        data = await api.task.getTaskByTicket(ticketId)
+        const tasks = await api.task.getTaskByTicket(ticketId)
+        setTaskCount(tasks.length)
       } else {
-        console.log("📋 Загружаем все задачи...")
-        data = await api.task.getAllTasks()
+        setTaskCount(0)
       }
-      setTasks(data)
     } catch (error) {
-      console.error("Ошибка загрузки задач:", error)
+      console.error("Ошибка загрузки количества задач:", error)
+      setTaskCount(0)
     }
   }
 
   useEffect(() => {
-    fetchTasks()
+    fetchTaskCount()
   }, [ticketId])
 
   return (
     <>
       <Button
         fullWidth
-        color={tasks.length > 0 ? "blue" : "gray"}
+        color={taskCount > 0 ? "blue" : "gray"}
         onClick={() => setOpened(true)}
       >
-        {tasks.length > 0
-          ? `Для этого тикета есть ${tasks.length} задача(и)`
-          : "Нет задач. Cоздать?"}
+        {taskCount > 0 ? `Задачи: ${taskCount}` : "Нет задач, создать?"}
       </Button>
 
       <Drawer
@@ -50,30 +44,7 @@ const TaskListOverlay = ({ ticketId, userId, openEditTask }) => {
         padding="md"
         size="lg"
       >
-        <Button
-          fullWidth
-          color="green"
-          onClick={() => setTaskModalOpen(true)}
-          mb="md"
-        >
-          {["Создать задачу"]}
-        </Button>
-
-        <TaskList
-          tasks={tasks}
-          fetchTasks={fetchTasks}
-          openEditTask={openEditTask}
-        />
-
-        {/* Теперь передаем userId в TaskModal */}
-        <TaskModal
-          isOpen={taskModalOpen}
-          onClose={() => setTaskModalOpen(false)}
-          defaultTicketId={ticketId}
-          defaultCreatedBy={userId} // <-- Передаем userId
-          fetchTasks={fetchTasks}
-          openEditTask={openEditTask}
-        />
+        <TaskComponent selectTicketId={ticketId} userId={userId} />
       </Drawer>
     </>
   )

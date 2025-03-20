@@ -341,8 +341,8 @@ const ChatMessages = ({
 
   const openEditTask = (task) => {
     console.log("Редактирование задачи:", task)
-    setSelectedTask(task) // ✅ Записываем задачу
-    setIsTaskModalOpen(true) // ✅ Открываем модалку
+    setSelectedTask(task)
+    setIsTaskModalOpen(true)
   }
 
   return (
@@ -604,7 +604,7 @@ const ChatMessages = ({
           fetchTasks={fetchTasks}
           ticketId={selectTicketId}
           userId={userId}
-          openEditTask={openEditTask} // <-- Добавляем передачу функции
+          openEditTask={openEditTask}
         />
       )}
       <div className="manager-send-message-container">
@@ -733,13 +733,6 @@ const ChatMessages = ({
               </div>
             )}
         </div>
-        {/* <TaskModal
-          isOpen={isTaskModalOpen}
-          onClose={() => setIsTaskModalOpen(false)}
-          defaultTicketId={selectTicketId}
-          defaultCreatedBy={userId}
-          fetchTasks={fetchTasks}
-        /> */}
       </div>
     </div>
   )
