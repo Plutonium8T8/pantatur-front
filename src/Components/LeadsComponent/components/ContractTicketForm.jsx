@@ -12,6 +12,10 @@ const formatDate = (date) => {
   return dayjs(date).format(DATE_TIME_FORMAT)
 }
 
+const parseServerDate = (date) => {
+  return date ? dayjs(date, DATE_TIME_FORMAT) : undefined
+}
+
 export const ContractTicketForm = ({ onClose, onSubmit, loading, data }) => {
   const form = useForm({
     mode: "uncontrolled",
@@ -38,7 +42,24 @@ export const ContractTicketForm = ({ onClose, onSubmit, loading, data }) => {
 
   useEffect(() => {
     if (data) {
-      form.setValues(data)
+      form.setValues({
+        data_contractului: parseServerDate(data?.data_contractului),
+        data_avansului: parseServerDate(data?.data_avansului),
+        data_de_plata_integrala: parseServerDate(data?.data_de_plata_integrala),
+        numar_de_contract: data?.numar_de_contract,
+        contract_trimis: data?.contract_trimis,
+        contract_semnat: data?.contract_semnat,
+        tour_operator: data?.tour_operator,
+        numarul_cererii_de_la_operator: data?.numarul_cererii_de_la_operator,
+        achitare_efectuata: data?.achitare_efectuata,
+        rezervare_confirmata: data?.rezervare_confirmata,
+        contract_arhivat: data?.contract_arhivat,
+        statutul_platii: data?.statutul_platii,
+        avans_euro: data?.avans_euro,
+        pret_netto: data?.pret_netto,
+        achitat_client: data?.achitat_client,
+        control: data?.control
+      })
     }
   }, [data])
 
@@ -92,14 +113,14 @@ export const ContractTicketForm = ({ onClose, onSubmit, loading, data }) => {
         mt="md"
         label={getLanguageByKey("Contract trimis")}
         key={form.key("contract_trimis")}
-        {...form.getInputProps("contract_trimis")}
+        {...form.getInputProps("contract_trimis", { type: "checkbox" })}
       />
 
       <LabelSwitch
         mt="md"
         label={getLanguageByKey("Contract semnat")}
         key={form.key("contract_semnat")}
-        {...form.getInputProps("contract_semnat")}
+        {...form.getInputProps("contract_semnat", { type: "checkbox" })}
       />
 
       <TextInput
@@ -122,21 +143,21 @@ export const ContractTicketForm = ({ onClose, onSubmit, loading, data }) => {
         mt="md"
         label={getLanguageByKey("Achitare efectuată")}
         key={form.key("achitare_efectuata")}
-        {...form.getInputProps("achitare_efectuata")}
+        {...form.getInputProps("achitare_efectuata", { type: "checkbox" })}
       />
 
       <LabelSwitch
         mt="md"
         label={getLanguageByKey("Rezervare confirmată")}
         key={form.key("rezervare_confirmata")}
-        {...form.getInputProps("rezervare_confirmata")}
+        {...form.getInputProps("rezervare_confirmata", { type: "checkbox" })}
       />
 
       <LabelSwitch
         mt="md"
         label={getLanguageByKey("Contract arhivat")}
         key={form.key("contract_arhivat")}
-        {...form.getInputProps("contract_arhivat")}
+        {...form.getInputProps("contract_arhivat", { type: "checkbox" })}
       />
 
       <Select
@@ -202,7 +223,7 @@ export const ContractTicketForm = ({ onClose, onSubmit, loading, data }) => {
         mt="md"
         label={getLanguageByKey("Control Admin")}
         key={form.key("control")}
-        {...form.getInputProps("control")}
+        {...form.getInputProps("control", { type: "checkbox" })}
       />
 
       <Flex justify="end" gap="md" mt="md">

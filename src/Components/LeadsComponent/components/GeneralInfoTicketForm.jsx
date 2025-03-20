@@ -36,10 +36,14 @@ export const GeneralInfoTicketForm = ({ onSubmit, onClose, loading, data }) => {
 
   useEffect(() => {
     if (data) {
-      const { tags, ...rest } = data
       form.setValues({
+        technician_id: `${data?.technician_id}`,
         tags: parseTags(data?.tags),
-        ...rest
+        workflow: data?.workflow,
+        priority: data?.priority,
+        contact: data?.contact,
+        group_title: data?.group_title,
+        description: data?.description
       })
     }
   }, [data])

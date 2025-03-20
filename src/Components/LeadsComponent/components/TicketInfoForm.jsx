@@ -1,6 +1,7 @@
 import { Select, Button, Flex, NumberInput } from "@mantine/core"
 import { DatePickerInput } from "@mantine/dates"
 import { useForm } from "@mantine/form"
+import dayjs from "dayjs"
 import { useEffect } from "react"
 import { getLanguageByKey } from "../../utils"
 import {
@@ -13,11 +14,14 @@ import {
   nameExcursionOptions,
   purchaseProcessingOptions
 } from "../../../FormOptions"
-import dayjs from "dayjs"
 import { DATE_TIME_FORMAT, DD_MM_YYYY } from "../../../app-constants"
 
 const formatDate = (date) => {
   return dayjs(date).format(DATE_TIME_FORMAT)
+}
+
+const parseServerDate = (date) => {
+  return date ? dayjs(date, DATE_TIME_FORMAT) : undefined
 }
 
 export const TicketInfoForm = ({ onClose, onSubmit, loading, data }) => {
@@ -50,7 +54,21 @@ export const TicketInfoForm = ({ onClose, onSubmit, loading, data }) => {
 
   useEffect(() => {
     if (data) {
-      form.setValues(data)
+      form.setValues({
+        data_venit_in_oficiu: parseServerDate(data?.data_venit_in_oficiu),
+        data_plecarii: parseServerDate(data?.data_plecarii),
+        data_intoarcerii: parseServerDate(data?.data_intoarcerii),
+        data_cererii_de_retur: parseServerDate(data?.data_cererii_de_retur),
+        buget: data?.buget,
+        sursa_lead: data?.sursa_lead,
+        promo: data?.promo,
+        marketing: data?.marketing,
+        tipul_serviciului: data?.tipul_serviciului,
+        tara: data?.tara,
+        tip_de_transport: data?.tip_de_transport,
+        denumirea_excursiei_turului: data?.denumirea_excursiei_turului,
+        procesarea_achizitionarii: data?.procesarea_achizitionarii
+      })
     }
   }, [data])
 
