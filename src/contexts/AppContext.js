@@ -158,13 +158,15 @@ export const AppProvider = ({ children }) => {
     try {
       setIsLoading(true)
 
-      const response = await api.tickets.getLightList()
-      const data = response.tickets || []
+      const data = await api.tickets.getLightList()
 
       const processedTickets = data.map((ticket) => ({
         ...ticket,
-        client_ids: ticket.clients
-          ? ticket.clients.map((client) => client.id)
+        client_ids: ticket.client_id
+          ? ticket.client_id
+              .replace(/[{}]/g, "")
+              .split(",")
+              .map((id) => Number(id))
           : [],
         last_message: ticket.last_message || "Nu sunt mesaje",
         time_sent: ticket.time_sent || null,
