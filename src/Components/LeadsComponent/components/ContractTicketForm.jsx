@@ -24,6 +24,12 @@ export const ContractTicketForm = ({ onClose, onSubmit, loading, data }) => {
       data_contractului,
       data_avansului,
       data_de_plata_integrala,
+      contract_trimis,
+      contract_semnat,
+      achitare_efectuata,
+      rezervare_confirmata,
+      contract_arhivat,
+      control,
       ...rest
     }) => {
       const formattedData = {
@@ -33,7 +39,13 @@ export const ContractTicketForm = ({ onClose, onSubmit, loading, data }) => {
         ...(data_avansului && { data_avansului: formatDate(data_avansului) }),
         ...(data_de_plata_integrala && {
           data_de_plata_integrala: formatDate(data_de_plata_integrala)
-        })
+        }),
+        contract_trimis: String(contract_trimis ?? false),
+        contract_semnat: String(contract_semnat ?? false),
+        achitare_efectuata: String(achitare_efectuata ?? false),
+        rezervare_confirmata: String(rezervare_confirmata ?? false),
+        contract_arhivat: String(contract_arhivat ?? false),
+        control: String(control ?? false)
       }
 
       return { ...formattedData, ...rest }
