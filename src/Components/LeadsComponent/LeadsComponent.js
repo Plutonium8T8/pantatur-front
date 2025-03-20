@@ -17,6 +17,7 @@ import { Spin } from "../Spin"
 import { RefLeadsFilter } from "./LeadsFilter"
 import "../../App.css"
 import "../SnackBarComponent/SnackBarComponent.css"
+import { SpinnerRightBottom } from "../SpinnerRightBottom"
 
 const SORT_BY = "creation_date"
 const ORDER = "DESC"
@@ -42,7 +43,7 @@ const Leads = () => {
   const { enqueueSnackbar } = useSnackbar()
   const navigate = useNavigate()
   const leadsFilterHeight = useDOMElementHeight(refLeadsFilter)
-  const { tickets, isLoading, setTickets } = useApp()
+  const { tickets, isLoading, setTickets, spinnerTickets } = useApp()
   const { ticketId } = useParams()
 
   const [hardTickets, setHardTickets] = useState([])
@@ -391,6 +392,7 @@ const Leads = () => {
           <SingleChat ticketId={ticketId} onClose={closeChatModal} />
         )}
       </Modal>
+      {spinnerTickets && <SpinnerRightBottom />}
     </>
   )
 }
