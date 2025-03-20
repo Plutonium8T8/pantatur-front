@@ -44,6 +44,7 @@ const ChatMessages = ({
   const reactionContainerRef = useRef(null)
   const [isUserAtBottom, setIsUserAtBottom] = useState(true)
   const [selectedPlatform, setSelectedPlatform] = useState("web")
+  const [tasks, setTasks] = useState([])
 
   const platformIcons = {
     facebook: <FaFacebook />,
@@ -331,6 +332,15 @@ const ChatMessages = ({
       setSelectedPlatform(lastPlatform || "web")
     }
   }, [selectedClient, messages])
+
+  const fetchTasks = async () => {
+    const data = await api.task.getAllTasks()
+    setTasks(data)
+  }
+
+  useEffect(() => {
+    fetchTasks()
+  }, [])
 
   return (
     <div className="chat-area">
@@ -724,6 +734,7 @@ const ChatMessages = ({
           onClose={() => setIsTaskModalOpen(false)}
           defaultTicketId={selectTicketId}
           defaultCreatedBy={userId}
+          fetchTasks={fetchTasks}
         />
       </div>
     </div>

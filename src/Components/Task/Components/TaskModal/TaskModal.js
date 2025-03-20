@@ -150,8 +150,6 @@ const TaskModal = ({
 
       fetchTasks()
       handleClose()
-    } catch (error) {
-      enqueueSnackbar("Ошибка при сохранении задачи", { variant: "error" })
     } finally {
       setLoading(false)
     }
