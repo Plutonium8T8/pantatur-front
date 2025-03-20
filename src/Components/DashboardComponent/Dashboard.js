@@ -19,6 +19,7 @@ import {
   ArcElement,
   RadialLinearScale
 } from "chart.js"
+import { Flex } from "@mantine/core"
 import { useUser } from "../../hooks"
 import { api } from "../../api"
 import { Filter } from "./Filter"
@@ -56,16 +57,13 @@ const Dashboard = () => {
   const [containerWidth, setContainerWidth] = useState(0)
   const [selectedTechnicians, setSelectedTechnicians] = useState([])
   const [layout, setLayout] = useState([])
-  const [dateRange, setDateRange] = useState({
-    start: null,
-    end: null
-  })
+  const [dateRange, setDateRange] = useState([])
   const { userId } = useUser()
   const { enqueueSnackbar } = useSnackbar()
 
   const fetchStatistics = useCallback(async ({ dateRange, technicianId }) => {
     setIsLoading(true)
-    const { start, end } = dateRange
+    const [start, end] = dateRange
     try {
       const statsData = await api.dashboard.statistics(
         {
@@ -112,7 +110,8 @@ const Dashboard = () => {
   }
 
   useEffect(() => {
-    if (!!dateRange.start !== !!dateRange.end) {
+    const [start, end] = dateRange
+    if (!!start !== !!end) {
       return
     }
 
@@ -141,14 +140,6 @@ const Dashboard = () => {
     return { cols, rowHeight }
   }, [containerWidth])
 
-  if (isLoading) {
-    return (
-      <div className="d-flex align-items-center justify-content-center h-full">
-        <Spin />
-      </div>
-    )
-  }
-
   return (
     <div className="dashboard-container-wrapper">
       <h1 className="dashboard-title | mb-16">
@@ -163,38 +154,44 @@ const Dashboard = () => {
         dateRange={dateRange}
       />
 
-      <GridLayout
-        className="dashboard-layout"
-        layout={layout}
-        cols={cols}
-        rowHeight={rowHeight}
-        width={containerWidth}
-        isResizable={true}
-        isDraggable={true}
-        compactType={null}
-        preventCollision={true}
-        onResizeStop={(_, __, resizeGraph) => updateGraph(resizeGraph)}
-        onDragStop={(_, __, movedGraph) => updateGraph(movedGraph)}
-      >
-        {layout.map((graph) => {
-          const { label } = metricsDashboardCharts[graph.graphName]
-          const ChartComponent = chartComponents[graph.type]
-          const graphValue = statistics[graph.graphName].data
+      {isLoading ? (
+        <Flex align="center" justify="center" className="dashboard-loading">
+          <Spin />
+        </Flex>
+      ) : (
+        <GridLayout
+          className="dashboard-layout"
+          layout={layout}
+          cols={cols}
+          rowHeight={rowHeight}
+          width={containerWidth}
+          isResizable={true}
+          isDraggable={true}
+          compactType={null}
+          preventCollision={true}
+          onResizeStop={(_, __, resizeGraph) => updateGraph(resizeGraph)}
+          onDragStop={(_, __, movedGraph) => updateGraph(movedGraph)}
+        >
+          {layout.map((graph) => {
+            const { label } = metricsDashboardCharts[graph.graphName]
+            const ChartComponent = chartComponents[graph.type]
+            const graphValue = statistics[graph.graphName].data
 
-          if (graphValue?.length) {
-            const chartData = chartsMetadata(graphValue, label, graph.type)
+            if (graphValue?.length) {
+              const chartData = chartsMetadata(graphValue, label, graph.type)
 
-            return renderChart({
-              Component: ChartComponent,
-              chartData,
-              chartLabel: label,
-              index: graph.i
-            })
-          }
+              return renderChart({
+                Component: ChartComponent,
+                chartData,
+                chartLabel: label,
+                index: graph.i
+              })
+            }
 
-          return null
-        })}
-      </GridLayout>
+            return null
+          })}
+        </GridLayout>
+      )}
     </div>
   )
 }

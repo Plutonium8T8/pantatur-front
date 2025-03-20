@@ -31,3 +31,7 @@
   background-color: #ccc;
   margin-bottom: 16px;
 }
+
+.dashboard-loading {
+  height: calc(100% - (42px + 66px + 20px));
+}
