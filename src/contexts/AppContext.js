@@ -168,7 +168,7 @@ export const AppProvider = ({ children }) => {
               .split(",")
               .map((id) => Number(id))
           : [],
-        last_message: ticket.last_message || "Nu sunt mesaje",
+        last_message: ticket.last_message || "",
         time_sent: ticket.time_sent || null,
         unseen_count: ticket.unseen_count || 0
       }))
