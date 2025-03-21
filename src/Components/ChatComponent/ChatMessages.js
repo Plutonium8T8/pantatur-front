@@ -66,8 +66,7 @@ const ChatMessages = ({
 
     return ticketMessages.length > 0 ? ticketMessages[0].client_id : null
   }
-  console.log("userIduserIduserIduserIduserId", userId)
-  console.log("id ticket pentru task!!!!", selectTicketId)
+
   useEffect(() => {
     const lastClient = getLastClientWhoSentMessage()
     if (lastClient) {
