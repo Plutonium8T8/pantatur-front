@@ -1,11 +1,10 @@
-import { useEffect, useState } from "react"
-import CustomMultiSelect from "../../MultipleSelect/MultipleSelect"
-import { ISO_DATE } from "../../../app-constants"
 import { getLanguageByKey } from "../../utils"
-import { DatePicker } from "../../DatePicker"
-import { api } from "../../../api"
-import { Button } from "../../Button"
 import "./Filter.css"
+import { Select, Button } from "@mantine/core"
+import { DatePickerInput } from "@mantine/dates"
+import { DD_MM_YYYY } from "../../../app-constants"
+import { useGetTechniciansList } from "../../../hooks"
+import dayjs from "dayjs"
 
 const getStartEndDateRange = (date) => {
   const startOfDay = new Date(date)
@@ -14,10 +13,7 @@ const getStartEndDateRange = (date) => {
   const endOfDay = new Date(date)
   endOfDay.setHours(23, 59, 59, 999)
 
-  return {
-    start: startOfDay,
-    end: endOfDay
-  }
+  return [startOfDay, endOfDay]
 }
 
 const getYesterdayDate = () => {
@@ -28,88 +24,66 @@ const getYesterdayDate = () => {
   return getStartEndDateRange(yesterday)
 }
 
-const date = {
-  today: "today",
-  yesterday: "yesterday"
-}
-
 export const Filter = ({
   onSelectedTechnicians,
   onSelectDataRange,
   selectedTechnicians,
   dateRange
 }) => {
-  const [technicianList, setTechnicianList] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [currentDate, setCurrentDate] = useState()
-
-  useEffect(() => {
-    const getTechnicianList = async () => {
-      try {
-        setLoading(true)
-        const technicians = await api.users.getTechnicianList()
-        const techniciansFullNameId = technicians.map(
-          ({ id }) => `${id.id}: ${id.name} ${id.surname}`
-        )
-
-        setTechnicianList(techniciansFullNameId)
-      } catch (error) {
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    getTechnicianList()
-  }, [])
+  const { technicians } = useGetTechniciansList()
 
   return (
     <div className="d-flex gap-8 justify-content-center align-items-center mb-16">
       <div className="dashboard-filter-multi-select">
-        <CustomMultiSelect
-          options={technicianList}
+        <Select
+          clearable
+          value={selectedTechnicians}
+          searchable
           onChange={(technician) => {
-            onSelectedTechnicians(technician)
+            onSelectedTechnicians(technician ?? [])
           }}
-          selectedValues={selectedTechnicians}
           placeholder={getLanguageByKey("Selectează operator")}
-          loading={loading}
+          data={technicians}
         />
       </div>
 
-      <div className="d-flex | dashboard-filter-time">
+      <div className="d-flex">
         <Button
-          className={`${currentDate === date.today ? "dashboard-filter-time-active" : ""}`}
+          variant={
+            dayjs(dateRange[0]).isSame(dayjs(), "day") &&
+            dayjs(dateRange[1]).isSame(dayjs(), "day")
+              ? "filled"
+              : "default"
+          }
           onClick={() => {
             onSelectDataRange(getStartEndDateRange(new Date()))
-            setCurrentDate(date.today)
           }}
         >
           {getLanguageByKey("azi")}
         </Button>
         <Button
-          className={`${currentDate === date.yesterday ? "dashboard-filter-time-active" : ""}`}
+          variant={
+            dayjs(dateRange[0]).isSame(dayjs().subtract(1, "day"), "day") &&
+            dayjs(dateRange[1]).isSame(dayjs().subtract(1, "day"), "day")
+              ? "filled"
+              : "default"
+          }
           onClick={() => {
             onSelectDataRange(getYesterdayDate())
-            setCurrentDate(date.yesterday)
           }}
         >
           {getLanguageByKey("ieri")}
         </Button>
-        <DatePicker
-          selectsRange
-          startDate={currentDate ? null : dateRange.start}
-          endDate={currentDate ? null : dateRange.end}
-          dateFormat={ISO_DATE}
-          placeholder={getLanguageByKey("Selectează o dată")}
-          clear
-          onChange={(date) => {
-            const [start, end] = date
-            setCurrentDate()
 
-            onSelectDataRange({
-              start,
-              end
-            })
+        <DatePickerInput
+          className="dashboard-filter-date-input"
+          clearable
+          valueFormat={DD_MM_YYYY}
+          type="range"
+          placeholder={getLanguageByKey("Selectează o dată")}
+          value={dateRange}
+          onChange={(date) => {
+            onSelectDataRange(date)
           }}
         />
       </div>

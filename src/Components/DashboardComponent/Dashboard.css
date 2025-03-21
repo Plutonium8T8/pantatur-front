@@ -22,12 +22,12 @@
   position: relative;
 }
 
-.dashboard-title {
-  margin-top: 0;
-}
-
 .dashboard-divider {
   height: 1px;
   background-color: #ccc;
   margin-bottom: 16px;
+}
+
+.dashboard-loading {
+  height: calc(100% - (42px + 66px + 20px));
 }
