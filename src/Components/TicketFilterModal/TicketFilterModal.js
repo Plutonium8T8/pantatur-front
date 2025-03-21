@@ -1,7 +1,6 @@
 import React, { useState } from "react"
 import { platformOptions, filterDefaults, filteredWorkflows } from "./utils"
 import { SelectWorkflow } from "./SelectWorkflow"
-
 import { getLanguageByKey } from "../utils"
 import { Tabs, Flex, Button, MultiSelect } from "@mantine/core"
 import "./TicketFilterModal.css"
@@ -83,17 +82,8 @@ export const TicketFilterModal = ({
         </Tabs.Tab>
       </Tabs.List>
 
-      <Tabs.Panel
-        style={{ border: "1px solid green", height: "calc(100% - 36px)" }}
-        value="filter_workflow"
-        pt="xs"
-        className="tabs-panel"
-      >
-        <Flex
-          style={{ border: "1px solid red", height: "100%" }}
-          direction="column"
-          justify="space-between"
-        >
+      <Tabs.Panel value="filter_workflow" pt="xs">
+        <Flex direction="column" justify="space-between">
           <SelectWorkflow
             selectedValues={systemFilters.workflow}
             onChange={(_, value) =>
@@ -145,28 +135,39 @@ export const TicketFilterModal = ({
               </Tabs.Tab>
             </Tabs.List>
 
-            <Tabs.Panel value="filter_general_info">
+            <Tabs.Panel pl="20" value="filter_general_info">
               <GeneralInfoTicketForm
+                loading={loading}
                 onClose={onClose}
                 onSubmit={onApplyTicketFilters}
               />
             </Tabs.Panel>
-            <Tabs.Panel value="filter_ticket_info">
-              <TicketInfoForm onClose={onClose} />
+            <Tabs.Panel pl="20" value="filter_ticket_info">
+              <TicketInfoForm
+                loading={loading}
+                onClose={onClose}
+                onSubmit={onApplyTicketFilters}
+              />
             </Tabs.Panel>
-            <Tabs.Panel value="filter_contact">
+            <Tabs.Panel pl="20" value="filter_contact">
               <ContractTicketForm
+                loading={loading}
                 onClose={onClose}
                 onSubmit={onApplyTicketFilters}
               />
             </Tabs.Panel>
 
-            <Tabs.Panel value="filter_invoice">
-              <Invoice onClose={onClose} onSubmit={onApplyTicketFilters} />
+            <Tabs.Panel pl="20" value="filter_invoice">
+              <Invoice
+                loading={loading}
+                onClose={onClose}
+                onSubmit={onApplyTicketFilters}
+              />
             </Tabs.Panel>
 
-            <Tabs.Panel value="filter_quality_control">
+            <Tabs.Panel pl="20" value="filter_quality_control">
               <QualityControl
+                loading={loading}
                 onClose={onClose}
                 onSubmit={onApplyTicketFilters}
               />

@@ -20,6 +20,7 @@ import { parseTags } from "../../../stringUtils"
 
 export const GeneralInfoTicketForm = ({ onSubmit, onClose, loading, data }) => {
   const { technicians } = useGetTechniciansList()
+
   const form = useForm({
     mode: "uncontrolled",
 
