@@ -1454,6 +1454,26 @@ export const translations = {
   "Comision companie": {
     RO: "Comision companie",
     RU: "Комиссия компании"
+  },
+  "Confirmare ștergere": {
+    RO: "Confirmare ștergere",
+    RU: "Подтверждение удаления"
+  },
+  "Sigur doriți să ștergeți acest task?": {
+    RO: "Sigur doriți să ștergeți acest task?",
+    RU: "Вы уверены, что хотите удалить эту задачу?"
+  },
+  Anulează: {
+    RO: "Anulează",
+    RU: "Отмена"
+  },
+  "Task șters cu succes!": {
+    RO: "Task șters cu succes!",
+    RU: "Задача успешно удалена!"
+  },
+  "Eroare la ștergerea taskului": {
+    RO: "Eroare la ștergerea taskului",
+    RU: "Ошибка при удалении задачи"
   }
 }
 

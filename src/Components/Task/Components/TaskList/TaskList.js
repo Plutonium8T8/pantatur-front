@@ -42,18 +42,30 @@ const TaskList = ({
 
   const handleDeleteTask = (taskId) => {
     openConfirmModal({
-      title: "Confirmare ștergere",
+      title: translations["Confirmare ștergere"][language],
       centered: true,
-      children: <p>Sigur doriți să ștergeți acest task?</p>,
-      labels: { confirm: "Șterge", cancel: "Anulează" },
+      children: (
+        <p>{translations["Sigur doriți să ștergeți acest task?"][language]}</p>
+      ),
+      labels: {
+        confirm: translations["Șterge"][language],
+        cancel: translations["Anulează"][language]
+      },
       confirmProps: { color: "red" },
       onConfirm: async () => {
         try {
           await api.task.delete({ id: taskId })
-          enqueueSnackbar("Task șters cu succes!", { variant: "success" })
+          enqueueSnackbar(translations["Task șters cu succes!"][language], {
+            variant: "success"
+          })
           fetchTasks()
         } catch (error) {
-          enqueueSnackbar("Eroare la ștergerea taskului", { variant: "error" })
+          enqueueSnackbar(
+            translations["Eroare la ștergerea taskului"][language],
+            {
+              variant: "error"
+            }
+          )
         }
       }
     })
