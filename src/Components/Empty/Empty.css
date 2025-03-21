@@ -1,7 +1,5 @@
 .empty {
-  /* height: 500px; */
   color: #00000073;
-  min-height: 100vh;
 }
 
 .empty .no-data {

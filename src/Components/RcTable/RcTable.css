@@ -74,3 +74,7 @@
   flex-direction: column;
   gap: 20px;
 }
+
+.table .rc-table-expanded-row-fixed {
+  width: 100% !important;
+}
