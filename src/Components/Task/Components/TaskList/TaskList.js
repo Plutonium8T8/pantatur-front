@@ -74,12 +74,17 @@ const TaskList = ({
         status: true
       })
 
-      enqueueSnackbar("Task marcat ca finalizat!", { variant: "success" })
+      enqueueSnackbar(translations["Task marcat ca finalizat!"][language], {
+        variant: "success"
+      })
       fetchTasks()
     } catch (error) {
-      enqueueSnackbar("Eroare la actualizarea statusului taskului", {
-        variant: "error"
-      })
+      enqueueSnackbar(
+        translations["Eroare la actualizarea statusului taskului"][language],
+        {
+          variant: "error"
+        }
+      )
     }
   }
 
@@ -140,7 +145,7 @@ const TaskList = ({
       {
         title: (
           <HeaderCellRcTable
-            title={translations["Task pentru Ticket-ul"][language]}
+            title={translations["Lead ID"][language]}
             order={order}
           />
         ),
@@ -278,17 +283,22 @@ const TaskList = ({
             <Menu.Dropdown>
               <Menu.Item
                 leftSection={<IoCheckmarkCircle size={16} />}
-                onClick={() => handleMarkTaskAsComplete(row.id)}
+                onClick={() => {
+                  if (!row.status) {
+                    handleMarkTaskAsComplete(row.id)
+                  }
+                }}
+                disabled={row.status}
+                style={
+                  row.status ? { opacity: 0.5, cursor: "not-allowed" } : {}
+                }
               >
                 {translations["Finalizați"][language]}
               </Menu.Item>
 
               <Menu.Item
                 leftSection={<IoPencil size={16} />}
-                onClick={() => {
-                  console.log("🔍 Редактирование задачи, передаем:", row)
-                  openEditTask(row)
-                }}
+                onClick={() => openEditTask(row)}
               >
                 {translations["Modificați"][language]}
               </Menu.Item>

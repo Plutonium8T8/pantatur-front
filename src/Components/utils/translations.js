@@ -1371,8 +1371,8 @@ export const translations = {
     RU: "Этап задачи"
   },
   Deadline: {
-    RO: "Deadline",
-    RU: "Дедлайн"
+    RO: "Timp limita",
+    RU: "Время выполнения"
   },
   Toate: {
     RO: "Toate",
@@ -1474,6 +1474,34 @@ export const translations = {
   "Eroare la ștergerea taskului": {
     RO: "Eroare la ștergerea taskului",
     RU: "Ошибка при удалении задачи"
+  },
+  "Task marcat ca finalizat!": {
+    RO: "Task marcat ca finalizat!",
+    RU: "Таск помечен как законченый!"
+  },
+  "Eroare la actualizarea statusului taskului": {
+    RO: "Eroare la actualizarea statusului taskului",
+    RU: "Ошибка при помечении таска"
+  },
+  "Eroare la încărcarea tichetelor": {
+    RO: "Eroare la încărcarea tichetelor",
+    RU: "Ошибка загрузки тикетов"
+  },
+  "Eroare la încărcarea utilizatorilor": {
+    RO: "Eroare la încărcarea utilizatorilor",
+    RU: "Ошибка загрузки пользователей"
+  },
+  "Toate câmpurile sunt obligatorii": {
+    RO: "Toate câmpurile sunt obligatorii",
+    RU: "Все поля обязательны для заполнения"
+  },
+  "Task actualizat cu succes!": {
+    RO: "Task actualizat cu succes!",
+    RU: "Задача успешно обновлена!"
+  },
+  "Task creat cu succes!": {
+    RO: "Task creat cu succes!",
+    RU: "Задача успешно создана!"
   }
 }
 

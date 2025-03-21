@@ -89,7 +89,12 @@ const TaskModal = ({
       const data = await api.tickets.list()
       setTicketIds(data.map((ticket) => ticket.id.toString()))
     } catch (error) {
-      enqueueSnackbar("Eroare la încărcarea tichetelor", { variant: "error" })
+      enqueueSnackbar(
+        translations["Eroare la încărcarea tichetelor"][language],
+        {
+          variant: "error"
+        }
+      )
     }
   }
 
@@ -103,9 +108,12 @@ const TaskModal = ({
         }))
       )
     } catch (error) {
-      enqueueSnackbar("Eroare la încărcarea utilizatorilor", {
-        variant: "error"
-      })
+      enqueueSnackbar(
+        translations["Eroare la încărcarea utilizatorilor"][language],
+        {
+          variant: "error"
+        }
+      )
     }
   }
 
@@ -121,9 +129,12 @@ const TaskModal = ({
       !task.priority ||
       !task.status_task
     ) {
-      enqueueSnackbar("Toate câmpurile sunt obligatorii", {
-        variant: "warning"
-      })
+      enqueueSnackbar(
+        translations["Toate câmpurile sunt obligatorii"][language],
+        {
+          variant: "warning"
+        }
+      )
       return
     }
 
@@ -142,10 +153,12 @@ const TaskModal = ({
 
       if (selectedTask) {
         await api.task.update({ id: selectedTask.id, ...updatedTask })
-        enqueueSnackbar("Задача успешно обновлена!", { variant: "success" })
+        enqueueSnackbar("Task actualizat cu succes!", { variant: "success" })
       } else {
         await api.task.create(updatedTask)
-        enqueueSnackbar("Задача успешно создана!", { variant: "success" })
+        enqueueSnackbar(translations["Task creat cu succes!"][language], {
+          variant: "success"
+        })
       }
 
       fetchTasks()
