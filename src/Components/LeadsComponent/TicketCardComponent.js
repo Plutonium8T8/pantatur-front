@@ -6,9 +6,7 @@ import "./TicketCardComponent.css"
 import { Modal } from "../Modal"
 import SingleChat from "../ChatComponent/SingleChat"
 import { Tag } from "../Tag"
-
-const DEFAULT_PHOTO =
-  "https://storage.googleapis.com/pandatur_bucket/utils/icon-5359554_640.webp"
+import { DEFAULT_PHOTO } from "../../app-constants"
 
 const TicketCard = ({ ticket, onEditTicket }) => {
   const [isHovered, setIsHovered] = useState(false)

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from "react"
 import { translations } from "../utils/translations"
 import { useUser, useApp } from "../../hooks"
 import { Spin } from "../Spin"
+import { DEFAULT_PHOTO } from "../../app-constants"
 
 const ChatList = ({ setIsLoading, selectTicketId, setSelectTicketId }) => {
   const { tickets, getClientMessagesSingle, isLoading } = useApp()
@@ -213,7 +214,7 @@ const ChatList = ({ setIsLoading, selectTicketId, setSelectTicketId }) => {
                   <div className="foto-description">
                     <img
                       className="foto-user"
-                      src="https://storage.googleapis.com/pandatur_bucket/utils/icon-5359554_640.webp"
+                      src={ticket?.photo_url ? ticket.photo_url : DEFAULT_PHOTO}
                       alt="example"
                     />
                     <div className="tickets-descriptions">
