@@ -4,7 +4,6 @@ import { Checkbox } from "../../../Checkbox"
 import { translations } from "../../../utils/translations"
 import "./TaskList.css"
 import { TypeTask } from "../OptionsTaskType/OptionsTaskType"
-// import { Button } from "../../../Button"
 import { useSnackbar } from "notistack"
 import { api } from "../../../../api"
 import { openConfirmModal } from "@mantine/modals"
@@ -319,7 +318,6 @@ const TaskList = ({
         rowKey={({ id }) => id}
         columns={columns}
         data={tasks}
-        pagination={{ position: "center", total: tasks.length, pageSize: 10 }}
         selectedRow={selectedRow}
         loading={loading}
         bordered

@@ -25,8 +25,6 @@ export const RcTable = ({
   loading,
   ...props
 }) => {
-  const { position, ...restPagination } = pagination
-
   return (
     <div className="table-container-custom">
       <div className="rc-table-scroll-container">
@@ -44,8 +42,8 @@ export const RcTable = ({
         />
       </div>
       {!!pagination && (
-        <div className={`d-flex justify-content-${position}`}>
-          <Pagination {...restPagination} />
+        <div className={`d-flex justify-content-${pagination?.position}`}>
+          {/* <Pagination {...restPagination} /> */}
         </div>
       )}
     </div>
