@@ -24,8 +24,8 @@ const TaskModal = ({
     taskType: "",
     createdBy: "",
     createdFor: "",
-    priority: "Medium",
-    status_task: "To Do"
+    priority: "",
+    status_task: ""
   })
 
   const [scheduledTime, setScheduledTime] = useState(null)
@@ -48,8 +48,8 @@ const TaskModal = ({
         taskType: selectedTask.task_type || "",
         createdBy: selectedTask.created_by.toString(),
         createdFor: selectedTask.created_for?.toString() || "",
-        priority: selectedTask.priority || "Medium",
-        status_task: selectedTask.status_task || "To Do"
+        priority: selectedTask.priority || "",
+        status_task: selectedTask.status_task || ""
       })
 
       setScheduledTime(parseDate(selectedTask.scheduled_time))
@@ -61,8 +61,8 @@ const TaskModal = ({
         taskType: "",
         createdBy: defaultCreatedBy?.toString() || "",
         createdFor: "",
-        priority: "Medium",
-        status_task: "To Do"
+        priority: "",
+        status_task: ""
       })
 
       setScheduledTime(null)
@@ -77,8 +77,8 @@ const TaskModal = ({
       taskType: "",
       createdBy: "",
       createdFor: "",
-      priority: "Medium",
-      status_task: "To Do"
+      priority: "",
+      status_task: ""
     })
     setScheduledTime(null)
     onClose()
@@ -220,6 +220,7 @@ const TaskModal = ({
             setTask((prev) => ({ ...prev, taskType: value }))
           }
           placeholder="Alege tip task"
+          required
         />
 
         <MantineSelect
@@ -227,6 +228,7 @@ const TaskModal = ({
           data={["Low", "Medium", "High"]}
           value={task.priority}
           onChange={(value) => setTask({ ...task, priority: value })}
+          placeholder={translations["Prioritate"][language]}
           required
           searchable
           mt="md"
@@ -237,6 +239,7 @@ const TaskModal = ({
           data={["To Do", "In Progress", "Done", "Overdue"]}
           value={task.status_task}
           onChange={(value) => setTask({ ...task, status_task: value })}
+          placeholder={translations["Status"][language]}
           required
           searchable
           mt="md"
@@ -246,6 +249,7 @@ const TaskModal = ({
           label={translations["Deadline"][language]}
           value={scheduledTime}
           onChange={setScheduledTime}
+          placeholder={translations["Deadline"][language]}
           required
           clearable
           mt="md"
@@ -256,6 +260,7 @@ const TaskModal = ({
           name="description"
           value={task.description}
           onChange={(e) => setTask({ ...task, description: e.target.value })}
+          placeholder={translations["Descriere task"][language]}
           required
           autosize
           minRows={3}
@@ -268,6 +273,7 @@ const TaskModal = ({
           data={userList}
           value={task.createdFor}
           onChange={(value) => setTask({ ...task, createdFor: value })}
+          placeholder={translations["Pentru"][language]}
           required
           searchable
           mt="md"
@@ -280,20 +286,22 @@ const TaskModal = ({
           onChange={(value) =>
             setTask((prev) => ({ ...prev, createdBy: value }))
           }
+          placeholder={translations["De la utilizatorul"][language]}
           required
           searchable
           mt="md"
           disabled={!!defaultCreatedBy}
         />
-
-        <Button type="submit" loading={loading} mt="md">
-          {selectedTask
-            ? translations["Editare Task"][language]
-            : translations["Adaugă task"][language]}
-        </Button>
-        <Button variant="outline" onClick={onClose} mt="md" ml="md">
-          {translations["Anulare"][language]}
-        </Button>
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <Button type="submit" loading={loading} mt="md">
+            {selectedTask
+              ? translations["Editare Task"][language]
+              : translations["Adaugă task"][language]}
+          </Button>
+          <Button variant="outline" onClick={onClose} mt="md" ml="md">
+            {translations["Anulare"][language]}
+          </Button>
+        </div>
       </form>
     </Modal>
   )
