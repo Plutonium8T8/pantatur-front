@@ -7,6 +7,7 @@ import { api } from "../../../../api"
 const TaskListOverlay = ({ ticketId, userId }) => {
   const [opened, setOpened] = useState(false)
   const [taskCount, setTaskCount] = useState(null)
+  const language = localStorage.getItem("language") || "RO"
 
   const fetchTaskCount = async () => {
     try {
@@ -17,7 +18,7 @@ const TaskListOverlay = ({ ticketId, userId }) => {
         setTaskCount(0)
       }
     } catch (error) {
-      console.error("Ошибка загрузки количества задач:", error)
+      console.error(error)
       setTaskCount(0)
     }
   }
@@ -33,7 +34,9 @@ const TaskListOverlay = ({ ticketId, userId }) => {
         color={taskCount > 0 ? "blue" : "gray"}
         onClick={() => setOpened(true)}
       >
-        {taskCount > 0 ? `Задачи: ${taskCount}` : "Нет задач, создать?"}
+        {taskCount > 0
+          ? `${translations["Задачи"][language]}: ${taskCount}`
+          : translations["Нет задач, создать?"][language]}
       </Button>
 
       <Drawer

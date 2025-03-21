@@ -1502,6 +1502,14 @@ export const translations = {
   "Task creat cu succes!": {
     RO: "Task creat cu succes!",
     RU: "Задача успешно создана!"
+  },
+  Задачи: {
+    RO: "Taskuri",
+    RU: "Задачи"
+  },
+  "Нет задач, создать?": {
+    RO: "Niciun task, creați unul?",
+    RU: "Нет задач, создать?"
   }
 }
 
