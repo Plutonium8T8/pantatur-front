@@ -16,18 +16,7 @@ const TaskModal = ({
   defaultCreatedBy
 }) => {
   const { enqueueSnackbar } = useSnackbar()
-
-  const [task, setTask] = useState({
-    ticketId: "",
-    scheduledTime: "",
-    description: "",
-    taskType: "",
-    createdBy: "",
-    createdFor: "",
-    priority: "",
-    status_task: ""
-  })
-
+  const [task, setTask] = useState({})
   const [scheduledTime, setScheduledTime] = useState(null)
   const [ticketIds, setTicketIds] = useState([])
   const [userList, setUserList] = useState([])

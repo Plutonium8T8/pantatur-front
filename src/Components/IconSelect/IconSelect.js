@@ -17,7 +17,9 @@ const IconSelect = ({
 
   return (
     <div className={`input-group-icon ${hasError ? "invalid-field" : ""}`}>
-      <label htmlFor={id}>{translations[label]?.[language] ?? label}</label>
+      <label htmlFor={id} style={{ fontSize: "14px", fontWeight: 500 }}>
+        {translations[label]?.[language] ?? label}
+      </label>
 
       <Select
         id={id}
