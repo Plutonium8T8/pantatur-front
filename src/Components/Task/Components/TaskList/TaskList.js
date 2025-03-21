@@ -36,10 +36,6 @@ const TaskList = ({
     High: "#F44336"
   }
 
-  const toggleMenu = (id) => {
-    setOpenMenuId(openMenuId === id ? null : id)
-  }
-
   const handleDeleteTask = (taskId) => {
     openConfirmModal({
       title: translations["Confirmare ștergere"][language],
