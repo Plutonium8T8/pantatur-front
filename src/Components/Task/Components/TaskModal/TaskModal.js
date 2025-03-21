@@ -252,6 +252,8 @@ const TaskModal = ({
           value={scheduledTime}
           onChange={setScheduledTime}
           placeholder={translations["Deadline"][language]}
+          withSeconds
+          minDate={new Date()}
           required
           clearable
           mt="md"
