@@ -8,7 +8,6 @@ const TaskListOverlay = ({ ticketId, userId }) => {
   const [opened, setOpened] = useState(false)
   const [taskCount, setTaskCount] = useState(null)
 
-  // Функция загрузки количества задач для тикета
   const fetchTaskCount = async () => {
     try {
       if (ticketId) {
@@ -47,7 +46,7 @@ const TaskListOverlay = ({ ticketId, userId }) => {
         <TaskComponent
           selectTicketId={ticketId}
           userId={userId}
-          updateTaskCount={fetchTaskCount} // Передаем функцию обновления
+          updateTaskCount={fetchTaskCount}
         />
       </Drawer>
     </>

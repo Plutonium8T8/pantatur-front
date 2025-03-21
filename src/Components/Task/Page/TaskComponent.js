@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react"
 import TaskModal from "../Components/TaskModal/TaskModal"
 import TaskList from "../Components/TaskList/TaskList"
 import { api } from "../../../api"
-import { Input } from "../../Input"
 import { translations } from "../../utils/translations"
+import { Input, Button } from "@mantine/core"
 import "./TaskComponent.css"
 
 const TaskComponent = ({ selectTicketId, updateTaskCount, userId }) => {
@@ -22,7 +22,7 @@ const TaskComponent = ({ selectTicketId, updateTaskCount, userId }) => {
         data = await api.task.getAllTasks()
       }
       setTasks(data)
-      updateTaskCount() // Обновляем счетчик задач
+      updateTaskCount()
     } catch (error) {
       console.error("Ошибка загрузки задач:", error)
     }
@@ -58,18 +58,17 @@ const TaskComponent = ({ selectTicketId, updateTaskCount, userId }) => {
             placeholder={translations["Cautare"][language]}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="task-search-input"
           />
-          <button className="task-add-button" onClick={openNewTask}>
+          <Button className="task-add-button" onClick={openNewTask}>
             + {translations["New Task"][language]}
-          </button>
+          </Button>
         </div>
       </div>
       <div className="task-list-container">
         <TaskList
           tasks={filteredTasks}
           openEditTask={openEditTask}
-          fetchTasks={fetchTasks} // Передаем обновленную функцию
+          fetchTasks={fetchTasks}
         />
       </div>
       <TaskModal

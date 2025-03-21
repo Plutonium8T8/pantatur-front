@@ -28,19 +28,21 @@ export const RcTable = ({
   const { position, ...restPagination } = pagination
 
   return (
-    <div>
-      <Table
-        className="table"
-        tableLayout="fixed"
-        emptyText={renderSpinOrEmptyBox(loading)}
-        rowClassName={({ id }) =>
-          `${bordered ? "border" : ""} ${selectedRow.includes(id) ? "row-selection" : ""}`
-        }
-        columns={columns}
-        data={data}
-        scroll={{ x: "100%" }}
-        {...props}
-      />
+    <div className="table-container-custom">
+      <div className="rc-table-scroll-container">
+        <Table
+          className="table"
+          tableLayout="fixed"
+          emptyText={renderSpinOrEmptyBox(loading)}
+          rowClassName={({ id }) =>
+            `${bordered ? "border" : ""} ${selectedRow.includes(id) ? "row-selection" : ""}`
+          }
+          columns={columns}
+          data={data}
+          scroll={{ x: "100%" }}
+          {...props}
+        />
+      </div>
       {!!pagination && (
         <div className={`d-flex justify-content-${position}`}>
           <Pagination {...restPagination} />

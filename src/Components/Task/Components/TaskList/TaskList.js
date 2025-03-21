@@ -7,6 +7,7 @@ import { TypeTask } from "../OptionsTaskType/OptionsTaskType"
 import { Button } from "../../../Button"
 import { useSnackbar } from "notistack"
 import { api } from "../../../../api"
+import { openConfirmModal } from "@mantine/modals"
 import {
   IoEllipsisHorizontal,
   IoCheckmarkCircle,
@@ -39,16 +40,23 @@ const TaskList = ({
     setOpenMenuId(openMenuId === id ? null : id)
   }
 
-  const handleDeleteTask = async (taskId) => {
-    if (!window.confirm("Sigur doriți să ștergeți acest task?")) return
-
-    try {
-      await api.task.delete({ id: taskId })
-      enqueueSnackbar("Task șters cu succes!", { variant: "success" })
-      fetchTasks()
-    } catch (error) {
-      enqueueSnackbar("Eroare la ștergerea taskului", { variant: "error" })
-    }
+  const handleDeleteTask = (taskId) => {
+    openConfirmModal({
+      title: "Confirmare ștergere",
+      centered: true,
+      children: <p>Sigur doriți să ștergeți acest task?</p>,
+      labels: { confirm: "Șterge", cancel: "Anulează" },
+      confirmProps: { color: "red" },
+      onConfirm: async () => {
+        try {
+          await api.task.delete({ id: taskId })
+          enqueueSnackbar("Task șters cu succes!", { variant: "success" })
+          fetchTasks()
+        } catch (error) {
+          enqueueSnackbar("Eroare la ștergerea taskului", { variant: "error" })
+        }
+      }
+    })
   }
 
   const handleMarkTaskAsComplete = async (taskId) => {
