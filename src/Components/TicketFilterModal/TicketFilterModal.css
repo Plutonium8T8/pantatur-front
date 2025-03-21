@@ -21,3 +21,7 @@
   overflow-y: auto;
   width: 100%;
 }
+
+.tabs-panel {
+  height: 100%;
+}

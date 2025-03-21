@@ -69,113 +69,6 @@ export const TicketFilterModal = ({
     resetTicketsFilters?.(resetFilters)
   }
 
-  // const clearSystemFilters = () => {
-  //   const resetFilters = {
-  //     ...filterDefaults,
-  //     workflow: filterDefaults.workflow || []
-  //   }
-
-  //   setSystemFilters(resetFilters)
-  // }
-
-  // const content = {
-  //   workflow: (
-  //     <div className="container-content-title | d-flex justify-content-between flex-column gap-8">
-  //       <div>
-  //         <h2>{getLanguageByKey("Filtru de sistem")}</h2>
-
-  //         <WorkflowFilter
-  //           handleMultiSelectChange={handleMultiSelectChangeSystemFilters}
-  //           selectedValues={systemFilters.workflow}
-  //         />
-  //       </div>
-  //       <div className="d-flex gap-8 justify-content-end">
-  //         <Button onClick={clearSystemFilters}>
-  //           {getLanguageByKey("Reset filter")}
-  //         </Button>
-  //         <Button onClick={onClose}>{getLanguageByKey("Anuleaza")}</Button>
-  //         <Button
-  //           loading={loading}
-  //           variant="primary"
-  //           onClick={() => onApplyWorkflowFilters(systemFilters)}
-  //         >
-  //           {getLanguageByKey("Confirma")}
-  //         </Button>
-  //       </div>
-  //     </div>
-  //   ),
-
-  //   ticket: (
-  //     <div className="container-content-title">
-  //       <div className="mb-16">
-  //         <h2>{getLanguageByKey("Filtru pentru Lead")}</h2>
-
-  //         <div className="container-ticket-content | d-flex flex-column gap-16">
-  //           <div className="container-extra-group">
-  //             <WorkflowFilter
-  //               handleMultiSelectChange={handleMultiSelectChange}
-  //               selectedValues={leadFilters.workflow}
-  //             />
-  //           </div>
-
-  //           <LeadCreationDate
-  //             handleInputChange={handleInputChange}
-  //             filters={leadFilters}
-  //             handleMultiSelectChange={handleMultiSelectChange}
-  //           />
-
-  //           <Contact
-  //             filters={leadFilters}
-  //             handleInputChange={handleInputChange}
-  //             handleMultiSelectChange={handleMultiSelectChange}
-  //             onFilters={changeFilters}
-  //           />
-
-  //           <Invoice
-  //             handleMultiSelectChange={handleMultiSelectChange}
-  //             handleInputChange={handleInputChange}
-  //             filters={leadFilters}
-  //           />
-
-  //           <QualityControl
-  //             handleInputChange={handleInputChange}
-  //             handleMultiSelectChange={handleMultiSelectChange}
-  //             filters={leadFilters}
-  //           />
-  //         </div>
-  //       </div>
-  //       <div className="d-flex gap-8 justify-content-end">
-  //         <Button onClick={clearFilters}>
-  //           {getLanguageByKey("Reset filter")}
-  //         </Button>
-  //         <Button onClick={onClose}>{getLanguageByKey("Anuleaza")}</Button>
-  //         <Button
-  //           loading={loading}
-  //           variant="primary"
-  //           onClick={() => onApplyTicketFilters(leadFilters)}
-  //         >
-  //           {getLanguageByKey("Confirma")}
-  //         </Button>
-  //       </div>
-  //     </div>
-  //   ),
-
-  //   messages: (
-  //     <div className="container-content-title">
-  //       <h2>{getLanguageByKey("Filtru pentru mesaje (coming soon)")}</h2>
-  //       <div className="d-flex flex-column gap-8">
-  //         <label>{getLanguageByKey("Platforma mesaj")}</label>
-  //         <CustomMultiSelect
-  //           options={platformOptions}
-  //           placeholder={getLanguageByKey("Platforma mesaj")}
-  //           onChange={(values) => handleMultiSelectChange("platform", values)}
-  //           selectedValues={leadFilters.platform}
-  //         />
-  //       </div>
-  //     </div>
-  //   )
-  // }
-
   return (
     <Tabs defaultValue="filter_workflow">
       <Tabs.List>
@@ -190,8 +83,17 @@ export const TicketFilterModal = ({
         </Tabs.Tab>
       </Tabs.List>
 
-      <Tabs.Panel value="filter_workflow" pt="xs">
-        <>
+      <Tabs.Panel
+        style={{ border: "1px solid green", height: "calc(100% - 36px)" }}
+        value="filter_workflow"
+        pt="xs"
+        className="tabs-panel"
+      >
+        <Flex
+          style={{ border: "1px solid red", height: "100%" }}
+          direction="column"
+          justify="space-between"
+        >
           <SelectWorkflow
             selectedValues={systemFilters.workflow}
             onChange={(_, value) =>
@@ -219,7 +121,7 @@ export const TicketFilterModal = ({
               {getLanguageByKey("Trimite")}
             </Button>
           </Flex>
-        </>
+        </Flex>
       </Tabs.Panel>
 
       <Tabs.Panel value="filter_ticket" pt="xs">
@@ -270,38 +172,6 @@ export const TicketFilterModal = ({
               />
             </Tabs.Panel>
           </Tabs>
-
-          {/* Invoice */}
-
-          {/* <SelectWorkflow
-            onChange={handleMultiSelectChange}
-            selectedValues={leadFilters.workflow}
-          /> */}
-
-          {/* <LeadCreationDate
-            handleInputChange={handleInputChange}
-            filters={leadFilters}
-            handleMultiSelectChange={handleMultiSelectChange}
-          /> */}
-
-          {/* <Contact
-            filters={leadFilters}
-            handleInputChange={handleInputChange}
-            handleMultiSelectChange={handleMultiSelectChange}
-            onFilters={changeFilters}
-          /> */}
-
-          {/* <Invoice
-            handleMultiSelectChange={handleMultiSelectChange}
-            handleInputChange={handleInputChange}
-            filters={leadFilters}
-          /> */}
-
-          {/* <QualityControl
-            handleInputChange={handleInputChange}
-            handleMultiSelectChange={handleMultiSelectChange}
-            filters={leadFilters}
-          /> */}
         </>
       </Tabs.Panel>
 

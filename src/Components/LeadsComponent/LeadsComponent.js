@@ -15,7 +15,7 @@ import SingleChat from "../ChatComponent/SingleChat"
 import { Spin } from "../Spin"
 import { RefLeadsFilter } from "./LeadsFilter"
 import TicketModal from "./TicketModal/TicketModalComponent"
-import { Text } from "@mantine/core"
+import { ScrollArea } from "@mantine/core"
 import "../../App.css"
 import "../SnackBarComponent/SnackBarComponent.css"
 import { SpinnerRightBottom } from "../SpinnerRightBottom"
@@ -366,9 +366,15 @@ const Leads = () => {
       )}
 
       <MantineModal
+        title={getLanguageByKey("Filtrează tichete")}
+        styles={{
+          body: { height: "700px" }
+        }}
+        size="700"
         keepMounted
         open={isFilterOpen && !isTableView}
         onClose={closeTicketModal}
+        scrollAreaComponent={ScrollArea.Autosize}
       >
         <TicketFilterModal
           loading={loading}

@@ -1349,6 +1349,10 @@ export const translations = {
   "Comision companie": {
     RO: "Comision companie",
     RU: "Комиссия компании"
+  },
+  "Filtrează tichete": {
+    RO: "Filtrează tichete",
+    RU: "Фильтровать тикеты"
   }
 }
 
