@@ -326,76 +326,9 @@ const Leads = () => {
               ))}
           </div>
         )}
-
-        <MantineModal
-          open={isModalOpen}
-          onClose={() => closeModal()}
-          title={getLanguageByKey("Editarea tichetelor în grup")}
-        >
-          <EditBulkOrSingleLeadTabs
-            onClose={closeModal}
-            selectedTickets={selectedTickets}
-            fetchLeads={fetchTicketList}
-            id={
-              selectedTickets.length === 1
-                ? selectedTickets[0]
-                : currentTicket?.id
-            }
-          />
-        </MantineModal>
-
-        {isOpenAddLeadModal && (
-          <TicketModal
-            fetchTickets={fetchTicketList}
-            selectedGroupTitle={groupTitle}
-            ticket={currentTicket}
-            onClose={() => setIsOpenAddLeadModal(false)}
-            onSave={(updatedTicket) => {
-              setTickets((prevTickets) => {
-                const isEditing = Boolean(updatedTicket.ticket_id)
-                return isEditing
-                  ? prevTickets.map((ticket) =>
-                      ticket.id === updatedTicket.ticket_id
-                        ? updatedTicket
-                        : ticket
-                    )
-                  : [...prevTickets, updatedTicket]
-              })
-            }}
-          />
-        )}
-
-        <MantineModal
-          open={isFilterOpen && !isTableView}
-          onClose={closeTicketModal}
-        >
-          <TicketFilterModal
-            loading={loading}
-            isOpen={isFilterOpen && !isTableView}
-            onClose={closeTicketModal}
-            onApplyWorkflowFilters={(filters) =>
-              applyWorkflowFilters(
-                normalizeLeadsFilters(filters),
-                filteredTicketIds
-              )
-            }
-            onApplyTicketFilters={(filters) => {
-              handleApplyFilterLightTicket(normalizeLeadsFilters(filters))
-            }}
-          />
-        </MantineModal>
-
-        <TicketFilterModal
-          loading={loadingFilters}
-          isOpen={isFilterOpen && isTableView}
-          onClose={closeTicketModal}
-          onApplyWorkflowFilters={closeTicketModal}
-          onApplyTicketFilters={(filters) =>
-            handleApplyFiltersHardTicket(normalizeLeadsFilters(filters))
-          }
-          resetTicketsFilters={setHardTicketFilters}
-        />
       </div>
+
+      {spinnerTickets && <SpinnerRightBottom />}
 
       <Modal
         open={isChatOpen}
@@ -410,7 +343,84 @@ const Leads = () => {
           <SingleChat ticketId={ticketId} onClose={closeChatModal} />
         )}
       </Modal>
-      {spinnerTickets && <SpinnerRightBottom />}
+
+      {isOpenAddLeadModal && (
+        <TicketModal
+          fetchTickets={fetchTicketList}
+          selectedGroupTitle={groupTitle}
+          ticket={currentTicket}
+          onClose={() => setIsOpenAddLeadModal(false)}
+          onSave={(updatedTicket) => {
+            setTickets((prevTickets) => {
+              const isEditing = Boolean(updatedTicket.ticket_id)
+              return isEditing
+                ? prevTickets.map((ticket) =>
+                    ticket.id === updatedTicket.ticket_id
+                      ? updatedTicket
+                      : ticket
+                  )
+                : [...prevTickets, updatedTicket]
+            })
+          }}
+        />
+      )}
+
+      <MantineModal
+        keepMounted
+        open={isFilterOpen && !isTableView}
+        onClose={closeTicketModal}
+      >
+        <TicketFilterModal
+          loading={loading}
+          onClose={closeTicketModal}
+          onApplyWorkflowFilters={(filters) =>
+            applyWorkflowFilters(
+              normalizeLeadsFilters(filters),
+              filteredTicketIds
+            )
+          }
+          onApplyTicketFilters={(filters) => {
+            handleApplyFilterLightTicket(normalizeLeadsFilters(filters))
+          }}
+        />
+      </MantineModal>
+
+      <MantineModal
+        keepMounted
+        open={isFilterOpen && isTableView}
+        onClose={closeTicketModal}
+      >
+        <TicketFilterModal
+          loading={loading}
+          onClose={closeTicketModal}
+          onApplyWorkflowFilters={(filters) =>
+            applyWorkflowFilters(
+              normalizeLeadsFilters(filters),
+              filteredTicketIds
+            )
+          }
+          onApplyTicketFilters={(filters) => {
+            handleApplyFilterLightTicket(normalizeLeadsFilters(filters))
+          }}
+        />
+      </MantineModal>
+
+      <MantineModal
+        open={isModalOpen}
+        onClose={() => closeModal()}
+        title={getLanguageByKey("Editarea tichetelor în grup")}
+      >
+        <EditBulkOrSingleLeadTabs
+          onClose={closeModal}
+          selectedTickets={selectedTickets}
+          fetchLeads={fetchTicketList}
+          id={
+            selectedTickets.length === 1
+              ? selectedTickets[0]
+              : currentTicket?.id
+          }
+        />
+      </MantineModal>
     </>
   )
 }

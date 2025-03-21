@@ -1,6 +1,13 @@
 import { Modal, Text } from "@mantine/core"
 
-export const MantineModal = ({ children, open, title, onClose }) => {
+export const MantineModal = ({
+  children,
+  open,
+  title,
+  onClose,
+  footer,
+  ...props
+}) => {
   return (
     <Modal
       centered
@@ -12,6 +19,7 @@ export const MantineModal = ({ children, open, title, onClose }) => {
           {title}
         </Text>
       }
+      {...props}
     >
       {children}
     </Modal>

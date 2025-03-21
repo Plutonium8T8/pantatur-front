@@ -82,7 +82,6 @@ export const ContractTicketForm = ({ onClose, onSubmit, loading, data }) => {
       })}
     >
       <TextInput
-        mt="md"
         label={getLanguageByKey("Nr de contract")}
         placeholder={getLanguageByKey("Nr de contract")}
         key={form.key("numar_de_contract")}

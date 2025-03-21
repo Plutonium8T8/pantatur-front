@@ -1,32 +1,17 @@
 import React, { useState } from "react"
-import CustomMultiSelect from "../MultipleSelect/MultipleSelect"
-import "./TicketFilterModal.css"
-import { Modal } from "../Modal"
-import { platformOptions, filterDefaults } from "./utils"
-import { WorkflowFilter } from "./WorkflowFilter"
-import { QualityControl } from "./QualityControl"
-import { Invoice } from "./Invoice"
-import { Contact } from "./Contact"
-import { LeadCreationDate } from "./LeadCreationDate"
-import { Tab } from "../Tab"
-import { getLanguageByKey } from "../utils/getLanguageByKey"
-// import { Button } from "../Button"
-import { Tabs, Flex, Button } from "@mantine/core"
+import { platformOptions, filterDefaults, filteredWorkflows } from "./utils"
+import { SelectWorkflow } from "./SelectWorkflow"
 
-const tabsButtons = [
-  {
-    title: getLanguageByKey("General"),
-    key: "workflow"
-  },
-  {
-    title: getLanguageByKey("Lead"),
-    key: "ticket"
-  },
-  {
-    title: getLanguageByKey("Mesaje"),
-    key: "messages"
-  }
-]
+import { getLanguageByKey } from "../utils"
+import { Tabs, Flex, Button, MultiSelect } from "@mantine/core"
+import "./TicketFilterModal.css"
+import {
+  TicketInfoForm,
+  ContractTicketForm,
+  GeneralInfoTicketForm,
+  Invoice,
+  QualityControl
+} from "../LeadsComponent/components"
 
 const formatValue = (name, value) => {
   if (name === "tags") {
@@ -36,8 +21,11 @@ const formatValue = (name, value) => {
   return value
 }
 
+const systemFiltersInitialState = {
+  workflow: filteredWorkflows
+}
+
 export const TicketFilterModal = ({
-  isOpen,
   onClose,
   onApplyWorkflowFilters,
   onApplyTicketFilters,
@@ -45,7 +33,7 @@ export const TicketFilterModal = ({
   loading
 }) => {
   const [leadFilters, setLeadFilters] = useState(filterDefaults)
-  const [systemFilters, setSystemFilters] = useState(filterDefaults)
+  const [systemFilters, setSystemFilters] = useState(systemFiltersInitialState)
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -60,13 +48,6 @@ export const TicketFilterModal = ({
     setLeadFilters((prev) => ({
       ...prev,
       [field]: value
-    }))
-  }
-
-  const handleMultiSelectChangeSystemFilters = (name, selectedValues) => {
-    setSystemFilters((prev) => ({
-      ...prev,
-      [name]: formatValue(name, selectedValues)
     }))
   }
 
@@ -88,14 +69,14 @@ export const TicketFilterModal = ({
     resetTicketsFilters?.(resetFilters)
   }
 
-  const clearSystemFilters = () => {
-    const resetFilters = {
-      ...filterDefaults,
-      workflow: filterDefaults.workflow || []
-    }
+  // const clearSystemFilters = () => {
+  //   const resetFilters = {
+  //     ...filterDefaults,
+  //     workflow: filterDefaults.workflow || []
+  //   }
 
-    setSystemFilters(resetFilters)
-  }
+  //   setSystemFilters(resetFilters)
+  // }
 
   // const content = {
   //   workflow: (
@@ -199,25 +180,32 @@ export const TicketFilterModal = ({
     <Tabs defaultValue="filter_workflow">
       <Tabs.List>
         <Tabs.Tab value="filter_workflow">
-          {getLanguageByKey("Informații generale")}
+          {getLanguageByKey("Filtru de sistem")}
         </Tabs.Tab>
         <Tabs.Tab value="filter_ticket">
-          {getLanguageByKey("Informații despre tichet")}
+          {getLanguageByKey("Filtru pentru Lead")}
         </Tabs.Tab>
         <Tabs.Tab value="filter_message">
-          {getLanguageByKey("Contact")}
+          {getLanguageByKey("Filtru pentru mesaje (coming soon)")}
         </Tabs.Tab>
       </Tabs.List>
 
       <Tabs.Panel value="filter_workflow" pt="xs">
         <>
-          <WorkflowFilter
-            handleMultiSelectChange={handleMultiSelectChange}
-            selectedValues={leadFilters.workflow}
+          <SelectWorkflow
+            selectedValues={systemFilters.workflow}
+            onChange={(_, value) =>
+              setSystemFilters({
+                workflow: value
+              })
+            }
           />
 
           <Flex justify="end" gap="md" mt="md">
-            <Button variant="outline" onClick={clearSystemFilters}>
+            <Button
+              variant="outline"
+              onClick={() => setSystemFilters(systemFiltersInitialState)}
+            >
               {getLanguageByKey("Reset filter")}
             </Button>
             <Button variant="default" onClick={onClose}>
@@ -235,50 +223,106 @@ export const TicketFilterModal = ({
       </Tabs.Panel>
 
       <Tabs.Panel value="filter_ticket" pt="xs">
-        <div className="mb-16">
-          <h2>{getLanguageByKey("Filtru pentru Lead")}</h2>
+        <>
+          <Tabs defaultValue="filter_general_info" orientation="vertical">
+            <Tabs.List>
+              <Tabs.Tab value="filter_general_info">
+                {getLanguageByKey("Informații generale")}
+              </Tabs.Tab>
+              <Tabs.Tab value="filter_ticket_info">
+                {getLanguageByKey("Informații despre tichet")}
+              </Tabs.Tab>
+              <Tabs.Tab value="filter_contact">
+                {getLanguageByKey("Contact")}
+              </Tabs.Tab>
+              <Tabs.Tab value="filter_invoice">
+                {getLanguageByKey("Invoice")}
+              </Tabs.Tab>
+              <Tabs.Tab value="filter_quality_control">
+                {getLanguageByKey("Control calitate")}
+              </Tabs.Tab>
+            </Tabs.List>
 
-          <div className="container-ticket-content | d-flex flex-column gap-16">
-            <WorkflowFilter
-              handleMultiSelectChange={handleMultiSelectChange}
-              selectedValues={leadFilters.workflow}
-            />
+            <Tabs.Panel value="filter_general_info">
+              <GeneralInfoTicketForm
+                onClose={onClose}
+                onSubmit={onApplyTicketFilters}
+              />
+            </Tabs.Panel>
+            <Tabs.Panel value="filter_ticket_info">
+              <TicketInfoForm onClose={onClose} />
+            </Tabs.Panel>
+            <Tabs.Panel value="filter_contact">
+              <ContractTicketForm
+                onClose={onClose}
+                onSubmit={onApplyTicketFilters}
+              />
+            </Tabs.Panel>
 
-            <LeadCreationDate
-              handleInputChange={handleInputChange}
-              filters={leadFilters}
-              handleMultiSelectChange={handleMultiSelectChange}
-            />
+            <Tabs.Panel value="filter_invoice">
+              <Invoice onClose={onClose} onSubmit={onApplyTicketFilters} />
+            </Tabs.Panel>
 
-            <Contact
-              filters={leadFilters}
-              handleInputChange={handleInputChange}
-              handleMultiSelectChange={handleMultiSelectChange}
-              onFilters={changeFilters}
-            />
+            <Tabs.Panel value="filter_quality_control">
+              <QualityControl
+                onClose={onClose}
+                onSubmit={onApplyTicketFilters}
+              />
+            </Tabs.Panel>
+          </Tabs>
 
-            <Invoice
-              handleMultiSelectChange={handleMultiSelectChange}
-              handleInputChange={handleInputChange}
-              filters={leadFilters}
-            />
+          {/* Invoice */}
 
-            <QualityControl
-              handleInputChange={handleInputChange}
-              handleMultiSelectChange={handleMultiSelectChange}
-              filters={leadFilters}
-            />
-          </div>
-        </div>
+          {/* <SelectWorkflow
+            onChange={handleMultiSelectChange}
+            selectedValues={leadFilters.workflow}
+          /> */}
+
+          {/* <LeadCreationDate
+            handleInputChange={handleInputChange}
+            filters={leadFilters}
+            handleMultiSelectChange={handleMultiSelectChange}
+          /> */}
+
+          {/* <Contact
+            filters={leadFilters}
+            handleInputChange={handleInputChange}
+            handleMultiSelectChange={handleMultiSelectChange}
+            onFilters={changeFilters}
+          /> */}
+
+          {/* <Invoice
+            handleMultiSelectChange={handleMultiSelectChange}
+            handleInputChange={handleInputChange}
+            filters={leadFilters}
+          /> */}
+
+          {/* <QualityControl
+            handleInputChange={handleInputChange}
+            handleMultiSelectChange={handleMultiSelectChange}
+            filters={leadFilters}
+          /> */}
+        </>
       </Tabs.Panel>
 
       <Tabs.Panel value="filter_message" pt="xs">
-        <CustomMultiSelect
-          options={platformOptions}
+        <MultiSelect
+          searchable
+          clearable
+          label={getLanguageByKey("Platforma mesaj")}
           placeholder={getLanguageByKey("Platforma mesaj")}
-          onChange={(values) => handleMultiSelectChange("platform", values)}
-          selectedValues={leadFilters.platform}
+          data={platformOptions}
+          defaultValue={leadFilters.platform}
         />
+
+        <Flex justify="end" gap="md" mt="md">
+          <Button variant="default" onClick={onClose}>
+            {getLanguageByKey("Închide")}
+          </Button>
+          <Button disabled variant="filled" loading={loading} onClick={onClose}>
+            {getLanguageByKey("Trimite")}
+          </Button>
+        </Flex>
       </Tabs.Panel>
     </Tabs>
   )
