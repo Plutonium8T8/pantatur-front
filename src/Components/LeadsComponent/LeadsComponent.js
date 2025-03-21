@@ -15,11 +15,11 @@ import SingleChat from "../ChatComponent/SingleChat"
 import { Spin } from "../Spin"
 import { RefLeadsFilter } from "./LeadsFilter"
 import TicketModal from "./TicketModal/TicketModalComponent"
-import { Modal as MantineModal, Text } from "@mantine/core"
+import { Text } from "@mantine/core"
 import "../../App.css"
 import "../SnackBarComponent/SnackBarComponent.css"
 import { SpinnerRightBottom } from "../SpinnerRightBottom"
-
+import { MantineModal } from "../MantineModal"
 import { EditBulkOrSingleLeadTabs } from "./components"
 
 const SORT_BY = "creation_date"
@@ -328,15 +328,9 @@ const Leads = () => {
         )}
 
         <MantineModal
-          centered
-          opened={isModalOpen}
+          open={isModalOpen}
           onClose={() => closeModal()}
-          size="lg"
-          title={
-            <Text size="xl" fw="bold">
-              {getLanguageByKey("Editarea tichetelor în grup")}
-            </Text>
-          }
+          title={getLanguageByKey("Editarea tichetelor în grup")}
         >
           <EditBulkOrSingleLeadTabs
             onClose={closeModal}
@@ -371,20 +365,26 @@ const Leads = () => {
           />
         )}
 
-        <TicketFilterModal
-          loading={loading}
-          isOpen={isFilterOpen && !isTableView}
+        <MantineModal
+          open={isFilterOpen && !isTableView}
           onClose={closeTicketModal}
-          onApplyWorkflowFilters={(filters) =>
-            applyWorkflowFilters(
-              normalizeLeadsFilters(filters),
-              filteredTicketIds
-            )
-          }
-          onApplyTicketFilters={(filters) => {
-            handleApplyFilterLightTicket(normalizeLeadsFilters(filters))
-          }}
-        />
+        >
+          <TicketFilterModal
+            loading={loading}
+            isOpen={isFilterOpen && !isTableView}
+            onClose={closeTicketModal}
+            onApplyWorkflowFilters={(filters) =>
+              applyWorkflowFilters(
+                normalizeLeadsFilters(filters),
+                filteredTicketIds
+              )
+            }
+            onApplyTicketFilters={(filters) => {
+              handleApplyFilterLightTicket(normalizeLeadsFilters(filters))
+            }}
+          />
+        </MantineModal>
+
         <TicketFilterModal
           loading={loadingFilters}
           isOpen={isFilterOpen && isTableView}

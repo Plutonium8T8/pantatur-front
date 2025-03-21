@@ -10,7 +10,8 @@ import { Contact } from "./Contact"
 import { LeadCreationDate } from "./LeadCreationDate"
 import { Tab } from "../Tab"
 import { getLanguageByKey } from "../utils/getLanguageByKey"
-import { Button } from "../Button"
+// import { Button } from "../Button"
+import { Tabs, Flex, Button } from "@mantine/core"
 
 const tabsButtons = [
   {
@@ -96,45 +97,152 @@ export const TicketFilterModal = ({
     setSystemFilters(resetFilters)
   }
 
-  const content = {
-    workflow: (
-      <div className="container-content-title | d-flex justify-content-between flex-column gap-8">
-        <div>
-          <h2>{getLanguageByKey("Filtru de sistem")}</h2>
+  // const content = {
+  //   workflow: (
+  //     <div className="container-content-title | d-flex justify-content-between flex-column gap-8">
+  //       <div>
+  //         <h2>{getLanguageByKey("Filtru de sistem")}</h2>
 
+  //         <WorkflowFilter
+  //           handleMultiSelectChange={handleMultiSelectChangeSystemFilters}
+  //           selectedValues={systemFilters.workflow}
+  //         />
+  //       </div>
+  //       <div className="d-flex gap-8 justify-content-end">
+  //         <Button onClick={clearSystemFilters}>
+  //           {getLanguageByKey("Reset filter")}
+  //         </Button>
+  //         <Button onClick={onClose}>{getLanguageByKey("Anuleaza")}</Button>
+  //         <Button
+  //           loading={loading}
+  //           variant="primary"
+  //           onClick={() => onApplyWorkflowFilters(systemFilters)}
+  //         >
+  //           {getLanguageByKey("Confirma")}
+  //         </Button>
+  //       </div>
+  //     </div>
+  //   ),
+
+  //   ticket: (
+  //     <div className="container-content-title">
+  //       <div className="mb-16">
+  //         <h2>{getLanguageByKey("Filtru pentru Lead")}</h2>
+
+  //         <div className="container-ticket-content | d-flex flex-column gap-16">
+  //           <div className="container-extra-group">
+  //             <WorkflowFilter
+  //               handleMultiSelectChange={handleMultiSelectChange}
+  //               selectedValues={leadFilters.workflow}
+  //             />
+  //           </div>
+
+  //           <LeadCreationDate
+  //             handleInputChange={handleInputChange}
+  //             filters={leadFilters}
+  //             handleMultiSelectChange={handleMultiSelectChange}
+  //           />
+
+  //           <Contact
+  //             filters={leadFilters}
+  //             handleInputChange={handleInputChange}
+  //             handleMultiSelectChange={handleMultiSelectChange}
+  //             onFilters={changeFilters}
+  //           />
+
+  //           <Invoice
+  //             handleMultiSelectChange={handleMultiSelectChange}
+  //             handleInputChange={handleInputChange}
+  //             filters={leadFilters}
+  //           />
+
+  //           <QualityControl
+  //             handleInputChange={handleInputChange}
+  //             handleMultiSelectChange={handleMultiSelectChange}
+  //             filters={leadFilters}
+  //           />
+  //         </div>
+  //       </div>
+  //       <div className="d-flex gap-8 justify-content-end">
+  //         <Button onClick={clearFilters}>
+  //           {getLanguageByKey("Reset filter")}
+  //         </Button>
+  //         <Button onClick={onClose}>{getLanguageByKey("Anuleaza")}</Button>
+  //         <Button
+  //           loading={loading}
+  //           variant="primary"
+  //           onClick={() => onApplyTicketFilters(leadFilters)}
+  //         >
+  //           {getLanguageByKey("Confirma")}
+  //         </Button>
+  //       </div>
+  //     </div>
+  //   ),
+
+  //   messages: (
+  //     <div className="container-content-title">
+  //       <h2>{getLanguageByKey("Filtru pentru mesaje (coming soon)")}</h2>
+  //       <div className="d-flex flex-column gap-8">
+  //         <label>{getLanguageByKey("Platforma mesaj")}</label>
+  //         <CustomMultiSelect
+  //           options={platformOptions}
+  //           placeholder={getLanguageByKey("Platforma mesaj")}
+  //           onChange={(values) => handleMultiSelectChange("platform", values)}
+  //           selectedValues={leadFilters.platform}
+  //         />
+  //       </div>
+  //     </div>
+  //   )
+  // }
+
+  return (
+    <Tabs defaultValue="filter_workflow">
+      <Tabs.List>
+        <Tabs.Tab value="filter_workflow">
+          {getLanguageByKey("Informații generale")}
+        </Tabs.Tab>
+        <Tabs.Tab value="filter_ticket">
+          {getLanguageByKey("Informații despre tichet")}
+        </Tabs.Tab>
+        <Tabs.Tab value="filter_message">
+          {getLanguageByKey("Contact")}
+        </Tabs.Tab>
+      </Tabs.List>
+
+      <Tabs.Panel value="filter_workflow" pt="xs">
+        <>
           <WorkflowFilter
-            handleMultiSelectChange={handleMultiSelectChangeSystemFilters}
-            selectedValues={systemFilters.workflow}
+            handleMultiSelectChange={handleMultiSelectChange}
+            selectedValues={leadFilters.workflow}
           />
-        </div>
-        <div className="d-flex gap-8 justify-content-end">
-          <Button onClick={clearSystemFilters}>
-            {getLanguageByKey("Reset filter")}
-          </Button>
-          <Button onClick={onClose}>{getLanguageByKey("Anuleaza")}</Button>
-          <Button
-            loading={loading}
-            variant="primary"
-            onClick={() => onApplyWorkflowFilters(systemFilters)}
-          >
-            {getLanguageByKey("Confirma")}
-          </Button>
-        </div>
-      </div>
-    ),
 
-    ticket: (
-      <div className="container-content-title">
+          <Flex justify="end" gap="md" mt="md">
+            <Button variant="outline" onClick={clearSystemFilters}>
+              {getLanguageByKey("Reset filter")}
+            </Button>
+            <Button variant="default" onClick={onClose}>
+              {getLanguageByKey("Închide")}
+            </Button>
+            <Button
+              variant="filled"
+              loading={loading}
+              onClick={() => onApplyWorkflowFilters(systemFilters)}
+            >
+              {getLanguageByKey("Trimite")}
+            </Button>
+          </Flex>
+        </>
+      </Tabs.Panel>
+
+      <Tabs.Panel value="filter_ticket" pt="xs">
         <div className="mb-16">
           <h2>{getLanguageByKey("Filtru pentru Lead")}</h2>
 
           <div className="container-ticket-content | d-flex flex-column gap-16">
-            <div className="container-extra-group">
-              <WorkflowFilter
-                handleMultiSelectChange={handleMultiSelectChange}
-                selectedValues={leadFilters.workflow}
-              />
-            </div>
+            <WorkflowFilter
+              handleMultiSelectChange={handleMultiSelectChange}
+              selectedValues={leadFilters.workflow}
+            />
 
             <LeadCreationDate
               handleInputChange={handleInputChange}
@@ -162,48 +270,16 @@ export const TicketFilterModal = ({
             />
           </div>
         </div>
-        <div className="d-flex gap-8 justify-content-end">
-          <Button onClick={clearFilters}>
-            {getLanguageByKey("Reset filter")}
-          </Button>
-          <Button onClick={onClose}>{getLanguageByKey("Anuleaza")}</Button>
-          <Button
-            loading={loading}
-            variant="primary"
-            onClick={() => onApplyTicketFilters(leadFilters)}
-          >
-            {getLanguageByKey("Confirma")}
-          </Button>
-        </div>
-      </div>
-    ),
+      </Tabs.Panel>
 
-    messages: (
-      <div className="container-content-title">
-        <h2>{getLanguageByKey("Filtru pentru mesaje (coming soon)")}</h2>
-        <div className="d-flex flex-column gap-8">
-          <label>{getLanguageByKey("Platforma mesaj")}</label>
-          <CustomMultiSelect
-            options={platformOptions}
-            placeholder={getLanguageByKey("Platforma mesaj")}
-            onChange={(values) => handleMultiSelectChange("platform", values)}
-            selectedValues={leadFilters.platform}
-          />
-        </div>
-      </div>
-    )
-  }
-
-  return (
-    <Modal
-      loading={loading}
-      footer={null}
-      open={isOpen}
-      width={1000}
-      height={700}
-      onClose={onClose}
-    >
-      <Tab headerContentSpacing={24} tabs={tabsButtons} content={content} />
-    </Modal>
+      <Tabs.Panel value="filter_message" pt="xs">
+        <CustomMultiSelect
+          options={platformOptions}
+          placeholder={getLanguageByKey("Platforma mesaj")}
+          onChange={(values) => handleMultiSelectChange("platform", values)}
+          selectedValues={leadFilters.platform}
+        />
+      </Tabs.Panel>
+    </Tabs>
   )
 }
