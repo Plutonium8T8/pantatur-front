@@ -4,10 +4,11 @@ import { Checkbox } from "../../../Checkbox"
 import { translations } from "../../../utils/translations"
 import "./TaskList.css"
 import { TypeTask } from "../OptionsTaskType/OptionsTaskType"
-import { Button } from "../../../Button"
+// import { Button } from "../../../Button"
 import { useSnackbar } from "notistack"
 import { api } from "../../../../api"
 import { openConfirmModal } from "@mantine/modals"
+import { Menu, Button } from "@mantine/core"
 import {
   IoEllipsisHorizontal,
   IoCheckmarkCircle,
@@ -272,51 +273,40 @@ const TaskList = ({
         width: 150,
         align: "center",
         render: (_, row) => (
-          <div className="action-menu">
-            <Button
-              variant="default"
-              className="action-button-task"
-              onClick={() => toggleMenu(row.id)}
-            >
-              <IoEllipsisHorizontal size={18} />
-            </Button>
+          <Menu shadow="md" width={200} position="bottom-end">
+            <Menu.Target>
+              <Button variant="default" className="action-button-task">
+                <IoEllipsisHorizontal size={18} />
+              </Button>
+            </Menu.Target>
 
-            {openMenuId === row.id && (
-              <div className="dropdown-menu">
-                <div
-                  className="dropdown-item complete"
-                  onClick={() => {
-                    handleMarkTaskAsComplete(row.id)
-                    setOpenMenuId(null)
-                  }}
-                >
-                  <IoCheckmarkCircle size={18} />
-                  <span>{translations["Finalizați"][language]}</span>
-                </div>
-                <div
-                  className="dropdown-item edit"
-                  onClick={() => {
-                    console.log("🔍 Редактирование задачи, передаем:", row)
-                    openEditTask(row)
-                    setOpenMenuId(null)
-                  }}
-                >
-                  <IoPencil size={18} />
-                  <span>{translations["Modificați"][language]}</span>
-                </div>
-                <div
-                  className="dropdown-item delete"
-                  onClick={() => {
-                    handleDeleteTask(row.id)
-                    setOpenMenuId(null)
-                  }}
-                >
-                  <IoTrash size={18} />
-                  <span>{translations["Ștergeți"][language]}</span>
-                </div>
-              </div>
-            )}
-          </div>
+            <Menu.Dropdown>
+              <Menu.Item
+                leftSection={<IoCheckmarkCircle size={16} />}
+                onClick={() => handleMarkTaskAsComplete(row.id)}
+              >
+                {translations["Finalizați"][language]}
+              </Menu.Item>
+
+              <Menu.Item
+                leftSection={<IoPencil size={16} />}
+                onClick={() => {
+                  console.log("🔍 Редактирование задачи, передаем:", row)
+                  openEditTask(row)
+                }}
+              >
+                {translations["Modificați"][language]}
+              </Menu.Item>
+
+              <Menu.Item
+                leftSection={<IoTrash size={16} />}
+                onClick={() => handleDeleteTask(row.id)}
+                color="red"
+              >
+                {translations["Ștergeți"][language]}
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
         )
       }
     ],
