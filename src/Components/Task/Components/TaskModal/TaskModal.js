@@ -142,7 +142,9 @@ const TaskModal = ({
 
       if (selectedTask) {
         await api.task.update({ id: selectedTask.id, ...updatedTask })
-        enqueueSnackbar("Task actualizat cu succes!", { variant: "success" })
+        enqueueSnackbar(translations["Task actualizat cu succes!"][language], {
+          variant: "success"
+        })
       } else {
         await api.task.create(updatedTask)
         enqueueSnackbar(translations["Task creat cu succes!"][language], {
